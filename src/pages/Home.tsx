@@ -22,6 +22,38 @@ const categories = [
 export default function Home() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [timeLeft, setTimeLeft] = useState({ days: "00", hours: "00", minutes: "00", seconds: "00" });
+
+  useEffect(() => {
+    const calculateTimeLeft = () => {
+      const targetDate = new Date();
+      targetDate.setMonth(2); // 0-indexed, 2 is March
+      targetDate.setDate(20);
+      targetDate.setHours(0, 0, 0, 0);
+
+      const now = new Date();
+      if (now > targetDate) {
+        targetDate.setFullYear(now.getFullYear() + 1);
+      }
+
+      const diff = targetDate.getTime() - now.getTime();
+      if (diff <= 0) return { days: "00", hours: "00", minutes: "00", seconds: "00" };
+
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24)).toString().padStart(2, "0");
+      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24).toString().padStart(2, "0");
+      const minutes = Math.floor((diff / 1000 / 60) % 60).toString().padStart(2, "0");
+      const seconds = Math.floor((diff / 1000) % 60).toString().padStart(2, "0");
+
+      return { days, hours, minutes, seconds };
+    };
+
+    setTimeLeft(calculateTimeLeft());
+    const timer = setInterval(() => {
+      setTimeLeft(calculateTimeLeft());
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     async function fetchProducts() {
@@ -135,10 +167,15 @@ export default function Home() {
               </div>
               <div className="flex flex-col items-start sm:items-end gap-3">
                 <div className="flex gap-2">
-                  {["03", "14", "22"].map((t, i) => (
+                  {[
+                    { value: timeLeft.days, label: "DAYS" },
+                    { value: timeLeft.hours, label: "HRS" },
+                    { value: timeLeft.minutes, label: "MIN" },
+                    { value: timeLeft.seconds, label: "SEC" }
+                  ].map((t, i) => (
                     <div key={i} className="glass-heavy rounded-xl px-3 py-2 text-center min-w-[52px]">
-                      <div className="text-xl font-bold text-white font-mono">{t}</div>
-                      <div className="text-xs text-white/60">{["HRS", "MIN", "SEC"][i]}</div>
+                      <div className="text-xl font-bold text-white font-mono">{t.value}</div>
+                      <div className="text-xs text-white/60">{t.label}</div>
                     </div>
                   ))}
                 </div>
