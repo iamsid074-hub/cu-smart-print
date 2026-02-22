@@ -123,7 +123,7 @@ export default function Navbar() {
 
         {/* Actions */}
         <div className="flex items-center gap-2 ml-auto lg:ml-0">
-          <div className="relative">
+          <div className="static sm:relative">
             <button
               onClick={handleNotificationClick}
               className={`relative p-2 rounded-full transition-colors ${showNotifications ? 'bg-white/10 text-foreground' : 'hover:bg-white/5 text-muted-foreground hover:text-foreground'}`}
@@ -137,7 +137,7 @@ export default function Navbar() {
               <motion.div
                 initial={{ opacity: 0, y: 10, scale: 0.95 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
-                className="absolute right-0 mt-2 w-80 glass-heavy border border-white/10 rounded-2xl shadow-xl overflow-hidden z-50 origin-top-right"
+                className="absolute top-[64px] left-4 right-4 sm:top-full sm:left-auto sm:right-0 sm:mt-2 w-auto sm:w-[360px] glass-heavy border border-white/10 rounded-2xl shadow-xl overflow-hidden z-50 origin-top sm:origin-top-right"
               >
                 <div className="p-4 border-b border-white/5 flex items-center justify-between">
                   <h3 className="font-bold text-sm">Notifications</h3>
@@ -171,9 +171,9 @@ export default function Navbar() {
                       className="p-4 border-b border-white/5 hover:bg-white/5 transition-colors cursor-pointer flex gap-3"
                     >
                       <div className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${n.unread && hasUnread ? "bg-neon-orange" : "bg-transparent"}`} />
-                      <div>
-                        <p className="text-sm font-semibold text-foreground">{n.title}</p>
-                        <p className="text-xs text-muted-foreground mt-0.5">{n.desc}</p>
+                      <div className="flex-1 min-w-0 pr-2">
+                        <p className="text-sm font-semibold text-foreground truncate">{n.title}</p>
+                        <p className="text-xs text-muted-foreground mt-0.5 break-words line-clamp-2">{n.desc}</p>
                         <p className="text-xs text-muted-foreground/60 mt-1">{n.time}</p>
                       </div>
                     </div>
