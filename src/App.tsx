@@ -11,6 +11,8 @@ import Tracking from "./pages/Tracking";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import Profile from "./pages/Profile";
+import Browse from "./pages/Browse";
+import ProductDetail from "./pages/ProductDetail";
 import Navbar from "./components/Navbar";
 import UsernameSetup from "./components/UsernameSetup";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
@@ -54,6 +56,8 @@ function AppLayout() {
         <Route path="/list" element={<ProtectedRoute><ListProduct /></ProtectedRoute>} />
         <Route path="/tracking" element={<ProtectedRoute><Tracking /></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+        <Route path="/browse" element={<ProtectedRoute><Browse /></ProtectedRoute>} />
+        <Route path="/product/:id" element={<ProtectedRoute><ProductDetail /></ProtectedRoute>} />
 
         <Route path="*" element={<NotFound />} />
       </Routes>

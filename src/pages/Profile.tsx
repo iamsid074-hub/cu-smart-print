@@ -20,8 +20,12 @@ export default function Profile() {
     const [phoneNumber, setPhoneNumber] = useState("");
     const fileInputRef = useRef<HTMLInputElement>(null);
 
+    // My Listings
+    const [myProducts, setMyProducts] = useState<any[]>([]);
+    const [loadingListings, setLoadingListings] = useState(true);
+
     useEffect(() => {
-        async function fetchProfile() {
+        async function fetchProfileAndListings() {
             if (!user) return;
             const { data } = await supabase.from("profiles").select("*").eq("id", user.id).single();
             if (data) {
@@ -30,9 +34,40 @@ export default function Profile() {
                 setHostelBlock(data.hostel_block || "");
                 setPhoneNumber(data.phone_number || "");
             }
+
+            const { data: listings } = await supabase
+                .from("products")
+                .select("*")
+                .eq("seller_id", user.id)
+                .order("created_at", { ascending: false });
+
+            setMyProducts(listings || []);
+            setLoadingListings(false);
         }
-        fetchProfile();
+        fetchProfileAndListings();
     }, [user]);
+
+    const handleMarkSold = async (id: string) => {
+        const { error } = await supabase.from("products").update({ status: 'sold' }).eq('id', id);
+        if (!error) {
+            setMyProducts(prev => prev.map(p => p.id === id ? { ...p, status: 'sold' } : p));
+            toast.success("Item marked as sold!");
+        } else {
+            toast.error("Failed to update status");
+        }
+    };
+
+    const handleDeleteListing = async (id: string) => {
+        if (!confirm("Are you sure you want to delete this listing?")) return;
+        const { error } = await supabase.from("products").delete().eq('id', id);
+        if (!error) {
+            setMyProducts(prev => prev.filter(p => p.id !== id));
+            toast.success("Listing deleted.");
+        } else {
+            toast.error("Failed to delete listing");
+        }
+    };
+
 
     const handleSaveProfile = async () => {
         if (!user) return;
@@ -250,21 +285,49 @@ export default function Profile() {
                         initial={{ opacity: 0, x: 20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: 0.1 }}
-                        className="glass rounded-3xl p-6 sm:p-8"
+                        className="glass rounded-3xl p-6 sm:p-8 border border-white/5"
                     >
                         <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
                             <Package className="w-5 h-5 text-neon-blue" /> My Active Listings
                         </h3>
-                        <div className="text-center py-12 text-muted-foreground border-2 border-dashed border-white/10 rounded-2xl">
-                            You haven't listed any items yet.
-                        </div>
+
+                        {loadingListings ? (
+                            <div className="flex justify-center py-12"><Loader2 className="w-8 h-8 animate-spin text-neon-cyan" /></div>
+                        ) : myProducts.length === 0 ? (
+                            <div className="text-center py-12 text-muted-foreground border-2 border-dashed border-white/10 rounded-2xl">
+                                No listings yet. <button onClick={() => navigate('/list')} className="text-neon-cyan underline inline ml-1">Sell something</button>
+                            </div>
+                        ) : (
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                {myProducts.map((cmd) => (
+                                    <div key={cmd.id} className="relative group overflow-hidden rounded-2xl glass border border-white/5 hover:border-white/20 transition-all p-3 flex gap-4 items-center">
+                                        <div className="w-20 h-20 rounded-xl overflow-hidden flex-shrink-0 bg-background/50">
+                                            <img src={cmd.image_url || 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400'} alt={cmd.title} className="w-full h-full object-cover" />
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <h4 className="font-semibold text-foreground truncate">{cmd.title}</h4>
+                                            <p className="text-neon-fire font-bold">₹{cmd.price}</p>
+                                            <div className="flex items-center gap-1 mt-1">
+                                                <span className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded-full ${cmd.status === 'sold' ? 'bg-red-500/20 text-red-500' : 'bg-green-500/20 text-green-500'}`}>{cmd.status}</span>
+                                            </div>
+                                        </div>
+                                        <div className="absolute right-0 top-0 bottom-0 bg-gradient-to-l from-background via-background/90 to-transparent w-24 flex flex-col justify-center items-end pr-3 opacity-0 group-hover:opacity-100 transition-opacity gap-2 translate-x-4 group-hover:translate-x-0">
+                                            {cmd.status !== 'sold' && (
+                                                <button onClick={() => handleMarkSold(cmd.id)} className="text-[10px] font-bold text-green-400 hover:text-green-300 uppercase underline backdrop-blur-md bg-black/40 px-2 py-1 rounded">Mark Sold</button>
+                                            )}
+                                            <button onClick={() => handleDeleteListing(cmd.id)} className="text-[10px] font-bold text-red-400 hover:text-red-300 uppercase underline backdrop-blur-md bg-black/40 px-2 py-1 rounded">Delete</button>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </motion.div>
 
                     <motion.div
                         initial={{ opacity: 0, x: 20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: 0.2 }}
-                        className="glass rounded-3xl p-6 sm:p-8"
+                        className="glass rounded-3xl p-6 sm:p-8 border border-white/5"
                     >
                         <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
                             <Heart className="w-5 h-5 text-neon-pink" /> Saved Items

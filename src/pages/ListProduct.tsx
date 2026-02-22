@@ -365,7 +365,7 @@ export default function ListProduct() {
                     </div>
                   </div>
                 </div>
-                <button className="px-6 py-3 rounded-xl bg-gradient-fire text-white font-bold shadow-neon-fire w-full">
+                <button onClick={() => window.location.href = '/profile'} className="px-6 py-3 rounded-xl bg-gradient-fire text-white font-bold shadow-neon-fire w-full">
                   View My Listing →
                 </button>
               </motion.div>

@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useLocation } from "react-router-dom";
 import { Send, Phone, Video, MoreVertical, ArrowLeft, Search, CheckCheck, Smile, MessageCircle } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
@@ -12,12 +13,21 @@ type Message = { id: string; sender_id: string; receiver_id: string; content: st
 
 export default function Chat() {
   const { user } = useAuth();
+  const location = useLocation();
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeContact, setActiveContact] = useState<Profile | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (location.state?.contact) {
+      setActiveContact(location.state.contact as Profile);
+      // clean up history state if you don't want it to reopen every reload
+      window.history.replaceState({}, document.title)
+    }
+  }, [location.state]);
 
   useEffect(() => {
     const fetchProfiles = async () => {
