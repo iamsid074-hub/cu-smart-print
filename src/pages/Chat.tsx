@@ -22,12 +22,13 @@ export default function Chat() {
   useEffect(() => {
     const fetchProfiles = async () => {
       if (!user) return;
+      if (!searchQuery.trim()) {
+        setProfiles([]);
+        return;
+      }
 
       let query = supabase.from("profiles").select("id, username, full_name, avatar_url").neq("id", user.id);
-
-      if (searchQuery.trim()) {
-        query = query.ilike("username", `%${searchQuery.trim()}%`);
-      }
+      query = query.ilike("username", `%${searchQuery.trim()}%`);
 
       const { data, error } = await query.limit(20);
 
