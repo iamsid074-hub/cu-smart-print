@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Search, Bell, MessageCircle, User, Zap, Menu, X } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
@@ -12,11 +12,19 @@ const navLinks = [
   { label: "Track", path: "/tracking" },
 ];
 
-type Notification = { id: string; title: string; desc: string; time: string; unread: boolean; };
+type Notification = {
+  id: string;
+  title: string;
+  desc: string;
+  time: string;
+  unread: boolean;
+  senderProfile?: any;
+};
 
 export default function Navbar() {
   const { user } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchFocused, setSearchFocused] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
@@ -29,18 +37,20 @@ export default function Navbar() {
     const fetchNotifications = async () => {
       const { data, error } = await supabase
         .from("messages")
-        .select(`id, content, created_at, profiles!messages_sender_id_fkey(full_name)`)
+        .select(`id, content, created_at, profiles!messages_sender_id_fkey(id, full_name, username, avatar_url)`)
         .eq("receiver_id", user.id)
         .order("created_at", { ascending: false })
         .limit(5);
 
       if (!error && data) {
+        // Group by sender to avoid duplicate notifications from the same person (optional) or just map
         const mapped: Notification[] = data.map((msg: any) => ({
           id: msg.id,
           title: "New Message",
           desc: `${msg.profiles.full_name} sent: "${msg.content.length > 30 ? msg.content.substring(0, 30) + "..." : msg.content}"`,
           time: new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          unread: true
+          unread: true,
+          senderProfile: msg.profiles,
         }));
 
         setNotifications(mapped);
@@ -131,7 +141,15 @@ export default function Navbar() {
               >
                 <div className="p-4 border-b border-white/5 flex items-center justify-between">
                   <h3 className="font-bold text-sm">Notifications</h3>
-                  <button className="text-xs text-neon-cyan hover:text-white transition-colors">Mark all as read</button>
+                  <button
+                    onClick={() => {
+                      setHasUnread(false);
+                      setNotifications(prev => prev.map(n => ({ ...n, unread: false })));
+                    }}
+                    className="text-xs text-neon-cyan hover:text-white transition-colors"
+                  >
+                    Mark all as read
+                  </button>
                 </div>
                 <div className="max-h-[300px] overflow-y-auto">
                   {notifications.length === 0 ? (
@@ -140,7 +158,18 @@ export default function Navbar() {
                       <span className="text-sm">No new notifications</span>
                     </div>
                   ) : notifications.map((n) => (
-                    <div key={n.id} className="p-4 border-b border-white/5 hover:bg-white/5 transition-colors cursor-pointer flex gap-3">
+                    <div
+                      key={n.id}
+                      onClick={() => {
+                        setShowNotifications(false);
+                        if (n.senderProfile) {
+                          navigate('/chat', { state: { contact: n.senderProfile } });
+                        } else {
+                          navigate('/chat');
+                        }
+                      }}
+                      className="p-4 border-b border-white/5 hover:bg-white/5 transition-colors cursor-pointer flex gap-3"
+                    >
                       <div className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${n.unread && hasUnread ? "bg-neon-orange" : "bg-transparent"}`} />
                       <div>
                         <p className="text-sm font-semibold text-foreground">{n.title}</p>
@@ -150,8 +179,14 @@ export default function Navbar() {
                     </div>
                   ))}
                 </div>
-                <div className="p-3 text-center bg-white/5 hover:bg-white/10 transition-colors cursor-pointer">
-                  <span className="text-xs font-medium text-foreground">View all activity</span>
+                <div
+                  onClick={() => {
+                    setShowNotifications(false);
+                    navigate('/chat');
+                  }}
+                  className="p-3 text-center bg-white/5 hover:bg-white/10 transition-colors cursor-pointer"
+                >
+                  <span className="text-xs font-medium text-foreground">View all messages</span>
                 </div>
               </motion.div>
             )}
