@@ -67,7 +67,7 @@ export default function Login() {
             >
                 <div className="text-center mb-8">
                     <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-neon-cyan to-neon-blue inline-block mb-2">
-                        CU Bazzar
+                        CU BAZZAR
                     </h1>
                     <p className="text-muted-foreground text-sm">
                         {isLogin ? "Enter your credentials to continue" : "Join the campus marketplace"}

@@ -79,7 +79,7 @@ export default function Navbar() {
           </div>
           <span className="font-bold text-lg tracking-tight">
             <span className="text-neon-fire">CU</span>
-            <span className="text-foreground"> Bazaar</span>
+            <span className="text-foreground"> BAZZAR</span>
           </span>
         </Link>
 
