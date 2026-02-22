@@ -13,6 +13,9 @@ export default defineConfig(({ mode }) => ({
     },
   },
   plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
+  build: {
+    target: 'es2020',
+  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
