@@ -78,3 +78,10 @@ CREATE POLICY "Users can view orders they bought or sold." ON public.orders FOR 
 CREATE POLICY "Buyers can create orders." ON public.orders FOR INSERT WITH CHECK (auth.role() = 'authenticated' AND auth.uid() = buyer_id);
 -- Sellers update to 'confirmed', 'delivering', etc. Admin/System can also update.
 CREATE POLICY "Involved parties can update order status." ON public.orders FOR UPDATE USING (auth.uid() = buyer_id OR auth.uid() = seller_id);
+
+-- 5. Storage Bucket for Products
+INSERT INTO storage.buckets (id, name, public) VALUES ('product-images', 'product-images', true) ON CONFLICT (id) DO NOTHING;
+
+CREATE POLICY "Public Access" ON storage.objects FOR SELECT USING (bucket_id = 'product-images');
+CREATE POLICY "Authenticated users can upload images" ON storage.objects FOR INSERT WITH CHECK (bucket_id = 'product-images' AND auth.role() = 'authenticated');
+
