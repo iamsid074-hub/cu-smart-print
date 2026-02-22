@@ -5,6 +5,7 @@ import { supabase } from '../lib/supabase';
 interface AuthContextType {
     user: User | null;
     session: Session | null;
+    profile: any | null; // Stores profiles row (username, avatar, etc.)
     loading: boolean;
     signOut: () => Promise<void>;
 }
@@ -12,6 +13,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType>({
     user: null,
     session: null,
+    profile: null,
     loading: true,
     signOut: async () => { },
 });
@@ -19,32 +21,74 @@ const AuthContext = createContext<AuthContextType>({
 export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
     const [session, setSession] = useState<Session | null>(null);
+    const [profile, setProfile] = useState<any | null>(null);
     const [loading, setLoading] = useState(true);
 
+    const fetchProfile = async (userId: string) => {
+        try {
+            const { data, error } = await supabase.from('profiles').select('*').eq('id', userId).single();
+            if (error && error.code !== 'PGRST116') {
+                console.error("Error fetching profile:", error);
+            }
+            setProfile(data || null);
+        } catch (err) {
+            console.error("Unexpected error in fetchProfile:", err);
+            setProfile(null);
+        }
+    };
+
     useEffect(() => {
-        // Check active sessions and sets the user
-        supabase.auth.getSession().then(({ data: { session } }) => {
-            setSession(session);
-            setUser(session?.user ?? null);
-            setLoading(false);
+        let mounted = true;
+
+        // Fallback timer ensures loading state breaks after 2s if everything hangs
+        const timer = setTimeout(() => {
+            if (mounted && loading) setLoading(false);
+        }, 2000);
+
+        supabase.auth.getSession().then(({ data: { session }, error }) => {
+            if (error) console.error("Session error:", error);
+
+            if (mounted) {
+                setSession(session);
+                setUser(session?.user ?? null);
+                setLoading(false); // Stop loading immediately to unblock UI
+            }
+
+            if (session?.user) {
+                fetchProfile(session.user.id);
+            }
+        }).catch(err => {
+            console.error("Session fetch caught error:", err);
+            if (mounted) setLoading(false);
         });
 
-        // Listen for changes on auth state (in, out, etc.)
         const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-            setSession(session);
-            setUser(session?.user ?? null);
-            setLoading(false);
+            if (mounted) {
+                setSession(session);
+                setUser(session?.user ?? null);
+                setLoading(false);
+            }
+            if (session?.user) {
+                fetchProfile(session.user.id);
+            } else {
+                if (mounted) setProfile(null);
+            }
         });
 
-        return () => subscription.unsubscribe();
+        return () => {
+            mounted = false;
+            clearTimeout(timer);
+            subscription.unsubscribe();
+        };
     }, []);
 
     const signOut = async () => {
         await supabase.auth.signOut();
+        setProfile(null);
     };
 
     return (
-        <AuthContext.Provider value={{ user, session, loading, signOut }}>
+        <AuthContext.Provider value={{ user, session, profile, loading, signOut }}>
             {children}
         </AuthContext.Provider>
     );
