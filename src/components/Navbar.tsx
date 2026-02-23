@@ -126,7 +126,7 @@ export default function Navbar() {
           <div className="static sm:relative">
             <button
               onClick={handleNotificationClick}
-              className={`relative p-2 rounded-full transition-colors ${showNotifications ? 'bg-white/10 text-foreground' : 'hover:bg-white/5 text-muted-foreground hover:text-foreground'}`}
+              className={`relative p-2 rounded-full hover-bell-ring transition-colors ${showNotifications ? 'bg-white/10 text-foreground' : 'hover:bg-white/5 text-muted-foreground hover:text-foreground'}`}
             >
               <Bell className="w-5 h-5" />
               {hasUnread && <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-gradient-fire"></span>}
