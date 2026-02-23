@@ -53,7 +53,7 @@ export default function ProductCard({
         )}
 
         {/* Wishlist */}
-        <button className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full glass flex items-center justify-center text-muted-foreground hover:text-neon-pink transition-all duration-200 hover:scale-110">
+        <button className="premium-glass-button absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center text-white/90 hover:text-neon-pink shadow-lg z-10 transition-transform">
           <Heart className="w-4 h-4" />
         </button>
 
@@ -99,8 +99,8 @@ export default function ProductCard({
               )}
             </div>
             <motion.button
-              whileTap={{ scale: 0.9 }}
-              className="px-3 py-1.5 rounded-xl bg-gradient-fire text-white text-xs font-semibold shadow-neon-fire hover:shadow-lg transition-all duration-200"
+              onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.location.href = `/product/${id}`; }}
+              className="premium-glass-button px-4 py-2 bg-white/10 hover:bg-white/20 text-white text-xs font-bold rounded-lg shadow-glass transition-colors"
             >
               Buy
             </motion.button>

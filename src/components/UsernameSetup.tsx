@@ -174,12 +174,12 @@ export default function UsernameSetup({ onComplete }: { onComplete: () => void }
                             disabled={status !== "available" || isSubmitting}
                             whileHover={status === "available" && !isSubmitting ? { scale: 1.02 } : {}}
                             whileTap={status === "available" && !isSubmitting ? { scale: 0.98 } : {}}
-                            className="w-full py-3.5 rounded-2xl bg-gradient-fire text-white font-bold flex items-center justify-center gap-2 shadow-neon-fire disabled:opacity-50 disabled:shadow-none transition-all"
+                            className="premium-glass-button w-full py-3.5 bg-gradient-fire text-white font-bold flex flex-row shadow-neon-fire disabled:opacity-50 disabled:shadow-none transition-all"
                         >
                             {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : (
                                 <>
                                     Continue to App
-                                    <ArrowRight className="w-5 h-5" />
+                                    <ArrowRight className="w-5 h-5 ml-2" />
                                 </>
                             )}
                         </motion.button>
@@ -188,7 +188,7 @@ export default function UsernameSetup({ onComplete }: { onComplete: () => void }
                     <div className="mt-6 text-center">
                         <button
                             onClick={() => supabase.auth.signOut().then(() => navigate('/'))}
-                            className="text-xs text-muted-foreground hover:text-white transition-colors"
+                            className="premium-glass-button text-xs text-muted-foreground hover:text-white transition-colors px-4 py-2"
                             disabled={isSubmitting}
                         >
                             Cancel and sign out

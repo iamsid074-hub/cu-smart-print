@@ -9,14 +9,14 @@ import type { Database } from "@/types/supabase";
 type Product = Database["public"]["Tables"]["products"]["Row"];
 
 const categories = [
-  { icon: Laptop, label: "Electronics", count: "1.2K+", gradient: "from-neon-cyan to-neon-blue" },
-  { icon: BookOpen, label: "Books", count: "3.4K+", gradient: "from-neon-orange to-neon-pink" },
-  { icon: Shirt, label: "Fashion", count: "2.1K+", gradient: "from-neon-pink to-neon-blue" },
-  { icon: Bike, label: "Sports", count: "890+", gradient: "from-neon-cyan to-neon-orange" },
-  { icon: Headphones, label: "Audio", count: "560+", gradient: "from-neon-blue to-neon-pink" },
-  { icon: Camera, label: "Camera", count: "320+", gradient: "from-neon-orange to-neon-cyan" },
-  { icon: Sofa, label: "Furniture", count: "780+", gradient: "from-neon-pink to-neon-orange" },
-  { icon: Utensils, label: "Kitchen", count: "240+", gradient: "from-neon-cyan to-neon-blue" },
+  { icon: Laptop, label: "Electronics", count: "1.2K+", gradient: "from-neon-cyan to-neon-blue", image: "https://images.unsplash.com/photo-1498049794561-7780e7231661?q=80&w=600&auto=format&fit=crop" },
+  { icon: BookOpen, label: "Books", count: "3.4K+", gradient: "from-neon-orange to-neon-pink", image: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?q=80&w=600&auto=format&fit=crop" },
+  { icon: Shirt, label: "Fashion", count: "2.1K+", gradient: "from-neon-pink to-neon-blue", image: "https://images.unsplash.com/photo-1445205170230-053b83016050?q=80&w=600&auto=format&fit=crop" },
+  { icon: Bike, label: "Sports", count: "890+", gradient: "from-neon-cyan to-neon-orange", image: "https://images.unsplash.com/photo-1517649763962-0c623066013b?q=80&w=600&auto=format&fit=crop" },
+  { icon: Headphones, label: "Audio", count: "560+", gradient: "from-neon-blue to-neon-pink", image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=600&auto=format&fit=crop" },
+  { icon: Camera, label: "Camera", count: "320+", gradient: "from-neon-orange to-neon-cyan", image: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=600&auto=format&fit=crop" },
+  { icon: Sofa, label: "Furniture", count: "780+", gradient: "from-neon-pink to-neon-orange", image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?q=80&w=600&auto=format&fit=crop" },
+  { icon: Utensils, label: "Kitchen", count: "240+", gradient: "from-neon-cyan to-neon-blue", image: "https://images.unsplash.com/photo-1556910103-1c02745aae4d?q=80&w=600&auto=format&fit=crop" },
 ];
 
 export default function Home() {
@@ -182,7 +182,7 @@ export default function Home() {
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="px-6 py-3 rounded-2xl bg-white text-background font-bold text-sm shadow-lg hover:shadow-xl transition-all"
+                  className="btn-liquid-glass px-8 py-4 font-bold text-white text-sm shadow-xl"
                 >
                   Shop the Sale →
                 </motion.button>
@@ -192,29 +192,51 @@ export default function Home() {
         </motion.section>
 
         {/* === BROWSE CATEGORIES === */}
-        <section className="mb-12">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-2">
-              <Grid3X3 className="w-5 h-5 text-neon-cyan" />
-              <h2 className="text-xl font-bold">Browse Categories</h2>
+        <section className="mb-16">
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center gap-3">
+              <Grid3X3 className="w-6 h-6 text-neon-cyan" />
+              <h2 className="text-2xl font-black tracking-tight">Browse Categories</h2>
             </div>
-            <Link to="/browse" className="flex items-center gap-1 text-sm text-neon-cyan hover:text-foreground transition-colors">
-              All <ChevronRight className="w-4 h-4" />
+            <Link to="/browse" className="premium-glass-button group px-4 py-2 flex items-center gap-2 text-sm text-white">
+              <span className="group-hover:text-neon-cyan transition-colors">See All</span>
+              <ChevronRight className="w-4 h-4 group-hover:translate-x-1 group-hover:text-neon-cyan transition-all" />
             </Link>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
+          <div className="flex gap-5 overflow-x-auto scrollbar-hide pb-8 pt-2 px-2 -mx-2">
             {categories.map((cat, i) => (
               <Link
                 key={cat.label}
                 to={`/browse?category=${cat.label}`}
-                className="glass rounded-2xl p-4 flex flex-col items-center gap-2 border border-white/5 hover:border-white/15 transition-all duration-200 group relative block"
+                className="group relative flex-shrink-0 w-48 h-56 rounded-3xl overflow-hidden glass-heavy border border-white/10 hover:border-white/30 transition-all duration-500 ease-out hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(0,0,0,0.8)]"
               >
-                <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${cat.gradient} flex items-center justify-center group-hover:shadow-neon-fire transition-all`}>
-                  <cat.icon className="w-5 h-5 text-white" />
+                {/* Photographic Background Image */}
+                <div className="absolute inset-0 z-0">
+                  <img src={cat.image} alt={cat.label} className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700 ease-out" />
+                  <div className="absolute inset-0 bg-black/60 group-hover:bg-black/40 transition-colors duration-500" />
                 </div>
-                <span className="text-xs font-semibold text-foreground">{cat.label}</span>
-                <span className="text-xs text-muted-foreground font-mono">{cat.count}</span>
+
+                {/* Dynamic Gradient Overlay that intensifies on hover */}
+                <div className={`absolute inset-0 bg-gradient-to-t ${cat.gradient} opacity-40 mix-blend-overlay group-hover:opacity-70 transition-opacity duration-500 z-0`} />
+                <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/90 to-transparent z-0" />
+
+                {/* Giant semi-transparent background icon */}
+                <cat.icon className="absolute -bottom-6 -right-6 w-32 h-32 text-white/10 transform group-hover:scale-110 group-hover:-rotate-12 transition-transform duration-700 ease-out pointer-events-none z-0" />
+
+                <div className="relative h-full flex flex-col items-center justify-center p-6 text-center z-10 pt-10">
+                  <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${cat.gradient} p-0.5 mb-auto transform group-hover:scale-110 group-hover:rotate-6 transition-transform duration-500 shadow-lg group-hover:shadow-[0_0_20px_rgba(255,255,255,0.4)]`}>
+                    <div className="w-full h-full bg-black/60 backdrop-blur-md rounded-[14px] flex items-center justify-center">
+                      <cat.icon className="w-7 h-7 text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]" />
+                    </div>
+                  </div>
+                  <div className="mt-auto pt-4">
+                    <h3 className="font-black text-xl text-white tracking-wide mb-1 drop-shadow-md">{cat.label}</h3>
+                    <div className="inline-flex items-center justify-center px-3 py-1 rounded-full bg-black/40 backdrop-blur-md border border-white/20 text-xs font-mono text-white/90 group-hover:bg-white/20 transition-colors shadow-sm">
+                      {cat.count} listings
+                    </div>
+                  </div>
+                </div>
               </Link>
             ))}
           </div>

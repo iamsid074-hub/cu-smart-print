@@ -313,9 +313,9 @@ export default function Profile() {
                                         </div>
                                         <div className="absolute right-0 top-0 bottom-0 bg-gradient-to-l from-background via-background/90 to-transparent w-24 flex flex-col justify-center items-end pr-3 opacity-0 group-hover:opacity-100 transition-opacity gap-2 translate-x-4 group-hover:translate-x-0">
                                             {cmd.status !== 'sold' && (
-                                                <button onClick={() => handleMarkSold(cmd.id)} className="text-[10px] font-bold text-green-400 hover:text-green-300 uppercase underline backdrop-blur-md bg-black/40 px-2 py-1 rounded">Mark Sold</button>
+                                                <button onClick={() => handleMarkSold(cmd.id)} className="premium-glass-button text-[10px] font-bold text-green-400 hover:text-green-300 uppercase underline px-2 py-1">Mark Sold</button>
                                             )}
-                                            <button onClick={() => handleDeleteListing(cmd.id)} className="text-[10px] font-bold text-red-400 hover:text-red-300 uppercase underline backdrop-blur-md bg-black/40 px-2 py-1 rounded">Delete</button>
+                                            <button onClick={() => handleDeleteListing(cmd.id)} className="premium-glass-button text-[10px] font-bold text-red-400 hover:text-red-300 uppercase underline px-2 py-1">Delete</button>
                                         </div>
                                     </div>
                                 ))}

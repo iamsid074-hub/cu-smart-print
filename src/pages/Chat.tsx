@@ -200,7 +200,7 @@ export default function Chat() {
         <div className={`flex-1 flex flex-col ${!activeContact ? "hidden md:flex" : "flex"}`}>
           {/* Chat header */}
           <div className="flex items-center gap-3 px-4 py-3 border-b border-white/5 glass-heavy">
-            <button onClick={() => setActiveContact(null)} className="md:hidden p-1 text-muted-foreground">
+            <button onClick={() => setActiveContact(null)} className="premium-glass-button md:hidden p-1 text-muted-foreground">
               <ArrowLeft className="w-5 h-5" />
             </button>
             <div className="relative flex-shrink-0">
@@ -220,9 +220,9 @@ export default function Chat() {
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <button className="p-2 rounded-full hover:bg-white/5 text-muted-foreground hover:text-foreground transition-colors"><Phone className="w-4 h-4" /></button>
-              <button className="p-2 rounded-full hover:bg-white/5 text-muted-foreground hover:text-foreground transition-colors"><Video className="w-4 h-4" /></button>
-              <button className="p-2 rounded-full hover:bg-white/5 text-muted-foreground hover:text-foreground transition-colors"><MoreVertical className="w-4 h-4" /></button>
+              <button className="premium-glass-button p-2 rounded-full hover:bg-white/5 text-muted-foreground hover:text-foreground transition-colors"><Phone className="w-4 h-4" /></button>
+              <button className="premium-glass-button p-2 rounded-full hover:bg-white/5 text-muted-foreground hover:text-foreground transition-colors"><Video className="w-4 h-4" /></button>
+              <button className="premium-glass-button p-2 rounded-full hover:bg-white/5 text-muted-foreground hover:text-foreground transition-colors"><MoreVertical className="w-4 h-4" /></button>
             </div>
           </div>
 
@@ -266,7 +266,7 @@ export default function Chat() {
           {/* Input */}
           <div className="p-4 border-t border-white/5">
             <div className="flex items-center gap-3 glass rounded-2xl px-4 py-2">
-              <button className="text-muted-foreground hover:text-foreground transition-colors">
+              <button className="premium-glass-button text-muted-foreground hover:text-foreground transition-colors">
                 <Smile className="w-5 h-5" />
               </button>
               <input

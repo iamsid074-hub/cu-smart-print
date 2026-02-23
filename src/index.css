@@ -321,3 +321,127 @@
   background-size: 200% 200%;
   animation: aurora-shift 4s ease infinite;
 }
+
+@keyframes bell-ring {
+  0% {
+    transform: rotate(0);
+  }
+
+  10% {
+    transform: rotate(15deg);
+  }
+
+  20% {
+    transform: rotate(-10deg);
+  }
+
+  30% {
+    transform: rotate(15deg);
+  }
+
+  40% {
+    transform: rotate(-10deg);
+  }
+
+  50% {
+    transform: rotate(0);
+  }
+
+  100% {
+    transform: rotate(0);
+  }
+}
+
+.hover-bell-ring:hover {
+  animation: bell-ring 0.6s ease-in-out;
+  transform-origin: top center;
+}
+
+/* Custom Premium Liquid Glass Effect */
+.premium-glass-button {
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+
+  /* Glass aesthetics */
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  /* Glowing edge */
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 4px 30px rgba(0, 0, 0, 0.1),
+    inset 0 1px 1px rgba(255, 255, 255, 0.15),
+    inset 0 -1px 1px rgba(255, 255, 255, 0.05);
+
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  transform: translateZ(0);
+  /* Hardware acceleration */
+}
+
+/* Base button text styling */
+.premium-glass-button span {
+  font-weight: 600;
+  position: relative;
+  z-index: 10;
+}
+
+/* Hover effects */
+.premium-glass-button:hover {
+  transform: translateY(-2px) scale(1.02);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.25);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.2),
+    0 0 20px rgba(255, 255, 255, 0.1),
+    /* Outer glow */
+    inset 0 1px 2px rgba(255, 255, 255, 0.3),
+    inset 0 -1px 1px rgba(255, 255, 255, 0.05);
+}
+
+.premium-glass-button:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* Shine animation overlay */
+.premium-glass-button::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(to right,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.1) 50%,
+      rgba(255, 255, 255, 0) 100%);
+  transform: skewX(-25deg);
+  animation: shine 6s infinite;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Content needs to stay above the shine */
+.premium-glass-button>*:not(.absolute) {
+  position: relative;
+  z-index: 2;
+}
+
+@keyframes shine {
+  0% {
+    left: -100%;
+  }
+
+  20% {
+    left: 200%;
+  }
+
+  100% {
+    left: 200%;
+  }
+}

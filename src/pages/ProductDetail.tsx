@@ -79,10 +79,10 @@ export default function ProductDetail() {
                         />
                         {/* Top right actions */}
                         <div className="absolute top-4 right-4 flex gap-3">
-                            <button className="w-12 h-12 rounded-full glass-heavy flex items-center justify-center text-foreground hover:text-neon-pink transition-all hover:scale-110 shadow-lg">
+                            <button className="premium-glass-button w-12 h-12 flex items-center justify-center text-foreground hover:text-neon-pink shadow-lg">
                                 <Heart className="w-5 h-5" />
                             </button>
-                            <button className="w-12 h-12 rounded-full glass-heavy flex items-center justify-center text-foreground hover:text-neon-cyan transition-all hover:scale-110 shadow-lg">
+                            <button className="premium-glass-button w-12 h-12 flex items-center justify-center text-foreground hover:text-neon-cyan shadow-lg">
                                 <Share2 className="w-5 h-5" />
                             </button>
                         </div>

@@ -112,10 +112,10 @@ export default function Login() {
                     <button
                         type="submit"
                         disabled={loading}
-                        className="w-full relative group overflow-hidden rounded-xl bg-foreground text-background font-bold py-3.5 px-4 transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-70 disabled:hover:scale-100 mt-2"
+                        className="premium-glass-button w-full relative group overflow-hidden bg-foreground text-background font-bold py-3.5 px-4 mt-2"
                     >
                         <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-neon-cyan via-neon-blue to-neon-pink opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                        <div className="relative flex items-center justify-center gap-2 group-hover:text-white transition-colors duration-300">
+                        <div className="relative w-full flex flex-nowrap whitespace-nowrap items-center justify-center gap-2 group-hover:text-white transition-colors duration-300">
                             {loading ? (
                                 <Loader2 className="w-5 h-5 animate-spin" />
                             ) : (

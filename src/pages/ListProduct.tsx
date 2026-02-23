@@ -240,7 +240,7 @@ export default function ListProduct() {
                   />
                   <button
                     onClick={() => fileInputRef.current?.click()}
-                    className="px-6 py-2.5 rounded-xl bg-gradient-fire text-white text-sm font-semibold shadow-neon-fire"
+                    className="premium-glass-button px-6 py-2.5 text-white text-sm font-semibold shadow-neon-fire"
                   >
                     {imageFile ? "Change File" : "Choose Files"}
                   </button>
@@ -365,8 +365,8 @@ export default function ListProduct() {
                     </div>
                   </div>
                 </div>
-                <button onClick={() => window.location.href = '/profile'} className="px-6 py-3 rounded-xl bg-gradient-fire text-white font-bold shadow-neon-fire w-full">
-                  View My Listing →
+                <button onClick={() => window.location.href = '/profile'} className="premium-glass-button px-6 py-3 text-white font-bold shadow-neon-fire w-full">
+                  Keep Selling
                 </button>
               </motion.div>
             )}
@@ -389,7 +389,7 @@ export default function ListProduct() {
                 whileTap={{ scale: 0.95 }}
                 onClick={handleNext}
                 disabled={loading}
-                className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-gradient-fire text-white text-sm font-bold shadow-neon-fire disabled:opacity-50"
+                className="premium-glass-button flex items-center gap-2 px-6 py-2.5 text-white text-sm font-bold shadow-neon-fire disabled:opacity-50"
               >
                 {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : step === 4 ? "Publish" : "Continue"} {!loading && <ChevronRight className="w-4 h-4" />}
               </motion.button>

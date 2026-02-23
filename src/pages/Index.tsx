@@ -48,14 +48,14 @@ export default function Index() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8, ease: "easeOut" }}
-              className="relative z-10 flex flex-col items-center gap-4"
+              className="relative z-10 flex flex-col items-center gap-6"
             >
-              <div className="w-16 h-16 rounded-2xl bg-gradient-fire flex items-center justify-center shadow-neon-fire">
-                <Zap className="w-8 h-8 text-white" />
+              <div className="relative w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden bg-white/5 border border-white/10 flex items-center justify-center p-2 shadow-[0_0_40px_rgba(0,255,255,0.2)]">
+                <img src="/logo.png" alt="CU BAZZAR Logo" className="w-[140%] h-[140%] object-cover object-center mix-blend-screen" />
               </div>
-              <h1 className="text-4xl sm:text-6xl font-black tracking-tight flex items-center gap-2">
-                <span className="text-neon-fire">CU</span>
-                <span className="text-foreground">BAZZAR</span>
+              <h1 className="text-5xl sm:text-7xl font-black tracking-tight flex items-center gap-3">
+                <span className="text-neon-fire drop-shadow-lg">CU</span>
+                <span className="text-foreground drop-shadow-md">BAZZAR</span>
               </h1>
             </motion.div>
           </motion.div>
@@ -156,12 +156,12 @@ export default function Index() {
           >
             <Link to="/home">
               <motion.button
-                whileHover={{ scale: 1.05, rotateX: 10, y: -5 }}
+                whileHover={{ y: -5 }}
                 whileTap={{ scale: 0.98 }}
-                className="group flex items-center gap-3 px-10 py-5 rounded-full bg-white text-black font-black text-lg shadow-[0_10px_30px_rgba(255,255,255,0.2),inset_0_-2px_0_rgba(0,0,0,0.2)] transition-all duration-300 transform-gpu hover:shadow-[0_20px_40px_rgba(255,255,255,0.3)] hover:bg-gray-100"
+                className="group premium-glass-button flex items-center justify-center whitespace-nowrap px-12 py-6 min-w-[300px]"
               >
-                <span>Explore Now</span>
-                <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+                <span className="text-white font-black text-2xl tracking-wide drop-shadow-md mr-3">Explore Now</span>
+                <ArrowRight className="w-6 h-6 text-white drop-shadow-md transition-transform group-hover:translate-x-2" />
               </motion.button>
             </Link>
           </motion.div>
@@ -251,7 +251,7 @@ export default function Index() {
           <p className="text-muted-foreground mb-10 text-lg">The official campus marketplace.</p>
 
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <Link to="/home" className="inline-block px-8 py-3.5 rounded-full bg-white/5 hover:bg-white/10 text-white font-medium transition-colors border border-white/10 hover:border-white/30 backdrop-blur-sm shadow-xl">
+            <Link to="/home" className="premium-glass-button flex items-center justify-center whitespace-nowrap px-10 py-4 font-bold text-white text-lg min-w-[250px] shadow-xl">
               Enter Marketplace
             </Link>
           </motion.div>

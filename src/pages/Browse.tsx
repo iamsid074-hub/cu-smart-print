@@ -56,9 +56,9 @@ export default function Browse() {
                                     <button
                                         key={c}
                                         onClick={() => handleCategoryClick(c)}
-                                        className={`text-left px-3 py-2 rounded-xl text-sm transition-all ${(categoryParam === c || (!categoryParam && c === "All"))
-                                                ? "bg-gradient-fire text-white font-semibold"
-                                                : "text-muted-foreground hover:bg-white/5 hover:text-foreground"
+                                        className={`premium-glass-button text-left px-3 py-2 rounded-xl text-sm transition-all ${(categoryParam === c || (!categoryParam && c === "All"))
+                                            ? "bg-gradient-fire text-white font-semibold"
+                                            : "text-muted-foreground hover:bg-white/5 hover:text-foreground"
                                             }`}
                                     >
                                         {c}
@@ -88,7 +88,7 @@ export default function Browse() {
                                 <p className="text-muted-foreground text-sm">We couldn't find any items in this category.</p>
                                 <button
                                     onClick={() => handleCategoryClick("All")}
-                                    className="mt-6 px-6 py-2 rounded-xl bg-white/10 hover:bg-white/20 transition-colors text-sm font-medium"
+                                    className="premium-glass-button mt-6 px-6 py-2 rounded-xl bg-white/10 hover:bg-white/20 transition-colors text-sm font-medium"
                                 >
                                     Clear Filters
                                 </button>
