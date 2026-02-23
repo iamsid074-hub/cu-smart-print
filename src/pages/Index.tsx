@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
-import { ArrowRight, Zap, ShoppingBag, Star, TrendingUp, BookOpn, Grid3X3, Laptop } from "lucide-react";
+import { ArrowRight, Zap, ShoppingBag, Star, TrendingUp, BookOpen, Grid3X3, Laptop } from "lucide-react";
 
 const floatingStats = [
   { label: "Active Students", value: "12K+", icon: Star },
@@ -56,7 +56,7 @@ export default function Index() {
       </AnimatePresence>
 
       {/* 2 & 3. LANDING PAGE REVEAL & HERO */}
-      <section className="relative min-h-screen flex items-center justify-center pt-16">
+      <section className="relative min-h-screen flex items-center justify-center pt-16 perspective-1000">
         {/* Background */}
         <div className="absolute inset-0">
           <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=2000&auto=format&fit=crop" alt="hero" className="w-full h-full object-cover opacity-20" />
@@ -68,37 +68,37 @@ export default function Index() {
         <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-neon-orange/10 blur-[120px] animate-float" />
         <div className="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full bg-neon-cyan/10 blur-[120px] animate-float" style={{ animationDelay: "2s" }} />
 
-        {/* Floating Background Cards (Parallax/Float) */}
+        {/* Floating Background Cards (3D Parallax/Float) */}
         {!showIntro && (
-          <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none hidden md:block">
+          <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none hidden md:block" style={{ perspective: '1200px' }}>
             <motion.div
-              initial={{ opacity: 0, y: 50, rotate: -10 }}
-              animate={{ opacity: 1, y: [0, -20, 0], rotate: [-10, -5, -10] }}
-              transition={{ opacity: { delay: 0.8, duration: 1 }, y: { repeat: Infinity, duration: 6, ease: "easeInOut" }, rotate: { repeat: Infinity, duration: 7, ease: "easeInOut" } }}
-              className="absolute top-1/4 left-[10%] glass-heavy p-4 rounded-2xl border border-white/10 shadow-xl"
+              initial={{ opacity: 0, y: 100, rotateX: 45, rotateY: -30 }}
+              animate={{ opacity: 1, y: [0, -30, 0], rotateX: [15, 25, 15], rotateY: [-20, -10, -20] }}
+              transition={{ opacity: { delay: 0.8, duration: 1 }, y: { repeat: Infinity, duration: 7, ease: "easeInOut" }, rotateX: { repeat: Infinity, duration: 8, ease: "easeInOut" }, rotateY: { repeat: Infinity, duration: 9, ease: "easeInOut" } }}
+              className="absolute top-1/4 left-[10%] glass-heavy p-5 rounded-2xl border border-white/20 shadow-[0_20px_40px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.2)] transform-gpu"
             >
-              <div className="w-12 h-12 rounded-xl bg-neon-orange/20 flex items-center justify-center mb-2"><BookOpn className="w-6 h-6 text-neon-orange" /></div>
-              <div className="w-20 h-2 bg-white/20 rounded-full"></div>
+              <div className="w-14 h-14 rounded-xl bg-neon-orange/20 flex items-center justify-center mb-3 shadow-[0_0_15px_rgba(255,100,0,0.3)]"><BookOpen className="w-7 h-7 text-neon-orange" /></div>
+              <div className="w-24 h-2 bg-white/20 rounded-full shadow-inner shadow-black/50"></div>
             </motion.div>
 
             <motion.div
-              initial={{ opacity: 0, y: 50, rotate: 15 }}
-              animate={{ opacity: 1, y: [0, -25, 0], rotate: [15, 20, 15] }}
-              transition={{ opacity: { delay: 1, duration: 1 }, y: { repeat: Infinity, duration: 5, ease: "easeInOut", delay: 1 }, rotate: { repeat: Infinity, duration: 8, ease: "easeInOut" } }}
-              className="absolute top-1/3 right-[15%] glass border border-white/5 p-5 rounded-3xl shadow-xl backdrop-blur-md bg-black/40"
+              initial={{ opacity: 0, y: 100, rotateX: -45, rotateY: 30 }}
+              animate={{ opacity: 1, y: [0, -40, 0], rotateX: [-15, -25, -15], rotateY: [20, 10, 20] }}
+              transition={{ opacity: { delay: 1, duration: 1 }, y: { repeat: Infinity, duration: 6, ease: "easeInOut", delay: 1 }, rotateX: { repeat: Infinity, duration: 9, ease: "easeInOut" }, rotateY: { repeat: Infinity, duration: 7, ease: "easeInOut" } }}
+              className="absolute top-1/3 right-[12%] glass border border-white/20 p-6 rounded-3xl shadow-[0_30px_60px_rgba(0,0,0,0.7),inset_0_2px_0_rgba(255,255,255,0.15)] backdrop-blur-md bg-black/60 transform-gpu"
             >
-              <div className="w-16 h-16 rounded-2xl bg-neon-cyan/20 flex items-center justify-center mb-3"><Laptop className="w-8 h-8 text-neon-cyan" /></div>
-              <div className="w-24 h-2 bg-white/20 rounded-full mb-2"></div>
-              <div className="w-16 h-2 bg-white/10 rounded-full"></div>
+              <div className="w-16 h-16 rounded-2xl bg-neon-cyan/20 flex items-center justify-center mb-4 shadow-[0_0_20px_rgba(0,200,255,0.3)]"><Laptop className="w-8 h-8 text-neon-cyan" /></div>
+              <div className="w-28 h-2.5 bg-white/20 rounded-full mb-3 shadow-inner shadow-black/50"></div>
+              <div className="w-20 h-2 bg-white/10 rounded-full shadow-inner shadow-black/50"></div>
             </motion.div>
 
             <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: [1, 1.05, 1], y: [0, -15, 0] }}
-              transition={{ opacity: { delay: 1.2, duration: 1 }, y: { repeat: Infinity, duration: 4, ease: "easeInOut" }, scale: { repeat: Infinity, duration: 4, ease: "easeInOut" } }}
-              className="absolute bottom-1/3 left-[20%] w-24 h-24 rounded-full border-4 border-neon-pink/20 flex items-center justify-center bg-black/20 backdrop-blur-sm"
+              initial={{ opacity: 0, scale: 0.5, rotateZ: -45 }}
+              animate={{ opacity: 1, scale: [1, 1.1, 1], y: [0, -25, 0], rotateZ: [-10, 10, -10], rotateX: [10, -10, 10] }}
+              transition={{ opacity: { delay: 1.2, duration: 1 }, y: { repeat: Infinity, duration: 5, ease: "easeInOut" }, scale: { repeat: Infinity, duration: 5, ease: "easeInOut" }, rotateZ: { repeat: Infinity, duration: 15, ease: "linear" } }}
+              className="absolute bottom-1/4 left-[18%] w-28 h-28 rounded-[2rem] border-4 border-neon-pink/30 flex items-center justify-center bg-black/40 backdrop-blur-md shadow-[0_20px_50px_rgba(255,0,150,0.15),inset_0_5px_15px_rgba(255,255,255,0.1)] transform-gpu"
             >
-              <Grid3X3 className="w-8 h-8 text-neon-pink/50" />
+              <Grid3X3 className="w-10 h-10 text-neon-pink/70 drop-shadow-[0_0_10px_rgba(255,0,150,0.5)]" />
             </motion.div>
           </div>
         )}
@@ -140,40 +140,41 @@ export default function Index() {
 
           {/* CTA */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: showIntro ? 0 : 1, y: showIntro ? 20 : 0 }}
-            transition={{ duration: 0.6, delay: 0.5 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-20"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: showIntro ? 0 : 1, y: showIntro ? 30 : 0 }}
+            transition={{ duration: 0.6, delay: 0.5, type: "spring", stiffness: 100 }}
+            className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-20 relative z-20 perspective-1000"
           >
             <Link to="/home">
               <motion.button
-                whileHover={{ scale: 1.03 }}
+                whileHover={{ scale: 1.05, rotateX: 10, y: -5 }}
                 whileTap={{ scale: 0.95 }}
-                className="group flex items-center gap-3 px-8 py-4 rounded-2xl bg-gradient-fire text-white font-bold text-lg shadow-neon-fire btn-ripple transition-all duration-300"
+                className="group flex items-center gap-3 px-10 py-5 rounded-2xl bg-gradient-fire text-white font-black text-lg shadow-[0_15px_30px_rgba(255,100,0,0.4),inset_0_2px_0_rgba(255,255,255,0.4)] btn-ripple transition-all duration-300 transform-gpu"
               >
-                Explore Now
-                <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+                <span className="drop-shadow-md">Explore Now</span>
+                <ArrowRight className="w-6 h-6 drop-shadow-md transition-transform group-hover:translate-x-2" />
               </motion.button>
             </Link>
           </motion.div>
 
           {/* Stats */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
-            className="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-2xl mx-auto"
+            initial={{ opacity: 0, y: 40, rotateX: -20 }}
+            whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.8, type: "spring", bounce: 0.4 }}
+            className="grid grid-cols-2 md:grid-cols-3 gap-6 max-w-3xl mx-auto drop-shadow-2xl perspective-1000"
           >
             {floatingStats.map((stat, i) => (
               <motion.div
                 key={stat.label}
-                whileHover={{ y: -5, scale: 1.02 }}
-                className="glass-heavy rounded-2xl p-5 text-center border border-white/5 hover:border-white/10 transition-all shadow-glass hover:shadow-neon-ocean/20 cursor-default"
+                whileHover={{ y: -10, scale: 1.05, rotateX: 10, rotateY: -5 }}
+                transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                className="glass-heavy rounded-2xl p-6 text-center border-t border-l border-white/20 border-b border-r border-black/40 hover:border-white/40 transition-all shadow-[0_20px_40px_rgba(0,0,0,0.5),inset_0_2px_10px_rgba(255,255,255,0.1)] hover:shadow-[0_30px_60px_rgba(0,180,255,0.3),inset_0_4px_15px_rgba(255,255,255,0.2)] transform-gpu cursor-pointer bg-gradient-to-b from-white/5 to-transparent"
               >
-                <stat.icon className="w-6 h-6 text-neon-cyan mx-auto mb-2" />
-                <div className="font-bold text-2xl text-foreground">{stat.value}</div>
-                <div className="text-xs font-medium text-muted-foreground mt-1 tracking-wider uppercase">{stat.label}</div>
+                <stat.icon className="w-8 h-8 text-neon-cyan mx-auto mb-3 drop-shadow-[0_0_10px_rgba(0,255,255,0.5)]" />
+                <div className="font-black text-3xl text-white drop-shadow-md">{stat.value}</div>
+                <div className="text-sm font-bold text-muted-foreground mt-1 tracking-widest uppercase py-1">{stat.label}</div>
               </motion.div>
             ))}
           </motion.div>
