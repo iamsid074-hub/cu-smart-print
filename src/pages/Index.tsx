@@ -258,7 +258,7 @@ export default function Index() {
         </div>
 
         <div className="mt-20 pt-8 border-t border-white/5 text-sm font-medium text-muted-foreground flex flex-col sm:flex-row items-center justify-between max-w-6xl mx-auto">
-          <p className="mb-4 sm:mb-0 text-white/50">© 2026 CU Bazaar. ANSHU (cse,1st year).</p>
+          <p className="mb-4 sm:mb-0 text-white/50">© 2026 CU Bazaar. ANSHU.</p>
           <div className="flex gap-6 justify-center">
             <Link to="/" className="hover:text-white transition-colors duration-200">Privacy Policy</Link>
             <Link to="/" className="hover:text-white transition-colors duration-200">Terms of Service</Link>
