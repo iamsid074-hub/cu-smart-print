@@ -41,9 +41,12 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 }
 
 function AdminRoute({ children }: { children: React.ReactNode }) {
-  const { user, isAdmin, loading } = useAuth();
+  const { user, isAdmin, loading, profile } = useAuth();
+  // Show spinner while auth OR profile is still loading
   if (loading) return <div className="min-h-screen flex items-center justify-center font-bold text-2xl text-neon-cyan">Loading...</div>;
   if (!user) return <Navigate to="/login" replace />;
+  // If user exists but profile hasn't arrived yet — wait (don't redirect prematurely)
+  if (!profile) return <div className="min-h-screen flex items-center justify-center font-bold text-2xl text-neon-cyan">Loading...</div>;
   if (!isAdmin) return <Navigate to="/home" replace />;
   return <>{children}</>;
 }
