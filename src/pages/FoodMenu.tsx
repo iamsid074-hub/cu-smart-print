@@ -103,7 +103,7 @@ export default function FoodMenu() {
     };
 
     return (
-        <div className="min-h-screen bg-[#0A0505] pt-24 pb-16 px-4 overflow-hidden relative">
+        <div className="min-h-screen bg-[#0A0505] pt-24 pb-16 px-4 sm:px-6 overflow-x-hidden relative">
 
             {/* Warm Ambient Glows */}
             <div className="absolute top-0 left-1/4 w-96 h-96 bg-orange-500/10 rounded-full blur-[120px] pointer-events-none" />
@@ -115,41 +115,41 @@ export default function FoodMenu() {
                 <motion.div
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="text-center mb-12"
+                    className="text-center mb-8 md:mb-12"
                 >
                     <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400 font-semibold text-sm mb-4 backdrop-blur-md">
                         <Pizza className="w-4 h-4" /> CU Food Menu
                     </div>
-                    <h1 className="text-4xl md:text-6xl font-black mb-4 tracking-tight">
+                    <h1 className="text-3xl sm:text-4xl md:text-6xl font-black mb-3 md:mb-4 tracking-tight leading-tight">
                         Late night cravings?<br />
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-red-500 to-yellow-500 drop-shadow-[0_0_20px_rgba(249,115,22,0.4)]">
                             Delivered fast 🚀
                         </span>
                     </h1>
-                    <p className="text-muted-foreground max-w-lg mx-auto text-lg">
+                    <p className="text-muted-foreground max-w-lg mx-auto text-sm sm:text-base md:text-lg px-2">
                         Get snacks, drinks, and instant food delivered straight to your hostel room with ZERO delivery fees.
                     </p>
                 </motion.div>
 
                 {/* Categories — FIX: moved inside max-w-6xl container, fixed button children indentation */}
-                <div className="flex justify-center gap-4 mb-12 overflow-x-auto pb-4 scrollbar-hide">
+                <div className="flex gap-3 mb-8 md:mb-12 overflow-x-auto pb-3 scrollbar-hide px-1 -mx-1" style={{ WebkitOverflowScrolling: 'touch' }}>
                     {foodCategories.map((cat) => (
                         <button
                             key={cat.id}
                             onClick={() => setActiveCategory(cat.id)}
-                            className={`flex items-center gap-2 px-6 py-3 rounded-full font-bold transition-all duration-300 flex-shrink-0 ${activeCategory === cat.id
+                            className={`flex items-center gap-2 px-5 py-2.5 sm:px-6 sm:py-3 rounded-full font-bold transition-all duration-300 flex-shrink-0 min-h-[44px] text-sm sm:text-base ${activeCategory === cat.id
                                 ? `bg-gradient-to-r ${cat.color} text-white shadow-[0_0_20px_rgba(249,115,22,0.4)] scale-105`
                                 : 'bg-white/5 border border-white/10 text-muted-foreground hover:bg-white/10 hover:text-white'
                                 }`}
                         >
-                            <cat.icon className="w-5 h-5" />
+                            <cat.icon className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
                             {cat.name}
                         </button>
                     ))}
                 </div>
 
                 {/* Grid — FIX: moved inside max-w-6xl container */}
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
                     {filteredFoods.map((item, i) => (
                         <motion.div
                             key={item.id}
@@ -164,7 +164,7 @@ export default function FoodMenu() {
                             </div>
 
                             {/* Image */}
-                            <div className="relative h-40 md:h-48 overflow-hidden bg-white/5 p-4 flex items-center justify-center">
+                            <div className="relative h-36 sm:h-40 md:h-48 overflow-hidden bg-white/5 p-3 sm:p-4 flex items-center justify-center">
                                 <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent z-10 opacity-60" />
                                 <img
                                     src={item.image}
@@ -174,17 +174,18 @@ export default function FoodMenu() {
                             </div>
 
                             {/* Content */}
-                            <div className="p-4 flex flex-col flex-1 relative z-20 -mt-6">
-                                <h3 className="font-bold text-lg mb-1 line-clamp-1">{item.title}</h3>
-                                <p className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-500 mb-4 tracking-tight">
+                            <div className="p-3 sm:p-4 flex flex-col flex-1 relative z-20 -mt-6">
+                                <h3 className="font-bold text-sm sm:text-base md:text-lg mb-1 line-clamp-2 leading-snug">{item.title}</h3>
+                                <p className="text-xl sm:text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-500 mb-3 sm:mb-4 tracking-tight">
                                     ₹{item.price}
                                 </p>
 
                                 <button
                                     onClick={() => handleOpenCheckout(item)}
-                                    className="mt-auto w-full py-3 rounded-xl bg-white/5 hover:bg-gradient-to-r hover:from-orange-500 hover:to-red-500 group-hover:shadow-[0_0_20px_rgba(249,115,22,0.4)] border border-white/10 hover:border-transparent text-white font-bold transition-all duration-300 flex items-center justify-center gap-2"
+                                    className="mt-auto w-full min-h-[44px] py-2.5 sm:py-3 rounded-xl bg-white/5 hover:bg-gradient-to-r hover:from-orange-500 hover:to-red-500 group-hover:shadow-[0_0_20px_rgba(249,115,22,0.4)] border border-white/10 hover:border-transparent text-white font-bold transition-all duration-300 flex items-center justify-center gap-1.5 sm:gap-2 text-xs sm:text-sm"
                                 >
-                                    <Plus className="w-5 h-5" /> Add to Box
+                                    <Plus className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
+                                    <span>Add to Box</span>
                                 </button>
                             </div>
                         </motion.div>

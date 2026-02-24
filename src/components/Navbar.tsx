@@ -82,7 +82,7 @@ export default function Navbar() {
       transition={{ duration: 0.5, ease: [0.34, 1.56, 0.64, 1] }}
       className="fixed top-0 left-0 right-0 z-50 glass-heavy border-b border-white/5"
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center gap-4">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center gap-2 sm:gap-4">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2 flex-shrink-0 group">
           <div className="relative w-10 h-10 rounded-full overflow-hidden bg-white/5 border border-white/10 flex items-center justify-center p-0.5 group-hover:border-neon-cyan/50 transition-colors shadow-lg">
@@ -133,11 +133,11 @@ export default function Navbar() {
         </div>
 
         {/* Actions - Right Side */}
-        <div className="flex items-center gap-3 ml-auto z-10">
+        <div className="flex items-center gap-2 ml-auto z-10 flex-shrink-0">
           <div className="flex items-center gap-1 bg-black/40 backdrop-blur-md p-1 rounded-full border border-white/10 glass shadow-[0_8px_32px_rgba(0,0,0,0.5)]">
 
             {/* Notification Bell */}
-            <div className="static sm:relative">
+            <div className="relative">
               <button
                 onClick={handleNotificationClick}
                 className={`relative p-2.5 rounded-full hover-bell-ring transition-colors flex items-center justify-center ${showNotifications ? 'bg-white/10 text-white' : 'hover:bg-white/5 text-muted-foreground hover:text-white'
@@ -154,7 +154,7 @@ export default function Navbar() {
                 <motion.div
                   initial={{ opacity: 0, y: 10, scale: 0.95 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
-                  className="fixed top-[76px] left-4 right-4 sm:absolute sm:top-[calc(100%+12px)] sm:left-auto sm:-right-2 sm:mt-0 w-[calc(100vw-32px)] sm:w-[380px] glass-heavy border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-50 origin-top sm:origin-top-right bg-[#0A0A0F]/95 backdrop-blur-xl"
+                  className="absolute top-[calc(100%+12px)] right-0 w-[min(380px,calc(100vw-32px))] glass-heavy border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-50 origin-top-right bg-[#0A0A0F]/95 backdrop-blur-xl"
                 >
                   <div className="p-4 border-b border-white/5 flex items-center justify-between bg-white/5">
                     <h3 className="font-bold text-sm tracking-wide">Notifications</h3>
