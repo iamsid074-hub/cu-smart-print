@@ -10,6 +10,7 @@ const navLinks = [
   { label: "Chat", path: "/chat" },
   { label: "Sell", path: "/list" },
   { label: "Track", path: "/tracking" },
+  { label: "Food", path: "/food" },
 ];
 
 type Notification = {
