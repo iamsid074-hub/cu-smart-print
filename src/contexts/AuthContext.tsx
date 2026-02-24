@@ -26,7 +26,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [profile, setProfile] = useState<any | null>(null);
     const [loading, setLoading] = useState(true);
 
-    const fetchProfile = async (userId: string) => {
+    const fetchProfile = async (userId: string, onDone?: () => void) => {
         try {
             const { data, error } = await supabase.from('profiles').select('*').eq('id', userId).single();
             if (error && error.code !== 'PGRST116') {
@@ -36,16 +36,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         } catch (err) {
             console.error("Unexpected error in fetchProfile:", err);
             setProfile(null);
+        } finally {
+            onDone?.();
         }
     };
 
     useEffect(() => {
         let mounted = true;
 
-        // Fallback timer ensures loading state breaks after 2s if everything hangs
+        // Fallback timer ensures loading state breaks after 3s if everything hangs
         const timer = setTimeout(() => {
-            if (mounted && loading) setLoading(false);
-        }, 2000);
+            if (mounted) setLoading(false);
+        }, 3000);
 
         supabase.auth.getSession().then(({ data: { session }, error }) => {
             if (error) console.error("Session error:", error);
@@ -53,11 +55,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             if (mounted) {
                 setSession(session);
                 setUser(session?.user ?? null);
-                setLoading(false); // Stop loading immediately to unblock UI
             }
 
             if (session?.user) {
-                fetchProfile(session.user.id);
+                // Keep loading=true until profile (with is_admin) is fetched
+                fetchProfile(session.user.id, () => {
+                    if (mounted) setLoading(false);
+                });
+            } else {
+                if (mounted) setLoading(false);
             }
         }).catch(err => {
             console.error("Session fetch caught error:", err);
@@ -68,12 +74,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             if (mounted) {
                 setSession(session);
                 setUser(session?.user ?? null);
-                setLoading(false);
             }
             if (session?.user) {
-                fetchProfile(session.user.id);
+                fetchProfile(session.user.id, () => {
+                    if (mounted) setLoading(false);
+                });
             } else {
-                if (mounted) setProfile(null);
+                if (mounted) {
+                    setProfile(null);
+                    setLoading(false);
+                }
             }
         });
 
