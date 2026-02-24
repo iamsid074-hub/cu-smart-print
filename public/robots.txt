@@ -1,14 +1,11 @@
-User-agent: Googlebot
-Allow: /
-
-User-agent: Bingbot
-Allow: /
-
-User-agent: Twitterbot
-Allow: /
-
-User-agent: facebookexternalhit
-Allow: /
-
 User-agent: *
 Allow: /
+
+# Block auth and private pages from indexing
+Disallow: /home
+Disallow: /chat
+Disallow: /list
+Disallow: /tracking
+Disallow: /profile
+
+Sitemap: https://cubazzar.shop/sitemap.xml
