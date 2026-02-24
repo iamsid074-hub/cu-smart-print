@@ -1,17 +1,33 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { MessageCircle, Heart, Share2, MapPin, Clock, BadgeCheck, Loader2, ArrowLeft } from "lucide-react";
+import { MessageCircle, Heart, Share2, MapPin, Clock, BadgeCheck, Loader2, ArrowLeft, ShoppingBag } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog";
 
 export default function ProductDetail() {
     const { id } = useParams();
     const navigate = useNavigate();
     const { user } = useAuth();
+    const { toast } = useToast();
 
     const [product, setProduct] = useState<any>(null);
     const [loading, setLoading] = useState(true);
+
+    // Buy Now State
+    const [isBuyModalOpen, setIsBuyModalOpen] = useState(false);
+    const [location, setLocation] = useState("");
+    const [phone, setPhone] = useState("");
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     useEffect(() => {
         async function fetchProduct() {
@@ -55,6 +71,68 @@ export default function ProductDetail() {
         }
         // Navigate to Chat page and pass the seller profile as state so Chat auto-opens it
         navigate('/chat', { state: { contact: product.profiles } });
+    };
+
+    // Calculate Dynamic Delivery Fee based on Time of Day
+    const getDeliveryFee = () => {
+        const hour = new Date().getHours();
+        if (hour >= 6 && hour < 12) return 15; // Morning: Low
+        if (hour >= 12 && hour < 18) return 25; // Afternoon: Moderate
+        return 40; // Night: Highest
+    };
+
+    const deliveryFee = getDeliveryFee();
+    const totalAmount = product ? product.price + deliveryFee : 0;
+
+    const handleBuyNow = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!user) {
+            navigate('/login');
+            return;
+        }
+
+        if (!location.trim() || !phone.trim()) {
+            toast({ title: "Details missing", description: "Please enter delivery location and phone number.", variant: "destructive" });
+            return;
+        }
+
+        setIsSubmitting(true);
+
+        // Simulate network delay
+        setTimeout(() => {
+            const orderDetails = {
+                id: `CUB-${Math.floor(10000 + Math.random() * 90000)}`,
+                product: {
+                    id: product.id,
+                    title: product.title,
+                    price: product.price,
+                    image_url: product.image_url,
+                    seller_name: product.profiles?.full_name || "Student",
+                },
+                pricing: {
+                    basePrice: product.price,
+                    deliveryFee: deliveryFee,
+                    total: totalAmount,
+                },
+                shipping: {
+                    location,
+                    phone,
+                    method: "Cash on Delivery",
+                },
+                placedAt: new Date().toISOString(),
+                status: "placed"
+            };
+
+            // Save to local storage to simulate backend for Tracking page
+            localStorage.setItem("active_order", JSON.stringify(orderDetails));
+
+            toast({ title: "Order Placed Successfully! 🎉", description: "Generating your tracking id..." });
+            setIsSubmitting(false);
+            setIsBuyModalOpen(false);
+
+            // Navigate to tracking page
+            navigate('/tracking');
+        }, 1500);
     };
 
     return (
@@ -157,12 +235,99 @@ export default function ProductDetail() {
                             </div>
 
                             {!isOwner && product.status === 'available' && (
-                                <button
-                                    onClick={handleChatWithSeller}
-                                    className="w-full sm:w-auto px-6 py-3 rounded-2xl bg-gradient-to-r from-neon-cyan to-neon-blue text-white font-bold shadow-neon-blue hover:scale-105 transition-transform flex items-center justify-center gap-2"
-                                >
-                                    <MessageCircle className="w-5 h-5" /> Chat Seller
-                                </button>
+                                <div className="w-full sm:w-auto flex flex-col sm:flex-row items-center gap-3">
+                                    <Dialog open={isBuyModalOpen} onOpenChange={setIsBuyModalOpen}>
+                                        <DialogTrigger asChild>
+                                            <button
+                                                className="w-full sm:w-auto px-6 py-3 rounded-2xl bg-gradient-fire text-white font-bold shadow-neon-fire hover:scale-105 transition-transform flex items-center justify-center gap-2"
+                                            >
+                                                <ShoppingBag className="w-5 h-5" /> Buy Now
+                                            </button>
+                                        </DialogTrigger>
+                                        <DialogContent className="sm:max-w-md glass-heavy border border-white/10 bg-[#0A0A0F]/95 backdrop-blur-xl">
+                                            <DialogHeader>
+                                                <DialogTitle className="text-2xl font-black">Checkout</DialogTitle>
+                                                <DialogDescription className="text-muted-foreground">
+                                                    Complete your purchase securely.
+                                                </DialogDescription>
+                                            </DialogHeader>
+
+                                            <div className="mt-4 flex flex-col gap-6">
+                                                {/* Product Summary */}
+                                                <div className="flex items-center gap-4 p-4 rounded-2xl bg-white/5 border border-white/10">
+                                                    <div className="w-16 h-16 rounded-xl overflow-hidden bg-black/40 hidden sm:block">
+                                                        <img src={product.image_url || 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400'} alt="product" className="w-full h-full object-cover" />
+                                                    </div>
+                                                    <div className="flex-1">
+                                                        <p className="font-bold line-clamp-1">{product.title}</p>
+                                                        <div className="flex items-center justify-between mt-1">
+                                                            <p className="text-sm text-muted-foreground">Base Price</p>
+                                                            <p className="font-semibold">₹{product.price.toLocaleString()}</p>
+                                                        </div>
+                                                        <div className="flex items-center justify-between mt-1">
+                                                            <div className="flex items-center gap-1 text-sm text-neon-cyan">
+                                                                <Clock className="w-3 h-3" /> Delivery
+                                                            </div>
+                                                            <p className="font-semibold text-neon-cyan">+ ₹{deliveryFee}</p>
+                                                        </div>
+                                                        <div className="w-full h-[1px] bg-white/10 my-2" />
+                                                        <div className="flex items-center justify-between">
+                                                            <p className="text-sm font-bold">Total</p>
+                                                            <p className="font-black text-neon-fire text-lg">₹{totalAmount.toLocaleString()}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                {/* Checkout Form */}
+                                                <form onSubmit={handleBuyNow} className="flex flex-col gap-4">
+                                                    <div>
+                                                        <label className="text-xs font-bold text-muted-foreground uppercase mb-1 block">Delivery Location (Hostel/Room)</label>
+                                                        <input
+                                                            type="text"
+                                                            required
+                                                            value={location}
+                                                            onChange={e => setLocation(e.target.value)}
+                                                            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-neon-orange focus:ring-1 focus:ring-neon-orange transition-all"
+                                                            placeholder="e.g. Zakir A, Room 402"
+                                                        />
+                                                    </div>
+                                                    <div>
+                                                        <label className="text-xs font-bold text-muted-foreground uppercase mb-1 block">Contact Number</label>
+                                                        <input
+                                                            type="tel"
+                                                            required
+                                                            value={phone}
+                                                            onChange={e => setPhone(e.target.value)}
+                                                            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-neon-orange focus:ring-1 focus:ring-neon-orange transition-all"
+                                                            placeholder="e.g. 9876543210"
+                                                        />
+                                                    </div>
+                                                    <div className="p-3 rounded-xl bg-green-500/10 border border-green-500/20 text-center">
+                                                        <p className="text-sm text-green-400 font-semibold gap-1 flex items-center justify-center">
+                                                            <BadgeCheck className="w-4 h-4" /> Cash on Delivery available
+                                                        </p>
+                                                        <p className="text-xs text-green-400/70 mt-0.5">Pay when your item is delivered.</p>
+                                                    </div>
+
+                                                    <button
+                                                        type="submit"
+                                                        disabled={isSubmitting}
+                                                        className="w-full py-4 mt-2 rounded-xl bg-neon-fire text-black font-black uppercase tracking-wide hover:shadow-neon-fire transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                                                    >
+                                                        {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : `Place Order (₹${totalAmount.toLocaleString()})`}
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </DialogContent>
+                                    </Dialog>
+
+                                    <button
+                                        onClick={handleChatWithSeller}
+                                        className="w-full sm:w-auto px-6 py-3 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold transition-transform flex items-center justify-center gap-2"
+                                    >
+                                        <MessageCircle className="w-5 h-5" /> Chat Seller
+                                    </button>
+                                </div>
                             )}
                         </div>
 
