@@ -14,10 +14,12 @@ import Profile from "./pages/Profile";
 import Browse from "./pages/Browse";
 import ProductDetail from "./pages/ProductDetail";
 import FoodMenu from "./pages/FoodMenu";
+import Admin from "./pages/Admin";
 import Navbar from "./components/Navbar";
 import UsernameSetup from "./components/UsernameSetup";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { Navigate } from "react-router-dom";
+
 
 const queryClient = new QueryClient();
 
@@ -38,14 +40,24 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   );
 }
 
+function AdminRoute({ children }: { children: React.ReactNode }) {
+  const { user, isAdmin, loading } = useAuth();
+  if (loading) return <div className="min-h-screen flex items-center justify-center font-bold text-2xl text-neon-cyan">Loading...</div>;
+  if (!user) return <Navigate to="/login" replace />;
+  if (!isAdmin) return <Navigate to="/home" replace />;
+  return <>{children}</>;
+}
+
+
 function AppLayout() {
   const location = useLocation();
   const isLanding = location.pathname === "/";
+  const isAdmin = location.pathname.startsWith("/admin");
   const { user } = useAuth();
 
   return (
     <>
-      {!isLanding && <Navbar />}
+      {!isLanding && !isAdmin && <Navbar />}
       <Routes>
         <Route path="/" element={user ? <Navigate to="/home" replace /> : <Index />} />
         {/* We wrap Home in ProtectedRoute so users are gated there too if they bypass somehow */}
@@ -60,6 +72,9 @@ function AppLayout() {
         <Route path="/browse" element={<ProtectedRoute><Browse /></ProtectedRoute>} />
         <Route path="/product/:id" element={<ProtectedRoute><ProductDetail /></ProtectedRoute>} />
         <Route path="/food" element={<ProtectedRoute><FoodMenu /></ProtectedRoute>} />
+
+        {/* Admin Route */}
+        <Route path="/admin" element={<AdminRoute><Admin /></AdminRoute>} />
 
         <Route path="*" element={<NotFound />} />
       </Routes>

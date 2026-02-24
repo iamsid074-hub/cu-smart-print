@@ -7,6 +7,7 @@ interface AuthContextType {
     session: Session | null;
     profile: any | null; // Stores profiles row (username, avatar, etc.)
     loading: boolean;
+    isAdmin: boolean;
     signOut: () => Promise<void>;
 }
 
@@ -15,6 +16,7 @@ const AuthContext = createContext<AuthContextType>({
     session: null,
     profile: null,
     loading: true,
+    isAdmin: false,
     signOut: async () => { },
 });
 
@@ -87,8 +89,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setProfile(null);
     };
 
+    const isAdmin = !!(profile?.is_admin);
+
     return (
-        <AuthContext.Provider value={{ user, session, profile, loading, signOut }}>
+        <AuthContext.Provider value={{ user, session, profile, loading, isAdmin, signOut }}>
             {children}
         </AuthContext.Provider>
     );
