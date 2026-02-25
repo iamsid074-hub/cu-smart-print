@@ -1,16 +1,10 @@
-const https = require('https');
-
 module.exports = async (req, res) => {
-    // Debug endpoint: visit /api/sb in browser to verify function works
+    // Debug: if no url param, return ok
     if (req.method === 'GET' && !req.query.url) {
-        return res.status(200).json({
-            status: 'proxy_ok',
-            node: process.version,
-            time: new Date().toISOString(),
-        });
+        return res.status(200).json({ status: 'alive', v: process.version });
     }
 
-    // CORS preflight
+    // CORS
     if (req.method === 'OPTIONS') {
         res.setHeader('Access-Control-Allow-Origin', '*');
         res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE,OPTIONS');
@@ -18,88 +12,57 @@ module.exports = async (req, res) => {
         return res.status(204).end();
     }
 
-    const raw = req.query.url;
-    if (!raw || typeof raw !== 'string' || !raw.includes('supabase.co')) {
-        return res.status(400).json({ error: 'missing_or_invalid_url', received: typeof raw });
+    const targetUrl = req.query.url;
+    if (!targetUrl || !targetUrl.includes('supabase.co')) {
+        return res.status(400).json({ error: 'bad_url' });
     }
 
     try {
-        let parsedUrl;
-        try {
-            parsedUrl = new URL(raw);
-        } catch (e) {
-            return res.status(400).json({ error: 'url_parse_failed', raw: raw.substring(0, 100), detail: e.message });
-        }
+        // Use dynamic import for https
+        const https = await import('node:https');
+        const url = await import('node:url');
+        const parsed = new url.URL(targetUrl);
 
-        // Prepare body
-        let bodyStr = null;
+        // Body
+        let body = null;
         if (req.method !== 'GET' && req.method !== 'HEAD' && req.body != null) {
-            bodyStr = typeof req.body === 'string' ? req.body : JSON.stringify(req.body);
+            body = typeof req.body === 'string' ? req.body : JSON.stringify(req.body);
         }
 
-        // Build headers to forward
-        const fwdHeaders = {};
-        const skipSet = ['host', 'connection', 'transfer-encoding', 'accept-encoding'];
+        // Headers
+        const h = {};
         for (const [k, v] of Object.entries(req.headers)) {
-            if (!skipSet.includes(k.toLowerCase())) {
-                fwdHeaders[k] = v;
-            }
+            if (!['host', 'connection', 'transfer-encoding', 'accept-encoding'].includes(k)) h[k] = v;
         }
-        fwdHeaders['host'] = parsedUrl.hostname;
-        if (bodyStr) {
-            fwdHeaders['content-length'] = String(Buffer.byteLength(bodyStr));
-        } else {
-            delete fwdHeaders['content-length'];
-        }
+        h['host'] = parsed.hostname;
+        if (body) h['content-length'] = String(Buffer.byteLength(body));
+        else delete h['content-length'];
 
         return new Promise((resolve) => {
-            const options = {
-                hostname: parsedUrl.hostname,
-                port: 443,
-                path: parsedUrl.pathname + parsedUrl.search,
-                method: req.method,
-                headers: fwdHeaders,
-            };
-
-            const proxyReq = https.request(options, (proxyRes) => {
-                // Collect response body as chunks
+            const r = https.request({
+                hostname: parsed.hostname, port: 443,
+                path: parsed.pathname + parsed.search,
+                method: req.method, headers: h,
+            }, (upstream) => {
                 const chunks = [];
-                proxyRes.on('data', (chunk) => chunks.push(chunk));
-                proxyRes.on('end', () => {
-                    try {
-                        const body = Buffer.concat(chunks);
-                        // Forward content-type
-                        const ct = proxyRes.headers['content-type'];
-                        if (ct) res.setHeader('Content-Type', ct);
-                        res.status(proxyRes.statusCode).send(body);
-                    } catch (e) {
-                        if (!res.headersSent) res.status(500).json({ error: 'response_error', detail: e.message });
-                    }
+                upstream.on('data', (c) => chunks.push(c));
+                upstream.on('end', () => {
+                    const buf = Buffer.concat(chunks);
+                    const ct = upstream.headers['content-type'];
+                    if (ct) res.setHeader('Content-Type', ct);
+                    res.status(upstream.statusCode).send(buf);
                     resolve();
                 });
             });
-
-            proxyReq.on('error', (err) => {
-                if (!res.headersSent) {
-                    res.status(502).json({ error: 'upstream_error', message: err.message });
-                }
+            r.on('error', (e) => {
+                if (!res.headersSent) res.status(502).json({ error: e.message });
                 resolve();
             });
-
-            proxyReq.setTimeout(9000, () => {
-                proxyReq.destroy();
-                if (!res.headersSent) {
-                    res.status(504).json({ error: 'timeout' });
-                }
-                resolve();
-            });
-
-            if (bodyStr) proxyReq.write(bodyStr);
-            proxyReq.end();
+            r.setTimeout(9000, () => { r.destroy(); if (!res.headersSent) res.status(504).json({ error: 'timeout' }); resolve(); });
+            if (body) r.write(body);
+            r.end();
         });
     } catch (err) {
-        if (!res.headersSent) {
-            res.status(500).json({ error: 'caught_error', message: err.message, stack: err.stack });
-        }
+        return res.status(500).json({ error: 'exception', msg: err.message, stack: (err.stack || '').split('\n').slice(0, 3) });
     }
 };
