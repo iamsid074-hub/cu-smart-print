@@ -89,7 +89,7 @@ export default function ListProduct() {
           title: formData.title,
           category: formData.category,
           condition: formData.condition,
-          reason_for_selling: formData.description,
+          reason_for_selling: formData.description.trim() || "Not specified",
           price: Number(formData.price),
           original_price: formData.originalPrice ? Number(formData.originalPrice) : null,
           image_url: imageUrl,
