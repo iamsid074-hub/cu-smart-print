@@ -154,7 +154,7 @@ export default function Navbar() {
                 <motion.div
                   initial={{ opacity: 0, y: 10, scale: 0.95 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
-                  className="absolute top-[calc(100%+12px)] right-0 w-[min(380px,calc(100vw-32px))] glass-heavy border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-50 origin-top-right bg-[#0A0A0F]/95 backdrop-blur-xl"
+                  className="absolute top-[calc(100%+12px)] right-[-60px] sm:right-0 w-[min(380px,calc(100vw-32px))] glass-heavy border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-50 origin-top-right bg-[#0A0A0F]/95 backdrop-blur-xl"
                 >
                   <div className="p-4 border-b border-white/5 flex items-center justify-between bg-white/5">
                     <h3 className="font-bold text-sm tracking-wide">Notifications</h3>
