@@ -1,4 +1,4 @@
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
     const SUPABASE_URL = 'https://xzzjmhfsmdnpzegfzrvo.supabase.co';
 
     // Handle CORS preflight
@@ -45,4 +45,4 @@ export default async function handler(req, res) {
         console.error('Supabase proxy error:', err);
         res.status(502).json({ error: 'proxy_error', message: err.message });
     }
-}
+};
