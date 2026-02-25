@@ -59,10 +59,13 @@ interface Stats {
 
 // ─── Status Config ─────────────────────────────────────────────────────────────
 const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; border: string }> = {
-    pending: { label: "Pending", color: "text-yellow-400", bg: "bg-yellow-400/15", border: "border-yellow-400/30" },
-    confirmed: { label: "Accepted", color: "text-neon-cyan", bg: "bg-cyan-400/15", border: "border-cyan-400/30" },
+    pending: { label: "Awaiting Seller", color: "text-yellow-400", bg: "bg-yellow-400/15", border: "border-yellow-400/30" },
+    seller_accepted: { label: "Seller Confirmed", color: "text-neon-cyan", bg: "bg-cyan-400/15", border: "border-cyan-400/30" },
+    seller_rejected: { label: "Seller Rejected", color: "text-red-400", bg: "bg-red-400/15", border: "border-red-400/30" },
+    confirmed: { label: "Admin Accepted", color: "text-neon-blue", bg: "bg-blue-400/15", border: "border-blue-400/30" },
+    picked: { label: "Picked Up", color: "text-purple-400", bg: "bg-purple-400/15", border: "border-purple-400/30" },
     delivering: { label: "Out for Delivery", color: "text-neon-orange", bg: "bg-orange-400/15", border: "border-orange-400/30" },
-    completed: { label: "Delivered", color: "text-green-400", bg: "bg-green-400/15", border: "border-green-400/30" },
+    completed: { label: "Delivered ✅", color: "text-green-400", bg: "bg-green-400/15", border: "border-green-400/30" },
     cancelled: { label: "Cancelled", color: "text-red-400", bg: "bg-red-400/15", border: "border-red-400/30" },
 };
 
@@ -307,18 +310,21 @@ function ProductsSection({ products, loading, onDelete }: {
 
 // ─── Orders Section ────────────────────────────────────────────────────────────
 function OrdersSection({ orders, loading, onUpdateStatus }: {
-    orders: Order[]; loading: boolean; onUpdateStatus: (id: string, status: string) => void;
+    orders: Order[]; loading: boolean; onUpdateStatus: (id: string, status: string, timestamps?: Record<string, string>) => void;
 }) {
-    const nextStatus: Record<string, { label: string; status: string; icon: any; color: string } | null> = {
-        pending: { label: "Accept Order", status: "confirmed", icon: CheckCircle, color: "bg-cyan-500/20 border-cyan-500/40 text-cyan-400 hover:bg-cyan-500/30" },
-        confirmed: { label: "Out for Delivery", status: "delivering", icon: Truck, color: "bg-orange-500/20 border-orange-500/40 text-orange-400 hover:bg-orange-500/30" },
-        delivering: { label: "Mark Delivered", status: "completed", icon: HomeIcon, color: "bg-green-500/20 border-green-500/40 text-green-400 hover:bg-green-500/30" },
+    const nextStatus: Record<string, { label: string; status: string; icon: any; color: string; timestamps?: object } | null> = {
+        pending: { label: "Forward to Admin", status: "confirmed", icon: ChevronRight, color: "bg-blue-500/20 border-blue-500/40 text-blue-400 hover:bg-blue-500/30", timestamps: { accepted_at: new Date().toISOString() } },
+        seller_accepted: { label: "Accept & Pickup", status: "confirmed", icon: CheckCircle, color: "bg-cyan-500/20 border-cyan-500/40 text-cyan-400 hover:bg-cyan-500/30", timestamps: { accepted_at: new Date().toISOString() } },
+        confirmed: { label: "Picked from Seller ✓", status: "picked", icon: Package, color: "bg-purple-500/20 border-purple-500/40 text-purple-400 hover:bg-purple-500/30", timestamps: { picked_at: new Date().toISOString() } },
+        picked: { label: "Out for Delivery 🚀", status: "delivering", icon: Truck, color: "bg-orange-500/20 border-orange-500/40 text-orange-400 hover:bg-orange-500/30", timestamps: { out_for_delivery_at: new Date().toISOString() } },
+        delivering: { label: "Mark Delivered ✅", status: "completed", icon: HomeIcon, color: "bg-green-500/20 border-green-500/40 text-green-400 hover:bg-green-500/30", timestamps: { delivered_at: new Date().toISOString() } },
         completed: null,
         cancelled: null,
+        seller_rejected: { label: "Override & Accept", status: "confirmed", icon: CheckCircle, color: "bg-cyan-500/20 border-cyan-500/40 text-cyan-400 hover:bg-cyan-500/30", timestamps: { accepted_at: new Date().toISOString() } },
     };
 
-    const activeOrders = orders.filter(o => ["pending", "confirmed", "delivering"].includes(o.status));
-    const closedOrders = orders.filter(o => ["completed", "cancelled"].includes(o.status));
+    const activeOrders = orders.filter(o => ["pending", "seller_accepted", "confirmed", "picked", "delivering"].includes(o.status));
+    const closedOrders = orders.filter(o => ["completed", "cancelled", "seller_rejected"].includes(o.status));
 
     const renderOrder = (order: Order) => {
         const action = nextStatus[order.status];
@@ -386,7 +392,7 @@ function OrdersSection({ orders, loading, onUpdateStatus }: {
                     {/* Action Button */}
                     {action && (
                         <button
-                            onClick={() => onUpdateStatus(order.id, action.status)}
+                            onClick={() => onUpdateStatus(order.id, action.status, (action as any).timestamps)}
                             className={`w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border text-sm font-bold transition-all ${action.color}`}
                         >
                             <action.icon className="w-4 h-4" />
@@ -667,8 +673,9 @@ export default function Admin() {
         setDeletingId(null);
     };
 
-    const handleUpdateOrderStatus = async (id: string, status: string) => {
-        await supabase.from("orders").update({ status }).eq("id", id);
+    const handleUpdateOrderStatus = async (id: string, status: string, timestamps?: Record<string, string>) => {
+        const updates: any = { status, ...timestamps };
+        await supabase.from("orders").update(updates).eq("id", id);
         setOrders(prev => prev.map(o => o.id === id ? { ...o, status } : o));
         setRecentOrders(prev => prev.map(o => o.id === id ? { ...o, status } : o));
         await fetchStats();
@@ -886,8 +893,8 @@ function SidebarContent({
                         key={item.id}
                         onClick={() => setSection(item.id)}
                         className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all group relative ${section === item.id
-                                ? "bg-gradient-to-r from-neon-orange/20 to-neon-pink/10 text-white border border-neon-orange/30 shadow-sm"
-                                : "text-muted-foreground hover:text-white hover:bg-white/5"
+                            ? "bg-gradient-to-r from-neon-orange/20 to-neon-pink/10 text-white border border-neon-orange/30 shadow-sm"
+                            : "text-muted-foreground hover:text-white hover:bg-white/5"
                             }`}
                     >
                         {section === item.id && (

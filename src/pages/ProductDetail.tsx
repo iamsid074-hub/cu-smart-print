@@ -23,9 +23,9 @@ export default function ProductDetail() {
     const [product, setProduct] = useState<any>(null);
     const [loading, setLoading] = useState(true);
 
-    // Buy Now State
     const [isBuyModalOpen, setIsBuyModalOpen] = useState(false);
-    const [location, setLocation] = useState("");
+    const [deliveryLocation, setDeliveryLocation] = useState("");
+    const [deliveryRoom, setDeliveryRoom] = useState("");
     const [phone, setPhone] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -84,55 +84,41 @@ export default function ProductDetail() {
     const deliveryFee = getDeliveryFee();
     const totalAmount = product ? product.price + deliveryFee : 0;
 
-    const handleBuyNow = (e: React.FormEvent) => {
+    const handleBuyNow = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!user) {
-            navigate('/login');
-            return;
-        }
-
-        if (!location.trim() || !phone.trim()) {
+        if (!user) { navigate('/login'); return; }
+        if (!deliveryLocation.trim() || !phone.trim()) {
             toast({ title: "Details missing", description: "Please enter delivery location and phone number.", variant: "destructive" });
             return;
         }
-
         setIsSubmitting(true);
+        try {
+            const commission = Math.round(product.price * 0.05); // 5% commission
+            const { data, error } = await supabase.from("orders").insert({
+                product_id: product.id,
+                buyer_id: user.id,
+                seller_id: product.seller_id,
+                base_price: product.price,
+                commission,
+                delivery_charge: deliveryFee,
+                total_price: totalAmount,
+                delivery_location: deliveryLocation,
+                delivery_room: deliveryRoom || null,
+                buyer_phone: phone,
+                status: 'pending',
+                seller_notified_at: new Date().toISOString(),
+            }).select().single();
 
-        // Simulate network delay
-        setTimeout(() => {
-            const orderDetails = {
-                id: `CUB-${Math.floor(10000 + Math.random() * 90000)}`,
-                product: {
-                    id: product.id,
-                    title: product.title,
-                    price: product.price,
-                    image_url: product.image_url,
-                    seller_name: product.profiles?.full_name || "Student",
-                },
-                pricing: {
-                    basePrice: product.price,
-                    deliveryFee: deliveryFee,
-                    total: totalAmount,
-                },
-                shipping: {
-                    location,
-                    phone,
-                    method: "Cash on Delivery",
-                },
-                placedAt: new Date().toISOString(),
-                status: "placed"
-            };
+            if (error) throw error;
 
-            // Save to local storage to simulate backend for Tracking page
-            localStorage.setItem("active_order", JSON.stringify(orderDetails));
-
-            toast({ title: "Order Placed Successfully! 🎉", description: "Generating your tracking id..." });
-            setIsSubmitting(false);
+            toast({ title: "Order Placed! 🎉", description: "Waiting for seller confirmation..." });
             setIsBuyModalOpen(false);
-
-            // Navigate to tracking page
-            navigate('/tracking');
-        }, 1500);
+            navigate(`/tracking?order=${data.id}`);
+        } catch (err: any) {
+            toast({ title: "Order failed", description: err.message || "Please try again.", variant: "destructive" });
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -281,14 +267,24 @@ export default function ProductDetail() {
                                                 {/* Checkout Form */}
                                                 <form onSubmit={handleBuyNow} className="flex flex-col gap-4">
                                                     <div>
-                                                        <label className="text-xs font-bold text-muted-foreground uppercase mb-1 block">Delivery Location (Hostel/Room)</label>
+                                                        <label className="text-xs font-bold text-muted-foreground uppercase mb-1 block">Hostel / Block</label>
                                                         <input
                                                             type="text"
                                                             required
-                                                            value={location}
-                                                            onChange={e => setLocation(e.target.value)}
+                                                            value={deliveryLocation}
+                                                            onChange={e => setDeliveryLocation(e.target.value)}
                                                             className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-neon-orange focus:ring-1 focus:ring-neon-orange transition-all"
-                                                            placeholder="e.g. Zakir A, Room 402"
+                                                            placeholder="e.g. Zakir Hussain Block A"
+                                                        />
+                                                    </div>
+                                                    <div>
+                                                        <label className="text-xs font-bold text-muted-foreground uppercase mb-1 block">Room Number (optional)</label>
+                                                        <input
+                                                            type="text"
+                                                            value={deliveryRoom}
+                                                            onChange={e => setDeliveryRoom(e.target.value)}
+                                                            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-neon-orange focus:ring-1 focus:ring-neon-orange transition-all"
+                                                            placeholder="e.g. 402"
                                                         />
                                                     </div>
                                                     <div>

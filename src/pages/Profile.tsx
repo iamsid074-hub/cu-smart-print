@@ -1,8 +1,8 @@
 import { useEffect, useState, useRef } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
-import { LogOut, User, MapPin, Phone, Package, Heart, Edit2, Check, Loader2, Camera } from "lucide-react";
-import { motion } from "framer-motion";
+import { LogOut, User, MapPin, Phone, Package, Heart, Edit2, Check, Loader2, Camera, ShoppingCart, CheckCircle, XCircle, Clock, Bell } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
@@ -23,6 +23,11 @@ export default function Profile() {
     // My Listings
     const [myProducts, setMyProducts] = useState<any[]>([]);
     const [loadingListings, setLoadingListings] = useState(true);
+
+    // Seller: Incoming Orders
+    const [incomingOrders, setIncomingOrders] = useState<any[]>([]);
+    const [loadingOrders, setLoadingOrders] = useState(true);
+    const [processingOrderId, setProcessingOrderId] = useState<string | null>(null);
 
     useEffect(() => {
         async function fetchProfileAndListings() {
@@ -46,6 +51,67 @@ export default function Profile() {
         }
         fetchProfileAndListings();
     }, [user]);
+
+    // ── Seller: fetch incoming orders ──────────────────────────────────────────
+    const fetchIncomingOrders = async () => {
+        if (!user) return;
+        const { data } = await supabase
+            .from("orders")
+            .select(`
+                *,
+                products(title, image_url, price),
+                buyer:profiles!orders_buyer_id_fkey(full_name, phone_number, hostel_block)
+            `)
+            .eq("seller_id", user.id)
+            .in("status", ["pending", "seller_accepted", "seller_rejected"])
+            .order("created_at", { ascending: false });
+
+        const orders = (data || []) as any[];
+
+        // Auto-forward orders pending > 8 minutes to admin
+        const now = Date.now();
+        for (const o of orders) {
+            if (o.status === "pending") {
+                const placedAt = new Date(o.seller_notified_at || o.created_at).getTime();
+                if ((now - placedAt) / 60000 > 8) {
+                    await supabase.from("orders").update({ status: "confirmed", accepted_at: new Date().toISOString() }).eq("id", o.id);
+                    o.status = "confirmed";
+                }
+            }
+        }
+        setIncomingOrders(orders.filter((o: any) => ["pending", "seller_accepted", "seller_rejected"].includes(o.status)));
+        setLoadingOrders(false);
+    };
+
+    useEffect(() => { fetchIncomingOrders(); }, [user]);
+
+    useEffect(() => {
+        if (!user) return;
+        const channel = supabase.channel("seller_orders_rt")
+            .on("postgres_changes", { event: "INSERT", schema: "public", table: "orders", filter: `seller_id=eq.${user.id}` },
+                () => { fetchIncomingOrders(); toast.success("📦 New order received!"); })
+            .subscribe();
+        return () => { supabase.removeChannel(channel); };
+    }, [user]);
+
+    const handleAcceptOrder = async (orderId: string) => {
+        setProcessingOrderId(orderId);
+        const { error } = await supabase.from("orders")
+            .update({ status: "seller_accepted", accepted_at: new Date().toISOString() }).eq("id", orderId);
+        if (error) toast.error("Failed to accept order");
+        else { toast.success("Order accepted! Admin will pickup."); fetchIncomingOrders(); }
+        setProcessingOrderId(null);
+    };
+
+    const handleRejectOrder = async (orderId: string) => {
+        if (!confirm("Are you sure you want to reject this order?")) return;
+        setProcessingOrderId(orderId);
+        const { error } = await supabase.from("orders")
+            .update({ status: "seller_rejected" }).eq("id", orderId);
+        if (error) toast.error("Failed to reject order");
+        else { toast.warning("Order rejected."); fetchIncomingOrders(); }
+        setProcessingOrderId(null);
+    };
 
     const handleMarkSold = async (id: string) => {
         const { error } = await supabase.from("products").update({ status: 'sold' }).eq('id', id);
@@ -326,7 +392,81 @@ export default function Profile() {
                     <motion.div
                         initial={{ opacity: 0, x: 20 }}
                         animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.2 }}
+                        transition={{ delay: 0.15 }}
+                        className="glass rounded-3xl p-6 sm:p-8 border border-white/5"
+                    >
+                        <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
+                            <ShoppingCart className="w-5 h-5 text-neon-orange" /> Incoming Orders
+                            {incomingOrders.filter(o => o.status === "pending").length > 0 && (
+                                <span className="ml-1 px-2 py-0.5 rounded-full text-xs bg-neon-orange/20 border border-neon-orange/30 text-neon-orange font-bold animate-pulse">
+                                    {incomingOrders.filter(o => o.status === "pending").length} new
+                                </span>
+                            )}
+                        </h3>
+                        {loadingOrders ? (
+                            <div className="flex justify-center py-8"><Loader2 className="w-6 h-6 animate-spin text-neon-cyan" /></div>
+                        ) : incomingOrders.length === 0 ? (
+                            <div className="text-center py-8 text-muted-foreground border-2 border-dashed border-white/10 rounded-2xl">
+                                <Bell className="w-8 h-8 mx-auto mb-2 opacity-30" />
+                                No incoming orders yet.
+                            </div>
+                        ) : (
+                            <AnimatePresence>
+                                <div className="space-y-4">
+                                    {incomingOrders.map((order) => (
+                                        <motion.div key={order.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+                                            className={`glass rounded-2xl border p-4 ${order.status === "pending" ? "border-neon-orange/30 bg-neon-orange/5" :
+                                                order.status === "seller_accepted" ? "border-neon-cyan/30 bg-neon-cyan/5" :
+                                                    "border-red-500/20 bg-red-500/5 opacity-70"}`}>
+                                            <div className="flex items-start gap-3 mb-3">
+                                                <div className="w-12 h-12 rounded-xl overflow-hidden bg-white/5 flex-shrink-0">
+                                                    <img src={order.products?.image_url || "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=80"} alt="" className="w-full h-full object-cover" />
+                                                </div>
+                                                <div className="flex-1 min-w-0">
+                                                    <p className="font-bold text-sm truncate">{order.products?.title || "Product"}</p>
+                                                    <p className="text-neon-fire font-bold text-sm">₹{order.total_price?.toLocaleString()}</p>
+                                                    <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full ${order.status === "pending" ? "bg-neon-orange/20 text-neon-orange" :
+                                                        order.status === "seller_accepted" ? "bg-neon-cyan/20 text-neon-cyan" :
+                                                            "bg-red-500/20 text-red-400"}`}>
+                                                        {order.status === "pending" ? "Awaiting Your Response" :
+                                                            order.status === "seller_accepted" ? "Accepted — Admin Pickup Pending" : "Rejected"}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div className="glass rounded-xl p-3 border border-white/5 mb-3 space-y-1">
+                                                <p className="text-xs font-bold text-muted-foreground uppercase">Buyer Details</p>
+                                                <p className="text-sm font-semibold">{order.buyer?.full_name || "Buyer"}</p>
+                                                <p className="text-xs text-muted-foreground flex items-center gap-1"><Phone className="w-3 h-3" /> {order.buyer_phone || "—"}</p>
+                                                <p className="text-xs text-muted-foreground flex items-center gap-1"><MapPin className="w-3 h-3" /> {order.delivery_location}{order.delivery_room ? `, Room ${order.delivery_room}` : ""}</p>
+                                            </div>
+                                            <p className="text-xs text-muted-foreground flex items-center gap-1 mb-3">
+                                                <Clock className="w-3 h-3" /> {new Date(order.created_at).toLocaleString("en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
+                                            </p>
+                                            {order.status === "pending" && (
+                                                <div className="flex gap-2">
+                                                    <button onClick={() => handleAcceptOrder(order.id)}
+                                                        disabled={processingOrderId === order.id}
+                                                        className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl bg-neon-cyan/15 border border-neon-cyan/30 text-neon-cyan text-sm font-bold hover:bg-neon-cyan/25 transition-all disabled:opacity-50">
+                                                        {processingOrderId === order.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle className="w-4 h-4" />} Accept
+                                                    </button>
+                                                    <button onClick={() => handleRejectOrder(order.id)}
+                                                        disabled={processingOrderId === order.id}
+                                                        className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-sm font-bold hover:bg-red-500/20 transition-all disabled:opacity-50">
+                                                        <XCircle className="w-4 h-4" /> Reject
+                                                    </button>
+                                                </div>
+                                            )}
+                                        </motion.div>
+                                    ))}
+                                </div>
+                            </AnimatePresence>
+                        )}
+                    </motion.div>
+
+                    <motion.div
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.25 }}
                         className="glass rounded-3xl p-6 sm:p-8 border border-white/5"
                     >
                         <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
@@ -337,7 +477,6 @@ export default function Profile() {
                         </div>
                     </motion.div>
                 </div>
-
             </div>
         </div>
     );
