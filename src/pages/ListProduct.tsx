@@ -1,6 +1,6 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Upload, Tag, DollarSign, MapPin, CheckCircle, ChevronRight, Image as ImageIcon, Package, Loader2 } from "lucide-react";
+import { Upload, Tag, DollarSign, MapPin, CheckCircle, ChevronRight, Image as ImageIcon, Package, Loader2, Phone, AlertCircle } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
@@ -17,17 +17,30 @@ const categories = ["Electronics", "Books", "Fashion", "Sports", "Furniture", "K
 const conditions = ["New", "Like New", "Good", "Fair"];
 
 export default function ListProduct() {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     title: "", category: "", condition: "", description: "",
     price: "", originalPrice: "", negotiable: false,
     location: "", meetup: "",
+    sellerPhone: "", sellerHostel: "", sellerRoom: "",
   });
   const [dragOver, setDragOver] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  // Auto-fill seller details from profile
+  useEffect(() => {
+    if (profile) {
+      setFormData(prev => ({
+        ...prev,
+        sellerPhone: prev.sellerPhone || profile.phone_number || "",
+        sellerHostel: prev.sellerHostel || profile.hostel_block || "",
+      }));
+    }
+  }, [profile]);
 
   const handleNext = async () => {
     if (step === 4) {
@@ -36,10 +49,28 @@ export default function ListProduct() {
         return;
       }
 
-      if (!formData.title || !formData.category || !formData.condition || !formData.price || !formData.location) {
+      if (!formData.title || !formData.category || !formData.condition || !formData.price) {
         toast.error("Please fill in all required fields.");
         return;
       }
+
+      // Validate seller info
+      const newErrors: Record<string, string> = {};
+      if (!formData.sellerPhone.trim() || formData.sellerPhone.replace(/\D/g, "").length < 10) {
+        newErrors.sellerPhone = "Valid phone number is required (10+ digits)";
+      }
+      if (!formData.sellerHostel.trim()) {
+        newErrors.sellerHostel = "Hostel / Block is required";
+      }
+      if (!formData.sellerRoom.trim()) {
+        newErrors.sellerRoom = "Room number is required";
+      }
+      if (Object.keys(newErrors).length > 0) {
+        setErrors(newErrors);
+        toast.error("Please fill all required seller details");
+        return;
+      }
+      setErrors({});
 
       setLoading(true);
       try {
@@ -65,6 +96,15 @@ export default function ListProduct() {
           status: "available",
           is_trending: false,
         });
+
+        if (error) throw error;
+
+        // Also update the seller's profile with phone/hostel/room
+        await supabase.from("profiles").upsert({
+          id: user.id,
+          phone_number: formData.sellerPhone,
+          hostel_block: `${formData.sellerHostel}, Room ${formData.sellerRoom}`,
+        }, { onConflict: "id" });
 
         if (error) throw error;
         setStep(5);
@@ -307,19 +347,51 @@ export default function ListProduct() {
               </motion.div>
             )}
 
-            {/* Step 4: Location */}
             {step === 4 && (
               <motion.div key="step4" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }} transition={{ duration: 0.3 }} className="space-y-5">
-                <h2 className="font-bold text-xl mb-6">Pickup Location</h2>
+                <h2 className="font-bold text-xl mb-6">Your Details & Pickup</h2>
+
+                {/* Seller Phone */}
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground mb-2 block">Campus Location *</label>
-                  <input
-                    value={formData.location}
-                    onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                    placeholder="e.g. Hostel Block C, Room 214"
-                    className="w-full glass rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground outline-none border border-white/10 focus:border-neon-orange/50 transition-all"
-                  />
+                  <label className="text-sm font-medium text-muted-foreground mb-2 block">Your Phone Number *</label>
+                  <div className="relative">
+                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neon-orange" />
+                    <input
+                      value={formData.sellerPhone}
+                      onChange={(e) => { setFormData({ ...formData, sellerPhone: e.target.value }); setErrors(prev => ({ ...prev, sellerPhone: "" })); }}
+                      placeholder="e.g. 9876543210"
+                      type="tel"
+                      className={`w-full glass rounded-xl pl-10 pr-4 py-3 text-sm text-foreground placeholder:text-muted-foreground outline-none border transition-all ${errors.sellerPhone ? "border-red-500/50 focus:border-red-500" : "border-white/10 focus:border-neon-orange/50"}`}
+                    />
+                  </div>
+                  {errors.sellerPhone && <p className="text-xs text-red-400 mt-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" /> {errors.sellerPhone}</p>}
                 </div>
+
+                {/* Seller Hostel */}
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground mb-2 block">Your Hostel / Block *</label>
+                  <input
+                    value={formData.sellerHostel}
+                    onChange={(e) => { setFormData({ ...formData, sellerHostel: e.target.value }); setErrors(prev => ({ ...prev, sellerHostel: "" })); }}
+                    placeholder="e.g. Zakir Hussain Block A"
+                    className={`w-full glass rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground outline-none border transition-all ${errors.sellerHostel ? "border-red-500/50 focus:border-red-500" : "border-white/10 focus:border-neon-orange/50"}`}
+                  />
+                  {errors.sellerHostel && <p className="text-xs text-red-400 mt-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" /> {errors.sellerHostel}</p>}
+                </div>
+
+                {/* Seller Room */}
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground mb-2 block">Your Room Number *</label>
+                  <input
+                    value={formData.sellerRoom}
+                    onChange={(e) => { setFormData({ ...formData, sellerRoom: e.target.value }); setErrors(prev => ({ ...prev, sellerRoom: "" })); }}
+                    placeholder="e.g. 402"
+                    className={`w-full glass rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground outline-none border transition-all ${errors.sellerRoom ? "border-red-500/50 focus:border-red-500" : "border-white/10 focus:border-neon-orange/50"}`}
+                  />
+                  {errors.sellerRoom && <p className="text-xs text-red-400 mt-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" /> {errors.sellerRoom}</p>}
+                </div>
+
+                {/* Meetup Location */}
                 <div>
                   <label className="text-sm font-medium text-muted-foreground mb-2 block">Preferred Meetup Spot</label>
                   {["Main Gate", "Library", "Canteen", "C-Block Lobby", "Sports Complex"].map((spot) => (
@@ -335,6 +407,13 @@ export default function ListProduct() {
                     </button>
                   ))}
                 </div>
+
+                {/* Validation hint */}
+                {(!formData.sellerPhone || !formData.sellerHostel || !formData.sellerRoom) && (
+                  <div className="glass rounded-xl p-3 border border-yellow-500/20 bg-yellow-500/5">
+                    <p className="text-xs text-yellow-400 flex items-center gap-1"><AlertCircle className="w-3 h-3" /> All seller details are required to publish</p>
+                  </div>
+                )}
               </motion.div>
             )}
 
@@ -388,7 +467,7 @@ export default function ListProduct() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={handleNext}
-                disabled={loading}
+                disabled={loading || (step === 4 && (!formData.sellerPhone.trim() || !formData.sellerHostel.trim() || !formData.sellerRoom.trim()))}
                 className="premium-glass-button flex items-center gap-2 px-6 py-2.5 text-white text-sm font-bold shadow-neon-fire disabled:opacity-50"
               >
                 {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : step === 4 ? "Publish" : "Continue"} {!loading && <ChevronRight className="w-4 h-4" />}

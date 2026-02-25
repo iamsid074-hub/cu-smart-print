@@ -6,7 +6,7 @@ import {
     Trash2, CheckCircle, Truck, Home as HomeIcon, Clock, TrendingUp,
     AlertTriangle, ChevronRight, Loader2, Eye, RefreshCw, Shield,
     LogOut, Star, MapPin, Phone, User, Calendar, DollarSign,
-    Activity, Box, ShoppingBag
+    Activity, Box, ShoppingBag, Copy, AlertCircle
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
@@ -36,11 +36,12 @@ interface Order {
     total_price: number;
     delivery_location: string;
     delivery_room: string | null;
+    buyer_phone: string | null;
     status: string;
     created_at: string;
-    products?: { title: string; image_url: string | null; price: number } | null;
+    products?: { title: string; image_url: string | null; price: number; category: string | null; reason_for_selling: string | null } | null;
     buyer?: { full_name: string; phone_number: string | null; hostel_block: string | null };
-    seller?: { full_name: string; phone_number: string | null };
+    seller?: { full_name: string; phone_number: string | null; hostel_block: string | null };
 }
 
 interface AdminNotification {
@@ -328,6 +329,8 @@ function OrdersSection({ orders, loading, onUpdateStatus }: {
 
     const renderOrder = (order: Order) => {
         const action = nextStatus[order.status];
+        const sellerMissing = !order.seller?.phone_number || !order.seller?.hostel_block;
+        const copyPhone = (phone: string) => { navigator.clipboard.writeText(phone); };
         return (
             <motion.div
                 key={order.id}
@@ -348,45 +351,74 @@ function OrdersSection({ orders, loading, onUpdateStatus }: {
                 </div>
 
                 <div className="p-4 space-y-4">
-                    {/* Product */}
-                    <div className="flex items-center gap-3">
-                        <div className="w-14 h-14 rounded-xl overflow-hidden bg-white/5 flex-shrink-0 border border-white/10">
-                            <img src={order.products?.image_url || "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=80"} alt="" className="w-full h-full object-cover" />
+                    {/* ── Product Details ────────────────────── */}
+                    <div className="flex gap-4">
+                        <div className="w-20 h-20 rounded-xl overflow-hidden bg-white/5 flex-shrink-0 border border-white/10">
+                            <img src={order.products?.image_url || "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=120"} alt="" className="w-full h-full object-cover" />
                         </div>
                         <div className="flex-1 min-w-0">
                             <p className="font-bold text-sm text-white truncate">{order.products?.title || "Product Removed"}</p>
-                            <p className="text-neon-fire font-bold text-sm">₹{order.total_price.toLocaleString()}</p>
+                            <p className="text-neon-fire font-bold text-lg">₹{order.total_price.toLocaleString()}</p>
+                            {order.products?.category && (
+                                <span className="inline-block px-2 py-0.5 rounded-lg bg-white/10 text-xs text-muted-foreground font-mono mt-1">{order.products.category}</span>
+                            )}
+                            {order.products?.reason_for_selling && (
+                                <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{order.products.reason_for_selling}</p>
+                            )}
                         </div>
                     </div>
 
-                    {/* Buyer / Seller */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div className="glass rounded-xl p-3 border border-white/5">
-                            <p className="text-xs text-neon-cyan font-bold uppercase tracking-wider mb-2 flex items-center gap-1">
-                                <User className="w-3 h-3" /> Buyer
-                            </p>
-                            <p className="text-sm font-semibold text-white">{order.buyer?.full_name || "Unknown"}</p>
-                            {order.buyer?.phone_number && (
-                                <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
-                                    <Phone className="w-3 h-3" /> {order.buyer.phone_number}
-                                </p>
+                    {/* ── Buyer Details ──────────────────────── */}
+                    <div className="glass rounded-xl p-3 border border-neon-cyan/20">
+                        <p className="text-xs text-neon-cyan font-bold uppercase tracking-wider mb-2 flex items-center gap-1">
+                            <User className="w-3 h-3" /> Buyer
+                        </p>
+                        <p className="text-sm font-semibold text-white">{order.buyer?.full_name || "Unknown"}</p>
+                        {(order.buyer_phone || order.buyer?.phone_number) && (
+                            <div className="flex items-center gap-2 mt-1">
+                                <Phone className="w-3 h-3 text-neon-cyan" />
+                                <span className="text-xs text-muted-foreground">{order.buyer_phone || order.buyer?.phone_number}</span>
+                                <button onClick={() => copyPhone(order.buyer_phone || order.buyer?.phone_number || "")} className="p-0.5 rounded hover:bg-white/10 transition-colors" title="Copy phone">
+                                    <Copy className="w-3 h-3 text-muted-foreground hover:text-white" />
+                                </button>
+                            </div>
+                        )}
+                        <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
+                            <MapPin className="w-3 h-3" /> {order.delivery_location}
+                            {order.delivery_room && `, Room ${order.delivery_room}`}
+                        </p>
+                    </div>
+
+                    {/* ── Seller Details ─────────────────────── */}
+                    <div className={`glass rounded-xl p-3 border ${sellerMissing ? "border-yellow-500/30 bg-yellow-500/5" : "border-neon-orange/20"}`}>
+                        <p className="text-xs text-neon-orange font-bold uppercase tracking-wider mb-2 flex items-center gap-1">
+                            <Star className="w-3 h-3" /> Seller
+                            {sellerMissing && (
+                                <span className="ml-auto flex items-center gap-1 text-yellow-400 text-[10px] font-bold">
+                                    <AlertCircle className="w-3 h-3" /> Incomplete Info
+                                </span>
                             )}
+                        </p>
+                        <p className="text-sm font-semibold text-white">{order.seller?.full_name || "Unknown"}</p>
+                        {order.seller?.phone_number ? (
+                            <div className="flex items-center gap-2 mt-1">
+                                <Phone className="w-3 h-3 text-neon-orange" />
+                                <span className="text-xs text-muted-foreground">{order.seller.phone_number}</span>
+                                <button onClick={() => copyPhone(order.seller?.phone_number || "")} className="p-0.5 rounded hover:bg-white/10 transition-colors" title="Copy phone">
+                                    <Copy className="w-3 h-3 text-muted-foreground hover:text-white" />
+                                </button>
+                            </div>
+                        ) : (
+                            <p className="text-xs text-yellow-400 mt-1 flex items-center gap-1"><Phone className="w-3 h-3" /> No phone provided</p>
+                        )}
+                        {order.seller?.hostel_block ? (
                             <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
-                                <MapPin className="w-3 h-3" /> {order.delivery_location}
-                                {order.delivery_room && `, Room ${order.delivery_room}`}
+                                <MapPin className="w-3 h-3" /> {order.seller.hostel_block}
                             </p>
-                        </div>
-                        <div className="glass rounded-xl p-3 border border-white/5">
-                            <p className="text-xs text-neon-orange font-bold uppercase tracking-wider mb-2 flex items-center gap-1">
-                                <Star className="w-3 h-3" /> Seller
-                            </p>
-                            <p className="text-sm font-semibold text-white">{order.seller?.full_name || "Unknown"}</p>
-                            {order.seller?.phone_number && (
-                                <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
-                                    <Phone className="w-3 h-3" /> {order.seller.phone_number}
-                                </p>
-                            )}
-                        </div>
+                        ) : (
+                            <p className="text-xs text-yellow-400 mt-1 flex items-center gap-1"><MapPin className="w-3 h-3" /> No location provided</p>
+                        )}
+                        <p className="text-[10px] text-muted-foreground/50 font-mono mt-1">ID: {order.seller_id.slice(0, 12)}...</p>
                     </div>
 
                     {/* Action Button */}
@@ -570,7 +602,7 @@ export default function Admin() {
         setLoadingStats(true);
         const [{ count: productCount }, { count: orderCount }, { count: userCount }] = await Promise.all([
             supabase.from("products").select("*", { count: "exact", head: true }),
-            supabase.from("orders").select("*", { count: "exact", head: true }).in("status", ["pending", "confirmed", "delivering"]),
+            supabase.from("orders").select("*", { count: "exact", head: true }).in("status", ["pending", "seller_accepted", "confirmed", "picked", "delivering"]),
             supabase.from("profiles").select("*", { count: "exact", head: true }),
         ]);
         setStats({
@@ -599,11 +631,11 @@ export default function Admin() {
         const { data } = await supabase
             .from("orders")
             .select(`
-        *,
-        products(title, image_url, price),
-        buyer:profiles!orders_buyer_id_fkey(full_name, phone_number, hostel_block),
-        seller:profiles!orders_seller_id_fkey(full_name, phone_number)
-      `)
+                *,
+                products(title, image_url, price, category, reason_for_selling),
+                buyer:profiles!orders_buyer_id_fkey(full_name, phone_number, hostel_block),
+                seller:profiles!orders_seller_id_fkey(full_name, phone_number, hostel_block)
+            `)
             .order("created_at", { ascending: false });
         const mapped = ((data as any[]) || []).map(o => ({
             ...o,
