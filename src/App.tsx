@@ -45,8 +45,15 @@ function AdminRoute({ children }: { children: React.ReactNode }) {
   // Show spinner while auth OR profile is still loading
   if (loading) return <div className="min-h-screen flex items-center justify-center font-bold text-2xl text-neon-cyan">Loading...</div>;
   if (!user) return <Navigate to="/login" replace />;
-  // If user exists but profile hasn't arrived yet — wait (don't redirect prematurely)
-  if (!profile) return <div className="min-h-screen flex items-center justify-center font-bold text-2xl text-neon-cyan">Loading...</div>;
+  // If user exists but profile hasn't arrived yet — wait briefly with a visual indicator
+  if (!profile) return (
+    <div className="min-h-screen flex flex-col items-center justify-center gap-4">
+      <div className="font-bold text-2xl text-neon-cyan">Loading admin profile...</div>
+      <button onClick={() => window.location.reload()} className="px-4 py-2 rounded-lg bg-white/10 text-sm text-white hover:bg-white/20 transition-colors">
+        Retry
+      </button>
+    </div>
+  );
   if (!isAdmin) return <Navigate to="/home" replace />;
   return <>{children}</>;
 }
