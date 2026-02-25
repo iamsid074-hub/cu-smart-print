@@ -100,13 +100,19 @@ export default function ListProduct() {
         if (error) throw error;
 
         // Also update the seller's profile with phone/hostel/room
-        await supabase.from("profiles").upsert({
+        const profileUpdate = {
           id: user.id,
           phone_number: formData.sellerPhone,
-          hostel_block: `${formData.sellerHostel}, Room ${formData.sellerRoom}`,
-        }, { onConflict: "id" });
+          hostel_block: formData.sellerHostel.trim()
+            ? `${formData.sellerHostel.trim()}, Room ${formData.sellerRoom.trim()}`
+            : null,
+        };
+        console.log("[ListProduct] Upserting profile:", profileUpdate);
+        const { error: profileError } = await supabase.from("profiles").upsert(profileUpdate, { onConflict: "id" });
+        if (profileError) {
+          console.error("[ListProduct] Profile upsert error:", profileError);
+        }
 
-        if (error) throw error;
         setStep(5);
         toast.success("Item published successfully!");
       } catch (err: any) {

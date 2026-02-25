@@ -315,7 +315,7 @@ export default function Home() {
                   className="glass rounded-2xl overflow-hidden cursor-pointer group block"
                 >
                   <div className="relative h-36 overflow-hidden">
-                    <img src={product.image} alt={product.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                    <img src={product.image} alt={product.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" onError={(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400'; }} />
                     <div className="absolute inset-0 bg-gradient-to-t from-card/80 to-transparent" />
                   </div>
                   <div className="p-3">

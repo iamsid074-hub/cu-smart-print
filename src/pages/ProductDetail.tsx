@@ -140,6 +140,7 @@ export default function ProductDetail() {
                             src={product.image_url || 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=800'}
                             alt={product.title}
                             className="w-full h-full object-contain"
+                            onError={(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=800'; }}
                         />
                         {/* Top right actions */}
                         <div className="absolute top-4 right-4 flex gap-3">

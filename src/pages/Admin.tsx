@@ -354,7 +354,7 @@ function OrdersSection({ orders, loading, onUpdateStatus }: {
                     {/* ── Product Details ────────────────────── */}
                     <div className="flex gap-4">
                         <div className="w-20 h-20 rounded-xl overflow-hidden bg-white/5 flex-shrink-0 border border-white/10">
-                            <img src={order.products?.image_url || "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=120"} alt="" className="w-full h-full object-cover" />
+                            <img src={order.products?.image_url || "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=120"} alt="" className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=120"; }} />
                         </div>
                         <div className="flex-1 min-w-0">
                             <p className="font-bold text-sm text-white truncate">{order.products?.title || "Product Removed"}</p>
