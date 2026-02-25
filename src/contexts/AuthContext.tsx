@@ -32,6 +32,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             if (error && error.code !== 'PGRST116') {
                 console.error("Error fetching profile:", error);
             }
+            console.log("[AuthContext] Profile loaded:", data); // DEBUG
             setProfile(data || null);
         } catch (err) {
             console.error("Unexpected error in fetchProfile:", err);
