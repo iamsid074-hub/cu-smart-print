@@ -1,69 +1,105 @@
 const https = require('https');
-const { URL } = require('url');
 
-module.exports = (req, res) => {
-    const raw = req.query.url;
-    if (!raw || !raw.includes('supabase.co')) {
-        return res.status(403).json({ error: 'forbidden' });
+module.exports = async (req, res) => {
+    // Debug endpoint: visit /api/sb in browser to verify function works
+    if (req.method === 'GET' && !req.query.url) {
+        return res.status(200).json({
+            status: 'proxy_ok',
+            node: process.version,
+            time: new Date().toISOString(),
+        });
     }
 
     // CORS preflight
     if (req.method === 'OPTIONS') {
         res.setHeader('Access-Control-Allow-Origin', '*');
         res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE,OPTIONS');
-        res.setHeader('Access-Control-Allow-Headers', 'authorization,apikey,content-type,x-client-info,prefer,range,accept');
+        res.setHeader('Access-Control-Allow-Headers', '*');
         return res.status(204).end();
     }
 
-    let targetUrl;
+    const raw = req.query.url;
+    if (!raw || typeof raw !== 'string' || !raw.includes('supabase.co')) {
+        return res.status(400).json({ error: 'missing_or_invalid_url', received: typeof raw });
+    }
+
     try {
-        targetUrl = new URL(raw);
-    } catch (e) {
-        return res.status(400).json({ error: 'bad_url', detail: e.message });
-    }
-
-    // Build forwarded headers
-    const fwdHeaders = {};
-    const skip = ['host', 'connection', 'transfer-encoding', 'content-length', 'accept-encoding'];
-    for (const [k, v] of Object.entries(req.headers)) {
-        if (!skip.includes(k.toLowerCase())) fwdHeaders[k] = v;
-    }
-    fwdHeaders['host'] = targetUrl.hostname;
-
-    // Prepare body for non-GET
-    let bodyStr = null;
-    if (!['GET', 'HEAD'].includes(req.method) && req.body != null) {
-        bodyStr = typeof req.body === 'string' ? req.body : JSON.stringify(req.body);
-        fwdHeaders['content-length'] = Buffer.byteLength(bodyStr).toString();
-        if (!fwdHeaders['content-type']) fwdHeaders['content-type'] = 'application/json';
-    }
-
-    const options = {
-        hostname: targetUrl.hostname,
-        port: 443,
-        path: targetUrl.pathname + targetUrl.search,
-        method: req.method,
-        headers: fwdHeaders,
-    };
-
-    const proxy = https.request(options, (upstream) => {
-        // Forward status + headers
-        const respHeaders = { ...upstream.headers };
-        delete respHeaders['content-encoding'];
-        delete respHeaders['transfer-encoding'];
-        delete respHeaders['connection'];
-
-        res.writeHead(upstream.statusCode, respHeaders);
-        upstream.pipe(res);
-    });
-
-    proxy.on('error', (err) => {
-        console.error('[sb proxy] error:', err.message);
-        if (!res.headersSent) {
-            res.status(502).json({ error: 'proxy_error', message: err.message });
+        let parsedUrl;
+        try {
+            parsedUrl = new URL(raw);
+        } catch (e) {
+            return res.status(400).json({ error: 'url_parse_failed', raw: raw.substring(0, 100), detail: e.message });
         }
-    });
 
-    if (bodyStr) proxy.write(bodyStr);
-    proxy.end();
+        // Prepare body
+        let bodyStr = null;
+        if (req.method !== 'GET' && req.method !== 'HEAD' && req.body != null) {
+            bodyStr = typeof req.body === 'string' ? req.body : JSON.stringify(req.body);
+        }
+
+        // Build headers to forward
+        const fwdHeaders = {};
+        const skipSet = ['host', 'connection', 'transfer-encoding', 'accept-encoding'];
+        for (const [k, v] of Object.entries(req.headers)) {
+            if (!skipSet.includes(k.toLowerCase())) {
+                fwdHeaders[k] = v;
+            }
+        }
+        fwdHeaders['host'] = parsedUrl.hostname;
+        if (bodyStr) {
+            fwdHeaders['content-length'] = String(Buffer.byteLength(bodyStr));
+        } else {
+            delete fwdHeaders['content-length'];
+        }
+
+        return new Promise((resolve) => {
+            const options = {
+                hostname: parsedUrl.hostname,
+                port: 443,
+                path: parsedUrl.pathname + parsedUrl.search,
+                method: req.method,
+                headers: fwdHeaders,
+            };
+
+            const proxyReq = https.request(options, (proxyRes) => {
+                // Collect response body as chunks
+                const chunks = [];
+                proxyRes.on('data', (chunk) => chunks.push(chunk));
+                proxyRes.on('end', () => {
+                    try {
+                        const body = Buffer.concat(chunks);
+                        // Forward content-type
+                        const ct = proxyRes.headers['content-type'];
+                        if (ct) res.setHeader('Content-Type', ct);
+                        res.status(proxyRes.statusCode).send(body);
+                    } catch (e) {
+                        if (!res.headersSent) res.status(500).json({ error: 'response_error', detail: e.message });
+                    }
+                    resolve();
+                });
+            });
+
+            proxyReq.on('error', (err) => {
+                if (!res.headersSent) {
+                    res.status(502).json({ error: 'upstream_error', message: err.message });
+                }
+                resolve();
+            });
+
+            proxyReq.setTimeout(9000, () => {
+                proxyReq.destroy();
+                if (!res.headersSent) {
+                    res.status(504).json({ error: 'timeout' });
+                }
+                resolve();
+            });
+
+            if (bodyStr) proxyReq.write(bodyStr);
+            proxyReq.end();
+        });
+    } catch (err) {
+        if (!res.headersSent) {
+            res.status(500).json({ error: 'caught_error', message: err.message, stack: err.stack });
+        }
+    }
 };
