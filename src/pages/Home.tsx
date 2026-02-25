@@ -101,7 +101,7 @@ export default function Home() {
           transition={{ duration: 0.5 }}
           className="py-10"
         >
-          <p className="text-muted-foreground text-sm font-mono mb-2 tracking-wide font-medium">GOOD MORNING, STUDENT 👋</p>
+          <p className="text-muted-foreground text-sm font-mono mb-2 tracking-wide font-medium">NICE TO MEET YOU STUDENTS👋</p>
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight">
             What are you <span className="text-neon-fire">looking for</span>?
           </h1>
