@@ -1,8 +1,25 @@
 import https from 'node:https';
 import { URL } from 'node:url';
 
+// Disable Vercel's automatic body parsing so we can forward raw binary (file uploads) untouched
+export const config = {
+    api: {
+        bodyParser: false,
+    },
+};
+
+// Collect raw body from the incoming request stream
+function getRawBody(req) {
+    return new Promise((resolve, reject) => {
+        const chunks = [];
+        req.on('data', (chunk) => chunks.push(chunk));
+        req.on('end', () => resolve(Buffer.concat(chunks)));
+        req.on('error', reject);
+    });
+}
+
 export default async function handler(req, res) {
-    // Debug endpoint: GET /api/sb → verify function works
+    // Debug endpoint
     if (req.method === 'GET' && !req.query.url) {
         return res.status(200).json({ status: 'alive', v: process.version });
     }
@@ -16,28 +33,32 @@ export default async function handler(req, res) {
     }
 
     const targetUrl = req.query.url;
-    if (!targetUrl || typeof targetUrl !== 'string' || !targetUrl.includes('supabase.co')) {
-        return res.status(400).json({ error: 'bad_url' });
+    if (!targetUrl || typeof targetUrl !== 'string' || !targetUrl.includes('supabase')) {
+        return res.status(400).json({ error: 'bad_url', received: String(targetUrl).slice(0, 60) });
     }
 
     try {
         const parsed = new URL(targetUrl);
 
-        // Body
-        let body = null;
-        if (req.method !== 'GET' && req.method !== 'HEAD' && req.body != null) {
-            body = typeof req.body === 'string' ? req.body : JSON.stringify(req.body);
+        // Read raw body for non-GET requests (handles JSON, binary, multipart — everything)
+        let rawBody = null;
+        if (req.method !== 'GET' && req.method !== 'HEAD') {
+            rawBody = await getRawBody(req);
+            if (rawBody.length === 0) rawBody = null;
         }
 
-        // Forward headers
+        // Forward headers — keep content-type intact so Supabase knows what it's receiving
         const h = {};
         const skip = ['host', 'connection', 'transfer-encoding', 'accept-encoding'];
         for (const [k, v] of Object.entries(req.headers)) {
             if (!skip.includes(k)) h[k] = v;
         }
         h['host'] = parsed.hostname;
-        if (body) h['content-length'] = String(Buffer.byteLength(body));
-        else delete h['content-length'];
+        if (rawBody) {
+            h['content-length'] = String(rawBody.length);
+        } else {
+            delete h['content-length'];
+        }
 
         return new Promise((resolve) => {
             const r = https.request({
@@ -63,13 +84,13 @@ export default async function handler(req, res) {
                 resolve();
             });
 
-            r.setTimeout(9000, () => {
+            r.setTimeout(15000, () => {
                 r.destroy();
                 if (!res.headersSent) res.status(504).json({ error: 'timeout' });
                 resolve();
             });
 
-            if (body) r.write(body);
+            if (rawBody) r.write(rawBody);
             r.end();
         });
     } catch (err) {
