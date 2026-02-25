@@ -1,10 +1,10 @@
-module.exports = async function handler(req, res) {
-    // Security: only allow proxying to our supabase project
-    const SUPABASE_HOST = 'xzzjmhfsmdnpzegfzrvo.supabase.co';
-    const targetUrl = decodeURIComponent(req.query.url || '');
+const https = require('https');
+const { URL } = require('url');
 
-    if (!targetUrl || !targetUrl.includes(SUPABASE_HOST)) {
-        return res.status(403).json({ error: 'forbidden', detail: 'invalid target url' });
+module.exports = (req, res) => {
+    const raw = req.query.url;
+    if (!raw || !raw.includes('supabase.co')) {
+        return res.status(403).json({ error: 'forbidden' });
     }
 
     // CORS preflight
@@ -15,37 +15,55 @@ module.exports = async function handler(req, res) {
         return res.status(204).end();
     }
 
-    // Build headers to forward (skip hop-by-hop headers)
-    const headers = {};
-    const skip = new Set(['host', 'connection', 'transfer-encoding', 'content-length', 'accept-encoding']);
-    for (const [key, val] of Object.entries(req.headers)) {
-        if (!skip.has(key.toLowerCase())) {
-            headers[key] = val;
-        }
-    }
-
-    const init = { method: req.method, headers };
-
-    // Forward body for write operations
-    if (!['GET', 'HEAD'].includes(req.method) && req.body !== undefined && req.body !== null) {
-        init.body = typeof req.body === 'string' ? req.body : JSON.stringify(req.body);
-        if (!headers['content-type']) headers['content-type'] = 'application/json';
-    }
-
+    let targetUrl;
     try {
-        const upstream = await fetch(targetUrl, init);
-
-        upstream.headers.forEach((v, k) => {
-            const lk = k.toLowerCase();
-            if (!['content-encoding', 'transfer-encoding', 'connection'].includes(lk)) {
-                res.setHeader(k, v);
-            }
-        });
-
-        const buf = Buffer.from(await upstream.arrayBuffer());
-        res.status(upstream.status).send(buf);
-    } catch (err) {
-        console.error('[sb proxy] error:', err.message, 'target:', targetUrl);
-        res.status(502).json({ error: 'proxy_error', message: err.message });
+        targetUrl = new URL(raw);
+    } catch (e) {
+        return res.status(400).json({ error: 'bad_url', detail: e.message });
     }
+
+    // Build forwarded headers
+    const fwdHeaders = {};
+    const skip = ['host', 'connection', 'transfer-encoding', 'content-length', 'accept-encoding'];
+    for (const [k, v] of Object.entries(req.headers)) {
+        if (!skip.includes(k.toLowerCase())) fwdHeaders[k] = v;
+    }
+    fwdHeaders['host'] = targetUrl.hostname;
+
+    // Prepare body for non-GET
+    let bodyStr = null;
+    if (!['GET', 'HEAD'].includes(req.method) && req.body != null) {
+        bodyStr = typeof req.body === 'string' ? req.body : JSON.stringify(req.body);
+        fwdHeaders['content-length'] = Buffer.byteLength(bodyStr).toString();
+        if (!fwdHeaders['content-type']) fwdHeaders['content-type'] = 'application/json';
+    }
+
+    const options = {
+        hostname: targetUrl.hostname,
+        port: 443,
+        path: targetUrl.pathname + targetUrl.search,
+        method: req.method,
+        headers: fwdHeaders,
+    };
+
+    const proxy = https.request(options, (upstream) => {
+        // Forward status + headers
+        const respHeaders = { ...upstream.headers };
+        delete respHeaders['content-encoding'];
+        delete respHeaders['transfer-encoding'];
+        delete respHeaders['connection'];
+
+        res.writeHead(upstream.statusCode, respHeaders);
+        upstream.pipe(res);
+    });
+
+    proxy.on('error', (err) => {
+        console.error('[sb proxy] error:', err.message);
+        if (!res.headersSent) {
+            res.status(502).json({ error: 'proxy_error', message: err.message });
+        }
+    });
+
+    if (bodyStr) proxy.write(bodyStr);
+    proxy.end();
 };
