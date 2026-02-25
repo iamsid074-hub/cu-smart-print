@@ -1,5 +1,8 @@
-module.exports = async (req, res) => {
-    // Debug: if no url param, return ok
+import https from 'node:https';
+import { URL } from 'node:url';
+
+export default async function handler(req, res) {
+    // Debug endpoint: GET /api/sb → verify function works
     if (req.method === 'GET' && !req.query.url) {
         return res.status(200).json({ status: 'alive', v: process.version });
     }
@@ -13,15 +16,12 @@ module.exports = async (req, res) => {
     }
 
     const targetUrl = req.query.url;
-    if (!targetUrl || !targetUrl.includes('supabase.co')) {
+    if (!targetUrl || typeof targetUrl !== 'string' || !targetUrl.includes('supabase.co')) {
         return res.status(400).json({ error: 'bad_url' });
     }
 
     try {
-        // Use dynamic import for https
-        const https = await import('node:https');
-        const url = await import('node:url');
-        const parsed = new url.URL(targetUrl);
+        const parsed = new URL(targetUrl);
 
         // Body
         let body = null;
@@ -29,10 +29,11 @@ module.exports = async (req, res) => {
             body = typeof req.body === 'string' ? req.body : JSON.stringify(req.body);
         }
 
-        // Headers
+        // Forward headers
         const h = {};
+        const skip = ['host', 'connection', 'transfer-encoding', 'accept-encoding'];
         for (const [k, v] of Object.entries(req.headers)) {
-            if (!['host', 'connection', 'transfer-encoding', 'accept-encoding'].includes(k)) h[k] = v;
+            if (!skip.includes(k)) h[k] = v;
         }
         h['host'] = parsed.hostname;
         if (body) h['content-length'] = String(Buffer.byteLength(body));
@@ -40,9 +41,11 @@ module.exports = async (req, res) => {
 
         return new Promise((resolve) => {
             const r = https.request({
-                hostname: parsed.hostname, port: 443,
+                hostname: parsed.hostname,
+                port: 443,
                 path: parsed.pathname + parsed.search,
-                method: req.method, headers: h,
+                method: req.method,
+                headers: h,
             }, (upstream) => {
                 const chunks = [];
                 upstream.on('data', (c) => chunks.push(c));
@@ -54,15 +57,22 @@ module.exports = async (req, res) => {
                     resolve();
                 });
             });
+
             r.on('error', (e) => {
                 if (!res.headersSent) res.status(502).json({ error: e.message });
                 resolve();
             });
-            r.setTimeout(9000, () => { r.destroy(); if (!res.headersSent) res.status(504).json({ error: 'timeout' }); resolve(); });
+
+            r.setTimeout(9000, () => {
+                r.destroy();
+                if (!res.headersSent) res.status(504).json({ error: 'timeout' });
+                resolve();
+            });
+
             if (body) r.write(body);
             r.end();
         });
     } catch (err) {
-        return res.status(500).json({ error: 'exception', msg: err.message, stack: (err.stack || '').split('\n').slice(0, 3) });
+        return res.status(500).json({ error: err.message });
     }
-};
+}
