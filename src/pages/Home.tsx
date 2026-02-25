@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ChevronRight, Flame, Sun, Grid3X3, Laptop, BookOpen, Shirt, Bike, Headphones, Camera, Sofa, Utensils, Loader2 } from "lucide-react";
+import { ChevronRight, Flame, Sun, Grid3X3, Laptop, BookOpen, Shirt, Bike, Headphones, Camera, Sofa, Utensils, Loader2, ShoppingBag } from "lucide-react";
 import ProductCard from "@/components/ProductCard";
 import { supabase } from "@/lib/supabase";
 import type { Database } from "@/types/supabase";
@@ -17,6 +17,17 @@ const categories = [
   { icon: Camera, label: "Camera", count: "320+", gradient: "from-neon-orange to-neon-cyan", image: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=600&auto=format&fit=crop" },
   { icon: Sofa, label: "Furniture", count: "780+", gradient: "from-neon-pink to-neon-orange", image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?q=80&w=600&auto=format&fit=crop" },
   { icon: Utensils, label: "Kitchen", count: "240+", gradient: "from-neon-cyan to-neon-blue", image: "https://images.unsplash.com/photo-1556910103-1c02745aae4d?q=80&w=600&auto=format&fit=crop" },
+];
+
+const campusEssentials = [
+  { id: "ce1", title: "Practical File (100pg)", price: 60, image: "https://images.unsplash.com/photo-1586075010923-2dd4570fb338?q=80&w=400&auto=format&fit=crop", gradient: "from-emerald-500 to-teal-600" },
+  { id: "ce2", title: "Spiral Notebook A4", price: 45, image: "https://images.unsplash.com/photo-1531346878377-a5be20888e57?q=80&w=400&auto=format&fit=crop", gradient: "from-blue-500 to-indigo-600" },
+  { id: "ce3", title: "Pen Set (5 Pack)", price: 30, image: "https://images.unsplash.com/photo-1585336261022-680e295ce3fe?q=80&w=400&auto=format&fit=crop", gradient: "from-violet-500 to-purple-600" },
+  { id: "ce4", title: "Highlighter Set (4)", price: 80, image: "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?q=80&w=400&auto=format&fit=crop", gradient: "from-yellow-400 to-orange-500" },
+  { id: "ce5", title: "Scientific Calculator", price: 350, image: "https://images.unsplash.com/photo-1564466809058-bf4114d55352?q=80&w=400&auto=format&fit=crop", gradient: "from-cyan-500 to-blue-600" },
+  { id: "ce6", title: "Complete Stationery Kit", price: 150, image: "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?q=80&w=400&auto=format&fit=crop", gradient: "from-pink-500 to-rose-600" },
+  { id: "ce7", title: "Graph Paper Pad", price: 40, image: "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?q=80&w=400&auto=format&fit=crop", gradient: "from-amber-400 to-orange-500" },
+  { id: "ce8", title: "Geometry Box Set", price: 120, image: "https://images.unsplash.com/photo-1596495578065-6e0763fa1178?q=80&w=400&auto=format&fit=crop", gradient: "from-teal-400 to-emerald-500" },
 ];
 
 export default function Home() {
@@ -190,6 +201,47 @@ export default function Home() {
             </div>
           </div>
         </motion.section>
+
+        {/* === CAMPUS ESSENTIALS === */}
+        <section className="mb-16">
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center gap-3">
+              <ShoppingBag className="w-6 h-6 text-emerald-400" />
+              <h2 className="text-2xl font-black tracking-tight">🎒 Campus Essentials</h2>
+            </div>
+            <span className="px-3 py-1 rounded-full text-xs bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-bold">Always Available</span>
+          </div>
+
+          <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-4 px-1 -mx-1 snap-x snap-mandatory lg:grid lg:grid-cols-4 lg:overflow-visible lg:snap-none">
+            {campusEssentials.map((item, i) => (
+              <motion.div
+                key={item.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.06 }}
+                className="group flex-shrink-0 w-[160px] sm:w-[200px] lg:w-full snap-start glass rounded-2xl overflow-hidden border border-white/5 hover:border-emerald-500/30 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(16,185,129,0.15)]"
+              >
+                <div className="relative h-32 sm:h-36 overflow-hidden bg-gradient-to-br from-white/5 to-white/[0.02] flex items-center justify-center p-4">
+                  <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent z-10 opacity-50" />
+                  <img
+                    src={item.image}
+                    alt={item.title}
+                    loading="lazy"
+                    className="w-[85%] h-[85%] object-cover rounded-xl group-hover:scale-110 transition-transform duration-500 z-0"
+                  />
+                </div>
+                <div className="p-3 sm:p-4">
+                  <p className="text-xs sm:text-sm font-bold text-foreground line-clamp-1 mb-1">{item.title}</p>
+                  <p className={`text-lg font-black text-transparent bg-clip-text bg-gradient-to-r ${item.gradient}`}>₹{item.price}</p>
+                  <button className={`mt-2 w-full py-2 rounded-xl bg-gradient-to-r ${item.gradient} text-white text-xs font-bold opacity-90 hover:opacity-100 hover:shadow-lg transition-all duration-300`}>
+                    Buy Now
+                  </button>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </section>
 
         {/* === BROWSE CATEGORIES === */}
         <section className="mb-16">
