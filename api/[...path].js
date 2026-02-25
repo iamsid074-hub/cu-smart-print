@@ -9,11 +9,18 @@ module.exports = async function handler(req, res) {
         return res.status(204).end();
     }
 
-    // Strip /api/ prefix to get the Supabase path
-    const proxyPath = req.url.replace(/^\/api\/?/, '');
-    const targetUrl = `${SUPABASE_URL}/${proxyPath}`;
+    // In Vercel [...]path.js, req.query.path is the array of path segments after /api/
+    const pathArray = req.query.path || [];
+    const pathStr = Array.isArray(pathArray) ? pathArray.join('/') : pathArray;
 
-    // Forward headers, skip hop-by-hop ones
+    // Extract query string from req.url (everything after the ?)
+    const rawUrl = req.url || '';
+    const qIndex = rawUrl.indexOf('?');
+    const queryString = qIndex !== -1 ? rawUrl.slice(qIndex) : '';
+
+    const targetUrl = `${SUPABASE_URL}/${pathStr}${queryString}`;
+
+    // Forward safe headers only
     const headers = {};
     const skip = new Set(['host', 'connection', 'transfer-encoding', 'content-length', 'accept-encoding']);
     for (const [key, val] of Object.entries(req.headers)) {
@@ -24,9 +31,14 @@ module.exports = async function handler(req, res) {
 
     const init = { method: req.method, headers };
 
-    // Forward body for non-GET requests
-    if (!['GET', 'HEAD'].includes(req.method) && req.body != null) {
-        init.body = typeof req.body === 'string' ? req.body : JSON.stringify(req.body);
+    // Forward body for writes
+    if (!['GET', 'HEAD'].includes(req.method)) {
+        if (req.body !== undefined && req.body !== null) {
+            init.body = typeof req.body === 'string' ? req.body : JSON.stringify(req.body);
+            if (!headers['content-type']) {
+                headers['content-type'] = 'application/json';
+            }
+        }
     }
 
     try {
@@ -34,7 +46,8 @@ module.exports = async function handler(req, res) {
 
         // Forward response headers
         upstream.headers.forEach((v, k) => {
-            if (!['content-encoding', 'transfer-encoding', 'connection'].includes(k.toLowerCase())) {
+            const lk = k.toLowerCase();
+            if (!['content-encoding', 'transfer-encoding', 'connection'].includes(lk)) {
                 res.setHeader(k, v);
             }
         });
@@ -42,7 +55,7 @@ module.exports = async function handler(req, res) {
         const buf = Buffer.from(await upstream.arrayBuffer());
         res.status(upstream.status).send(buf);
     } catch (err) {
-        console.error('Supabase proxy error:', err);
-        res.status(502).json({ error: 'proxy_error', message: err.message });
+        console.error('Supabase proxy error:', err.message, 'URL:', targetUrl);
+        res.status(502).json({ error: 'proxy_error', message: err.message, url: targetUrl });
     }
 };
