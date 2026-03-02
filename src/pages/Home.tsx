@@ -8,15 +8,17 @@ import type { Database } from "@/types/supabase";
 
 type Product = Database["public"]["Tables"]["products"]["Row"];
 
+const fontH: React.CSSProperties = { fontFamily: "'Space Grotesk', sans-serif" };
+
 const categories = [
-  { icon: Laptop, label: "Electronics", count: "1.2K+", gradient: "from-neon-cyan to-neon-blue", image: "https://images.unsplash.com/photo-1498049794561-7780e7231661?q=80&w=600&auto=format&fit=crop" },
-  { icon: BookOpen, label: "Books", count: "3.4K+", gradient: "from-neon-orange to-neon-pink", image: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?q=80&w=600&auto=format&fit=crop" },
-  { icon: Shirt, label: "Fashion", count: "2.1K+", gradient: "from-neon-pink to-neon-blue", image: "https://images.unsplash.com/photo-1445205170230-053b83016050?q=80&w=600&auto=format&fit=crop" },
-  { icon: Bike, label: "Sports", count: "890+", gradient: "from-neon-cyan to-neon-orange", image: "https://images.unsplash.com/photo-1517649763962-0c623066013b?q=80&w=600&auto=format&fit=crop" },
-  { icon: Headphones, label: "Audio", count: "560+", gradient: "from-neon-blue to-neon-pink", image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=600&auto=format&fit=crop" },
-  { icon: Camera, label: "Camera", count: "320+", gradient: "from-neon-orange to-neon-cyan", image: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=600&auto=format&fit=crop" },
-  { icon: Sofa, label: "Furniture", count: "780+", gradient: "from-neon-pink to-neon-orange", image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?q=80&w=600&auto=format&fit=crop" },
-  { icon: Utensils, label: "Kitchen", count: "240+", gradient: "from-neon-cyan to-neon-blue", image: "https://images.unsplash.com/photo-1556910103-1c02745aae4d?q=80&w=600&auto=format&fit=crop" },
+  { icon: Laptop, label: "Electronics", count: "1.2K+", gradient: "from-cyan-400 to-blue-500", image: "https://images.unsplash.com/photo-1498049794561-7780e7231661?q=80&w=600&auto=format&fit=crop" },
+  { icon: BookOpen, label: "Books", count: "3.4K+", gradient: "from-orange-400 to-rose-500", image: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?q=80&w=600&auto=format&fit=crop" },
+  { icon: Shirt, label: "Fashion", count: "2.1K+", gradient: "from-pink-400 to-violet-500", image: "https://images.unsplash.com/photo-1445205170230-053b83016050?q=80&w=600&auto=format&fit=crop" },
+  { icon: Bike, label: "Sports", count: "890+", gradient: "from-teal-400 to-cyan-500", image: "https://images.unsplash.com/photo-1517649763962-0c623066013b?q=80&w=600&auto=format&fit=crop" },
+  { icon: Headphones, label: "Audio", count: "560+", gradient: "from-indigo-400 to-violet-500", image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=600&auto=format&fit=crop" },
+  { icon: Camera, label: "Camera", count: "320+", gradient: "from-amber-400 to-orange-500", image: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=600&auto=format&fit=crop" },
+  { icon: Sofa, label: "Furniture", count: "780+", gradient: "from-rose-400 to-pink-500", image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?q=80&w=600&auto=format&fit=crop" },
+  { icon: Utensils, label: "Kitchen", count: "240+", gradient: "from-emerald-400 to-teal-500", image: "https://images.unsplash.com/photo-1556910103-1c02745aae4d?q=80&w=600&auto=format&fit=crop" },
 ];
 
 const campusEssentials = [
@@ -38,41 +40,30 @@ export default function Home() {
   useEffect(() => {
     const calculateTimeLeft = () => {
       const targetDate = new Date();
-      targetDate.setMonth(2); // 0-indexed, 2 is March
+      targetDate.setMonth(2);
       targetDate.setDate(20);
       targetDate.setHours(0, 0, 0, 0);
-
       const now = new Date();
-      if (now > targetDate) {
-        targetDate.setFullYear(now.getFullYear() + 1);
-      }
-
+      if (now > targetDate) targetDate.setFullYear(now.getFullYear() + 1);
       const diff = targetDate.getTime() - now.getTime();
       if (diff <= 0) return { days: "00", hours: "00", minutes: "00", seconds: "00" };
-
-      const days = Math.floor(diff / (1000 * 60 * 60 * 24)).toString().padStart(2, "0");
-      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24).toString().padStart(2, "0");
-      const minutes = Math.floor((diff / 1000 / 60) % 60).toString().padStart(2, "0");
-      const seconds = Math.floor((diff / 1000) % 60).toString().padStart(2, "0");
-
-      return { days, hours, minutes, seconds };
+      return {
+        days: Math.floor(diff / (1000 * 60 * 60 * 24)).toString().padStart(2, "0"),
+        hours: Math.floor((diff / (1000 * 60 * 60)) % 24).toString().padStart(2, "0"),
+        minutes: Math.floor((diff / 1000 / 60) % 60).toString().padStart(2, "0"),
+        seconds: Math.floor((diff / 1000) % 60).toString().padStart(2, "0"),
+      };
     };
-
     setTimeLeft(calculateTimeLeft());
-    const timer = setInterval(() => {
-      setTimeLeft(calculateTimeLeft());
-    }, 1000);
-
+    const timer = setInterval(() => setTimeLeft(calculateTimeLeft()), 1000);
     return () => clearInterval(timer);
   }, []);
 
   useEffect(() => {
     async function fetchProducts() {
       const { data } = await supabase
-        .from("products")
-        .select(`*, profiles(full_name)`)
-        .eq("status", "available")
-        .order("created_at", { ascending: false });
+        .from("products").select(`*, profiles(full_name)`)
+        .eq("status", "available").order("created_at", { ascending: false });
       setProducts(data || []);
       setLoading(false);
     }
@@ -82,62 +73,61 @@ export default function Home() {
   const trendingMapped = products.filter((p) => p.is_trending).map((p) => ({
     id: p.id,
     image: p.image_url || 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400',
-    title: p.title,
-    price: p.price,
-    originalPrice: p.original_price || undefined,
-    condition: p.condition as any,
-    rating: 4.5,
-    seller: (p as any).profiles?.full_name || "Student",
-    badge: "🔥 Hot",
+    title: p.title, price: p.price, originalPrice: p.original_price || undefined,
+    condition: p.condition as any, rating: 4.5,
+    seller: (p as any).profiles?.full_name || "Student", badge: "🔥 Hot",
   }));
 
   const freshMapped = products.filter((p) => !p.is_trending).map((p) => ({
     id: p.id,
     image: p.image_url || 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400',
-    title: p.title,
-    price: p.price,
-    originalPrice: p.original_price || undefined,
-    condition: p.condition as any,
-    rating: 4.5,
+    title: p.title, price: p.price, originalPrice: p.original_price || undefined,
+    condition: p.condition as any, rating: 4.5,
     seller: (p as any).profiles?.full_name || "Student",
   }));
 
   return (
-    <div className="min-h-screen bg-background pt-20 pb-16">
-      <div className="max-w-[1600px] mx-auto px-6 lg:px-10">
-        {/* Header */}
+    <div className="min-h-screen bg-background pt-20 pb-20">
+      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-10">
+
+        {/* ─── Header ─── */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="py-10"
+          className="pt-5 pb-6 sm:py-10"
         >
-          <p className="text-muted-foreground text-sm font-mono mb-2 tracking-wide font-medium">NICE TO MEET YOU STUDENTS👋</p>
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight">
-            What are you <span className="text-neon-fire">looking for</span>?
+          <p className="text-xs sm:text-sm mb-1 sm:mb-2 font-medium tracking-wide" style={{ color: '#8F8175' }}>
+            Hey there, Student 👋
+          </p>
+          <h1 className="text-2xl sm:text-4xl lg:text-5xl font-bold tracking-tight" style={fontH}>
+            What are you{" "}
+            <span style={{ color: '#FF6B6B' }}>looking for</span>?
           </h1>
         </motion.div>
 
-        {/* === TRENDING SECTION === */}
-        <section className="mb-12">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-2">
-              <Flame className="w-5 h-5 text-neon-orange" />
-              <h2 className="text-xl font-bold">Trending Right Now</h2>
-              <span className="px-2 py-0.5 rounded-full text-xs bg-gradient-fire text-white font-bold">LIVE</span>
+        {/* ─── TRENDING ─── */}
+        <section className="mb-8 sm:mb-12">
+          <div className="flex items-center justify-between mb-4 sm:mb-6">
+            <div className="flex items-center gap-2 min-w-0">
+              <Flame className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" style={{ color: '#FF6B6B' }} />
+              <h2 className="text-base sm:text-xl font-bold truncate" style={fontH}>Trending</h2>
+              <span className="px-1.5 py-0.5 rounded text-[10px] sm:text-xs font-bold text-white flex-shrink-0" style={{ background: '#FF6B6B' }}>LIVE</span>
             </div>
-            <Link to="/browse" className="flex items-center gap-1 text-sm text-neon-cyan hover:text-foreground transition-colors">
-              See all <ChevronRight className="w-4 h-4" />
+            <Link to="/browse" className="flex items-center gap-0.5 text-xs sm:text-sm flex-shrink-0" style={{ color: '#4DB8AC' }}>
+              See all <ChevronRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </Link>
           </div>
 
-          <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-4">
+          <div className="flex gap-3 sm:gap-4 overflow-x-auto scrollbar-hide pb-4 -mx-1 px-1">
             {loading ? (
               <div className="flex justify-center w-full py-8">
-                <Loader2 className="w-8 h-8 animate-spin text-neon-cyan" />
+                <Loader2 className="w-6 h-6 animate-spin" style={{ color: '#4DB8AC' }} />
               </div>
             ) : trendingMapped.length === 0 ? (
-              <p className="text-muted-foreground w-full py-4">No trending products yet.</p>
+              <div className="w-full py-6 text-center">
+                <p className="text-sm" style={{ color: '#8F8175' }}>No trending products yet.</p>
+              </div>
             ) : (
               trendingMapped.map((product, i) => (
                 <ProductCard key={product.id} {...product} delay={i * 0.08} />
@@ -146,95 +136,93 @@ export default function Home() {
           </div>
         </section>
 
-        {/* === SUMMER SALE BANNER === */}
+        {/* ─── SUMMER SALE BANNER ─── */}
         <motion.section
           initial={{ opacity: 0, scale: 0.97 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="mb-12"
+          className="mb-8 sm:mb-12"
         >
-          <div className="relative rounded-3xl overflow-hidden p-8 sm:p-12">
-            {/* Gradient BG */}
-            <div className="absolute inset-0 bg-gradient-to-r from-neon-orange via-neon-pink to-neon-blue animate-aurora opacity-90" />
-            <div className="absolute inset-0 bg-grid opacity-20" />
+          <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden p-5 sm:p-8 lg:p-12" style={{ backgroundColor: '#2A2420', border: '1px solid #3D342C' }}>
+            {/* Subtle warm accent glow */}
+            <div className="absolute -top-16 -right-16 w-40 h-40 sm:w-60 sm:h-60 rounded-full blur-3xl pointer-events-none" style={{ background: 'rgba(255,107,107,0.1)' }} />
+            <div className="absolute -bottom-16 -left-16 w-40 h-40 sm:w-60 sm:h-60 rounded-full blur-3xl pointer-events-none" style={{ background: 'rgba(77,184,172,0.06)' }} />
 
-            {/* Glow */}
-            <div className="absolute -top-20 -right-20 w-60 h-60 rounded-full bg-white/20 blur-3xl" />
-            <div className="absolute -bottom-20 -left-20 w-60 h-60 rounded-full bg-white/10 blur-3xl" />
-
-            <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
-              <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <Sun className="w-5 h-5 text-white" />
-                  <span className="text-white/80 font-mono text-sm uppercase tracking-widest">Summer Sale</span>
-                </div>
-                <h2 className="text-3xl sm:text-5xl font-bold text-white mb-2">
-                  Summer Sale starts from 20 March
-                </h2>
-                <p className="text-white/80 text-sm sm:text-base">
-                  UP TO 70% OFF · Exclusive deals for CU Students
-                </p>
+            <div className="relative z-10">
+              <div className="flex items-center gap-2 mb-2">
+                <Sun className="w-4 h-4" style={{ color: '#F0C040' }} />
+                <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-widest" style={{ color: '#8F8175' }}>Summer Sale</span>
               </div>
-              <div className="flex flex-col items-start sm:items-end gap-3">
-                <div className="flex gap-2">
+              <h2 className="text-xl sm:text-3xl lg:text-4xl font-bold mb-2 leading-tight" style={{ ...fontH, color: '#E8DED4' }}>
+                March 20 — <span style={{ color: '#FF6B6B' }}>Up to 70% off</span>
+              </h2>
+              <p className="text-xs sm:text-sm mb-5" style={{ color: '#8F8175' }}>
+                Exclusive deals for CU Students
+              </p>
+
+              <div className="flex flex-wrap items-center gap-3 sm:gap-4">
+                <div className="flex gap-1.5 sm:gap-2">
                   {[
-                    { value: timeLeft.days, label: "DAYS" },
-                    { value: timeLeft.hours, label: "HRS" },
-                    { value: timeLeft.minutes, label: "MIN" },
-                    { value: timeLeft.seconds, label: "SEC" }
+                    { value: timeLeft.days, label: "D" },
+                    { value: timeLeft.hours, label: "H" },
+                    { value: timeLeft.minutes, label: "M" },
+                    { value: timeLeft.seconds, label: "S" }
                   ].map((t, i) => (
-                    <div key={i} className="glass-heavy rounded-xl px-3 py-2 text-center min-w-[52px]">
-                      <div className="text-xl font-bold text-white font-mono">{t.value}</div>
-                      <div className="text-xs text-white/60">{t.label}</div>
+                    <div key={i} className="rounded-lg px-2 py-1.5 sm:px-3 sm:py-2 text-center min-w-[40px] sm:min-w-[48px]" style={{ backgroundColor: 'rgba(255,255,255,0.05)', border: '1px solid #3D342C' }}>
+                      <div className="text-base sm:text-lg font-bold font-mono" style={{ color: '#E8DED4' }}>{t.value}</div>
+                      <div className="text-[9px] sm:text-[10px] font-medium" style={{ color: '#8F8175' }}>{t.label}</div>
                     </div>
                   ))}
                 </div>
                 <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="btn-liquid-glass px-8 py-4 font-bold text-white text-sm shadow-xl"
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
+                  className="px-5 py-2.5 sm:px-6 sm:py-3 rounded-xl font-bold text-white text-xs sm:text-sm transition-shadow"
+                  style={{ background: '#FF6B6B', boxShadow: '0 4px 16px rgba(255,107,107,0.2)' }}
                 >
-                  Shop the Sale →
+                  Shop Sale →
                 </motion.button>
               </div>
             </div>
           </div>
         </motion.section>
 
-        {/* === CAMPUS ESSENTIALS === */}
-        <section className="mb-16">
-          <div className="flex items-center justify-between mb-8">
-            <div className="flex items-center gap-3">
-              <ShoppingBag className="w-6 h-6 text-emerald-400" />
-              <h2 className="text-2xl font-black tracking-tight">🎒 Campus Essentials</h2>
+        {/* ─── CAMPUS ESSENTIALS ─── */}
+        <section className="mb-10 sm:mb-16">
+          <div className="flex items-center justify-between mb-4 sm:mb-8">
+            <div className="flex items-center gap-2 min-w-0">
+              <ShoppingBag className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" style={{ color: '#4DB8AC' }} />
+              <h2 className="text-base sm:text-xl font-bold truncate" style={fontH}>Campus Essentials</h2>
             </div>
-            <span className="px-3 py-1 rounded-full text-xs bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-bold">Always Available</span>
+            <span className="px-2 py-0.5 sm:px-3 sm:py-1 rounded-full text-[10px] sm:text-xs font-semibold flex-shrink-0" style={{ backgroundColor: 'rgba(77,184,172,0.1)', color: '#4DB8AC', border: '1px solid rgba(77,184,172,0.2)' }}>
+              Always Available
+            </span>
           </div>
 
-          <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-4 px-1 -mx-1 snap-x snap-mandatory lg:grid lg:grid-cols-4 lg:overflow-visible lg:snap-none">
-            {campusEssentials.map((item, i) => (
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+            {campusEssentials.slice(0, 8).map((item, i) => (
               <motion.div
                 key={item.id}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.06 }}
-                className="group flex-shrink-0 w-[160px] sm:w-[200px] lg:w-full snap-start glass rounded-2xl overflow-hidden border border-white/5 hover:border-emerald-500/30 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(16,185,129,0.15)]"
+                transition={{ delay: i * 0.04 }}
+                className="group rounded-xl sm:rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1"
+                style={{ backgroundColor: '#2A2420', border: '1px solid #3D342C', boxShadow: '0 2px 12px rgba(0,0,0,0.2)' }}
               >
-                <div className="relative h-32 sm:h-36 overflow-hidden bg-gradient-to-br from-white/5 to-white/[0.02] flex items-center justify-center p-4">
-                  <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent z-10 opacity-50" />
-                  <img
-                    src={item.image}
-                    alt={item.title}
-                    loading="lazy"
-                    className="w-[85%] h-[85%] object-cover rounded-xl group-hover:scale-110 transition-transform duration-500 z-0"
+                <div className="relative h-24 sm:h-32 overflow-hidden" style={{ backgroundColor: 'rgba(255,255,255,0.02)' }}>
+                  <img src={item.image} alt={item.title} loading="lazy"
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    onError={(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400'; }}
                   />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#2A2420] to-transparent opacity-60" />
                 </div>
-                <div className="p-3 sm:p-4">
-                  <p className="text-xs sm:text-sm font-bold text-foreground line-clamp-1 mb-1">{item.title}</p>
-                  <p className={`text-lg font-black text-transparent bg-clip-text bg-gradient-to-r ${item.gradient}`}>₹{item.price}</p>
-                  <button className={`mt-2 w-full py-2 rounded-xl bg-gradient-to-r ${item.gradient} text-white text-xs font-bold opacity-90 hover:opacity-100 hover:shadow-lg transition-all duration-300`}>
+                <div className="p-2.5 sm:p-3">
+                  <p className="text-[11px] sm:text-xs font-semibold line-clamp-1 mb-1" style={{ color: '#E8DED4' }}>{item.title}</p>
+                  <p className="text-sm sm:text-base font-bold" style={{ color: '#FF6B6B' }}>₹{item.price}</p>
+                  <button className="mt-1.5 sm:mt-2 w-full py-1.5 sm:py-2 rounded-lg text-white text-[10px] sm:text-xs font-semibold transition-opacity hover:opacity-90"
+                    style={{ background: '#FF6B6B' }}>
                     Buy Now
                   </button>
                 </div>
@@ -243,84 +231,80 @@ export default function Home() {
           </div>
         </section>
 
-        {/* === BROWSE CATEGORIES === */}
-        <section className="mb-16">
-          <div className="flex items-center justify-between mb-8">
-            <div className="flex items-center gap-3">
-              <Grid3X3 className="w-6 h-6 text-neon-cyan" />
-              <h2 className="text-2xl font-black tracking-tight">Browse Categories</h2>
+        {/* ─── BROWSE CATEGORIES ─── */}
+        <section className="mb-10 sm:mb-16">
+          <div className="flex items-center justify-between mb-4 sm:mb-8">
+            <div className="flex items-center gap-2">
+              <Grid3X3 className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: '#4DB8AC' }} />
+              <h2 className="text-base sm:text-xl font-bold" style={fontH}>Browse Categories</h2>
             </div>
-            <Link to="/browse" className="premium-glass-button group px-4 py-2 flex items-center gap-2 text-sm text-white">
-              <span className="group-hover:text-neon-cyan transition-colors">See All</span>
-              <ChevronRight className="w-4 h-4 group-hover:translate-x-1 group-hover:text-neon-cyan transition-all" />
+            <Link to="/browse" className="flex items-center gap-1 text-xs sm:text-sm" style={{ color: '#4DB8AC' }}>
+              See All <ChevronRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </Link>
           </div>
 
-          <div className="flex gap-5 overflow-x-auto scrollbar-hide pb-8 pt-2 px-2 -mx-2">
-            {categories.map((cat, i) => (
+          <div className="flex gap-3 sm:gap-5 overflow-x-auto scrollbar-hide pb-4 -mx-1 px-1">
+            {categories.map((cat) => (
               <Link
                 key={cat.label}
                 to={`/browse?category=${cat.label}`}
-                className="group relative flex-shrink-0 w-48 h-56 rounded-3xl overflow-hidden glass-heavy border border-white/10 hover:border-white/30 transition-all duration-500 ease-out hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(0,0,0,0.8)]"
+                className="group relative flex-shrink-0 w-32 h-40 sm:w-48 sm:h-56 rounded-2xl sm:rounded-3xl overflow-hidden transition-all duration-500 ease-out hover:-translate-y-2"
+                style={{ border: '1px solid #3D342C' }}
               >
-                {/* Photographic Background Image */}
+                {/* Photo bg */}
                 <div className="absolute inset-0 z-0">
                   <img src={cat.image} alt={cat.label} className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700 ease-out" />
                   <div className="absolute inset-0 bg-black/60 group-hover:bg-black/40 transition-colors duration-500" />
                 </div>
-
-                {/* Dynamic Gradient Overlay that intensifies on hover */}
-                <div className={`absolute inset-0 bg-gradient-to-t ${cat.gradient} opacity-40 mix-blend-overlay group-hover:opacity-70 transition-opacity duration-500 z-0`} />
+                {/* Gradient overlay */}
+                <div className={`absolute inset-0 bg-gradient-to-t ${cat.gradient} opacity-30 mix-blend-overlay z-0`} />
                 <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/90 to-transparent z-0" />
 
-                {/* Giant semi-transparent background icon */}
-                <cat.icon className="absolute -bottom-6 -right-6 w-32 h-32 text-white/10 transform group-hover:scale-110 group-hover:-rotate-12 transition-transform duration-700 ease-out pointer-events-none z-0" />
-
-                <div className="relative h-full flex flex-col items-center justify-center p-6 text-center z-10 pt-10">
-                  <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${cat.gradient} p-0.5 mb-auto transform group-hover:scale-110 group-hover:rotate-6 transition-transform duration-500 shadow-lg group-hover:shadow-[0_0_20px_rgba(255,255,255,0.4)]`}>
-                    <div className="w-full h-full bg-black/60 backdrop-blur-md rounded-[14px] flex items-center justify-center">
-                      <cat.icon className="w-7 h-7 text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]" />
+                <div className="relative h-full flex flex-col items-center justify-end p-3 sm:p-5 text-center z-10">
+                  <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-br ${cat.gradient} p-0.5 mb-2 sm:mb-3 transform group-hover:scale-110 transition-transform duration-500 shadow-lg`}>
+                    <div className="w-full h-full bg-black/50 backdrop-blur-sm rounded-[10px] sm:rounded-[14px] flex items-center justify-center">
+                      <cat.icon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                     </div>
                   </div>
-                  <div className="mt-auto pt-4">
-                    <h3 className="font-black text-xl text-white tracking-wide mb-1 drop-shadow-md">{cat.label}</h3>
-                    <div className="inline-flex items-center justify-center px-3 py-1 rounded-full bg-black/40 backdrop-blur-md border border-white/20 text-xs font-mono text-white/90 group-hover:bg-white/20 transition-colors shadow-sm">
-                      {cat.count} listings
-                    </div>
-                  </div>
+                  <h3 className="font-bold text-sm sm:text-lg text-white tracking-wide mb-0.5 sm:mb-1">{cat.label}</h3>
+                  <span className="text-[10px] sm:text-xs px-2 py-0.5 rounded-full text-white/70 font-medium" style={{ backgroundColor: 'rgba(0,0,0,0.4)' }}>
+                    {cat.count}
+                  </span>
                 </div>
               </Link>
             ))}
           </div>
         </section>
 
-        {/* === SECOND ROW – More Products === */}
-        <section>
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold">📦 Fresh Listings</h2>
-            <Link to="/browse" className="flex items-center gap-1 text-sm text-neon-cyan">See all <ChevronRight className="w-4 h-4" /></Link>
+        {/* ─── FRESH LISTINGS ─── */}
+        <section className="mb-10">
+          <div className="flex items-center justify-between mb-4 sm:mb-6">
+            <h2 className="text-base sm:text-xl font-bold" style={fontH}>📦 Fresh Listings</h2>
+            <Link to="/browse" className="flex items-center gap-0.5 text-xs sm:text-sm" style={{ color: '#4DB8AC' }}>See all <ChevronRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" /></Link>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
             {loading ? (
               <div className="col-span-full flex justify-center py-8">
-                <Loader2 className="w-8 h-8 animate-spin text-neon-cyan" />
+                <Loader2 className="w-6 h-6 animate-spin" style={{ color: '#4DB8AC' }} />
               </div>
             ) : freshMapped.length === 0 ? (
-              <div className="col-span-full text-muted-foreground py-4">No fresh listings.</div>
+              <div className="col-span-full text-center py-6">
+                <p className="text-sm" style={{ color: '#8F8175' }}>No fresh listings yet.</p>
+              </div>
             ) : (
-              freshMapped.map((product, i) => (
-                <Link
-                  to={`/product/${product.id}`}
-                  key={`fresh-${product.id}`}
-                  className="glass rounded-2xl overflow-hidden cursor-pointer group block"
-                >
-                  <div className="relative h-36 overflow-hidden">
-                    <img src={product.image} alt={product.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" onError={(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400'; }} />
-                    <div className="absolute inset-0 bg-gradient-to-t from-card/80 to-transparent" />
+              freshMapped.map((product) => (
+                <Link to={`/product/${product.id}`} key={`fresh-${product.id}`}
+                  className="rounded-xl sm:rounded-2xl overflow-hidden group block transition-all hover:-translate-y-1"
+                  style={{ backgroundColor: '#2A2420', border: '1px solid #3D342C' }}>
+                  <div className="relative h-28 sm:h-36 overflow-hidden">
+                    <img src={product.image} alt={product.title}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      onError={(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400'; }} />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#2A2420]/80 to-transparent" />
                   </div>
-                  <div className="p-3">
-                    <p className="text-xs font-semibold text-foreground line-clamp-1 mb-1">{product.title}</p>
-                    <p className="text-neon-fire font-bold text-sm">₹{product.price.toLocaleString()}</p>
+                  <div className="p-2.5 sm:p-3">
+                    <p className="text-[11px] sm:text-xs font-semibold line-clamp-1 mb-1" style={{ color: '#E8DED4' }}>{product.title}</p>
+                    <p className="text-sm font-bold" style={{ color: '#FF6B6B' }}>₹{product.price.toLocaleString()}</p>
                   </div>
                 </Link>
               ))
