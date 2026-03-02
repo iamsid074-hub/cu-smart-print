@@ -136,56 +136,131 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ─── SUMMER SALE BANNER ─── */}
+        {/* ─── 🔥 SUMMER SALE BANNER ─── */}
         <motion.section
-          initial={{ opacity: 0, scale: 0.97 }}
-          whileInView={{ opacity: 1, scale: 1 }}
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
           className="mb-8 sm:mb-12"
         >
-          <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden p-5 sm:p-8 lg:p-12" style={{ backgroundColor: '#2A2420', border: '1px solid #3D342C' }}>
-            {/* Subtle warm accent glow */}
-            <div className="absolute -top-16 -right-16 w-40 h-40 sm:w-60 sm:h-60 rounded-full blur-3xl pointer-events-none" style={{ background: 'rgba(255,107,107,0.1)' }} />
-            <div className="absolute -bottom-16 -left-16 w-40 h-40 sm:w-60 sm:h-60 rounded-full blur-3xl pointer-events-none" style={{ background: 'rgba(77,184,172,0.06)' }} />
+          {/* Animated border wrapper */}
+          <div className="relative rounded-2xl sm:rounded-3xl p-[2px] overflow-hidden" style={{
+            background: 'linear-gradient(135deg, #FF6B6B, #F0C040, #FF6B6B, #4DB8AC, #FF6B6B)',
+            backgroundSize: '300% 300%',
+            animation: 'sale-border-shift 4s ease infinite',
+          }}>
+            <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden" style={{ backgroundColor: '#1E1815' }}>
 
-            <div className="relative z-10">
-              <div className="flex items-center gap-2 mb-2">
-                <Sun className="w-4 h-4" style={{ color: '#F0C040' }} />
-                <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-widest" style={{ color: '#8F8175' }}>Summer Sale</span>
-              </div>
-              <h2 className="text-xl sm:text-3xl lg:text-4xl font-bold mb-2 leading-tight" style={{ ...fontH, color: '#E8DED4' }}>
-                March 20 — <span style={{ color: '#FF6B6B' }}>Up to 70% off</span>
-              </h2>
-              <p className="text-xs sm:text-sm mb-5" style={{ color: '#8F8175' }}>
-                Exclusive deals for CU Students
-              </p>
+              {/* Glowing orbs */}
+              <div className="absolute top-0 right-0 w-64 h-64 sm:w-96 sm:h-96 rounded-full blur-[100px] pointer-events-none" style={{ background: 'rgba(255,107,107,0.15)' }} />
+              <div className="absolute bottom-0 left-0 w-48 h-48 sm:w-72 sm:h-72 rounded-full blur-[80px] pointer-events-none" style={{ background: 'rgba(240,192,64,0.08)' }} />
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 rounded-full blur-[60px] pointer-events-none" style={{ background: 'rgba(77,184,172,0.06)' }} />
 
-              <div className="flex flex-wrap items-center gap-3 sm:gap-4">
-                <div className="flex gap-1.5 sm:gap-2">
-                  {[
-                    { value: timeLeft.days, label: "D" },
-                    { value: timeLeft.hours, label: "H" },
-                    { value: timeLeft.minutes, label: "M" },
-                    { value: timeLeft.seconds, label: "S" }
-                  ].map((t, i) => (
-                    <div key={i} className="rounded-lg px-2 py-1.5 sm:px-3 sm:py-2 text-center min-w-[40px] sm:min-w-[48px]" style={{ backgroundColor: 'rgba(255,255,255,0.05)', border: '1px solid #3D342C' }}>
-                      <div className="text-base sm:text-lg font-bold font-mono" style={{ color: '#E8DED4' }}>{t.value}</div>
-                      <div className="text-[9px] sm:text-[10px] font-medium" style={{ color: '#8F8175' }}>{t.label}</div>
+              {/* Sparkle particles */}
+              <div className="absolute top-4 right-8 text-xl sm:text-2xl animate-pulse pointer-events-none" style={{ animationDuration: '2s' }}>✨</div>
+              <div className="absolute bottom-6 right-16 sm:right-24 text-lg animate-pulse pointer-events-none" style={{ animationDuration: '3s', animationDelay: '0.5s' }}>🌟</div>
+              <div className="absolute top-8 left-[40%] text-sm animate-pulse pointer-events-none" style={{ animationDuration: '2.5s', animationDelay: '1s' }}>⭐</div>
+
+              <div className="relative z-10 p-5 sm:p-8 lg:p-10">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
+
+                  {/* Left — Main content */}
+                  <div className="flex-1">
+                    {/*  Badge */}
+                    <motion.div
+                      initial={{ opacity: 0, x: -10 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      className="inline-flex items-center gap-2 px-3 py-1 rounded-full mb-4"
+                      style={{ background: 'rgba(255,107,107,0.12)', border: '1px solid rgba(255,107,107,0.2)' }}
+                    >
+                      <span className="relative flex h-2 w-2">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ backgroundColor: '#FF6B6B' }}></span>
+                        <span className="relative inline-flex rounded-full h-2 w-2" style={{ backgroundColor: '#FF6B6B' }}></span>
+                      </span>
+                      <span className="text-[10px] sm:text-xs font-bold uppercase tracking-widest" style={{ color: '#FF6B6B' }}>Summer Sale · Limited Time</span>
+                    </motion.div>
+
+                    <h2 className="text-2xl sm:text-4xl lg:text-5xl font-bold leading-[1.1] mb-2" style={fontH}>
+                      <span style={{ color: '#E8DED4' }}>Something </span>
+                      <span className="relative" style={{ color: '#FF6B6B' }}>
+                        massive
+                        <svg className="absolute -bottom-1 left-0 w-full" viewBox="0 0 120 8" fill="none"><path d="M2 5C30 2 90 2 118 5" stroke="#FF6B6B" strokeWidth="2.5" strokeLinecap="round" opacity="0.5" /></svg>
+                      </span>
+                      <span style={{ color: '#E8DED4' }}> is coming</span>
+                    </h2>
+
+                    <p className="text-sm sm:text-base mb-1 max-w-md" style={{ color: 'rgba(232,222,212,0.5)' }}>
+                      March 20 · Up to <strong style={{ color: '#F0C040' }}>70% off</strong> on everything
+                    </p>
+                    <p className="text-xs sm:text-sm mb-5" style={{ color: 'rgba(232,222,212,0.25)' }}>
+                      Exclusive for CU Students · First come, first served 🎯
+                    </p>
+
+                    {/* Countdown */}
+                    <div className="flex flex-wrap items-center gap-3 sm:gap-4">
+                      <div className="flex items-center gap-1 sm:gap-1.5">
+                        {[
+                          { value: timeLeft.days, label: "Days" },
+                          { value: timeLeft.hours, label: "Hrs" },
+                          { value: timeLeft.minutes, label: "Min" },
+                          { value: timeLeft.seconds, label: "Sec" }
+                        ].map((t, i) => (
+                          <div key={i} className="flex items-center gap-1 sm:gap-1.5">
+                            <div className="rounded-xl px-2.5 py-2 sm:px-3.5 sm:py-2.5 text-center min-w-[44px] sm:min-w-[56px]" style={{ backgroundColor: 'rgba(255,107,107,0.08)', border: '1px solid rgba(255,107,107,0.15)' }}>
+                              <div className="text-lg sm:text-2xl font-bold font-mono" style={{ color: '#E8DED4' }}>{t.value}</div>
+                              <div className="text-[8px] sm:text-[10px] font-semibold uppercase tracking-wider" style={{ color: '#8F8175' }}>{t.label}</div>
+                            </div>
+                            {i < 3 && <span className="text-lg font-bold" style={{ color: 'rgba(255,107,107,0.3)' }}>:</span>}
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                  ))}
+                  </div>
+
+                  {/* Right — Big discount + CTA */}
+                  <div className="flex flex-row sm:flex-col items-center sm:items-end gap-4">
+                    {/* Giant percentage */}
+                    <div className="relative">
+                      <motion.div
+                        animate={{ scale: [1, 1.03, 1] }}
+                        transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
+                        className="text-5xl sm:text-7xl lg:text-8xl font-black select-none"
+                        style={{ ...fontH, color: 'rgba(255,107,107,0.12)', lineHeight: 1 }}
+                      >
+                        70<span className="text-3xl sm:text-5xl">%</span>
+                      </motion.div>
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <span className="text-lg sm:text-2xl font-bold" style={{ color: '#FF6B6B' }}>UP TO</span>
+                      </div>
+                    </div>
+
+                    <motion.button
+                      whileHover={{ y: -2, scale: 1.04 }}
+                      whileTap={{ scale: 0.96 }}
+                      className="group relative px-6 py-3 sm:px-8 sm:py-3.5 rounded-xl font-bold text-white text-xs sm:text-sm overflow-hidden transition-shadow"
+                      style={{ background: '#FF6B6B', boxShadow: '0 4px 20px rgba(255,107,107,0.3)' }}
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
+                      <span className="relative flex items-center gap-2" style={fontH}>
+                        Remind Me 🔔
+                      </span>
+                    </motion.button>
+                  </div>
                 </div>
-                <motion.button
-                  whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.97 }}
-                  className="px-5 py-2.5 sm:px-6 sm:py-3 rounded-xl font-bold text-white text-xs sm:text-sm transition-shadow"
-                  style={{ background: '#FF6B6B', boxShadow: '0 4px 16px rgba(255,107,107,0.2)' }}
-                >
-                  Shop Sale →
-                </motion.button>
               </div>
             </div>
           </div>
+
+          {/* Keyframe for animated border */}
+          <style>{`
+            @keyframes sale-border-shift {
+              0% { background-position: 0% 50%; }
+              50% { background-position: 100% 50%; }
+              100% { background-position: 0% 50%; }
+            }
+          `}</style>
         </motion.section>
 
         {/* ─── CAMPUS ESSENTIALS ─── */}
