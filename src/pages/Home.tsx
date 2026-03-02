@@ -197,10 +197,6 @@ export default function Home() {
               <div className="absolute bottom-0 left-0 w-48 h-48 sm:w-72 sm:h-72 rounded-full blur-[80px] pointer-events-none" style={{ background: 'rgba(240,192,64,0.08)' }} />
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 rounded-full blur-[60px] pointer-events-none" style={{ background: 'rgba(77,184,172,0.06)' }} />
 
-              {/* Sparkle particles */}
-              <div className="absolute top-4 right-8 text-xl sm:text-2xl animate-pulse pointer-events-none" style={{ animationDuration: '2s' }}>✨</div>
-              <div className="absolute bottom-6 right-16 sm:right-24 text-lg animate-pulse pointer-events-none" style={{ animationDuration: '3s', animationDelay: '0.5s' }}>🌟</div>
-              <div className="absolute top-8 left-[40%] text-sm animate-pulse pointer-events-none" style={{ animationDuration: '2.5s', animationDelay: '1s' }}>⭐</div>
 
               <div className="relative z-10 p-5 sm:p-8 lg:p-10">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
