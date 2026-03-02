@@ -6,13 +6,13 @@ import {
     Trash2, CheckCircle, Truck, Home as HomeIcon, Clock, TrendingUp,
     AlertTriangle, ChevronRight, Loader2, Eye, RefreshCw, Shield,
     LogOut, Star, MapPin, Phone, User, Calendar, DollarSign,
-    Activity, Box, ShoppingBag, Copy, AlertCircle
+    Activity, Box, ShoppingBag, Copy, AlertCircle, UtensilsCrossed, Filter
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
-type AdminSection = "dashboard" | "products" | "orders" | "notifications";
+type AdminSection = "dashboard" | "products" | "item_orders" | "food_orders" | "notifications";
 
 interface Product {
     id: string;
@@ -309,170 +309,289 @@ function ProductsSection({ products, loading, onDelete }: {
     );
 }
 
-// ─── Orders Section ────────────────────────────────────────────────────────────
-function OrdersSection({ orders, loading, onUpdateStatus }: {
+// ─── Helper: detect food order ─────────────────────────────────────────────────
+function isFoodOrder(order: Order): boolean {
+    return (order.delivery_location?.includes('[Custom Food:') || order.delivery_location?.includes('[CE:') || order.delivery_room?.includes('[CUSTOM FOOD ORDER]')) && !order.products;
+}
+
+// ─── Filter Bar Component ──────────────────────────────────────────────────────
+function FilterBar({ active, onChange }: { active: string; onChange: (f: string) => void }) {
+    const filters = [
+        { id: 'all', label: 'All' },
+        { id: 'today', label: 'Today' },
+        { id: 'pending', label: 'Pending' },
+        { id: 'delivered', label: 'Delivered' },
+        { id: 'cancelled', label: 'Cancelled' },
+    ];
+    return (
+        <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+            {filters.map(f => (
+                <button
+                    key={f.id}
+                    onClick={() => onChange(f.id)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex-shrink-0 ${active === f.id ? 'bg-neon-orange/20 text-neon-orange border border-neon-orange/30' : 'bg-white/5 text-muted-foreground hover:bg-white/10 border border-white/5'}`}
+                >
+                    {f.label}
+                </button>
+            ))}
+        </div>
+    );
+}
+
+function applyFilter(orders: Order[], filter: string): Order[] {
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    switch (filter) {
+        case 'today': return orders.filter(o => new Date(o.created_at) >= today);
+        case 'pending': return orders.filter(o => ['pending', 'seller_accepted', 'confirmed', 'picked', 'delivering'].includes(o.status));
+        case 'delivered': return orders.filter(o => o.status === 'completed');
+        case 'cancelled': return orders.filter(o => ['cancelled', 'seller_rejected'].includes(o.status));
+        default: return orders;
+    }
+}
+
+// ─── Item Orders Section ────────────────────────────────────────────────────────
+function ItemOrdersSection({ orders, loading, onUpdateStatus }: {
     orders: Order[]; loading: boolean; onUpdateStatus: (id: string, status: string, timestamps?: Record<string, string>) => void;
 }) {
+    const [filter, setFilter] = useState('all');
+    const itemOrders = orders.filter(o => !isFoodOrder(o));
+    const filtered = applyFilter(itemOrders, filter);
+
     const nextStatus: Record<string, { label: string; status: string; icon: any; color: string; timestamps?: object } | null> = {
-        pending: { label: "Forward to Admin", status: "confirmed", icon: ChevronRight, color: "bg-blue-500/20 border-blue-500/40 text-blue-400 hover:bg-blue-500/30", timestamps: { accepted_at: new Date().toISOString() } },
+        pending: { label: "Accept Order", status: "confirmed", icon: CheckCircle, color: "bg-blue-500/20 border-blue-500/40 text-blue-400 hover:bg-blue-500/30", timestamps: { accepted_at: new Date().toISOString() } },
         seller_accepted: { label: "Accept & Pickup", status: "confirmed", icon: CheckCircle, color: "bg-cyan-500/20 border-cyan-500/40 text-cyan-400 hover:bg-cyan-500/30", timestamps: { accepted_at: new Date().toISOString() } },
         confirmed: { label: "Picked from Seller ✓", status: "picked", icon: Package, color: "bg-purple-500/20 border-purple-500/40 text-purple-400 hover:bg-purple-500/30", timestamps: { picked_at: new Date().toISOString() } },
         picked: { label: "Out for Delivery 🚀", status: "delivering", icon: Truck, color: "bg-orange-500/20 border-orange-500/40 text-orange-400 hover:bg-orange-500/30", timestamps: { out_for_delivery_at: new Date().toISOString() } },
         delivering: { label: "Mark Delivered ✅", status: "completed", icon: HomeIcon, color: "bg-green-500/20 border-green-500/40 text-green-400 hover:bg-green-500/30", timestamps: { delivered_at: new Date().toISOString() } },
-        completed: null,
-        cancelled: null,
+        completed: null, cancelled: null,
         seller_rejected: { label: "Override & Accept", status: "confirmed", icon: CheckCircle, color: "bg-cyan-500/20 border-cyan-500/40 text-cyan-400 hover:bg-cyan-500/30", timestamps: { accepted_at: new Date().toISOString() } },
     };
 
-    const activeOrders = orders.filter(o => ["pending", "seller_accepted", "confirmed", "picked", "delivering"].includes(o.status));
-    const closedOrders = orders.filter(o => ["completed", "cancelled", "seller_rejected"].includes(o.status));
-
-    const renderOrder = (order: Order) => {
-        const action = nextStatus[order.status];
-        const sellerMissing = !order.seller?.phone_number || !order.seller?.hostel_block;
-        const copyPhone = (phone: string) => { navigator.clipboard.writeText(phone); };
-        return (
-            <motion.div
-                key={order.id}
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="glass-heavy rounded-2xl border border-white/10 overflow-hidden hover:border-white/20 transition-all"
-            >
-                {/* Order Header */}
-                <div className="p-4 border-b border-white/5 flex items-center gap-3 bg-white/2">
-                    <div className="flex-1 min-w-0">
-                        <p className="text-xs text-muted-foreground font-mono">ORDER #{order.id.slice(0, 8).toUpperCase()}</p>
-                        <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1">
-                            <Clock className="w-3 h-3" />
-                            {new Date(order.created_at).toLocaleString("en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
-                        </p>
-                    </div>
-                    <StatusBadge status={order.status} />
-                </div>
-
-                <div className="p-4 space-y-4">
-                    {/* ── Product Details ────────────────────── */}
-                    <div className="flex gap-4">
-                        <div className="w-20 h-20 rounded-xl overflow-hidden bg-white/5 flex-shrink-0 border border-white/10">
-                            <img src={order.products?.image_url || "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=120"} alt="" className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=120"; }} />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                            <p className="font-bold text-sm text-white truncate">{order.products?.title || "Product Removed"}</p>
-                            <p className="text-neon-fire font-bold text-lg">₹{order.total_price.toLocaleString()}</p>
-                            {order.products?.category && (
-                                <span className="inline-block px-2 py-0.5 rounded-lg bg-white/10 text-xs text-muted-foreground font-mono mt-1">{order.products.category}</span>
-                            )}
-                            {order.products?.reason_for_selling && (
-                                <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{order.products.reason_for_selling}</p>
-                            )}
-                        </div>
-                    </div>
-
-                    {/* ── Buyer Details ──────────────────────── */}
-                    <div className="glass rounded-xl p-3 border border-neon-cyan/20">
-                        <p className="text-xs text-neon-cyan font-bold uppercase tracking-wider mb-2 flex items-center gap-1">
-                            <User className="w-3 h-3" /> Buyer
-                        </p>
-                        <p className="text-sm font-semibold text-white">{order.buyer?.full_name || "Unknown"}</p>
-                        {(order.buyer_phone || order.buyer?.phone_number) && (
-                            <div className="flex items-center gap-2 mt-1">
-                                <Phone className="w-3 h-3 text-neon-cyan" />
-                                <span className="text-xs text-muted-foreground">{order.buyer_phone || order.buyer?.phone_number}</span>
-                                <button onClick={() => copyPhone(order.buyer_phone || order.buyer?.phone_number || "")} className="p-0.5 rounded hover:bg-white/10 transition-colors" title="Copy phone">
-                                    <Copy className="w-3 h-3 text-muted-foreground hover:text-white" />
-                                </button>
-                            </div>
-                        )}
-                        <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
-                            <MapPin className="w-3 h-3" /> {order.delivery_location}
-                            {order.delivery_room && `, Room ${order.delivery_room}`}
-                        </p>
-                    </div>
-
-                    {/* ── Seller Details ─────────────────────── */}
-                    <div className={`glass rounded-xl p-3 border ${sellerMissing ? "border-yellow-500/30 bg-yellow-500/5" : "border-neon-orange/20"}`}>
-                        <p className="text-xs text-neon-orange font-bold uppercase tracking-wider mb-2 flex items-center gap-1">
-                            <Star className="w-3 h-3" /> Seller
-                            {sellerMissing && (
-                                <span className="ml-auto flex items-center gap-1 text-yellow-400 text-[10px] font-bold">
-                                    <AlertCircle className="w-3 h-3" /> Incomplete Info
-                                </span>
-                            )}
-                        </p>
-                        <p className="text-sm font-semibold text-white">{order.seller?.full_name || "Unknown"}</p>
-                        {order.seller?.phone_number ? (
-                            <div className="flex items-center gap-2 mt-1">
-                                <Phone className="w-3 h-3 text-neon-orange" />
-                                <span className="text-xs text-muted-foreground">{order.seller.phone_number}</span>
-                                <button onClick={() => copyPhone(order.seller?.phone_number || "")} className="p-0.5 rounded hover:bg-white/10 transition-colors" title="Copy phone">
-                                    <Copy className="w-3 h-3 text-muted-foreground hover:text-white" />
-                                </button>
-                            </div>
-                        ) : (
-                            <p className="text-xs text-yellow-400 mt-1 flex items-center gap-1"><Phone className="w-3 h-3" /> No phone provided</p>
-                        )}
-                        {order.seller?.hostel_block ? (
-                            <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
-                                <MapPin className="w-3 h-3" /> {order.seller.hostel_block}
-                            </p>
-                        ) : (
-                            <p className="text-xs text-yellow-400 mt-1 flex items-center gap-1"><MapPin className="w-3 h-3" /> No location provided</p>
-                        )}
-                        <p className="text-[10px] text-muted-foreground/50 font-mono mt-1">ID: {order.seller_id.slice(0, 12)}...</p>
-                    </div>
-
-                    {/* Action Button */}
-                    {action && (
-                        <button
-                            onClick={() => onUpdateStatus(order.id, action.status, (action as any).timestamps)}
-                            className={`w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border text-sm font-bold transition-all ${action.color}`}
-                        >
-                            <action.icon className="w-4 h-4" />
-                            {action.label}
-                        </button>
-                    )}
-                </div>
-            </motion.div>
-        );
-    };
+    const copyPhone = (phone: string) => { navigator.clipboard.writeText(phone); };
 
     return (
-        <div className="space-y-8">
-            <div>
-                <h2 className="text-2xl font-black mb-1">Order Management</h2>
-                <p className="text-muted-foreground text-sm">{orders.length} total orders • {activeOrders.length} active</p>
+        <div className="space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                    <h2 className="text-2xl font-black mb-1 flex items-center gap-2"><ShoppingCart className="w-6 h-6 text-neon-cyan" /> Item Orders</h2>
+                    <p className="text-muted-foreground text-sm">{itemOrders.length} total • {itemOrders.filter(o => !['completed', 'cancelled', 'seller_rejected'].includes(o.status)).length} active</p>
+                </div>
+                <FilterBar active={filter} onChange={setFilter} />
             </div>
 
             {loading ? (
                 <div className="flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin text-neon-cyan" /></div>
-            ) : orders.length === 0 ? (
+            ) : filtered.length === 0 ? (
                 <div className="glass-heavy rounded-2xl p-12 text-center border border-white/10">
                     <ShoppingCart className="w-12 h-12 text-muted-foreground mx-auto mb-3 opacity-40" />
-                    <p className="text-muted-foreground">No orders found</p>
+                    <p className="text-muted-foreground">No item orders found</p>
                 </div>
             ) : (
-                <>
-                    {activeOrders.length > 0 && (
-                        <div>
-                            <h3 className="text-sm font-bold text-neon-cyan uppercase tracking-wider mb-4 flex items-center gap-2">
-                                <Activity className="w-4 h-4" /> Active Orders ({activeOrders.length})
-                            </h3>
-                            <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-                                {activeOrders.map(renderOrder)}
-                            </div>
-                        </div>
-                    )}
-                    {closedOrders.length > 0 && (
-                        <div>
-                            <h3 className="text-sm font-bold text-muted-foreground uppercase tracking-wider mb-4 flex items-center gap-2">
-                                <CheckCircle className="w-4 h-4" /> Closed Orders ({closedOrders.length})
-                            </h3>
-                            <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-                                {closedOrders.map(renderOrder)}
-                            </div>
-                        </div>
-                    )}
-                </>
+                <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+                    {filtered.map((order, i) => {
+                        const action = nextStatus[order.status];
+                        return (
+                            <motion.div key={order.id} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}
+                                className="glass-heavy rounded-2xl border border-white/10 overflow-hidden hover:border-white/20 transition-all">
+                                <div className="p-4 border-b border-white/5 flex items-center gap-3">
+                                    <div className="flex-1 min-w-0">
+                                        <p className="text-xs text-muted-foreground font-mono">ORDER #{order.id.slice(0, 8).toUpperCase()}</p>
+                                        <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1">
+                                            <Clock className="w-3 h-3" />
+                                            {new Date(order.created_at).toLocaleString("en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
+                                        </p>
+                                    </div>
+                                    <StatusBadge status={order.status} />
+                                </div>
+                                <div className="p-4 space-y-4">
+                                    <div className="flex gap-4">
+                                        <div className="w-20 h-20 rounded-xl overflow-hidden bg-white/5 flex-shrink-0 border border-white/10">
+                                            <img src={order.products?.image_url || "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=120"} alt="" className="w-full h-full object-cover" />
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <p className="font-bold text-sm text-white truncate">{order.products?.title || "Product Removed"}</p>
+                                            <p className="text-neon-fire font-bold text-lg">₹{order.total_price.toLocaleString()}</p>
+                                            {order.products?.category && <span className="inline-block px-2 py-0.5 rounded-lg bg-white/10 text-xs text-muted-foreground font-mono mt-1">{order.products.category}</span>}
+                                        </div>
+                                    </div>
+                                    <div className="glass rounded-xl p-3 border border-neon-cyan/20">
+                                        <p className="text-xs text-neon-cyan font-bold uppercase tracking-wider mb-2 flex items-center gap-1"><User className="w-3 h-3" /> Buyer</p>
+                                        <p className="text-sm font-semibold text-white">{order.buyer?.full_name || "Unknown"}</p>
+                                        {(order.buyer_phone || order.buyer?.phone_number) && (
+                                            <div className="flex items-center gap-2 mt-1">
+                                                <Phone className="w-3 h-3 text-neon-cyan" />
+                                                <span className="text-xs text-muted-foreground">{order.buyer_phone || order.buyer?.phone_number}</span>
+                                                <button onClick={() => copyPhone(order.buyer_phone || order.buyer?.phone_number || "")} className="p-0.5 rounded hover:bg-white/10"><Copy className="w-3 h-3 text-muted-foreground" /></button>
+                                            </div>
+                                        )}
+                                        <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1"><MapPin className="w-3 h-3" /> {order.delivery_location}{order.delivery_room && `, Room ${order.delivery_room}`}</p>
+                                    </div>
+                                    <div className="glass rounded-xl p-3 border border-neon-orange/20">
+                                        <p className="text-xs text-neon-orange font-bold uppercase tracking-wider mb-2 flex items-center gap-1"><Star className="w-3 h-3" /> Seller</p>
+                                        <p className="text-sm font-semibold text-white">{order.seller?.full_name || "Unknown"}</p>
+                                        {order.seller?.phone_number && (
+                                            <div className="flex items-center gap-2 mt-1">
+                                                <Phone className="w-3 h-3 text-neon-orange" />
+                                                <span className="text-xs text-muted-foreground">{order.seller.phone_number}</span>
+                                                <button onClick={() => copyPhone(order.seller?.phone_number || "")} className="p-0.5 rounded hover:bg-white/10"><Copy className="w-3 h-3 text-muted-foreground" /></button>
+                                            </div>
+                                        )}
+                                        {order.seller?.hostel_block && <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1"><MapPin className="w-3 h-3" /> {order.seller.hostel_block}</p>}
+                                    </div>
+                                    {action && (
+                                        <button onClick={() => onUpdateStatus(order.id, action.status, (action as any).timestamps)}
+                                            className={`w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border text-sm font-bold transition-all ${action.color}`}>
+                                            <action.icon className="w-4 h-4" /> {action.label}
+                                        </button>
+                                    )}
+                                </div>
+                            </motion.div>
+                        );
+                    })}
+                </div>
+            )}
+        </div>
+    );
+}
+
+// ─── Food Orders Section ────────────────────────────────────────────────────────
+function FoodOrdersSection({ orders, loading, onUpdateStatus }: {
+    orders: Order[]; loading: boolean; onUpdateStatus: (id: string, status: string, timestamps?: Record<string, string>) => void;
+}) {
+    const [filter, setFilter] = useState('all');
+    const foodOrders = orders.filter(o => isFoodOrder(o));
+    const filtered = applyFilter(foodOrders, filter);
+
+    const nextStatus: Record<string, { label: string; status: string; icon: any; color: string; timestamps?: object } | null> = {
+        pending: { label: "Accept Order", status: "confirmed", icon: CheckCircle, color: "bg-green-500/20 border-green-500/40 text-green-400 hover:bg-green-500/30", timestamps: { accepted_at: new Date().toISOString() } },
+        confirmed: { label: "Out for Delivery 🚀", status: "delivering", icon: Truck, color: "bg-orange-500/20 border-orange-500/40 text-orange-400 hover:bg-orange-500/30", timestamps: { out_for_delivery_at: new Date().toISOString() } },
+        delivering: { label: "Mark Delivered ✅", status: "completed", icon: HomeIcon, color: "bg-green-500/20 border-green-500/40 text-green-400 hover:bg-green-500/30", timestamps: { delivered_at: new Date().toISOString() } },
+        completed: null, cancelled: null,
+        seller_accepted: { label: "Accept", status: "confirmed", icon: CheckCircle, color: "bg-green-500/20 border-green-500/40 text-green-400 hover:bg-green-500/30", timestamps: { accepted_at: new Date().toISOString() } },
+        picked: { label: "Out for Delivery", status: "delivering", icon: Truck, color: "bg-orange-500/20 border-orange-500/40 text-orange-400 hover:bg-orange-500/30", timestamps: { out_for_delivery_at: new Date().toISOString() } },
+        seller_rejected: null,
+    };
+
+    const copyPhone = (phone: string) => { navigator.clipboard.writeText(phone); };
+
+    // Parse food order details from delivery_location and delivery_room
+    const parseFoodDetails = (order: Order) => {
+        let hostel = order.delivery_location || '';
+        let itemTitle = '';
+        // Extract hostel and item from "BH-1 [Custom Food: 2x Maggi...]" or "BH-1 [CE: Practical File]"
+        const ceMatch = hostel.match(/^(.+?)\s*\[CE:\s*(.+?)\]$/);
+        const customMatch = hostel.match(/^(.+?)\s*\[Custom Food:\s*(.+?)\]$/);
+        if (ceMatch) { hostel = ceMatch[1].trim(); itemTitle = ceMatch[2]; }
+        else if (customMatch) { hostel = customMatch[1].trim(); itemTitle = customMatch[2]; }
+
+        let items = '';
+        let notes = '';
+        const room = order.delivery_room || '';
+        if (room.includes('[CUSTOM FOOD ORDER]')) {
+            const parts = room.replace('[CUSTOM FOOD ORDER]\n', '').split('\n---\n');
+            items = parts[0] || '';
+            notes = parts[1]?.replace('Notes: ', '') || '';
+        } else {
+            items = itemTitle || room || 'N/A';
+        }
+
+        return { hostel, items, notes };
+    };
+
+    return (
+        <div className="space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                    <h2 className="text-2xl font-black mb-1 flex items-center gap-2"><UtensilsCrossed className="w-6 h-6 text-orange-400" /> Food Orders</h2>
+                    <p className="text-muted-foreground text-sm">{foodOrders.length} total • {foodOrders.filter(o => !['completed', 'cancelled'].includes(o.status)).length} active</p>
+                </div>
+                <FilterBar active={filter} onChange={setFilter} />
+            </div>
+
+            {loading ? (
+                <div className="flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin text-orange-400" /></div>
+            ) : filtered.length === 0 ? (
+                <div className="glass-heavy rounded-2xl p-12 text-center border border-white/10">
+                    <UtensilsCrossed className="w-12 h-12 text-muted-foreground mx-auto mb-3 opacity-40" />
+                    <p className="text-muted-foreground">No food orders found</p>
+                </div>
+            ) : (
+                <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+                    {filtered.map((order, i) => {
+                        const action = nextStatus[order.status];
+                        const { hostel, items, notes } = parseFoodDetails(order);
+                        return (
+                            <motion.div key={order.id} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}
+                                className="glass-heavy rounded-2xl border border-orange-500/15 overflow-hidden hover:border-orange-500/30 transition-all">
+                                {/* Header */}
+                                <div className="p-4 border-b border-white/5 flex items-center gap-3" style={{ background: 'rgba(255,107,0,0.03)' }}>
+                                    <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(255,107,0,0.12)' }}>
+                                        <UtensilsCrossed className="w-5 h-5 text-orange-400" />
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <p className="text-xs text-muted-foreground font-mono">FOOD #{order.id.slice(0, 8).toUpperCase()}</p>
+                                        <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1">
+                                            <Clock className="w-3 h-3" />
+                                            {new Date(order.created_at).toLocaleString("en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
+                                        </p>
+                                    </div>
+                                    <StatusBadge status={order.status} />
+                                </div>
+
+                                <div className="p-4 space-y-4">
+                                    {/* Food Items */}
+                                    <div className="rounded-xl p-3 border border-orange-500/15" style={{ background: 'rgba(255,107,0,0.04)' }}>
+                                        <p className="text-xs text-orange-400 font-bold uppercase tracking-wider mb-2 flex items-center gap-1">
+                                            <ShoppingBag className="w-3 h-3" /> Ordered Items
+                                        </p>
+                                        <div className="space-y-1">
+                                            {items.split('\n').filter(Boolean).map((line, idx) => (
+                                                <p key={idx} className="text-sm text-white flex items-start gap-2">
+                                                    <span className="text-orange-400 mt-0.5">•</span>
+                                                    <span>{line.trim()}</span>
+                                                </p>
+                                            ))}
+                                        </div>
+                                        {notes && (
+                                            <div className="mt-2 pt-2 border-t border-orange-500/10">
+                                                <p className="text-[10px] text-orange-300/60 uppercase font-bold mb-0.5">Notes</p>
+                                                <p className="text-xs text-muted-foreground italic">{notes}</p>
+                                            </div>
+                                        )}
+                                        {order.total_price > 0 && (
+                                            <div className="mt-2 pt-2 border-t border-orange-500/10 flex items-center justify-between">
+                                                <span className="text-xs text-muted-foreground">Total</span>
+                                                <span className="text-base font-black text-orange-400">₹{order.total_price.toLocaleString()}</span>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* Buyer + Delivery */}
+                                    <div className="glass rounded-xl p-3 border border-neon-cyan/20">
+                                        <p className="text-xs text-neon-cyan font-bold uppercase tracking-wider mb-2 flex items-center gap-1"><User className="w-3 h-3" /> Deliver To</p>
+                                        <p className="text-sm font-semibold text-white">{order.buyer?.full_name || "Student"}</p>
+                                        {order.buyer_phone && (
+                                            <div className="flex items-center gap-2 mt-1">
+                                                <Phone className="w-3 h-3 text-neon-cyan" />
+                                                <span className="text-xs text-muted-foreground">{order.buyer_phone}</span>
+                                                <button onClick={() => copyPhone(order.buyer_phone || "")} className="p-0.5 rounded hover:bg-white/10" title="Copy"><Copy className="w-3 h-3 text-muted-foreground" /></button>
+                                            </div>
+                                        )}
+                                        <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1"><MapPin className="w-3 h-3" /> {hostel}</p>
+                                    </div>
+
+                                    {/* Action */}
+                                    {action && (
+                                        <button onClick={() => onUpdateStatus(order.id, action.status, (action as any).timestamps)}
+                                            className={`w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border text-sm font-bold transition-all ${action.color}`}>
+                                            <action.icon className="w-4 h-4" /> {action.label}
+                                        </button>
+                                    )}
+                                </div>
+                            </motion.div>
+                        );
+                    })}
+                </div>
             )}
         </div>
     );
@@ -727,7 +846,8 @@ export default function Admin() {
     const navItems: { id: AdminSection; label: string; icon: any; badge?: number }[] = [
         { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
         { id: "products", label: "Products", icon: Package, badge: products.length },
-        { id: "orders", label: "Orders", icon: ShoppingCart, badge: orders.filter(o => o.status === "pending").length || undefined },
+        { id: "item_orders", label: "Item Orders", icon: ShoppingCart, badge: orders.filter(o => !isFoodOrder(o) && o.status === 'pending').length || undefined },
+        { id: "food_orders", label: "Food Orders", icon: UtensilsCrossed, badge: orders.filter(o => isFoodOrder(o) && o.status === 'pending').length || undefined },
         { id: "notifications", label: "Notifications", icon: Bell, badge: unreadCount || undefined },
     ];
 
@@ -858,8 +978,15 @@ export default function Admin() {
                                     onDelete={(id, title) => setConfirmDialog({ productId: id, title })}
                                 />
                             )}
-                            {section === "orders" && (
-                                <OrdersSection
+                            {section === "item_orders" && (
+                                <ItemOrdersSection
+                                    orders={orders}
+                                    loading={loadingOrders}
+                                    onUpdateStatus={handleUpdateOrderStatus}
+                                />
+                            )}
+                            {section === "food_orders" && (
+                                <FoodOrdersSection
                                     orders={orders}
                                     loading={loadingOrders}
                                     onUpdateStatus={handleUpdateOrderStatus}
