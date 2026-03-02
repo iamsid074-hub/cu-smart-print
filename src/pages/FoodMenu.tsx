@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Pizza, Coffee, Apple, ShoppingBag, Clock, Loader2, Plus, BadgeCheck, Cookie, Soup } from "lucide-react";
+import { Pizza, Coffee, Apple, ShoppingBag, Clock, Loader2, Plus, BadgeCheck, Cookie, Soup, FileText, Send, MessageSquare, Sparkles, X, MapPin, Phone } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
 import {
     Dialog,
@@ -71,6 +72,51 @@ export default function FoodMenu() {
     const [location, setLocation] = useState("");
     const [phone, setPhone] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    // Custom Order State
+    const [showCustomOrder, setShowCustomOrder] = useState(false);
+    const [customItems, setCustomItems] = useState("");
+    const [customNotes, setCustomNotes] = useState("");
+    const [customHostel, setCustomHostel] = useState("");
+    const [customPhone, setCustomPhone] = useState("");
+    const [customSubmitting, setCustomSubmitting] = useState(false);
+
+    const handleCustomOrder = async () => {
+        if (!user) { navigate('/login'); return; }
+        if (!customItems.trim()) {
+            toast({ title: "List your items", description: "Please type what you'd like to order.", variant: "destructive" });
+            return;
+        }
+        if (!customHostel.trim() || !customPhone.trim()) {
+            toast({ title: "Details missing", description: "Please enter delivery location and phone number.", variant: "destructive" });
+            return;
+        }
+        setCustomSubmitting(true);
+        try {
+            const { error } = await supabase.from("admin_notifications").insert({
+                type: 'new_order',
+                payload: {
+                    custom_food_order: true,
+                    items: customItems,
+                    special_instructions: customNotes || 'None',
+                    buyer_id: user.id,
+                    buyer_name: user.user_metadata?.full_name || user.email || 'Student',
+                    hostel: customHostel,
+                    phone: customPhone,
+                    timestamp: new Date().toISOString(),
+                },
+            });
+            if (error) throw error;
+
+            toast({ title: "Custom order submitted! 🎉", description: "Admin will review and confirm shortly." });
+            setShowCustomOrder(false);
+            setCustomItems(""); setCustomNotes(""); setCustomHostel(""); setCustomPhone("");
+        } catch (err: any) {
+            toast({ title: "Failed to submit", description: err.message || "Please try again.", variant: "destructive" });
+        } finally {
+            setCustomSubmitting(false);
+        }
+    };
 
     const filteredFoods = foodItems.filter(item => item.category === activeCategory);
     const activeCat = foodCategories.find(c => c.id === activeCategory);
@@ -234,6 +280,173 @@ export default function FoodMenu() {
                             </motion.div>
                         ))}
                     </motion.div>
+                </AnimatePresence>
+
+                {/* ─── Custom Order Section ─── */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    className="mt-12 sm:mt-16 mb-8"
+                >
+                    <div className="relative rounded-2xl sm:rounded-3xl p-[2px] overflow-hidden" style={{
+                        background: 'linear-gradient(135deg, #FF6B00, #FF4444, #FF6B00, #FFAA00, #FF6B00)',
+                        backgroundSize: '300% 300%',
+                        animation: 'sale-border-shift 4s ease infinite',
+                    }}>
+                        <div className="rounded-2xl sm:rounded-3xl p-6 sm:p-8 lg:p-10" style={{ backgroundColor: '#120805' }}>
+                            <div className="flex flex-col sm:flex-row sm:items-center gap-6">
+                                <div className="flex-1">
+                                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full mb-3" style={{ background: 'rgba(255,107,0,0.12)', border: '1px solid rgba(255,107,0,0.2)' }}>
+                                        <Sparkles className="w-3.5 h-3.5 text-orange-400" />
+                                        <span className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-orange-400">New Feature</span>
+                                    </div>
+                                    <h3 className="text-xl sm:text-2xl lg:text-3xl font-black text-white mb-2 leading-tight">
+                                        Can't find what you need?
+                                    </h3>
+                                    <p className="text-sm text-white/50 max-w-md mb-4">
+                                        Tell us exactly what you want — list items, quantities, brands. We'll get it and deliver to your room. 📝
+                                    </p>
+                                    <div className="flex flex-wrap gap-2 mb-4">
+                                        {["🍕 Maggi Combo", "🥤 Energy Drinks", "📚 Stationery", "🧴 Daily Needs"].map(tag => (
+                                            <span key={tag} className="px-2.5 py-1 rounded-lg text-[10px] sm:text-xs font-medium" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.5)' }}>
+                                                {tag}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
+                                <motion.button
+                                    onClick={() => user ? setShowCustomOrder(true) : navigate('/login')}
+                                    whileHover={{ scale: 1.03, y: -2 }}
+                                    whileTap={{ scale: 0.97 }}
+                                    className="group relative px-6 py-3.5 sm:px-8 sm:py-4 rounded-xl font-bold text-white text-sm overflow-hidden flex-shrink-0 flex items-center gap-2"
+                                    style={{ background: 'linear-gradient(135deg, #FF6B00, #FF4444)', boxShadow: '0 4px 20px rgba(255,107,0,0.3)' }}
+                                >
+                                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
+                                    <FileText className="w-4 h-4 relative z-10" />
+                                    <span className="relative z-10">Create Custom Order</span>
+                                </motion.button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <style>{`
+                        @keyframes sale-border-shift {
+                            0% { background-position: 0% 50%; }
+                            50% { background-position: 100% 50%; }
+                            100% { background-position: 0% 50%; }
+                        }
+                    `}</style>
+                </motion.div>
+
+                {/* ─── Custom Order Modal ─── */}
+                <AnimatePresence>
+                    {showCustomOrder && (
+                        <motion.div
+                            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                            className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4"
+                            style={{ backgroundColor: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(6px)' }}
+                            onClick={() => !customSubmitting && setShowCustomOrder(false)}
+                        >
+                            <motion.div
+                                initial={{ y: 100, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 100, opacity: 0 }}
+                                transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+                                className="w-full sm:max-w-[480px] max-h-[90vh] overflow-y-auto rounded-t-2xl sm:rounded-2xl"
+                                style={{ backgroundColor: '#120805', border: '1px solid rgba(255,107,0,0.15)' }}
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                {/* Header */}
+                                <div className="flex items-center justify-between p-4 sm:p-5 sticky top-0 z-10" style={{ backgroundColor: '#120805', borderBottom: '1px solid rgba(255,107,0,0.1)' }}>
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: 'rgba(255,107,0,0.12)' }}>
+                                            <MessageSquare className="w-5 h-5 text-orange-400" />
+                                        </div>
+                                        <div>
+                                            <h3 className="text-sm font-bold text-white">Custom Order</h3>
+                                            <p className="text-[11px] text-white/40">Tell us what you need</p>
+                                        </div>
+                                    </div>
+                                    <button onClick={() => setShowCustomOrder(false)} className="p-1.5 rounded-lg text-white/40 hover:text-white transition-colors">
+                                        <X className="w-5 h-5" />
+                                    </button>
+                                </div>
+
+                                {/* Form */}
+                                <div className="p-4 sm:p-5 space-y-4">
+                                    {/* Items List */}
+                                    <div>
+                                        <label className="text-xs font-bold text-orange-200/60 uppercase mb-1.5 block flex items-center gap-1">
+                                            <FileText className="w-3 h-3" /> Items You Need *
+                                        </label>
+                                        <textarea
+                                            value={customItems}
+                                            onChange={(e) => setCustomItems(e.target.value)}
+                                            rows={4}
+                                            className="w-full bg-black/40 border border-orange-500/20 rounded-xl px-4 py-3 text-sm text-orange-50 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all placeholder:text-orange-200/20 resize-none"
+                                            placeholder={"e.g.\n2x Maggi (Masala)\n1x Red Bull\n3x Dairy Milk Silk\n1x Notebook"}
+                                        />
+                                        <p className="text-[10px] text-white/25 mt-1 px-1">List each item with quantity. One per line works best.</p>
+                                    </div>
+
+                                    {/* Special Instructions */}
+                                    <div>
+                                        <label className="text-xs font-bold text-orange-200/60 uppercase mb-1.5 block">Special Instructions</label>
+                                        <textarea
+                                            value={customNotes}
+                                            onChange={(e) => setCustomNotes(e.target.value)}
+                                            rows={2}
+                                            className="w-full bg-black/40 border border-orange-500/20 rounded-xl px-4 py-3 text-sm text-orange-50 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all placeholder:text-orange-200/20 resize-none"
+                                            placeholder="Brand preferences, spice level, etc. (optional)"
+                                        />
+                                    </div>
+
+                                    {/* Delivery Details */}
+                                    <div className="space-y-3">
+                                        <div className="relative">
+                                            <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-orange-200/40" />
+                                            <input
+                                                value={customHostel}
+                                                onChange={(e) => setCustomHostel(e.target.value)}
+                                                placeholder="Hostel Block + Room (e.g. BH-1, 402)"
+                                                className="w-full bg-black/40 border border-orange-500/20 rounded-xl pl-10 pr-4 h-[48px] text-sm text-orange-50 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all placeholder:text-orange-200/20"
+                                            />
+                                        </div>
+                                        <div className="relative">
+                                            <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-orange-200/40" />
+                                            <input
+                                                value={customPhone}
+                                                onChange={(e) => setCustomPhone(e.target.value)}
+                                                type="tel"
+                                                placeholder="Phone Number"
+                                                className="w-full bg-black/40 border border-orange-500/20 rounded-xl pl-10 pr-4 h-[48px] text-sm text-orange-50 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all placeholder:text-orange-200/20"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center gap-2 px-1">
+                                        <Clock className="w-3.5 h-3.5 text-orange-400/60" />
+                                        <span className="text-[11px] text-orange-400/60">Admin will review & confirm with estimated total · Cash on Delivery</span>
+                                    </div>
+                                </div>
+
+                                {/* Submit */}
+                                <div className="p-4 sm:p-5" style={{ borderTop: '1px solid rgba(255,107,0,0.1)' }}>
+                                    <button
+                                        onClick={handleCustomOrder}
+                                        disabled={customSubmitting}
+                                        className="w-full py-3.5 rounded-xl text-white font-bold text-sm transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                                        style={{ background: 'linear-gradient(135deg, #FF6B00, #FF4444)', boxShadow: '0 4px 16px rgba(255,107,0,0.25)' }}
+                                    >
+                                        {customSubmitting ? (
+                                            <Loader2 className="w-5 h-5 animate-spin" />
+                                        ) : (
+                                            <><Send className="w-4 h-4" /> Submit Custom Order</>
+                                        )}
+                                    </button>
+                                </div>
+                            </motion.div>
+                        </motion.div>
+                    )}
                 </AnimatePresence>
 
                 {/* Checkout Modal */}
