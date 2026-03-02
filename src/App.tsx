@@ -62,12 +62,13 @@ function AdminRoute({ children }: { children: React.ReactNode }) {
 function AppLayout() {
   const location = useLocation();
   const isLanding = location.pathname === "/";
+  const isLogin = location.pathname === "/login";
   const isAdmin = location.pathname.startsWith("/admin");
   const { user } = useAuth();
 
   return (
     <>
-      {!isLanding && !isAdmin && <Navbar />}
+      {!isLanding && !isLogin && !isAdmin && <Navbar />}
       <Routes>
         <Route path="/" element={user ? <Navigate to="/home" replace /> : <Index />} />
         {/* We wrap Home in ProtectedRoute so users are gated there too if they bypass somehow */}
