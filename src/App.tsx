@@ -14,10 +14,12 @@ import Profile from "./pages/Profile";
 import Browse from "./pages/Browse";
 import ProductDetail from "./pages/ProductDetail";
 import FoodMenu from "./pages/FoodMenu";
+import Cart from "./pages/Cart";
 import Admin from "./pages/Admin";
 import Navbar from "./components/Navbar";
 import UsernameSetup from "./components/UsernameSetup";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
+import { CartProvider } from "./contexts/CartContext";
 import { Navigate } from "react-router-dom";
 
 
@@ -83,6 +85,7 @@ function AppLayout() {
         <Route path="/browse" element={<ProtectedRoute><Browse /></ProtectedRoute>} />
         <Route path="/product/:id" element={<ProtectedRoute><ProductDetail /></ProtectedRoute>} />
         <Route path="/food" element={<ProtectedRoute><FoodMenu /></ProtectedRoute>} />
+        <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
 
         {/* Admin Route */}
         <Route path="/admin" element={<AdminRoute><Admin /></AdminRoute>} />
@@ -96,13 +99,15 @@ function AppLayout() {
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <AppLayout />
-        </BrowserRouter>
-      </TooltipProvider>
+      <CartProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <AppLayout />
+          </BrowserRouter>
+        </TooltipProvider>
+      </CartProvider>
     </AuthProvider>
   </QueryClientProvider>
 );

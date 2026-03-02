@@ -87,8 +87,13 @@ export default function ProductDetail() {
     const handleBuyNow = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!user) { navigate('/login'); return; }
-        if (!deliveryLocation.trim() || !phone.trim()) {
-            toast({ title: "Details missing", description: "Please enter delivery location and phone number.", variant: "destructive" });
+        if (!deliveryLocation.trim() || !deliveryRoom.trim()) {
+            toast({ title: "Details missing", description: "Please enter hostel and room number.", variant: "destructive" });
+            return;
+        }
+        const phoneClean = phone.replace(/\D/g, "");
+        if (phoneClean.length !== 10) {
+            toast({ title: "Invalid phone", description: "Phone must be exactly 10 digits.", variant: "destructive" });
             return;
         }
         setIsSubmitting(true);
@@ -104,7 +109,7 @@ export default function ProductDetail() {
                 total_price: totalAmount,
                 delivery_location: deliveryLocation,
                 delivery_room: deliveryRoom || null,
-                buyer_phone: phone,
+                buyer_phone: phone.replace(/\D/g, ""),
                 status: 'pending',
                 seller_notified_at: new Date().toISOString(),
             }).select().single();
@@ -279,9 +284,10 @@ export default function ProductDetail() {
                                                         />
                                                     </div>
                                                     <div>
-                                                        <label className="text-xs font-bold text-muted-foreground uppercase mb-1 block">Room Number (optional)</label>
+                                                        <label className="text-xs font-bold text-muted-foreground uppercase mb-1 block">Room Number *</label>
                                                         <input
                                                             type="text"
+                                                            required
                                                             value={deliveryRoom}
                                                             onChange={e => setDeliveryRoom(e.target.value)}
                                                             className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-neon-orange focus:ring-1 focus:ring-neon-orange transition-all"
@@ -289,15 +295,20 @@ export default function ProductDetail() {
                                                         />
                                                     </div>
                                                     <div>
-                                                        <label className="text-xs font-bold text-muted-foreground uppercase mb-1 block">Contact Number</label>
+                                                        <label className="text-xs font-bold text-muted-foreground uppercase mb-1 block">Phone Number *</label>
                                                         <input
                                                             type="tel"
                                                             required
                                                             value={phone}
-                                                            onChange={e => setPhone(e.target.value)}
-                                                            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-neon-orange focus:ring-1 focus:ring-neon-orange transition-all"
+                                                            onChange={e => setPhone(e.target.value.replace(/\D/g, "").slice(0, 10))}
+                                                            maxLength={10}
+                                                            className={`w-full bg-white/5 border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-1 transition-all ${phone.length > 0 && phone.length !== 10 ? 'border-red-500/50 focus:border-red-500 focus:ring-red-500' : 'border-white/10 focus:border-neon-orange focus:ring-neon-orange'
+                                                                }`}
                                                             placeholder="e.g. 9876543210"
                                                         />
+                                                        {phone.length > 0 && phone.length !== 10 && (
+                                                            <p className="text-xs text-red-400 mt-1">Phone must be exactly 10 digits</p>
+                                                        )}
                                                     </div>
                                                     <div className="p-3 rounded-xl bg-green-500/10 border border-green-500/20 text-center">
                                                         <p className="text-sm text-green-400 font-semibold gap-1 flex items-center justify-center">
@@ -308,8 +319,8 @@ export default function ProductDetail() {
 
                                                     <button
                                                         type="submit"
-                                                        disabled={isSubmitting}
-                                                        className="w-full py-4 mt-2 rounded-xl bg-neon-fire text-black font-black uppercase tracking-wide hover:shadow-neon-fire transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                                                        disabled={isSubmitting || !deliveryLocation.trim() || !deliveryRoom.trim() || phone.length !== 10}
+                                                        className="w-full py-4 mt-2 rounded-xl bg-neon-fire text-black font-black uppercase tracking-wide hover:shadow-neon-fire transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center"
                                                     >
                                                         {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : `Place Order (₹${totalAmount.toLocaleString()})`}
                                                     </button>

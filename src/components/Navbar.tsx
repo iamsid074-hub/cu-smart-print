@@ -1,9 +1,10 @@
 import { motion } from "framer-motion";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Search, Bell, MessageCircle, User, Zap, Menu, X } from "lucide-react";
+import { Search, Bell, MessageCircle, User, Zap, Menu, X, ShoppingCart } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
+import { useCart } from "@/contexts/CartContext";
 
 const navLinks = [
   { label: "Home", path: "/home" },
@@ -31,6 +32,7 @@ export default function Navbar() {
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [hasUnread, setHasUnread] = useState(false);
+  const { totalItems: cartCount } = useCart();
 
   useEffect(() => {
     if (!user) return;
@@ -214,6 +216,16 @@ export default function Navbar() {
             {/* Chat Icon */}
             <Link to="/chat" className="p-2.5 rounded-full hover:bg-foreground/5 transition-colors text-muted-foreground hover:text-foreground flex items-center justify-center">
               <MessageCircle className="w-5 h-5" />
+            </Link>
+
+            {/* Cart Icon */}
+            <Link to="/cart" className="relative p-2.5 rounded-full hover:bg-foreground/5 transition-colors text-muted-foreground hover:text-foreground flex items-center justify-center">
+              <ShoppingCart className="w-5 h-5" />
+              {cartCount > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] rounded-full bg-[#FF6B6B] text-white text-[10px] font-black flex items-center justify-center px-1 shadow-[0_0_8px_rgba(255,107,107,0.6)] border-2 border-[#2A2420]">
+                  {cartCount > 9 ? "9+" : cartCount}
+                </span>
+              )}
             </Link>
 
             {/* Profile Avatar */}

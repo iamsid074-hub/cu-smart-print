@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Pizza, Coffee, Apple, ShoppingBag, Clock, Loader2, Plus, BadgeCheck, Cookie, Soup, FileText, Send, MessageSquare, Sparkles, X, MapPin, Phone } from "lucide-react";
+import { Pizza, Coffee, Apple, ShoppingBag, Clock, Loader2, Plus, BadgeCheck, Cookie, Soup, FileText, Send, MessageSquare, Sparkles, X, MapPin, Phone, ShoppingCart } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useCart } from "@/contexts/CartContext";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -63,6 +64,7 @@ export default function FoodMenu() {
     const { user } = useAuth();
     const navigate = useNavigate();
     const { toast } = useToast();
+    const { addItem, totalItems: cartCount } = useCart();
 
     const [activeCategory, setActiveCategory] = useState("snacks");
     const [selectedFood, setSelectedFood] = useState<any>(null);
@@ -87,8 +89,13 @@ export default function FoodMenu() {
             toast({ title: "List your items", description: "Please type what you'd like to order.", variant: "destructive" });
             return;
         }
-        if (!customHostel.trim() || !customPhone.trim()) {
-            toast({ title: "Details missing", description: "Please enter delivery location and phone number.", variant: "destructive" });
+        if (!customHostel.trim()) {
+            toast({ title: "Details missing", description: "Please enter your hostel block.", variant: "destructive" });
+            return;
+        }
+        const phoneClean = customPhone.replace(/\D/g, "");
+        if (phoneClean.length !== 10) {
+            toast({ title: "Invalid phone", description: "Phone must be exactly 10 digits.", variant: "destructive" });
             return;
         }
         setCustomSubmitting(true);
@@ -105,7 +112,7 @@ export default function FoodMenu() {
                 total_price: 0, // Admin will set price after review
                 delivery_location: `${customHostel} [Custom Food: ${customItems.split('\n')[0]}...]`,
                 delivery_room: itemSummary,
-                buyer_phone: customPhone,
+                buyer_phone: customPhone.replace(/\D/g, ""),
                 status: 'pending',
                 seller_notified_at: new Date().toISOString(),
             });
@@ -273,11 +280,14 @@ export default function FoodMenu() {
                                     </p>
 
                                     <button
-                                        onClick={() => handleOpenCheckout(item)}
+                                        onClick={() => {
+                                            addItem({ id: item.id, title: item.title, price: item.price, image: item.image, category: item.category });
+                                            toast({ title: `${item.title} added! 🛒`, description: `${cartCount + 1} item(s) in cart` });
+                                        }}
                                         className="mt-auto w-full min-h-[40px] sm:min-h-[44px] py-2 sm:py-2.5 rounded-xl bg-white/5 hover:bg-gradient-to-r hover:from-orange-500 hover:to-red-500 group-hover:shadow-[0_0_20px_rgba(249,115,22,0.3)] border border-white/10 hover:border-transparent text-white font-bold transition-all duration-300 flex items-center justify-center gap-1.5 text-xs sm:text-sm"
                                     >
-                                        <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
-                                        <span>Add to Box</span>
+                                        <ShoppingCart className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
+                                        <span>Add to Cart</span>
                                     </button>
                                 </div>
                             </motion.div>

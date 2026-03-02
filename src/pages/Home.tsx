@@ -43,8 +43,13 @@ export default function Home() {
   const handleQuickBuy = async () => {
     if (!user) { navigate('/login'); return; }
     if (!buyItem) return;
-    if (!buyHostel.trim() || !buyPhone.trim()) {
-      toast.error("Please fill in your hostel and phone number.");
+    const phoneClean = buyPhone.replace(/\D/g, "");
+    if (!buyHostel.trim() || !buyRoom.trim()) {
+      toast.error("Please fill in your hostel and room number.");
+      return;
+    }
+    if (phoneClean.length !== 10) {
+      toast.error("Phone number must be exactly 10 digits.");
       return;
     }
     setBuyLoading(true);
@@ -59,7 +64,7 @@ export default function Home() {
         total_price: buyItem.price,
         delivery_location: `${buyHostel} [CE: ${buyItem.title}]`,
         delivery_room: buyRoom || null,
-        buyer_phone: buyPhone,
+        buyer_phone: phoneClean,
         status: 'pending',
         seller_notified_at: new Date().toISOString(),
       }).select().single();
@@ -405,7 +410,7 @@ export default function Home() {
                     <HomeIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: '#8F8175' }} />
                     <input
                       value={buyRoom} onChange={(e) => setBuyRoom(e.target.value)}
-                      placeholder="Room Number (optional)"
+                      placeholder="Room Number *"
                       className="w-full rounded-xl pl-10 pr-4 h-[48px] text-sm focus:outline-none transition-all"
                       style={{ backgroundColor: 'rgba(255,255,255,0.04)', color: '#E8DED4', border: '1px solid #3D342C' }}
                     />
@@ -414,13 +419,17 @@ export default function Home() {
                   <div className="relative">
                     <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: '#8F8175' }} />
                     <input
-                      value={buyPhone} onChange={(e) => setBuyPhone(e.target.value)}
-                      placeholder="Phone Number"
+                      value={buyPhone} onChange={(e) => setBuyPhone(e.target.value.replace(/\D/g, "").slice(0, 10))}
+                      placeholder="10-digit Phone Number *"
                       type="tel"
+                      maxLength={10}
                       className="w-full rounded-xl pl-10 pr-4 h-[48px] text-sm focus:outline-none transition-all"
-                      style={{ backgroundColor: 'rgba(255,255,255,0.04)', color: '#E8DED4', border: '1px solid #3D342C' }}
+                      style={{ backgroundColor: 'rgba(255,255,255,0.04)', color: '#E8DED4', border: buyPhone.length > 0 && buyPhone.length !== 10 ? '1px solid rgba(255,80,80,0.5)' : '1px solid #3D342C' }}
                     />
                   </div>
+                  {buyPhone.length > 0 && buyPhone.length !== 10 && (
+                    <p className="text-[11px] mt-1 px-1" style={{ color: '#FF5050' }}>Phone must be exactly 10 digits</p>
+                  )}
 
                   <div className="flex items-center gap-2 mt-1 px-1">
                     <Zap className="w-3.5 h-3.5" style={{ color: '#4DB8AC' }} />
@@ -432,10 +441,10 @@ export default function Home() {
                 <div className="p-4 sm:p-5" style={{ borderTop: '1px solid #3D342C' }}>
                   <motion.button
                     onClick={handleQuickBuy}
-                    disabled={buyLoading}
+                    disabled={buyLoading || !buyHostel.trim() || !buyRoom.trim() || buyPhone.length !== 10}
                     whileTap={{ scale: 0.97 }}
-                    className="w-full py-3.5 rounded-xl text-white font-bold text-sm transition-all disabled:opacity-50"
-                    style={{ ...fontH, background: '#FF6B6B', boxShadow: '0 4px 16px rgba(255,107,107,0.25)' }}
+                    className="w-full py-3.5 rounded-xl text-white font-bold text-sm transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                    style={{ ...fontH, background: (!buyHostel.trim() || !buyRoom.trim() || buyPhone.length !== 10) ? 'rgba(255,255,255,0.1)' : '#FF6B6B', boxShadow: '0 4px 16px rgba(255,107,107,0.25)' }}
                   >
                     {buyLoading ? (
                       <Loader2 className="w-5 h-5 animate-spin mx-auto" />

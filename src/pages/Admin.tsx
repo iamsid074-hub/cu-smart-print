@@ -440,10 +440,18 @@ function ItemOrdersSection({ orders, loading, onUpdateStatus }: {
                                         {order.seller?.hostel_block && <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1"><MapPin className="w-3 h-3" /> {order.seller.hostel_block}</p>}
                                     </div>
                                     {action && (
-                                        <button onClick={() => onUpdateStatus(order.id, action.status, (action as any).timestamps)}
-                                            className={`w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border text-sm font-bold transition-all ${action.color}`}>
-                                            <action.icon className="w-4 h-4" /> {action.label}
-                                        </button>
+                                        <div className="flex gap-2">
+                                            <button onClick={() => onUpdateStatus(order.id, action.status, (action as any).timestamps)}
+                                                className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl border text-sm font-bold transition-all ${action.color}`}>
+                                                <action.icon className="w-4 h-4" /> {action.label}
+                                            </button>
+                                            {order.status === 'pending' && (
+                                                <button onClick={() => onUpdateStatus(order.id, 'cancelled')}
+                                                    className="px-4 py-2.5 rounded-xl border border-red-500/30 bg-red-500/10 text-red-400 text-sm font-bold hover:bg-red-500/20 transition-all">
+                                                    Decline
+                                                </button>
+                                            )}
+                                        </div>
                                     )}
                                 </div>
                             </motion.div>
@@ -583,10 +591,18 @@ function FoodOrdersSection({ orders, loading, onUpdateStatus }: {
 
                                     {/* Action */}
                                     {action && (
-                                        <button onClick={() => onUpdateStatus(order.id, action.status, (action as any).timestamps)}
-                                            className={`w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border text-sm font-bold transition-all ${action.color}`}>
-                                            <action.icon className="w-4 h-4" /> {action.label}
-                                        </button>
+                                        <div className="flex gap-2">
+                                            <button onClick={() => onUpdateStatus(order.id, action.status, (action as any).timestamps)}
+                                                className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl border text-sm font-bold transition-all ${action.color}`}>
+                                                <action.icon className="w-4 h-4" /> {action.label}
+                                            </button>
+                                            {order.status === 'pending' && (
+                                                <button onClick={() => onUpdateStatus(order.id, 'cancelled')}
+                                                    className="px-4 py-2.5 rounded-xl border border-red-500/30 bg-red-500/10 text-red-400 text-sm font-bold hover:bg-red-500/20 transition-all">
+                                                    Decline
+                                                </button>
+                                            )}
+                                        </div>
                                     )}
                                 </div>
                             </motion.div>
