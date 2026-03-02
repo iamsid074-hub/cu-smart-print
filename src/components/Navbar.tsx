@@ -80,13 +80,13 @@ export default function Navbar() {
       initial={{ y: -80, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5, ease: [0.34, 1.56, 0.64, 1] }}
-      className="fixed top-0 left-0 right-0 z-50 glass-heavy border-b border-white/5"
+      className="fixed top-0 left-0 right-0 z-50 border-b" style={{ background: 'rgba(201,187,176,0.85)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', borderColor: '#A89885' }}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center gap-2 sm:gap-4">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2 flex-shrink-0 group">
-          <div className="relative w-10 h-10 rounded-full overflow-hidden bg-white/5 border border-white/10 flex items-center justify-center p-0.5 group-hover:border-neon-cyan/50 transition-colors shadow-lg">
-            <img src="/logo.png" alt="CU BAZZAR Logo" className="w-[140%] h-[140%] object-cover object-center mix-blend-screen" />
+          <div className="relative w-10 h-10 rounded-full overflow-hidden border flex items-center justify-center p-0.5 transition-colors shadow-sm" style={{ backgroundColor: '#D9CFC1', borderColor: '#A89885' }}>
+            <img src="/logo.png" alt="CU BAZZAR Logo" className="w-full h-full object-cover object-center rounded-full" />
           </div>
           <span className="font-bold text-lg tracking-tight hidden sm:block">
             <span className="text-neon-fire">CU</span>
@@ -108,21 +108,21 @@ export default function Navbar() {
 
         {/* Nav links - Center Pill Dock */}
         <div className="hidden lg:flex flex-1 justify-center relative z-10">
-          <div className="flex items-center gap-1 p-1 rounded-full glass bg-black/40 backdrop-blur-md border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.5)]">
+          <div className="flex items-center gap-1 p-1 rounded-full border shadow-sm" style={{ backgroundColor: '#D9CFC1', borderColor: '#A89885' }}>
             {navLinks.map((link) => (
               <Link
                 key={link.path}
                 to={link.path}
                 className={`px-5 py-2.5 rounded-full text-sm font-bold transition-all duration-300 relative overflow-hidden ${location.pathname === link.path
-                  ? "text-white shadow-lg"
-                  : "text-muted-foreground hover:text-white"
+                  ? "text-white shadow-md"
+                  : "text-foreground/60 hover:text-foreground"
                   }`}
               >
                 {/* Active Gradient Pill */}
                 {location.pathname === link.path && (
                   <motion.div
                     layoutId="active-nav-pill"
-                    className="absolute inset-0 bg-gradient-to-r from-neon-orange to-neon-pink rounded-full -z-10 shadow-neon-fire"
+                    className="absolute inset-0 rounded-full -z-10" style={{ background: '#FF6B6B', boxShadow: '0 2px 10px rgba(255,107,107,0.3)' }}
                     transition={{ type: "spring", stiffness: 300, damping: 30 }}
                   />
                 )}
@@ -134,18 +134,18 @@ export default function Navbar() {
 
         {/* Actions - Right Side */}
         <div className="flex items-center gap-2 ml-auto z-10 flex-shrink-0">
-          <div className="flex items-center gap-1 bg-black/40 backdrop-blur-md p-1 rounded-full border border-white/10 glass shadow-[0_8px_32px_rgba(0,0,0,0.5)]">
+          <div className="flex items-center gap-1 p-1 rounded-full border shadow-sm" style={{ backgroundColor: '#D9CFC1', borderColor: '#A89885' }}>
 
             {/* Notification Bell */}
             <div className="relative">
               <button
                 onClick={handleNotificationClick}
-                className={`relative p-2.5 rounded-full hover-bell-ring transition-colors flex items-center justify-center ${showNotifications ? 'bg-white/10 text-white' : 'hover:bg-white/5 text-muted-foreground hover:text-white'
+                className={`relative p-2.5 rounded-full hover-bell-ring transition-colors flex items-center justify-center ${showNotifications ? 'bg-foreground/10 text-foreground' : 'hover:bg-foreground/5 text-muted-foreground hover:text-foreground'
                   }`}
               >
                 <Bell className="w-5 h-5" />
                 {hasUnread && (
-                  <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 rounded-full bg-neon-orange shadow-[0_0_10px_rgba(255,100,0,0.8)] border-2 border-[#12121A]"></span>
+                  <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 rounded-full bg-[#FF6B6B] shadow-[0_0_8px_rgba(255,107,107,0.6)] border-2 border-[#D9CFC1]"></span>
                 )}
               </button>
 
@@ -154,16 +154,16 @@ export default function Navbar() {
                 <motion.div
                   initial={{ opacity: 0, y: 10, scale: 0.95 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
-                  className="absolute top-[calc(100%+12px)] right-[-60px] sm:right-0 w-[min(380px,calc(100vw-32px))] glass-heavy border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-50 origin-top-right bg-[#0A0A0F]/95 backdrop-blur-xl"
+                  className="absolute top-[calc(100%+12px)] right-[-60px] sm:right-0 w-[min(380px,calc(100vw-32px))] border rounded-2xl shadow-xl overflow-hidden z-50 origin-top-right" style={{ backgroundColor: '#D9CFC1', borderColor: '#A89885' }}
                 >
-                  <div className="p-4 border-b border-white/5 flex items-center justify-between bg-white/5">
+                  <div className="p-4 border-b flex items-center justify-between" style={{ borderColor: '#A89885', backgroundColor: 'rgba(184,168,150,0.3)' }}>
                     <h3 className="font-bold text-sm tracking-wide">Notifications</h3>
                     <button
                       onClick={() => {
                         setHasUnread(false);
                         setNotifications(prev => prev.map(n => ({ ...n, unread: false })));
                       }}
-                      className="text-xs font-semibold text-neon-cyan hover:text-white transition-colors"
+                      className="text-xs font-semibold text-[#FF6B6B] hover:text-[#e55a5a] transition-colors"
                     >
                       Mark all read
                     </button>
@@ -171,7 +171,7 @@ export default function Navbar() {
                   <div className="max-h-[350px] overflow-y-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
                     {notifications.length === 0 ? (
                       <div className="p-8 text-center text-muted-foreground flex flex-col items-center gap-3">
-                        <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center">
+                        <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ backgroundColor: 'rgba(184,168,150,0.3)' }}>
                           <Bell className="w-6 h-6 opacity-40" />
                         </div>
                         <span className="text-sm">You're all caught up!</span>
@@ -187,11 +187,11 @@ export default function Navbar() {
                             navigate('/chat');
                           }
                         }}
-                        className="p-4 border-b border-white/5 hover:bg-white/10 transition-colors cursor-pointer flex gap-4 items-start"
+                        className="p-4 border-b hover:bg-foreground/5 transition-colors cursor-pointer flex gap-4 items-start" style={{ borderColor: '#A89885' }}
                       >
-                        <div className={`w-2 h-2 rounded-full mt-2 flex-shrink-0 shadow-sm ${n.unread && hasUnread ? "bg-neon-orange shadow-[0_0_8px_rgba(255,100,0,0.8)]" : "bg-white/10"}`} />
+                        <div className={`w-2 h-2 rounded-full mt-2 flex-shrink-0 shadow-sm ${n.unread && hasUnread ? "bg-[#FF6B6B] shadow-[0_0_6px_rgba(255,107,107,0.5)]" : "bg-foreground/10"}`} />
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-semibold text-white truncate">{n.title}</p>
+                          <p className="text-sm font-semibold text-foreground truncate">{n.title}</p>
                           <p className="text-sm text-muted-foreground mt-1 break-words line-clamp-2 leading-relaxed">{n.desc}</p>
                           <p className="text-xs text-muted-foreground/50 mt-2 font-mono">{n.time}</p>
                         </div>
@@ -203,23 +203,23 @@ export default function Navbar() {
                       setShowNotifications(false);
                       navigate('/chat');
                     }}
-                    className="p-3.5 text-center bg-white/5 hover:bg-white/10 transition-colors cursor-pointer border-t border-white/5"
+                    className="p-3.5 text-center hover:bg-foreground/5 transition-colors cursor-pointer border-t" style={{ borderColor: '#A89885' }}
                   >
-                    <span className="text-xs font-bold text-white tracking-wide uppercase">Open Messages</span>
+                    <span className="text-xs font-bold text-foreground tracking-wide uppercase">Open Messages</span>
                   </div>
                 </motion.div>
               )}
             </div>
 
             {/* Chat Icon */}
-            <Link to="/chat" className="p-2.5 rounded-full hover:bg-white/5 transition-colors text-muted-foreground hover:text-white flex items-center justify-center">
+            <Link to="/chat" className="p-2.5 rounded-full hover:bg-foreground/5 transition-colors text-muted-foreground hover:text-foreground flex items-center justify-center">
               <MessageCircle className="w-5 h-5" />
             </Link>
 
             {/* Profile Avatar */}
             <div className="pl-1 pr-1.5">
-              <Link to="/profile" className="w-9 h-9 rounded-full bg-gradient-to-tr from-neon-blue to-neon-cyan flex items-center justify-center cursor-pointer hover:shadow-[0_0_15px_rgba(0,255,255,0.4)] transition-all transform hover:scale-105 border border-white/20">
-                <User className="w-4.5 h-4.5 text-white drop-shadow-md" />
+              <Link to="/profile" className="w-9 h-9 rounded-full flex items-center justify-center cursor-pointer transition-all transform hover:scale-105 border" style={{ background: '#FF6B6B', borderColor: '#e55a5a' }}>
+                <User className="w-4.5 h-4.5 text-white" />
               </Link>
             </div>
           </div>
@@ -238,7 +238,7 @@ export default function Navbar() {
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="lg:hidden glass-heavy border-t border-white/5 px-4 py-4 flex flex-col gap-2"
+          className="lg:hidden border-t px-4 py-4 flex flex-col gap-2" style={{ backgroundColor: '#D9CFC1', borderColor: '#A89885' }}
         >
           <div className="flex items-center gap-2 mb-2">
             <Search className="w-4 h-4 text-muted-foreground" />
@@ -253,15 +253,17 @@ export default function Navbar() {
               to={link.path}
               onClick={() => setMenuOpen(false)}
               className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${location.pathname === link.path
-                ? "bg-gradient-fire text-white"
-                : "text-muted-foreground hover:text-foreground hover:bg-white/5"
+                ? "text-white"
+                : "text-muted-foreground hover:text-foreground hover:bg-foreground/5"
                 }`}
+              style={location.pathname === link.path ? { background: '#FF6B6B' } : undefined}
             >
               {link.label}
             </Link>
           ))}
         </motion.div>
-      )}
-    </motion.nav>
+      )
+      }
+    </motion.nav >
   );
 }
