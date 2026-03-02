@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
-import { ChevronRight, Flame, Sun, Grid3X3, Laptop, BookOpen, Shirt, Bike, Headphones, Camera, Sofa, Utensils, Loader2, ShoppingBag } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
+import { ChevronRight, Flame, Grid3X3, Laptop, BookOpen, Shirt, Bike, Headphones, Camera, Sofa, Utensils, Loader2, ShoppingBag, X, MapPin, Phone, Home as HomeIcon, Zap } from "lucide-react";
 import ProductCard from "@/components/ProductCard";
 import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
+import { campusEssentials, ADMIN_SELLER_ID, type CampusEssentialItem } from "@/config/campusEssentials";
 import type { Database } from "@/types/supabase";
 
 type Product = Database["public"]["Tables"]["products"]["Row"];
@@ -21,21 +24,58 @@ const categories = [
   { icon: Utensils, label: "Kitchen", count: "240+", gradient: "from-emerald-400 to-teal-500", image: "https://images.unsplash.com/photo-1556910103-1c02745aae4d?q=80&w=600&auto=format&fit=crop" },
 ];
 
-const campusEssentials = [
-  { id: "ce1", title: "Practical File (100pg)", price: 60, image: "https://images.unsplash.com/photo-1586075010923-2dd4570fb338?q=80&w=400&auto=format&fit=crop", gradient: "from-emerald-500 to-teal-600" },
-  { id: "ce2", title: "Spiral Notebook A4", price: 45, image: "https://images.unsplash.com/photo-1531346878377-a5be20888e57?q=80&w=400&auto=format&fit=crop", gradient: "from-blue-500 to-indigo-600" },
-  { id: "ce3", title: "Pen Set (5 Pack)", price: 30, image: "https://images.unsplash.com/photo-1585336261022-680e295ce3fe?q=80&w=400&auto=format&fit=crop", gradient: "from-violet-500 to-purple-600" },
-  { id: "ce4", title: "Highlighter Set (4)", price: 80, image: "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?q=80&w=400&auto=format&fit=crop", gradient: "from-yellow-400 to-orange-500" },
-  { id: "ce5", title: "Scientific Calculator", price: 350, image: "https://images.unsplash.com/photo-1564466809058-bf4114d55352?q=80&w=400&auto=format&fit=crop", gradient: "from-cyan-500 to-blue-600" },
-  { id: "ce6", title: "Complete Stationery Kit", price: 150, image: "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?q=80&w=400&auto=format&fit=crop", gradient: "from-pink-500 to-rose-600" },
-  { id: "ce7", title: "Graph Paper Pad", price: 40, image: "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?q=80&w=400&auto=format&fit=crop", gradient: "from-amber-400 to-orange-500" },
-  { id: "ce8", title: "Geometry Box Set", price: 120, image: "https://images.unsplash.com/photo-1596495578065-6e0763fa1178?q=80&w=400&auto=format&fit=crop", gradient: "from-teal-400 to-emerald-500" },
-];
+// campusEssentials imported from @/config/campusEssentials
 
 export default function Home() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [timeLeft, setTimeLeft] = useState({ days: "00", hours: "00", minutes: "00", seconds: "00" });
+
+  // ── Campus Essentials Quick-Buy ──
+  const [buyItem, setBuyItem] = useState<CampusEssentialItem | null>(null);
+  const [buyHostel, setBuyHostel] = useState("");
+  const [buyRoom, setBuyRoom] = useState("");
+  const [buyPhone, setBuyPhone] = useState("");
+  const [buyLoading, setBuyLoading] = useState(false);
+
+  const handleQuickBuy = async () => {
+    if (!user) { navigate('/login'); return; }
+    if (!buyItem) return;
+    if (!buyHostel.trim() || !buyPhone.trim()) {
+      toast.error("Please fill in your hostel and phone number.");
+      return;
+    }
+    setBuyLoading(true);
+    try {
+      const { data, error } = await supabase.from("orders").insert({
+        product_id: null, // campus essentials don't have a DB product row
+        buyer_id: user.id,
+        seller_id: ADMIN_SELLER_ID,
+        base_price: buyItem.price,
+        commission: 0,
+        delivery_charge: 0,
+        total_price: buyItem.price,
+        delivery_location: `${buyHostel} [CE: ${buyItem.title}]`,
+        delivery_room: buyRoom || null,
+        buyer_phone: buyPhone,
+        status: 'pending',
+        seller_notified_at: new Date().toISOString(),
+      }).select().single();
+
+      if (error) throw error;
+
+      toast.success(`Order placed for ${buyItem.title}! 🎉`);
+      setBuyItem(null);
+      setBuyHostel(""); setBuyRoom(""); setBuyPhone("");
+      navigate(`/tracking?order=${data.id}`);
+    } catch (err: any) {
+      toast.error(err.message || "Order failed. Please try again.");
+    } finally {
+      setBuyLoading(false);
+    }
+  };
 
   useEffect(() => {
     const calculateTimeLeft = () => {
@@ -270,13 +310,13 @@ export default function Home() {
               <ShoppingBag className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" style={{ color: '#4DB8AC' }} />
               <h2 className="text-base sm:text-xl font-bold truncate" style={fontH}>Campus Essentials</h2>
             </div>
-            <span className="px-2 py-0.5 sm:px-3 sm:py-1 rounded-full text-[10px] sm:text-xs font-semibold flex-shrink-0" style={{ backgroundColor: 'rgba(77,184,172,0.1)', color: '#4DB8AC', border: '1px solid rgba(77,184,172,0.2)' }}>
-              Always Available
-            </span>
+            <div className="flex items-center gap-1.5 px-2 py-0.5 sm:px-3 sm:py-1 rounded-full text-[10px] sm:text-xs font-semibold flex-shrink-0" style={{ backgroundColor: 'rgba(77,184,172,0.1)', color: '#4DB8AC', border: '1px solid rgba(77,184,172,0.2)' }}>
+              <Zap className="w-3 h-3" /> Fast Delivery
+            </div>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
-            {campusEssentials.slice(0, 8).map((item, i) => (
+            {campusEssentials.map((item, i) => (
               <motion.div
                 key={item.id}
                 initial={{ opacity: 0, y: 20 }}
@@ -292,12 +332,25 @@ export default function Home() {
                     onError={(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400'; }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#2A2420] to-transparent opacity-60" />
+                  {item.badge && (
+                    <div className="absolute top-1.5 left-1.5 sm:top-2 sm:left-2 px-1.5 py-0.5 rounded-md text-[9px] sm:text-[10px] font-bold text-white" style={{ background: '#FF6B6B' }}>
+                      {item.badge}
+                    </div>
+                  )}
                 </div>
                 <div className="p-2.5 sm:p-3">
                   <p className="text-[11px] sm:text-xs font-semibold line-clamp-1 mb-1" style={{ color: '#E8DED4' }}>{item.title}</p>
-                  <p className="text-sm sm:text-base font-bold" style={{ color: '#FF6B6B' }}>₹{item.price}</p>
-                  <button className="mt-1.5 sm:mt-2 w-full py-1.5 sm:py-2 rounded-lg text-white text-[10px] sm:text-xs font-semibold transition-opacity hover:opacity-90"
-                    style={{ background: '#FF6B6B' }}>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <p className="text-sm sm:text-base font-bold" style={{ color: '#FF6B6B' }}>₹{item.price}</p>
+                    <div className="flex items-center gap-0.5 text-[9px]" style={{ color: '#4DB8AC' }}>
+                      <Zap className="w-2.5 h-2.5" /> Fast
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setBuyItem(item)}
+                    className="w-full py-1.5 sm:py-2 rounded-lg text-white text-[10px] sm:text-xs font-semibold transition-all hover:opacity-90 active:scale-[0.97]"
+                    style={{ background: '#FF6B6B' }}
+                  >
                     Buy Now
                   </button>
                 </div>
@@ -305,6 +358,100 @@ export default function Home() {
             ))}
           </div>
         </section>
+
+        {/* ─── Quick Buy Modal ─── */}
+        <AnimatePresence>
+          {buyItem && (
+            <motion.div
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4"
+              style={{ backgroundColor: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)' }}
+              onClick={() => !buyLoading && setBuyItem(null)}
+            >
+              <motion.div
+                initial={{ y: 100, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 100, opacity: 0 }}
+                transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+                className="w-full sm:max-w-[420px] rounded-t-2xl sm:rounded-2xl overflow-hidden"
+                style={{ backgroundColor: '#2A2420', border: '1px solid #3D342C' }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                {/* Header */}
+                <div className="flex items-center justify-between p-4 sm:p-5" style={{ borderBottom: '1px solid #3D342C' }}>
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0" style={{ border: '1px solid #3D342C' }}>
+                      <img src={buyItem.image} alt={buyItem.title} className="w-full h-full object-cover" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-bold" style={{ ...fontH, color: '#E8DED4' }}>{buyItem.title}</p>
+                      <p className="text-base font-bold" style={{ color: '#FF6B6B' }}>₹{buyItem.price}</p>
+                    </div>
+                  </div>
+                  <button onClick={() => setBuyItem(null)} className="p-1.5 rounded-lg transition-colors" style={{ color: '#8F8175' }}>
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+
+                {/* Form */}
+                <div className="p-4 sm:p-5 space-y-3">
+                  <p className="text-xs font-medium mb-3" style={{ color: '#8F8175' }}>Where should we deliver? ⚡</p>
+
+                  <div className="relative">
+                    <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: '#8F8175' }} />
+                    <input
+                      value={buyHostel} onChange={(e) => setBuyHostel(e.target.value)}
+                      placeholder="Hostel Block (e.g. BH-1)"
+                      className="w-full rounded-xl pl-10 pr-4 h-[48px] text-sm focus:outline-none transition-all"
+                      style={{ backgroundColor: 'rgba(255,255,255,0.04)', color: '#E8DED4', border: '1px solid #3D342C' }}
+                    />
+                  </div>
+
+                  <div className="relative">
+                    <HomeIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: '#8F8175' }} />
+                    <input
+                      value={buyRoom} onChange={(e) => setBuyRoom(e.target.value)}
+                      placeholder="Room Number (optional)"
+                      className="w-full rounded-xl pl-10 pr-4 h-[48px] text-sm focus:outline-none transition-all"
+                      style={{ backgroundColor: 'rgba(255,255,255,0.04)', color: '#E8DED4', border: '1px solid #3D342C' }}
+                    />
+                  </div>
+
+                  <div className="relative">
+                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: '#8F8175' }} />
+                    <input
+                      value={buyPhone} onChange={(e) => setBuyPhone(e.target.value)}
+                      placeholder="Phone Number"
+                      type="tel"
+                      className="w-full rounded-xl pl-10 pr-4 h-[48px] text-sm focus:outline-none transition-all"
+                      style={{ backgroundColor: 'rgba(255,255,255,0.04)', color: '#E8DED4', border: '1px solid #3D342C' }}
+                    />
+                  </div>
+
+                  <div className="flex items-center gap-2 mt-1 px-1">
+                    <Zap className="w-3.5 h-3.5" style={{ color: '#4DB8AC' }} />
+                    <span className="text-[11px]" style={{ color: '#4DB8AC' }}>Delivered by Campus Store · No extra charges</span>
+                  </div>
+                </div>
+
+                {/* Footer */}
+                <div className="p-4 sm:p-5" style={{ borderTop: '1px solid #3D342C' }}>
+                  <motion.button
+                    onClick={handleQuickBuy}
+                    disabled={buyLoading}
+                    whileTap={{ scale: 0.97 }}
+                    className="w-full py-3.5 rounded-xl text-white font-bold text-sm transition-all disabled:opacity-50"
+                    style={{ ...fontH, background: '#FF6B6B', boxShadow: '0 4px 16px rgba(255,107,107,0.25)' }}
+                  >
+                    {buyLoading ? (
+                      <Loader2 className="w-5 h-5 animate-spin mx-auto" />
+                    ) : (
+                      <>Place Order · ₹{buyItem.price}</>
+                    )}
+                  </motion.button>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* ─── BROWSE CATEGORIES ─── */}
         <section className="mb-10 sm:mb-16">
