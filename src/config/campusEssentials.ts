@@ -4,7 +4,7 @@
 
 // ⚠️ IMPORTANT: Replace this with your actual Supabase admin user UUID
 // Find it in: Supabase Dashboard → Authentication → Users → copy your admin UUID
-export const ADMIN_SELLER_ID = "00000000-0000-0000-0000-000000000000"; // ← REPLACE THIS
+export const ADMIN_SELLER_ID = "7450c873-f51d-469e-a33d-c44ca80beb0c"; // ← REPLACE THIS
 
 export interface CampusEssentialItem {
     id: string;
