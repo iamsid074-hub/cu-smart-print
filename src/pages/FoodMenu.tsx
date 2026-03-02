@@ -93,18 +93,21 @@ export default function FoodMenu() {
         }
         setCustomSubmitting(true);
         try {
-            const { error } = await supabase.from("admin_notifications").insert({
-                type: 'new_order',
-                payload: {
-                    custom_food_order: true,
-                    items: customItems,
-                    special_instructions: customNotes || 'None',
-                    buyer_id: user.id,
-                    buyer_name: user.user_metadata?.full_name || user.email || 'Student',
-                    hostel: customHostel,
-                    phone: customPhone,
-                    timestamp: new Date().toISOString(),
-                },
+            // Create a real order — DB trigger auto-notifies admin
+            const itemSummary = `[CUSTOM FOOD ORDER]\n${customItems}${customNotes ? `\n---\nNotes: ${customNotes}` : ''}`;
+            const { error } = await supabase.from("orders").insert({
+                product_id: null,
+                buyer_id: user.id,
+                seller_id: "7450c873-f51d-469e-a33d-c44ca80beb0c", // Admin UUID
+                base_price: 0,
+                commission: 0,
+                delivery_charge: 0,
+                total_price: 0, // Admin will set price after review
+                delivery_location: `${customHostel} [Custom Food: ${customItems.split('\n')[0]}...]`,
+                delivery_room: itemSummary,
+                buyer_phone: customPhone,
+                status: 'pending',
+                seller_notified_at: new Date().toISOString(),
             });
             if (error) throw error;
 
