@@ -311,7 +311,8 @@ function ProductsSection({ products, loading, onDelete }: {
 
 // ─── Helper: detect food order ─────────────────────────────────────────────────
 function isFoodOrder(order: Order): boolean {
-    return (order.delivery_location?.includes('[Custom Food:') || order.delivery_location?.includes('[CE:') || order.delivery_room?.includes('[CUSTOM FOOD ORDER]')) && !order.products;
+    // Only custom food orders are "food" — Campus Essentials ([CE:]) go to Item Orders
+    return (order.delivery_location?.includes('[Custom Food:') || order.delivery_room?.includes('[CUSTOM FOOD ORDER]')) && !order.products;
 }
 
 // ─── Filter Bar Component ──────────────────────────────────────────────────────
