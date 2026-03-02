@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Heart, Star, BadgeCheck } from "lucide-react";
+import { Heart, Star, BadgeCheck, ShoppingCart } from "lucide-react";
+import { useCart } from "@/contexts/CartContext";
+import { useToast } from "@/hooks/use-toast";
 
 interface ProductCardProps {
   id: string;
@@ -34,6 +36,8 @@ export default function ProductCard({
   badge,
   delay = 0,
 }: ProductCardProps) {
+  const { addItem } = useCart();
+  const { toast } = useToast();
   return (
     <Link to={`/product/${id}`} className="block flex-shrink-0 w-56 sm:w-64">
       <motion.div
@@ -100,10 +104,16 @@ export default function ProductCard({
               )}
             </div>
             <motion.button
-              onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.location.href = `/product/${id}`; }}
-              className="premium-glass-button px-4 py-2 bg-white/10 hover:bg-white/20 text-white text-xs font-bold rounded-lg shadow-glass transition-colors"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                addItem({ id, title, price, image, category: condition });
+                toast({ title: `${title} added! 🛒` });
+              }}
+              whileTap={{ scale: 0.9 }}
+              className="premium-glass-button px-3 py-2 bg-white/10 hover:bg-white/20 text-white text-xs font-bold rounded-lg shadow-glass transition-colors flex items-center gap-1"
             >
-              Buy
+              <ShoppingCart className="w-3.5 h-3.5" /> Cart
             </motion.button>
           </div>
         </div>

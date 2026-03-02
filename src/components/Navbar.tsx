@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Search, Bell, MessageCircle, User, Zap, Menu, X, ShoppingCart } from "lucide-react";
+import { Search, Bell, User, Zap, Menu, X, ShoppingCart } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
@@ -8,7 +8,6 @@ import { useCart } from "@/contexts/CartContext";
 
 const navLinks = [
   { label: "Home", path: "/home" },
-  { label: "Chat", path: "/chat" },
   { label: "Sell", path: "/list" },
   { label: "Track", path: "/tracking" },
   { label: "Food", path: "/food" },
@@ -183,11 +182,7 @@ export default function Navbar() {
                         key={n.id}
                         onClick={() => {
                           setShowNotifications(false);
-                          if (n.senderProfile) {
-                            navigate('/chat', { state: { contact: n.senderProfile } });
-                          } else {
-                            navigate('/chat');
-                          }
+                          navigate('/tracking');
                         }}
                         className="p-4 border-b hover:bg-foreground/5 transition-colors cursor-pointer flex gap-4 items-start" style={{ borderColor: '#3D342C' }}
                       >
@@ -203,20 +198,17 @@ export default function Navbar() {
                   <div
                     onClick={() => {
                       setShowNotifications(false);
-                      navigate('/chat');
+                      navigate('/tracking');
                     }}
                     className="p-3.5 text-center hover:bg-foreground/5 transition-colors cursor-pointer border-t" style={{ borderColor: '#3D342C' }}
                   >
-                    <span className="text-xs font-bold text-foreground tracking-wide uppercase">Open Messages</span>
+                    <span className="text-xs font-bold text-foreground tracking-wide uppercase">View All</span>
                   </div>
                 </motion.div>
               )}
             </div>
 
-            {/* Chat Icon */}
-            <Link to="/chat" className="p-2.5 rounded-full hover:bg-foreground/5 transition-colors text-muted-foreground hover:text-foreground flex items-center justify-center">
-              <MessageCircle className="w-5 h-5" />
-            </Link>
+
 
             {/* Cart Icon */}
             <Link to="/cart" className="relative p-2.5 rounded-full hover:bg-foreground/5 transition-colors text-muted-foreground hover:text-foreground flex items-center justify-center">

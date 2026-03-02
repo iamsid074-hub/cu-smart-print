@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import Index from "./pages/Index";
 import Home from "./pages/Home";
-import Chat from "./pages/Chat";
+
 import ListProduct from "./pages/ListProduct";
 import Tracking from "./pages/Tracking";
 import NotFound from "./pages/NotFound";
@@ -78,7 +78,7 @@ function AppLayout() {
         <Route path="/login" element={user ? <Navigate to="/home" replace /> : <Login />} />
 
         {/* Protected Routes */}
-        <Route path="/chat" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
+
         <Route path="/list" element={<ProtectedRoute><ListProduct /></ProtectedRoute>} />
         <Route path="/tracking" element={<ProtectedRoute><Tracking /></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />

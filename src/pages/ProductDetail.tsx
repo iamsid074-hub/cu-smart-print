@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { MessageCircle, Heart, Share2, MapPin, Clock, BadgeCheck, Loader2, ArrowLeft, ShoppingBag } from "lucide-react";
+import { Heart, Share2, MapPin, Clock, BadgeCheck, Loader2, ArrowLeft, ShoppingBag, ShoppingCart } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
+import { useCart } from "@/contexts/CartContext";
 import { useToast } from "@/hooks/use-toast";
 import {
     Dialog,
@@ -19,6 +20,7 @@ export default function ProductDetail() {
     const navigate = useNavigate();
     const { user } = useAuth();
     const { toast } = useToast();
+    const { addItem } = useCart();
 
     const [product, setProduct] = useState<any>(null);
     const [loading, setLoading] = useState(true);
@@ -64,14 +66,7 @@ export default function ProductDetail() {
 
     const isOwner = user?.id === product.seller_id;
 
-    const handleChatWithSeller = () => {
-        if (!user) {
-            navigate('/login');
-            return;
-        }
-        // Navigate to Chat page and pass the seller profile as state so Chat auto-opens it
-        navigate('/chat', { state: { contact: product.profiles } });
-    };
+
 
     // Calculate Dynamic Delivery Fee based on Time of Day
     const getDeliveryFee = () => {
@@ -329,11 +324,21 @@ export default function ProductDetail() {
                                         </DialogContent>
                                     </Dialog>
 
+
                                     <button
-                                        onClick={handleChatWithSeller}
+                                        onClick={() => {
+                                            addItem({
+                                                id: product.id,
+                                                title: product.title,
+                                                price: product.price,
+                                                image: product.image_url || 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400',
+                                                category: product.category,
+                                            });
+                                            toast({ title: `${product.title} added to cart! 🛒` });
+                                        }}
                                         className="w-full sm:w-auto px-6 py-3 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold transition-transform flex items-center justify-center gap-2"
                                     >
-                                        <MessageCircle className="w-5 h-5" /> Chat Seller
+                                        <ShoppingCart className="w-5 h-5" /> Add to Cart
                                     </button>
                                 </div>
                             )}
