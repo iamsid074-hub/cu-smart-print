@@ -465,7 +465,8 @@ export default function Home() {
               <Grid3X3 className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: '#4DB8AC' }} />
               <h2 className="text-base sm:text-xl font-bold" style={fontH}>Browse Categories</h2>
             </div>
-            <Link to="/browse" className="flex items-center gap-1 text-xs sm:text-sm" style={{ color: '#4DB8AC' }}>
+            <Link to="/browse" className="flex items-center gap-1.5 text-xs sm:text-sm font-bold px-4 py-2 rounded-xl transition-all hover:scale-105 active:scale-95"
+              style={{ background: 'rgba(77,184,172,0.08)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', border: '1px solid rgba(77,184,172,0.15)', color: '#4DB8AC', boxShadow: '0 4px 16px rgba(77,184,172,0.08), inset 0 1px 0 rgba(255,255,255,0.05)' }}>
               See All <ChevronRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </Link>
           </div>
