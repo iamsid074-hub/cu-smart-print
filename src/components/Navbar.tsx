@@ -80,12 +80,12 @@ export default function Navbar() {
       initial={{ y: -80, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5, ease: [0.34, 1.56, 0.64, 1] }}
-      className="fixed top-0 left-0 right-0 z-50 border-b" style={{ background: 'rgba(201,187,176,0.85)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', borderColor: '#A89885' }}
+      className="fixed top-0 left-0 right-0 z-50 border-b" style={{ background: 'rgba(26,20,18,0.88)', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)', borderColor: 'rgba(61,52,44,0.5)' }}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center gap-2 sm:gap-4">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2 flex-shrink-0 group">
-          <div className="relative w-10 h-10 rounded-full overflow-hidden border flex items-center justify-center p-0.5 transition-colors shadow-sm" style={{ backgroundColor: '#D9CFC1', borderColor: '#A89885' }}>
+          <div className="relative w-10 h-10 rounded-full overflow-hidden border flex items-center justify-center p-0.5 transition-colors shadow-sm" style={{ backgroundColor: '#2A2420', borderColor: '#3D342C' }}>
             <img src="/logo.png" alt="CU BAZZAR Logo" className="w-full h-full object-cover object-center rounded-full" />
           </div>
           <span className="font-bold text-lg tracking-tight hidden sm:block">
@@ -108,7 +108,7 @@ export default function Navbar() {
 
         {/* Nav links - Center Pill Dock */}
         <div className="hidden lg:flex flex-1 justify-center relative z-10">
-          <div className="flex items-center gap-1 p-1 rounded-full border shadow-sm" style={{ backgroundColor: '#D9CFC1', borderColor: '#A89885' }}>
+          <div className="flex items-center gap-1 p-1 rounded-full border shadow-sm" style={{ backgroundColor: 'rgba(42,36,32,0.8)', borderColor: '#3D342C' }}>
             {navLinks.map((link) => (
               <Link
                 key={link.path}
@@ -134,7 +134,7 @@ export default function Navbar() {
 
         {/* Actions - Right Side */}
         <div className="flex items-center gap-2 ml-auto z-10 flex-shrink-0">
-          <div className="flex items-center gap-1 p-1 rounded-full border shadow-sm" style={{ backgroundColor: '#D9CFC1', borderColor: '#A89885' }}>
+          <div className="flex items-center gap-1 p-1 rounded-full border shadow-sm" style={{ backgroundColor: 'rgba(42,36,32,0.8)', borderColor: '#3D342C' }}>
 
             {/* Notification Bell */}
             <div className="relative">
@@ -145,7 +145,7 @@ export default function Navbar() {
               >
                 <Bell className="w-5 h-5" />
                 {hasUnread && (
-                  <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 rounded-full bg-[#FF6B6B] shadow-[0_0_8px_rgba(255,107,107,0.6)] border-2 border-[#D9CFC1]"></span>
+                  <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 rounded-full bg-[#FF6B6B] shadow-[0_0_8px_rgba(255,107,107,0.6)] border-2 border-[#2A2420]"></span>
                 )}
               </button>
 
@@ -154,9 +154,9 @@ export default function Navbar() {
                 <motion.div
                   initial={{ opacity: 0, y: 10, scale: 0.95 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
-                  className="absolute top-[calc(100%+12px)] right-[-60px] sm:right-0 w-[min(380px,calc(100vw-32px))] border rounded-2xl shadow-xl overflow-hidden z-50 origin-top-right" style={{ backgroundColor: '#D9CFC1', borderColor: '#A89885' }}
+                  className="absolute top-[calc(100%+12px)] right-[-60px] sm:right-0 w-[min(380px,calc(100vw-32px))] border rounded-2xl shadow-xl overflow-hidden z-50 origin-top-right" style={{ backgroundColor: '#2A2420', borderColor: '#3D342C' }}
                 >
-                  <div className="p-4 border-b flex items-center justify-between" style={{ borderColor: '#A89885', backgroundColor: 'rgba(184,168,150,0.3)' }}>
+                  <div className="p-4 border-b flex items-center justify-between" style={{ borderColor: '#3D342C', backgroundColor: 'rgba(255,255,255,0.03)' }}>
                     <h3 className="font-bold text-sm tracking-wide">Notifications</h3>
                     <button
                       onClick={() => {
@@ -171,7 +171,7 @@ export default function Navbar() {
                   <div className="max-h-[350px] overflow-y-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
                     {notifications.length === 0 ? (
                       <div className="p-8 text-center text-muted-foreground flex flex-col items-center gap-3">
-                        <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ backgroundColor: 'rgba(184,168,150,0.3)' }}>
+                        <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ backgroundColor: 'rgba(255,255,255,0.05)' }}>
                           <Bell className="w-6 h-6 opacity-40" />
                         </div>
                         <span className="text-sm">You're all caught up!</span>
@@ -187,7 +187,7 @@ export default function Navbar() {
                             navigate('/chat');
                           }
                         }}
-                        className="p-4 border-b hover:bg-foreground/5 transition-colors cursor-pointer flex gap-4 items-start" style={{ borderColor: '#A89885' }}
+                        className="p-4 border-b hover:bg-foreground/5 transition-colors cursor-pointer flex gap-4 items-start" style={{ borderColor: '#3D342C' }}
                       >
                         <div className={`w-2 h-2 rounded-full mt-2 flex-shrink-0 shadow-sm ${n.unread && hasUnread ? "bg-[#FF6B6B] shadow-[0_0_6px_rgba(255,107,107,0.5)]" : "bg-foreground/10"}`} />
                         <div className="flex-1 min-w-0">
@@ -203,7 +203,7 @@ export default function Navbar() {
                       setShowNotifications(false);
                       navigate('/chat');
                     }}
-                    className="p-3.5 text-center hover:bg-foreground/5 transition-colors cursor-pointer border-t" style={{ borderColor: '#A89885' }}
+                    className="p-3.5 text-center hover:bg-foreground/5 transition-colors cursor-pointer border-t" style={{ borderColor: '#3D342C' }}
                   >
                     <span className="text-xs font-bold text-foreground tracking-wide uppercase">Open Messages</span>
                   </div>
@@ -238,7 +238,7 @@ export default function Navbar() {
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="lg:hidden border-t px-4 py-4 flex flex-col gap-2" style={{ backgroundColor: '#D9CFC1', borderColor: '#A89885' }}
+          className="lg:hidden border-t px-4 py-4 flex flex-col gap-2" style={{ backgroundColor: '#2A2420', borderColor: '#3D342C' }}
         >
           <div className="flex items-center gap-2 mb-2">
             <Search className="w-4 h-4 text-muted-foreground" />

@@ -6,79 +6,82 @@
 
 @layer base {
   :root {
-    /* ─── Warm Cream Palette ─── */
-    --background: 22 12% 74%;
-    /* #C9BBB0 */
-    --foreground: 25 13% 15%;
-    /* #2B2621 */
+    /* ─── Dark Chocolate Palette ─── */
+    --background: 18 18% 9%;
+    /* #1A1412 – deep cocoa */
+    --foreground: 25 25% 88%;
+    /* #E8DED4 – warm cream text */
 
-    --card: 30 17% 80%;
-    /* #D9CFC1 */
-    --card-foreground: 25 13% 15%;
+    --card: 18 14% 14%;
+    /* #2A2420 – dark card */
+    --card-foreground: 25 25% 88%;
 
-    --popover: 30 17% 80%;
-    --popover-foreground: 25 13% 15%;
+    --popover: 18 14% 14%;
+    --popover-foreground: 25 25% 88%;
 
     /* Coral primary */
     --primary: 0 100% 71%;
     /* #FF6B6B */
     --primary-foreground: 0 0% 100%;
 
-    /* Teal accent */
-    --accent: 174 47% 55%;
-    /* #4ECDC4 */
-    --accent-foreground: 25 13% 15%;
+    /* Warm teal accent */
+    --accent: 174 40% 50%;
+    /* #4DB8AC */
+    --accent-foreground: 25 25% 88%;
 
-    --secondary: 30 16% 66%;
-    /* #B8A896 */
-    --secondary-foreground: 25 13% 15%;
+    /* Darker sidebar */
+    --secondary: 18 12% 18%;
+    /* #362F2A */
+    --secondary-foreground: 25 25% 88%;
 
-    --muted: 28 14% 72%;
-    --muted-foreground: 25 10% 48%;
-    /* #8A7E73 */
+    /* Muted tones */
+    --muted: 18 10% 18%;
+    --muted-foreground: 25 12% 52%;
+    /* #8F8175 – muted warm */
 
     --destructive: 0 85% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 28 14% 59%;
-    /* #A89885 */
-    --input: 30 20% 92%;
-    /* #F5F1E8 */
+    --border: 18 10% 22%;
+    /* #3D342C */
+    --input: 18 12% 12%;
+    /* #221D19 */
     --ring: 0 100% 71%;
 
     --radius: 0.75rem;
 
     /* Accent palette */
     --neon-orange: 0 100% 71%;
-    --neon-pink: 330 70% 55%;
-    --neon-cyan: 174 47% 55%;
-    --neon-blue: 215 65% 55%;
-    --neon-yellow: 40 90% 55%;
+    /* coral */
+    --neon-pink: 330 60% 55%;
+    --neon-cyan: 174 40% 50%;
+    --neon-blue: 215 55% 55%;
+    --neon-yellow: 40 80% 55%;
 
-    /* Glass → warm translucent */
-    --glass-bg: 30 17% 80%;
-    --glass-border: 28 14% 59%;
+    /* Glass → dark chocolate translucent */
+    --glass-bg: 18 14% 14%;
+    --glass-border: 18 10% 22%;
 
-    /* Gradients (coral toned) */
+    /* Gradients */
     --gradient-fire: linear-gradient(135deg, #FF6B6B, #FF8E8E);
-    --gradient-ocean: linear-gradient(135deg, #4ECDC4, #44A8B3);
-    --gradient-aurora: linear-gradient(135deg, #FF6B6B, #9B59B6, #4ECDC4);
-    --gradient-card: linear-gradient(145deg, #D9CFC1, #D0C4B5);
+    --gradient-ocean: linear-gradient(135deg, #4DB8AC, #3D9B8F);
+    --gradient-aurora: linear-gradient(135deg, #FF6B6B, #9B59B6, #4DB8AC);
+    --gradient-card: linear-gradient(145deg, #2A2420, #221D19);
 
-    /* Warm shadows */
-    --shadow-neon-fire: 0 4px 20px rgba(255, 107, 107, 0.25);
-    --shadow-neon-ocean: 0 4px 20px rgba(78, 205, 196, 0.25);
-    --shadow-card: 0 4px 16px rgba(43, 38, 33, 0.08);
-    --shadow-glass: 0 4px 16px rgba(43, 38, 33, 0.06);
+    /* Warm dark shadows */
+    --shadow-neon-fire: 0 4px 20px rgba(255, 107, 107, 0.2);
+    --shadow-neon-ocean: 0 4px 20px rgba(77, 184, 172, 0.2);
+    --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.25);
+    --shadow-glass: 0 4px 16px rgba(0, 0, 0, 0.2);
 
-    /* Sidebar: darker cream */
-    --sidebar-background: 30 14% 62%;
-    --sidebar-foreground: 25 13% 15%;
+    /* Sidebar */
+    --sidebar-background: 18 14% 8%;
+    --sidebar-foreground: 25 25% 88%;
     --sidebar-primary: 0 100% 71%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 30 16% 66%;
-    --sidebar-accent-foreground: 25 13% 15%;
-    --sidebar-border: 28 14% 59%;
+    --sidebar-accent: 18 12% 18%;
+    --sidebar-accent-foreground: 25 25% 88%;
+    --sidebar-border: 18 10% 22%;
     --sidebar-ring: 0 100% 71%;
   }
 }
@@ -116,12 +119,12 @@
 
 @layer utilities {
 
-  /* Warm glassmorphism */
+  /* Warm dark glass */
   .glass {
     background: hsl(var(--glass-bg) / 0.7);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    border: 1px solid hsl(var(--glass-border) / 0.3);
+    border: 1px solid hsl(var(--glass-border) / 0.5);
     box-shadow: var(--shadow-glass);
   }
 
@@ -129,7 +132,7 @@
     background: hsl(var(--glass-bg) / 0.9);
     backdrop-filter: blur(24px);
     -webkit-backdrop-filter: blur(24px);
-    border: 1px solid hsl(var(--glass-border) / 0.4);
+    border: 1px solid hsl(var(--glass-border) / 0.6);
     box-shadow: var(--shadow-glass);
   }
 
@@ -139,7 +142,7 @@
   }
 
   .text-neon-ocean {
-    color: #4ECDC4;
+    color: #4DB8AC;
   }
 
   .text-neon-aurora {
@@ -164,16 +167,16 @@
 
   /* Accent borders */
   .border-neon-fire {
-    border: 1px solid rgba(255, 107, 107, 0.35);
-    box-shadow: 0 0 10px rgba(255, 107, 107, 0.1);
+    border: 1px solid rgba(255, 107, 107, 0.3);
+    box-shadow: 0 0 10px rgba(255, 107, 107, 0.08);
   }
 
   .border-neon-ocean {
-    border: 1px solid rgba(78, 205, 196, 0.35);
-    box-shadow: 0 0 10px rgba(78, 205, 196, 0.1);
+    border: 1px solid rgba(77, 184, 172, 0.3);
+    box-shadow: 0 0 10px rgba(77, 184, 172, 0.08);
   }
 
-  /* Glow effects */
+  /* Glow */
   .glow-fire {
     box-shadow: var(--shadow-neon-fire);
   }
@@ -182,14 +185,14 @@
     box-shadow: var(--shadow-neon-ocean);
   }
 
-  /* Card hover (warm) */
+  /* Card hover */
   .card-hover {
     transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
   }
 
   .card-hover:hover {
     transform: translateY(-4px);
-    box-shadow: 0 8px 28px rgba(43, 38, 33, 0.12);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
   }
 
   /* Scrollbar */
@@ -215,11 +218,11 @@
     animation: pulse-dot 2s ease-in-out infinite;
   }
 
-  /* Dot grid */
+  /* Grid */
   .bg-grid {
     background-image:
-      linear-gradient(rgba(43, 38, 33, 0.06) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(43, 38, 33, 0.06) 1px, transparent 1px);
+      linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
     background-size: 40px 40px;
   }
 
@@ -233,7 +236,7 @@
     content: '';
     position: absolute;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.15);
     transform: scale(0);
     animation: ripple 0.6s linear;
   }
@@ -281,11 +284,11 @@
 
   0%,
   100% {
-    box-shadow: 0 0 12px rgba(255, 107, 107, 0.2);
+    box-shadow: 0 0 12px rgba(255, 107, 107, 0.15);
   }
 
   50% {
-    box-shadow: 0 0 24px rgba(255, 107, 107, 0.35);
+    box-shadow: 0 0 24px rgba(255, 107, 107, 0.3);
   }
 }
 
@@ -358,7 +361,7 @@
   transform-origin: top center;
 }
 
-/* Warm glass button */
+/* Dark chocolate glass button */
 .premium-glass-button {
   cursor: pointer;
   position: relative;
@@ -367,11 +370,13 @@
   align-items: center;
   justify-content: center;
   border-radius: 12px;
-  background: #D9CFC1;
-  border: 1px solid #A89885;
-  box-shadow: 0 2px 8px rgba(43, 38, 33, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
   transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-  color: #2B2621;
+  color: rgba(232, 222, 212, 0.9);
   font-weight: 600;
 }
 
@@ -383,9 +388,9 @@
 
 .premium-glass-button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(43, 38, 33, 0.12);
-  background: #E0D6C8;
-  border-color: #9A8B7A;
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.3);
 }
 
 .premium-glass-button:active {
@@ -399,7 +404,7 @@
   left: -100%;
   width: 50%;
   height: 100%;
-  background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.15), transparent);
+  background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.06), transparent);
   transform: skewX(-25deg);
   animation: shine 6s infinite;
   z-index: 1;
@@ -425,7 +430,7 @@
   }
 }
 
-/* ─── Focus Accessibility ─── */
+/* ─── Accessibility ─── */
 :focus-visible {
   outline: 3px solid #FF6B6B;
   outline-offset: 2px;
