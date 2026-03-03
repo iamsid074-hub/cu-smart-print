@@ -28,11 +28,13 @@ export default function UpiPaymentModal({ isOpen, onClose, amount, orderIdText, 
     const [copied, setCopied] = useState(false);
     const isMobile = useIsMobile();
 
-    const upiId = import.meta.env.VITE_MERCHANT_UPI_ID || "9466166750@ybl";
-    const merchantName = "CU Bazzar";
-    // Using a simple intent with a unique transaction reference (tr) to avoid duplicate transaction/spam blocks
-    const trRef = `TR_${Date.now()}_${orderIdText.replace(/[^a-zA-Z0-9]/g, '')}`;
-    const upiUri = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(merchantName)}&am=${amount}&cu=INR&tn=${encodeURIComponent(`Order ${orderIdText}`)}&tr=${trRef}`;
+    const upiId = import.meta.env.VITE_MERCHANT_UPI_ID || "9466166750@fam";
+    const merchantName = "CUBazzar";
+    // Format amount as fixed 2-decimal to avoid bank parsing issues
+    const formattedAmount = Number(amount).toFixed(2);
+    // Short unique transaction reference — some banks reject long or special-char tr values
+    const trRef = `${Date.now()}`;
+    const upiUri = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(merchantName)}&am=${formattedAmount}&cu=INR&tn=${encodeURIComponent(`CUBazzar ${orderIdText}`)}&tr=${trRef}`;
 
     useEffect(() => {
         if (!isOpen) {
