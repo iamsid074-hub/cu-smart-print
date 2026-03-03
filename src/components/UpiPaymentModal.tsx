@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Loader2, ArrowLeft, Smartphone, Monitor, CheckCircle } from "lucide-react";
+import { X, Loader2, ArrowLeft, Smartphone, Monitor, CheckCircle, ShieldAlert } from "lucide-react";
 import QRCode from "react-qr-code";
 import { toast } from "sonner";
 
@@ -22,8 +22,12 @@ function useIsMobile() {
     return isMobile;
 }
 
+const COOLDOWN_SECONDS = 30;
+
 export default function UpiPaymentModal({ isOpen, onClose, amount, orderIdText, onPaymentVerify }: UpiPaymentModalProps) {
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [countdown, setCountdown] = useState(COOLDOWN_SECONDS);
+    const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
     const isMobile = useIsMobile();
 
     const upiId = import.meta.env.VITE_MERCHANT_UPI_ID || "9466166750@fam";
@@ -32,19 +36,35 @@ export default function UpiPaymentModal({ isOpen, onClose, amount, orderIdText, 
     const trRef = `${Date.now()}`;
     const upiUri = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(merchantName)}&am=${formattedAmount}&cu=INR&tn=${encodeURIComponent(`CUBazzar ${orderIdText}`)}&tr=${trRef}`;
 
+    // Countdown timer — starts when modal opens, resets when closed
     useEffect(() => {
-        if (!isOpen) {
-            setIsSubmitting(false);
-        }
         if (isOpen) {
+            setCountdown(COOLDOWN_SECONDS);
+            setIsSubmitting(false);
             document.body.style.overflow = "hidden";
+            timerRef.current = setInterval(() => {
+                setCountdown(prev => {
+                    if (prev <= 1) {
+                        if (timerRef.current) clearInterval(timerRef.current);
+                        return 0;
+                    }
+                    return prev - 1;
+                });
+            }, 1000);
         } else {
             document.body.style.overflow = "";
+            if (timerRef.current) clearInterval(timerRef.current);
         }
-        return () => { document.body.style.overflow = ""; };
+        return () => {
+            document.body.style.overflow = "";
+            if (timerRef.current) clearInterval(timerRef.current);
+        };
     }, [isOpen]);
 
+    const isButtonLocked = countdown > 0;
+
     const handleConfirmPayment = async () => {
+        if (isButtonLocked) return;
         setIsSubmitting(true);
         try {
             await onPaymentVerify(trRef);
@@ -149,15 +169,24 @@ export default function UpiPaymentModal({ isOpen, onClose, amount, orderIdText, 
                                 <div className="flex-grow border-t border-white/10"></div>
                             </div>
 
-                            {/* Confirm Payment Button */}
+                            {/* Confirm Payment Button — locked for 30s */}
                             <button
                                 onClick={handleConfirmPayment}
-                                disabled={isSubmitting}
-                                className="w-full py-4 rounded-xl text-white font-bold text-sm flex justify-center items-center gap-2.5 transition-all disabled:opacity-60 hover:scale-[1.02] active:scale-[0.98]"
-                                style={{ background: 'linear-gradient(135deg, #FF6B6B, #FF4444)', boxShadow: '0 4px 20px rgba(255,107,107,0.3)' }}
+                                disabled={isSubmitting || isButtonLocked}
+                                className="w-full py-4 rounded-xl text-white font-bold text-sm flex justify-center items-center gap-2.5 transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.02] active:scale-[0.98]"
+                                style={{
+                                    background: isButtonLocked
+                                        ? 'rgba(255,255,255,0.08)'
+                                        : 'linear-gradient(135deg, #FF6B6B, #FF4444)',
+                                    boxShadow: isButtonLocked
+                                        ? 'none'
+                                        : '0 4px 20px rgba(255,107,107,0.3)'
+                                }}
                             >
                                 {isSubmitting ? (
                                     <Loader2 className="w-5 h-5 animate-spin" />
+                                ) : isButtonLocked ? (
+                                    <>Complete payment first · {countdown}s</>
                                 ) : (
                                     <>
                                         <CheckCircle className="w-5 h-5" />
@@ -165,9 +194,14 @@ export default function UpiPaymentModal({ isOpen, onClose, amount, orderIdText, 
                                     </>
                                 )}
                             </button>
-                            <p className="text-[10px] text-center text-muted-foreground -mt-2">
-                                Tap after you've paid · Admin will verify your payment
-                            </p>
+
+                            {/* Fraud Warning */}
+                            <div className="flex items-start gap-2 p-3 rounded-xl bg-red-500/8 border border-red-500/15">
+                                <ShieldAlert className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
+                                <p className="text-[10px] text-red-300/70 leading-relaxed">
+                                    <strong className="text-red-400">Warning:</strong> Every payment is verified by admin. Fake confirmations without actual payment will result in <strong>permanent account ban</strong>.
+                                </p>
+                            </div>
                         </div>
                     </motion.div>
                 </div>
@@ -176,3 +210,4 @@ export default function UpiPaymentModal({ isOpen, onClose, amount, orderIdText, 
         document.body
     );
 }
+
