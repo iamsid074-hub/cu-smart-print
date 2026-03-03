@@ -98,7 +98,8 @@ export default function ProductDetail() {
         setIsSubmitting(true);
         try {
             if (paymentMethod === "online") {
-                setShowUpiModal(true);
+                setIsBuyModalOpen(false); // Close delivery modal first
+                setTimeout(() => setShowUpiModal(true), 150); // Smooth transition
                 setIsSubmitting(false);
                 return;
             }

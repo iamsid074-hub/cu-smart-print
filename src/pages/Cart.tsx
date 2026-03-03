@@ -55,7 +55,8 @@ export default function Cart() {
         setSubmitting(true);
         try {
             if (paymentMethod === "online") {
-                setShowUpiModal(true);
+                setShowCheckout(false); // Close checkout panel first
+                setTimeout(() => setShowUpiModal(true), 150); // Smooth transition
                 setSubmitting(false);
                 return;
             } else {

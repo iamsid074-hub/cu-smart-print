@@ -59,9 +59,10 @@ export default function Home() {
     setBuyLoading(true);
     try {
       if (buyPaymentMethod === "online") {
-        setShowUpiModal(true);
+        setBuyItem(null); // Close delivery details modal first
+        setTimeout(() => setShowUpiModal(true), 150); // Smooth transition
         setBuyLoading(false);
-        return; // Wait for UTR verification
+        return;
       }
 
       await finalizeOrder("cod", null);
