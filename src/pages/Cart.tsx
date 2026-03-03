@@ -19,7 +19,7 @@ export default function Cart() {
     const [hostel, setHostel] = useState("");
     const [room, setRoom] = useState("");
     const [phone, setPhone] = useState("");
-    const [paymentMethod, setPaymentMethod] = useState<"online" | "cod">("cod");
+    const [paymentMethod, setPaymentMethod] = useState<"online" | "cod">("online");
     const [submitting, setSubmitting] = useState(false);
     const [showUpiModal, setShowUpiModal] = useState(false);
 
@@ -200,7 +200,7 @@ export default function Cart() {
                                     className="w-full py-3.5 rounded-xl font-bold text-white text-sm flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
                                     style={{ background: isFormValid ? "linear-gradient(135deg, #FF6B00, #FF4444)" : "rgba(255,255,255,0.1)" }}>
                                     {submitting ? <Loader2 className="w-5 h-5 animate-spin" /> :
-                                        paymentMethod === "online" ? `Pay ₹${totalPrice} Online` : `Place COD Order · ₹${totalPrice}`}
+                                        `Pay ₹${totalPrice} Online`}
                                 </button>
                             </motion.div>
                         )}

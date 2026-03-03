@@ -41,7 +41,7 @@ export default function Home() {
   const [buyRoom, setBuyRoom] = useState("");
   const [buyPhone, setBuyPhone] = useState("");
   const [buyLoading, setBuyLoading] = useState(false);
-  const [buyPaymentMethod, setBuyPaymentMethod] = useState<"online" | "cod">("cod");
+  const [buyPaymentMethod, setBuyPaymentMethod] = useState<"online" | "cod">("online");
   const [showUpiModal, setShowUpiModal] = useState(false);
   const [upiItemSnapshot, setUpiItemSnapshot] = useState<{ price: number; id: string; title: string } | null>(null);
 

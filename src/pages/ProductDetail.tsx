@@ -32,7 +32,7 @@ export default function ProductDetail() {
     const [deliveryRoom, setDeliveryRoom] = useState("");
     const [phone, setPhone] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [paymentMethod, setPaymentMethod] = useState<"online" | "cod">("cod");
+    const [paymentMethod, setPaymentMethod] = useState<"online" | "cod">("online");
     const [showUpiModal, setShowUpiModal] = useState(false);
 
     useEffect(() => {
@@ -342,7 +342,7 @@ export default function ProductDetail() {
                                                         disabled={isSubmitting || !deliveryLocation.trim() || !deliveryRoom.trim() || phone.length !== 10}
                                                         className="w-full py-4 mt-2 rounded-xl bg-neon-fire text-black font-black uppercase tracking-wide hover:shadow-neon-fire transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center"
                                                     >
-                                                        {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : paymentMethod === "online" ? `Pay ₹${totalAmount.toLocaleString()} Online` : `COD · ₹${totalAmount.toLocaleString()}`}
+                                                        {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : `Pay ₹${totalAmount.toLocaleString()} Online`}
                                                     </button>
                                                 </form>
                                             </div>
