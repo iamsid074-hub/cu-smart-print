@@ -152,17 +152,17 @@ export default function Home() {
 
   const trendingMapped = products.filter((p) => p.is_trending).map((p) => ({
     id: p.id,
-    image: p.image_url || 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400',
+    image: p.image_url || '',
     title: p.title, price: p.price, originalPrice: p.original_price || undefined,
-    condition: p.condition as any, rating: 4.5,
+    condition: p.condition as any, category: p.category, rating: 4.5,
     seller: (p as any).profiles?.full_name || "Student", badge: "🔥 Hot",
   }));
 
   const freshMapped = products.filter((p) => !p.is_trending).map((p) => ({
     id: p.id,
-    image: p.image_url || 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400',
+    image: p.image_url || '',
     title: p.title, price: p.price, originalPrice: p.original_price || undefined,
-    condition: p.condition as any, rating: 4.5,
+    condition: p.condition as any, category: p.category, rating: 4.5,
     seller: (p as any).profiles?.full_name || "Student",
   }));
 
@@ -577,9 +577,21 @@ export default function Home() {
                   className="rounded-xl sm:rounded-2xl overflow-hidden group block transition-all hover:-translate-y-1"
                   style={{ backgroundColor: '#2A2420', border: '1px solid #3D342C' }}>
                   <div className="relative h-28 sm:h-36 overflow-hidden">
-                    <img src={product.image} alt={product.title}
+                    <img src={product.image || `https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=400`} alt={product.title}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                      onError={(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400'; }} />
+                      onError={(e) => {
+                        const cat = product.category as string | undefined;
+                        const FALLBACKS: Record<string, string> = {
+                          Electronics: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=400',
+                          Books: 'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400',
+                          Fashion: 'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=400',
+                          Sports: 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=400',
+                          Audio: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400',
+                          Furniture: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400',
+                          Kitchen: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400',
+                        };
+                        (e.target as HTMLImageElement).src = (cat && FALLBACKS[cat]) || 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=400';
+                      }} />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#2A2420]/80 to-transparent" />
                   </div>
                   <div className="p-2.5 sm:p-3">

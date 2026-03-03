@@ -27,6 +27,8 @@ export default function ListProduct() {
   });
   const [dragOver, setDragOver] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [imageError, setImageError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -76,9 +78,11 @@ export default function ListProduct() {
       try {
         let imageUrl = null;
         if (imageFile) {
-          const fileExt = imageFile.name.split('.').pop();
-          const fileName = `${Math.random()}.${fileExt}`;
-          const { error: uploadError } = await supabase.storage.from("product-images").upload(fileName, imageFile);
+          // Compress image before uploading
+          const compressedBlob = await compressImage(imageFile, 1200, 0.82);
+          const fileExt = imageFile.name.split('.').pop()?.toLowerCase() || 'jpg';
+          const fileName = `${Date.now()}_${Math.random().toString(36).slice(2)}.${fileExt}`;
+          const { error: uploadError } = await supabase.storage.from("product-images").upload(fileName, compressedBlob, { contentType: imageFile.type });
           if (uploadError) throw uploadError;
           const { data } = supabase.storage.from("product-images").getPublicUrl(fileName);
           imageUrl = data.publicUrl;
@@ -128,6 +132,52 @@ export default function ListProduct() {
 
   const back = () => setStep((s) => Math.max(s - 1, 1));
   const progress = ((step - 1) / (steps.length - 1)) * 100;
+
+  // ── Helpers ────────────────────────────────────────────────────────────────
+  const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+  const MAX_SIZE_MB = 5;
+
+  function handleImageSelect(file: File) {
+    setImageError(null);
+    if (!ALLOWED_TYPES.includes(file.type)) {
+      setImageError('Only JPG, PNG, WEBP, or GIF images are allowed.');
+      return;
+    }
+    if (file.size > MAX_SIZE_MB * 1024 * 1024) {
+      setImageError(`Image must be under ${MAX_SIZE_MB}MB. Yours is ${(file.size / (1024 * 1024)).toFixed(1)}MB.`);
+      return;
+    }
+    setImageFile(file);
+    const reader = new FileReader();
+    reader.onload = (e) => setImagePreview(e.target?.result as string);
+    reader.readAsDataURL(file);
+  }
+
+  function removeImage() {
+    setImageFile(null);
+    setImagePreview(null);
+    setImageError(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  }
+
+  async function compressImage(file: File, maxDim: number, quality: number): Promise<Blob> {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => {
+        let { width, height } = img;
+        if (width > maxDim || height > maxDim) {
+          if (width > height) { height = Math.round((height / width) * maxDim); width = maxDim; }
+          else { width = Math.round((width / height) * maxDim); height = maxDim; }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        canvas.getContext('2d')!.drawImage(img, 0, 0, width, height);
+        canvas.toBlob((blob) => resolve(blob || file), file.type === 'image/png' ? 'image/png' : 'image/jpeg', quality);
+      };
+      img.src = URL.createObjectURL(file);
+    });
+  }
 
   return (
     <div className="min-h-screen bg-background pt-20 pb-16 px-4">
@@ -251,7 +301,38 @@ export default function ListProduct() {
             {/* Step 2: Photos */}
             {step === 2 && (
               <motion.div key="step2" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }} transition={{ duration: 0.3 }}>
-                <h2 className="font-bold text-xl mb-6">Add Photos</h2>
+                <h2 className="font-bold text-xl mb-2">Add a Photo</h2>
+                <p className="text-sm text-muted-foreground mb-5">Pick the correct image for <span className="text-neon-cyan font-semibold">{formData.title || 'your item'}</span></p>
+
+                {/* Live preview */}
+                {imagePreview && (
+                  <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="mb-4 relative rounded-2xl overflow-hidden border border-white/10" style={{ height: 220 }}>
+                    <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                    <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between">
+                      <span className="text-xs text-white/80 truncate max-w-[70%]">{imageFile?.name}</span>
+                      <button
+                        onClick={removeImage}
+                        className="text-xs font-bold text-red-400 bg-black/50 px-2 py-0.5 rounded-full hover:bg-red-500/30 transition-colors"
+                      >
+                        ✕ Remove
+                      </button>
+                    </div>
+                    <div className="absolute top-3 left-3 px-2 py-0.5 rounded-full text-xs font-bold bg-green-500/80 text-white">
+                      ✓ Preview
+                    </div>
+                  </motion.div>
+                )}
+
+                {/* Error message */}
+                {imageError && (
+                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-4 flex items-start gap-2 glass rounded-xl p-3 border border-red-500/30 bg-red-500/5">
+                    <AlertCircle className="w-4 h-4 text-red-400 mt-0.5 flex-shrink-0" />
+                    <p className="text-xs text-red-400">{imageError}</p>
+                  </motion.div>
+                )}
+
+                {/* Drop zone */}
                 <div
                   onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
                   onDragLeave={() => setDragOver(false)}
@@ -259,40 +340,27 @@ export default function ListProduct() {
                     e.preventDefault();
                     setDragOver(false);
                     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-                      setImageFile(e.dataTransfer.files[0]);
+                      handleImageSelect(e.dataTransfer.files[0]);
                     }
                   }}
-                  className={`border-2 border-dashed rounded-2xl p-12 text-center transition-all duration-300 ${dragOver ? "border-neon-orange/60 bg-neon-orange/5" : "border-white/15 hover:border-white/25"
+                  className={`border-2 border-dashed rounded-2xl p-8 text-center transition-all duration-300 cursor-pointer ${dragOver ? 'border-neon-orange/60 bg-neon-orange/5' : imagePreview ? 'border-white/10' : 'border-white/15 hover:border-white/30'
                     }`}
+                  onClick={() => fileInputRef.current?.click()}
                 >
-                  <Upload className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                  {imageFile ? (
-                    <div className="mb-4">
-                      <p className="font-semibold text-neon-cyan">{imageFile.name}</p>
-                      <button onClick={() => setImageFile(null)} className="text-xs text-neon-fire mt-2">Remove</button>
-                    </div>
-                  ) : (
-                    <>
-                      <p className="font-semibold text-foreground mb-2">Drop photos here</p>
-                      <p className="text-sm text-muted-foreground mb-4">or click to browse · Max 8 photos</p>
-                    </>
-                  )}
+                  <Upload className={`w-10 h-10 mx-auto mb-3 transition-colors ${dragOver ? 'text-neon-orange' : 'text-muted-foreground'}`} />
+                  <p className="font-semibold text-foreground mb-1">{imagePreview ? 'Replace photo' : 'Drop photo here'}</p>
+                  <p className="text-xs text-muted-foreground">JPG · PNG · WEBP · GIF &nbsp;·&nbsp; Max 5 MB</p>
                   <input
                     type="file"
-                    accept="image/*"
+                    accept="image/jpeg,image/png,image/webp,image/gif"
                     className="hidden"
                     ref={fileInputRef}
-                    onChange={(e) => { if (e.target.files && e.target.files[0]) setImageFile(e.target.files[0]) }}
+                    onChange={(e) => { if (e.target.files && e.target.files[0]) handleImageSelect(e.target.files[0]); }}
                   />
-                  <button
-                    onClick={() => fileInputRef.current?.click()}
-                    className="premium-glass-button px-6 py-2.5 text-white text-sm font-semibold shadow-neon-fire"
-                  >
-                    {imageFile ? "Change File" : "Choose Files"}
-                  </button>
                 </div>
-                <p className="text-xs text-muted-foreground mt-4 text-center">
-                  💡 Good photos = 3× more views. Use natural light!
+
+                <p className="text-xs text-muted-foreground mt-3 text-center">
+                  💡 Check the preview above to confirm it's the correct photo before continuing.
                 </p>
               </motion.div>
             )}

@@ -1,8 +1,24 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Heart, Star, BadgeCheck, ShoppingCart } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { useToast } from "@/hooks/use-toast";
+
+// Category-aware fallback images (so a calculator NEVER shows a camera placeholder)
+const CATEGORY_FALLBACKS: Record<string, string> = {
+  Electronics: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=400&q=80",  // circuit board
+  Books: "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400&q=80",  // books
+  Fashion: "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=400&q=80",  // clothes
+  Sports: "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=400&q=80",  // sports
+  Audio: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&q=80",  // headphones
+  Camera: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=400&q=80",  // camera
+  Furniture: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400&q=80",  // sofa
+  Kitchen: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&q=80",  // kitchen
+  Stationery: "https://images.unsplash.com/photo-1583485088034-697b5bc54ccd?w=400&q=80",  // pens/notebooks
+  Other: "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=400&q=80",  // generic product
+};
+const DEFAULT_FALLBACK = "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=400&q=80";
 
 interface ProductCardProps {
   id: string;
@@ -11,6 +27,7 @@ interface ProductCardProps {
   price: number;
   originalPrice?: number;
   condition: "New" | "Like New" | "Good" | "Fair";
+  category?: string;   // e.g. "Electronics", "Books" — used for smart fallback image
   rating?: number;
   seller?: string;
   badge?: string;
@@ -31,6 +48,7 @@ export default function ProductCard({
   price,
   originalPrice,
   condition,
+  category,
   rating = 4.5,
   seller = "Student",
   badge,
@@ -38,6 +56,12 @@ export default function ProductCard({
 }: ProductCardProps) {
   const { addItem } = useCart();
   const { toast } = useToast();
+  const [imgLoaded, setImgLoaded] = useState(false);
+  const [imgError, setImgError] = useState(false);
+
+  // Use product category for a smart fallback (never shows a camera image for a calculator)
+  const fallbackSrc = (category && CATEGORY_FALLBACKS[category]) ?? DEFAULT_FALLBACK;
+  const displaySrc = imgError ? fallbackSrc : (image || fallbackSrc);
   return (
     <Link to={`/product/${id}`} className="block flex-shrink-0 w-56 sm:w-64">
       <motion.div
@@ -62,12 +86,18 @@ export default function ProductCard({
         </button>
 
         {/* Image */}
-        <div className="relative overflow-hidden h-44">
+        <div className="relative overflow-hidden h-44 bg-white/5">
+          {/* Skeleton shimmer while loading */}
+          {!imgLoaded && !imgError && (
+            <div className="absolute inset-0 animate-pulse" style={{ background: 'linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.09) 50%, rgba(255,255,255,0.04) 75%)', backgroundSize: '200% 100%' }} />
+          )}
           <img
-            src={image}
+            src={displaySrc}
             alt={title}
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-            onError={(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400'; }}
+            className={`w-full h-full object-cover transition-all duration-500 group-hover:scale-110 ${imgLoaded ? 'opacity-100' : 'opacity-0'
+              }`}
+            onLoad={() => setImgLoaded(true)}
+            onError={() => { setImgError(true); setImgLoaded(true); }}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent opacity-60" />
           {/* Glow on hover */}

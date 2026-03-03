@@ -200,11 +200,12 @@ export default function Browse() {
                                 <ProductCard
                                     key={p.id}
                                     id={p.id}
-                                    image={p.image_url || 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400'}
+                                    image={p.image_url || ''}
                                     title={p.title}
                                     price={p.price}
                                     originalPrice={p.original_price || undefined}
                                     condition={p.condition as any}
+                                    category={p.category}
                                     rating={4.5}
                                     seller={p.profiles?.full_name || "Student"}
                                     delay={i * 0.04}

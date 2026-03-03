@@ -14,7 +14,27 @@ export default function Login() {
     const [loading, setLoading] = useState(false);
     const [focusedField, setFocusedField] = useState<string | null>(null);
     const [acceptedTerms, setAcceptedTerms] = useState(false);
+    const [forgotPassword, setForgotPassword] = useState(false);
+    const [resetSent, setResetSent] = useState(false);
     const navigate = useNavigate();
+
+    const handleForgotPassword = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!email.trim()) { toast.error("Enter your email first."); return; }
+        setLoading(true);
+        try {
+            const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                redirectTo: `${window.location.origin}/reset-password`,
+            });
+            if (error) throw error;
+            setResetSent(true);
+            toast.success("Reset link sent! Check your inbox 📧");
+        } catch (err: any) {
+            toast.error(err.message || "Could not send reset link. Try again.");
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -189,102 +209,158 @@ export default function Login() {
                         </AnimatePresence>
                     </div>
 
-                    {/* Form */}
-                    <form onSubmit={handleSubmit} className="space-y-4">
-                        {/* Email */}
-                        <div>
-                            <label className="block text-sm mb-1.5 font-medium" style={{ color: "rgba(232,222,212,0.4)" }}>University email</label>
-                            <div className="relative rounded-xl transition-all duration-300" style={{
-                                boxShadow: focusedField === "email"
-                                    ? "0 0 0 2px rgba(255,107,107,0.35), 0 0 16px rgba(255,107,107,0.08)"
-                                    : "0 0 0 1px rgba(61,52,44,0.6)"
-                            }}>
-                                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                                    <Mail className="h-4 w-4 transition-colors duration-200" style={{ color: focusedField === "email" ? "#FF6B6B" : "rgba(232,222,212,0.2)" }} />
-                                </div>
-                                <input
-                                    type="email" required value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    onFocus={() => setFocusedField("email")}
-                                    onBlur={() => setFocusedField(null)}
-                                    className="w-full rounded-xl pl-10 pr-4 h-[52px] text-sm focus:outline-none transition-colors"
-                                    style={{ backgroundColor: "rgba(255,255,255,0.03)", color: "#E8DED4" }}
-                                    placeholder="you@cuchd.in"
-                                />
-                            </div>
-                        </div>
-
-                        {/* Password */}
-                        <div>
-                            <label className="block text-sm mb-1.5 font-medium" style={{ color: "rgba(232,222,212,0.4)" }}>Password</label>
-                            <div className="relative rounded-xl transition-all duration-300" style={{
-                                boxShadow: focusedField === "password"
-                                    ? "0 0 0 2px rgba(255,107,107,0.35), 0 0 16px rgba(255,107,107,0.08)"
-                                    : "0 0 0 1px rgba(61,52,44,0.6)"
-                            }}>
-                                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                                    <Lock className="h-4 w-4 transition-colors duration-200" style={{ color: focusedField === "password" ? "#FF6B6B" : "rgba(232,222,212,0.2)" }} />
-                                </div>
-                                <input
-                                    type="password" required value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    onFocus={() => setFocusedField("password")}
-                                    onBlur={() => setFocusedField(null)}
-                                    className="w-full rounded-xl pl-10 pr-4 h-[52px] text-sm focus:outline-none transition-colors"
-                                    style={{ backgroundColor: "rgba(255,255,255,0.03)", color: "#E8DED4" }}
-                                    placeholder="something secret..."
-                                    minLength={6}
-                                />
-                            </div>
-                            {!isLogin && <p className="text-[11px] mt-1 ml-0.5" style={{ color: "rgba(232,222,212,0.2)" }}>At least 6 characters — make it count!</p>}
-                        </div>
-
-                        {/* T&C Accept Checkbox — signup only */}
-                        {!isLogin && (
-                            <div className="flex items-start gap-3 px-1">
-                                <button
-                                    type="button"
-                                    onClick={() => setAcceptedTerms(!acceptedTerms)}
-                                    className="w-4 h-4 rounded flex-shrink-0 mt-0.5 flex items-center justify-center transition-all border"
-                                    style={{
-                                        backgroundColor: acceptedTerms ? '#FF6B6B' : 'rgba(255,255,255,0.04)',
-                                        borderColor: acceptedTerms ? '#FF6B6B' : 'rgba(255,255,255,0.15)',
-                                    }}
-                                    aria-checked={acceptedTerms}
-                                    role="checkbox"
-                                >
-                                    {acceptedTerms && (
-                                        <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
-                                            <path d="M1 3.5L3.8 6.5L9 1" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                                        </svg>
-                                    )}
-                                </button>
-                                <p className="text-xs leading-relaxed" style={{ color: "rgba(232,222,212,0.4)" }}>
-                                    I have read and agree to the{" "}
-                                    <Link to="/terms" target="_blank" className="underline underline-offset-2 hover:opacity-80 transition-opacity" style={{ color: "#FF6B6B" }}>
-                                        Terms and Conditions
-                                    </Link>
-                                    {" "}of CU Bazzar. I understand it is an intermediary platform and I am responsible for my own transactions.
-                                </p>
-                            </div>
-                        )}
-
-                        {/* Submit */}
-                        <motion.button
-                            type="submit" disabled={loading || (!isLogin && !acceptedTerms)}
-                            whileHover={{ y: -1 }} whileTap={{ scale: 0.985 }}
-                            className="w-full relative group py-3.5 rounded-xl text-white font-semibold text-sm overflow-hidden transition-shadow duration-300 disabled:opacity-50 disabled:cursor-not-allowed h-[52px]"
-                            style={{ ...fontH, background: "#FF6B6B", boxShadow: "0 4px 20px rgba(255,107,107,0.25)" }}
-                        >
-                            {/* Shine */}
-                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
-                            <span className="relative flex items-center justify-center gap-2">
-                                {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : (
-                                    <>{isLogin ? "Let's get you in" : "Create my account"}<ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" /></>
+                    {/* ── FORGOT PASSWORD FLOW ── */}
+                    <AnimatePresence mode="wait">
+                        {forgotPassword ? (
+                            <motion.div key="forgot" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.2 }}>
+                                {resetSent ? (
+                                    <div className="py-6 text-center space-y-3">
+                                        <div className="w-12 h-12 rounded-full flex items-center justify-center mx-auto" style={{ backgroundColor: 'rgba(77,184,172,0.12)', border: '1px solid rgba(77,184,172,0.2)' }}>
+                                            <Mail className="w-5 h-5" style={{ color: '#4DB8AC' }} />
+                                        </div>
+                                        <p className="font-semibold" style={{ color: '#E8DED4' }}>Check your inbox!</p>
+                                        <p className="text-sm" style={{ color: 'rgba(232,222,212,0.4)' }}>We sent a password reset link to <strong style={{ color: 'rgba(232,222,212,0.7)' }}>{email}</strong>.</p>
+                                        <button type="button" onClick={() => { setForgotPassword(false); setResetSent(false); }} className="text-sm font-semibold mt-2" style={{ color: '#FF6B6B' }}>← Back to login</button>
+                                    </div>
+                                ) : (
+                                    <form onSubmit={handleForgotPassword} className="space-y-4">
+                                        <div>
+                                            <p className="text-sm mb-1" style={{ color: 'rgba(232,222,212,0.35)' }}>Enter your university email and we'll send a reset link.</p>
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm mb-1.5 font-medium" style={{ color: 'rgba(232,222,212,0.4)' }}>University email</label>
+                                            <div className="relative rounded-xl transition-all duration-300" style={{ boxShadow: focusedField === 'reset-email' ? '0 0 0 2px rgba(255,107,107,0.35)' : '0 0 0 1px rgba(61,52,44,0.6)' }}>
+                                                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                                                    <Mail className="h-4 w-4" style={{ color: focusedField === 'reset-email' ? '#FF6B6B' : 'rgba(232,222,212,0.2)' }} />
+                                                </div>
+                                                <input type="email" required value={email} onChange={e => setEmail(e.target.value)}
+                                                    onFocus={() => setFocusedField('reset-email')} onBlur={() => setFocusedField(null)}
+                                                    className="w-full rounded-xl pl-10 pr-4 h-[52px] text-sm focus:outline-none transition-colors"
+                                                    style={{ backgroundColor: 'rgba(255,255,255,0.03)', color: '#E8DED4' }}
+                                                    placeholder="you@cuchd.in" />
+                                            </div>
+                                        </div>
+                                        <motion.button type="submit" disabled={loading} whileHover={{ y: -1 }} whileTap={{ scale: 0.985 }}
+                                            className="w-full py-3.5 rounded-xl text-white font-semibold text-sm flex items-center justify-center gap-2 h-[52px] disabled:opacity-50"
+                                            style={{ ...fontH, background: '#FF6B6B', boxShadow: '0 4px 20px rgba(255,107,107,0.25)' }}>
+                                            {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <><Mail className="w-4 h-4" /> Send Reset Link</>}
+                                        </motion.button>
+                                        <button type="button" onClick={() => setForgotPassword(false)} className="w-full text-sm" style={{ color: 'rgba(232,222,212,0.3)' }}>← Back to login</button>
+                                    </form>
                                 )}
-                            </span>
-                        </motion.button>
-                    </form>
+                            </motion.div>
+                        ) : (
+                            <motion.div key="main" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.2 }}>
+
+                                {/* Form */}
+                                <form onSubmit={handleSubmit} className="space-y-4">
+                                    {/* Email */}
+                                    <div>
+                                        <label className="block text-sm mb-1.5 font-medium" style={{ color: "rgba(232,222,212,0.4)" }}>University email</label>
+                                        <div className="relative rounded-xl transition-all duration-300" style={{
+                                            boxShadow: focusedField === "email"
+                                                ? "0 0 0 2px rgba(255,107,107,0.35), 0 0 16px rgba(255,107,107,0.08)"
+                                                : "0 0 0 1px rgba(61,52,44,0.6)"
+                                        }}>
+                                            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                                                <Mail className="h-4 w-4 transition-colors duration-200" style={{ color: focusedField === "email" ? "#FF6B6B" : "rgba(232,222,212,0.2)" }} />
+                                            </div>
+                                            <input
+                                                type="email" required value={email}
+                                                onChange={(e) => setEmail(e.target.value)}
+                                                onFocus={() => setFocusedField("email")}
+                                                onBlur={() => setFocusedField(null)}
+                                                className="w-full rounded-xl pl-10 pr-4 h-[52px] text-sm focus:outline-none transition-colors"
+                                                style={{ backgroundColor: "rgba(255,255,255,0.03)", color: "#E8DED4" }}
+                                                placeholder="you@cuchd.in"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {/* Password */}
+                                    <div>
+                                        <label className="block text-sm mb-1.5 font-medium" style={{ color: "rgba(232,222,212,0.4)" }}>Password</label>
+                                        <div className="relative rounded-xl transition-all duration-300" style={{
+                                            boxShadow: focusedField === "password"
+                                                ? "0 0 0 2px rgba(255,107,107,0.35), 0 0 16px rgba(255,107,107,0.08)"
+                                                : "0 0 0 1px rgba(61,52,44,0.6)"
+                                        }}>
+                                            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                                                <Lock className="h-4 w-4 transition-colors duration-200" style={{ color: focusedField === "password" ? "#FF6B6B" : "rgba(232,222,212,0.2)" }} />
+                                            </div>
+                                            <input
+                                                type="password" required value={password}
+                                                onChange={(e) => setPassword(e.target.value)}
+                                                onFocus={() => setFocusedField("password")}
+                                                onBlur={() => setFocusedField(null)}
+                                                className="w-full rounded-xl pl-10 pr-4 h-[52px] text-sm focus:outline-none transition-colors"
+                                                style={{ backgroundColor: "rgba(255,255,255,0.03)", color: "#E8DED4" }}
+                                                placeholder="something secret..."
+                                                minLength={6}
+                                            />
+                                        </div>
+                                        {!isLogin && <p className="text-[11px] mt-1 ml-0.5" style={{ color: "rgba(232,222,212,0.2)" }}>At least 6 characters — make it count!</p>}
+                                    </div>
+
+                                    {/* T&C Accept Checkbox — signup only */}
+                                    {!isLogin && (
+                                        <div className="flex items-start gap-3 px-1">
+                                            <button
+                                                type="button"
+                                                onClick={() => setAcceptedTerms(!acceptedTerms)}
+                                                className="w-4 h-4 rounded flex-shrink-0 mt-0.5 flex items-center justify-center transition-all border"
+                                                style={{
+                                                    backgroundColor: acceptedTerms ? '#FF6B6B' : 'rgba(255,255,255,0.04)',
+                                                    borderColor: acceptedTerms ? '#FF6B6B' : 'rgba(255,255,255,0.15)',
+                                                }}
+                                                aria-checked={acceptedTerms}
+                                                role="checkbox"
+                                            >
+                                                {acceptedTerms && (
+                                                    <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
+                                                        <path d="M1 3.5L3.8 6.5L9 1" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                                    </svg>
+                                                )}
+                                            </button>
+                                            <p className="text-xs leading-relaxed" style={{ color: "rgba(232,222,212,0.4)" }}>
+                                                I have read and agree to the{" "}
+                                                <Link to="/terms" target="_blank" className="underline underline-offset-2 hover:opacity-80 transition-opacity" style={{ color: "#FF6B6B" }}>
+                                                    Terms and Conditions
+                                                </Link>
+                                                {" "}of CU Bazzar. I understand it is an intermediary platform and I am responsible for my own transactions.
+                                            </p>
+                                        </div>
+                                    )}
+
+                                    {/* Forgot password link — login only */}
+                                    {isLogin && (
+                                        <div className="flex justify-end -mt-1">
+                                            <button type="button" onClick={() => { setForgotPassword(true); setResetSent(false); }}
+                                                className="text-xs transition-opacity hover:opacity-80"
+                                                style={{ color: 'rgba(232,222,212,0.3)' }}
+                                            >Forgot password?</button>
+                                        </div>
+                                    )}
+
+                                    {/* Submit */}
+                                    <motion.button
+                                        type="submit" disabled={loading || (!isLogin && !acceptedTerms)}
+                                        whileHover={{ y: -1 }} whileTap={{ scale: 0.985 }}
+                                        className="w-full relative group py-3.5 rounded-xl text-white font-semibold text-sm overflow-hidden transition-shadow duration-300 disabled:opacity-50 disabled:cursor-not-allowed h-[52px]"
+                                        style={{ ...fontH, background: "#FF6B6B", boxShadow: "0 4px 20px rgba(255,107,107,0.25)" }}
+                                    >
+                                        {/* Shine */}
+                                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
+                                        <span className="relative flex items-center justify-center gap-2">
+                                            {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : (
+                                                <>{isLogin ? "Let's get you in" : "Create my account"}<ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" /></>
+                                            )}
+                                        </span>
+                                    </motion.button>
+                                </form>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
 
                     {/* Divider */}
                     <div className="flex items-center gap-4 my-5">
