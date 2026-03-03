@@ -16,6 +16,7 @@ import ProductDetail from "./pages/ProductDetail";
 import FoodMenu from "./pages/FoodMenu";
 import Cart from "./pages/Cart";
 import Admin from "./pages/Admin";
+import TermsAndConditions from "./pages/TermsAndConditions";
 import Navbar from "./components/Navbar";
 import UsernameSetup from "./components/UsernameSetup";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
@@ -89,6 +90,9 @@ function AppLayout() {
 
         {/* Admin Route */}
         <Route path="/admin" element={<AdminRoute><Admin /></AdminRoute>} />
+
+        {/* Public Pages */}
+        <Route path="/terms" element={<TermsAndConditions />} />
 
         <Route path="*" element={<NotFound />} />
       </Routes>

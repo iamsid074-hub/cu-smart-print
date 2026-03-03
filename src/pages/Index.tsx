@@ -329,7 +329,7 @@ export default function Index() {
           <p>© 2026 All copyright reserved , CU BAZZAR , ANSHU</p>
           <div className="flex gap-6">
             <Link to="/" className="hover:opacity-70 transition-opacity">Privacy</Link>
-            <Link to="/" className="hover:opacity-70 transition-opacity">Terms</Link>
+            <Link to="/terms" className="hover:opacity-70 transition-opacity">Terms</Link>
           </div>
         </div>
       </footer>
