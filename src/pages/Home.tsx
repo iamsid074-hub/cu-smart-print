@@ -107,8 +107,8 @@ export default function Home() {
         delivery_room: buyRoom || null,
         buyer_phone: phoneClean,
         status: 'pending',
-        payment_method: method === "online" ? "upi" : "cod",
-        payment_status: method === "online" ? "verifying" : "pending",
+        payment_method: method === "online" ? "cashfree" : "cod",
+        payment_status: method === "online" ? "paid" : "pending",
         razorpay_payment_id: utrNumber,
         seller_notified_at: new Date().toISOString(),
       }).select().single();
@@ -562,6 +562,8 @@ export default function Home() {
               onClose={() => { setShowUpiModal(false); setUpiItemSnapshot(null); }}
               amount={upiItemSnapshot?.price || 0}
               orderIdText={`CE_${upiItemSnapshot?.id || 'TEST'}`}
+              customerId={user?.id || "guest"}
+              customerPhone={buyPhone || "9999999999"}
               onPaymentVerify={async (utr) => {
                 await finalizeOrder("online", utr);
               }}

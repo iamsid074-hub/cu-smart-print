@@ -583,6 +583,8 @@ export default function FoodMenu() {
                     onClose={() => { setShowUpiModal(false); setUpiSnapshot(null); }}
                     amount={upiSnapshot?.price || 0}
                     orderIdText={`FOOD_${upiSnapshot?.foodId || 'X'}`}
+                    customerId={user?.id || "guest"}
+                    customerPhone={upiSnapshot?.phone || phone || "9999999999"}
                     onPaymentVerify={async (utr) => {
                         await finalizeOrder(utr);
                     }}

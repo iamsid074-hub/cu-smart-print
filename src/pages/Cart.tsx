@@ -224,6 +224,8 @@ export default function Cart() {
                 onClose={() => setShowUpiModal(false)}
                 amount={orderTotal}
                 orderIdText={`CART_${Date.now().toString().slice(-6)}`}
+                customerId={user?.id || "guest"}
+                customerPhone={phone || "9999999999"}
                 onPaymentVerify={async (utr) => {
                     setSubmitting(true);
                     try {

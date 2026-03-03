@@ -1,99 +1,119 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Loader2, Smartphone, Monitor, CheckCircle } from "lucide-react";
+import { X, Loader2, CheckCircle, AlertCircle, CreditCard } from "lucide-react";
 import { toast } from "sonner";
+import { createCashfreeOrder, verifyCashfreePayment, loadCashfreeSDK } from "@/lib/cashfree";
 
 interface UpiPaymentModalProps {
     isOpen: boolean;
     onClose: () => void;
     amount: number;
     orderIdText: string;
-    onPaymentVerify: (utrNumber: string) => Promise<void>;
+    onPaymentVerify: (paymentId: string) => Promise<void>;
+    customerPhone?: string;
+    customerName?: string;
+    customerId?: string;
+    customerEmail?: string;
 }
 
-function useIsMobile() {
-    const [isMobile, setIsMobile] = useState(false);
-    useEffect(() => {
-        const ua = navigator.userAgent || "";
-        setIsMobile(/Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(ua));
-    }, []);
-    return isMobile;
-}
+type Step = "loading" | "error" | "verifying" | "success";
 
-type Step = "qr" | "placing" | "success";
-
-export default function UpiPaymentModal({ isOpen, onClose, amount, orderIdText, onPaymentVerify }: UpiPaymentModalProps) {
-    const [step, setStep] = useState<Step>("qr");
-    const [userLeftForUpi, setUserLeftForUpi] = useState(false);
-    const hasAutoSubmittedRef = useRef(false);
-    const isMobile = useIsMobile();
-
-    const upiId = import.meta.env.VITE_MERCHANT_UPI_ID || "9466166750@fam";
-    const merchantName = "CUBazzar";
-    const formattedAmount = Number(amount).toFixed(2);
-
-    const [sessionUri, setSessionUri] = useState("");
-    const [sessionTrRef, setSessionTrRef] = useState("");
+export default function UpiPaymentModal({
+    isOpen,
+    onClose,
+    amount,
+    orderIdText,
+    onPaymentVerify,
+    customerPhone = "9999999999",
+    customerName = "CUBazaar Customer",
+    customerId = "guest",
+    customerEmail,
+}: UpiPaymentModalProps) {
+    const [step, setStep] = useState<Step>("loading");
+    const [errorMsg, setErrorMsg] = useState("");
 
     useEffect(() => {
-        if (isOpen) {
-            const tr = `${Date.now()}`;
-            const uri = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(merchantName)}&am=${formattedAmount}&cu=INR&tn=${encodeURIComponent(`CUBazzar ${orderIdText}`)}&tr=${tr}`;
-            setSessionTrRef(tr);
-            setSessionUri(uri);
-            setStep("qr");
-            setUserLeftForUpi(false);
-            hasAutoSubmittedRef.current = false;
-            document.body.style.overflow = "hidden";
-        } else {
+        if (!isOpen) return;
+
+        let cancelled = false;
+        setStep("loading");
+        setErrorMsg("");
+        document.body.style.overflow = "hidden";
+
+        (async () => {
+            try {
+                // 1. Load Cashfree SDK
+                const cashfree = await loadCashfreeSDK();
+                if (cancelled) return;
+
+                // 2. Create order on backend
+                const order = await createCashfreeOrder({
+                    amount,
+                    customer_id: customerId,
+                    customer_phone: customerPhone,
+                    customer_name: customerName,
+                    customer_email: customerEmail,
+                    order_note: `CUBazaar ${orderIdText}`,
+                });
+                if (cancelled) return;
+
+                // 3. Open Cashfree checkout
+                const result = await cashfree.checkout({
+                    paymentSessionId: order.payment_session_id,
+                    redirectTarget: "_modal",
+                });
+
+                if (cancelled) return;
+
+                // 4. Checkout closed/returned — verify payment
+                if (result.error) {
+                    // User closed the checkout or payment failed on Cashfree's side
+                    if (result.error.message?.includes('closed') || result.error.message?.includes('cancelled')) {
+                        onClose();
+                        return;
+                    }
+                    setErrorMsg(result.error.message || "Payment failed");
+                    setStep("error");
+                    return;
+                }
+
+                // 5. Payment may have succeeded — verify with backend
+                setStep("verifying");
+                const verification = await verifyCashfreePayment(order.order_id);
+
+                if (verification.verified) {
+                    // Payment confirmed! Place order in Supabase
+                    await onPaymentVerify(order.order_id);
+                    setStep("success");
+                    toast.success("Payment successful! Order placed 🎉");
+                    setTimeout(() => onClose(), 1500);
+                } else {
+                    setErrorMsg(`Payment status: ${verification.order_status}. Please try again.`);
+                    setStep("error");
+                }
+            } catch (err: any) {
+                if (cancelled) return;
+                console.error("Cashfree error:", err);
+                setErrorMsg(err?.message || "Something went wrong. Please try again.");
+                setStep("error");
+            }
+        })();
+
+        return () => {
+            cancelled = true;
             document.body.style.overflow = "";
-        }
-        return () => { document.body.style.overflow = ""; };
+        };
     }, [isOpen]);
 
-    const placeOrder = useCallback(async () => {
-        if (step !== "qr") return;
-        setStep("placing");
-        try {
-            await onPaymentVerify(sessionTrRef);
-            setStep("success");
-            toast.success("Order placed successfully! 🎉");
-            setTimeout(() => onClose(), 1500);
-        } catch (err: any) {
-            toast.error(err?.message || "Order failed. Please try again.");
-            setStep("qr");
-        }
-    }, [step, sessionTrRef, onPaymentVerify, onClose]);
-
-    // Track when user taps "Open UPI App" and leaves browser
-    const handleUpiAppClick = () => {
-        setUserLeftForUpi(true);
+    const handleRetry = () => {
+        // Close and re-trigger by toggling isOpen from parent
+        onClose();
     };
-
-    // AUTO-DETECT: When user returns from UPI app → auto-place order
-    useEffect(() => {
-        if (!isOpen || !userLeftForUpi) return;
-
-        const handleVisibilityChange = () => {
-            if (
-                document.visibilityState === "visible" &&
-                userLeftForUpi &&
-                !hasAutoSubmittedRef.current &&
-                step === "qr"
-            ) {
-                hasAutoSubmittedRef.current = true;
-                setTimeout(() => placeOrder(), 800);
-            }
-        };
-
-        document.addEventListener("visibilitychange", handleVisibilityChange);
-        return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
-    }, [isOpen, userLeftForUpi, step, placeOrder]);
 
     return createPortal(
         <AnimatePresence>
-            {isOpen && sessionUri && (
+            {isOpen && (
                 <div className="fixed inset-0 z-[9999] flex items-center justify-center" style={{ isolation: 'isolate' }}>
                     {/* Backdrop */}
                     <motion.div
@@ -110,7 +130,7 @@ export default function UpiPaymentModal({ isOpen, onClose, amount, orderIdText, 
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.9, y: 30 }}
                         transition={{ type: "spring", stiffness: 350, damping: 30 }}
-                        className="relative w-full max-w-sm mx-4 rounded-[24px] overflow-y-auto max-h-[90vh]"
+                        className="relative w-full max-w-sm mx-4 rounded-[24px] overflow-hidden"
                         style={{
                             background: '#0D0606',
                             border: '1px solid rgba(255,255,255,0.12)',
@@ -118,89 +138,40 @@ export default function UpiPaymentModal({ isOpen, onClose, amount, orderIdText, 
                         }}
                     >
                         <AnimatePresence mode="wait">
-                            {/* ───────── CLEAN QR SCREEN ───────── */}
-                            {step === "qr" && (
+                            {/* ───────── LOADING / OPENING CHECKOUT ───────── */}
+                            {step === "loading" && (
                                 <motion.div
-                                    key="qr"
+                                    key="loading"
                                     initial={{ opacity: 0 }}
                                     animate={{ opacity: 1 }}
                                     exit={{ opacity: 0 }}
-                                    transition={{ duration: 0.2 }}
+                                    className="flex flex-col items-center justify-center py-16 px-6 space-y-4"
                                 >
-                                    {/* Header */}
-                                    <div className="flex justify-between items-center px-5 py-4 border-b border-white/8">
-                                        <h3 className="font-bold text-lg text-white">Pay ₹{amount.toLocaleString()}</h3>
-                                        <button
-                                            onClick={onClose}
-                                            className="p-2 rounded-full hover:bg-white/10 text-muted-foreground transition-colors"
-                                        >
-                                            <X className="w-5 h-5" />
-                                        </button>
-                                    </div>
-
-                                    <div className="p-6 space-y-5">
-                                        {/* Amount */}
-                                        <div className="text-center">
-                                            <p className="text-xs text-muted-foreground mb-1 uppercase tracking-wider">Scan & Pay</p>
-                                            <p className="text-4xl font-black text-neon-fire">₹{amount.toLocaleString()}</p>
+                                    <div className="relative">
+                                        <Loader2 className="w-14 h-14 text-green-400 animate-spin" />
+                                        <div className="absolute inset-0 flex items-center justify-center">
+                                            <CreditCard className="w-6 h-6 text-green-400/60" />
                                         </div>
-
-                                        {/* QR Code */}
-                                        <div className="flex flex-col items-center">
-                                            <div className="bg-white p-3 rounded-2xl shadow-xl border-4 border-white/5">
-                                                <img src="/payment-qr.jpg" alt="UPI QR Code" className="w-[200px] h-[200px] object-contain rounded-lg" />
-                                            </div>
-
-                                            {!isMobile && (
-                                                <div className="flex items-center gap-2 mt-3 px-3 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20">
-                                                    <Monitor className="w-3.5 h-3.5 text-blue-400" />
-                                                    <p className="text-[11px] text-blue-400 font-medium">Scan with GPay • PhonePe • Paytm</p>
-                                                </div>
-                                            )}
-                                        </div>
-
-                                        {/* UPI App deep link — mobile only */}
-                                        {isMobile && (
-                                            <a
-                                                href={sessionUri}
-                                                onClick={handleUpiAppClick}
-                                                className="w-full py-3.5 rounded-xl text-white font-bold text-sm flex justify-center items-center gap-2.5 hover:scale-[1.02] active:scale-[0.98] transition-all block"
-                                                style={{ background: 'linear-gradient(135deg, #10B981, #059669)', boxShadow: '0 4px 15px rgba(16,185,129,0.3)' }}
-                                            >
-                                                <Smartphone className="w-5 h-5" />
-                                                Open UPI App to Pay
-                                            </a>
-                                        )}
-
-                                        {/* Auto-detect hint — shows only after user opened UPI app */}
-                                        {isMobile && userLeftForUpi && (
-                                            <motion.div
-                                                initial={{ opacity: 0, y: 10 }}
-                                                animate={{ opacity: 1, y: 0 }}
-                                                className="flex items-center gap-2 p-3 rounded-xl bg-green-500/10 border border-green-500/20"
-                                            >
-                                                <Loader2 className="w-4 h-4 text-green-400 animate-spin flex-shrink-0" />
-                                                <p className="text-[11px] text-green-400 font-medium">
-                                                    Complete payment in UPI app — order will be placed automatically ✨
-                                                </p>
-                                            </motion.div>
-                                        )}
                                     </div>
+                                    <p className="text-lg font-bold text-white">Opening Checkout...</p>
+                                    <p className="text-xs text-muted-foreground text-center">
+                                        Preparing secure payment of ₹{amount.toLocaleString()}
+                                    </p>
                                 </motion.div>
                             )}
 
-                            {/* ───────── PLACING ORDER ───────── */}
-                            {step === "placing" && (
+                            {/* ───────── VERIFYING ───────── */}
+                            {step === "verifying" && (
                                 <motion.div
-                                    key="placing"
+                                    key="verifying"
                                     initial={{ opacity: 0, scale: 0.95 }}
                                     animate={{ opacity: 1, scale: 1 }}
                                     exit={{ opacity: 0 }}
                                     className="flex flex-col items-center justify-center py-16 px-6 space-y-4"
                                 >
                                     <Loader2 className="w-14 h-14 text-green-400 animate-spin" />
-                                    <p className="text-lg font-bold text-white">Placing your order...</p>
-                                    <p className="text-xs text-muted-foreground">Please wait</p>
+                                    <p className="text-lg font-bold text-white">Verifying Payment...</p>
+                                    <p className="text-xs text-muted-foreground">Confirming with payment gateway</p>
                                 </motion.div>
                             )}
 
@@ -220,8 +191,42 @@ export default function UpiPaymentModal({ isOpen, onClose, amount, orderIdText, 
                                     >
                                         <CheckCircle className="w-20 h-20 text-green-400" />
                                     </motion.div>
-                                    <p className="text-xl font-black text-white">Order Placed! 🎉</p>
-                                    <p className="text-sm text-green-400 font-medium">Redirecting to tracking...</p>
+                                    <p className="text-xl font-black text-white">Payment Successful! 🎉</p>
+                                    <p className="text-sm text-green-400 font-medium">Order placed — redirecting...</p>
+                                </motion.div>
+                            )}
+
+                            {/* ───────── ERROR ───────── */}
+                            {step === "error" && (
+                                <motion.div
+                                    key="error"
+                                    initial={{ opacity: 0, scale: 0.95 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    exit={{ opacity: 0 }}
+                                    className="flex flex-col items-center justify-center py-12 px-6 space-y-5"
+                                >
+                                    <div className="w-16 h-16 rounded-full bg-red-500/15 flex items-center justify-center">
+                                        <AlertCircle className="w-9 h-9 text-red-400" />
+                                    </div>
+                                    <div className="text-center space-y-1">
+                                        <p className="text-lg font-bold text-white">Payment Failed</p>
+                                        <p className="text-sm text-muted-foreground">{errorMsg}</p>
+                                    </div>
+                                    <div className="flex gap-3 w-full">
+                                        <button
+                                            onClick={onClose}
+                                            className="flex-1 py-3 rounded-xl text-muted-foreground font-medium text-sm border border-white/10 hover:bg-white/5 transition-all"
+                                        >
+                                            Cancel
+                                        </button>
+                                        <button
+                                            onClick={handleRetry}
+                                            className="flex-1 py-3 rounded-xl text-white font-bold text-sm transition-all hover:scale-[1.02] active:scale-[0.98]"
+                                            style={{ background: 'linear-gradient(135deg, #10B981, #059669)' }}
+                                        >
+                                            Retry
+                                        </button>
+                                    </div>
                                 </motion.div>
                             )}
                         </AnimatePresence>

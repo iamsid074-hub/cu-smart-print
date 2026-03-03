@@ -161,8 +161,8 @@ export default function ProductDetail() {
                 delivery_room: deliveryRoom || null,
                 buyer_phone: phone.replace(/\D/g, ""),
                 status: 'pending',
-                payment_method: method === "online" ? "upi" : "cod",
-                payment_status: method === "online" ? "verifying" : "pending",
+                payment_method: method === "online" ? "cashfree" : "cod",
+                payment_status: method === "online" ? "paid" : "pending",
                 razorpay_payment_id: utrNumber,
                 seller_notified_at: new Date().toISOString(),
             }).select().single();
@@ -442,6 +442,8 @@ export default function ProductDetail() {
                 onClose={() => setShowUpiModal(false)}
                 amount={totalAmount}
                 orderIdText={`PRD_${product?.id?.slice(0, 6) || "ID"}`}
+                customerId={user?.id || "guest"}
+                customerPhone={phone || "9999999999"}
                 onPaymentVerify={async (utr) => {
                     await finalizeOrder("online", utr);
                 }}

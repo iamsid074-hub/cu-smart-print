@@ -1,6 +1,18 @@
 {
     "rewrites": [
         {
+            "source": "/api/cashfree-order",
+            "destination": "/api/cashfree-order.js"
+        },
+        {
+            "source": "/api/cashfree-verify",
+            "destination": "/api/cashfree-verify.js"
+        },
+        {
+            "source": "/api/sb",
+            "destination": "/api/sb.js"
+        },
+        {
             "source": "/(.*)",
             "destination": "/index.html"
         }
