@@ -326,7 +326,7 @@ export default function Index() {
       {/* ─── Footer ─── */}
       <footer className="py-8 px-5" style={{ backgroundColor: C.surface, borderTop: `1px solid ${C.border}` }}>
         <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm" style={{ color: C.muted }}>
-          <p>© 2026 All copyright reserved , CU BAZZAR , ANSHU</p>
+          <p>© 2026 All copyright reserved , CU BAZZAR </p>
           <div className="flex gap-6">
             <Link to="/" className="hover:opacity-70 transition-opacity">Privacy</Link>
             <Link to="/terms" className="hover:opacity-70 transition-opacity">Terms</Link>
