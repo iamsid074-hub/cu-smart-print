@@ -31,6 +31,7 @@ export default function Profile() {
 
     const [activeTab, setActiveTab] = useState<TabId>('listings');
     const [showProfileCard, setShowProfileCard] = useState(false);
+    const [hasAutoShown, setHasAutoShown] = useState(false);
 
     useEffect(() => {
         async function fetchProfileAndListings() {
@@ -178,6 +179,14 @@ export default function Profile() {
         { id: 'saved', label: 'Saved' },
     ];
 
+    // Auto-show profile card on first load once profile is ready
+    useEffect(() => {
+        if (profile && !hasAutoShown) {
+            const t = setTimeout(() => { setShowProfileCard(true); setHasAutoShown(true); }, 400);
+            return () => clearTimeout(t);
+        }
+    }, [profile]);
+
     return (
         <div className="min-h-screen pt-16 pb-24" style={{ backgroundColor: '#0f0f10' }}>
             <div className="max-w-2xl mx-auto px-4">
@@ -185,23 +194,41 @@ export default function Profile() {
                 {/* ── PROFILE HEADER STRIP ── */}
                 <div className="py-6 border-b" style={{ borderColor: '#1e1e21' }}>
                     <div className="flex items-center gap-4">
-                        {/* Avatar */}
-                        <div className="relative flex-shrink-0 cursor-pointer group" onClick={() => { if (isEditing) fileInputRef.current?.click(); else setShowProfileCard(true); }}>
-                            <div className="w-14 h-14 rounded-full overflow-hidden transition-transform hover:scale-105" style={{ backgroundColor: '#1a1a1d', border: '1px solid #2a2a2e' }}>
-                                {profile?.avatar_url ? (
-                                    <img src={profile.avatar_url} alt="" className="w-full h-full object-cover" />
-                                ) : (
-                                    <div className="w-full h-full flex items-center justify-center">
-                                        <User className="w-6 h-6" style={{ color: '#555' }} />
-                                    </div>
+                        {/* Avatar — click to open animated profile card */}
+                        <div className="flex flex-col items-center gap-1 flex-shrink-0">
+                            <div
+                                className="relative cursor-pointer group"
+                                onClick={() => { if (isEditing) fileInputRef.current?.click(); else setShowProfileCard(true); }}
+                            >
+                                {/* Pulsing ring hint */}
+                                {!isEditing && (
+                                    <span className="absolute inset-0 rounded-full animate-ping opacity-40" style={{ backgroundColor: '#ef4444', animationDuration: '2s' }} />
                                 )}
-                            </div>
-                            {isEditing && (
-                                <div className="absolute inset-0 w-14 h-14 rounded-full bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <Camera className="w-4 h-4 text-white" />
+                                <div className="relative w-14 h-14 rounded-full overflow-hidden transition-all group-hover:scale-105" style={{ backgroundColor: '#1a1a1d', border: '2px solid #ef4444' }}>
+                                    {profile?.avatar_url ? (
+                                        <img src={profile.avatar_url} alt="" className="w-full h-full object-cover" />
+                                    ) : (
+                                        <div className="w-full h-full flex items-center justify-center">
+                                            <User className="w-6 h-6" style={{ color: '#555' }} />
+                                        </div>
+                                    )}
+                                    {isEditing && (
+                                        <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <Camera className="w-4 h-4 text-white" />
+                                        </div>
+                                    )}
                                 </div>
+                                <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleAvatarUpload} />
+                            </div>
+                            {!isEditing && (
+                                <button
+                                    onClick={() => setShowProfileCard(true)}
+                                    className="text-[10px] font-medium px-2 py-0.5 rounded-full transition-colors"
+                                    style={{ backgroundColor: '#1a1a1d', color: '#ef4444', border: '1px solid #2a2a2e' }}
+                                >
+                                    View Card
+                                </button>
                             )}
-                            <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleAvatarUpload} />
                         </div>
 
                         {/* Info */}
