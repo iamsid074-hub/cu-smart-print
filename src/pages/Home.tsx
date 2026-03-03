@@ -34,7 +34,19 @@ export default function Home() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [timeLeft, setTimeLeft] = useState({ days: "00", hours: "00", minutes: "00", seconds: "00" });
+  const [isReminded, setIsReminded] = useState(() => localStorage.getItem('cubazzar_sale_reminder') === '1');
 
+  const handleRemindMe = () => {
+    if (isReminded) {
+      localStorage.removeItem('cubazzar_sale_reminder');
+      setIsReminded(false);
+      toast.success("Reminder cancelled");
+    } else {
+      localStorage.setItem('cubazzar_sale_reminder', '1');
+      setIsReminded(true);
+      toast.success("Reminder set! We'll notify you when the Summer Sale starts 🎯");
+    }
+  };
   // ── Campus Essentials Quick-Buy ──
   const [buyItem, setBuyItem] = useState<CampusEssentialItem | null>(null);
   const [buyHostel, setBuyHostel] = useState("");
@@ -313,14 +325,15 @@ export default function Home() {
                     </div>
 
                     <motion.button
+                      onClick={handleRemindMe}
                       whileHover={{ y: -2, scale: 1.04 }}
                       whileTap={{ scale: 0.96 }}
-                      className="group relative px-6 py-3 sm:px-8 sm:py-3.5 rounded-xl font-bold text-white text-xs sm:text-sm overflow-hidden transition-shadow"
-                      style={{ background: '#FF6B6B', boxShadow: '0 4px 20px rgba(255,107,107,0.3)' }}
+                      className={`group relative px-6 py-3 sm:px-8 sm:py-3.5 rounded-xl font-bold text-white text-xs sm:text-sm overflow-hidden transition-shadow ${isReminded ? 'bg-green-500' : ''}`}
+                      style={{ background: isReminded ? '#10B981' : '#FF6B6B', boxShadow: isReminded ? '0 4px 20px rgba(16,185,129,0.3)' : '0 4px 20px rgba(255,107,107,0.3)' }}
                     >
                       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
                       <span className="relative flex items-center gap-2" style={fontH}>
-                        Remind Me 🔔
+                        {isReminded ? "Reminder Set ✓" : "Remind Me 🔔"}
                       </span>
                     </motion.button>
                   </div>

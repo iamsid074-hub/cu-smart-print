@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
-import { Heart, Star, BadgeCheck, ShoppingCart } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Heart, Star, BadgeCheck, ShoppingCart, Share2 } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { useToast } from "@/hooks/use-toast";
 
@@ -59,6 +59,38 @@ export default function ProductCard({
   const [imgLoaded, setImgLoaded] = useState(false);
   const [imgError, setImgError] = useState(false);
 
+  // ── Favourites (localStorage) ──
+  const favKey = `cubazzar_fav_${id}`;
+  const [isFav, setIsFav] = useState(() => localStorage.getItem(favKey) === '1');
+
+  const handleFav = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const next = !isFav;
+    setIsFav(next);
+    if (next) {
+      localStorage.setItem(favKey, '1');
+      toast({ title: `${title} added to favourites ❤️` });
+    } else {
+      localStorage.removeItem(favKey);
+      toast({ title: `Removed from favourites` });
+    }
+  };
+
+  // ── Share (Web Share API → clipboard fallback) ──
+  const handleShare = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const url = `${window.location.origin}/product/${id}`;
+    const text = `Check out "${title}" for ₹${price} on CU Bazzar!`;
+    if (navigator.share) {
+      try { await navigator.share({ title, text, url }); } catch {/* cancelled */ }
+    } else {
+      await navigator.clipboard.writeText(url);
+      toast({ title: 'Link copied! 📋', description: 'Share it with friends.' });
+    }
+  };
+
   // Use product category for a smart fallback (never shows a camera image for a calculator)
   const fallbackSrc = (category && CATEGORY_FALLBACKS[category]) ?? DEFAULT_FALLBACK;
   const displaySrc = imgError ? fallbackSrc : (image || fallbackSrc);
@@ -80,10 +112,26 @@ export default function ProductCard({
           </div>
         )}
 
-        {/* Wishlist */}
-        <button className="premium-glass-button absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center text-white/90 hover:text-neon-pink shadow-lg z-10 transition-transform">
-          <Heart className="w-4 h-4" />
-        </button>
+        {/* Wishlist + Share */}
+        <div className="absolute top-3 right-3 z-10 flex gap-1.5">
+          <motion.button
+            onClick={handleFav}
+            whileTap={{ scale: 0.75 }}
+            className={`w-8 h-8 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 ${isFav
+                ? 'bg-pink-500/90 text-white shadow-pink-500/30'
+                : 'premium-glass-button text-white/80 hover:text-neon-pink'
+              }`}
+          >
+            <Heart className={`w-4 h-4 transition-all ${isFav ? 'fill-current scale-110' : ''}`} />
+          </motion.button>
+          <motion.button
+            onClick={handleShare}
+            whileTap={{ scale: 0.75 }}
+            className="premium-glass-button w-8 h-8 rounded-full flex items-center justify-center text-white/80 hover:text-neon-cyan shadow-lg transition-colors"
+          >
+            <Share2 className="w-3.5 h-3.5" />
+          </motion.button>
+        </div>
 
         {/* Image */}
         <div className="relative overflow-hidden h-44 bg-white/5">

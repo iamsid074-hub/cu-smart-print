@@ -36,6 +36,24 @@ export default function ProductDetail() {
     const [showUpiModal, setShowUpiModal] = useState(false);
     const [copied, setCopied] = useState(false);
 
+    // ── Favourites (localStorage) ──
+    const favKey = `cubazzar_fav_${id}`;
+    const [isFav, setIsFav] = useState(() => localStorage.getItem(favKey) === '1');
+
+    const handleFav = (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const next = !isFav;
+        setIsFav(next);
+        if (next) {
+            localStorage.setItem(favKey, '1');
+            toast({ title: `${product?.title || 'Product'} added to favourites ❤️` });
+        } else {
+            localStorage.removeItem(favKey);
+            toast({ title: `Removed from favourites` });
+        }
+    };
+
     const handleShare = async () => {
         const url = window.location.href;
         const text = `Check out "${product?.title}" for ₹${product?.price} on CU Bazzar!`;
@@ -185,8 +203,14 @@ export default function ProductDetail() {
                         />
                         {/* Top right actions */}
                         <div className="absolute top-4 right-4 flex gap-3">
-                            <button className="premium-glass-button w-12 h-12 flex items-center justify-center text-foreground hover:text-neon-pink shadow-lg">
-                                <Heart className="w-5 h-5" />
+                            <button
+                                onClick={handleFav}
+                                className={`premium-glass-button w-12 h-12 flex items-center justify-center shadow-lg transition-all duration-300 ${isFav
+                                    ? 'bg-pink-500/90 text-white shadow-pink-500/30'
+                                    : 'text-foreground hover:text-neon-pink'
+                                    }`}
+                            >
+                                <Heart className={`w-5 h-5 transition-all ${isFav ? 'fill-current scale-110' : ''}`} />
                             </button>
                             <button
                                 onClick={handleShare}
