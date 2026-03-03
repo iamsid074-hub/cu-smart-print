@@ -75,7 +75,10 @@ export default function Home() {
   };
 
   const finalizeOrder = async (method: "online" | "cod", utrNumber: string | null) => {
-    if (!user || !buyItem) return;
+    if (!user) return;
+    // Use upiItemSnapshot as buyItem is cleared before UPI modal opens
+    const item = upiItemSnapshot ?? (buyItem ? { price: buyItem.price, id: buyItem.id, title: buyItem.title } : null);
+    if (!item) { toast.error("Order data missing. Please try again."); return; }
     const phoneClean = buyPhone.replace(/\D/g, "");
     setBuyLoading(true);
 
@@ -84,11 +87,11 @@ export default function Home() {
         product_id: null,
         buyer_id: user.id,
         seller_id: ADMIN_SELLER_ID,
-        base_price: buyItem.price,
+        base_price: item.price,
         commission: 0,
         delivery_charge: 0,
-        total_price: buyItem.price,
-        delivery_location: `${buyHostel} [CE: ${buyItem.title}]`,
+        total_price: item.price,
+        delivery_location: `${buyHostel} [CE: ${item.title}]`,
         delivery_room: buyRoom || null,
         buyer_phone: phoneClean,
         status: 'pending',
@@ -100,8 +103,9 @@ export default function Home() {
 
       if (error) throw error;
 
-      toast.success(method === "online" ? `Order submitted! Admin will verify your payment 🎉` : `Order placed for ${buyItem.title}! Pay on delivery 🎉`);
+      toast.success(method === "online" ? `Order submitted! Admin will verify your payment 🎉` : `Order placed for ${item.title}! Pay on delivery 🎉`);
       setBuyItem(null);
+      setUpiItemSnapshot(null);
       setBuyHostel(""); setBuyRoom(""); setBuyPhone(""); setBuyPaymentMethod("cod");
       setShowUpiModal(false);
       navigate(`/tracking?order=${data.id}`);
@@ -111,6 +115,7 @@ export default function Home() {
       setBuyLoading(false);
     }
   };
+
 
   useEffect(() => {
     const calculateTimeLeft = () => {
