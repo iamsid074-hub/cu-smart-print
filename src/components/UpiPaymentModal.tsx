@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Copy, CheckCircle, ShieldCheck, Loader2, ArrowLeft } from "lucide-react";
-import QRCode from "react-qr-code";
+import { X, Copy, CheckCircle, Loader2, ArrowLeft, Smartphone, Monitor } from "lucide-react";
 import { toast } from "sonner";
 
 interface UpiPaymentModalProps {
@@ -13,21 +12,33 @@ interface UpiPaymentModalProps {
     onPaymentVerify: (utrNumber: string) => Promise<void>;
 }
 
+function useIsMobile() {
+    const [isMobile, setIsMobile] = useState(false);
+    useEffect(() => {
+        const check = () => {
+            const ua = navigator.userAgent || "";
+            setIsMobile(/Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(ua));
+        };
+        check();
+    }, []);
+    return isMobile;
+}
+
 export default function UpiPaymentModal({ isOpen, onClose, amount, orderIdText, onPaymentVerify }: UpiPaymentModalProps) {
     const [utrNumber, setUtrNumber] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [copied, setCopied] = useState(false);
+    const isMobile = useIsMobile();
 
     const upiId = import.meta.env.VITE_MERCHANT_UPI_ID || "anshu@sbi";
     const merchantName = "CU BAZZAR";
-    const upiUri = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(merchantName)}&tr=${orderIdText}&am=${amount}&cu=INR`;
+    const upiUri = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(merchantName)}&tr=${orderIdText}&am=${amount}&cu=INR&tn=${encodeURIComponent(`CU Bazzar Order ${orderIdText}`)}`;
 
     useEffect(() => {
         if (!isOpen) {
             setUtrNumber("");
             setIsSubmitting(false);
         }
-        // Lock body scroll when modal is open
         if (isOpen) {
             document.body.style.overflow = "hidden";
         } else {
@@ -57,12 +68,11 @@ export default function UpiPaymentModal({ isOpen, onClose, amount, orderIdText, 
         }
     };
 
-    // Use createPortal to render at document.body level — avoids parent overflow/z-index issues
     return createPortal(
         <AnimatePresence>
             {isOpen && (
                 <div className="fixed inset-0 z-[9999] flex items-center justify-center" style={{ isolation: 'isolate' }}>
-                    {/* Full-screen backdrop */}
+                    {/* Backdrop */}
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
@@ -98,45 +108,76 @@ export default function UpiPaymentModal({ isOpen, onClose, amount, orderIdText, 
                             </button>
                         </div>
 
-                        <div className="p-6 space-y-6">
+                        <div className="p-6 space-y-5">
                             {/* Amount */}
                             <div className="text-center">
                                 <p className="text-xs text-muted-foreground mb-1 uppercase tracking-wider">Amount to Pay</p>
                                 <p className="text-4xl font-black text-neon-fire">₹{amount.toLocaleString()}</p>
                             </div>
 
-                            {/* Mobile Deep Link */}
-                            <a
-                                href={upiUri}
-                                className="w-full py-3.5 rounded-xl text-white font-bold text-sm flex justify-center items-center gap-2 hover:scale-[1.02] active:scale-[0.98] transition-all block"
-                                style={{ background: 'linear-gradient(135deg, #10B981, #059669)', boxShadow: '0 4px 15px rgba(16,185,129,0.3)' }}
-                            >
-                                <ShieldCheck className="w-5 h-5" />
-                                Open UPI App
-                            </a>
-                            <p className="text-[10px] text-center text-muted-foreground uppercase tracking-wide -mt-4">GPay • PhonePe • Paytm</p>
+                            {/* Static QR Code Image */}
+                            <div className="flex flex-col items-center">
+                                <div className="bg-white p-3 rounded-2xl shadow-xl border-4 border-white/5">
+                                    <img
+                                        src="/upi-qr.png"
+                                        alt="UPI QR Code"
+                                        className="w-44 h-44 object-contain"
+                                        onError={(e) => {
+                                            (e.target as HTMLImageElement).style.display = 'none';
+                                        }}
+                                    />
+                                </div>
 
-                            <div className="relative flex items-center">
-                                <div className="flex-grow border-t border-white/10"></div>
-                                <span className="flex-shrink-0 mx-4 text-xs text-muted-foreground font-medium uppercase">Or Scan QR</span>
-                                <div className="flex-grow border-t border-white/10"></div>
+                                {/* Desktop hint */}
+                                {!isMobile && (
+                                    <div className="flex items-center gap-2 mt-3 px-3 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20">
+                                        <Monitor className="w-3.5 h-3.5 text-blue-400" />
+                                        <p className="text-[11px] text-blue-400 font-medium">Scan this QR from your phone</p>
+                                    </div>
+                                )}
                             </div>
 
-                            {/* QR Code */}
-                            <div className="bg-white p-4 rounded-2xl w-fit mx-auto border-4 border-white/5 shadow-xl">
-                                <QRCode value={upiUri} size={160} level="H" />
-                            </div>
-
-                            <div className="flex items-center justify-center gap-2">
-                                <p className="text-sm font-medium text-white">{upiId}</p>
+                            {/* UPI ID Display */}
+                            <div className="flex items-center justify-center gap-2 py-2 px-4 rounded-xl bg-white/5 border border-white/8 mx-auto w-fit">
+                                <p className="text-sm font-mono font-medium text-white">{upiId}</p>
                                 <button onClick={handleCopyUpi} className="text-neon-cyan hover:text-neon-blue transition-colors p-1" title="Copy UPI ID">
                                     {copied ? <CheckCircle className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                                 </button>
                             </div>
 
-                            {/* Verification Form */}
+                            {/* Pay via UPI App Button (mobile deep link) */}
+                            {isMobile ? (
+                                <a
+                                    href={upiUri}
+                                    className="w-full py-3.5 rounded-xl text-white font-bold text-sm flex justify-center items-center gap-2.5 hover:scale-[1.02] active:scale-[0.98] transition-all block"
+                                    style={{ background: 'linear-gradient(135deg, #10B981, #059669)', boxShadow: '0 4px 15px rgba(16,185,129,0.3)' }}
+                                >
+                                    <Smartphone className="w-5 h-5" />
+                                    Pay ₹{amount} via UPI App
+                                </a>
+                            ) : (
+                                <div className="text-center">
+                                    <a
+                                        href={upiUri}
+                                        className="w-full py-3.5 rounded-xl text-white font-bold text-sm flex justify-center items-center gap-2.5 transition-all block opacity-80"
+                                        style={{ background: 'linear-gradient(135deg, #10B981, #059669)', boxShadow: '0 4px 15px rgba(16,185,129,0.3)' }}
+                                    >
+                                        <Smartphone className="w-5 h-5" />
+                                        Open UPI App
+                                    </a>
+                                    <p className="text-[10px] text-muted-foreground mt-2">Works best on mobile · GPay • PhonePe • Paytm</p>
+                                </div>
+                            )}
+
+                            <div className="relative flex items-center">
+                                <div className="flex-grow border-t border-white/10"></div>
+                                <span className="flex-shrink-0 mx-4 text-xs text-muted-foreground font-medium uppercase">After Payment</span>
+                                <div className="flex-grow border-t border-white/10"></div>
+                            </div>
+
+                            {/* UTR Verification Form */}
                             <form onSubmit={handleSubmit} className="p-4 rounded-xl border border-white/8" style={{ background: 'rgba(255,255,255,0.02)' }}>
-                                <p className="text-xs font-bold text-white mb-3">Paid? Enter UTR / Ref Number <span className="text-red-400">*</span></p>
+                                <p className="text-xs font-bold text-white mb-3">Enter UTR / Ref Number <span className="text-red-400">*</span></p>
                                 <input
                                     type="text"
                                     required
@@ -152,7 +193,7 @@ export default function UpiPaymentModal({ isOpen, onClose, amount, orderIdText, 
                                     className="w-full py-2.5 rounded-lg text-white font-bold text-sm flex justify-center items-center gap-2 transition-all disabled:opacity-50"
                                     style={{ background: utrNumber.length >= 12 ? '#FF6B6B' : 'rgba(255,255,255,0.1)' }}
                                 >
-                                    {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : "Verify Payment"}
+                                    {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : "Confirm Payment"}
                                 </button>
                             </form>
                         </div>
