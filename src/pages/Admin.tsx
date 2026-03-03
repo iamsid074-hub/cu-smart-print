@@ -354,8 +354,8 @@ function applyFilter(orders: Order[], filter: string): Order[] {
 }
 
 // ─── Item Orders Section ────────────────────────────────────────────────────────
-function ItemOrdersSection({ orders, loading, onUpdateStatus }: {
-    orders: Order[]; loading: boolean; onUpdateStatus: (id: string, status: string, timestamps?: Record<string, string>) => void;
+function ItemOrdersSection({ orders, loading, onUpdateStatus, onVerifyUpi }: {
+    orders: Order[]; loading: boolean; onUpdateStatus: (id: string, status: string, timestamps?: Record<string, string>) => void; onVerifyUpi: (id: string) => void;
 }) {
     const [filter, setFilter] = useState('all');
     const itemOrders = orders.filter(o => !isFoodOrder(o));
@@ -417,10 +417,15 @@ function ItemOrdersSection({ orders, loading, onUpdateStatus }: {
                                             <p className="text-neon-fire font-bold text-lg">₹{order.total_price.toLocaleString()}</p>
                                             <div className="flex items-center gap-2 mt-1">
                                                 {order.products?.category && <span className="inline-block px-2 py-0.5 rounded-lg bg-white/10 text-xs text-muted-foreground font-mono">{order.products.category}</span>}
-                                                <span className={`inline-block px-2 py-0.5 rounded-lg text-xs font-bold ${order.payment_method === 'online' ? 'bg-green-500/15 text-green-400' : 'bg-yellow-500/15 text-yellow-400'}`}>
-                                                    {order.payment_method === 'online' ? '💳 Paid' : '💵 COD'}
+                                                <span className={`inline-block px-2 py-0.5 rounded-lg text-xs font-bold ${order.payment_status === 'verifying' ? 'bg-orange-500/15 text-orange-400' : order.payment_status === 'paid' ? 'bg-green-500/15 text-green-400' : 'bg-yellow-500/15 text-yellow-400'}`}>
+                                                    {order.payment_status === 'verifying' ? `🟡 Verify UTR: ${order.razorpay_payment_id || 'N/A'}` : order.payment_status === 'paid' ? '💳 Paid Online' : '💵 COD'}
                                                 </span>
                                             </div>
+                                            {order.payment_status === 'verifying' && (
+                                                <button onClick={() => onVerifyUpi(order.id)} className="px-3 py-1.5 mt-2 bg-green-500/20 border border-green-500/30 text-green-400 hover:bg-green-500/30 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 transition-all">
+                                                    <CheckCircle className="w-3.5 h-3.5" /> Accept UPI Payment
+                                                </button>
+                                            )}
                                         </div>
                                     </div>
                                     <div className="glass rounded-xl p-3 border border-neon-cyan/20">
@@ -472,8 +477,8 @@ function ItemOrdersSection({ orders, loading, onUpdateStatus }: {
 }
 
 // ─── Food Orders Section ────────────────────────────────────────────────────────
-function FoodOrdersSection({ orders, loading, onUpdateStatus }: {
-    orders: Order[]; loading: boolean; onUpdateStatus: (id: string, status: string, timestamps?: Record<string, string>) => void;
+function FoodOrdersSection({ orders, loading, onUpdateStatus, onVerifyUpi }: {
+    orders: Order[]; loading: boolean; onUpdateStatus: (id: string, status: string, timestamps?: Record<string, string>) => void; onVerifyUpi: (id: string) => void;
 }) {
     const [filter, setFilter] = useState('all');
     const foodOrders = orders.filter(o => isFoodOrder(o));
@@ -581,10 +586,15 @@ function FoodOrdersSection({ orders, loading, onUpdateStatus }: {
                                                 <span className="text-base font-black text-orange-400">₹{order.total_price.toLocaleString()}</span>
                                             </div>
                                         )}
-                                        <div className="mt-2 flex items-center gap-2">
-                                            <span className={`inline-block px-2 py-0.5 rounded-lg text-xs font-bold ${order.payment_method === 'online' ? 'bg-green-500/15 text-green-400' : 'bg-yellow-500/15 text-yellow-400'}`}>
-                                                {order.payment_method === 'online' ? '💳 Paid Online' : '💵 Cash on Delivery'}
+                                        <div className="mt-2 flex flex-col items-start gap-2">
+                                            <span className={`inline-block px-2 py-0.5 rounded-lg text-xs font-bold ${order.payment_status === 'verifying' ? 'bg-orange-500/15 text-orange-400' : order.payment_status === 'paid' ? 'bg-green-500/15 text-green-400' : 'bg-yellow-500/15 text-yellow-400'}`}>
+                                                {order.payment_status === 'verifying' ? `🟡 Verify UTR: ${order.razorpay_payment_id || 'N/A'}` : order.payment_status === 'paid' ? '💳 Paid Online' : '💵 Cash on Delivery'}
                                             </span>
+                                            {order.payment_status === 'verifying' && (
+                                                <button onClick={() => onVerifyUpi(order.id)} className="px-3 py-1.5 bg-green-500/20 border border-green-500/30 text-green-400 hover:bg-green-500/30 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 transition-all">
+                                                    <CheckCircle className="w-3.5 h-3.5" /> Accept UPI Payment
+                                                </button>
+                                            )}
                                         </div>
                                     </div>
 
@@ -862,6 +872,14 @@ export default function Admin() {
         await fetchStats();
     };
 
+    const handleVerifyUpi = async (id: string) => {
+        await supabase.from("orders").update({ payment_status: 'paid' }).eq("id", id);
+        setOrders(prev => prev.map(o => o.id === id ? { ...o, payment_status: 'paid' } : o));
+        setRecentOrders(prev => prev.map(o => o.id === id ? { ...o, payment_status: 'paid' } : o));
+        await fetchStats();
+        alert("UPI Payment Verified Successfully!");
+    };
+
     const handleMarkRead = async (id: string) => {
         await supabase.from("admin_notifications").update({ is_read: true }).eq("id", id);
         setNotifications(prev => prev.map(n => n.id === id ? { ...n, is_read: true } : n));
@@ -1013,6 +1031,7 @@ export default function Admin() {
                                     orders={orders}
                                     loading={loadingOrders}
                                     onUpdateStatus={handleUpdateOrderStatus}
+                                    onVerifyUpi={handleVerifyUpi}
                                 />
                             )}
                             {section === "food_orders" && (
@@ -1020,6 +1039,7 @@ export default function Admin() {
                                     orders={orders}
                                     loading={loadingOrders}
                                     onUpdateStatus={handleUpdateOrderStatus}
+                                    onVerifyUpi={handleVerifyUpi}
                                 />
                             )}
                             {section === "notifications" && (

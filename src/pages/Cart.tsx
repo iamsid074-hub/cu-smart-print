@@ -6,8 +6,8 @@ import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
-import { openRazorpayCheckout } from "@/lib/razorpay";
 import PaymentSelector from "@/components/PaymentSelector";
+import UpiPaymentModal from "@/components/UpiPaymentModal";
 
 export default function Cart() {
     const { items, removeItem, updateQuantity, clearCart, totalItems, totalPrice } = useCart();
@@ -21,6 +21,7 @@ export default function Cart() {
     const [phone, setPhone] = useState("");
     const [paymentMethod, setPaymentMethod] = useState<"online" | "cod">("cod");
     const [submitting, setSubmitting] = useState(false);
+    const [showUpiModal, setShowUpiModal] = useState(false);
 
     const phoneClean = phone.replace(/\D/g, "");
     const isPhoneValid = phoneClean.length === 10;
@@ -40,8 +41,8 @@ export default function Cart() {
             delivery_room: `[CUSTOM FOOD ORDER]\n${itemsSummary}`,
             buyer_phone: phoneClean,
             status: "pending",
-            payment_method: paymentMethod,
-            payment_status: paymentMethod === "online" ? "paid" : "pending",
+            payment_method: paymentMethod === "online" ? "upi" : "cod",
+            payment_status: paymentMethod === "online" ? "verifying" : "pending",
             razorpay_payment_id: paymentId || null,
             seller_notified_at: new Date().toISOString(),
         });
@@ -54,28 +55,18 @@ export default function Cart() {
         setSubmitting(true);
         try {
             if (paymentMethod === "online") {
-                const result = await openRazorpayCheckout({
-                    amount: totalPrice,
-                    name: user.email?.split("@")[0] || "Student",
-                    email: user.email || "",
-                    phone: phoneClean,
-                    description: `${totalItems} items from CU BAZZAR`,
-                });
-                await createOrder(result.razorpay_payment_id);
-                toast({ title: "Payment successful! 🎉", description: `₹${totalPrice} paid. Order placed.` });
+                setShowUpiModal(true);
+                setSubmitting(false);
+                return;
             } else {
                 await createOrder();
                 toast({ title: "Order placed! 🎉", description: `${totalItems} items ordered. Pay ₹${totalPrice} on delivery.` });
+                clearCart();
+                setShowCheckout(false);
+                navigate("/tracking");
             }
-            clearCart();
-            setShowCheckout(false);
-            navigate("/tracking");
         } catch (err: any) {
-            if (err.message === "Payment cancelled") {
-                toast({ title: "Payment cancelled", description: "You can try again or switch to COD.", variant: "destructive" });
-            } else {
-                toast({ title: "Order failed", description: err.message || "Please try again.", variant: "destructive" });
-            }
+            toast({ title: "Order failed", description: err.message || "Please try again.", variant: "destructive" });
         } finally {
             setSubmitting(false);
         }
@@ -215,6 +206,29 @@ export default function Cart() {
                     </>
                 )}
             </div>
+
+            {/* UPI Payment Modal */}
+            <UpiPaymentModal
+                isOpen={showUpiModal}
+                onClose={() => setShowUpiModal(false)}
+                amount={totalPrice}
+                orderIdText={`CART_${Date.now().toString().slice(-6)}`}
+                onPaymentVerify={async (utr) => {
+                    setSubmitting(true);
+                    try {
+                        await createOrder(utr);
+                        toast({ title: "Order submitted! 🎉", description: `Admin will verify your payment of ₹${totalPrice}.` });
+                        clearCart();
+                        setShowCheckout(false);
+                        setShowUpiModal(false);
+                        navigate("/tracking");
+                    } catch (err: any) {
+                        toast({ title: "Order failed", description: err.message || "Please try again.", variant: "destructive" });
+                    } finally {
+                        setSubmitting(false);
+                    }
+                }}
+            />
         </div>
     );
 }

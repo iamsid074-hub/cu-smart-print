@@ -7,8 +7,8 @@ import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { campusEssentials, ADMIN_SELLER_ID, type CampusEssentialItem } from "@/config/campusEssentials";
-import { openRazorpayCheckout } from "@/lib/razorpay";
 import PaymentSelector from "@/components/PaymentSelector";
+import UpiPaymentModal from "@/components/UpiPaymentModal";
 import type { Database } from "@/types/supabase";
 
 type Product = Database["public"]["Tables"]["products"]["Row"];
@@ -42,6 +42,7 @@ export default function Home() {
   const [buyPhone, setBuyPhone] = useState("");
   const [buyLoading, setBuyLoading] = useState(false);
   const [buyPaymentMethod, setBuyPaymentMethod] = useState<"online" | "cod">("cod");
+  const [showUpiModal, setShowUpiModal] = useState(false);
 
   const handleQuickBuy = async () => {
     if (!user) { navigate('/login'); return; }
@@ -57,19 +58,25 @@ export default function Home() {
     }
     setBuyLoading(true);
     try {
-      let paymentId: string | null = null;
-
       if (buyPaymentMethod === "online") {
-        const result = await openRazorpayCheckout({
-          amount: buyItem.price,
-          name: user.email?.split("@")[0] || "Student",
-          email: user.email || "",
-          phone: phoneClean,
-          description: `CE: ${buyItem.title}`,
-        });
-        paymentId = result.razorpay_payment_id;
+        setShowUpiModal(true);
+        setBuyLoading(false);
+        return; // Wait for UTR verification
       }
 
+      await finalizeOrder("cod", null);
+    } catch (err: any) {
+      toast.error(err.message || "Order failed. Please try again.");
+      setBuyLoading(false);
+    }
+  };
+
+  const finalizeOrder = async (method: "online" | "cod", utrNumber: string | null) => {
+    if (!user || !buyItem) return;
+    const phoneClean = buyPhone.replace(/\D/g, "");
+    setBuyLoading(true);
+
+    try {
       const { data, error } = await supabase.from("orders").insert({
         product_id: null,
         buyer_id: user.id,
@@ -82,24 +89,21 @@ export default function Home() {
         delivery_room: buyRoom || null,
         buyer_phone: phoneClean,
         status: 'pending',
-        payment_method: buyPaymentMethod,
-        payment_status: buyPaymentMethod === "online" ? "paid" : "pending",
-        razorpay_payment_id: paymentId,
+        payment_method: method === "online" ? "upi" : "cod",
+        payment_status: method === "online" ? "verifying" : "pending",
+        razorpay_payment_id: utrNumber,
         seller_notified_at: new Date().toISOString(),
       }).select().single();
 
       if (error) throw error;
 
-      toast.success(buyPaymentMethod === "online" ? `Payment successful! ${buyItem.title} ordered 🎉` : `Order placed for ${buyItem.title}! Pay on delivery 🎉`);
+      toast.success(method === "online" ? `Order submitted! Admin will verify your payment 🎉` : `Order placed for ${buyItem.title}! Pay on delivery 🎉`);
       setBuyItem(null);
       setBuyHostel(""); setBuyRoom(""); setBuyPhone(""); setBuyPaymentMethod("cod");
+      setShowUpiModal(false);
       navigate(`/tracking?order=${data.id}`);
     } catch (err: any) {
-      if (err.message === "Payment cancelled") {
-        toast.error("Payment cancelled. Try again or choose COD.");
-      } else {
-        toast.error(err.message || "Order failed. Please try again.");
-      }
+      toast.error(err.message || "Order failed. Please try again.");
     } finally {
       setBuyLoading(false);
     }
@@ -531,6 +535,16 @@ export default function Home() {
                 </div>
               </Link>
             ))}
+            {/* UPI Payment Modal */}
+            <UpiPaymentModal
+              isOpen={showUpiModal}
+              onClose={() => setShowUpiModal(false)}
+              amount={buyItem?.price || 0}
+              orderIdText={`CE_${buyItem?.id || 'TEST'}`}
+              onPaymentVerify={async (utr) => {
+                await finalizeOrder("online", utr);
+              }}
+            />
           </div>
         </section>
 

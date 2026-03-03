@@ -254,8 +254,8 @@ export default function Tracking() {
                 {order.total_price > 0 && (
                   <div className="text-right flex-shrink-0">
                     <p className="text-neon-fire font-bold text-lg sm:text-xl">₹{order.total_price?.toLocaleString()}</p>
-                    <p className={`text-xs font-bold ${order.payment_method === 'online' ? 'text-green-400' : 'text-yellow-400'}`}>
-                      {order.payment_method === 'online' ? '💳 Paid Online ✓' : '💵 Pay on Delivery'}
+                    <p className={`text-xs font-bold ${order.payment_status === 'verifying' ? 'text-orange-400' : order.payment_status === 'paid' ? 'text-green-400' : 'text-yellow-400'}`}>
+                      {order.payment_status === 'verifying' ? '🟡 Verifying Payment...' : order.payment_status === 'paid' ? '💳 Paid Online ✓' : '💵 Pay on Delivery'}
                     </p>
                   </div>
                 )}

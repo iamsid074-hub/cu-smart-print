@@ -30,14 +30,13 @@ export default function PaymentSelector({ selected, onChange, totalAmount, disab
                 <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style={{
                     background: selected === "online" ? 'rgba(77,184,172,0.15)' : 'rgba(255,255,255,0.05)',
                 }}>
-                    <CreditCard className="w-4 h-4" style={{ color: selected === "online" ? '#4DB8AC' : '#8F8175' }} />
+                    <Smartphone className="w-4 h-4" style={{ color: selected === "online" ? '#4DB8AC' : '#8F8175' }} />
                 </div>
                 <div className="flex-1 min-w-0">
-                    <p className="text-sm font-bold" style={{ color: selected === "online" ? '#E8DED4' : '#8F8175' }}>Pay Online</p>
-                    <p className="text-[10px]" style={{ color: '#6B5F54' }}>UPI · Cards · Net Banking · Wallets</p>
+                    <p className="text-sm font-bold" style={{ color: selected === "online" ? '#E8DED4' : '#8F8175' }}>Pay via UPI</p>
+                    <p className="text-[10px]" style={{ color: '#6B5F54' }}>GPay · PhonePe · Paytm</p>
                 </div>
                 <div className="flex items-center gap-1.5 flex-shrink-0">
-                    <Smartphone className="w-3 h-3" style={{ color: '#6B5F54' }} />
                     <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-all ${selected === "online" ? "border-[#4DB8AC]" : "border-white/15"}`}>
                         {selected === "online" && <div className="w-2 h-2 rounded-full" style={{ backgroundColor: '#4DB8AC' }} />}
                     </div>

@@ -6,8 +6,8 @@ import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
 import { useToast } from "@/hooks/use-toast";
-import { openRazorpayCheckout } from "@/lib/razorpay";
 import PaymentSelector from "@/components/PaymentSelector";
+import UpiPaymentModal from "@/components/UpiPaymentModal";
 import {
     Dialog,
     DialogContent,
@@ -33,6 +33,7 @@ export default function ProductDetail() {
     const [phone, setPhone] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [paymentMethod, setPaymentMethod] = useState<"online" | "cod">("cod");
+    const [showUpiModal, setShowUpiModal] = useState(false);
 
     useEffect(() => {
         async function fetchProduct() {
@@ -96,23 +97,26 @@ export default function ProductDetail() {
         }
         setIsSubmitting(true);
         try {
-            const commission = Math.round(product.price * 0.05);
-            let paymentId: string | null = null;
-
             if (paymentMethod === "online") {
-                const result = await openRazorpayCheckout({
-                    amount: totalAmount,
-                    name: user.email?.split("@")[0] || "Student",
-                    email: user.email || "",
-                    phone: phoneClean,
-                    description: product.title,
-                });
-                paymentId = result.razorpay_payment_id;
+                setShowUpiModal(true);
+                setIsSubmitting(false);
+                return;
             }
 
+            await finalizeOrder("cod", null);
+        } catch (err: any) {
+            toast({ title: "Order failed", description: err.message || "Please try again.", variant: "destructive" });
+            setIsSubmitting(false);
+        }
+    };
+
+    const finalizeOrder = async (method: "online" | "cod", utrNumber: string | null) => {
+        setIsSubmitting(true);
+        try {
+            const commission = Math.round(product.price * 0.05);
             const { data, error } = await supabase.from("orders").insert({
                 product_id: product.id,
-                buyer_id: user.id,
+                buyer_id: user!.id,
                 seller_id: product.seller_id,
                 base_price: product.price,
                 commission,
@@ -122,23 +126,20 @@ export default function ProductDetail() {
                 delivery_room: deliveryRoom || null,
                 buyer_phone: phone.replace(/\D/g, ""),
                 status: 'pending',
-                payment_method: paymentMethod,
-                payment_status: paymentMethod === "online" ? "paid" : "pending",
-                razorpay_payment_id: paymentId,
+                payment_method: method === "online" ? "upi" : "cod",
+                payment_status: method === "online" ? "verifying" : "pending",
+                razorpay_payment_id: utrNumber,
                 seller_notified_at: new Date().toISOString(),
             }).select().single();
 
             if (error) throw error;
 
-            toast({ title: paymentMethod === "online" ? "Payment successful! 🎉" : "Order Placed! 🎉", description: paymentMethod === "online" ? `₹${totalAmount} paid.` : "Pay on delivery. Waiting for seller confirmation..." });
+            toast({ title: method === "online" ? "Order submitted! 🎉" : "Order Placed! 🎉", description: method === "online" ? `Admin will verify payment.` : "Pay on delivery." });
             setIsBuyModalOpen(false);
+            setShowUpiModal(false);
             navigate(`/tracking?order=${data.id}`);
         } catch (err: any) {
-            if (err.message === "Payment cancelled") {
-                toast({ title: "Payment cancelled", description: "Try again or switch to COD.", variant: "destructive" });
-            } else {
-                toast({ title: "Order failed", description: err.message || "Please try again.", variant: "destructive" });
-            }
+            toast({ title: "Order failed", description: err.message || "Please try again.", variant: "destructive" });
         } finally {
             setIsSubmitting(false);
         }
@@ -386,6 +387,17 @@ export default function ProductDetail() {
                     </motion.div>
                 </div>
             </div>
+
+            {/* UPI Payment Modal */}
+            <UpiPaymentModal
+                isOpen={showUpiModal}
+                onClose={() => setShowUpiModal(false)}
+                amount={totalAmount}
+                orderIdText={`PRD_${product?.id?.slice(0, 6) || "ID"}`}
+                onPaymentVerify={async (utr) => {
+                    await finalizeOrder("online", utr);
+                }}
+            />
         </div>
     );
 }
