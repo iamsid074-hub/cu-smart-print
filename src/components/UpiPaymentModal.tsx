@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Copy, CheckCircle, Loader2, ArrowLeft, Smartphone, Monitor } from "lucide-react";
+import { X, Loader2, ArrowLeft, Smartphone, Monitor, CheckCircle } from "lucide-react";
 import QRCode from "react-qr-code";
 import { toast } from "sonner";
 
@@ -23,22 +23,17 @@ function useIsMobile() {
 }
 
 export default function UpiPaymentModal({ isOpen, onClose, amount, orderIdText, onPaymentVerify }: UpiPaymentModalProps) {
-    const [utrNumber, setUtrNumber] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [copied, setCopied] = useState(false);
     const isMobile = useIsMobile();
 
     const upiId = import.meta.env.VITE_MERCHANT_UPI_ID || "9466166750@fam";
     const merchantName = "CUBazzar";
-    // Format amount as fixed 2-decimal to avoid bank parsing issues
     const formattedAmount = Number(amount).toFixed(2);
-    // Short unique transaction reference — some banks reject long or special-char tr values
     const trRef = `${Date.now()}`;
     const upiUri = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(merchantName)}&am=${formattedAmount}&cu=INR&tn=${encodeURIComponent(`CUBazzar ${orderIdText}`)}&tr=${trRef}`;
 
     useEffect(() => {
         if (!isOpen) {
-            setUtrNumber("");
             setIsSubmitting(false);
         }
         if (isOpen) {
@@ -49,32 +44,17 @@ export default function UpiPaymentModal({ isOpen, onClose, amount, orderIdText, 
         return () => { document.body.style.overflow = ""; };
     }, [isOpen]);
 
-    const handleCopyUpi = () => {
-        navigator.clipboard.writeText(upiId);
-        setCopied(true);
-        toast.success("UPI ID copied!");
-        setTimeout(() => setCopied(false), 2000);
-    };
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        const clean = utrNumber.trim();
-        if (clean.length < 6) {
-            toast.error("Please enter a valid UTR / reference number (min 6 characters)");
-            return;
-        }
+    const handleConfirmPayment = async () => {
         setIsSubmitting(true);
         try {
-            await onPaymentVerify(clean);
-            // If onPaymentVerify didn't navigate/close already, close the modal
+            await onPaymentVerify(trRef);
             onClose();
         } catch (err: any) {
-            toast.error(err?.message || "Payment confirmation failed. Please try again.");
+            toast.error(err?.message || "Order failed. Please try again.");
         } finally {
             setIsSubmitting(false);
         }
     };
-
 
     return createPortal(
         <AnimatePresence>
@@ -123,7 +103,7 @@ export default function UpiPaymentModal({ isOpen, onClose, amount, orderIdText, 
                                 <p className="text-4xl font-black text-neon-fire">₹{amount.toLocaleString()}</p>
                             </div>
 
-                            {/* Dynamic QR Code — generated from UPI intent with exact amount */}
+                            {/* Dynamic QR Code */}
                             <div className="flex flex-col items-center">
                                 <div className="bg-white p-4 rounded-2xl shadow-xl border-4 border-white/5">
                                     <QRCode value={upiUri} size={180} level="H" />
@@ -137,8 +117,6 @@ export default function UpiPaymentModal({ isOpen, onClose, amount, orderIdText, 
                                     </div>
                                 )}
                             </div>
-
-
 
                             {/* Pay via UPI App Button */}
                             {isMobile ? (
@@ -164,33 +142,32 @@ export default function UpiPaymentModal({ isOpen, onClose, amount, orderIdText, 
                                 </div>
                             )}
 
+                            {/* Divider */}
                             <div className="relative flex items-center">
                                 <div className="flex-grow border-t border-white/10"></div>
                                 <span className="flex-shrink-0 mx-4 text-xs text-muted-foreground font-medium uppercase">After Payment</span>
                                 <div className="flex-grow border-t border-white/10"></div>
                             </div>
 
-                            {/* UTR Verification Form */}
-                            <form onSubmit={handleSubmit} className="p-4 rounded-xl border border-white/8" style={{ background: 'rgba(255,255,255,0.02)' }}>
-                                <p className="text-xs font-bold text-white mb-3">Enter UTR / Ref Number <span className="text-red-400">*</span></p>
-                                <input
-                                    type="text"
-                                    required
-                                    value={utrNumber}
-                                    onChange={(e) => setUtrNumber(e.target.value.replace(/[^a-zA-Z0-9]/g, "").slice(0, 22))}
-                                    placeholder="e.g. 312345678901"
-                                    maxLength={22}
-                                    className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-neon-fire focus:ring-1 focus:ring-neon-fire transition-all mb-3 text-center tracking-widest font-mono"
-                                />
-                                <button
-                                    type="submit"
-                                    disabled={utrNumber.trim().length < 6 || isSubmitting}
-                                    className="w-full py-2.5 rounded-lg text-white font-bold text-sm flex justify-center items-center gap-2 transition-all disabled:opacity-50"
-                                    style={{ background: utrNumber.trim().length >= 6 ? '#FF6B6B' : 'rgba(255,255,255,0.1)' }}
-                                >
-                                    {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : "Confirm Payment"}
-                                </button>
-                            </form>
+                            {/* Confirm Payment Button */}
+                            <button
+                                onClick={handleConfirmPayment}
+                                disabled={isSubmitting}
+                                className="w-full py-4 rounded-xl text-white font-bold text-sm flex justify-center items-center gap-2.5 transition-all disabled:opacity-60 hover:scale-[1.02] active:scale-[0.98]"
+                                style={{ background: 'linear-gradient(135deg, #FF6B6B, #FF4444)', boxShadow: '0 4px 20px rgba(255,107,107,0.3)' }}
+                            >
+                                {isSubmitting ? (
+                                    <Loader2 className="w-5 h-5 animate-spin" />
+                                ) : (
+                                    <>
+                                        <CheckCircle className="w-5 h-5" />
+                                        I've Completed Payment ✅
+                                    </>
+                                )}
+                            </button>
+                            <p className="text-[10px] text-center text-muted-foreground -mt-2">
+                                Tap after you've paid · Admin will verify your payment
+                            </p>
                         </div>
                     </motion.div>
                 </div>
