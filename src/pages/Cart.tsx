@@ -27,6 +27,16 @@ export default function Cart() {
     const isPhoneValid = phoneClean.length === 10;
     const isFormValid = hostel.trim() !== "" && room.trim() !== "" && isPhoneValid;
 
+    // Calculate Dynamic Delivery Fee based on Time of Day (same as Buy Now)
+    const getDeliveryFee = () => {
+        const hour = new Date().getHours();
+        if (hour >= 6 && hour < 12) return 15; // Morning: Low
+        if (hour >= 12 && hour < 18) return 25; // Afternoon: Moderate
+        return 40; // Night: Highest
+    };
+    const deliveryFee = getDeliveryFee();
+    const orderTotal = totalPrice + deliveryFee;
+
     const createOrder = async (paymentId?: string) => {
         const itemsSummary = items.map(i => `${i.quantity}x ${i.title} (₹${i.price})`).join("\n");
         const { error } = await supabase.from("orders").insert({
@@ -35,8 +45,8 @@ export default function Cart() {
             seller_id: "7450c873-f51d-469e-a33d-c44ca80beb0c",
             base_price: totalPrice,
             commission: 0,
-            delivery_charge: 0,
-            total_price: totalPrice,
+            delivery_charge: deliveryFee,
+            total_price: orderTotal,
             delivery_location: `${hostel} [Custom Food: ${items[0]?.title}${items.length > 1 ? ` +${items.length - 1} more` : ""}...]`,
             delivery_room: `[CUSTOM FOOD ORDER]\n${itemsSummary}`,
             buyer_phone: phoneClean,
@@ -61,7 +71,7 @@ export default function Cart() {
                 return;
             } else {
                 await createOrder();
-                toast({ title: "Order placed! 🎉", description: `${totalItems} items ordered. Pay ₹${totalPrice} on delivery.` });
+                toast({ title: "Order placed! 🎉", description: `${totalItems} items ordered. Pay ₹${orderTotal} on delivery.` });
                 clearCart();
                 setShowCheckout(false);
                 navigate("/tracking");
@@ -148,13 +158,13 @@ export default function Cart() {
                                 <span>Subtotal ({totalItems} items)</span>
                                 <span>₹{totalPrice}</span>
                             </div>
-                            <div className="flex justify-between items-center text-sm text-green-400 mb-3">
-                                <span>Delivery</span>
-                                <span>FREE</span>
+                            <div className="flex justify-between items-center text-sm text-neon-cyan mb-3">
+                                <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> Delivery</span>
+                                <span>+ ₹{deliveryFee}</span>
                             </div>
                             <div className="border-t border-white/10 pt-3 flex justify-between items-center">
                                 <span className="font-bold text-white">Total</span>
-                                <span className="text-xl font-black text-orange-400">₹{totalPrice}</span>
+                                <span className="text-xl font-black text-orange-400">₹{orderTotal}</span>
                             </div>
                         </div>
 
@@ -192,7 +202,7 @@ export default function Cart() {
                                 <PaymentSelector
                                     selected={paymentMethod}
                                     onChange={setPaymentMethod}
-                                    totalAmount={totalPrice}
+                                    totalAmount={orderTotal}
                                     disabled={submitting}
                                 />
 
@@ -200,7 +210,7 @@ export default function Cart() {
                                     className="w-full py-3.5 rounded-xl font-bold text-white text-sm flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
                                     style={{ background: isFormValid ? "linear-gradient(135deg, #FF6B00, #FF4444)" : "rgba(255,255,255,0.1)" }}>
                                     {submitting ? <Loader2 className="w-5 h-5 animate-spin" /> :
-                                        `Pay ₹${totalPrice} Online`}
+                                        `Pay ₹${orderTotal} Online`}
                                 </button>
                             </motion.div>
                         )}
@@ -212,13 +222,13 @@ export default function Cart() {
             <UpiPaymentModal
                 isOpen={showUpiModal}
                 onClose={() => setShowUpiModal(false)}
-                amount={totalPrice}
+                amount={orderTotal}
                 orderIdText={`CART_${Date.now().toString().slice(-6)}`}
                 onPaymentVerify={async (utr) => {
                     setSubmitting(true);
                     try {
                         await createOrder(utr);
-                        toast({ title: "Order submitted! 🎉", description: `Admin will verify your payment of ₹${totalPrice}.` });
+                        toast({ title: "Order submitted! 🎉", description: `Admin will verify your payment of ₹${orderTotal}.` });
                         clearCart();
                         setShowCheckout(false);
                         setShowUpiModal(false);
