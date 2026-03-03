@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ShoppingCart, Minus, Plus, Trash2, ArrowLeft, Loader2, MapPin, Phone, Clock, ShoppingBag } from "lucide-react";
+import { ShoppingCart, Minus, Plus, Trash2, ArrowLeft, Loader2, MapPin, Phone, Clock, ShoppingBag, CheckCircle } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
+import { openRazorpayCheckout } from "@/lib/razorpay";
+import PaymentSelector from "@/components/PaymentSelector";
 
 export default function Cart() {
     const { items, removeItem, updateQuantity, clearCart, totalItems, totalPrice } = useCart();
@@ -17,39 +19,63 @@ export default function Cart() {
     const [hostel, setHostel] = useState("");
     const [room, setRoom] = useState("");
     const [phone, setPhone] = useState("");
+    const [paymentMethod, setPaymentMethod] = useState<"online" | "cod">("cod");
     const [submitting, setSubmitting] = useState(false);
 
     const phoneClean = phone.replace(/\D/g, "");
     const isPhoneValid = phoneClean.length === 10;
     const isFormValid = hostel.trim() !== "" && room.trim() !== "" && isPhoneValid;
 
+    const createOrder = async (paymentId?: string) => {
+        const itemsSummary = items.map(i => `${i.quantity}x ${i.title} (₹${i.price})`).join("\n");
+        const { error } = await supabase.from("orders").insert({
+            product_id: null,
+            buyer_id: user!.id,
+            seller_id: "7450c873-f51d-469e-a33d-c44ca80beb0c",
+            base_price: totalPrice,
+            commission: 0,
+            delivery_charge: 0,
+            total_price: totalPrice,
+            delivery_location: `${hostel} [Custom Food: ${items[0]?.title}${items.length > 1 ? ` +${items.length - 1} more` : ""}...]`,
+            delivery_room: `[CUSTOM FOOD ORDER]\n${itemsSummary}`,
+            buyer_phone: phoneClean,
+            status: "pending",
+            payment_method: paymentMethod,
+            payment_status: paymentMethod === "online" ? "paid" : "pending",
+            razorpay_payment_id: paymentId || null,
+            seller_notified_at: new Date().toISOString(),
+        });
+        if (error) throw error;
+    };
+
     const handleCheckout = async () => {
         if (!user) { navigate("/login"); return; }
         if (!isFormValid) return;
         setSubmitting(true);
         try {
-            const itemsSummary = items.map(i => `${i.quantity}x ${i.title} (₹${i.price})`).join("\n");
-            const { error } = await supabase.from("orders").insert({
-                product_id: null,
-                buyer_id: user.id,
-                seller_id: "7450c873-f51d-469e-a33d-c44ca80beb0c",
-                base_price: totalPrice,
-                commission: 0,
-                delivery_charge: 0,
-                total_price: totalPrice,
-                delivery_location: `${hostel} [Custom Food: ${items[0]?.title}${items.length > 1 ? ` +${items.length - 1} more` : ""}...]`,
-                delivery_room: `[CUSTOM FOOD ORDER]\n${itemsSummary}`,
-                buyer_phone: phoneClean,
-                status: "pending",
-                seller_notified_at: new Date().toISOString(),
-            });
-            if (error) throw error;
-            toast({ title: "Order placed! 🎉", description: `${totalItems} items ordered. Admin will confirm shortly.` });
+            if (paymentMethod === "online") {
+                const result = await openRazorpayCheckout({
+                    amount: totalPrice,
+                    name: user.email?.split("@")[0] || "Student",
+                    email: user.email || "",
+                    phone: phoneClean,
+                    description: `${totalItems} items from CU BAZZAR`,
+                });
+                await createOrder(result.razorpay_payment_id);
+                toast({ title: "Payment successful! 🎉", description: `₹${totalPrice} paid. Order placed.` });
+            } else {
+                await createOrder();
+                toast({ title: "Order placed! 🎉", description: `${totalItems} items ordered. Pay ₹${totalPrice} on delivery.` });
+            }
             clearCart();
             setShowCheckout(false);
             navigate("/tracking");
         } catch (err: any) {
-            toast({ title: "Order failed", description: err.message || "Please try again.", variant: "destructive" });
+            if (err.message === "Payment cancelled") {
+                toast({ title: "Payment cancelled", description: "You can try again or switch to COD.", variant: "destructive" });
+            } else {
+                toast({ title: "Order failed", description: err.message || "Please try again.", variant: "destructive" });
+            }
         } finally {
             setSubmitting(false);
         }
@@ -169,14 +195,20 @@ export default function Cart() {
                                         <p className="text-[11px] text-red-400 mt-1 px-1">Phone must be exactly 10 digits</p>
                                     )}
                                 </div>
-                                <div className="flex items-center gap-2 px-1">
-                                    <Clock className="w-3.5 h-3.5 text-orange-400/60" />
-                                    <span className="text-[11px] text-orange-400/60">Cash on Delivery · Admin confirms order</span>
-                                </div>
+
+                                {/* Payment Method Selector */}
+                                <PaymentSelector
+                                    selected={paymentMethod}
+                                    onChange={setPaymentMethod}
+                                    totalAmount={totalPrice}
+                                    disabled={submitting}
+                                />
+
                                 <button onClick={handleCheckout} disabled={submitting || !isFormValid}
                                     className="w-full py-3.5 rounded-xl font-bold text-white text-sm flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
                                     style={{ background: isFormValid ? "linear-gradient(135deg, #FF6B00, #FF4444)" : "rgba(255,255,255,0.1)" }}>
-                                    {submitting ? <Loader2 className="w-5 h-5 animate-spin" /> : `Place Order · ₹${totalPrice}`}
+                                    {submitting ? <Loader2 className="w-5 h-5 animate-spin" /> :
+                                        paymentMethod === "online" ? `Pay ₹${totalPrice} Online` : `Place COD Order · ₹${totalPrice}`}
                                 </button>
                             </motion.div>
                         )}

@@ -114,6 +114,8 @@ export default function FoodMenu() {
                 delivery_room: itemSummary,
                 buyer_phone: customPhone.replace(/\D/g, ""),
                 status: 'pending',
+                payment_method: 'cod',
+                payment_status: 'pending',
                 seller_notified_at: new Date().toISOString(),
             });
             if (error) throw error;

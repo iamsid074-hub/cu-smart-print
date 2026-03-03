@@ -7,6 +7,8 @@ import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { campusEssentials, ADMIN_SELLER_ID, type CampusEssentialItem } from "@/config/campusEssentials";
+import { openRazorpayCheckout } from "@/lib/razorpay";
+import PaymentSelector from "@/components/PaymentSelector";
 import type { Database } from "@/types/supabase";
 
 type Product = Database["public"]["Tables"]["products"]["Row"];
@@ -39,6 +41,7 @@ export default function Home() {
   const [buyRoom, setBuyRoom] = useState("");
   const [buyPhone, setBuyPhone] = useState("");
   const [buyLoading, setBuyLoading] = useState(false);
+  const [buyPaymentMethod, setBuyPaymentMethod] = useState<"online" | "cod">("cod");
 
   const handleQuickBuy = async () => {
     if (!user) { navigate('/login'); return; }
@@ -54,8 +57,21 @@ export default function Home() {
     }
     setBuyLoading(true);
     try {
+      let paymentId: string | null = null;
+
+      if (buyPaymentMethod === "online") {
+        const result = await openRazorpayCheckout({
+          amount: buyItem.price,
+          name: user.email?.split("@")[0] || "Student",
+          email: user.email || "",
+          phone: phoneClean,
+          description: `CE: ${buyItem.title}`,
+        });
+        paymentId = result.razorpay_payment_id;
+      }
+
       const { data, error } = await supabase.from("orders").insert({
-        product_id: null, // campus essentials don't have a DB product row
+        product_id: null,
         buyer_id: user.id,
         seller_id: ADMIN_SELLER_ID,
         base_price: buyItem.price,
@@ -66,17 +82,24 @@ export default function Home() {
         delivery_room: buyRoom || null,
         buyer_phone: phoneClean,
         status: 'pending',
+        payment_method: buyPaymentMethod,
+        payment_status: buyPaymentMethod === "online" ? "paid" : "pending",
+        razorpay_payment_id: paymentId,
         seller_notified_at: new Date().toISOString(),
       }).select().single();
 
       if (error) throw error;
 
-      toast.success(`Order placed for ${buyItem.title}! 🎉`);
+      toast.success(buyPaymentMethod === "online" ? `Payment successful! ${buyItem.title} ordered 🎉` : `Order placed for ${buyItem.title}! Pay on delivery 🎉`);
       setBuyItem(null);
-      setBuyHostel(""); setBuyRoom(""); setBuyPhone("");
+      setBuyHostel(""); setBuyRoom(""); setBuyPhone(""); setBuyPaymentMethod("cod");
       navigate(`/tracking?order=${data.id}`);
     } catch (err: any) {
-      toast.error(err.message || "Order failed. Please try again.");
+      if (err.message === "Payment cancelled") {
+        toast.error("Payment cancelled. Try again or choose COD.");
+      } else {
+        toast.error(err.message || "Order failed. Please try again.");
+      }
     } finally {
       setBuyLoading(false);
     }
@@ -431,6 +454,13 @@ export default function Home() {
                     <p className="text-[11px] mt-1 px-1" style={{ color: '#FF5050' }}>Phone must be exactly 10 digits</p>
                   )}
 
+                  <PaymentSelector
+                    selected={buyPaymentMethod}
+                    onChange={setBuyPaymentMethod}
+                    totalAmount={buyItem?.price || 0}
+                    disabled={buyLoading}
+                  />
+
                   <div className="flex items-center gap-2 mt-1 px-1">
                     <Zap className="w-3.5 h-3.5" style={{ color: '#4DB8AC' }} />
                     <span className="text-[11px]" style={{ color: '#4DB8AC' }}>Delivered by Campus Store · No extra charges</span>
@@ -449,7 +479,7 @@ export default function Home() {
                     {buyLoading ? (
                       <Loader2 className="w-5 h-5 animate-spin mx-auto" />
                     ) : (
-                      <>Place Order · ₹{buyItem.price}</>
+                      <>{buyPaymentMethod === "online" ? `Pay ₹${buyItem.price} Online` : `COD · ₹${buyItem.price}`}</>
                     )}
                   </motion.button>
                 </div>

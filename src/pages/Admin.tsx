@@ -38,6 +38,9 @@ interface Order {
     delivery_room: string | null;
     buyer_phone: string | null;
     status: string;
+    payment_method?: string;
+    payment_status?: string;
+    razorpay_payment_id?: string;
     created_at: string;
     products?: { title: string; image_url: string | null; price: number; category: string | null; reason_for_selling: string | null } | null;
     buyer?: { full_name: string; phone_number: string | null; hostel_block: string | null };
@@ -412,7 +415,12 @@ function ItemOrdersSection({ orders, loading, onUpdateStatus }: {
                                         <div className="flex-1 min-w-0">
                                             <p className="font-bold text-sm text-white truncate">{order.products?.title || "Product Removed"}</p>
                                             <p className="text-neon-fire font-bold text-lg">₹{order.total_price.toLocaleString()}</p>
-                                            {order.products?.category && <span className="inline-block px-2 py-0.5 rounded-lg bg-white/10 text-xs text-muted-foreground font-mono mt-1">{order.products.category}</span>}
+                                            <div className="flex items-center gap-2 mt-1">
+                                                {order.products?.category && <span className="inline-block px-2 py-0.5 rounded-lg bg-white/10 text-xs text-muted-foreground font-mono">{order.products.category}</span>}
+                                                <span className={`inline-block px-2 py-0.5 rounded-lg text-xs font-bold ${order.payment_method === 'online' ? 'bg-green-500/15 text-green-400' : 'bg-yellow-500/15 text-yellow-400'}`}>
+                                                    {order.payment_method === 'online' ? '💳 Paid' : '💵 COD'}
+                                                </span>
+                                            </div>
                                         </div>
                                     </div>
                                     <div className="glass rounded-xl p-3 border border-neon-cyan/20">
@@ -573,6 +581,11 @@ function FoodOrdersSection({ orders, loading, onUpdateStatus }: {
                                                 <span className="text-base font-black text-orange-400">₹{order.total_price.toLocaleString()}</span>
                                             </div>
                                         )}
+                                        <div className="mt-2 flex items-center gap-2">
+                                            <span className={`inline-block px-2 py-0.5 rounded-lg text-xs font-bold ${order.payment_method === 'online' ? 'bg-green-500/15 text-green-400' : 'bg-yellow-500/15 text-yellow-400'}`}>
+                                                {order.payment_method === 'online' ? '💳 Paid Online' : '💵 Cash on Delivery'}
+                                            </span>
+                                        </div>
                                     </div>
 
                                     {/* Buyer + Delivery */}

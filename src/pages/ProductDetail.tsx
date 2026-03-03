@@ -6,6 +6,8 @@ import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
 import { useToast } from "@/hooks/use-toast";
+import { openRazorpayCheckout } from "@/lib/razorpay";
+import PaymentSelector from "@/components/PaymentSelector";
 import {
     Dialog,
     DialogContent,
@@ -30,6 +32,7 @@ export default function ProductDetail() {
     const [deliveryRoom, setDeliveryRoom] = useState("");
     const [phone, setPhone] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [paymentMethod, setPaymentMethod] = useState<"online" | "cod">("cod");
 
     useEffect(() => {
         async function fetchProduct() {
@@ -93,7 +96,20 @@ export default function ProductDetail() {
         }
         setIsSubmitting(true);
         try {
-            const commission = Math.round(product.price * 0.05); // 5% commission
+            const commission = Math.round(product.price * 0.05);
+            let paymentId: string | null = null;
+
+            if (paymentMethod === "online") {
+                const result = await openRazorpayCheckout({
+                    amount: totalAmount,
+                    name: user.email?.split("@")[0] || "Student",
+                    email: user.email || "",
+                    phone: phoneClean,
+                    description: product.title,
+                });
+                paymentId = result.razorpay_payment_id;
+            }
+
             const { data, error } = await supabase.from("orders").insert({
                 product_id: product.id,
                 buyer_id: user.id,
@@ -106,16 +122,23 @@ export default function ProductDetail() {
                 delivery_room: deliveryRoom || null,
                 buyer_phone: phone.replace(/\D/g, ""),
                 status: 'pending',
+                payment_method: paymentMethod,
+                payment_status: paymentMethod === "online" ? "paid" : "pending",
+                razorpay_payment_id: paymentId,
                 seller_notified_at: new Date().toISOString(),
             }).select().single();
 
             if (error) throw error;
 
-            toast({ title: "Order Placed! 🎉", description: "Waiting for seller confirmation..." });
+            toast({ title: paymentMethod === "online" ? "Payment successful! 🎉" : "Order Placed! 🎉", description: paymentMethod === "online" ? `₹${totalAmount} paid.` : "Pay on delivery. Waiting for seller confirmation..." });
             setIsBuyModalOpen(false);
             navigate(`/tracking?order=${data.id}`);
         } catch (err: any) {
-            toast({ title: "Order failed", description: err.message || "Please try again.", variant: "destructive" });
+            if (err.message === "Payment cancelled") {
+                toast({ title: "Payment cancelled", description: "Try again or switch to COD.", variant: "destructive" });
+            } else {
+                toast({ title: "Order failed", description: err.message || "Please try again.", variant: "destructive" });
+            }
         } finally {
             setIsSubmitting(false);
         }
@@ -305,19 +328,19 @@ export default function ProductDetail() {
                                                             <p className="text-xs text-red-400 mt-1">Phone must be exactly 10 digits</p>
                                                         )}
                                                     </div>
-                                                    <div className="p-3 rounded-xl bg-green-500/10 border border-green-500/20 text-center">
-                                                        <p className="text-sm text-green-400 font-semibold gap-1 flex items-center justify-center">
-                                                            <BadgeCheck className="w-4 h-4" /> Cash on Delivery available
-                                                        </p>
-                                                        <p className="text-xs text-green-400/70 mt-0.5">Pay when your item is delivered.</p>
-                                                    </div>
+                                                    <PaymentSelector
+                                                        selected={paymentMethod}
+                                                        onChange={setPaymentMethod}
+                                                        totalAmount={totalAmount}
+                                                        disabled={isSubmitting}
+                                                    />
 
                                                     <button
                                                         type="submit"
                                                         disabled={isSubmitting || !deliveryLocation.trim() || !deliveryRoom.trim() || phone.length !== 10}
                                                         className="w-full py-4 mt-2 rounded-xl bg-neon-fire text-black font-black uppercase tracking-wide hover:shadow-neon-fire transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center"
                                                     >
-                                                        {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : `Place Order (₹${totalAmount.toLocaleString()})`}
+                                                        {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : paymentMethod === "online" ? `Pay ₹${totalAmount.toLocaleString()} Online` : `COD · ₹${totalAmount.toLocaleString()}`}
                                                     </button>
                                                 </form>
                                             </div>

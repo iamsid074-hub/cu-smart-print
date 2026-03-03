@@ -202,8 +202,8 @@ export default function Tracking() {
             {!isCompleted && (
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
                 className={`w-full border rounded-2xl p-4 mb-6 flex justify-between items-center ${type === "food"
-                    ? "bg-gradient-to-r from-orange-500/15 to-red-500/15 border-orange-500/25 shadow-[0_0_20px_rgba(255,107,0,0.1)]"
-                    : "bg-gradient-to-r from-neon-blue/20 to-neon-cyan/20 border-neon-cyan/30 shadow-[0_0_20px_rgba(0,255,255,0.1)]"
+                  ? "bg-gradient-to-r from-orange-500/15 to-red-500/15 border-orange-500/25 shadow-[0_0_20px_rgba(255,107,0,0.1)]"
+                  : "bg-gradient-to-r from-neon-blue/20 to-neon-cyan/20 border-neon-cyan/30 shadow-[0_0_20px_rgba(0,255,255,0.1)]"
                   }`}>
                 <div className="flex items-center gap-3">
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center ${type === "food" ? "bg-orange-500/20" : "bg-neon-cyan/20"}`}>
@@ -240,8 +240,8 @@ export default function Tracking() {
                       {type === "food" ? "FOOD" : "ORDER"} #{order.id.slice(0, 8).toUpperCase()}
                     </p>
                     <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${type === "food"
-                        ? "bg-orange-500/15 border border-orange-500/30 text-orange-400"
-                        : "bg-neon-cyan/15 border border-neon-cyan/30 text-neon-cyan"
+                      ? "bg-orange-500/15 border border-orange-500/30 text-orange-400"
+                      : "bg-neon-cyan/15 border border-neon-cyan/30 text-neon-cyan"
                       }`}>
                       {type === "food" ? "🍕 Food" : "📦 Item"}
                     </span>
@@ -254,7 +254,9 @@ export default function Tracking() {
                 {order.total_price > 0 && (
                   <div className="text-right flex-shrink-0">
                     <p className="text-neon-fire font-bold text-lg sm:text-xl">₹{order.total_price?.toLocaleString()}</p>
-                    <p className="text-xs text-muted-foreground">Cash on Delivery</p>
+                    <p className={`text-xs font-bold ${order.payment_method === 'online' ? 'text-green-400' : 'text-yellow-400'}`}>
+                      {order.payment_method === 'online' ? '💳 Paid Online ✓' : '💵 Pay on Delivery'}
+                    </p>
                   </div>
                 )}
               </div>
@@ -323,8 +325,8 @@ export default function Tracking() {
                       <motion.div key={step.key} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: 0.3 + i * 0.08 }} className="flex items-start gap-4 relative">
                         <div className={`relative z-10 w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300 ${isDone ? (type === "food" ? "bg-gradient-to-r from-orange-500 to-red-500 shadow-lg" : "bg-gradient-fire shadow-neon-fire") :
-                            isActive ? (type === "food" ? "bg-orange-500/30 shadow-lg border border-orange-500/50" : "bg-gradient-ocean shadow-neon-ocean animate-glow-pulse") :
-                              "bg-secondary border border-white/10"
+                          isActive ? (type === "food" ? "bg-orange-500/30 shadow-lg border border-orange-500/50" : "bg-gradient-ocean shadow-neon-ocean animate-glow-pulse") :
+                            "bg-secondary border border-white/10"
                           }`}>
                           {isDone ? <CheckCircle className="w-5 h-5 text-white" /> :
                             <step.icon className={`w-5 h-5 ${isActive ? "text-white" : "text-muted-foreground"}`} />}
@@ -332,14 +334,14 @@ export default function Tracking() {
                         <div className="flex-1 pb-2">
                           <div className="flex items-center flex-wrap gap-1">
                             <p className={`font-semibold text-sm transition-colors duration-300 ${isActive ? (type === "food" ? "text-orange-400" : "text-neon-cyan") :
-                                isDone ? "text-foreground" : "text-muted-foreground"
+                              isDone ? "text-foreground" : "text-muted-foreground"
                               }`}>
                               {step.label}
                             </p>
                             {isActive && (
                               <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold tracking-widest uppercase ${type === "food"
-                                  ? "bg-orange-500/20 border border-orange-500/40 text-orange-400"
-                                  : "bg-neon-cyan/20 border border-neon-cyan/40 text-neon-cyan"
+                                ? "bg-orange-500/20 border border-orange-500/40 text-orange-400"
+                                : "bg-neon-cyan/20 border border-neon-cyan/40 text-neon-cyan"
                                 }`}>Now</span>
                             )}
                           </div>
