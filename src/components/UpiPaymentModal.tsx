@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Loader2, ArrowLeft, Smartphone, Monitor, CheckCircle, ShieldAlert } from "lucide-react";
@@ -22,52 +22,36 @@ function useIsMobile() {
     return isMobile;
 }
 
-const COOLDOWN_SECONDS = 30;
-
 export default function UpiPaymentModal({ isOpen, onClose, amount, orderIdText, onPaymentVerify }: UpiPaymentModalProps) {
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [countdown, setCountdown] = useState(COOLDOWN_SECONDS);
-    const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
     const isMobile = useIsMobile();
 
     const upiId = import.meta.env.VITE_MERCHANT_UPI_ID || "9466166750@fam";
     const merchantName = "CUBazzar";
     const formattedAmount = Number(amount).toFixed(2);
-    const trRef = `${Date.now()}`;
-    const upiUri = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(merchantName)}&am=${formattedAmount}&cu=INR&tn=${encodeURIComponent(`CUBazzar ${orderIdText}`)}&tr=${trRef}`;
 
-    // Countdown timer — starts when modal opens, resets when closed
+    // Generate UPI URI ONCE when modal opens — keeps QR code stable
+    const [sessionUri, setSessionUri] = useState("");
+    const [sessionTrRef, setSessionTrRef] = useState("");
+
     useEffect(() => {
         if (isOpen) {
-            setCountdown(COOLDOWN_SECONDS);
+            const tr = `${Date.now()}`;
+            const uri = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(merchantName)}&am=${formattedAmount}&cu=INR&tn=${encodeURIComponent(`CUBazzar ${orderIdText}`)}&tr=${tr}`;
+            setSessionTrRef(tr);
+            setSessionUri(uri);
             setIsSubmitting(false);
             document.body.style.overflow = "hidden";
-            timerRef.current = setInterval(() => {
-                setCountdown(prev => {
-                    if (prev <= 1) {
-                        if (timerRef.current) clearInterval(timerRef.current);
-                        return 0;
-                    }
-                    return prev - 1;
-                });
-            }, 1000);
         } else {
             document.body.style.overflow = "";
-            if (timerRef.current) clearInterval(timerRef.current);
         }
-        return () => {
-            document.body.style.overflow = "";
-            if (timerRef.current) clearInterval(timerRef.current);
-        };
+        return () => { document.body.style.overflow = ""; };
     }, [isOpen]);
 
-    const isButtonLocked = countdown > 0;
-
     const handleConfirmPayment = async () => {
-        if (isButtonLocked) return;
         setIsSubmitting(true);
         try {
-            await onPaymentVerify(trRef);
+            await onPaymentVerify(sessionTrRef);
             onClose();
         } catch (err: any) {
             toast.error(err?.message || "Order failed. Please try again.");
@@ -78,7 +62,7 @@ export default function UpiPaymentModal({ isOpen, onClose, amount, orderIdText, 
 
     return createPortal(
         <AnimatePresence>
-            {isOpen && (
+            {isOpen && sessionUri && (
                 <div className="fixed inset-0 z-[9999] flex items-center justify-center" style={{ isolation: 'isolate' }}>
                     {/* Backdrop */}
                     <motion.div
@@ -123,10 +107,10 @@ export default function UpiPaymentModal({ isOpen, onClose, amount, orderIdText, 
                                 <p className="text-4xl font-black text-neon-fire">₹{amount.toLocaleString()}</p>
                             </div>
 
-                            {/* Dynamic QR Code */}
+                            {/* Static QR Code — generated once per session */}
                             <div className="flex flex-col items-center">
                                 <div className="bg-white p-4 rounded-2xl shadow-xl border-4 border-white/5">
-                                    <QRCode value={upiUri} size={180} level="H" />
+                                    <QRCode value={sessionUri} size={180} level="H" />
                                 </div>
 
                                 {/* Desktop hint */}
@@ -141,7 +125,7 @@ export default function UpiPaymentModal({ isOpen, onClose, amount, orderIdText, 
                             {/* Pay via UPI App Button */}
                             {isMobile ? (
                                 <a
-                                    href={upiUri}
+                                    href={sessionUri}
                                     className="w-full py-3.5 rounded-xl text-white font-bold text-sm flex justify-center items-center gap-2.5 hover:scale-[1.02] active:scale-[0.98] transition-all block"
                                     style={{ background: 'linear-gradient(135deg, #10B981, #059669)', boxShadow: '0 4px 15px rgba(16,185,129,0.3)' }}
                                 >
@@ -151,7 +135,7 @@ export default function UpiPaymentModal({ isOpen, onClose, amount, orderIdText, 
                             ) : (
                                 <div className="text-center">
                                     <a
-                                        href={upiUri}
+                                        href={sessionUri}
                                         className="w-full py-3.5 rounded-xl text-white font-bold text-sm flex justify-center items-center gap-2.5 transition-all block opacity-80"
                                         style={{ background: 'linear-gradient(135deg, #10B981, #059669)', boxShadow: '0 4px 15px rgba(16,185,129,0.3)' }}
                                     >
@@ -169,24 +153,15 @@ export default function UpiPaymentModal({ isOpen, onClose, amount, orderIdText, 
                                 <div className="flex-grow border-t border-white/10"></div>
                             </div>
 
-                            {/* Confirm Payment Button — locked for 30s */}
+                            {/* Confirm Payment Button — immediately available */}
                             <button
                                 onClick={handleConfirmPayment}
-                                disabled={isSubmitting || isButtonLocked}
-                                className="w-full py-4 rounded-xl text-white font-bold text-sm flex justify-center items-center gap-2.5 transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.02] active:scale-[0.98]"
-                                style={{
-                                    background: isButtonLocked
-                                        ? 'rgba(255,255,255,0.08)'
-                                        : 'linear-gradient(135deg, #FF6B6B, #FF4444)',
-                                    boxShadow: isButtonLocked
-                                        ? 'none'
-                                        : '0 4px 20px rgba(255,107,107,0.3)'
-                                }}
+                                disabled={isSubmitting}
+                                className="w-full py-4 rounded-xl text-white font-bold text-sm flex justify-center items-center gap-2.5 transition-all disabled:opacity-60 hover:scale-[1.02] active:scale-[0.98]"
+                                style={{ background: 'linear-gradient(135deg, #FF6B6B, #FF4444)', boxShadow: '0 4px 20px rgba(255,107,107,0.3)' }}
                             >
                                 {isSubmitting ? (
                                     <Loader2 className="w-5 h-5 animate-spin" />
-                                ) : isButtonLocked ? (
-                                    <>Complete payment first · {countdown}s</>
                                 ) : (
                                     <>
                                         <CheckCircle className="w-5 h-5" />
