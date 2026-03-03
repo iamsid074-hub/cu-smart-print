@@ -29,8 +29,9 @@ export default function UpiPaymentModal({ isOpen, onClose, amount, orderIdText, 
     const isMobile = useIsMobile();
 
     const upiId = import.meta.env.VITE_MERCHANT_UPI_ID || "9466166750@ybl";
-    const merchantName = "Campus Store";
-    const upiUri = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(merchantName)}&am=${amount}&cu=INR&tn=${encodeURIComponent(`CU Bazzar Order ${orderIdText}`)}`;
+    const merchantName = "CU Bazzar";
+    // Adding mc=0000 (Generic Merchant) and .toFixed(2) helps prevent PhonePe/GPay from incorrectly flagging P2P intents as "limit exceeded" or spam.
+    const upiUri = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(merchantName)}&mc=0000&am=${amount.toFixed(2)}&cu=INR&tn=${encodeURIComponent(`Order ${orderIdText}`)}`;
 
     useEffect(() => {
         if (!isOpen) {
