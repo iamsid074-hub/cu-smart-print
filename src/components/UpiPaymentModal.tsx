@@ -54,17 +54,23 @@ export default function UpiPaymentModal({ isOpen, onClose, amount, orderIdText, 
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (utrNumber.length < 12) {
-            toast.error("Please enter a valid 12-digit UTR number");
+        const clean = utrNumber.trim();
+        if (clean.length < 6) {
+            toast.error("Please enter a valid UTR / reference number (min 6 characters)");
             return;
         }
         setIsSubmitting(true);
         try {
-            await onPaymentVerify(utrNumber);
+            await onPaymentVerify(clean);
+            // If onPaymentVerify didn't navigate/close already, close the modal
+            onClose();
+        } catch (err: any) {
+            toast.error(err?.message || "Payment confirmation failed. Please try again.");
         } finally {
             setIsSubmitting(false);
         }
     };
+
 
     return createPortal(
         <AnimatePresence>
@@ -173,16 +179,16 @@ export default function UpiPaymentModal({ isOpen, onClose, amount, orderIdText, 
                                     type="text"
                                     required
                                     value={utrNumber}
-                                    onChange={(e) => setUtrNumber(e.target.value.replace(/\D/g, "").slice(0, 12))}
+                                    onChange={(e) => setUtrNumber(e.target.value.replace(/[^a-zA-Z0-9]/g, "").slice(0, 22))}
                                     placeholder="e.g. 312345678901"
-                                    maxLength={12}
+                                    maxLength={22}
                                     className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-neon-fire focus:ring-1 focus:ring-neon-fire transition-all mb-3 text-center tracking-widest font-mono"
                                 />
                                 <button
                                     type="submit"
-                                    disabled={utrNumber.length < 12 || isSubmitting}
+                                    disabled={utrNumber.trim().length < 6 || isSubmitting}
                                     className="w-full py-2.5 rounded-lg text-white font-bold text-sm flex justify-center items-center gap-2 transition-all disabled:opacity-50"
-                                    style={{ background: utrNumber.length >= 12 ? '#FF6B6B' : 'rgba(255,255,255,0.1)' }}
+                                    style={{ background: utrNumber.trim().length >= 6 ? '#FF6B6B' : 'rgba(255,255,255,0.1)' }}
                                 >
                                     {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : "Confirm Payment"}
                                 </button>
