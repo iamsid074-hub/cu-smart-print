@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Copy, CheckCircle, Loader2, ArrowLeft, Smartphone, Monitor } from "lucide-react";
+import QRCode from "react-qr-code";
 import { toast } from "sonner";
 
 interface UpiPaymentModalProps {
@@ -15,11 +16,8 @@ interface UpiPaymentModalProps {
 function useIsMobile() {
     const [isMobile, setIsMobile] = useState(false);
     useEffect(() => {
-        const check = () => {
-            const ua = navigator.userAgent || "";
-            setIsMobile(/Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(ua));
-        };
-        check();
+        const ua = navigator.userAgent || "";
+        setIsMobile(/Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(ua));
     }, []);
     return isMobile;
 }
@@ -30,9 +28,9 @@ export default function UpiPaymentModal({ isOpen, onClose, amount, orderIdText, 
     const [copied, setCopied] = useState(false);
     const isMobile = useIsMobile();
 
-    const upiId = import.meta.env.VITE_MERCHANT_UPI_ID || "anshu@sbi";
-    const merchantName = "CU BAZZAR";
-    const upiUri = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(merchantName)}&tr=${orderIdText}&am=${amount}&cu=INR&tn=${encodeURIComponent(`CU Bazzar Order ${orderIdText}`)}`;
+    const upiId = import.meta.env.VITE_MERCHANT_UPI_ID || "9466166750@ybl";
+    const merchantName = "Campus Store";
+    const upiUri = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(merchantName)}&am=${amount}&cu=INR&tn=${encodeURIComponent(`CU Bazzar Order ${orderIdText}`)}`;
 
     useEffect(() => {
         if (!isOpen) {
@@ -115,24 +113,17 @@ export default function UpiPaymentModal({ isOpen, onClose, amount, orderIdText, 
                                 <p className="text-4xl font-black text-neon-fire">₹{amount.toLocaleString()}</p>
                             </div>
 
-                            {/* Static QR Code Image */}
+                            {/* Dynamic QR Code — generated from UPI intent with exact amount */}
                             <div className="flex flex-col items-center">
-                                <div className="bg-white p-3 rounded-2xl shadow-xl border-4 border-white/5">
-                                    <img
-                                        src="/upi-qr.png"
-                                        alt="UPI QR Code"
-                                        className="w-44 h-44 object-contain"
-                                        onError={(e) => {
-                                            (e.target as HTMLImageElement).style.display = 'none';
-                                        }}
-                                    />
+                                <div className="bg-white p-4 rounded-2xl shadow-xl border-4 border-white/5">
+                                    <QRCode value={upiUri} size={180} level="H" />
                                 </div>
 
                                 {/* Desktop hint */}
                                 {!isMobile && (
                                     <div className="flex items-center gap-2 mt-3 px-3 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20">
                                         <Monitor className="w-3.5 h-3.5 text-blue-400" />
-                                        <p className="text-[11px] text-blue-400 font-medium">Scan this QR from your phone</p>
+                                        <p className="text-[11px] text-blue-400 font-medium">Scan this QR from your phone · Amount: ₹{amount}</p>
                                     </div>
                                 )}
                             </div>
@@ -145,7 +136,7 @@ export default function UpiPaymentModal({ isOpen, onClose, amount, orderIdText, 
                                 </button>
                             </div>
 
-                            {/* Pay via UPI App Button (mobile deep link) */}
+                            {/* Pay via UPI App Button */}
                             {isMobile ? (
                                 <a
                                     href={upiUri}
