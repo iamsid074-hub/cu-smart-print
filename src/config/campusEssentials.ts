@@ -21,7 +21,8 @@ export const campusEssentials: CampusEssentialItem[] = [
         id: "ce-practical-file",
         title: "Practical File (100 pages)",
         price: 60,
-        image: "https://images.unsplash.com/photo-1586075010923-2dd4570fb338?q=80&w=400&auto=format&fit=crop",
+        // ruled pages / practical file
+        image: "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?q=80&w=400&auto=format&fit=crop",
         category: "practical",
         badge: "Popular",
     },
@@ -31,6 +32,7 @@ export const campusEssentials: CampusEssentialItem[] = [
         id: "ce-notebook-50",
         title: "Notebook (Register)",
         price: 50,
+        // open notebook on desk
         image: "https://images.unsplash.com/photo-1531346878377-a5be20888e57?q=80&w=400&auto=format&fit=crop",
         category: "notebook",
     },
@@ -38,6 +40,7 @@ export const campusEssentials: CampusEssentialItem[] = [
         id: "ce-notebook-70",
         title: "Notebook (Long)",
         price: 70,
+        // slim notebook
         image: "https://images.unsplash.com/photo-1517842645767-c639042777db?q=80&w=400&auto=format&fit=crop",
         category: "notebook",
     },
@@ -45,14 +48,16 @@ export const campusEssentials: CampusEssentialItem[] = [
         id: "ce-notebook-100",
         title: "Ruled Notebook A4",
         price: 100,
-        image: "https://images.unsplash.com/photo-1544816155-12df9643f363?q=80&w=400&auto=format&fit=crop",
+        // lined paper with pen
+        image: "https://images.unsplash.com/photo-1455390582262-044cdead277a?q=80&w=400&auto=format&fit=crop",
         category: "notebook",
     },
     {
         id: "ce-spiral-120",
         title: "Spiral Notebook A4",
         price: 120,
-        image: "https://images.unsplash.com/photo-1541963463532-d68292c34b19?q=80&w=400&auto=format&fit=crop",
+        // spiral-bound notebook
+        image: "https://images.unsplash.com/photo-1612198790700-0738f4e49b2f?q=80&w=400&auto=format&fit=crop",
         category: "notebook",
         badge: "Best Seller",
     },
@@ -62,6 +67,7 @@ export const campusEssentials: CampusEssentialItem[] = [
         id: "ce-pen-10",
         title: "Ball Pen (Blue)",
         price: 10,
+        // ballpoint pens close-up
         image: "https://images.unsplash.com/photo-1585336261022-680e295ce3fe?q=80&w=400&auto=format&fit=crop",
         category: "stationery",
     },
@@ -69,14 +75,16 @@ export const campusEssentials: CampusEssentialItem[] = [
         id: "ce-pen-20",
         title: "Gel Pen (Black)",
         price: 20,
-        image: "https://images.unsplash.com/photo-1583485088034-697b5bc54ccd?q=80&w=400&auto=format&fit=crop",
+        // black pen writing on paper
+        image: "https://images.unsplash.com/photo-1471107340929-a87cd0f5b5f3?q=80&w=400&auto=format&fit=crop",
         category: "stationery",
     },
     {
         id: "ce-calculator",
         title: "Scientific Calculator",
         price: 350,
-        image: "https://images.unsplash.com/photo-1564466809058-bf4114d55352?q=80&w=400&auto=format&fit=crop",
+        // scientific calculator (Casio-style)
+        image: "https://images.unsplash.com/photo-1611125904014-5e50af5c35de?q=80&w=400&auto=format&fit=crop",
         category: "stationery",
         badge: "Essential",
     },
