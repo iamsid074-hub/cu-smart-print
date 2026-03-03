@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { supabase } from "@/lib/supabase";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Mail, Lock, Loader2, ArrowRight, Sparkles, ShoppingBag, Users, Zap } from "lucide-react";
 import { toast } from "sonner";
@@ -13,10 +13,15 @@ export default function Login() {
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
     const [focusedField, setFocusedField] = useState<string | null>(null);
+    const [acceptedTerms, setAcceptedTerms] = useState(false);
     const navigate = useNavigate();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (!isLogin && !acceptedTerms) {
+            toast.error("Please accept the Terms and Conditions to create an account.");
+            return;
+        }
         setLoading(true);
         try {
             if (isLogin) {
@@ -234,9 +239,39 @@ export default function Login() {
                             {!isLogin && <p className="text-[11px] mt-1 ml-0.5" style={{ color: "rgba(232,222,212,0.2)" }}>At least 6 characters — make it count!</p>}
                         </div>
 
+                        {/* T&C Accept Checkbox — signup only */}
+                        {!isLogin && (
+                            <div className="flex items-start gap-3 px-1">
+                                <button
+                                    type="button"
+                                    onClick={() => setAcceptedTerms(!acceptedTerms)}
+                                    className="w-4 h-4 rounded flex-shrink-0 mt-0.5 flex items-center justify-center transition-all border"
+                                    style={{
+                                        backgroundColor: acceptedTerms ? '#FF6B6B' : 'rgba(255,255,255,0.04)',
+                                        borderColor: acceptedTerms ? '#FF6B6B' : 'rgba(255,255,255,0.15)',
+                                    }}
+                                    aria-checked={acceptedTerms}
+                                    role="checkbox"
+                                >
+                                    {acceptedTerms && (
+                                        <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
+                                            <path d="M1 3.5L3.8 6.5L9 1" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                        </svg>
+                                    )}
+                                </button>
+                                <p className="text-xs leading-relaxed" style={{ color: "rgba(232,222,212,0.4)" }}>
+                                    I have read and agree to the{" "}
+                                    <Link to="/terms" target="_blank" className="underline underline-offset-2 hover:opacity-80 transition-opacity" style={{ color: "#FF6B6B" }}>
+                                        Terms and Conditions
+                                    </Link>
+                                    {" "}of CU Bazzar. I understand it is an intermediary platform and I am responsible for my own transactions.
+                                </p>
+                            </div>
+                        )}
+
                         {/* Submit */}
                         <motion.button
-                            type="submit" disabled={loading}
+                            type="submit" disabled={loading || (!isLogin && !acceptedTerms)}
                             whileHover={{ y: -1 }} whileTap={{ scale: 0.985 }}
                             className="w-full relative group py-3.5 rounded-xl text-white font-semibold text-sm overflow-hidden transition-shadow duration-300 disabled:opacity-50 disabled:cursor-not-allowed h-[52px]"
                             style={{ ...fontH, background: "#FF6B6B", boxShadow: "0 4px 20px rgba(255,107,107,0.25)" }}
@@ -269,7 +304,9 @@ export default function Login() {
                     </p>
 
                     <p className="text-[11px] mt-6 leading-relaxed" style={{ color: "rgba(232,222,212,0.12)" }}>
-                        By continuing, you agree to keep things cool and be a good campus citizen. 🤝
+                        By continuing, you agree to our{" "}
+                        <Link to="/terms" className="underline underline-offset-2 hover:opacity-60 transition-opacity" style={{ color: "rgba(232,222,212,0.25)" }}>Terms &amp; Conditions</Link>
+                        {" "}and to be a good campus citizen. 🤝
                     </p>
                 </motion.div>
             </div>
