@@ -430,9 +430,10 @@ export default function FoodMenu() {
                                             <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-orange-200/40" />
                                             <input
                                                 value={customPhone}
-                                                onChange={(e) => setCustomPhone(e.target.value)}
+                                                onChange={(e) => setCustomPhone(e.target.value.replace(/\D/g, "").slice(0, 10))}
                                                 type="tel"
-                                                placeholder="Phone Number"
+                                                maxLength={10}
+                                                placeholder="Phone Number (10 digits)"
                                                 className="w-full bg-black/40 border border-orange-500/20 rounded-xl pl-10 pr-4 h-[48px] text-sm text-orange-50 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all placeholder:text-orange-200/20"
                                             />
                                         </div>
