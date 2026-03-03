@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Pizza, Coffee, Apple, ShoppingBag, Clock, Loader2, Plus, BadgeCheck, Cookie, Soup, FileText, Send, MessageSquare, Sparkles, X, MapPin, Phone, ShoppingCart } from "lucide-react";
+import { Pizza, Coffee, Apple, ShoppingBag, Clock, Loader2, Plus, BadgeCheck, Cookie, Soup, FileText, Send, MessageSquare, Sparkles, X, MapPin, Phone, ShoppingCart, Smartphone } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
+import UpiPaymentModal from "@/components/UpiPaymentModal";
 import {
     Dialog,
     DialogContent,
@@ -83,6 +84,11 @@ export default function FoodMenu() {
     const [customPhone, setCustomPhone] = useState("");
     const [customSubmitting, setCustomSubmitting] = useState(false);
 
+    // UPI Payment State
+    const [showUpiModal, setShowUpiModal] = useState(false);
+    const [upiSnapshot, setUpiSnapshot] = useState<{ type: 'snack' | 'custom'; price: number; title: string; foodId: string; location: string; phone: string; customItems?: string; customNotes?: string } | null>(null);
+
+    // ── Custom Order: validate → close modal → open UPI ──
     const handleCustomOrder = async () => {
         if (!user) { navigate('/login'); return; }
         if (!customItems.trim()) {
@@ -98,33 +104,73 @@ export default function FoodMenu() {
             toast({ title: "Invalid phone", description: "Phone must be exactly 10 digits.", variant: "destructive" });
             return;
         }
-        setCustomSubmitting(true);
-        try {
-            // Create a real order — DB trigger auto-notifies admin
-            const itemSummary = `[CUSTOM FOOD ORDER]\n${customItems}${customNotes ? `\n---\nNotes: ${customNotes}` : ''}`;
-            const { error } = await supabase.from("orders").insert({
-                product_id: null,
-                buyer_id: user.id,
-                seller_id: "7450c873-f51d-469e-a33d-c44ca80beb0c", // Admin UUID
-                base_price: 0,
-                commission: 0,
-                delivery_charge: 0,
-                total_price: 0, // Admin will set price after review
-                delivery_location: `${customHostel} [Custom Food: ${customItems.split('\n')[0]}...]`,
-                delivery_room: itemSummary,
-                buyer_phone: customPhone.replace(/\D/g, ""),
-                status: 'pending',
-                seller_notified_at: new Date().toISOString(),
-            });
-            if (error) throw error;
+        // Snapshot data, close modal, open UPI
+        setUpiSnapshot({
+            type: 'custom',
+            price: 0, // Admin sets price later, but payment is recorded
+            title: `Custom: ${customItems.split('\n')[0]}`,
+            foodId: `CUSTOM-${Date.now()}`,
+            location: customHostel,
+            phone: phoneClean,
+            customItems: customItems,
+            customNotes: customNotes,
+        });
+        setShowCustomOrder(false);
+        setTimeout(() => setShowUpiModal(true), 150);
+    };
 
-            toast({ title: "Custom order submitted! 🎉", description: "Admin will review and confirm shortly." });
-            setShowCustomOrder(false);
+    // ── Finalize order after UTR verification ──
+    const finalizeOrder = async (utrNumber: string) => {
+        if (!user || !upiSnapshot) return;
+        try {
+            if (upiSnapshot.type === 'snack') {
+                // Create Supabase order for snack
+                const { error } = await supabase.from("orders").insert({
+                    product_id: null,
+                    buyer_id: user.id,
+                    seller_id: "7450c873-f51d-469e-a33d-c44ca80beb0c",
+                    base_price: upiSnapshot.price,
+                    commission: 0,
+                    delivery_charge: 0,
+                    total_price: upiSnapshot.price,
+                    delivery_location: upiSnapshot.location,
+                    delivery_room: `[FOOD] ${upiSnapshot.title}`,
+                    buyer_phone: upiSnapshot.phone,
+                    status: 'pending',
+                    razorpay_payment_id: utrNumber,
+                    seller_notified_at: new Date().toISOString(),
+                });
+                if (error) throw error;
+            } else {
+                // Create Supabase order for custom food
+                const itemSummary = `[CUSTOM FOOD ORDER]\n${upiSnapshot.customItems}${upiSnapshot.customNotes ? `\n---\nNotes: ${upiSnapshot.customNotes}` : ''}`;
+                const { error } = await supabase.from("orders").insert({
+                    product_id: null,
+                    buyer_id: user.id,
+                    seller_id: "7450c873-f51d-469e-a33d-c44ca80beb0c",
+                    base_price: 0,
+                    commission: 0,
+                    delivery_charge: 0,
+                    total_price: 0,
+                    delivery_location: `${upiSnapshot.location} [Custom Food: ${upiSnapshot.customItems?.split('\n')[0]}...]`,
+                    delivery_room: itemSummary,
+                    buyer_phone: upiSnapshot.phone,
+                    status: 'pending',
+                    razorpay_payment_id: utrNumber,
+                    seller_notified_at: new Date().toISOString(),
+                });
+                if (error) throw error;
+            }
+
+            toast({ title: "Order Placed! 🎉", description: "Payment verified. Admin will process your order shortly." });
+            setShowUpiModal(false);
+            setUpiSnapshot(null);
+            // Reset forms
             setCustomItems(""); setCustomNotes(""); setCustomHostel(""); setCustomPhone("");
+            setLocation(""); setPhone("");
+            navigate('/tracking');
         } catch (err: any) {
-            toast({ title: "Failed to submit", description: err.message || "Please try again.", variant: "destructive" });
-        } finally {
-            setCustomSubmitting(false);
+            toast({ title: "Order failed", description: err.message || "Please try again.", variant: "destructive" });
         }
     };
 
@@ -140,46 +186,31 @@ export default function FoodMenu() {
         setIsBuyModalOpen(true);
     };
 
+    // ── Snack Buy: validate → close modal → open UPI ──
     const handleBuyNow = (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (!location.trim() || !phone.trim()) {
-            toast({ title: "Details missing", description: "Please enter delivery location and phone number.", variant: "destructive" });
+        if (!location.trim()) {
+            toast({ title: "Details missing", description: "Please enter delivery location.", variant: "destructive" });
+            return;
+        }
+        const phoneClean = phone.replace(/\D/g, "");
+        if (phoneClean.length !== 10) {
+            toast({ title: "Invalid phone", description: "Phone must be exactly 10 digits.", variant: "destructive" });
             return;
         }
 
-        setIsSubmitting(true);
-
-        setTimeout(() => {
-            const orderDetails = {
-                id: `FOOD-${Math.floor(1000 + Math.random() * 9000)}`,
-                product: {
-                    id: selectedFood.id,
-                    title: selectedFood.title,
-                    price: selectedFood.price,
-                    image_url: selectedFood.image,
-                    seller_name: "CU Food Delivery 🛵",
-                },
-                pricing: {
-                    basePrice: selectedFood.price,
-                    deliveryFee: 0,
-                    total: selectedFood.price,
-                },
-                shipping: {
-                    location,
-                    phone,
-                    method: "Cash on Delivery",
-                },
-                placedAt: new Date().toISOString(),
-                status: "placed"
-            };
-
-            localStorage.setItem("active_order", JSON.stringify(orderDetails));
-            toast({ title: "Snack Ordered! 🍟", description: "Hold tight, it's coming fast!" });
-            setIsSubmitting(false);
-            setIsBuyModalOpen(false);
-            navigate('/tracking');
-        }, 1200);
+        // Snapshot snack data, close modal, open UPI
+        setUpiSnapshot({
+            type: 'snack',
+            price: selectedFood.price,
+            title: selectedFood.title,
+            foodId: selectedFood.id,
+            location: location,
+            phone: phoneClean,
+        });
+        setIsBuyModalOpen(false);
+        setTimeout(() => setShowUpiModal(true), 150);
     };
 
     return (
@@ -438,8 +469,8 @@ export default function FoodMenu() {
                                     </div>
 
                                     <div className="flex items-center gap-2 px-1">
-                                        <Clock className="w-3.5 h-3.5 text-orange-400/60" />
-                                        <span className="text-[11px] text-orange-400/60">Admin will review & confirm with estimated total · Cash on Delivery</span>
+                                        <Smartphone className="w-3.5 h-3.5 text-green-400/60" />
+                                        <span className="text-[11px] text-green-400/60">UPI Payment Only · Admin will review & confirm your order</span>
                                     </div>
                                 </div>
 
@@ -454,7 +485,7 @@ export default function FoodMenu() {
                                         {customSubmitting ? (
                                             <Loader2 className="w-5 h-5 animate-spin" />
                                         ) : (
-                                            <><Send className="w-4 h-4" /> Submit Custom Order</>
+                                            <><Send className="w-4 h-4" /> Pay & Submit Order</>
                                         )}
                                     </button>
                                 </div>
@@ -514,36 +545,48 @@ export default function FoodMenu() {
                                         />
                                     </div>
                                     <div>
-                                        <label className="text-xs font-bold text-orange-200/60 uppercase mb-1 block">Contact Number</label>
+                                        <label className="text-xs font-bold text-orange-200/60 uppercase mb-1 block">Contact Number (10 digits)</label>
                                         <input
                                             type="tel"
                                             required
                                             value={phone}
-                                            onChange={e => setPhone(e.target.value)}
+                                            onChange={e => setPhone(e.target.value.replace(/\D/g, "").slice(0, 10))}
+                                            maxLength={10}
                                             className="w-full bg-black/40 border border-orange-500/20 rounded-xl px-4 py-3 text-sm text-orange-50 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all placeholder:text-orange-200/20"
                                             placeholder="e.g. 9876543210"
                                         />
                                     </div>
 
-                                    <div className="p-3 rounded-xl bg-orange-500/10 border border-orange-500/20 text-center flex items-center justify-center gap-2">
-                                        <ShoppingBag className="w-4 h-4 text-orange-400" />
-                                        <p className="text-sm font-semibold text-orange-300">
-                                            Pay Cash on Delivery
+                                    <div className="p-3 rounded-xl bg-green-500/10 border border-green-500/20 text-center flex items-center justify-center gap-2">
+                                        <Smartphone className="w-4 h-4 text-green-400" />
+                                        <p className="text-sm font-semibold text-green-300">
+                                            Pay via UPI (Mandatory)
                                         </p>
                                     </div>
 
                                     <button
                                         type="submit"
-                                        disabled={isSubmitting}
-                                        className="w-full py-4 mt-2 rounded-xl bg-gradient-to-r from-orange-500 to-red-600 text-white font-black uppercase tracking-wide shadow-[0_0_20px_rgba(249,115,22,0.4)] hover:shadow-[0_0_30px_rgba(249,115,22,0.6)] hover:scale-[1.02] transition-all disabled:opacity-50 disabled:scale-100 flex items-center justify-center"
+                                        disabled={isSubmitting || phone.replace(/\D/g, "").length !== 10 || !location.trim()}
+                                        className="w-full py-4 mt-2 rounded-xl bg-gradient-to-r from-green-500 to-emerald-600 text-white font-black uppercase tracking-wide shadow-[0_0_20px_rgba(16,185,129,0.4)] hover:shadow-[0_0_30px_rgba(16,185,129,0.6)] hover:scale-[1.02] transition-all disabled:opacity-50 disabled:scale-100 flex items-center justify-center"
                                     >
-                                        {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : `Order Now (₹${selectedFood.price})`}
+                                        {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : `Pay ₹${selectedFood.price} via UPI`}
                                     </button>
                                 </form>
                             </div>
                         )}
                     </DialogContent>
                 </Dialog>
+
+                {/* UPI Payment Modal */}
+                <UpiPaymentModal
+                    isOpen={showUpiModal}
+                    onClose={() => { setShowUpiModal(false); setUpiSnapshot(null); }}
+                    amount={upiSnapshot?.price || 0}
+                    orderIdText={`FOOD_${upiSnapshot?.foodId || 'X'}`}
+                    onPaymentVerify={async (utr) => {
+                        await finalizeOrder(utr);
+                    }}
+                />
 
             </div>
         </div>
