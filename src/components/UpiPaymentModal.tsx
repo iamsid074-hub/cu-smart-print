@@ -2,7 +2,6 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Loader2, Smartphone, Monitor, CheckCircle } from "lucide-react";
-import QRCode from "react-qr-code";
 import { toast } from "sonner";
 
 interface UpiPaymentModalProps {
@@ -148,8 +147,8 @@ export default function UpiPaymentModal({ isOpen, onClose, amount, orderIdText, 
 
                                         {/* QR Code */}
                                         <div className="flex flex-col items-center">
-                                            <div className="bg-white p-4 rounded-2xl shadow-xl border-4 border-white/5">
-                                                <QRCode value={sessionUri} size={200} level="H" />
+                                            <div className="bg-white p-3 rounded-2xl shadow-xl border-4 border-white/5">
+                                                <img src="/payment-qr.jpg" alt="UPI QR Code" className="w-[200px] h-[200px] object-contain rounded-lg" />
                                             </div>
 
                                             {!isMobile && (
