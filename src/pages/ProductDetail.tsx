@@ -34,6 +34,22 @@ export default function ProductDetail() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [paymentMethod, setPaymentMethod] = useState<"online" | "cod">("online");
     const [showUpiModal, setShowUpiModal] = useState(false);
+    const [copied, setCopied] = useState(false);
+
+    const handleShare = async () => {
+        const url = window.location.href;
+        const text = `Check out "${product?.title}" for ₹${product?.price} on CU Bazzar!`;
+        if (navigator.share) {
+            try {
+                await navigator.share({ title: product?.title, text, url });
+            } catch {/* user cancelled */ }
+        } else {
+            await navigator.clipboard.writeText(url);
+            setCopied(true);
+            toast({ title: "Link copied! 📋", description: "Share it with your friends." });
+            setTimeout(() => setCopied(false), 2500);
+        }
+    };
 
     useEffect(() => {
         async function fetchProduct() {
@@ -172,8 +188,15 @@ export default function ProductDetail() {
                             <button className="premium-glass-button w-12 h-12 flex items-center justify-center text-foreground hover:text-neon-pink shadow-lg">
                                 <Heart className="w-5 h-5" />
                             </button>
-                            <button className="premium-glass-button w-12 h-12 flex items-center justify-center text-foreground hover:text-neon-cyan shadow-lg">
-                                <Share2 className="w-5 h-5" />
+                            <button
+                                onClick={handleShare}
+                                title="Share this product"
+                                className={`premium-glass-button w-12 h-12 flex items-center justify-center shadow-lg transition-all ${copied ? 'text-green-400 scale-110' : 'text-foreground hover:text-neon-cyan'
+                                    }`}
+                            >
+                                {copied
+                                    ? <span className="text-xs font-bold">✓</span>
+                                    : <Share2 className="w-5 h-5" />}
                             </button>
                         </div>
 
