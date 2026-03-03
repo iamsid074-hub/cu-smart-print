@@ -138,13 +138,7 @@ export default function UpiPaymentModal({ isOpen, onClose, amount, orderIdText, 
                                 )}
                             </div>
 
-                            {/* UPI ID Display */}
-                            <div className="flex items-center justify-center gap-2 py-2 px-4 rounded-xl bg-white/5 border border-white/8 mx-auto w-fit">
-                                <p className="text-sm font-mono font-medium text-white">{upiId}</p>
-                                <button onClick={handleCopyUpi} className="text-neon-cyan hover:text-neon-blue transition-colors p-1" title="Copy UPI ID">
-                                    {copied ? <CheckCircle className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-                                </button>
-                            </div>
+
 
                             {/* Pay via UPI App Button */}
                             {isMobile ? (
