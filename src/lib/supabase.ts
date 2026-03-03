@@ -23,5 +23,16 @@ const proxyFetch: typeof fetch = async (input, init?) => {
 }
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-    global: { fetch: proxyFetch }
+    global: { fetch: proxyFetch },
+    auth: {
+        // Disable the Navigator LockManager if it's failing on mobile by using simple localStorage
+        // This prevents the "Acquiring an exclusive Navigator LockManager lock timed out" error
+        storage: typeof window !== 'undefined' ? window.localStorage : undefined,
+        autoRefreshToken: true,
+        persistSession: true,
+        detectSessionInUrl: true,
+        // Optional: reduce the chance of locks by disabling the broadcast feature across tabs
+        // if this app is mostly used in a single PWA/web-app view
+        storageKey: 'sb-cubazzar-auth-token',
+    }
 })
