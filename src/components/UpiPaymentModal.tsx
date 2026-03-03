@@ -22,8 +22,7 @@ function useIsMobile() {
     return isMobile;
 }
 
-// Step 1 = Show QR   |   Step 2 = Show "Done" button   |   Step 3 = Placing order   |   Step 4 = Success
-type Step = "qr" | "done" | "placing" | "success";
+type Step = "qr" | "placing" | "success";
 
 export default function UpiPaymentModal({ isOpen, onClose, amount, orderIdText, onPaymentVerify }: UpiPaymentModalProps) {
     const [step, setStep] = useState<Step>("qr");
@@ -51,12 +50,7 @@ export default function UpiPaymentModal({ isOpen, onClose, amount, orderIdText, 
         return () => { document.body.style.overflow = ""; };
     }, [isOpen]);
 
-    // User closes QR → move to "done" step
-    const handleCloseQr = () => {
-        setStep("done");
-    };
-
-    // User taps "Done" → place order
+    // User taps "Done" → place order directly
     const handlePlaceOrder = async () => {
         setStep("placing");
         try {
@@ -66,18 +60,8 @@ export default function UpiPaymentModal({ isOpen, onClose, amount, orderIdText, 
             setTimeout(() => onClose(), 1500);
         } catch (err: any) {
             toast.error(err?.message || "Order failed. Please try again.");
-            setStep("done");
+            setStep("qr");
         }
-    };
-
-    // User wants to go back to QR from "done" step
-    const handleBackToQr = () => {
-        setStep("qr");
-    };
-
-    // Full cancel — close everything
-    const handleFullCancel = () => {
-        onClose();
     };
 
     return createPortal(
@@ -107,22 +91,22 @@ export default function UpiPaymentModal({ isOpen, onClose, amount, orderIdText, 
                         }}
                     >
                         <AnimatePresence mode="wait">
-                            {/* ───────── STEP 1: QR CODE ───────── */}
+                            {/* ───────── QR CODE + DONE BUTTON ───────── */}
                             {step === "qr" && (
                                 <motion.div
                                     key="qr"
                                     initial={{ opacity: 0 }}
                                     animate={{ opacity: 1 }}
-                                    exit={{ opacity: 0, x: -30 }}
+                                    exit={{ opacity: 0 }}
                                     transition={{ duration: 0.2 }}
                                 >
-                                    {/* Header */}
+                                    {/* Header — ✕ closes/cancels the modal entirely */}
                                     <div className="flex justify-between items-center px-5 py-4 border-b border-white/8">
                                         <h3 className="font-bold text-lg text-white">Pay ₹{amount.toLocaleString()}</h3>
                                         <button
-                                            onClick={handleCloseQr}
+                                            onClick={onClose}
                                             className="p-2 rounded-full hover:bg-white/10 text-muted-foreground transition-colors"
-                                            title="I've paid — close QR"
+                                            title="Cancel"
                                         >
                                             <X className="w-5 h-5" />
                                         </button>
@@ -161,73 +145,35 @@ export default function UpiPaymentModal({ isOpen, onClose, amount, orderIdText, 
                                             </a>
                                         )}
 
-                                        {/* Hint */}
-                                        <p className="text-[11px] text-center text-muted-foreground">
-                                            After payment, close this QR screen ✕
-                                        </p>
-                                    </div>
-                                </motion.div>
-                            )}
-
-                            {/* ───────── STEP 2: DONE — PLACE ORDER ───────── */}
-                            {step === "done" && (
-                                <motion.div
-                                    key="done"
-                                    initial={{ opacity: 0, x: 30 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    exit={{ opacity: 0 }}
-                                    transition={{ duration: 0.25 }}
-                                >
-                                    <div className="p-6 space-y-6">
-                                        {/* Icon + Title */}
-                                        <div className="text-center pt-4">
-                                            <div className="w-16 h-16 rounded-full bg-green-500/15 flex items-center justify-center mx-auto mb-4">
-                                                <CheckCircle className="w-9 h-9 text-green-400" />
-                                            </div>
-                                            <h3 className="text-xl font-black text-white mb-1">Payment Done?</h3>
-                                            <p className="text-sm text-muted-foreground">
-                                                If you've completed payment of <strong className="text-white">₹{amount.toLocaleString()}</strong>, tap below to place your order.
-                                            </p>
+                                        {/* Divider */}
+                                        <div className="relative flex items-center">
+                                            <div className="flex-grow border-t border-white/10"></div>
+                                            <span className="flex-shrink-0 mx-4 text-xs text-muted-foreground font-medium uppercase">After Payment</span>
+                                            <div className="flex-grow border-t border-white/10"></div>
                                         </div>
 
-                                        {/* Place Order Button */}
+                                        {/* Done — Place Order */}
                                         <button
                                             onClick={handlePlaceOrder}
                                             className="w-full py-4 rounded-xl text-white font-bold text-base flex justify-center items-center gap-2.5 transition-all hover:scale-[1.02] active:scale-[0.98]"
-                                            style={{ background: 'linear-gradient(135deg, #10B981, #059669)', boxShadow: '0 4px 20px rgba(16,185,129,0.35)' }}
+                                            style={{ background: 'linear-gradient(135deg, #FF6B6B, #FF4444)', boxShadow: '0 4px 20px rgba(255,107,107,0.3)' }}
                                         >
                                             <CheckCircle className="w-5 h-5" />
                                             Done — Place My Order
-                                        </button>
-
-                                        {/* Show QR Again */}
-                                        <button
-                                            onClick={handleBackToQr}
-                                            className="w-full py-3 rounded-xl text-muted-foreground font-medium text-sm flex justify-center items-center gap-2 transition-all hover:bg-white/5 border border-white/10"
-                                        >
-                                            Show QR Again
-                                        </button>
-
-                                        {/* Cancel */}
-                                        <button
-                                            onClick={handleFullCancel}
-                                            className="w-full py-2.5 text-red-400/60 font-medium text-xs flex justify-center items-center gap-1.5 transition-all hover:text-red-400"
-                                        >
-                                            Cancel Order
                                         </button>
 
                                         {/* Fraud Warning */}
                                         <div className="flex items-start gap-2 p-3 rounded-xl bg-red-500/8 border border-red-500/15">
                                             <ShieldAlert className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
                                             <p className="text-[10px] text-red-300/70 leading-relaxed">
-                                                <strong className="text-red-400">Warning:</strong> Every payment is verified by admin. Fake orders without actual payment will result in <strong>permanent account ban</strong>.
+                                                <strong className="text-red-400">Warning:</strong> Every payment is verified by admin. Fake orders without payment = <strong>permanent ban</strong>.
                                             </p>
                                         </div>
                                     </div>
                                 </motion.div>
                             )}
 
-                            {/* ───────── STEP 3: PLACING ORDER ───────── */}
+                            {/* ───────── PLACING ORDER ───────── */}
                             {step === "placing" && (
                                 <motion.div
                                     key="placing"
@@ -242,7 +188,7 @@ export default function UpiPaymentModal({ isOpen, onClose, amount, orderIdText, 
                                 </motion.div>
                             )}
 
-                            {/* ───────── STEP 4: SUCCESS ───────── */}
+                            {/* ───────── SUCCESS ───────── */}
                             {step === "success" && (
                                 <motion.div
                                     key="success"
