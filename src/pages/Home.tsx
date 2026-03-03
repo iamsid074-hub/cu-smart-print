@@ -43,6 +43,7 @@ export default function Home() {
   const [buyLoading, setBuyLoading] = useState(false);
   const [buyPaymentMethod, setBuyPaymentMethod] = useState<"online" | "cod">("cod");
   const [showUpiModal, setShowUpiModal] = useState(false);
+  const [upiItemSnapshot, setUpiItemSnapshot] = useState<{ price: number; id: string; title: string } | null>(null);
 
   const handleQuickBuy = async () => {
     if (!user) { navigate('/login'); return; }
@@ -59,6 +60,7 @@ export default function Home() {
     setBuyLoading(true);
     try {
       if (buyPaymentMethod === "online") {
+        setUpiItemSnapshot({ price: buyItem.price, id: buyItem.id, title: buyItem.title }); // Save before closing
         setBuyItem(null); // Close delivery details modal first
         setTimeout(() => setShowUpiModal(true), 150); // Smooth transition
         setBuyLoading(false);
@@ -539,9 +541,9 @@ export default function Home() {
             {/* UPI Payment Modal */}
             <UpiPaymentModal
               isOpen={showUpiModal}
-              onClose={() => setShowUpiModal(false)}
-              amount={buyItem?.price || 0}
-              orderIdText={`CE_${buyItem?.id || 'TEST'}`}
+              onClose={() => { setShowUpiModal(false); setUpiItemSnapshot(null); }}
+              amount={upiItemSnapshot?.price || 0}
+              orderIdText={`CE_${upiItemSnapshot?.id || 'TEST'}`}
               onPaymentVerify={async (utr) => {
                 await finalizeOrder("online", utr);
               }}
