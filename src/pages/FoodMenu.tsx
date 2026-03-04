@@ -162,7 +162,7 @@ export default function FoodMenu() {
                 if (error) throw error;
             }
 
-            toast({ title: "Order Placed! 🎉", description: "Payment verified. Admin will process your order shortly." });
+            toast({ title: "Order placed", description: "Payment verified. Admin will process your order shortly." });
             setShowUpiModal(false);
             setUpiSnapshot(null);
             // Reset forms
@@ -313,7 +313,7 @@ export default function FoodMenu() {
                                     <button
                                         onClick={() => {
                                             addItem({ id: item.id, title: item.title, price: item.price, image: item.image, category: item.category });
-                                            toast({ title: `${item.title} added! 🛒`, description: `${cartCount + 1} item(s) in cart` });
+                                            toast({ title: `${item.title} added`, description: `${cartCount + 1} item(s) in cart` });
                                         }}
                                         className="mt-auto w-full min-h-[40px] sm:min-h-[44px] py-2 sm:py-2.5 rounded-xl bg-white/5 hover:bg-gradient-to-r hover:from-orange-500 hover:to-red-500 group-hover:shadow-[0_0_20px_rgba(249,115,22,0.3)] border border-white/10 hover:border-transparent text-white font-bold transition-all duration-300 flex items-center justify-center gap-1.5 text-xs sm:text-sm"
                                     >

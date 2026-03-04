@@ -65,7 +65,7 @@ export default function Cart() {
                 return;
             } else {
                 await createOrder();
-                toast({ title: "Order placed! 🎉", description: `${totalItems} items ordered. Pay ₹${orderTotal} on delivery.` });
+                toast({ title: "Order placed", description: `${totalItems} items ordered. Pay ₹${orderTotal} on delivery.` });
                 clearCart();
                 setShowCheckout(false);
                 navigate("/tracking");
@@ -224,7 +224,7 @@ export default function Cart() {
                     setSubmitting(true);
                     try {
                         await createOrder(utr);
-                        toast({ title: "Order submitted! 🎉", description: `Admin will verify your payment of ₹${orderTotal}.` });
+                        toast({ title: "Order submitted", description: `Admin will verify your payment of ₹${orderTotal}.` });
                         clearCart();
                         setShowCheckout(false);
                         setShowUpiModal(false);

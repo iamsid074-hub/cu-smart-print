@@ -16,14 +16,14 @@ type Product = Database["public"]["Tables"]["products"]["Row"];
 const fontH: React.CSSProperties = { fontFamily: "'Space Grotesk', sans-serif" };
 
 const categories = [
-  { icon: Laptop, label: "Electronics", count: "1.2K+", gradient: "from-cyan-400 to-blue-500", image: "https://images.unsplash.com/photo-1498049794561-7780e7231661?q=80&w=600&auto=format&fit=crop" },
-  { icon: BookOpen, label: "Books", count: "3.4K+", gradient: "from-orange-400 to-rose-500", image: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?q=80&w=600&auto=format&fit=crop" },
-  { icon: Shirt, label: "Fashion", count: "2.1K+", gradient: "from-pink-400 to-violet-500", image: "https://images.unsplash.com/photo-1445205170230-053b83016050?q=80&w=600&auto=format&fit=crop" },
-  { icon: Bike, label: "Sports", count: "890+", gradient: "from-teal-400 to-cyan-500", image: "https://images.unsplash.com/photo-1517649763962-0c623066013b?q=80&w=600&auto=format&fit=crop" },
-  { icon: Headphones, label: "Audio", count: "560+", gradient: "from-indigo-400 to-violet-500", image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=600&auto=format&fit=crop" },
-  { icon: Camera, label: "Camera", count: "320+", gradient: "from-amber-400 to-orange-500", image: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=600&auto=format&fit=crop" },
-  { icon: Sofa, label: "Furniture", count: "780+", gradient: "from-rose-400 to-pink-500", image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?q=80&w=600&auto=format&fit=crop" },
-  { icon: Utensils, label: "Kitchen", count: "240+", gradient: "from-emerald-400 to-teal-500", image: "https://images.unsplash.com/photo-1556910103-1c02745aae4d?q=80&w=600&auto=format&fit=crop" },
+  { icon: Laptop, label: "Electronics", count: "New", gradient: "from-cyan-400 to-blue-500", image: "https://images.unsplash.com/photo-1498049794561-7780e7231661?q=80&w=600&auto=format&fit=crop" },
+  { icon: BookOpen, label: "Books", count: "Popular", gradient: "from-orange-400 to-rose-500", image: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?q=80&w=600&auto=format&fit=crop" },
+  { icon: Shirt, label: "Fashion", count: "New", gradient: "from-pink-400 to-violet-500", image: "https://images.unsplash.com/photo-1445205170230-053b83016050?q=80&w=600&auto=format&fit=crop" },
+  { icon: Bike, label: "Sports", count: "", gradient: "from-teal-400 to-cyan-500", image: "https://images.unsplash.com/photo-1517649763962-0c623066013b?q=80&w=600&auto=format&fit=crop" },
+  { icon: Headphones, label: "Audio", count: "", gradient: "from-indigo-400 to-violet-500", image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=600&auto=format&fit=crop" },
+  { icon: Camera, label: "Camera", count: "", gradient: "from-amber-400 to-orange-500", image: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=600&auto=format&fit=crop" },
+  { icon: Sofa, label: "Furniture", count: "", gradient: "from-rose-400 to-pink-500", image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?q=80&w=600&auto=format&fit=crop" },
+  { icon: Utensils, label: "Kitchen", count: "", gradient: "from-emerald-400 to-teal-500", image: "https://images.unsplash.com/photo-1556910103-1c02745aae4d?q=80&w=600&auto=format&fit=crop" },
 ];
 
 // campusEssentials imported from @/config/campusEssentials
@@ -44,7 +44,7 @@ export default function Home() {
     } else {
       localStorage.setItem('cubazzar_sale_reminder', '1');
       setIsReminded(true);
-      toast.success("Reminder set! We'll notify you when the Summer Sale starts 🎯");
+      toast.success("Reminder set! We'll notify you when the sale starts");
     }
   };
   // ── Campus Essentials Quick-Buy ──
@@ -115,7 +115,7 @@ export default function Home() {
 
       if (error) throw error;
 
-      toast.success(method === "online" ? `Order submitted! Admin will verify your payment 🎉` : `Order placed for ${item.title}! Pay on delivery 🎉`);
+      toast.success(method === "online" ? `Order submitted — admin will verify` : `Order placed for ${item.title}. Pay on delivery.`);
       setBuyItem(null);
       setUpiItemSnapshot(null);
       setBuyHostel(""); setBuyRoom(""); setBuyPhone(""); setBuyPaymentMethod("cod");
@@ -166,15 +166,15 @@ export default function Home() {
     id: p.id,
     image: p.image_url || '',
     title: p.title, price: p.price, originalPrice: p.original_price || undefined,
-    condition: p.condition as any, category: p.category, rating: 4.5,
-    seller: (p as any).profiles?.full_name || "Student", badge: "🔥 Hot",
+    condition: p.condition as any, category: p.category,
+    seller: (p as any).profiles?.full_name || "Student", badge: "Hot",
   }));
 
   const freshMapped = products.filter((p) => !p.is_trending).map((p) => ({
     id: p.id,
     image: p.image_url || '',
     title: p.title, price: p.price, originalPrice: p.original_price || undefined,
-    condition: p.condition as any, category: p.category, rating: 4.5,
+    condition: p.condition as any, category: p.category,
     seller: (p as any).profiles?.full_name || "Student",
   }));
 

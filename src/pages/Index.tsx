@@ -87,16 +87,16 @@ export default function Index() {
   useEffect(() => { const t = setTimeout(() => setShowIntro(false), 1600); return () => clearTimeout(t); }, []);
 
   const testimonials = [
-    { name: "Priya S.", year: "3rd Year, CSE", quote: "Sold my calculus notes in 2 hours!", avatar: "P", gradient: "from-rose-400 to-orange-400", rotate: -4 },
-    { name: "Arjun K.", year: "2nd Year, ECE", quote: "Found a barely-used calculator for ₹200. Absolute steal!", avatar: "A", gradient: "from-violet-400 to-indigo-400", rotate: 3 },
-    { name: "Sneha R.", year: "4th Year, BCA", quote: "Sold all my textbooks before graduating 📚", avatar: "S", gradient: "from-emerald-400 to-teal-400", rotate: -2 },
-    { name: "Rohit M.", year: "1st Year, MBA", quote: "Got my entire stationery kit from a senior!", avatar: "R", gradient: "from-amber-400 to-yellow-500", rotate: 5 },
+    { name: "Priya S.", year: "3rd Year, CSE", quote: "Sold my calculus notes in under 2 hours. Way faster than putting up hostel notices.", avatar: "P", gradient: "from-rose-400 to-orange-400", rotate: -4 },
+    { name: "Arjun K.", year: "2nd Year, ECE", quote: "Got a barely-used scientific calculator for ₹200. The senior was right in my block.", avatar: "A", gradient: "from-violet-400 to-indigo-400", rotate: 3 },
+    { name: "Sneha R.", year: "4th Year, BCA", quote: "Cleared out all my textbooks before graduating. Made ₹3K in a weekend.", avatar: "S", gradient: "from-emerald-400 to-teal-400", rotate: -2 },
+    { name: "Rohit M.", year: "1st Year, MBA", quote: "Got my entire first-semester stationery kit from a senior for half the market price.", avatar: "R", gradient: "from-amber-400 to-yellow-500", rotate: 5 },
   ];
 
   const stats = [
-    { value: 500, suffix: "+", label: "Students Trading", emoji: "🎓" },
-    { value: 200, suffix: "+", label: "Items Listed", emoji: "📦" },
-    { value: 100, suffix: "%", label: "Campus Verified", emoji: "✅" },
+    { value: 500, suffix: "+", label: "Students Joined", emoji: "" },
+    { value: 200, suffix: "+", label: "Items Listed", emoji: "" },
+    { value: 100, suffix: "%", label: "Campus Only", emoji: "" },
   ];
 
   return (
@@ -229,8 +229,8 @@ export default function Index() {
       <section className="relative py-20 sm:py-28 px-5 sm:px-8" style={{ backgroundColor: C.surface }}>
         <div className="max-w-5xl mx-auto">
           <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }} className="text-center mb-14">
-            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-3" style={{ ...fontH, color: C.text }}>Real Students, Real Trades</h2>
-            <p className="text-base sm:text-lg" style={{ color: C.muted }}>Here's what your fellow CU students are saying.</p>
+            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-3" style={{ ...fontH, color: C.text }}>What students say</h2>
+            <p className="text-base sm:text-lg" style={{ color: C.muted }}>From actual CU students who've used the platform.</p>
           </motion.div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {testimonials.map((t, i) => (
@@ -265,7 +265,7 @@ export default function Index() {
             {stats.map((s, i) => (
               <motion.div key={s.label} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }} transition={{ delay: i * 0.12, duration: 0.5 }} className="text-center">
-                <div className="text-3xl mb-2">{s.emoji}</div>
+                <div className="text-3xl mb-2" style={{ color: C.muted }}>{s.emoji || '—'}</div>
                 <p className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight" style={{ ...fontH, color: C.text }}>
                   <Counter target={s.value} suffix={s.suffix} />
                 </p>
@@ -285,9 +285,9 @@ export default function Index() {
           </motion.div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
-              { title: "Zero Commission", desc: "Keep 100% of what you earn. We don't take a single cut.", icon: ShieldCheck, color: C.teal },
-              { title: "Direct Chat", desc: "Negotiate directly with buyers and sellers on campus.", icon: MessageCircle, color: C.accent },
-              { title: "Campus Handoff", desc: "Meet at your hostel or the library. No shipping needed.", icon: Heart, color: "#9B59B6" },
+              { title: "No Platform Fee", desc: "We don't take a cut. Whatever you sell for, you keep.", icon: ShieldCheck, color: C.teal },
+              { title: "Direct Chat", desc: "Message buyers and sellers directly. No middlemen.", icon: MessageCircle, color: C.accent },
+              { title: "Campus Handoff", desc: "Meet at your hostel lobby or the library. No shipping.", icon: Heart, color: "#9B59B6" },
             ].map((f, i) => (
               <motion.div key={f.title} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }} transition={{ delay: i * 0.1, duration: 0.5 }} whileHover={{ y: -4 }}

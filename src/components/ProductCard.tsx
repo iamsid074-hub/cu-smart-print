@@ -49,7 +49,7 @@ export default function ProductCard({
   originalPrice,
   condition,
   category,
-  rating = 4.5,
+  rating,
   seller = "Student",
   badge,
   delay = 0,
@@ -70,7 +70,7 @@ export default function ProductCard({
     setIsFav(next);
     if (next) {
       localStorage.setItem(favKey, '1');
-      toast({ title: `${title} added to favourites ❤️` });
+      toast({ title: `${title} saved to favourites` });
     } else {
       localStorage.removeItem(favKey);
       toast({ title: `Removed from favourites` });
@@ -87,7 +87,7 @@ export default function ProductCard({
       try { await navigator.share({ title, text, url }); } catch {/* cancelled */ }
     } else {
       await navigator.clipboard.writeText(url);
-      toast({ title: 'Link copied! 📋', description: 'Share it with friends.' });
+      toast({ title: 'Link copied!', description: 'Share it with friends.' });
     }
   };
 
@@ -118,8 +118,8 @@ export default function ProductCard({
             onClick={handleFav}
             whileTap={{ scale: 0.75 }}
             className={`w-8 h-8 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 ${isFav
-                ? 'bg-pink-500/90 text-white shadow-pink-500/30'
-                : 'premium-glass-button text-white/80 hover:text-neon-pink'
+              ? 'bg-pink-500/90 text-white shadow-pink-500/30'
+              : 'premium-glass-button text-white/80 hover:text-neon-pink'
               }`}
           >
             <Heart className={`w-4 h-4 transition-all ${isFav ? 'fill-current scale-110' : ''}`} />
@@ -148,8 +148,6 @@ export default function ProductCard({
             onError={() => { setImgError(true); setImgLoaded(true); }}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent opacity-60" />
-          {/* Glow on hover */}
-          <div className="absolute inset-0 bg-gradient-fire opacity-0 group-hover:opacity-10 transition-opacity duration-300" />
         </div>
 
         {/* Content */}
@@ -164,12 +162,16 @@ export default function ProductCard({
               {condition}
             </span>
 
-            {/* Rating + Seller */}
+            {/* Seller */}
             <div className="flex items-center gap-1 mb-3">
-              <Star className="w-3.5 h-3.5 text-neon-yellow fill-current" />
-              <span className="text-xs text-muted-foreground">{rating}</span>
-              <span className="text-xs text-muted-foreground ml-1">• {seller}</span>
+              <span className="text-xs text-muted-foreground">{seller}</span>
               <BadgeCheck className="w-3.5 h-3.5 text-neon-cyan ml-0.5" />
+              {rating && (
+                <>
+                  <Star className="w-3 h-3 text-amber-400 fill-current ml-1" />
+                  <span className="text-xs text-muted-foreground">{rating}</span>
+                </>
+              )}
             </div>
           </div>
 
@@ -186,7 +188,7 @@ export default function ProductCard({
                 e.preventDefault();
                 e.stopPropagation();
                 addItem({ id, title, price, image, category: condition });
-                toast({ title: `${title} added! 🛒` });
+                toast({ title: `${title} added to cart` });
               }}
               whileTap={{ scale: 0.9 }}
               className="premium-glass-button px-3 py-2 bg-white/10 hover:bg-white/20 text-white text-xs font-bold rounded-lg shadow-glass transition-colors flex items-center gap-1"

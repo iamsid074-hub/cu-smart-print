@@ -47,7 +47,7 @@ export default function ProductDetail() {
         setIsFav(next);
         if (next) {
             localStorage.setItem(favKey, '1');
-            toast({ title: `${product?.title || 'Product'} added to favourites ❤️` });
+            toast({ title: `${product?.title || 'Product'} saved to favourites` });
         } else {
             localStorage.removeItem(favKey);
             toast({ title: `Removed from favourites` });
@@ -64,7 +64,7 @@ export default function ProductDetail() {
         } else {
             await navigator.clipboard.writeText(url);
             setCopied(true);
-            toast({ title: "Link copied! 📋", description: "Share it with your friends." });
+            toast({ title: "Link copied!", description: "Share it with your friends." });
             setTimeout(() => setCopied(false), 2500);
         }
     };
@@ -162,7 +162,7 @@ export default function ProductDetail() {
 
             if (error) throw error;
 
-            toast({ title: method === "online" ? "Order submitted! 🎉" : "Order Placed! 🎉", description: method === "online" ? `Admin will verify payment.` : "Pay on delivery." });
+            toast({ title: method === "online" ? "Order submitted" : "Order placed", description: method === "online" ? `Admin will verify payment.` : "Pay on delivery." });
             setIsBuyModalOpen(false);
             setShowUpiModal(false);
             navigate(`/tracking?order=${data.id}`);
@@ -399,7 +399,7 @@ export default function ProductDetail() {
                                                 image: product.image_url || 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400',
                                                 category: product.category,
                                             });
-                                            toast({ title: `${product.title} added to cart! 🛒` });
+                                            toast({ title: `${product.title} added to cart` });
                                         }}
                                         className="w-full sm:w-auto px-6 py-3 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold transition-transform flex items-center justify-center gap-2"
                                     >
