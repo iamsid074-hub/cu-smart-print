@@ -6,7 +6,7 @@ import {
     Trash2, CheckCircle, Truck, Home as HomeIcon, Clock, TrendingUp,
     AlertTriangle, ChevronRight, Loader2, Eye, RefreshCw, Shield,
     LogOut, Star, MapPin, Phone, User, Calendar, DollarSign,
-    Activity, Box, ShoppingBag, Copy, AlertCircle, UtensilsCrossed, Filter
+    Activity, Box, ShoppingBag, Copy, AlertCircle, UtensilsCrossed, Filter, Wrench
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
@@ -756,6 +756,23 @@ export default function Admin() {
 
     const unreadCount = notifications.filter(n => !n.is_read).length;
 
+    // ── Maintenance mode ──────────────────────────────────────────────────────────
+    const [maintenanceMode, setMaintenanceMode] = useState(false);
+    const [togglingMaintenance, setTogglingMaintenance] = useState(false);
+
+    useEffect(() => {
+        supabase.from('site_settings').select('value').eq('key', 'maintenance_mode').single()
+            .then(({ data }) => setMaintenanceMode(data?.value === true || data?.value === 'true'));
+    }, []);
+
+    const toggleMaintenance = async () => {
+        setTogglingMaintenance(true);
+        const newVal = !maintenanceMode;
+        await supabase.from('site_settings').upsert({ key: 'maintenance_mode', value: newVal }, { onConflict: 'key' });
+        setMaintenanceMode(newVal);
+        setTogglingMaintenance(false);
+    };
+
     // ── Fetch Stats ──────────────────────────────────────────────────────────────
     const fetchStats = useCallback(async () => {
         setLoadingStats(true);
@@ -990,6 +1007,22 @@ export default function Admin() {
                             <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] rounded-full bg-neon-orange text-white text-[10px] font-black flex items-center justify-center px-1 shadow-[0_0_10px_rgba(255,100,0,0.8)]">
                                 {unreadCount > 9 ? "9+" : unreadCount}
                             </span>
+                        )}
+                    </button>
+
+                    {/* Maintenance Toggle */}
+                    <button
+                        onClick={toggleMaintenance}
+                        disabled={togglingMaintenance}
+                        title={maintenanceMode ? "Maintenance ON — click to disable" : "Site is live — click to enable maintenance"}
+                        className={`relative p-2.5 rounded-full border transition-all ${maintenanceMode
+                            ? 'bg-amber-500/20 border-amber-500/40 hover:bg-amber-500/30'
+                            : 'glass border-white/10 hover:border-white/20'
+                            }`}
+                    >
+                        <Wrench className={`w-4 h-4 ${maintenanceMode ? 'text-amber-400' : 'text-muted-foreground'}`} />
+                        {maintenanceMode && (
+                            <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse shadow-[0_0_8px_rgba(251,191,36,0.8)]" />
                         )}
                     </button>
 

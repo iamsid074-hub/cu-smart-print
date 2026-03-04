@@ -19,6 +19,7 @@ import Admin from "./pages/Admin";
 import TermsAndConditions from "./pages/TermsAndConditions";
 import Navbar from "./components/Navbar";
 import UsernameSetup from "./components/UsernameSetup";
+import { useSiteGate, ClosedScreen, MaintenanceScreen } from "./components/SiteGate";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { CartProvider } from "./contexts/CartContext";
 import { Navigate } from "react-router-dom";
@@ -68,6 +69,13 @@ function AppLayout() {
   const isLogin = location.pathname === "/login";
   const isAdmin = location.pathname.startsWith("/admin");
   const { user } = useAuth();
+  const { gate } = useSiteGate();
+
+  // Show gate screens for non-admin, non-login, non-landing pages
+  if (gate && !isAdmin && !isLogin && !isLanding) {
+    if (gate === "maintenance") return <MaintenanceScreen />;
+    if (gate === "closed") return <ClosedScreen />;
+  }
 
   return (
     <>
