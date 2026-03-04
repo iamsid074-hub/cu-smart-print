@@ -1,21 +1,35 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, X, ShoppingCart, Truck, Zap, ChevronRight } from "lucide-react";
+import { Search, X, ShoppingCart, Truck, Zap, ChevronRight, CheckCircle, Package } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
 
-/* ═══════════════════════════════════════════════
-   DYNAMIC ISLAND — CU Bazaar Marketplace
-   Pill is ALWAYS compact inline in navbar.
-   Card views (cart/delivery/flash) render as
-   absolute-positioned dropdown panels below.
-   Search bar expands inline in the pill.
-   ═══════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════════
+   DYNAMIC ISLAND v2 — Smart Priority System
+   ─────────────────────────────────────────────────
+   P1 🔴 Delivery tracking, Cart changes, Order placed
+   P2 🟡 (reserved for future: messages, price drops)
+   P3 🟢 Flash sale, logo (idle content)
+   
+   Higher priority ALWAYS interrupts lower priority.
+   Auto-dismiss timers return to next-highest priority.
+   ═══════════════════════════════════════════════════════════════════ */
 
 type IslandView = "default" | "search" | "cart" | "delivery" | "flash";
 type ActiveOrder = { id: string; status: string; delivery_location: string; delivery_room: string | null; total_price: number; title: string };
+
+// Notification that can appear in the compact pill
+interface IslandNotification {
+    id: string;
+    priority: 1 | 2 | 3;
+    type: "cart-add" | "cart-remove" | "order-placed" | "delivery" | "flash" | "logo";
+    label: string;
+    icon: "cart" | "truck" | "zap" | "check" | "package" | "logo";
+    color: string;         // accent color for glow
+    expiresAt: number;     // timestamp when this auto-dismisses (0 = never)
+}
 
 const spring = { type: "spring" as const, stiffness: 380, damping: 28 };
 
@@ -36,11 +50,13 @@ export default function DynamicIsland() {
     const inputRef = useRef<HTMLInputElement>(null);
     const islandRef = useRef<HTMLDivElement>(null);
     const navigate = useNavigate();
-    const { items: cartItems, totalItems: cartCount, totalPrice: cartTotal, removeItem } = useCart();
+    const { items: cartItems, totalItems: cartCount, totalPrice: cartTotal, removeItem, lastAction } = useCart();
     const { user } = useAuth();
 
     // ─── Active order tracking ───
     const [activeOrder, setActiveOrder] = useState<ActiveOrder | null>(null);
+    const [justDelivered, setJustDelivered] = useState(false);
+
     useEffect(() => {
         if (!user) return;
         const fetchActive = async () => {
@@ -60,7 +76,15 @@ export default function DynamicIsland() {
                     total_price: data.total_price,
                     title: (data as any).products?.title || "Your order",
                 });
-            } else { setActiveOrder(null); }
+                setJustDelivered(false);
+            } else {
+                // If we HAD an active order and now don't, it was delivered
+                if (activeOrder) {
+                    setJustDelivered(true);
+                    setTimeout(() => setJustDelivered(false), 10000);
+                }
+                setActiveOrder(null);
+            }
         };
         fetchActive();
         const ch = supabase.channel("di_orders").on("postgres_changes", {
@@ -87,18 +111,150 @@ export default function DynamicIsland() {
         return () => clearInterval(id);
     }, []);
 
-    // ─── Compact label cycling (includes flash as compact label only) ───
-    const [compactMode, setCompactMode] = useState<"logo" | "cart" | "delivery" | "flash">("logo");
+    // ═══════════════════════════════════════════════════════════════
+    //  PRIORITY-BASED NOTIFICATION SYSTEM
+    // ═══════════════════════════════════════════════════════════════
+
+    const [notifications, setNotifications] = useState<IslandNotification[]>([]);
+    const [activeNotif, setActiveNotif] = useState<IslandNotification | null>(null);
+    const dismissTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    // Track rapid cart additions
+    const rapidAddRef = useRef<{ count: number; totalPrice: number; timer: ReturnType<typeof setTimeout> | null }>({ count: 0, totalPrice: 0, timer: null });
+    const lastProcessedActionRef = useRef<number>(0);
+
+    // Push a notification into the queue
+    const pushNotification = useCallback((notif: Omit<IslandNotification, "id">) => {
+        const newNotif: IslandNotification = { ...notif, id: `${notif.type}-${Date.now()}` };
+
+        setNotifications(prev => {
+            // Remove existing notifications of same type
+            const filtered = prev.filter(n => n.type !== notif.type);
+            // Add new and sort by priority (lower number = higher priority)
+            return [...filtered, newNotif].sort((a, b) => a.priority - b.priority);
+        });
+    }, []);
+
+    // Determine what to show — highest priority notification
     useEffect(() => {
-        const modes: ("logo" | "cart" | "delivery" | "flash")[] = ["logo"];
-        if (FLASH_SALE.active) modes.push("flash");
-        if (activeOrder) modes.push("delivery");
-        if (cartCount > 0) modes.push("cart");
-        if (modes.length <= 1) { setCompactMode("logo"); return; }
-        let i = 0;
-        const id = setInterval(() => { i = (i + 1) % modes.length; setCompactMode(modes[i]); }, 10000);
+        if (notifications.length === 0) {
+            setActiveNotif(null);
+            return;
+        }
+        const top = notifications[0]; // Already sorted by priority
+        setActiveNotif(top);
+
+        // Set auto-dismiss timer if notification has an expiry
+        if (dismissTimerRef.current) clearTimeout(dismissTimerRef.current);
+        if (top.expiresAt > 0) {
+            const remaining = top.expiresAt - Date.now();
+            if (remaining <= 0) {
+                // Already expired, remove it
+                setNotifications(prev => prev.filter(n => n.id !== top.id));
+            } else {
+                dismissTimerRef.current = setTimeout(() => {
+                    setNotifications(prev => prev.filter(n => n.id !== top.id));
+                }, remaining);
+            }
+        }
+
+        return () => { if (dismissTimerRef.current) clearTimeout(dismissTimerRef.current); };
+    }, [notifications]);
+
+    // ─── React to CART changes (P1) ───
+    useEffect(() => {
+        if (!lastAction || lastAction.timestamp <= lastProcessedActionRef.current) return;
+        lastProcessedActionRef.current = lastAction.timestamp;
+
+        if (lastAction.type === "add") {
+            // Rapid addition detection
+            const rapid = rapidAddRef.current;
+            rapid.count++;
+            rapid.totalPrice += (lastAction.itemPrice || 0);
+
+            if (rapid.timer) clearTimeout(rapid.timer);
+
+            // Wait 500ms to see if more items are added rapidly
+            rapid.timer = setTimeout(() => {
+                const label = rapid.count > 1
+                    ? `🛒 ${rapid.count} Items Added · ₹${rapid.totalPrice}`
+                    : `🛒 ${lastAction.itemTitle || "Item"} Added · ₹${lastAction.itemPrice || 0}`;
+
+                pushNotification({
+                    priority: 1,
+                    type: "cart-add",
+                    label,
+                    icon: "cart",
+                    color: "#FF6B6B",
+                    expiresAt: Date.now() + 5000,
+                });
+
+                // Reset rapid counter
+                rapid.count = 0;
+                rapid.totalPrice = 0;
+                rapid.timer = null;
+            }, 500);
+        } else if (lastAction.type === "remove") {
+            pushNotification({
+                priority: 1,
+                type: "cart-remove",
+                label: `🛒 ${lastAction.itemTitle || "Item"} Removed`,
+                icon: "cart",
+                color: "#FF6B6B",
+                expiresAt: Date.now() + 3000,
+            });
+        } else if (lastAction.type === "clear") {
+            pushNotification({
+                priority: 1,
+                type: "cart-remove",
+                label: "🛒 Cart Cleared",
+                icon: "cart",
+                color: "#FF6B6B",
+                expiresAt: Date.now() + 3000,
+            });
+        }
+
+        try { navigator.vibrate?.(15); } catch { }
+    }, [lastAction, pushNotification]);
+
+    // ─── React to DELIVERY status (P1, persistent) ───
+    useEffect(() => {
+        if (activeOrder) {
+            const statusText: Record<string, string> = {
+                pending: "📦 Order Placed", seller_accepted: "✅ Order Confirmed",
+                confirmed: "👨‍🍳 Preparing…", picked: "📦 Picked Up", delivering: "🚚 On the way!",
+            };
+            pushNotification({
+                priority: 1,
+                type: "delivery",
+                label: statusText[activeOrder.status] || "📦 Processing…",
+                icon: "truck",
+                color: "#30D158",
+                expiresAt: 0, // Never auto-dismiss — persistent while delivery active
+            });
+        } else if (justDelivered) {
+            pushNotification({
+                priority: 1,
+                type: "delivery",
+                label: "✅ Order Delivered!",
+                icon: "check",
+                color: "#30D158",
+                expiresAt: Date.now() + 10000,
+            });
+        } else {
+            // Remove delivery notification if no active order
+            setNotifications(prev => prev.filter(n => n.type !== "delivery"));
+        }
+    }, [activeOrder, justDelivered, pushNotification]);
+
+    // ─── Flash sale as P3 idle content ───
+    const [idleMode, setIdleMode] = useState<"logo" | "flash">("logo");
+    useEffect(() => {
+        if (!FLASH_SALE.active) return;
+        const id = setInterval(() => {
+            setIdleMode(prev => prev === "logo" ? "flash" : "logo");
+        }, 8000);
         return () => clearInterval(id);
-    }, [cartCount, activeOrder]);
+    }, []);
 
     // ─── Event handlers ───
     useEffect(() => {
@@ -123,10 +279,15 @@ export default function DynamicIsland() {
     };
 
     const handleCollapsedClick = () => {
-        if (compactMode === "cart" && cartCount > 0) open("cart");
-        else if (compactMode === "delivery" && activeOrder) open("delivery");
-        else if (compactMode === "flash" && FLASH_SALE.active) open("flash");
-        else open("search");
+        // Click behavior based on what's currently showing
+        if (activeNotif) {
+            if (activeNotif.type === "delivery" && activeOrder) { open("delivery"); return; }
+            if (activeNotif.type === "cart-add" || activeNotif.type === "cart-remove") { open("cart"); return; }
+        }
+        if (activeNotif?.type === "delivery") { open("delivery"); return; }
+        if (idleMode === "flash" && !activeNotif && FLASH_SALE.active) { open("flash"); return; }
+        if (cartCount > 0 && !activeNotif) { open("cart"); return; }
+        open("search");
     };
 
     const statusLabel: Record<string, string> = {
@@ -137,10 +298,31 @@ export default function DynamicIsland() {
         pending: "📦", seller_accepted: "✅", confirmed: "👨‍🍳", picked: "📦", delivering: "🚚",
     };
 
-    // Is a dropdown panel open? (not search — search stays inline)
+    // Determine pill appearance
     const isDropdownOpen = view === "cart" || view === "delivery" || view === "flash";
     const isSearchOpen = view === "search";
     const isExpanded = isDropdownOpen || isSearchOpen;
+
+    // What compact content to show
+    const showingNotif = !isExpanded && activeNotif;
+    const showingIdle = !isExpanded && !activeNotif;
+
+    // Glow animation based on content
+    const getAnimation = () => {
+        if (isExpanded) return "none";
+        if (activeNotif?.color === "#FF6B6B") return "diCartPulse 1.5s ease-in-out 1";
+        if (activeNotif?.color === "#30D158") return "diDeliveryBreathe 3s ease-in-out infinite";
+        if (showingIdle && idleMode === "flash") return "diFlash 2s ease-in-out infinite";
+        return "diBreathe 4s ease-in-out infinite";
+    };
+
+    // Pill width
+    const getPillWidth = () => {
+        if (isSearchOpen) return "min(420px, calc(100vw - 120px))";
+        if (showingNotif) return "min(280px, calc(100vw - 120px))";
+        if (showingIdle && idleMode === "flash") return "min(250px, calc(100vw - 160px))";
+        return 150;
+    };
 
     return (
         <>
@@ -153,9 +335,23 @@ export default function DynamicIsland() {
           0%,100% { box-shadow: 0 0 0 0.5px rgba(255,200,0,0.2), 0 2px 10px rgba(0,0,0,0.5), 0 0 20px rgba(255,200,0,0.1); }
           50% { box-shadow: 0 0 0 1px rgba(255,200,0,0.35), 0 2px 14px rgba(0,0,0,0.4), 0 0 30px rgba(255,200,0,0.18); }
         }
+        @keyframes diCartPulse {
+          0% { box-shadow: 0 0 0 0.5px rgba(255,107,107,0.1), 0 2px 10px rgba(0,0,0,0.5); }
+          20% { box-shadow: 0 0 0 2px rgba(255,107,107,0.4), 0 2px 14px rgba(0,0,0,0.4), 0 0 25px rgba(255,107,107,0.25); }
+          40% { box-shadow: 0 0 0 1px rgba(255,107,107,0.2), 0 2px 12px rgba(0,0,0,0.5), 0 0 15px rgba(255,107,107,0.1); }
+          100% { box-shadow: 0 0 0 0.5px rgba(255,255,255,0.06), 0 2px 10px rgba(0,0,0,0.5); }
+        }
+        @keyframes diDeliveryBreathe {
+          0%,100% { box-shadow: 0 0 0 0.5px rgba(48,209,88,0.15), 0 2px 10px rgba(0,0,0,0.5), 0 0 15px rgba(48,209,88,0.08); }
+          50% { box-shadow: 0 0 0 1px rgba(48,209,88,0.3), 0 2px 14px rgba(0,0,0,0.4), 0 0 25px rgba(48,209,88,0.15); }
+        }
         @keyframes greenPulse {
           0%,100% { opacity: 1; box-shadow: 0 0 4px #30D158; }
           50% { opacity: 0.6; box-shadow: 0 0 8px #30D158; }
+        }
+        @keyframes notifSlideIn {
+          0% { transform: translateY(-2px); opacity: 0; }
+          100% { transform: translateY(0); opacity: 1; }
         }
       `}</style>
 
@@ -166,7 +362,7 @@ export default function DynamicIsland() {
                 <motion.div
                     layout
                     animate={{
-                        width: isSearchOpen ? "min(420px, calc(100vw - 120px))" : compactMode === "logo" ? 150 : "min(250px, calc(100vw - 160px))",
+                        width: getPillWidth(),
                         height: 40,
                     }}
                     transition={spring}
@@ -183,7 +379,7 @@ export default function DynamicIsland() {
                         justifyContent: "center",
                         userSelect: "none",
                         WebkitTapHighlightColor: "transparent",
-                        animation: !isExpanded ? (compactMode === "flash" ? "diFlash 2s ease-in-out infinite" : "diBreathe 4s ease-in-out infinite") : "none",
+                        animation: getAnimation(),
                         boxShadow: isExpanded
                             ? "0 0 0 0.5px rgba(255,255,255,0.1), 0 4px 24px rgba(0,0,0,0.6)"
                             : undefined,
@@ -219,20 +415,45 @@ export default function DynamicIsland() {
                                     <X style={{ width: 12, height: 12, color: "rgba(255,255,255,0.5)" }} />
                                 </button>
                             </motion.div>
-                        ) : (
-                            /* ─── COLLAPSED (cycles through logo/cart/delivery/flash) ─── */
+                        ) : showingNotif ? (
+                            /* ─── PRIORITY NOTIFICATION (P1/P2 active) ─── */
                             <motion.div
-                                key={`compact-${compactMode}`}
+                                key={`notif-${activeNotif!.id}`}
+                                initial={{ opacity: 0, scale: 0.85, y: -2 }}
+                                animate={{ opacity: 1, scale: 1, y: 0 }}
+                                exit={{ opacity: 0, scale: 0.85 }}
+                                transition={{ duration: 0.22, ease: [0.34, 1.56, 0.64, 1] }}
+                                style={{ display: "flex", alignItems: "center", gap: 7, padding: "0 14px", height: "100%", width: "100%" }}
+                            >
+                                {/* Colored indicator dot */}
+                                <div style={{ width: 7, height: 7, borderRadius: "50%", background: activeNotif!.color, flexShrink: 0, boxShadow: `0 0 6px ${activeNotif!.color}` }} />
+
+                                {/* Icon */}
+                                {activeNotif!.icon === "cart" && <ShoppingCart style={{ width: 14, height: 14, color: activeNotif!.color, flexShrink: 0 }} />}
+                                {activeNotif!.icon === "truck" && <Truck style={{ width: 14, height: 14, color: activeNotif!.color, flexShrink: 0 }} />}
+                                {activeNotif!.icon === "check" && <CheckCircle style={{ width: 14, height: 14, color: activeNotif!.color, flexShrink: 0 }} />}
+                                {activeNotif!.icon === "package" && <Package style={{ width: 14, height: 14, color: activeNotif!.color, flexShrink: 0 }} />}
+
+                                {/* Label */}
+                                <span style={{ fontSize: 12, fontWeight: 600, color: "#fff", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", flex: 1 }}>
+                                    {activeNotif!.label}
+                                </span>
+
+                                <ChevronRight style={{ width: 12, height: 12, color: `${activeNotif!.color}66`, marginLeft: "auto", flexShrink: 0 }} />
+                            </motion.div>
+                        ) : (
+                            /* ─── IDLE STATE (logo ↔ flash sale cycling) ─── */
+                            <motion.div
+                                key={`idle-${idleMode}`}
                                 initial={{ opacity: 0, scale: 0.85 }}
                                 animate={{ opacity: 1, scale: 1 }}
                                 exit={{ opacity: 0, scale: 0.85 }}
                                 transition={{ duration: 0.18 }}
                                 style={{ display: "flex", alignItems: "center", gap: 7, padding: "0 14px", height: "100%", width: "100%" }}
                             >
-                                {/* Green indicator */}
                                 <div style={{ width: 7, height: 7, borderRadius: "50%", background: "#30D158", flexShrink: 0, animation: "greenPulse 2s ease-in-out infinite" }} />
 
-                                {compactMode === "logo" && (
+                                {idleMode === "logo" && (
                                     <>
                                         <div style={{ width: 22, height: 22, borderRadius: "50%", overflow: "hidden", border: "1.5px solid rgba(255,255,255,0.1)", flexShrink: 0 }}>
                                             <img src="/logo.png" alt="CU" style={{ width: "100%", height: "100%", objectFit: "cover" }}
@@ -244,25 +465,7 @@ export default function DynamicIsland() {
                                         </span>
                                     </>
                                 )}
-                                {compactMode === "cart" && (
-                                    <div style={{ display: "flex", alignItems: "center", gap: 6, flex: 1, minWidth: 0 }}>
-                                        <ShoppingCart style={{ width: 14, height: 14, color: "#FF6B6B", flexShrink: 0 }} />
-                                        <span style={{ fontSize: 12, fontWeight: 600, color: "#fff", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                                            {cartCount} item{cartCount !== 1 ? "s" : ""} · ₹{cartTotal}
-                                        </span>
-                                        <ChevronRight style={{ width: 12, height: 12, color: "rgba(255,255,255,0.3)", marginLeft: "auto", flexShrink: 0 }} />
-                                    </div>
-                                )}
-                                {compactMode === "delivery" && activeOrder && (
-                                    <div style={{ display: "flex", alignItems: "center", gap: 6, flex: 1, minWidth: 0 }}>
-                                        <span style={{ fontSize: 13, flexShrink: 0 }}>{statusEmoji[activeOrder.status] || "📦"}</span>
-                                        <span style={{ fontSize: 12, fontWeight: 600, color: "#fff", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                                            {activeOrder.status === "delivering" ? "Delivering..." : statusLabel[activeOrder.status] || "Processing..."}
-                                        </span>
-                                        <ChevronRight style={{ width: 12, height: 12, color: "rgba(255,255,255,0.3)", marginLeft: "auto", flexShrink: 0 }} />
-                                    </div>
-                                )}
-                                {compactMode === "flash" && (
+                                {idleMode === "flash" && (
                                     <div style={{ display: "flex", alignItems: "center", gap: 5, flex: 1, minWidth: 0 }}>
                                         <Zap style={{ width: 13, height: 13, color: "#FFD60A", fill: "#FFD60A", flexShrink: 0 }} />
                                         <span style={{ fontSize: 12, fontWeight: 700, color: "#FFD60A", whiteSpace: "nowrap" }}>
@@ -333,17 +536,24 @@ export default function DynamicIsland() {
                                                 +{cartItems.length - 5} more items
                                             </span>
                                         )}
+                                        {cartItems.length === 0 && (
+                                            <span style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", textAlign: "center", padding: 16 }}>
+                                                Cart is empty
+                                            </span>
+                                        )}
                                     </div>
-                                    <div style={{ display: "flex", gap: 8, marginTop: 4 }}>
-                                        <Link to="/cart" onClick={() => close()}
-                                            style={{ flex: 1, padding: "9px 12px", borderRadius: 12, background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.85)", fontSize: 13, fontWeight: 600, textAlign: "center", textDecoration: "none" }}>
-                                            View Cart
-                                        </Link>
-                                        <Link to="/cart" onClick={() => close()}
-                                            style={{ flex: 1, padding: "9px 12px", borderRadius: 12, background: "#FF6B6B", color: "#fff", fontSize: 13, fontWeight: 600, textAlign: "center", textDecoration: "none", boxShadow: "0 2px 10px rgba(255,107,107,0.3)" }}>
-                                            Checkout Now
-                                        </Link>
-                                    </div>
+                                    {cartItems.length > 0 && (
+                                        <div style={{ display: "flex", gap: 8, marginTop: 4 }}>
+                                            <Link to="/cart" onClick={() => close()}
+                                                style={{ flex: 1, padding: "9px 12px", borderRadius: 12, background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.85)", fontSize: 13, fontWeight: 600, textAlign: "center", textDecoration: "none" }}>
+                                                View Cart
+                                            </Link>
+                                            <Link to="/cart" onClick={() => close()}
+                                                style={{ flex: 1, padding: "9px 12px", borderRadius: 12, background: "#FF6B6B", color: "#fff", fontSize: 13, fontWeight: 600, textAlign: "center", textDecoration: "none", boxShadow: "0 2px 10px rgba(255,107,107,0.3)" }}>
+                                                Checkout Now
+                                            </Link>
+                                        </div>
+                                    )}
                                 </div>
                             )}
 
