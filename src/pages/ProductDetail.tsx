@@ -387,7 +387,7 @@ export default function ProductDetail() {
                                                     <button
                                                         type="submit"
                                                         disabled={isSubmitting || !deliveryLocation.trim() || !deliveryRoom.trim() || phone.length !== 10}
-                                                        className="w-full py-4 mt-2 rounded-xl bg-neon-fire text-black font-black uppercase tracking-wide hover:shadow-neon-fire transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center"
+                                                        className="w-full py-4 mt-2 rounded-xl bg-[#FF6B6B] text-white font-black uppercase tracking-wide hover:bg-[#e55a5a] hover:shadow-lg transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center"
                                                     >
                                                         {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : `Pay ₹${totalAmount.toLocaleString()} Online`}
                                                     </button>
