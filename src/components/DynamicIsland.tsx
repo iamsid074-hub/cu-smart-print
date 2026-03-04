@@ -87,16 +87,29 @@ export default function DynamicIsland() {
         return () => clearInterval(id);
     }, []);
 
-    // ─── Compact label cycling ───
-    const [compactMode, setCompactMode] = useState<"logo" | "cart" | "delivery" | "flash">("logo");
+    // ─── Compact label cycling (cart/delivery only — flash has its own timer) ───
+    const [compactMode, setCompactMode] = useState<"logo" | "cart" | "delivery">("logo");
     useEffect(() => {
         const modes: typeof compactMode[] = ["logo"];
-        if (FLASH_SALE.active) modes.push("flash");
         if (activeOrder) modes.push("delivery");
         if (cartCount > 0) modes.push("cart");
         if (modes.length <= 1) { setCompactMode("logo"); return; }
         let i = 0;
         const id = setInterval(() => { i = (i + 1) % modes.length; setCompactMode(modes[i]); }, 10000);
+        return () => clearInterval(id);
+    }, [cartCount, activeOrder]);
+
+    // ─── Flash sale auto-open every 20s, auto-close after 6s ───
+    useEffect(() => {
+        if (!FLASH_SALE.active) return;
+        const openFlash = () => {
+            setView("flash");
+            setTimeout(() => {
+                setView(prev => prev === "flash" ? "default" : prev); // only close if still on flash
+            }, 6000);
+        };
+        // First open after 20s
+        const id = setInterval(openFlash, 20000);
         return () => clearInterval(id);
     }, [cartCount, activeOrder]);
 
@@ -125,7 +138,6 @@ export default function DynamicIsland() {
     const handleCollapsedClick = () => {
         if (compactMode === "cart" && cartCount > 0) open("cart");
         else if (compactMode === "delivery" && activeOrder) open("delivery");
-        else if (compactMode === "flash" && FLASH_SALE.active) open("flash");
         else open("search");
     };
 
@@ -183,7 +195,7 @@ export default function DynamicIsland() {
                         justifyContent: "center",
                         userSelect: "none",
                         WebkitTapHighlightColor: "transparent",
-                        animation: !isExpanded ? (compactMode === "flash" ? "diFlash 2s ease-in-out infinite" : "diBreathe 4s ease-in-out infinite") : "none",
+                        animation: !isExpanded ? "diBreathe 4s ease-in-out infinite" : "none",
                         boxShadow: isExpanded
                             ? "0 0 0 0.5px rgba(255,255,255,0.1), 0 4px 24px rgba(0,0,0,0.6)"
                             : undefined,
@@ -262,15 +274,7 @@ export default function DynamicIsland() {
                                         <ChevronRight style={{ width: 12, height: 12, color: "rgba(255,255,255,0.3)", marginLeft: "auto", flexShrink: 0 }} />
                                     </div>
                                 )}
-                                {compactMode === "flash" && (
-                                    <div style={{ display: "flex", alignItems: "center", gap: 5, flex: 1, minWidth: 0 }}>
-                                        <Zap style={{ width: 13, height: 13, color: "#FFD60A", fill: "#FFD60A", flexShrink: 0 }} />
-                                        <span style={{ fontSize: 12, fontWeight: 700, color: "#FFD60A", whiteSpace: "nowrap" }}>
-                                            Flash Sale · {FLASH_SALE.discount}
-                                        </span>
-                                        <ChevronRight style={{ width: 12, height: 12, color: "rgba(255,200,0,0.4)", marginLeft: "auto", flexShrink: 0 }} />
-                                    </div>
-                                )}
+
                             </motion.div>
                         )}
                     </AnimatePresence>
