@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronRight, Flame, Grid3X3, Laptop, BookOpen, Shirt, Bike, Headphones, Camera, Sofa, Utensils, Loader2, ShoppingBag, X, MapPin, Phone, Home as HomeIcon, Zap } from "lucide-react";
+import { ChevronRight, ChevronLeft, Grid3X3, Laptop, BookOpen, Shirt, Bike, Headphones, Camera, Sofa, Utensils, Loader2, ShoppingBag, X, MapPin, Phone, Home as HomeIcon, Zap, UtensilsCrossed, Package, Rocket, ShieldCheck, BadgePercent, Users } from "lucide-react";
 import ProductCard from "@/components/ProductCard";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
@@ -27,6 +27,197 @@ const categories = [
 ];
 
 // campusEssentials imported from @/config/campusEssentials
+
+/* ─── Feature Cards Carousel ─── */
+const featureCards = [
+  {
+    icon: UtensilsCrossed,
+    title: "Food Delivery to Your Room",
+    desc: "Hungry? Get your favorite food delivered straight to your hostel. Fast, fresh, and hassle-free.",
+    cta: "Order Food",
+    link: "/food",
+    gradient: "from-orange-500/20 via-red-500/10 to-amber-500/20",
+    iconColor: "#FF6B6B",
+    borderColor: "rgba(255,107,107,0.25)",
+  },
+  {
+    icon: Package,
+    title: "Sell Your Old Products",
+    desc: "Got old books, gadgets, or clothes? List them in 30 seconds and turn them into cash.",
+    cta: "Start Selling",
+    link: "/sell",
+    gradient: "from-emerald-500/20 via-teal-500/10 to-green-500/20",
+    iconColor: "#4DB8AC",
+    borderColor: "rgba(77,184,172,0.25)",
+  },
+  {
+    icon: Rocket,
+    title: "Super Fast Campus Delivery",
+    desc: "Within-campus delivery in under 30 minutes. From hostel to hostel, we handle it.",
+    cta: "See How It Works",
+    link: "/browse",
+    gradient: "from-blue-500/20 via-cyan-500/10 to-sky-500/20",
+    iconColor: "#60A5FA",
+    borderColor: "rgba(96,165,250,0.25)",
+  },
+  {
+    icon: ShieldCheck,
+    title: "100% Safe & Verified",
+    desc: "Every transaction is campus-verified. Buy and sell with full confidence in our student community.",
+    cta: "Learn More",
+    link: "/browse",
+    gradient: "from-violet-500/20 via-purple-500/10 to-indigo-500/20",
+    iconColor: "#A78BFA",
+    borderColor: "rgba(167,139,250,0.25)",
+  },
+  {
+    icon: BadgePercent,
+    title: "Student-Only Prices",
+    desc: "Prices you won't find anywhere else. Save on everything from books to gadgets, only for CU students.",
+    cta: "Browse Deals",
+    link: "/browse",
+    gradient: "from-amber-500/20 via-yellow-500/10 to-orange-500/20",
+    iconColor: "#FBBF24",
+    borderColor: "rgba(251,191,36,0.25)",
+  },
+  {
+    icon: Users,
+    title: "Buy from Your Batchmates",
+    desc: "Shop from students you know and trust. Rate sellers, chat directly, and meet on campus.",
+    cta: "Join In",
+    link: "/browse",
+    gradient: "from-pink-500/20 via-rose-500/10 to-fuchsia-500/20",
+    iconColor: "#F472B6",
+    borderColor: "rgba(244,114,182,0.25)",
+  },
+];
+
+function FeatureCarousel() {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [activeIdx, setActiveIdx] = useState(0);
+  const cardCount = featureCards.length;
+
+  const scrollToIdx = useCallback((idx: number) => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const card = el.children[idx] as HTMLElement;
+    if (card) {
+      el.scrollTo({ left: card.offsetLeft - 16, behavior: "smooth" });
+    }
+  }, []);
+
+  const handleScroll = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const scrollLeft = el.scrollLeft;
+    const cardWidth = (el.children[0] as HTMLElement)?.offsetWidth || 300;
+    const gap = 16;
+    const idx = Math.round(scrollLeft / (cardWidth + gap));
+    setActiveIdx(Math.min(idx, cardCount - 1));
+  }, [cardCount]);
+
+  // Auto-play
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setActiveIdx((prev) => {
+        const next = (prev + 1) % cardCount;
+        scrollToIdx(next);
+        return next;
+      });
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [cardCount, scrollToIdx]);
+
+  return (
+    <section className="mb-8 sm:mb-12">
+      <div className="flex items-center justify-between mb-4 sm:mb-6">
+        <h2 className="text-base sm:text-xl font-bold" style={fontH}>What we offer</h2>
+        <div className="hidden sm:flex items-center gap-2">
+          <button
+            onClick={() => { const prev = Math.max(activeIdx - 1, 0); setActiveIdx(prev); scrollToIdx(prev); }}
+            className="w-8 h-8 rounded-full flex items-center justify-center transition-colors"
+            style={{ backgroundColor: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)' }}
+          >
+            <ChevronLeft className="w-4 h-4" style={{ color: '#AEA397' }} />
+          </button>
+          <button
+            onClick={() => { const next = Math.min(activeIdx + 1, cardCount - 1); setActiveIdx(next); scrollToIdx(next); }}
+            className="w-8 h-8 rounded-full flex items-center justify-center transition-colors"
+            style={{ backgroundColor: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)' }}
+          >
+            <ChevronRight className="w-4 h-4" style={{ color: '#AEA397' }} />
+          </button>
+        </div>
+      </div>
+
+      {/* Scrollable cards */}
+      <div
+        ref={scrollRef}
+        onScroll={handleScroll}
+        className="flex gap-4 overflow-x-auto scrollbar-hide pb-4 -mx-1 px-1"
+        style={{ scrollSnapType: 'x mandatory', WebkitOverflowScrolling: 'touch' }}
+      >
+        {featureCards.map((card, i) => (
+          <motion.div
+            key={card.title}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: i * 0.06 }}
+            className={`flex-shrink-0 w-[85vw] sm:w-[320px] lg:w-[360px] rounded-2xl p-6 sm:p-7 flex flex-col items-center text-center transition-all duration-300 hover:-translate-y-1 bg-gradient-to-br ${card.gradient}`}
+            style={{
+              scrollSnapAlign: 'start',
+              border: `1px solid ${card.borderColor}`,
+              minHeight: '260px',
+            }}
+          >
+            <div
+              className="w-14 h-14 rounded-2xl flex items-center justify-center mb-4"
+              style={{ backgroundColor: `${card.iconColor}15` }}
+            >
+              <card.icon className="w-7 h-7" style={{ color: card.iconColor }} />
+            </div>
+
+            <h3 className="text-base sm:text-lg font-bold mb-2" style={{ ...fontH, color: '#EDE6DE' }}>
+              {card.title}
+            </h3>
+            <p className="text-sm leading-relaxed mb-5 flex-1" style={{ color: '#AEA397' }}>
+              {card.desc}
+            </p>
+
+            <Link
+              to={card.link}
+              className="px-5 py-2.5 rounded-xl text-xs font-bold transition-all hover:scale-105"
+              style={{
+                backgroundColor: `${card.iconColor}18`,
+                color: card.iconColor,
+                border: `1px solid ${card.iconColor}30`,
+              }}
+            >
+              {card.cta}
+            </Link>
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Dot indicators */}
+      <div className="flex justify-center gap-1.5 mt-3">
+        {featureCards.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => { setActiveIdx(i); scrollToIdx(i); }}
+            className="transition-all duration-300 rounded-full"
+            style={{
+              width: activeIdx === i ? 20 : 6,
+              height: 6,
+              backgroundColor: activeIdx === i ? '#FF6B6B' : 'rgba(255,255,255,0.15)',
+            }}
+          />
+        ))}
+      </div>
+    </section>
+  );
+}
 
 export default function Home() {
   const { user } = useAuth();
@@ -198,35 +389,8 @@ export default function Home() {
           </h1>
         </motion.div>
 
-        {/* ─── TRENDING ─── */}
-        <section className="mb-8 sm:mb-12">
-          <div className="flex items-center justify-between mb-4 sm:mb-6">
-            <div className="flex items-center gap-2 min-w-0">
-              <Flame className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" style={{ color: '#FF6B6B' }} />
-              <h2 className="text-base sm:text-xl font-bold truncate" style={fontH}>Trending</h2>
-              <span className="px-1.5 py-0.5 rounded text-[10px] sm:text-xs font-bold text-white flex-shrink-0" style={{ background: '#FF6B6B' }}>LIVE</span>
-            </div>
-            <Link to="/browse" className="flex items-center gap-0.5 text-xs sm:text-sm flex-shrink-0" style={{ color: '#4DB8AC' }}>
-              See all <ChevronRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-            </Link>
-          </div>
-
-          <div className="flex gap-3 sm:gap-4 overflow-x-auto scrollbar-hide pb-4 -mx-1 px-1">
-            {loading ? (
-              <div className="flex justify-center w-full py-8">
-                <Loader2 className="w-6 h-6 animate-spin" style={{ color: '#4DB8AC' }} />
-              </div>
-            ) : trendingMapped.length === 0 ? (
-              <div className="w-full py-6 text-center">
-                <p className="text-sm" style={{ color: '#AEA397' }}>No trending products yet.</p>
-              </div>
-            ) : (
-              trendingMapped.map((product, i) => (
-                <ProductCard key={product.id} {...product} delay={i * 0.08} />
-              ))
-            )}
-          </div>
-        </section>
+        {/* ─── FEATURE CARDS CAROUSEL ─── */}
+        <FeatureCarousel />
 
         {/* ─── 🔥 SUMMER SALE BANNER ─── */}
         <motion.section
