@@ -92,6 +92,89 @@ const featureCards = [
   },
 ];
 
+function FeatureCard({ card, index }: { card: typeof featureCards[0]; index: number }) {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [tilt, setTilt] = useState({ x: 0, y: 0, active: false });
+
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const el = cardRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width;
+    const y = (e.clientY - rect.top) / rect.height;
+    setTilt({ x: (y - 0.5) * -14, y: (x - 0.5) * 14, active: true });
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    setTilt({ x: 0, y: 0, active: false });
+  }, []);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 24, scale: 0.95 }}
+      whileInView={{ opacity: 1, y: 0, scale: 1 }}
+      viewport={{ once: true }}
+      transition={{ delay: index * 0.08, duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
+      style={{ scrollSnapAlign: 'start' }}
+      className="flex-shrink-0"
+    >
+      <Link to={card.link} className="block">
+        <div
+          ref={cardRef}
+          onMouseMove={handleMouseMove}
+          onMouseLeave={handleMouseLeave}
+          className="w-[68vw] sm:w-[230px] lg:w-[260px] rounded-xl overflow-hidden cursor-pointer"
+          style={{ perspective: '800px' }}
+        >
+          <div
+            className="relative p-4 rounded-xl transition-transform duration-200 ease-out"
+            style={{
+              transform: tilt.active
+                ? `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) scale(1.03)`
+                : 'rotateX(0) rotateY(0) scale(1)',
+              transformStyle: 'preserve-3d',
+              border: `1px solid ${card.borderColor}`,
+              background: `linear-gradient(135deg, ${card.iconColor}0a, ${card.iconColor}04)`,
+            }}
+          >
+            {/* Cursor light reflection */}
+            {tilt.active && (
+              <div
+                className="absolute inset-0 rounded-xl pointer-events-none"
+                style={{
+                  background: `radial-gradient(circle at ${(tilt.y / 14 + 0.5) * 100}% ${(-tilt.x / 14 + 0.5) * 100}%, ${card.iconColor}15, transparent 60%)`,
+                }}
+              />
+            )}
+
+            <div className="flex items-start gap-3 relative z-10">
+              <div
+                className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"
+                style={{ backgroundColor: `${card.iconColor}15` }}
+              >
+                <card.icon className="w-[18px] h-[18px]" style={{ color: card.iconColor }} />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h3 className="text-[13px] font-bold leading-tight mb-1" style={{ ...fontH, color: '#EDE6DE' }}>
+                  {card.title}
+                </h3>
+                <p className="text-[11px] leading-relaxed line-clamp-2" style={{ color: '#AEA397' }}>
+                  {card.desc}
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-2.5 flex items-center gap-0.5 relative z-10">
+              <span className="text-[10px] font-semibold" style={{ color: card.iconColor }}>{card.cta}</span>
+              <ChevronRight className="w-3 h-3" style={{ color: card.iconColor }} />
+            </div>
+          </div>
+        </div>
+      </Link>
+    </motion.div>
+  );
+}
+
 function FeatureCarousel() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [activeIdx, setActiveIdx] = useState(0);
@@ -110,13 +193,12 @@ function FeatureCarousel() {
     const el = scrollRef.current;
     if (!el) return;
     const scrollLeft = el.scrollLeft;
-    const cardWidth = (el.children[0] as HTMLElement)?.offsetWidth || 300;
-    const gap = 16;
+    const cardWidth = (el.children[0] as HTMLElement)?.offsetWidth || 230;
+    const gap = 12;
     const idx = Math.round(scrollLeft / (cardWidth + gap));
     setActiveIdx(Math.min(idx, cardCount - 1));
   }, [cardCount]);
 
-  // Auto-play
   useEffect(() => {
     const timer = setInterval(() => {
       setActiveIdx((prev) => {
@@ -129,88 +211,48 @@ function FeatureCarousel() {
   }, [cardCount, scrollToIdx]);
 
   return (
-    <section className="mb-8 sm:mb-12">
-      <div className="flex items-center justify-between mb-4 sm:mb-6">
-        <h2 className="text-base sm:text-xl font-bold" style={fontH}>What we offer</h2>
-        <div className="hidden sm:flex items-center gap-2">
+    <section className="mb-8 sm:mb-10">
+      <div className="flex items-center justify-between mb-3 sm:mb-4">
+        <h2 className="text-sm sm:text-base font-bold" style={fontH}>What we offer</h2>
+        <div className="hidden sm:flex items-center gap-1.5">
           <button
             onClick={() => { const prev = Math.max(activeIdx - 1, 0); setActiveIdx(prev); scrollToIdx(prev); }}
-            className="w-8 h-8 rounded-full flex items-center justify-center transition-colors"
-            style={{ backgroundColor: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)' }}
+            className="w-7 h-7 rounded-full flex items-center justify-center transition-all hover:scale-110"
+            style={{ backgroundColor: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}
           >
-            <ChevronLeft className="w-4 h-4" style={{ color: '#AEA397' }} />
+            <ChevronLeft className="w-3.5 h-3.5" style={{ color: '#AEA397' }} />
           </button>
           <button
             onClick={() => { const next = Math.min(activeIdx + 1, cardCount - 1); setActiveIdx(next); scrollToIdx(next); }}
-            className="w-8 h-8 rounded-full flex items-center justify-center transition-colors"
-            style={{ backgroundColor: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)' }}
+            className="w-7 h-7 rounded-full flex items-center justify-center transition-all hover:scale-110"
+            style={{ backgroundColor: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}
           >
-            <ChevronRight className="w-4 h-4" style={{ color: '#AEA397' }} />
+            <ChevronRight className="w-3.5 h-3.5" style={{ color: '#AEA397' }} />
           </button>
         </div>
       </div>
 
-      {/* Scrollable cards */}
       <div
         ref={scrollRef}
         onScroll={handleScroll}
-        className="flex gap-4 overflow-x-auto scrollbar-hide pb-4 -mx-1 px-1"
+        className="flex gap-3 overflow-x-auto scrollbar-hide pb-2 -mx-1 px-1"
         style={{ scrollSnapType: 'x mandatory', WebkitOverflowScrolling: 'touch' }}
       >
         {featureCards.map((card, i) => (
-          <motion.div
-            key={card.title}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: i * 0.06 }}
-            className={`flex-shrink-0 w-[85vw] sm:w-[320px] lg:w-[360px] rounded-2xl p-6 sm:p-7 flex flex-col items-center text-center transition-all duration-300 hover:-translate-y-1 bg-gradient-to-br ${card.gradient}`}
-            style={{
-              scrollSnapAlign: 'start',
-              border: `1px solid ${card.borderColor}`,
-              minHeight: '260px',
-            }}
-          >
-            <div
-              className="w-14 h-14 rounded-2xl flex items-center justify-center mb-4"
-              style={{ backgroundColor: `${card.iconColor}15` }}
-            >
-              <card.icon className="w-7 h-7" style={{ color: card.iconColor }} />
-            </div>
-
-            <h3 className="text-base sm:text-lg font-bold mb-2" style={{ ...fontH, color: '#EDE6DE' }}>
-              {card.title}
-            </h3>
-            <p className="text-sm leading-relaxed mb-5 flex-1" style={{ color: '#AEA397' }}>
-              {card.desc}
-            </p>
-
-            <Link
-              to={card.link}
-              className="px-5 py-2.5 rounded-xl text-xs font-bold transition-all hover:scale-105"
-              style={{
-                backgroundColor: `${card.iconColor}18`,
-                color: card.iconColor,
-                border: `1px solid ${card.iconColor}30`,
-              }}
-            >
-              {card.cta}
-            </Link>
-          </motion.div>
+          <FeatureCard key={card.title} card={card} index={i} />
         ))}
       </div>
 
-      {/* Dot indicators */}
-      <div className="flex justify-center gap-1.5 mt-3">
+      <div className="flex justify-center gap-1.5 mt-2">
         {featureCards.map((_, i) => (
           <button
             key={i}
             onClick={() => { setActiveIdx(i); scrollToIdx(i); }}
             className="transition-all duration-300 rounded-full"
             style={{
-              width: activeIdx === i ? 20 : 6,
-              height: 6,
-              backgroundColor: activeIdx === i ? '#FF6B6B' : 'rgba(255,255,255,0.15)',
+              width: activeIdx === i ? 16 : 5,
+              height: 5,
+              backgroundColor: activeIdx === i ? '#FF6B6B' : 'rgba(255,255,255,0.12)',
             }}
           />
         ))}
