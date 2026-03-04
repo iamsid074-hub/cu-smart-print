@@ -265,7 +265,7 @@ export default function FoodMenu() {
                         Showing <span className="text-white font-bold">{filteredFoods.length}</span> items in <span className={`font-bold text-transparent bg-clip-text bg-gradient-to-r ${activeCat?.color}`}>{activeCat?.name}</span>
                     </p>
                     <span className="px-2.5 py-1 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-bold flex items-center gap-1">
-                        <BadgeCheck className="w-3 h-3" /> Free Delivery
+                        <BadgeCheck className="w-3 h-3" /> ₹5 Delivery
                     </span>
                 </div>
 
@@ -569,7 +569,7 @@ export default function FoodMenu() {
                                         disabled={isSubmitting || phone.replace(/\D/g, "").length !== 10 || !location.trim()}
                                         className="w-full py-4 mt-2 rounded-xl bg-gradient-to-r from-green-500 to-emerald-600 text-white font-black uppercase tracking-wide shadow-[0_0_20px_rgba(16,185,129,0.4)] hover:shadow-[0_0_30px_rgba(16,185,129,0.6)] hover:scale-[1.02] transition-all disabled:opacity-50 disabled:scale-100 flex items-center justify-center"
                                     >
-                                        {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : `Pay ₹${selectedFood.price} via UPI`}
+                                        {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : `Pay ₹${selectedFood.price + 5} via UPI`}
                                     </button>
                                 </form>
                             </div>
@@ -581,7 +581,7 @@ export default function FoodMenu() {
                 <UpiPaymentModal
                     isOpen={showUpiModal}
                     onClose={() => { setShowUpiModal(false); setUpiSnapshot(null); }}
-                    amount={upiSnapshot?.price || 0}
+                    amount={(upiSnapshot?.price || 0) + 5}
                     orderIdText={`FOOD_${upiSnapshot?.foodId || 'X'}`}
                     customerId={user?.id || "guest"}
                     customerPhone={upiSnapshot?.phone || phone || "9999999999"}

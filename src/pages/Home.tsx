@@ -482,13 +482,13 @@ export default function Home() {
                   <PaymentSelector
                     selected={buyPaymentMethod}
                     onChange={setBuyPaymentMethod}
-                    totalAmount={buyItem?.price || 0}
+                    totalAmount={(buyItem?.price || 0) + 5}
                     disabled={buyLoading}
                   />
 
                   <div className="flex items-center gap-2 mt-1 px-1">
                     <Zap className="w-3.5 h-3.5" style={{ color: '#4DB8AC' }} />
-                    <span className="text-[11px]" style={{ color: '#4DB8AC' }}>Delivered by Campus Store · No extra charges</span>
+                    <span className="text-[11px]" style={{ color: '#4DB8AC' }}>Delivered by Campus Store · ₹5 delivery fee included</span>
                   </div>
                 </div>
 
@@ -504,7 +504,7 @@ export default function Home() {
                     {buyLoading ? (
                       <Loader2 className="w-5 h-5 animate-spin mx-auto" />
                     ) : (
-                      <>{buyPaymentMethod === "online" ? `Pay ₹${buyItem.price} Online` : `COD · ₹${buyItem.price}`}</>
+                      <>{buyPaymentMethod === "online" ? `Pay ₹${buyItem.price + 5} Online` : `COD · ₹${buyItem.price + 5}`}</>
                     )}
                   </motion.button>
                 </div>
@@ -560,7 +560,7 @@ export default function Home() {
             <UpiPaymentModal
               isOpen={showUpiModal}
               onClose={() => { setShowUpiModal(false); setUpiItemSnapshot(null); }}
-              amount={upiItemSnapshot?.price || 0}
+              amount={(upiItemSnapshot?.price || 0) + 5}
               orderIdText={`CE_${upiItemSnapshot?.id || 'TEST'}`}
               customerId={user?.id || "guest"}
               customerPhone={buyPhone || "9999999999"}
