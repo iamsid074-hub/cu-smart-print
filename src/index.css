@@ -6,18 +6,18 @@
 
 @layer base {
   :root {
-    /* ─── Dark Chocolate Palette ─── */
-    --background: 18 18% 9%;
-    /* #1A1412 – deep cocoa */
-    --foreground: 25 25% 88%;
-    /* #E8DED4 – warm cream text */
+    /* ─── Warm Dark Palette (brightened) ─── */
+    --background: 18 16% 12%;
+    /* #211C18 – lifted cocoa */
+    --foreground: 25 25% 90%;
+    /* #EBE2D9 – warm cream text */
 
-    --card: 18 14% 14%;
-    /* #2A2420 – dark card */
-    --card-foreground: 25 25% 88%;
+    --card: 18 14% 17%;
+    /* #302A25 – lighter card */
+    --card-foreground: 25 25% 90%;
 
-    --popover: 18 14% 14%;
-    --popover-foreground: 25 25% 88%;
+    --popover: 18 14% 17%;
+    --popover-foreground: 25 25% 90%;
 
     /* Coral primary */
     --primary: 0 100% 71%;
@@ -27,25 +27,25 @@
     /* Warm teal accent */
     --accent: 174 40% 50%;
     /* #4DB8AC */
-    --accent-foreground: 25 25% 88%;
+    --accent-foreground: 25 25% 90%;
 
     /* Darker sidebar */
-    --secondary: 18 12% 18%;
-    /* #362F2A */
-    --secondary-foreground: 25 25% 88%;
+    --secondary: 18 12% 20%;
+    /* #3A332E */
+    --secondary-foreground: 25 25% 90%;
 
     /* Muted tones */
-    --muted: 18 10% 18%;
-    --muted-foreground: 25 12% 52%;
-    /* #8F8175 – muted warm */
+    --muted: 18 10% 20%;
+    --muted-foreground: 25 14% 58%;
+    /* #9C8F82 – brighter muted */
 
     --destructive: 0 85% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 18 10% 22%;
-    /* #3D342C */
-    --input: 18 12% 12%;
-    /* #221D19 */
+    --border: 18 10% 26%;
+    /* #463D35 – more visible borders */
+    --input: 18 12% 15%;
+    /* #2A241F */
     --ring: 0 100% 71%;
 
     --radius: 0.75rem;
@@ -58,30 +58,30 @@
     --neon-blue: 215 55% 55%;
     --neon-yellow: 40 80% 55%;
 
-    /* Glass → dark chocolate translucent */
-    --glass-bg: 18 14% 14%;
-    --glass-border: 18 10% 22%;
+    /* Glass → translucent */
+    --glass-bg: 18 14% 17%;
+    --glass-border: 18 10% 26%;
 
     /* Gradients */
     --gradient-fire: linear-gradient(135deg, #FF6B6B, #FF8E8E);
     --gradient-ocean: linear-gradient(135deg, #4DB8AC, #3D9B8F);
     --gradient-aurora: linear-gradient(135deg, #FF6B6B, #9B59B6, #4DB8AC);
-    --gradient-card: linear-gradient(145deg, #2A2420, #221D19);
+    --gradient-card: linear-gradient(145deg, #302A25, #2A241F);
 
     /* Warm dark shadows */
     --shadow-neon-fire: 0 4px 20px rgba(255, 107, 107, 0.2);
     --shadow-neon-ocean: 0 4px 20px rgba(77, 184, 172, 0.2);
-    --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.25);
-    --shadow-glass: 0 4px 16px rgba(0, 0, 0, 0.2);
+    --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.2);
+    --shadow-glass: 0 4px 16px rgba(0, 0, 0, 0.15);
 
     /* Sidebar */
-    --sidebar-background: 18 14% 8%;
-    --sidebar-foreground: 25 25% 88%;
+    --sidebar-background: 18 14% 10%;
+    --sidebar-foreground: 25 25% 90%;
     --sidebar-primary: 0 100% 71%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 18 12% 18%;
-    --sidebar-accent-foreground: 25 25% 88%;
-    --sidebar-border: 18 10% 22%;
+    --sidebar-accent: 18 12% 20%;
+    --sidebar-accent-foreground: 25 25% 90%;
+    --sidebar-border: 18 10% 26%;
     --sidebar-ring: 0 100% 71%;
   }
 }
