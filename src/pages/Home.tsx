@@ -189,7 +189,7 @@ export default function Home() {
           transition={{ duration: 0.5 }}
           className="pt-5 pb-6 sm:py-10"
         >
-          <p className="text-xs sm:text-sm mb-1 sm:mb-2 font-medium tracking-wide" style={{ color: '#9C8F82' }}>
+          <p className="text-xs sm:text-sm mb-1 sm:mb-2 font-medium tracking-wide" style={{ color: '#AEA397' }}>
             Hey there, Student 👋
           </p>
           <h1 className="text-2xl sm:text-4xl lg:text-5xl font-bold tracking-tight" style={fontH}>
@@ -218,7 +218,7 @@ export default function Home() {
               </div>
             ) : trendingMapped.length === 0 ? (
               <div className="w-full py-6 text-center">
-                <p className="text-sm" style={{ color: '#9C8F82' }}>No trending products yet.</p>
+                <p className="text-sm" style={{ color: '#AEA397' }}>No trending products yet.</p>
               </div>
             ) : (
               trendingMapped.map((product, i) => (
@@ -242,7 +242,7 @@ export default function Home() {
             backgroundSize: '300% 300%',
             animation: 'sale-border-shift 4s ease infinite',
           }}>
-            <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden" style={{ backgroundColor: '#1E1815' }}>
+            <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden" style={{ backgroundColor: '#261F1B' }}>
 
               {/* Glowing orbs */}
               <div className="absolute top-0 right-0 w-64 h-64 sm:w-96 sm:h-96 rounded-full blur-[100px] pointer-events-none" style={{ background: 'rgba(255,107,107,0.15)' }} />
@@ -271,12 +271,12 @@ export default function Home() {
                     </motion.div>
 
                     <h2 className="text-2xl sm:text-4xl lg:text-5xl font-bold leading-[1.1] mb-2" style={fontH}>
-                      <span style={{ color: '#EBE2D9' }}>Something </span>
+                      <span style={{ color: '#EDE6DE' }}>Something </span>
                       <span className="relative" style={{ color: '#FF6B6B' }}>
                         massive
                         <svg className="absolute -bottom-1 left-0 w-full" viewBox="0 0 120 8" fill="none"><path d="M2 5C30 2 90 2 118 5" stroke="#FF6B6B" strokeWidth="2.5" strokeLinecap="round" opacity="0.5" /></svg>
                       </span>
-                      <span style={{ color: '#EBE2D9' }}> is coming</span>
+                      <span style={{ color: '#EDE6DE' }}> is coming</span>
                     </h2>
 
                     <p className="text-sm sm:text-base mb-1 max-w-md" style={{ color: 'rgba(232,222,212,0.5)' }}>
@@ -297,8 +297,8 @@ export default function Home() {
                         ].map((t, i) => (
                           <div key={i} className="flex items-center gap-1 sm:gap-1.5">
                             <div className="rounded-xl px-2.5 py-2 sm:px-3.5 sm:py-2.5 text-center min-w-[44px] sm:min-w-[56px]" style={{ backgroundColor: 'rgba(255,107,107,0.08)', border: '1px solid rgba(255,107,107,0.15)' }}>
-                              <div className="text-lg sm:text-2xl font-bold font-mono" style={{ color: '#EBE2D9' }}>{t.value}</div>
-                              <div className="text-[8px] sm:text-[10px] font-semibold uppercase tracking-wider" style={{ color: '#9C8F82' }}>{t.label}</div>
+                              <div className="text-lg sm:text-2xl font-bold font-mono" style={{ color: '#EDE6DE' }}>{t.value}</div>
+                              <div className="text-[8px] sm:text-[10px] font-semibold uppercase tracking-wider" style={{ color: '#AEA397' }}>{t.label}</div>
                             </div>
                             {i < 3 && <span className="text-lg font-bold" style={{ color: 'rgba(255,107,107,0.3)' }}>:</span>}
                           </div>
@@ -373,14 +373,14 @@ export default function Home() {
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.04 }}
                 className="group rounded-xl sm:rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1"
-                style={{ backgroundColor: '#302A25', border: '1px solid #463D35', boxShadow: '0 2px 12px rgba(0,0,0,0.2)' }}
+                style={{ backgroundColor: '#3F3832', border: '1px solid #544B43', boxShadow: '0 2px 12px rgba(0,0,0,0.2)' }}
               >
                 <div className="relative h-24 sm:h-32 overflow-hidden" style={{ backgroundColor: 'rgba(255,255,255,0.02)' }}>
                   <img src={item.image} alt={item.title} loading="lazy"
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                     onError={(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400'; }}
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#302A25] to-transparent opacity-60" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#3F3832] to-transparent opacity-60" />
                   {item.badge && (
                     <div className="absolute top-1.5 left-1.5 sm:top-2 sm:left-2 px-1.5 py-0.5 rounded-md text-[9px] sm:text-[10px] font-bold text-white" style={{ background: '#FF6B6B' }}>
                       {item.badge}
@@ -388,7 +388,7 @@ export default function Home() {
                   )}
                 </div>
                 <div className="p-2.5 sm:p-3">
-                  <p className="text-[11px] sm:text-xs font-semibold line-clamp-1 mb-1" style={{ color: '#EBE2D9' }}>{item.title}</p>
+                  <p className="text-[11px] sm:text-xs font-semibold line-clamp-1 mb-1" style={{ color: '#EDE6DE' }}>{item.title}</p>
                   <div className="flex items-center justify-between mb-1.5">
                     <p className="text-sm sm:text-base font-bold" style={{ color: '#FF6B6B' }}>₹{item.price}</p>
                     <div className="flex items-center gap-0.5 text-[9px]" style={{ color: '#4DB8AC' }}>
@@ -421,58 +421,58 @@ export default function Home() {
                 initial={{ y: 100, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 100, opacity: 0 }}
                 transition={{ type: 'spring', damping: 25, stiffness: 300 }}
                 className="w-full sm:max-w-[420px] rounded-t-2xl sm:rounded-2xl overflow-hidden"
-                style={{ backgroundColor: '#302A25', border: '1px solid #463D35' }}
+                style={{ backgroundColor: '#3F3832', border: '1px solid #544B43' }}
                 onClick={(e) => e.stopPropagation()}
               >
                 {/* Header */}
-                <div className="flex items-center justify-between p-4 sm:p-5" style={{ borderBottom: '1px solid #463D35' }}>
+                <div className="flex items-center justify-between p-4 sm:p-5" style={{ borderBottom: '1px solid #544B43' }}>
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0" style={{ border: '1px solid #463D35' }}>
+                    <div className="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0" style={{ border: '1px solid #544B43' }}>
                       <img src={buyItem.image} alt={buyItem.title} className="w-full h-full object-cover" />
                     </div>
                     <div>
-                      <p className="text-sm font-bold" style={{ ...fontH, color: '#EBE2D9' }}>{buyItem.title}</p>
+                      <p className="text-sm font-bold" style={{ ...fontH, color: '#EDE6DE' }}>{buyItem.title}</p>
                       <p className="text-base font-bold" style={{ color: '#FF6B6B' }}>₹{buyItem.price}</p>
                     </div>
                   </div>
-                  <button onClick={() => setBuyItem(null)} className="p-1.5 rounded-lg transition-colors" style={{ color: '#9C8F82' }}>
+                  <button onClick={() => setBuyItem(null)} className="p-1.5 rounded-lg transition-colors" style={{ color: '#AEA397' }}>
                     <X className="w-5 h-5" />
                   </button>
                 </div>
 
                 {/* Form */}
                 <div className="p-4 sm:p-5 space-y-3">
-                  <p className="text-xs font-medium mb-3" style={{ color: '#9C8F82' }}>Where should we deliver? ⚡</p>
+                  <p className="text-xs font-medium mb-3" style={{ color: '#AEA397' }}>Where should we deliver? ⚡</p>
 
                   <div className="relative">
-                    <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: '#9C8F82' }} />
+                    <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: '#AEA397' }} />
                     <input
                       value={buyHostel} onChange={(e) => setBuyHostel(e.target.value)}
                       placeholder="Hostel Block (e.g. BH-1)"
                       className="w-full rounded-xl pl-10 pr-4 h-[48px] text-sm focus:outline-none transition-all"
-                      style={{ backgroundColor: 'rgba(255,255,255,0.04)', color: '#EBE2D9', border: '1px solid #463D35' }}
+                      style={{ backgroundColor: 'rgba(255,255,255,0.04)', color: '#EDE6DE', border: '1px solid #544B43' }}
                     />
                   </div>
 
                   <div className="relative">
-                    <HomeIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: '#9C8F82' }} />
+                    <HomeIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: '#AEA397' }} />
                     <input
                       value={buyRoom} onChange={(e) => setBuyRoom(e.target.value)}
                       placeholder="Room Number *"
                       className="w-full rounded-xl pl-10 pr-4 h-[48px] text-sm focus:outline-none transition-all"
-                      style={{ backgroundColor: 'rgba(255,255,255,0.04)', color: '#EBE2D9', border: '1px solid #463D35' }}
+                      style={{ backgroundColor: 'rgba(255,255,255,0.04)', color: '#EDE6DE', border: '1px solid #544B43' }}
                     />
                   </div>
 
                   <div className="relative">
-                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: '#9C8F82' }} />
+                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: '#AEA397' }} />
                     <input
                       value={buyPhone} onChange={(e) => setBuyPhone(e.target.value.replace(/\D/g, "").slice(0, 10))}
                       placeholder="10-digit Phone Number *"
                       type="tel"
                       maxLength={10}
                       className="w-full rounded-xl pl-10 pr-4 h-[48px] text-sm focus:outline-none transition-all"
-                      style={{ backgroundColor: 'rgba(255,255,255,0.04)', color: '#EBE2D9', border: buyPhone.length > 0 && buyPhone.length !== 10 ? '1px solid rgba(255,80,80,0.5)' : '1px solid #463D35' }}
+                      style={{ backgroundColor: 'rgba(255,255,255,0.04)', color: '#EDE6DE', border: buyPhone.length > 0 && buyPhone.length !== 10 ? '1px solid rgba(255,80,80,0.5)' : '1px solid #544B43' }}
                     />
                   </div>
                   {buyPhone.length > 0 && buyPhone.length !== 10 && (
@@ -493,7 +493,7 @@ export default function Home() {
                 </div>
 
                 {/* Footer */}
-                <div className="p-4 sm:p-5" style={{ borderTop: '1px solid #463D35' }}>
+                <div className="p-4 sm:p-5" style={{ borderTop: '1px solid #544B43' }}>
                   <motion.button
                     onClick={handleQuickBuy}
                     disabled={buyLoading || !buyHostel.trim() || !buyRoom.trim() || buyPhone.length !== 10}
@@ -532,7 +532,7 @@ export default function Home() {
                 key={cat.label}
                 to={`/browse?category=${cat.label}`}
                 className="group relative flex-shrink-0 w-32 h-40 sm:w-48 sm:h-56 rounded-2xl sm:rounded-3xl overflow-hidden transition-all duration-500 ease-out hover:-translate-y-2"
-                style={{ border: '1px solid #463D35' }}
+                style={{ border: '1px solid #544B43' }}
               >
                 {/* Photo bg */}
                 <div className="absolute inset-0 z-0">
@@ -584,13 +584,13 @@ export default function Home() {
               </div>
             ) : freshMapped.length === 0 ? (
               <div className="col-span-full text-center py-6">
-                <p className="text-sm" style={{ color: '#9C8F82' }}>No fresh listings yet.</p>
+                <p className="text-sm" style={{ color: '#AEA397' }}>No fresh listings yet.</p>
               </div>
             ) : (
               freshMapped.map((product) => (
                 <Link to={`/product/${product.id}`} key={`fresh-${product.id}`}
                   className="rounded-xl sm:rounded-2xl overflow-hidden group block transition-all hover:-translate-y-1"
-                  style={{ backgroundColor: '#302A25', border: '1px solid #463D35' }}>
+                  style={{ backgroundColor: '#3F3832', border: '1px solid #544B43' }}>
                   <div className="relative h-28 sm:h-36 overflow-hidden">
                     <img src={product.image || `https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=400`} alt={product.title}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
@@ -607,10 +607,10 @@ export default function Home() {
                         };
                         (e.target as HTMLImageElement).src = (cat && FALLBACKS[cat]) || 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=400';
                       }} />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#302A25]/80 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#3F3832]/80 to-transparent" />
                   </div>
                   <div className="p-2.5 sm:p-3">
-                    <p className="text-[11px] sm:text-xs font-semibold line-clamp-1 mb-1" style={{ color: '#EBE2D9' }}>{product.title}</p>
+                    <p className="text-[11px] sm:text-xs font-semibold line-clamp-1 mb-1" style={{ color: '#EDE6DE' }}>{product.title}</p>
                     <p className="text-sm font-bold" style={{ color: '#FF6B6B' }}>₹{product.price.toLocaleString()}</p>
                   </div>
                 </Link>

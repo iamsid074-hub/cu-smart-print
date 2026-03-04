@@ -5,13 +5,13 @@ import { ArrowRight, ShieldCheck, Heart, MessageCircle, Star, CheckCircle } from
 
 // ─── Dark Chocolate Palette ────────────────────────────────────────────────────
 const C = {
-  bg: "#211C18",
-  surface: "#261F1B",
-  card: "#302A25",
-  border: "#463D35",
-  text: "#EBE2D9",
-  muted: "#9C8F82",
-  doodle: "#564A40",
+  bg: "#332C27",
+  surface: "#3A332E",
+  card: "#3F3832",
+  border: "#544B43",
+  text: "#EDE6DE",
+  muted: "#AEA397",
+  doodle: "#665C52",
   accent: "#FF6B6B",
   accentGlow: "rgba(255,107,107,0.2)",
   teal: "#4DB8AC",

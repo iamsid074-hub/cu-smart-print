@@ -81,7 +81,7 @@ export default function Navbar() {
       initial={{ y: -80, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5, ease: [0.34, 1.56, 0.64, 1] }}
-      className="fixed top-0 left-0 right-0 z-50 border-b" style={{ background: 'rgba(33,28,24,0.88)', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)', borderColor: 'rgba(70,61,53,0.5)' }}
+      className="fixed top-0 left-0 right-0 z-50 border-b" style={{ background: 'rgba(51,44,39,0.92)', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)', borderColor: 'rgba(84,75,67,0.5)' }}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center gap-2 sm:gap-4">
         {/* Dynamic Island — logo + expandable search */}
@@ -89,7 +89,7 @@ export default function Navbar() {
 
         {/* Nav links - Center Pill Dock */}
         <div className="hidden lg:flex flex-1 justify-center relative z-10">
-          <div className="flex items-center gap-1 p-1 rounded-full border shadow-sm" style={{ backgroundColor: 'rgba(42,36,32,0.8)', borderColor: '#463D35' }}>
+          <div className="flex items-center gap-1 p-1 rounded-full border shadow-sm" style={{ backgroundColor: 'rgba(42,36,32,0.8)', borderColor: '#544B43' }}>
             {navLinks.map((link) => (
               <Link
                 key={link.path}
@@ -115,7 +115,7 @@ export default function Navbar() {
 
         {/* Actions - Right Side */}
         <div className="flex items-center gap-2 ml-auto z-10 flex-shrink-0">
-          <div className="flex items-center gap-1 p-1 rounded-full border shadow-sm" style={{ backgroundColor: 'rgba(42,36,32,0.8)', borderColor: '#463D35' }}>
+          <div className="flex items-center gap-1 p-1 rounded-full border shadow-sm" style={{ backgroundColor: 'rgba(42,36,32,0.8)', borderColor: '#544B43' }}>
 
 
 
@@ -123,7 +123,7 @@ export default function Navbar() {
             <Link to="/cart" className="relative p-2.5 rounded-full hover:bg-foreground/5 transition-colors text-muted-foreground hover:text-foreground flex items-center justify-center">
               <ShoppingCart className="w-5 h-5" />
               {cartCount > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] rounded-full bg-[#FF6B6B] text-white text-[10px] font-black flex items-center justify-center px-1 shadow-[0_0_8px_rgba(255,107,107,0.6)] border-2 border-[#302A25]">
+                <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] rounded-full bg-[#FF6B6B] text-white text-[10px] font-black flex items-center justify-center px-1 shadow-[0_0_8px_rgba(255,107,107,0.6)] border-2 border-[#3F3832]">
                   {cartCount > 9 ? "9+" : cartCount}
                 </span>
               )}
@@ -151,7 +151,7 @@ export default function Navbar() {
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="lg:hidden border-t px-4 py-4 flex flex-col gap-2" style={{ backgroundColor: '#302A25', borderColor: '#463D35' }}
+          className="lg:hidden border-t px-4 py-4 flex flex-col gap-2" style={{ backgroundColor: '#3F3832', borderColor: '#544B43' }}
         >
           {navLinks.map((link) => (
             <Link
