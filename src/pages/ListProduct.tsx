@@ -56,6 +56,11 @@ export default function ListProduct() {
         return;
       }
 
+      if (Number(formData.price) < 1) {
+        toast.error("Price must be at least ₹1.");
+        return;
+      }
+
       // Validate seller info
       const newErrors: Record<string, string> = {};
       if (!formData.sellerPhone.trim() || formData.sellerPhone.replace(/\D/g, "").length < 10) {
@@ -111,7 +116,6 @@ export default function ListProduct() {
             ? `${formData.sellerHostel.trim()}, Room ${formData.sellerRoom.trim()}`
             : null,
         };
-        console.log("[ListProduct] Upserting profile:", profileUpdate);
         const { error: profileError } = await supabase.from("profiles").upsert(profileUpdate, { onConflict: "id" });
         if (profileError) {
           console.error("[ListProduct] Profile upsert error:", profileError);
@@ -380,6 +384,7 @@ export default function ListProduct() {
                         onChange={(e) => setFormData({ ...formData, price: e.target.value })}
                         placeholder="0"
                         className="w-full glass rounded-xl pl-8 pr-4 py-3 text-sm text-foreground placeholder:text-muted-foreground outline-none border border-white/10 focus:border-neon-orange/50 transition-all"
+                        min="1"
                       />
                     </div>
                   </div>
