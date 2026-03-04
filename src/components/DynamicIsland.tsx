@@ -5,8 +5,9 @@ import { useNavigate } from "react-router-dom";
 
 /* ═══════════════════════════════════════════════
    DYNAMIC ISLAND — CU Bazaar Marketplace
-   Collapsed: shows logo "CU BAZZAR"
+   Collapsed: shows logo "CU BAZZAR" (pill shape)
    Expanded: logo (left) + search bar + 🔍
+   Renders INLINE in the navbar (not floating)
    ═══════════════════════════════════════════════ */
 
 const spring = { type: "spring" as const, stiffness: 380, damping: 28 };
@@ -20,9 +21,7 @@ export default function DynamicIsland() {
 
     // Focus input when expanding
     useEffect(() => {
-        if (expanded) {
-            setTimeout(() => inputRef.current?.focus(), 200);
-        }
+        if (expanded) setTimeout(() => inputRef.current?.focus(), 200);
     }, [expanded]);
 
     // ESC to close
@@ -55,7 +54,6 @@ export default function DynamicIsland() {
 
     return (
         <>
-            {/* Inject keyframes */}
             <style>{`
         @keyframes diBreathe {
           0%,100% { box-shadow: 0 0 0 0.5px rgba(255,255,255,0.06), 0 2px 10px rgba(0,0,0,0.5); }
@@ -67,19 +65,15 @@ export default function DynamicIsland() {
                 ref={islandRef}
                 layout
                 animate={{
-                    width: expanded ? Math.min(560, window.innerWidth - 32) : 170,
-                    height: expanded ? 52 : 42,
+                    width: expanded ? "min(500px, calc(100vw - 110px))" : 150,
+                    height: expanded ? 48 : 40,
                 }}
                 transition={spring}
                 onClick={() => { if (!expanded) { setExpanded(true); try { navigator.vibrate?.(10); } catch { } } }}
+                className="dynamic-island-el"
                 style={{
-                    position: "fixed",
-                    top: 8,
-                    left: "50%",
-                    x: "-50%",
-                    zIndex: 99999,
                     cursor: expanded ? "default" : "pointer",
-                    background: "rgba(0, 0, 0, 0.92)",
+                    background: "rgba(0, 0, 0, 0.94)",
                     backdropFilter: "blur(40px) saturate(180%)",
                     WebkitBackdropFilter: "blur(40px) saturate(180%)",
                     borderRadius: 50,
@@ -88,6 +82,7 @@ export default function DynamicIsland() {
                     alignItems: "center",
                     justifyContent: "center",
                     userSelect: "none",
+                    flexShrink: 0,
                     WebkitTapHighlightColor: "transparent",
                     animation: !expanded ? "diBreathe 4s ease-in-out infinite" : "none",
                     boxShadow: expanded
@@ -106,13 +101,12 @@ export default function DynamicIsland() {
                             exit={{ opacity: 0, scale: 0.85 }}
                             transition={{ duration: 0.18 }}
                             style={{
-                                display: "flex", alignItems: "center", gap: 8,
-                                padding: "0 16px", height: "100%",
+                                display: "flex", alignItems: "center", gap: 7,
+                                padding: "0 14px", height: "100%",
                             }}
                         >
-                            {/* Logo icon */}
                             <div style={{
-                                width: 26, height: 26, borderRadius: "50%", overflow: "hidden",
+                                width: 24, height: 24, borderRadius: "50%", overflow: "hidden",
                                 border: "1.5px solid rgba(255,255,255,0.1)", flexShrink: 0,
                             }}>
                                 <img
@@ -121,9 +115,8 @@ export default function DynamicIsland() {
                                     onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
                                 />
                             </div>
-                            {/* Brand text */}
                             <span style={{
-                                fontWeight: 700, fontSize: 14, letterSpacing: -0.3,
+                                fontWeight: 700, fontSize: 13, letterSpacing: -0.3,
                                 whiteSpace: "nowrap", display: "flex", gap: 4,
                             }}>
                                 <span style={{ color: "#FF6B6B" }}>CU</span>
@@ -139,13 +132,13 @@ export default function DynamicIsland() {
                             exit={{ opacity: 0 }}
                             transition={{ duration: 0.2, delay: 0.08 }}
                             style={{
-                                display: "flex", alignItems: "center", gap: 10,
-                                padding: "0 8px 0 14px", height: "100%", width: "100%",
+                                display: "flex", alignItems: "center", gap: 8,
+                                padding: "0 6px 0 12px", height: "100%", width: "100%",
                             }}
                         >
                             {/* Logo mini */}
                             <div style={{
-                                width: 28, height: 28, borderRadius: "50%", overflow: "hidden",
+                                width: 26, height: 26, borderRadius: "50%", overflow: "hidden",
                                 border: "1.5px solid rgba(255,255,255,0.1)", flexShrink: 0,
                             }}>
                                 <img
@@ -159,22 +152,22 @@ export default function DynamicIsland() {
                             <div style={{
                                 flex: 1, display: "flex", alignItems: "center",
                                 background: "rgba(255,255,255,0.08)",
-                                borderRadius: 24, padding: "0 4px 0 12px", height: 34,
+                                borderRadius: 24, padding: "0 4px 0 10px", height: 32,
                                 border: "1px solid rgba(255,255,255,0.06)",
-                                transition: "border-color 0.2s",
+                                minWidth: 0,
                             }}>
-                                <Search style={{ width: 14, height: 14, color: "rgba(255,255,255,0.35)", flexShrink: 0 }} />
+                                <Search style={{ width: 13, height: 13, color: "rgba(255,255,255,0.35)", flexShrink: 0 }} />
                                 <input
                                     ref={inputRef}
                                     type="text"
                                     value={query}
                                     onChange={(e) => setQuery(e.target.value)}
                                     onKeyDown={(e) => { if (e.key === "Enter") handleSearch(); }}
-                                    placeholder="Search products, categories..."
+                                    placeholder="Search products..."
                                     style={{
                                         flex: 1, background: "none", border: "none", outline: "none",
-                                        color: "#fff", fontSize: 13, padding: "0 8px",
-                                        fontFamily: "inherit",
+                                        color: "#fff", fontSize: 13, padding: "0 6px",
+                                        fontFamily: "inherit", minWidth: 0,
                                     }}
                                 />
                                 {query && (
@@ -182,12 +175,12 @@ export default function DynamicIsland() {
                                         onClick={(e) => { e.stopPropagation(); setQuery(""); inputRef.current?.focus(); }}
                                         style={{
                                             background: "rgba(255,255,255,0.1)", border: "none",
-                                            borderRadius: "50%", width: 22, height: 22,
+                                            borderRadius: "50%", width: 20, height: 20,
                                             display: "flex", alignItems: "center", justifyContent: "center",
                                             cursor: "pointer", flexShrink: 0,
                                         }}
                                     >
-                                        <X style={{ width: 12, height: 12, color: "rgba(255,255,255,0.6)" }} />
+                                        <X style={{ width: 11, height: 11, color: "rgba(255,255,255,0.6)" }} />
                                     </button>
                                 )}
                             </div>
@@ -196,28 +189,27 @@ export default function DynamicIsland() {
                             <button
                                 onClick={(e) => { e.stopPropagation(); handleSearch(); }}
                                 style={{
-                                    width: 34, height: 34, borderRadius: "50%", border: "none",
+                                    width: 30, height: 30, borderRadius: "50%", border: "none",
                                     background: query.trim() ? "#FF6B6B" : "rgba(255,255,255,0.08)",
                                     display: "flex", alignItems: "center", justifyContent: "center",
-                                    cursor: "pointer", flexShrink: 0,
-                                    transition: "all 0.2s",
+                                    cursor: "pointer", flexShrink: 0, transition: "all 0.2s",
                                     boxShadow: query.trim() ? "0 2px 10px rgba(255,107,107,0.3)" : "none",
                                 }}
                             >
-                                <Search style={{ width: 15, height: 15, color: query.trim() ? "#fff" : "rgba(255,255,255,0.4)" }} />
+                                <Search style={{ width: 14, height: 14, color: query.trim() ? "#fff" : "rgba(255,255,255,0.4)" }} />
                             </button>
 
                             {/* Close button */}
                             <button
                                 onClick={(e) => { e.stopPropagation(); setExpanded(false); setQuery(""); }}
                                 style={{
-                                    width: 30, height: 30, borderRadius: "50%", border: "none",
+                                    width: 28, height: 28, borderRadius: "50%", border: "none",
                                     background: "rgba(255,255,255,0.06)",
                                     display: "flex", alignItems: "center", justifyContent: "center",
                                     cursor: "pointer", flexShrink: 0, transition: "all 0.2s",
                                 }}
                             >
-                                <X style={{ width: 14, height: 14, color: "rgba(255,255,255,0.5)" }} />
+                                <X style={{ width: 13, height: 13, color: "rgba(255,255,255,0.5)" }} />
                             </button>
                         </motion.div>
                     )}
