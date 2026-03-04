@@ -27,14 +27,8 @@ export default function Cart() {
     const isPhoneValid = phoneClean.length === 10;
     const isFormValid = hostel.trim() !== "" && room.trim() !== "" && isPhoneValid;
 
-    // Calculate Dynamic Delivery Fee based on Time of Day (same as Buy Now)
-    const getDeliveryFee = () => {
-        const hour = new Date().getHours();
-        if (hour >= 6 && hour < 12) return 15; // Morning: Low
-        if (hour >= 12 && hour < 18) return 25; // Afternoon: Moderate
-        return 40; // Night: Highest
-    };
-    const deliveryFee = getDeliveryFee();
+    // Flat delivery fee
+    const deliveryFee = 5;
     const orderTotal = totalPrice + deliveryFee;
 
     const createOrder = async (paymentId?: string) => {
