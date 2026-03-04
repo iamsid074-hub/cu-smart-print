@@ -1,12 +1,13 @@
-import { useState } from "react";
+import { useState, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Pizza, Coffee, Apple, ShoppingBag, Clock, Loader2, Plus, BadgeCheck, Cookie, Soup, FileText, Send, MessageSquare, Sparkles, X, MapPin, Phone, ShoppingCart, Smartphone } from "lucide-react";
+import { Pizza, Coffee, Apple, ShoppingBag, Clock, Loader2, Plus, BadgeCheck, Cookie, Soup, FileText, Send, MessageSquare, Sparkles, X, MapPin, Phone, ShoppingCart, Smartphone, Store, ChevronDown, ChevronRight as ChevRight } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
 import UpiPaymentModal from "@/components/UpiPaymentModal";
+import { shops, type Shop, type MenuCategory } from "@/config/shopMenus";
 import {
     Dialog,
     DialogContent,
@@ -16,6 +17,7 @@ import {
 } from "@/components/ui/dialog";
 
 const foodCategories = [
+    { id: "shops", name: "Campus Shops", emoji: "🏪", icon: Store, color: "from-violet-500 to-purple-600" },
     { id: "snacks", name: "Snacks", emoji: "🍕", icon: Pizza, color: "from-orange-500 to-red-500" },
     { id: "chocolates", name: "Chocolates", emoji: "🍫", icon: Cookie, color: "from-amber-600 to-yellow-700" },
     { id: "beverages", name: "Beverages", emoji: "🥤", icon: Apple, color: "from-red-400 to-pink-500" },
@@ -67,9 +69,11 @@ export default function FoodMenu() {
     const { toast } = useToast();
     const { addItem, totalItems: cartCount } = useCart();
 
-    const [activeCategory, setActiveCategory] = useState("snacks");
+    const [activeCategory, setActiveCategory] = useState("shops");
     const [selectedFood, setSelectedFood] = useState<any>(null);
     const [isBuyModalOpen, setIsBuyModalOpen] = useState(false);
+    const [expandedShop, setExpandedShop] = useState<string | null>(null);
+    const [expandedMenuCat, setExpandedMenuCat] = useState<string | null>(null);
 
     // Form State
     const [location, setLocation] = useState("");
@@ -259,72 +263,192 @@ export default function FoodMenu() {
                     ))}
                 </div>
 
-                {/* Category Count */}
-                <div className="flex items-center justify-between mb-4 px-1">
-                    <p className="text-sm text-muted-foreground">
-                        Showing <span className="text-white font-bold">{filteredFoods.length}</span> items in <span className={`font-bold text-transparent bg-clip-text bg-gradient-to-r ${activeCat?.color}`}>{activeCat?.name}</span>
-                    </p>
-                    <span className="px-2.5 py-1 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-bold flex items-center gap-1">
-                        <BadgeCheck className="w-3 h-3" /> ₹5 Delivery
-                    </span>
-                </div>
+                {/* ─────── SHOPS VIEW ─────── */}
+                {activeCategory === "shops" ? (
+                    <div className="space-y-3">
+                        <div className="flex items-center justify-between mb-2 px-1">
+                            <p className="text-sm text-muted-foreground">
+                                <span className="text-white font-bold">{shops.length}</span> campus food shops
+                            </p>
+                            <span className="px-2.5 py-1 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-bold flex items-center gap-1">
+                                <BadgeCheck className="w-3 h-3" /> ₹5 Delivery
+                            </span>
+                        </div>
 
-                {/* Grid */}
-                <AnimatePresence mode="wait">
-                    <motion.div
-                        key={activeCategory}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        transition={{ duration: 0.25 }}
-                        className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-5"
-                    >
-                        {filteredFoods.map((item, i) => (
-                            <motion.div
-                                key={item.id}
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: i * 0.05 }}
-                                className="group relative glass rounded-2xl sm:rounded-3xl overflow-hidden border border-white/5 hover:border-orange-500/30 transition-all duration-300 hover:shadow-[0_0_30px_rgba(249,115,22,0.15)] hover:-translate-y-1 flex flex-col"
-                            >
-                                {/* Fast Delivery Badge */}
-                                <div className="absolute top-2 left-2 sm:top-3 sm:left-3 z-20 px-2 py-0.5 sm:py-1 rounded-lg bg-black/60 backdrop-blur-md border border-white/10 flex items-center gap-1 text-[9px] sm:text-[10px] font-bold text-white">
-                                    <Clock className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-orange-400" /> ~10 min
-                                </div>
-
-                                {/* Image — proper sizing with object-contain for full visibility */}
-                                <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-white/[0.03] to-white/[0.01]">
-                                    <div className="absolute inset-0 bg-gradient-to-t from-[#0A0505] to-transparent z-10 opacity-50" />
-                                    <img
-                                        src={item.image}
-                                        alt={item.title}
-                                        loading="lazy"
-                                        className="w-full h-full object-cover p-3 sm:p-4 rounded-2xl group-hover:scale-105 transition-transform duration-500 z-0"
-                                    />
-                                </div>
-
-                                {/* Content */}
-                                <div className="p-3 sm:p-4 flex flex-col flex-1 relative z-20">
-                                    <h3 className="font-bold text-xs sm:text-sm md:text-base mb-1 line-clamp-2 leading-snug">{item.title}</h3>
-                                    <p className="text-lg sm:text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-500 mb-2 sm:mb-3">
-                                        ₹{item.price}
-                                    </p>
-
+                        {shops.map((shop, si) => {
+                            const isOpen = expandedShop === shop.id;
+                            return (
+                                <motion.div
+                                    key={shop.id}
+                                    initial={{ opacity: 0, y: 16 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: si * 0.06 }}
+                                    className="rounded-2xl border border-white/10 overflow-hidden"
+                                    style={{ backgroundColor: 'rgba(255,255,255,0.03)' }}
+                                >
+                                    {/* Shop header — click to expand */}
                                     <button
-                                        onClick={() => {
-                                            addItem({ id: item.id, title: item.title, price: item.price, image: item.image, category: item.category });
-                                            toast({ title: `${item.title} added`, description: `${cartCount + 1} item(s) in cart` });
-                                        }}
-                                        className="mt-auto w-full min-h-[40px] sm:min-h-[44px] py-2 sm:py-2.5 rounded-xl bg-white/5 hover:bg-gradient-to-r hover:from-orange-500 hover:to-red-500 group-hover:shadow-[0_0_20px_rgba(249,115,22,0.3)] border border-white/10 hover:border-transparent text-white font-bold transition-all duration-300 flex items-center justify-center gap-1.5 text-xs sm:text-sm"
+                                        onClick={() => { setExpandedShop(isOpen ? null : shop.id); setExpandedMenuCat(null); }}
+                                        className="w-full flex items-center gap-3 p-4 sm:p-5 text-left transition-colors hover:bg-white/[0.03]"
                                     >
-                                        <ShoppingCart className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
-                                        <span>Add to Cart</span>
+                                        <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-violet-500/20 to-purple-500/20 border border-violet-500/20 flex items-center justify-center flex-shrink-0">
+                                            <Store className="w-5 h-5 text-violet-400" />
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <div className="flex items-center gap-2">
+                                                <h3 className="text-sm sm:text-base font-bold text-white truncate">{shop.name}</h3>
+                                                {shop.veg && (
+                                                    <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-green-500/15 text-green-400 border border-green-500/20 flex-shrink-0">VEG</span>
+                                                )}
+                                            </div>
+                                            <p className="text-xs text-muted-foreground mt-0.5">{shop.tag} · {shop.categories.length} categories</p>
+                                        </div>
+                                        <motion.div animate={{ rotate: isOpen ? 180 : 0 }} transition={{ duration: 0.2 }}>
+                                            <ChevronDown className="w-5 h-5 text-muted-foreground flex-shrink-0" />
+                                        </motion.div>
                                     </button>
-                                </div>
+
+                                    {/* Expanded menu */}
+                                    <AnimatePresence>
+                                        {isOpen && (
+                                            <motion.div
+                                                initial={{ height: 0, opacity: 0 }}
+                                                animate={{ height: 'auto', opacity: 1 }}
+                                                exit={{ height: 0, opacity: 0 }}
+                                                transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
+                                                className="overflow-hidden"
+                                            >
+                                                <div className="px-4 pb-4 sm:px-5 sm:pb-5 space-y-2" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+                                                    {/* Category pills */}
+                                                    <div className="flex gap-2 overflow-x-auto scrollbar-hide py-3 -mx-1 px-1">
+                                                        {shop.categories.map((mc) => (
+                                                            <button
+                                                                key={mc.category}
+                                                                onClick={() => setExpandedMenuCat(expandedMenuCat === mc.category ? null : mc.category)}
+                                                                className={`flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${expandedMenuCat === mc.category
+                                                                        ? 'bg-violet-500/20 text-violet-300 border border-violet-500/30'
+                                                                        : 'bg-white/5 text-muted-foreground border border-white/5 hover:bg-white/10'
+                                                                    }`}
+                                                            >
+                                                                {mc.category}
+                                                            </button>
+                                                        ))}
+                                                    </div>
+
+                                                    {/* Items for selected category */}
+                                                    {shop.categories
+                                                        .filter((mc) => !expandedMenuCat || mc.category === expandedMenuCat)
+                                                        .map((mc) => (
+                                                            <div key={mc.category} className="mb-3">
+                                                                <p className="text-xs font-bold text-violet-400 uppercase tracking-wider mb-2 px-1">{mc.category}</p>
+                                                                <div className="space-y-1">
+                                                                    {mc.items.map((item, idx) => (
+                                                                        <div
+                                                                            key={`${mc.category}-${idx}`}
+                                                                            className="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-white/[0.04] transition-colors group"
+                                                                        >
+                                                                            <span className="text-sm text-white/80 flex-1 min-w-0 truncate pr-3">{item.name}</span>
+                                                                            <div className="flex items-center gap-2 flex-shrink-0">
+                                                                                <span className="text-sm font-bold text-orange-400">₹{item.price}</span>
+                                                                                <button
+                                                                                    onClick={() => {
+                                                                                        addItem({
+                                                                                            id: `${shop.id}-${mc.category}-${idx}`,
+                                                                                            title: `${item.name} (${shop.name})`,
+                                                                                            price: item.price,
+                                                                                            image: '',
+                                                                                            category: 'shops',
+                                                                                        });
+                                                                                        toast({ title: `${item.name} added`, description: `From ${shop.name}` });
+                                                                                    }}
+                                                                                    className="w-7 h-7 rounded-lg bg-orange-500/10 border border-orange-500/20 flex items-center justify-center text-orange-400 opacity-0 group-hover:opacity-100 sm:opacity-100 transition-opacity hover:bg-orange-500/20"
+                                                                                >
+                                                                                    <Plus className="w-3.5 h-3.5" />
+                                                                                </button>
+                                                                            </div>
+                                                                        </div>
+                                                                    ))}
+                                                                </div>
+                                                            </div>
+                                                        ))}
+                                                </div>
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
+                                </motion.div>
+                            );
+                        })}
+                    </div>
+                ) : (
+                    <>
+                        {/* Category Count */}
+                        <div className="flex items-center justify-between mb-4 px-1">
+                            <p className="text-sm text-muted-foreground">
+                                Showing <span className="text-white font-bold">{filteredFoods.length}</span> items in <span className={`font-bold text-transparent bg-clip-text bg-gradient-to-r ${activeCat?.color}`}>{activeCat?.name}</span>
+                            </p>
+                            <span className="px-2.5 py-1 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-bold flex items-center gap-1">
+                                <BadgeCheck className="w-3 h-3" /> ₹5 Delivery
+                            </span>
+                        </div>
+
+                        {/* Grid */}
+                        <AnimatePresence mode="wait">
+                            <motion.div
+                                key={activeCategory}
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -10 }}
+                                transition={{ duration: 0.25 }}
+                                className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-5"
+                            >
+                                {filteredFoods.map((item, i) => (
+                                    <motion.div
+                                        key={item.id}
+                                        initial={{ opacity: 0, y: 20 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: i * 0.05 }}
+                                        className="group relative glass rounded-2xl sm:rounded-3xl overflow-hidden border border-white/5 hover:border-orange-500/30 transition-all duration-300 hover:shadow-[0_0_30px_rgba(249,115,22,0.15)] hover:-translate-y-1 flex flex-col"
+                                    >
+                                        {/* Fast Delivery Badge */}
+                                        <div className="absolute top-2 left-2 sm:top-3 sm:left-3 z-20 px-2 py-0.5 sm:py-1 rounded-lg bg-black/60 backdrop-blur-md border border-white/10 flex items-center gap-1 text-[9px] sm:text-[10px] font-bold text-white">
+                                            <Clock className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-orange-400" /> ~10 min
+                                        </div>
+
+                                        {/* Image */}
+                                        <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-white/[0.03] to-white/[0.01]">
+                                            <div className="absolute inset-0 bg-gradient-to-t from-[#0A0505] to-transparent z-10 opacity-50" />
+                                            <img
+                                                src={item.image}
+                                                alt={item.title}
+                                                loading="lazy"
+                                                className="w-full h-full object-cover p-3 sm:p-4 rounded-2xl group-hover:scale-105 transition-transform duration-500 z-0"
+                                            />
+                                        </div>
+
+                                        {/* Content */}
+                                        <div className="p-3 sm:p-4 flex flex-col flex-1 relative z-20">
+                                            <h3 className="font-bold text-xs sm:text-sm md:text-base mb-1 line-clamp-2 leading-snug">{item.title}</h3>
+                                            <p className="text-lg sm:text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-500 mb-2 sm:mb-3">
+                                                ₹{item.price}
+                                            </p>
+
+                                            <button
+                                                onClick={() => {
+                                                    addItem({ id: item.id, title: item.title, price: item.price, image: item.image, category: item.category });
+                                                    toast({ title: `${item.title} added`, description: `${cartCount + 1} item(s) in cart` });
+                                                }}
+                                                className="mt-auto w-full min-h-[40px] sm:min-h-[44px] py-2 sm:py-2.5 rounded-xl bg-white/5 hover:bg-gradient-to-r hover:from-orange-500 hover:to-red-500 group-hover:shadow-[0_0_20px_rgba(249,115,22,0.3)] border border-white/10 hover:border-transparent text-white font-bold transition-all duration-300 flex items-center justify-center gap-1.5 text-xs sm:text-sm"
+                                            >
+                                                <ShoppingCart className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
+                                                <span>Add to Cart</span>
+                                            </button>
+                                        </div>
+                                    </motion.div>
+                                ))}
                             </motion.div>
-                        ))}
-                    </motion.div>
-                </AnimatePresence>
+                        </AnimatePresence>
+                    </>
+                )}
 
                 {/* ─── Custom Order Section ─── */}
                 <motion.div
