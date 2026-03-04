@@ -18,6 +18,7 @@ import Cart from "./pages/Cart";
 import Admin from "./pages/Admin";
 import TermsAndConditions from "./pages/TermsAndConditions";
 import Navbar from "./components/Navbar";
+import DynamicIsland from "./components/DynamicIsland";
 import UsernameSetup from "./components/UsernameSetup";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { CartProvider } from "./contexts/CartContext";
@@ -72,6 +73,7 @@ function AppLayout() {
   return (
     <>
       {!isLanding && !isLogin && !isAdmin && <Navbar />}
+      {!isLanding && !isLogin && !isAdmin && <DynamicIsland />}
       <Routes>
         <Route path="/" element={user ? <Navigate to="/home" replace /> : <Index />} />
         {/* We wrap Home in ProtectedRoute so users are gated there too if they bypass somehow */}
