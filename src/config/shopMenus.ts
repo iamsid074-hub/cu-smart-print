@@ -1549,64 +1549,1071 @@ export const shops: Shop[] = [
     {
         id: "rock-in-roll",
         name: "Rock in Roll (NC-3)",
-        tag: "📞 9888391974 • Menu coming soon",
+        tag: "📞 9888391974 • Rolls • Noodles • Rice",
         veg: false,
-        categories: [{ category: "Menu Coming Soon", items: [{ name: "Full menu will be added shortly", price: 0 }] }],
+        categories: [
+            {
+                category: "Egg Roll", items: [
+                    { name: "Egg Roll", price: 30 }, { name: "Double Egg Roll", price: 50 }, { name: "Egg Paneer Roll", price: 60 },
+                    { name: "Double Egg Paneer Roll", price: 70 }, { name: "Egg Noodles Roll", price: 60 }, { name: "Egg Veg Roll", price: 70 },
+                    { name: "Egg Veg Paneer Roll", price: 70 }, { name: "Double Egg Veg Roll", price: 70 }, { name: "Double Egg Veg Paneer Roll", price: 90 },
+                ]
+            },
+            {
+                category: "Veg Roll", items: [
+                    { name: "Veg Roll", price: 40 }, { name: "Paneer Roll", price: 50 }, { name: "Veg Paneer Roll", price: 60 },
+                    { name: "Soya Chaap Roll", price: 60 }, { name: "Veg Noodles Roll", price: 60 }, { name: "Paneer Noodles Roll", price: 70 },
+                    { name: "Double Paneer Roll", price: 80 },
+                ]
+            },
+            {
+                category: "Chicken Roll", items: [
+                    { name: "Chicken Roll", price: 80 }, { name: "Chicken Paneer Roll", price: 90 }, { name: "Egg Chicken Roll", price: 90 },
+                    { name: "Double Egg Chicken Roll", price: 100 }, { name: "Egg Chicken Paneer Roll", price: 100 },
+                    { name: "Chicken Noodles Roll", price: 100 }, { name: "Double Egg Chicken Paneer Roll", price: 110 },
+                    { name: "Double Chicken Roll", price: 120 }, { name: "Double Chicken Paneer Roll", price: 130 },
+                    { name: "Double Egg Double Chicken Paneer Roll", price: 140 },
+                ]
+            },
+            {
+                category: "Noodles", items: [
+                    { name: "Veg Noodles", price: 80 }, { name: "Egg Noodles", price: 90 }, { name: "Soya Chaap Noodles", price: 100 },
+                    { name: "Paneer Noodles", price: 110 }, { name: "Chicken Noodles", price: 110 },
+                ]
+            },
+            {
+                category: "Rice", items: [
+                    { name: "Veg Fried Rice", price: 80 }, { name: "Egg Fried Rice", price: 90 }, { name: "Soya Chaap Fried Rice", price: 100 },
+                    { name: "Chicken Fried Rice", price: 110 }, { name: "Paneer Fried Rice", price: 110 },
+                ]
+            },
+            {
+                category: "Soups", items: [
+                    { name: "Veg Soup", price: 40 }, { name: "Chicken Soup", price: 70 },
+                ]
+            },
+        ],
     },
     {
         id: "food-castle",
         name: "Food Castle (NC-5)",
-        tag: "📞 9988619177 • Menu coming soon",
+        tag: "📞 9988619177 • Pizza • Bakery • Sandwiches",
         veg: false,
-        categories: [{ category: "Menu Coming Soon", items: [{ name: "Full menu will be added shortly", price: 0 }] }],
+        categories: [
+            {
+                category: "Hot Beverages", items: [
+                    { name: "Tea", price: 10 }, { name: "Milk Tea", price: 20 }, { name: "Espresso Coffee", price: 25 },
+                    { name: "Hot Badam Milk", price: 40 },
+                ]
+            },
+            {
+                category: "Snacks & Breakfast", items: [
+                    { name: "Samosa", price: 15 }, { name: "Samosa Chaat", price: 50 }, { name: "Rajma Rice", price: 50 },
+                    { name: "Chana Rice", price: 50 }, { name: "Bread Omelette", price: 50 },
+                ]
+            },
+            {
+                category: "Kathi Roll", items: [
+                    { name: "Veg Roll", price: 50 }, { name: "Paneer Roll", price: 70 }, { name: "Egg Roll", price: 50 },
+                    { name: "Soya Chaap Roll", price: 70 }, { name: "Chilly Paneer Roll", price: 70 },
+                    { name: "Pasta Roll", price: 70 }, { name: "Egg Noodles Roll", price: 70 },
+                    { name: "Egg Paneer Roll", price: 90 }, { name: "Egg Cheese Roll", price: 90 },
+                ]
+            },
+            {
+                category: "Mojito", items: [
+                    { name: "Kala Khatta", price: 60 }, { name: "Mango Tango", price: 60 }, { name: "Green Apple", price: 60 },
+                    { name: "Icey Blue", price: 60 }, { name: "Peach Mojito", price: 60 }, { name: "Virgin Mojito", price: 60 },
+                    { name: "Cold Coffee", price: 60 },
+                ]
+            },
+            {
+                category: "Light Drinks", items: [
+                    { name: "Lime Water", price: 30 }, { name: "Lime Soda", price: 40 }, { name: "Watermelon", price: 50 },
+                    { name: "Jal Jeera", price: 50 }, { name: "Strawberry Soda", price: 60 }, { name: "Blue Italian Soda", price: 60 },
+                ]
+            },
+            {
+                category: "Fruit Shakes", items: [
+                    { name: "Banana Shake", price: 50 }, { name: "Papaya Shake", price: 60 },
+                    { name: "Mango Shake", price: 60 }, { name: "Chiku Shake", price: 60 },
+                ]
+            },
+            {
+                category: "Spl. Milk Shakes", items: [
+                    { name: "Vanilla Shake", price: 60 }, { name: "Chocolate Shake", price: 60 },
+                    { name: "Butterscotch Shake", price: 60 }, { name: "Black Current Shake", price: 60 },
+                    { name: "Cold Coffee", price: 60 },
+                ]
+            },
+            {
+                category: "Smoothies", items: [
+                    { name: "Strawberry Smoothie", price: 60 }, { name: "Blue Raspberry Smoothie", price: 60 },
+                    { name: "Mango Smoothie", price: 60 }, { name: "Pineapple Smoothie", price: 60 },
+                ]
+            },
+            {
+                category: "Lassi", items: [
+                    { name: "Punjabi Sweet Lassi", price: 50 }, { name: "Salty Lassi", price: 50 },
+                ]
+            },
+            {
+                category: "Loaded Drinks", items: [
+                    { name: "Oreo Chocolate", price: 60 }, { name: "Kit Kat Blast", price: 60 },
+                    { name: "Snicker Blast", price: 60 }, { name: "Badam Milk", price: 60 },
+                    { name: "Badam Thandai", price: 60 }, { name: "Caramel Chocolate", price: 60 },
+                ]
+            },
+            {
+                category: "Noodles", items: [
+                    { name: "Veg Noodles", price: 70 }, { name: "Chilly Garlic Noodles", price: 80 },
+                    { name: "Cheese Noodles", price: 90 }, { name: "Egg Noodles", price: 90 },
+                    { name: "Mushroom Noodles", price: 90 }, { name: "Butter Noodles", price: 90 },
+                    { name: "Hakka Noodles", price: 100 },
+                ]
+            },
+            {
+                category: "Rice", items: [
+                    { name: "Veg Fried Rice", price: 70 }, { name: "Cheese Fried Rice", price: 90 },
+                    { name: "Egg Rice", price: 90 }, { name: "Mushroom Rice", price: 90 },
+                ]
+            },
+            {
+                category: "Chinese Snacks", items: [
+                    { name: "Veg Spring Roll", price: 60 }, { name: "Veg Maggi", price: 50 },
+                    { name: "Veg Manchurian", price: 70 }, { name: "Veg Momos", price: 60 },
+                    { name: "Chilli Potato", price: 70 }, { name: "Honey Chilly Potato", price: 90 },
+                    { name: "Honey Chilly Cauliflower", price: 90 }, { name: "Kurkure Momos", price: 90 },
+                    { name: "Chilly Momos", price: 90 }, { name: "Pav Bhaji", price: 70 },
+                    { name: "Cheese Finger", price: 100 }, { name: "Cheese Chilly", price: 100 },
+                    { name: "Mushroom Chilly", price: 100 }, { name: "Cheese Manchurian", price: 100 },
+                ]
+            },
+            {
+                category: "Grilled Patty & Fried", items: [
+                    { name: "Aloo Patty", price: 20 }, { name: "Cheese Patty", price: 30 },
+                    { name: "Paneer Corma Patty", price: 40 }, { name: "Cheese Corn Patty", price: 40 },
+                    { name: "Pasta Patty", price: 40 }, { name: "Golden Fries", price: 60 },
+                    { name: "Masala Fries", price: 70 }, { name: "Cheese Finger", price: 100 },
+                ]
+            },
+            {
+                category: "Burger", items: [
+                    { name: "Aloo Tikki Burger", price: 40 }, { name: "Veg Cheese Burger", price: 50 },
+                    { name: "Spicy Paneer Burger", price: 60 }, { name: "Mexican Burger", price: 70 },
+                    { name: "MHC King Burger", price: 70 },
+                ]
+            },
+            {
+                category: "Grilled Sandwich", items: [
+                    { name: "Veg Sandwich", price: 70 }, { name: "Cheese Bust Sandwich", price: 80 },
+                    { name: "Butter Sandwich", price: 80 }, { name: "Mushroom Corn Sandwich", price: 80 },
+                    { name: "Potato Tikka Sandwich", price: 80 }, { name: "Paneer Tikka Sandwich", price: 80 },
+                    { name: "Pasta Sandwich", price: 80 }, { name: "Paneer Corma Sandwich", price: 80 },
+                    { name: "Cheese Corn Sandwich", price: 80 },
+                ]
+            },
+            {
+                category: "Garlic Bread", items: [
+                    { name: "Plain Cheese", price: 100 }, { name: "Corn Cheese", price: 120 },
+                    { name: "Vegetarian", price: 90 }, { name: "Mexican Garlic Bread", price: 120 },
+                ]
+            },
+            {
+                category: "Pasta", items: [
+                    { name: "Tomato Penne", price: 90 }, { name: "Creamy White Sauce Pasta", price: 100 },
+                    { name: "Mushroom Corn Pasta", price: 110 }, { name: "Makhani Pasta", price: 110 },
+                    { name: "Mix Pasta", price: 110 },
+                ]
+            },
+            {
+                category: "Pizza", items: [
+                    { name: "Cheese Pizza", price: 100 }, { name: "Paneer Makhani Pizza", price: 140 },
+                    { name: "Farm House Pizza", price: 130 }, { name: "Cheese Corn Pizza", price: 130 },
+                    { name: "Veggie Penta Pizza", price: 130 }, { name: "Mexican Wave Pizza", price: 140 },
+                    { name: "Special Pizza", price: 150 },
+                ]
+            },
+            {
+                category: "Bakery Items", items: [
+                    { name: "Bakery Biscuit", price: 50 }, { name: "Cake (Half Kg)", price: 300 },
+                    { name: "Swiss Roll", price: 40 }, { name: "Pastry", price: 40 },
+                    { name: "Pudding", price: 40 }, { name: "Brownie", price: 40 },
+                    { name: "Brownie with Hot Chocolate", price: 50 },
+                ]
+            },
+            {
+                category: "Dessert", items: [
+                    { name: "Pastry", price: 40 }, { name: "Brownie", price: 40 },
+                    { name: "Brownie with Hot Chocolate", price: 50 },
+                ]
+            },
+            {
+                category: "American Corn", items: [
+                    { name: "Small Corn", price: 50 }, { name: "Large Corn", price: 60 },
+                ]
+            },
+            {
+                category: "Chinese Snacks Combo", items: [
+                    { name: "Noodle + Manchurian", price: 100 }, { name: "Rice + Manchurian", price: 100 },
+                    { name: "Noodle + Cheese Chilly", price: 120 }, { name: "Rice + Cheese Chilly", price: 120 },
+                ]
+            },
+            {
+                category: "Extra Healthy", items: [
+                    { name: "Brown Sandwich", price: 80 }, { name: "Fruit Salad", price: 60 },
+                    { name: "Pasta Salad", price: 100 },
+                ]
+            },
+        ],
     },
     {
         id: "eat-and-smile",
         name: "Eat and Smile (NC-6)",
-        tag: "📞 7988511867 • Menu coming soon",
+        tag: "📞 7988511867 • Breakfast • Chinese • Rolls",
         veg: false,
-        categories: [{ category: "Menu Coming Soon", items: [{ name: "Full menu will be added shortly", price: 0 }] }],
+        categories: [
+            {
+                category: "Breakfast", items: [
+                    { name: "Aloo Prantha", price: 70 }, { name: "Mix Prantha", price: 80 },
+                    { name: "Paneer Prantha", price: 90 }, { name: "Bread Omelette", price: 50 },
+                    { name: "Maggi", price: 40 }, { name: "Veg Maggi", price: 50 },
+                ]
+            },
+            {
+                category: "Patties", items: [
+                    { name: "Aloo Pattie", price: 20 }, { name: "Cheese Pattie", price: 25 },
+                    { name: "Cheese Corn Pattie", price: 30 }, { name: "Korma Pattie", price: 40 },
+                ]
+            },
+            {
+                category: "Rice", items: [
+                    { name: "Veg Fried Rice", price: 70 }, { name: "Paneer Rice", price: 90 },
+                    { name: "Egg Fried Rice", price: 90 }, { name: "Mushroom Fried Rice", price: 90 },
+                    { name: "Chicken Fried Rice", price: 110 },
+                ]
+            },
+            {
+                category: "Pasta", items: [
+                    { name: "Red Sauce Pasta", price: 90 }, { name: "White Sauce Pasta", price: 100 },
+                    { name: "Mix Sauce Pasta", price: 100 }, { name: "Chicken Pasta", price: 130 },
+                ]
+            },
+            {
+                category: "Noodles", items: [
+                    { name: "Veg Noodles", price: 70 }, { name: "Chilli Garlic Noodles", price: 80 },
+                    { name: "Hakka Noodles", price: 90 }, { name: "Paneer Noodles", price: 90 },
+                    { name: "Egg Noodles", price: 90 }, { name: "Chicken Noodles", price: 100 },
+                ]
+            },
+            {
+                category: "Burger", items: [
+                    { name: "Aloo Tikki Burger", price: 40 }, { name: "Cheese Burger", price: 50 },
+                    { name: "Paneer Burger", price: 60 }, { name: "Chicken Burger", price: 60 },
+                    { name: "King Burger", price: 80 }, { name: "Mexican Burger", price: 80 },
+                ]
+            },
+            {
+                category: "Sandwich", items: [
+                    { name: "Veg Grilled Sandwich", price: 70 }, { name: "Aloo Tikka Sandwich", price: 80 },
+                    { name: "Cheese Corn Sandwich", price: 80 }, { name: "Paneer Tikka Sandwich", price: 80 },
+                    { name: "Mexican Sandwich", price: 90 }, { name: "Paneer Korma Sandwich", price: 90 },
+                    { name: "Chicken Sandwich", price: 100 },
+                ]
+            },
+            {
+                category: "Roll", items: [
+                    { name: "Spring Roll", price: 60 }, { name: "Veg Roll", price: 50 },
+                    { name: "Egg Roll", price: 60 }, { name: "Paneer Roll", price: 70 },
+                    { name: "Soya Chaap Roll", price: 70 }, { name: "Cheese Corn Roll", price: 70 },
+                    { name: "Chicken Roll", price: 100 }, { name: "Cheese Finger", price: 100 },
+                ]
+            },
+            {
+                category: "Chinese", items: [
+                    { name: "Veg Manchurian", price: 80 }, { name: "Steam Momos", price: 60 },
+                    { name: "Fried Momos", price: 70 }, { name: "Chilly Chicken", price: 200 },
+                    { name: "Chilly Paneer", price: 150 }, { name: "Mushroom Chilli", price: 100 },
+                ]
+            },
+            {
+                category: "Fries", items: [
+                    { name: "Golden Fries", price: 70 }, { name: "Chilli Potato", price: 90 },
+                    { name: "Honey Chilli", price: 90 },
+                ]
+            },
+            {
+                category: "Beverages", items: [
+                    { name: "Chai", price: 15 }, { name: "Hot Coffee", price: 25 },
+                    { name: "Sweet Lassi", price: 40 }, { name: "Mango Lassi", price: 60 },
+                    { name: "Cold Coffee", price: 60 }, { name: "Banana Shake", price: 50 },
+                    { name: "Butterscotch Shake", price: 60 }, { name: "Kesar Pista Shake", price: 60 },
+                    { name: "Vanilla Shake", price: 60 }, { name: "Strawberry Shake", price: 60 },
+                    { name: "Black Current Shake", price: 60 }, { name: "Chocolate Shake", price: 60 },
+                    { name: "Oreo Shake", price: 60 },
+                ]
+            },
+            {
+                category: "Mojitos", items: [
+                    { name: "Nimbu Panni", price: 30 }, { name: "Lime Soda", price: 40 },
+                    { name: "Kala Khata", price: 50 }, { name: "Virgin Mojito", price: 50 },
+                    { name: "Green Apple", price: 50 }, { name: "Ice Blue", price: 50 },
+                ]
+            },
+            {
+                category: "Special Items", items: [
+                    { name: "Pav Bhaji", price: 70 }, { name: "Chole Bhature", price: 60 },
+                    { name: "Chole Bhature with Lassi", price: 90 },
+                ]
+            },
+            {
+                category: "Spl. Gym Diet", items: [
+                    { name: "Boil Chicken (250g)", price: 130 }, { name: "Grill Chicken", price: 140 },
+                    { name: "Stuffed Grill Chicken", price: 160 }, { name: "Special Meal", price: 180 },
+                ]
+            },
+        ],
     },
     {
         id: "zaika",
         name: "Zaika (NC-4)",
-        tag: "Campus food • Menu coming soon",
+        tag: "📞 8360292356 • Indian • Thali • Biryani",
         veg: false,
-        categories: [{ category: "Menu Coming Soon", items: [{ name: "Full menu will be added shortly", price: 0 }] }],
+        categories: [
+            {
+                category: "Veg Thali", items: [
+                    { name: "Rajma Thali", price: 80 }, { name: "Chole Thali", price: 80 },
+                    { name: "Dal Makhni Thali", price: 90 }, { name: "Spl. Veg Thali", price: 110 },
+                    { name: "Kadahi Paneer Thali", price: 140 }, { name: "Paneer Butter Masala Thali", price: 140 },
+                ]
+            },
+            {
+                category: "Veg Main Course", items: [
+                    { name: "Dal Makhni (Half)", price: 90 }, { name: "Dal Makhni (Full)", price: 160 },
+                    { name: "Mix Veg (Half)", price: 100 }, { name: "Mix Veg (Full)", price: 170 },
+                    { name: "Channa Masala (Half)", price: 90 }, { name: "Channa Masala (Full)", price: 160 },
+                    { name: "Rajma (Half)", price: 80 }, { name: "Rajma (Full)", price: 150 },
+                    { name: "Cholle White (Half)", price: 80 }, { name: "Cholle White (Full)", price: 150 },
+                    { name: "Kadahi Paneer (Half)", price: 150 }, { name: "Kadahi Paneer (Full)", price: 240 },
+                    { name: "Shahi Paneer (Half)", price: 150 }, { name: "Shahi Paneer (Full)", price: 240 },
+                    { name: "Paneer Butter Masala (Half)", price: 150 }, { name: "Paneer Butter Masala (Full)", price: 240 },
+                    { name: "Paneer Do Pyaza (Half)", price: 150 }, { name: "Paneer Do Pyaza (Full)", price: 240 },
+                    { name: "Soya Butter Masala (Half)", price: 150 }, { name: "Soya Butter Masala (Full)", price: 240 },
+                    { name: "Kadahi Soya (Half)", price: 150 }, { name: "Kadahi Soya (Full)", price: 240 },
+                ]
+            },
+            {
+                category: "Combos (Veg)", items: [
+                    { name: "Rajmah + Rice", price: 60 }, { name: "Cholle + Rice", price: 60 },
+                    { name: "Dal Makhni + Rice", price: 80 }, { name: "Paneer + Rice", price: 80 },
+                ]
+            },
+            {
+                category: "Parantha", items: [
+                    { name: "Aloo Parantha", price: 50 }, { name: "Paneer Parantha", price: 70 },
+                ]
+            },
+            {
+                category: "Veg Snacks", items: [
+                    { name: "Paneer Tikka", price: 220 }, { name: "Paneer Malai Tikka", price: 240 },
+                    { name: "Soya Malai Chaap", price: 200 }, { name: "Soya Achari Tikka", price: 200 },
+                ]
+            },
+            {
+                category: "Non-Veg Thali", items: [
+                    { name: "Kadhai Chicken Thali", price: 160 }, { name: "Butter Chicken Thali", price: 160 },
+                    { name: "Tawa Chicken Thali", price: 160 }, { name: "Masala Chicken Thali", price: 160 },
+                ]
+            },
+            {
+                category: "Non-Veg Main Course", items: [
+                    { name: "Butter Chicken (Half)", price: 250 }, { name: "Butter Chicken (Full)", price: 430 },
+                    { name: "Kadhai Chicken (Half)", price: 250 }, { name: "Kadhai Chicken (Full)", price: 430 },
+                    { name: "Masala Chicken (Half)", price: 250 }, { name: "Masala Chicken (Full)", price: 430 },
+                    { name: "Tawa Chicken (Half)", price: 250 }, { name: "Tawa Chicken (Full)", price: 430 },
+                    { name: "Chicken Do Pyaza", price: 250 },
+                    { name: "Chicken Curry (Home Style) (Half)", price: 240 }, { name: "Chicken Curry (Full)", price: 420 },
+                    { name: "Rara Chicken (Half)", price: 280 }, { name: "Rara Chicken (Full)", price: 450 },
+                ]
+            },
+            {
+                category: "Combos (Non-Veg)", items: [
+                    { name: "Chicken Curry + Rice", price: 160 }, { name: "Butter Chicken + Rice", price: 160 },
+                ]
+            },
+            {
+                category: "Non-Veg Snacks", items: [
+                    { name: "Tandoori Chicken (Half)", price: 250 }, { name: "Tandoori Chicken (Full)", price: 420 },
+                    { name: "Afghani Chicken (Half)", price: 270 }, { name: "Afghani Chicken (Full)", price: 450 },
+                ]
+            },
+            {
+                category: "Biryani", items: [
+                    { name: "Veg Biryani", price: 130 }, { name: "Chicken Biryani", price: 160 },
+                ]
+            },
+            {
+                category: "Breads / Kulcha", items: [
+                    { name: "Tandoori Roti", price: 10 }, { name: "Butter Naan", price: 20 },
+                    { name: "Garlic Naan", price: 30 }, { name: "Lacha Prantha", price: 30 },
+                    { name: "Amritshari Kulcha (Aloo/Pyaza)", price: 80 },
+                    { name: "Amritshari Kulcha (Paneer)", price: 110 },
+                    { name: "Cheese Naan With Gravy", price: 110 },
+                ]
+            },
+        ],
     },
     {
         id: "bakerz-hub",
         name: "Bakerz Hub (NC-2)",
-        tag: "Bakery • Menu coming soon",
+        tag: "📞 8947000006 • Pizza • Cafe • Bakery",
         veg: false,
-        categories: [{ category: "Menu Coming Soon", items: [{ name: "Full menu will be added shortly", price: 0 }] }],
+        categories: [
+            {
+                category: "Baker'z Hub Meals", items: [
+                    { name: "Veg Burger + Fries + Coke", price: 110 }, { name: "Chicken Burger + Fries + Coke", price: 130 },
+                    { name: "Chicken Biryani (Half)", price: 120 }, { name: "Chicken Biryani (Full)", price: 230 },
+                ]
+            },
+            {
+                category: "Mojito", items: [
+                    { name: "Masala Coke", price: 59 }, { name: "Mousami Soda", price: 59 },
+                    { name: "Lemon Mint", price: 69 }, { name: "Virgin Mojito", price: 69 },
+                    { name: "Green Apple", price: 89 }, { name: "Icey Blue", price: 69 },
+                    { name: "Lemon Iced Tea", price: 69 },
+                ]
+            },
+            {
+                category: "Shakes", items: [
+                    { name: "Banana Shake", price: 59 }, { name: "Chocolate Shake", price: 69 },
+                    { name: "Chocolate Oreo Shake", price: 79 }, { name: "Strawberry Shake", price: 69 },
+                ]
+            },
+            {
+                category: "Cold Coffee", items: [
+                    { name: "Classic Cold Coffee", price: 69 }, { name: "Irish Cold Coffee", price: 89 },
+                    { name: "Hazelnut Cold Coffee", price: 89 }, { name: "Tiramisu Cold Coffee", price: 99 },
+                ]
+            },
+            {
+                category: "Burger", items: [
+                    { name: "Veggie Burger", price: 50 }, { name: "Punjabi Masala Burger", price: 60 },
+                    { name: "Mexican Cheese Burger", price: 90 }, { name: "Crispy Chaap Burger", price: 80 },
+                    { name: "Chicken Burger", price: 80 }, { name: "Hot & Crispy Chicken Burger", price: 130 },
+                ]
+            },
+            {
+                category: "Sandwich", items: [
+                    { name: "Veg Grilled S/D", price: 80 }, { name: "Corn Grilled S/D", price: 90 },
+                    { name: "Paneer Korma S/D", price: 100 }, { name: "Paneer & Corn S/D", price: 110 },
+                    { name: "Top Loaded Pizza S/D", price: 140 }, { name: "Chicken Korma S/D", price: 130 },
+                    { name: "Chicken Makhani S/D", price: 130 }, { name: "Top Loaded Chicken Pizza S/D", price: 160 },
+                ]
+            },
+            {
+                category: "Patty", items: [
+                    { name: "Aloo Patty", price: 25 }, { name: "Cheese & Corn Patty", price: 40 },
+                    { name: "Pizza Patty", price: 50 }, { name: "Paneer Achari Patty", price: 60 },
+                    { name: "Chicken Patty", price: 70 },
+                ]
+            },
+            {
+                category: "Momos", items: [
+                    { name: "Veg Momos (Steam)", price: 75 }, { name: "Veg Momos (Fried)", price: 85 },
+                    { name: "Veg Momos (Kurkure)", price: 95 }, { name: "Veg Momos (Achari)", price: 115 },
+                    { name: "Corn Momos (Steam)", price: 85 }, { name: "Corn Momos (Fried)", price: 95 },
+                    { name: "Corn Momos (Kurkure)", price: 105 }, { name: "Corn Momos (Achari)", price: 125 },
+                    { name: "Paneer Momos (Steam)", price: 85 }, { name: "Paneer Momos (Fried)", price: 95 },
+                    { name: "Paneer Momos (Kurkure)", price: 115 }, { name: "Paneer Momos (Achari)", price: 125 },
+                    { name: "Chicken Momos (Steam)", price: 95 }, { name: "Chicken Momos (Fried)", price: 115 },
+                    { name: "Chicken Momos (Kurkure)", price: 115 }, { name: "Chicken Momos (Achari)", price: 135 },
+                ]
+            },
+            {
+                category: "Noodles", items: [
+                    { name: "Veg Noodle", price: 80 }, { name: "Paneer Noodle", price: 120 },
+                    { name: "Hakka Noodle", price: 130 }, { name: "Egg Noodle", price: 120 },
+                    { name: "Chicken Noodle", price: 120 },
+                ]
+            },
+            {
+                category: "Fried Rice", items: [
+                    { name: "Veg Fried Rice", price: 80 }, { name: "Paneer Fried Rice", price: 120 },
+                    { name: "Egg Fried Rice", price: 110 }, { name: "Chicken Fried Rice", price: 120 },
+                ]
+            },
+            {
+                category: "Chinese Snacks", items: [
+                    { name: "Spring Roll", price: 80 }, { name: "Chilly Paneer (6pc)", price: 130 },
+                    { name: "Chilly Potato", price: 100 }, { name: "Honey Chilly Potato", price: 110 },
+                    { name: "Crispy Fried Chaap", price: 140 }, { name: "Chilly Chicken", price: 210 },
+                    { name: "Fried Chicken (Boneless 8pc)", price: 230 },
+                ]
+            },
+            {
+                category: "Pizza (Veg)", items: [
+                    { name: "Cheese & Corn Pizza", price: 110 }, { name: "Garden Fresh Pizza", price: 140 },
+                    { name: "Paneer Onion Pizza", price: 160 }, { name: "Mexican Wave Pizza", price: 160 },
+                    { name: "Farm House Pizza", price: 170 }, { name: "Cheese Tandoori Pizza", price: 170 },
+                    { name: "Baker'z Hub Spl. Pizza", price: 210 },
+                ]
+            },
+            {
+                category: "Pizza (Non-Veg)", items: [
+                    { name: "Chicken Tikka Pizza", price: 200 }, { name: "Chicken Golden Delight", price: 210 },
+                    { name: "Smoked Chicken Pizza", price: 230 }, { name: "Baker'z Hub Chicken Spl. Pizza", price: 270 },
+                ]
+            },
+            {
+                category: "Wrap", items: [
+                    { name: "Crispy Veg Wrap", price: 80 }, { name: "Veg Zinger (Chaap) Wrap", price: 90 },
+                    { name: "Mexican Wrap", price: 100 }, { name: "Chicken Wrap", price: 110 },
+                    { name: "Chicken Hot & Crispy Wrap", price: 160 },
+                ]
+            },
+            {
+                category: "American Fries", items: [
+                    { name: "Golden Fries", price: 80 }, { name: "Masala Fries", price: 90 },
+                    { name: "Cheezy Fries", price: 100 }, { name: "Peri Peri Fries", price: 110 },
+                    { name: "Loaded Chicken Crispy Fries", price: 180 },
+                ]
+            },
+            {
+                category: "Pasta", items: [
+                    { name: "White / Red Sauce Pasta (Veg)", price: 100 }, { name: "White / Red Sauce Pasta (Non-Veg)", price: 160 },
+                    { name: "Mix Sauce Pasta (Veg)", price: 110 }, { name: "Mix Sauce Pasta (Non-Veg)", price: 170 },
+                    { name: "Tandoori Pasta (Veg)", price: 120 }, { name: "Tandoori Pasta (Non-Veg)", price: 180 },
+                    { name: "Achari Pasta (Veg)", price: 130 }, { name: "Achari Pasta (Non-Veg)", price: 190 },
+                ]
+            },
+            {
+                category: "Cake & Pastry", items: [
+                    { name: "Cake & Pastry (Half Kg)", price: 350 },
+                ]
+            },
+        ],
     },
     {
         id: "food-junction",
         name: "Food Junction (Zakir A)",
-        tag: "Campus food • Menu coming soon",
+        tag: "Multi-cuisine • Main Course • Thali",
         veg: false,
-        categories: [{ category: "Menu Coming Soon", items: [{ name: "Full menu will be added shortly", price: 0 }] }],
+        categories: [
+            {
+                category: "Breakfast", items: [
+                    { name: "Aloo Prantha Tava Wala", price: 90 }, { name: "Mix Prantha", price: 90 },
+                    { name: "Paneer Prantha", price: 100 }, { name: "Aloo Prantha Tandoor Wala", price: 100 },
+                    { name: "Mix Prantha Tandoor Wala", price: 100 }, { name: "Paneer Prantha Tandoor Wala", price: 110 },
+                    { name: "Maggi", price: 40 }, { name: "Veg Maggi", price: 50 },
+                ]
+            },
+            {
+                category: "Patties / Samosa", items: [
+                    { name: "Samosa", price: 15 }, { name: "Single Chana Samosa", price: 40 },
+                    { name: "Double Chana Samosa", price: 60 }, { name: "Chole Bhature", price: 70 },
+                    { name: "Aloo Pattie", price: 20 }, { name: "Cheese Pattie", price: 30 },
+                    { name: "Cheese Corn Pattie", price: 30 }, { name: "Korma Pattie", price: 40 },
+                ]
+            },
+            {
+                category: "Rice", items: [
+                    { name: "Veg Fried Rice", price: 80 }, { name: "Paneer Rice", price: 90 },
+                    { name: "Chana Rice", price: 60 }, { name: "Rajma Rice", price: 60 },
+                    { name: "Mushroom Fried Rice", price: 90 },
+                ]
+            },
+            {
+                category: "Pasta", items: [
+                    { name: "Red Sauce Pasta", price: 100 }, { name: "White Sauce Pasta", price: 100 },
+                    { name: "Mix Sauce Pasta", price: 100 },
+                ]
+            },
+            {
+                category: "Noodles", items: [
+                    { name: "Veg Noodles", price: 80 }, { name: "Chilli Garlic Noodles", price: 90 },
+                    { name: "Hakka Noodles", price: 100 }, { name: "Paneer Noodles", price: 100 },
+                ]
+            },
+            {
+                category: "Main Course", items: [
+                    { name: "Shahi Paneer (Half)", price: 140 }, { name: "Shahi Paneer (Full)", price: 200 },
+                    { name: "Kadhai Paneer (Half)", price: 140 }, { name: "Kadhai Paneer (Full)", price: 200 },
+                    { name: "Paneer Butter Masala (Half)", price: 140 }, { name: "Paneer Butter Masala (Full)", price: 200 },
+                    { name: "Paneer Bhurji (Half)", price: 150 }, { name: "Paneer Bhurji (Full)", price: 200 },
+                    { name: "Paneer Do Payja (Half)", price: 150 }, { name: "Paneer Do Payja (Full)", price: 200 },
+                    { name: "Rahra Paneer (Half)", price: 150 }, { name: "Rahra Paneer (Full)", price: 200 },
+                    { name: "Masala Chaap Gravy (Half)", price: 150 }, { name: "Masala Chaap Gravy (Full)", price: 200 },
+                    { name: "Malai Chaap Gravy (Half)", price: 150 }, { name: "Malai Chaap Gravy (Full)", price: 200 },
+                    { name: "Dal Makhani", price: 120 }, { name: "Channa Masala", price: 150 },
+                ]
+            },
+            {
+                category: "Roti / Naan", items: [
+                    { name: "Tandoori Roti", price: 10 }, { name: "Butter Naan", price: 20 },
+                    { name: "Missi Roti", price: 25 }, { name: "Lacha Parntha", price: 20 },
+                    { name: "Amirtsari Naan Chole", price: 100 },
+                ]
+            },
+            {
+                category: "Roll", items: [
+                    { name: "Spring Roll", price: 60 }, { name: "Veg Roll", price: 50 },
+                    { name: "Paneer Roll", price: 80 }, { name: "Soya Chaap Roll", price: 80 },
+                    { name: "Cheese Corn Roll", price: 80 }, { name: "Cheese Finger", price: 100 },
+                    { name: "Kathi Roll", price: 60 },
+                ]
+            },
+            {
+                category: "Chinese", items: [
+                    { name: "Veg Manchurian", price: 100 }, { name: "Steam Momos", price: 60 },
+                    { name: "Fried Momos", price: 70 }, { name: "Chilly Paneer", price: 120 },
+                    { name: "Mushroom Chilli", price: 100 },
+                ]
+            },
+            {
+                category: "Burger", items: [
+                    { name: "Aloo Tikki Burger", price: 50 }, { name: "Cheese Burger", price: 60 },
+                    { name: "Paneer Burger", price: 60 }, { name: "King Burger", price: 80 },
+                    { name: "Mexican Burger", price: 80 },
+                ]
+            },
+            {
+                category: "Sandwich", items: [
+                    { name: "Veg Grilled Sandwich", price: 70 }, { name: "Aloo Tikka Sandwich", price: 80 },
+                    { name: "Cheese Corn Sandwich", price: 80 }, { name: "Paneer Tikka Sandwich", price: 80 },
+                    { name: "Mexican Sandwich", price: 90 }, { name: "Paneer Korma Sandwich", price: 90 },
+                ]
+            },
+            {
+                category: "Fries", items: [
+                    { name: "Golden Fries", price: 70 }, { name: "Chilli Potato", price: 90 },
+                    { name: "Honey Chilli", price: 90 },
+                ]
+            },
+            {
+                category: "Beverages", items: [
+                    { name: "Chai", price: 15 }, { name: "Kuladh Chai", price: 20 },
+                    { name: "Hot Coffee", price: 30 }, { name: "Sweet Lassi", price: 40 },
+                    { name: "Mango Lassi", price: 60 }, { name: "Cold Coffee", price: 60 },
+                    { name: "Banana Shake", price: 50 }, { name: "Butterscotch Shake", price: 60 },
+                    { name: "Kesar Pista Shake", price: 60 }, { name: "Vanilla Shake", price: 60 },
+                    { name: "Strawberry Shake", price: 60 }, { name: "Black Current Shake", price: 60 },
+                    { name: "Chocolate Shake", price: 60 }, { name: "Oreo Shake", price: 60 },
+                ]
+            },
+            {
+                category: "Mojitos", items: [
+                    { name: "Nimbu Panni", price: 30 }, { name: "Lime Soda", price: 40 },
+                    { name: "Kala Khata", price: 60 }, { name: "Virgin Mojito", price: 60 },
+                    { name: "Green Apple", price: 60 }, { name: "Ice Blue", price: 60 },
+                ]
+            },
+            {
+                category: "Indian Thali", items: [
+                    { name: "Veg Thali", price: 100 }, { name: "Deluxe Thali", price: 110 },
+                ]
+            },
+            {
+                category: "Combo", items: [
+                    { name: "Kadhai Paneer + 2 Butter Naan", price: 150 },
+                    { name: "Soya Chaap Gravy + 2 Butter Naan", price: 150 },
+                    { name: "Shahi Paneer + 2 Butter Naan", price: 150 },
+                    { name: "Butter Masala + 2 Butter Naan", price: 150 },
+                ]
+            },
+        ],
     },
     {
         id: "king-cafe",
         name: "King Cafe (Zakir B)",
-        tag: "📞 8877263548 • Menu coming soon",
+        tag: "📞 8877263548 • Full Menu • Tandoori • Main Course",
         veg: false,
-        categories: [{ category: "Menu Coming Soon", items: [{ name: "Full menu will be added shortly", price: 0 }] }],
+        categories: [
+            {
+                category: "Breakfast", items: [
+                    { name: "Chole Bhature", price: 70 }, { name: "Aloo Parantha", price: 80 },
+                    { name: "Paneer Parantha", price: 90 }, { name: "Mix Parantha", price: 90 },
+                    { name: "Amritsari Kulcha", price: 110 }, { name: "Bread Omelette", price: 50 },
+                    { name: "Omelette", price: 30 }, { name: "Samosa", price: 15 }, { name: "Chana Samosa", price: 60 },
+                ]
+            },
+            {
+                category: "Beverages / Shakes", items: [
+                    { name: "Karak Chai", price: 20 }, { name: "Hot Coffee", price: 60 },
+                    { name: "Cold Coffee", price: 60 }, { name: "Mango Shake", price: 60 },
+                    { name: "Banana Shake", price: 50 }, { name: "Butterscotch Shake", price: 60 },
+                    { name: "Strawberry Shake", price: 60 }, { name: "Oreo Shake", price: 60 },
+                    { name: "Kit Kat Shake", price: 60 }, { name: "Chocolate Shake", price: 60 },
+                ]
+            },
+            {
+                category: "Combo / Thali", items: [
+                    { name: "Veg Burger + Fries + Coke", price: 130 }, { name: "Paneer Thali", price: 130 },
+                    { name: "Chicken Thali", price: 160 }, { name: "Chaap Thali", price: 140 },
+                    { name: "Veg Thali", price: 90 }, { name: "Spl. Paneer Thali", price: 140 },
+                ]
+            },
+            {
+                category: "Kathi Roll", items: [
+                    { name: "Spring Roll", price: 60 }, { name: "Veg Roll", price: 50 },
+                    { name: "Egg Roll", price: 60 }, { name: "Paneer Roll", price: 80 },
+                    { name: "Chicken Roll", price: 100 },
+                ]
+            },
+            {
+                category: "Mojito's", items: [
+                    { name: "Lime Soda", price: 40 }, { name: "Lime Water", price: 30 },
+                    { name: "Ice Blue", price: 60 }, { name: "Green Apple", price: 60 },
+                    { name: "Watermelon", price: 60 }, { name: "Virgin Mojito", price: 60 },
+                    { name: "Kala Khatta", price: 60 }, { name: "Ice Tea", price: 60 },
+                ]
+            },
+            {
+                category: "Fries", items: [
+                    { name: "Golden Fries", price: 70 }, { name: "Masala Fries", price: 80 },
+                    { name: "Peri Peri Fries", price: 90 }, { name: "Mexican Fries", price: 100 },
+                    { name: "Chilli Potato", price: 90 }, { name: "Honey Chilli Potato", price: 100 },
+                ]
+            },
+            {
+                category: "Sandwich", items: [
+                    { name: "Veg Sandwich", price: 70 }, { name: "Paneer Tikki Sandwich", price: 90 },
+                    { name: "Aloo Tikki Sandwich", price: 80 }, { name: "Cheese Sandwich", price: 80 },
+                    { name: "Paneer Korma Sandwich", price: 90 }, { name: "Chicken Sandwich", price: 100 },
+                ]
+            },
+            {
+                category: "Burger", items: [
+                    { name: "Aloo Tikki Burger", price: 50 }, { name: "Cheese Burger", price: 60 },
+                    { name: "Paneer Burger", price: 80 }, { name: "Mexican Burger", price: 100 },
+                    { name: "King Burger", price: 100 }, { name: "Chicken Burger", price: 80 },
+                    { name: "Chicken Cheese Burger", price: 90 },
+                ]
+            },
+            {
+                category: "Bread / Naan", items: [
+                    { name: "Tawa Roti", price: 10 }, { name: "Tandoori Roti", price: 12 },
+                    { name: "Butter Naan", price: 25 }, { name: "Garlic Naan", price: 35 },
+                    { name: "Laccha Parantha", price: 45 }, { name: "Stuff Naan", price: 25 },
+                    { name: "Missi Roti", price: 25 },
+                ]
+            },
+            {
+                category: "Rice", items: [
+                    { name: "Veg Fried Rice", price: 80 }, { name: "Chole Rice", price: 50 },
+                    { name: "Paneer Fried Rice", price: 100 }, { name: "Chicken Fried Rice", price: 110 },
+                    { name: "Egg Fried Rice", price: 90 }, { name: "Paneer Rice", price: 100 },
+                    { name: "Chicken Rice", price: 130 },
+                ]
+            },
+            {
+                category: "Veg Main Course", items: [
+                    { name: "Kali Mirch Paneer (Half)", price: 160 }, { name: "Kali Mirch Paneer (Full)", price: 250 },
+                    { name: "Paneer Changezi (Half)", price: 160 }, { name: "Paneer Changezi (Full)", price: 260 },
+                    { name: "Shahi Paneer (Half)", price: 150 }, { name: "Shahi Paneer (Full)", price: 240 },
+                    { name: "Kadhai Paneer (Half)", price: 150 }, { name: "Kadhai Paneer (Full)", price: 240 },
+                    { name: "Paneer Butter Masala (Half)", price: 150 }, { name: "Paneer Butter Masala (Full)", price: 240 },
+                    { name: "Paneer Lababdar (Half)", price: 150 }, { name: "Paneer Lababdar (Full)", price: 240 },
+                    { name: "Gravy Chaap (Half)", price: 150 }, { name: "Gravy Chaap (Full)", price: 200 },
+                    { name: "Chana Masala (Half)", price: 110 }, { name: "Chana Masala (Full)", price: 150 },
+                ]
+            },
+            {
+                category: "Non-Veg Main Course", items: [
+                    { name: "Handi Chicken (Half)", price: 260 }, { name: "Handi Chicken (Full)", price: 440 },
+                    { name: "Chicken Changezi (Half)", price: 270 }, { name: "Chicken Changezi (Full)", price: 450 },
+                    { name: "Chicken Kali Mirch (Half)", price: 250 }, { name: "Chicken Kali Mirch (Full)", price: 410 },
+                    { name: "Tawa Chicken Spl. (Half)", price: 260 }, { name: "Tawa Chicken Spl. (Full)", price: 440 },
+                    { name: "Kadhai Chicken (Half)", price: 240 }, { name: "Kadhai Chicken (Full)", price: 410 },
+                    { name: "Rara Chicken (Half)", price: 260 }, { name: "Rara Chicken (Full)", price: 430 },
+                    { name: "Chicken Butter Masala (Half)", price: 250 }, { name: "Chicken Butter Masala (Full)", price: 430 },
+                    { name: "Butter Chicken (Half)", price: 240 }, { name: "Butter Chicken (Full)", price: 410 },
+                ]
+            },
+            {
+                category: "Pasta", items: [
+                    { name: "White Sauce Pasta", price: 100 }, { name: "Red Sauce Pasta", price: 100 },
+                    { name: "Mix Sauce Pasta", price: 100 }, { name: "Tandoori Sauce Pasta", price: 110 },
+                ]
+            },
+            {
+                category: "Noodles", items: [
+                    { name: "Veg Noodles", price: 80 }, { name: "Paneer Noodles", price: 100 },
+                    { name: "Chilli Garlic Noodles", price: 90 }, { name: "Hakka Noodles", price: 110 },
+                    { name: "Chicken Noodle", price: 120 }, { name: "Chilli Garlic Chicken Noodle", price: 120 },
+                    { name: "Chicken Hakka Noodles", price: 120 },
+                ]
+            },
+            {
+                category: "Tandoori Snacks", items: [
+                    { name: "Paneer Tikka", price: 220 }, { name: "Tandoori Chaap", price: 150 },
+                    { name: "Paneer Malai Tikka", price: 240 }, { name: "Chicken Tikka", price: 250 },
+                    { name: "Malai Chicken", price: 270 }, { name: "Tandoori Chicken", price: 250 },
+                ]
+            },
+            {
+                category: "Snacks", items: [
+                    { name: "Chicken Chilli (Half)", price: 200 }, { name: "Chicken Chilli (Full)", price: 330 },
+                    { name: "Chicken Manchurian (Half)", price: 200 }, { name: "Chicken Manchurian (Full)", price: 350 },
+                    { name: "Chicken Lollipop (Half)", price: 200 }, { name: "Chicken Lollipop (Full)", price: 350 },
+                    { name: "Chilli Paneer (Half)", price: 150 }, { name: "Chilli Paneer (Full)", price: 220 },
+                    { name: "Veg Manchurian (Half)", price: 90 }, { name: "Veg Manchurian (Full)", price: 150 },
+                ]
+            },
+            {
+                category: "Dessert", items: [
+                    { name: "Kheer", price: 40 }, { name: "Gulab Jamun", price: 50 },
+                    { name: "Brownie with Ice Cream", price: 60 },
+                ]
+            },
+        ],
     },
     {
         id: "handi-biryani",
         name: "Handi Biryani (Zakir D)",
-        tag: "Biryani • Menu coming soon",
+        tag: "Biryani • Indian Main Course • Chinese",
         veg: false,
-        categories: [{ category: "Menu Coming Soon", items: [{ name: "Full menu will be added shortly", price: 0 }] }],
+        categories: [
+            {
+                category: "Hyd. Dum Biryani (Veg)", items: [
+                    { name: "Subz Biryani (Half)", price: 195 }, { name: "Subz Biryani (Full)", price: 289 },
+                    { name: "Paneer Tikka Biryani (Half)", price: 210 }, { name: "Paneer Tikka Biryani (Full)", price: 305 },
+                ]
+            },
+            {
+                category: "Hyd. Dum Biryani (Non-Veg)", items: [
+                    { name: "Chicken Biryani (Half)", price: 220 }, { name: "Chicken Biryani (Full)", price: 315 },
+                    { name: "Boneless Chicken Biryani (Half)", price: 238 }, { name: "Boneless Chicken Biryani (Full)", price: 325 },
+                    { name: "Chicken Tikka Biryani (Half)", price: 245 }, { name: "Chicken Tikka Biryani (Full)", price: 330 },
+                ]
+            },
+            {
+                category: "Non-Veg Chinese", items: [
+                    { name: "Chicken Noodles", price: 120 }, { name: "Egg Noodles", price: 100 },
+                    { name: "Chicken Fried Rice", price: 120 }, { name: "Egg Fried Rice", price: 110 },
+                    { name: "Schezwan Chicken Fried Rice", price: 120 },
+                    { name: "Chilli Chicken Boneless", price: 180 },
+                ]
+            },
+            {
+                category: "Veg Chinese", items: [
+                    { name: "Veg Noodles", price: 80 }, { name: "Chilli Garlic Noodles", price: 90 },
+                    { name: "Hakka Noodles", price: 90 }, { name: "Cheese Noodles", price: 100 },
+                    { name: "Veg Fried Rice", price: 100 }, { name: "Chilli Garlic Fried Rice", price: 90 },
+                    { name: "Schezwan Fries Rice", price: 100 },
+                    { name: "Chilli Paneer", price: 150 }, { name: "Veg Manchurian", price: 100 },
+                    { name: "Honey Chilli Potato", price: 90 }, { name: "Honey Chilli Cauliflower", price: 100 },
+                    { name: "Spring Roll", price: 60 },
+                ]
+            },
+            {
+                category: "Burger & Patties", items: [
+                    { name: "Aloo Tikki Burger", price: 50 }, { name: "Aloo Tikki Cheese Burger", price: 60 },
+                    { name: "Chicken Burger", price: 70 }, { name: "Chicken Cheese Burger", price: 80 },
+                    { name: "Cheese Corn Sandwich", price: 80 }, { name: "Paneer Tikka Sandwich", price: 90 },
+                    { name: "Aloo Patty", price: 25 }, { name: "Cheese Corn Patty", price: 35 },
+                    { name: "French Fries", price: 70 }, { name: "Masala Fries", price: 80 },
+                ]
+            },
+            {
+                category: "Main Course (Veg)", items: [
+                    { name: "Dal Makhani (Half)", price: 100 }, { name: "Dal Makhani (Full)", price: 150 },
+                    { name: "Kadhai Paneer (Half)", price: 140 }, { name: "Kadhai Paneer (Full)", price: 210 },
+                    { name: "Shahi Paneer (Half)", price: 140 }, { name: "Shahi Paneer (Full)", price: 210 },
+                    { name: "Paneer 2 Pyaza (Half)", price: 140 }, { name: "Paneer 2 Pyaza (Full)", price: 210 },
+                    { name: "Paneer Butter Masala (Half)", price: 140 }, { name: "Paneer Butter Masala (Full)", price: 210 },
+                    { name: "Channa Masala (Half)", price: 90 }, { name: "Channa Masala (Full)", price: 150 },
+                    { name: "Soya Chaap Masala", price: 170 },
+                ]
+            },
+            {
+                category: "Main Course (Non-Veg)", items: [
+                    { name: "Butter Chicken (Half)", price: 230 }, { name: "Butter Chicken (Full)", price: 390 },
+                    { name: "Kadhai Chicken (Half)", price: 230 }, { name: "Kadhai Chicken (Full)", price: 390 },
+                    { name: "Chicken Lababdar (Half)", price: 230 }, { name: "Chicken Lababdar (Full)", price: 390 },
+                    { name: "Rara Chicken (Half)", price: 250 }, { name: "Rara Chicken (Full)", price: 400 },
+                ]
+            },
+            {
+                category: "Rice Combo", items: [
+                    { name: "Channa Rice (Half)", price: 50 }, { name: "Channa Rice (Full)", price: 70 },
+                    { name: "Rajma Rice (Half)", price: 50 }, { name: "Rajma Rice (Full)", price: 70 },
+                    { name: "Paneer Rice (Half)", price: 80 }, { name: "Paneer Rice (Full)", price: 100 },
+                ]
+            },
+            {
+                category: "Veg Combo", items: [
+                    { name: "Dal Makhani + 2 Butter Naan", price: 110 },
+                    { name: "Kadhai Paneer + 2 Butter Naan", price: 140 },
+                    { name: "Shahi Paneer + 2 Butter Naan", price: 140 },
+                    { name: "Channa Masala + 2 Butter Naan", price: 140 },
+                    { name: "Cheese Naan With Gravy", price: 100 },
+                ]
+            },
+            {
+                category: "Non-Veg Combo", items: [
+                    { name: "Butter Chicken + 2 Butter Naan", price: 170 },
+                    { name: "Kadhai Chicken + 2 Butter Naan", price: 170 },
+                    { name: "Masala Chicken + 2 Butter Naan", price: 170 },
+                ]
+            },
+            {
+                category: "Paratha", items: [
+                    { name: "Aloo Paratha + Channa", price: 60 }, { name: "Mix Paratha + Channa", price: 80 },
+                    { name: "Paneer Paratha + Channa", price: 90 },
+                ]
+            },
+            {
+                category: "Bread", items: [
+                    { name: "Tandoori Roti", price: 12 }, { name: "Butter Naan", price: 25 },
+                    { name: "Lacha Paratha", price: 35 },
+                ]
+            },
+        ],
     },
     {
         id: "barkat-food",
         name: "Barkat Food (Zakir C)",
-        tag: "Campus food • Menu coming soon",
+        tag: "📞 7056853177 • Main Course • Biryani • Chinese",
         veg: false,
-        categories: [{ category: "Menu Coming Soon", items: [{ name: "Full menu will be added shortly", price: 0 }] }],
+        categories: [
+            {
+                category: "Breakfast", items: [
+                    { name: "Aloo Parantha (2 Pcs)", price: 70 }, { name: "Mix Parantha (2 Pcs)", price: 80 },
+                    { name: "Paneer Parantha (2 Pcs)", price: 90 }, { name: "Chole Bhature", price: 70 },
+                    { name: "Samosa", price: 15 }, { name: "Samosa With Chole", price: 50 },
+                    { name: "Bread Omelette", price: 50 },
+                ]
+            },
+            {
+                category: "Patty", items: [
+                    { name: "Aloo Patty", price: 20 }, { name: "Cheese Patty", price: 25 },
+                    { name: "Cheese Corn", price: 30 }, { name: "Paneer Korma", price: 40 },
+                    { name: "Tandoori Patty", price: 50 },
+                ]
+            },
+            {
+                category: "Burger", items: [
+                    { name: "Aloo Tikki Burger", price: 50 }, { name: "Cheese Burger", price: 60 },
+                    { name: "Paneer Burger", price: 70 }, { name: "Chicken Burger", price: 70 },
+                    { name: "Mexican Burger", price: 80 }, { name: "Egg Burger", price: 70 },
+                ]
+            },
+            {
+                category: "Pasta", items: [
+                    { name: "Red Sauce Pasta", price: 100 }, { name: "White Sauce Pasta", price: 100 },
+                    { name: "Mix Sauce Pasta", price: 100 }, { name: "Makhani Pasta", price: 110 },
+                    { name: "Chicken Pasta", price: 150 },
+                ]
+            },
+            {
+                category: "Noodles", items: [
+                    { name: "Veg Noodles", price: 80 }, { name: "Chilli Garlic Noodles", price: 90 },
+                    { name: "Hakka Noodles", price: 100 }, { name: "Paneer Noodles", price: 100 },
+                    { name: "Egg Noodles", price: 100 }, { name: "Chicken Noodles", price: 100 },
+                    { name: "Singapuri Noodles", price: 90 }, { name: "Manchurian Noodles", price: 120 },
+                ]
+            },
+            {
+                category: "Fried Rice", items: [
+                    { name: "Veg Fried Rice", price: 80 }, { name: "Garlic Fried Rice", price: 90 },
+                    { name: "Egg Fried Rice", price: 90 }, { name: "Paneer Fried Rice", price: 100 },
+                    { name: "Chicken Fried Rice", price: 110 },
+                ]
+            },
+            {
+                category: "Roll", items: [
+                    { name: "Veg Roll", price: 50 }, { name: "Double Egg Roll", price: 60 },
+                    { name: "Cheese Corn Roll", price: 70 }, { name: "Soya Chaap Roll", price: 70 },
+                    { name: "Cheese Corn Roll", price: 90 }, { name: "Paneer Roll", price: 80 },
+                    { name: "Chicken Roll", price: 100 },
+                ]
+            },
+            {
+                category: "Fries", items: [
+                    { name: "Golden Fries", price: 70 }, { name: "Masala Fries", price: 80 },
+                    { name: "Peri Peri Fries", price: 80 }, { name: "Mexican Fries", price: 100 },
+                    { name: "Cheese Fries", price: 100 }, { name: "Chilli Potato", price: 90 },
+                    { name: "Honey Chilli Potato", price: 100 },
+                ]
+            },
+            {
+                category: "Chinese", items: [
+                    { name: "Veg Momos", price: 70 }, { name: "Kurkure Momos", price: 90 },
+                    { name: "Chilli Momos", price: 120 }, { name: "Spring Roll", price: 60 },
+                    { name: "Veg Manchurian (Half)", price: 90 }, { name: "Veg Manchurian (Full)", price: 150 },
+                    { name: "Chilli Paneer (Half)", price: 150 }, { name: "Chilli Paneer (Full)", price: 220 },
+                    { name: "Chilli Chicken (Half)", price: 180 }, { name: "Chilli Chicken (Full)", price: 320 },
+                    { name: "Fried Chicken (Half)", price: 150 }, { name: "Fried Chicken (Full)", price: 250 },
+                ]
+            },
+            {
+                category: "Roti & Naan", items: [
+                    { name: "Tawa Roti", price: 8 }, { name: "Tandoori Roti", price: 12 },
+                    { name: "Naan", price: 25 }, { name: "Laccha Parantha", price: 35 },
+                ]
+            },
+            {
+                category: "Thali & Combo", items: [
+                    { name: "Paneer Thali", price: 130 }, { name: "Chicken Thali", price: 160 },
+                    { name: "Cheese Naan With Gravy", price: 100 }, { name: "Chur Chur Naan", price: 150 },
+                    { name: "Amritsari Naan", price: 110 },
+                ]
+            },
+            {
+                category: "Beverage", items: [
+                    { name: "Tea", price: 15 }, { name: "Coffee", price: 30 },
+                    { name: "Banana Shake", price: 50 }, { name: "Cold Coffee", price: 60 },
+                    { name: "Mango Shake", price: 60 }, { name: "Strawberry Shake", price: 60 },
+                    { name: "Black Current Shake", price: 60 }, { name: "Vanilla Shake", price: 60 },
+                    { name: "Butterscotch Shake", price: 60 }, { name: "Chocolate Shake", price: 60 },
+                    { name: "Oreo Shake", price: 60 }, { name: "Lassi", price: 50 },
+                ]
+            },
+            {
+                category: "Sandwich", items: [
+                    { name: "Veg Grilled Sandwich", price: 70 }, { name: "Cheese Sandwich", price: 80 },
+                    { name: "Aloo Tikka Sandwich", price: 80 }, { name: "Paneer Tikka Sandwich", price: 90 },
+                    { name: "Chicken Sandwich", price: 100 }, { name: "BBQ Chicken Sandwich", price: 120 },
+                ]
+            },
+            {
+                category: "Spl. Gym Diet", items: [
+                    { name: "Boil Chicken", price: 140 }, { name: "Grill Chicken", price: 160 },
+                    { name: "Chicken Salad", price: 180 }, { name: "Grilled Fish", price: 160 },
+                ]
+            },
+            {
+                category: "Indian Main Course", items: [
+                    { name: "Dal Makhni (Half)", price: 100 }, { name: "Dal Makhni (Full)", price: 150 },
+                    { name: "Channa Masala (Half)", price: 110 }, { name: "Channa Masala (Full)", price: 150 },
+                    { name: "Shahi Paneer (Half)", price: 130 }, { name: "Shahi Paneer (Full)", price: 210 },
+                    { name: "Kadhai Paneer (Half)", price: 140 }, { name: "Kadhai Paneer (Full)", price: 210 },
+                    { name: "Paneer Do Pyaza (Half)", price: 140 }, { name: "Paneer Do Pyaza (Full)", price: 210 },
+                    { name: "Butter Chicken (Half)", price: 230 }, { name: "Butter Chicken (Full)", price: 390 },
+                    { name: "Kadhai Chicken (Half)", price: 230 }, { name: "Kadhai Chicken (Full)", price: 390 },
+                    { name: "Chicken Lababdar (Half)", price: 230 }, { name: "Chicken Lababdar (Full)", price: 390 },
+                ]
+            },
+            {
+                category: "Rice & Biryani", items: [
+                    { name: "Chole Rice", price: 50 }, { name: "Paneer Rice", price: 80 },
+                    { name: "Veg Biryani", price: 100 }, { name: "Chicken Biryani", price: 150 },
+                ]
+            },
+            {
+                category: "Dessert", items: [
+                    { name: "Kheer", price: 40 }, { name: "Gulab Jamun", price: 50 },
+                    { name: "Cake & Pastries (1 Cup)", price: 50 }, { name: "Brownie with Ice Cream", price: 60 },
+                ]
+            },
+            {
+                category: "Mojito's", items: [
+                    { name: "Lime Soda", price: 40 }, { name: "Lime Water", price: 30 },
+                    { name: "Ice Blue", price: 60 }, { name: "Green Apple", price: 60 },
+                    { name: "Water Melon", price: 60 }, { name: "Virgin Mojito", price: 60 },
+                    { name: "Kala Khatta", price: 60 },
+                ]
+            },
+        ],
     },
 ];
