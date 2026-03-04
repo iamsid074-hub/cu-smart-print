@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Search, Bell, User, Zap, Menu, X, ShoppingCart } from "lucide-react";
+import { Bell, User, Zap, Menu, X, ShoppingCart } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
@@ -27,7 +27,6 @@ export default function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [searchFocused, setSearchFocused] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [hasUnread, setHasUnread] = useState(false);
@@ -84,28 +83,8 @@ export default function Navbar() {
       className="fixed top-0 left-0 right-0 z-50 border-b" style={{ background: 'rgba(26,20,18,0.88)', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)', borderColor: 'rgba(61,52,44,0.5)' }}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center gap-2 sm:gap-4">
-        {/* Logo */}
-        <Link to="/" className="flex items-center gap-2 flex-shrink-0 group">
-          <div className="relative w-10 h-10 rounded-full overflow-hidden border flex items-center justify-center p-0.5 transition-colors shadow-sm" style={{ backgroundColor: '#2A2420', borderColor: '#3D342C' }}>
-            <img src="/logo.png" alt="CU BAZZAR Logo" className="w-full h-full object-cover object-center rounded-full" />
-          </div>
-          <span className="font-bold text-lg tracking-tight hidden sm:block">
-            <span className="text-neon-fire">CU</span>
-            <span className="text-foreground group-hover:text-neon-cyan transition-colors"> BAZZAR</span>
-          </span>
-        </Link>
-
-        {/* Search */}
-        <div className={`hidden md:flex flex-1 max-w-md mx-4 relative transition-all duration-300 ${searchFocused ? "max-w-lg" : ""}`}>
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <input
-            type="text"
-            placeholder="Search products, categories..."
-            onFocus={() => setSearchFocused(true)}
-            onBlur={() => setSearchFocused(false)}
-            className="w-full pl-10 pr-4 py-2 rounded-full glass text-sm text-foreground placeholder:text-muted-foreground outline-none border border-white/10 focus:border-neon-orange/50 focus:shadow-neon-fire transition-all duration-300"
-          />
-        </div>
+        {/* Spacer for Dynamic Island at top-center */}
+        <div className="w-[180px] flex-shrink-0 hidden lg:block" />
 
         {/* Nav links - Center Pill Dock */}
         <div className="hidden lg:flex flex-1 justify-center relative z-10">
@@ -244,13 +223,6 @@ export default function Navbar() {
           animate={{ opacity: 1, y: 0 }}
           className="lg:hidden border-t px-4 py-4 flex flex-col gap-2" style={{ backgroundColor: '#2A2420', borderColor: '#3D342C' }}
         >
-          <div className="flex items-center gap-2 mb-2">
-            <Search className="w-4 h-4 text-muted-foreground" />
-            <input
-              placeholder="Search..."
-              className="flex-1 bg-transparent text-sm outline-none text-foreground placeholder:text-muted-foreground"
-            />
-          </div>
           {navLinks.map((link) => (
             <Link
               key={link.path}
