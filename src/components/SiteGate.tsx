@@ -11,7 +11,7 @@ import { useAuth } from "@/contexts/AuthContext";
   
   Operating hours (IST):
     Items:  6:00 AM – 10:00 PM
-    Food:   6:00 PM – 11:30 PM
+    Food:   6:00 PM – 12:00 AM
 
   Admins bypass both gates.
 */
@@ -33,9 +33,9 @@ function isItemsOpen(): boolean {
 
 function isFoodOpen(): boolean {
     const { hours, minutes } = getIST();
-    // 6:00 PM (18) to 11:30 PM (23:30)
+    // 6:00 PM (18) to 12:00 AM (midnight)
     const totalMins = hours * 60 + minutes;
-    return totalMins >= 18 * 60 && totalMins < 23 * 60 + 30;
+    return totalMins >= 18 * 60 && totalMins < 24 * 60;
 }
 
 function getNextOpenTime(): string {
@@ -114,7 +114,7 @@ function ClosedScreen() {
                         </div>
                         <div className="text-left flex-1">
                             <p className="text-sm font-bold text-white">Food Orders</p>
-                            <p className="text-xs text-muted-foreground">6:00 PM – 11:30 PM</p>
+                            <p className="text-xs text-muted-foreground">6:00 PM – 12:00 AM</p>
                         </div>
                         <span className={`text-xs font-bold px-3 py-1 rounded-full ${foodOpen ? "bg-green-500/20 text-green-400" : "bg-red-500/20 text-red-400"}`}>
                             {foodOpen ? "OPEN" : "CLOSED"}
