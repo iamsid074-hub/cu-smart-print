@@ -84,7 +84,7 @@ export const campusEssentials: CampusEssentialItem[] = [
         title: "Scientific Calculator",
         price: 350,
         // scientific calculator (Casio-style)
-        image: "https://images.unsplash.com/photo-1611125904014-5e50af5c35de?q=80&w=400&auto=format&fit=crop",
+        image: "https://images.unsplash.com/photo-1564466809058-bf4114d55352?q=80&w=400&auto=format&fit=crop",
         category: "stationery",
         badge: "Essential",
     },
