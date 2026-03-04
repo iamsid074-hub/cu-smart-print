@@ -96,7 +96,7 @@ export default function DynamicIsland() {
         if (cartCount > 0) modes.push("cart");
         if (modes.length <= 1) { setCompactMode("logo"); return; }
         let i = 0;
-        const id = setInterval(() => { i = (i + 1) % modes.length; setCompactMode(modes[i]); }, 5000);
+        const id = setInterval(() => { i = (i + 1) % modes.length; setCompactMode(modes[i]); }, 10000);
         return () => clearInterval(id);
     }, [cartCount, activeOrder]);
 
