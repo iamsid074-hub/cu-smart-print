@@ -185,7 +185,7 @@ export default function DynamicIsland() {
                     label,
                     icon: "cart",
                     color: "#FF6B6B",
-                    expiresAt: Date.now() + 5000,
+                    expiresAt: Date.now() + 3000, // Brief flash, then persistent cart-summary takes over
                 });
 
                 // Reset rapid counter
@@ -215,6 +215,23 @@ export default function DynamicIsland() {
 
         try { navigator.vibrate?.(15); } catch { }
     }, [lastAction, pushNotification]);
+
+    // ─── Persistent cart summary (stays as long as cart has items) ───
+    useEffect(() => {
+        if (cartCount > 0) {
+            pushNotification({
+                priority: 2, // P2: below brief P1 add/remove flashes, but above P3 flash sale
+                type: "cart-add" as any, // reuse type — won't conflict since persistent uses different id pattern
+                label: `🛒 ${cartCount} item${cartCount !== 1 ? "s" : ""} in cart · ₹${cartTotal}`,
+                icon: "cart",
+                color: "#FF6B6B",
+                expiresAt: 0, // Never auto-dismiss — persistent while cart has items
+            });
+        } else {
+            // Cart is empty — remove persistent cart notification
+            setNotifications(prev => prev.filter(n => !(n.priority === 2 && n.icon === "cart")));
+        }
+    }, [cartCount, cartTotal, pushNotification]);
 
     // ─── React to DELIVERY status (P1, persistent) ───
     useEffect(() => {
