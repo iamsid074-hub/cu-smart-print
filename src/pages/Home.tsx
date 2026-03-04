@@ -45,7 +45,7 @@ const featureCards = [
     title: "Sell Your Old Products",
     desc: "Got old books, gadgets, or clothes? List them in 30 seconds and turn them into cash.",
     cta: "Start Selling",
-    link: "/sell",
+    link: "/list",
     gradient: "from-emerald-500/20 via-teal-500/10 to-green-500/20",
     iconColor: "#4DB8AC",
     borderColor: "rgba(77,184,172,0.25)",

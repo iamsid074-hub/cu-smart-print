@@ -89,6 +89,7 @@ function AppLayout() {
         {/* Protected Routes */}
 
         <Route path="/list" element={<ProtectedRoute><ListProduct /></ProtectedRoute>} />
+        <Route path="/sell" element={<Navigate to="/list" replace />} />
         <Route path="/tracking" element={<ProtectedRoute><Tracking /></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
         <Route path="/browse" element={<ProtectedRoute><Browse /></ProtectedRoute>} />
