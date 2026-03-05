@@ -40,15 +40,14 @@ export default function PromoBanner() {
                             <span className="text-xl leading-none">🇮🇳</span>
                             <span className="text-sm font-bold text-white tracking-wide">IND</span>
                         </div>
-                        <span className="text-xs font-bold text-white/50 italic px-1">VS</span>
-                        <div className="flex items-center gap-2">
+                        <span className="text-xs font-bold text-emerald-400 italic px-1">WON AGAINST</span>
+                        <div className="flex items-center gap-2 opacity-50">
                             <span className="text-sm font-bold text-white tracking-wide">ENG</span>
                             <span className="text-xl leading-none">🇬🇧</span>
                         </div>
                         <div className="w-px h-4 bg-white/20 mx-1" />
-                        <span className="text-xs font-black uppercase tracking-widest text-[#FF6B6B] flex items-center gap-1.5">
-                            <span className="w-2 h-2 rounded-full bg-[#FF6B6B] animate-pulse" />
-                            Live Today
+                        <span className="text-xs font-black uppercase tracking-widest text-[#F0C040] flex items-center gap-1.5">
+                            INTO THE FINALS 🏆
                         </span>
                     </motion.div>
 
@@ -63,7 +62,7 @@ export default function PromoBanner() {
                             ₹5 Delivery <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">Only</span>
                         </h2>
                         <p className="text-white/80 text-lg md:text-xl lg:text-2xl font-bold mt-2 md:mt-4 max-w-2xl bg-[#0D0907]/40 px-6 py-2 rounded-full backdrop-blur-sm">
-                            Order Food & Enjoy the Semifinals!
+                            Celebrate India entering the Finals! 🇮🇳🥳
                         </p>
                     </motion.div>
 
@@ -107,14 +106,12 @@ export default function PromoBanner() {
                 <div className="absolute inset-0 flex flex-col p-5 h-full">
                     {/* Top: Match Info */}
                     <div className="flex items-center justify-between w-full mt-2">
-                        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full backdrop-blur-md border border-white/10 bg-[#0D0907]/60">
+                        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full backdrop-blur-md border border-emerald-500/30 bg-emerald-900/40">
                             <span className="text-sm">🇮🇳</span>
-                            <span className="text-[11px] font-bold text-white tracking-wider">IND vs ENG</span>
-                            <span className="text-sm">🇬🇧</span>
+                            <span className="text-[11px] font-bold text-white tracking-wider">IND WON! 🏆</span>
                         </div>
-                        <div className="px-3 py-1.5 rounded-full bg-rose-500/20 border border-rose-500/30 text-[10px] font-bold text-rose-400 uppercase tracking-widest flex items-center gap-1.5">
-                            <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
-                            Live
+                        <div className="px-3 py-1.5 rounded-full bg-amber-500/20 border border-amber-500/30 text-[10px] font-bold text-amber-400 uppercase tracking-widest flex items-center gap-1.5">
+                            FINALS BOUND
                         </div>
                     </div>
 
@@ -128,7 +125,7 @@ export default function PromoBanner() {
                             <span className="text-cyan-400 text-6xl">ONLY!</span>
                         </h2>
                         <p className="text-white/90 text-sm font-bold bg-[#0D0907]/60 px-4 py-1.5 rounded-full backdrop-blur-md mb-6 border border-white/5">
-                            On All Food Items Today 🏏
+                            To celebrate India's win! 🇮🇳🥳
                         </p>
 
                         <button className="flex items-center justify-center gap-2 w-full py-4 rounded-xl font-bold text-white text-[15px] active:scale-[0.98] transition-all"
