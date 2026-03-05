@@ -1,10 +1,11 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronRight, ChevronLeft, Grid3X3, Laptop, BookOpen, Shirt, Bike, Headphones, Camera, Sofa, Utensils, Loader2, ShoppingBag, X, MapPin, Phone, Home as HomeIcon, Zap, UtensilsCrossed, Package, Rocket, ShieldCheck, BadgePercent, Users } from "lucide-react";
+import { ChevronRight, ChevronLeft, Grid3X3, Laptop, BookOpen, Shirt, Bike, Headphones, Camera, Sofa, Utensils, Loader2, ShoppingBag, ShoppingCart, X, MapPin, Phone, Home as HomeIcon, Zap, UtensilsCrossed, Package, Rocket, ShieldCheck, BadgePercent, Users, Plus } from "lucide-react";
 import ProductCard from "@/components/ProductCard";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
+import { useCart } from "@/contexts/CartContext";
 import { toast } from "sonner";
 import { campusEssentials, ADMIN_SELLER_ID, type CampusEssentialItem } from "@/config/campusEssentials";
 import PaymentSelector from "@/components/PaymentSelector";
@@ -263,6 +264,7 @@ function FeatureCarousel() {
 
 export default function Home() {
   const { user } = useAuth();
+  const { addItem } = useCart();
   const navigate = useNavigate();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -570,7 +572,7 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5">
             {campusEssentials.map((item, i) => (
               <motion.div
                 key={item.id}
@@ -578,43 +580,56 @@ export default function Home() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.04 }}
-                className="group rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-lg flex flex-col"
+                className="group relative rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1.5 flex flex-col"
                 style={{
-                  backgroundColor: '#2A2420',
-                  border: '1px solid rgba(255,255,255,0.06)',
+                  backgroundColor: '#1E1814',
+                  border: '1px solid rgba(255,255,255,0.05)',
+                  boxShadow: '0 2px 16px rgba(0,0,0,0.2)',
                 }}
               >
-                {/* Image — full view, no crop */}
-                <div className="relative bg-white/[0.03] flex items-center justify-center p-3 sm:p-4" style={{ minHeight: '140px' }}>
+                {/* Badge */}
+                {item.badge && (
+                  <div className="absolute top-2.5 left-2.5 z-10 px-2 py-0.5 rounded-full text-[10px] font-bold tracking-wide uppercase"
+                    style={{ background: 'rgba(255,107,107,0.9)', color: '#fff', backdropFilter: 'blur(4px)', letterSpacing: '0.04em' }}>
+                    {item.badge}
+                  </div>
+                )}
+
+                {/* Image area — warm glow, full view */}
+                <div className="relative flex items-center justify-center p-4 sm:p-5" style={{ minHeight: '160px', background: 'radial-gradient(ellipse at center, rgba(255,165,80,0.06) 0%, transparent 70%)' }}>
                   <img src={item.image} alt={item.title} loading="lazy"
-                    className="max-h-[130px] sm:max-h-[150px] w-auto max-w-full object-contain group-hover:scale-105 transition-transform duration-500 rounded-lg"
-                    style={{ filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.3))' }}
+                    className="max-h-[120px] sm:max-h-[140px] w-auto max-w-full object-contain group-hover:scale-110 transition-transform duration-500"
+                    style={{ filter: 'drop-shadow(0 6px 20px rgba(0,0,0,0.4))' }}
                     onError={(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400'; }}
                   />
-                  {item.badge && (
-                    <div className="absolute top-2 left-2 px-2 py-0.5 rounded-md text-[10px] font-bold text-white"
-                      style={{ background: 'linear-gradient(135deg, #FF6B6B, #FF4757)' }}>
-                      {item.badge}
-                    </div>
-                  )}
                 </div>
 
-                {/* Divider */}
-                <div style={{ height: '1px', background: 'rgba(255,255,255,0.06)' }} />
-
                 {/* Content */}
-                <div className="p-3 sm:p-3.5 flex flex-col flex-1">
-                  <p className="text-xs sm:text-sm font-semibold line-clamp-2 mb-2 leading-snug" style={{ color: '#EDE6DE' }}>{item.title}</p>
-                  <div className="flex items-center justify-between mt-auto">
-                    <p className="text-base sm:text-lg font-bold" style={{ color: '#FF6B6B' }}>₹{item.price}</p>
-                    <button
-                      onClick={() => setBuyItem(item)}
-                      className="px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg text-white text-[11px] sm:text-xs font-semibold transition-all hover:scale-105 active:scale-95"
-                      style={{ background: 'linear-gradient(135deg, #FF6B6B, #FF4757)', boxShadow: '0 2px 8px rgba(255,107,107,0.25)' }}
-                    >
-                      Buy Now
-                    </button>
+                <div className="p-3 sm:p-4 flex flex-col flex-1" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
+                  <p className="text-xs sm:text-[13px] font-semibold line-clamp-2 mb-2.5 leading-snug" style={{ color: '#D4C8BC' }}>{item.title}</p>
+
+                  {/* Price */}
+                  <div className="flex items-baseline gap-1.5 mb-3">
+                    <span className="text-lg sm:text-xl font-extrabold" style={{ color: '#FF6B6B' }}>₹{item.price}</span>
+                    <span className="text-[10px] font-medium" style={{ color: 'rgba(255,255,255,0.25)' }}>+ ₹5 delivery</span>
                   </div>
+
+                  {/* Add to Cart button */}
+                  <button
+                    onClick={() => {
+                      addItem({ id: item.id, title: item.title, price: item.price, image: item.image, category: item.category });
+                      toast.success(`${item.title} added to cart`);
+                    }}
+                    className="w-full mt-auto py-2 sm:py-2.5 rounded-xl text-white text-[11px] sm:text-xs font-semibold flex items-center justify-center gap-1.5 transition-all duration-200 hover:brightness-110 active:scale-[0.97]"
+                    style={{
+                      background: 'linear-gradient(135deg, rgba(255,107,107,0.15), rgba(255,71,87,0.15))',
+                      border: '1px solid rgba(255,107,107,0.25)',
+                      color: '#FF6B6B',
+                    }}
+                  >
+                    <ShoppingCart className="w-3.5 h-3.5" />
+                    Add to Cart
+                  </button>
                 </div>
               </motion.div>
             ))}
