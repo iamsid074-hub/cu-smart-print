@@ -17,6 +17,7 @@ import FoodMenu from "./pages/FoodMenu";
 import Cart from "./pages/Cart";
 import Admin from "./pages/Admin";
 import TermsAndConditions from "./pages/TermsAndConditions";
+import HelpCenter from "./pages/HelpCenter";
 import Navbar from "./components/Navbar";
 import UsernameSetup from "./components/UsernameSetup";
 import { useSiteGate, ClosedScreen, MaintenanceScreen } from "./components/SiteGate";
@@ -102,6 +103,7 @@ function AppLayout() {
 
         {/* Public Pages */}
         <Route path="/terms" element={<TermsAndConditions />} />
+        <Route path="/help" element={<HelpCenter />} />
 
         <Route path="*" element={<NotFound />} />
       </Routes>
