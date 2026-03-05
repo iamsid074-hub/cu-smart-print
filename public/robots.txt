@@ -1,11 +1,11 @@
 User-agent: *
 Allow: /
 
-# Block auth and private pages from indexing
-Disallow: /home
+# Only block truly private user-specific pages
 Disallow: /chat
-Disallow: /list
 Disallow: /tracking
 Disallow: /profile
+Disallow: /admin
+Disallow: /list
 
 Sitemap: https://cubazzar.shop/sitemap.xml
