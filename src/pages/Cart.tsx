@@ -22,14 +22,40 @@ export default function Cart() {
     const [paymentMethod, setPaymentMethod] = useState<"online" | "cod">("online");
     const [submitting, setSubmitting] = useState(false);
     const [showUpiModal, setShowUpiModal] = useState(false);
+    const [promoCode, setPromoCode] = useState("");
+    const [promoApplied, setPromoApplied] = useState(false);
 
     const phoneClean = phone.replace(/\D/g, "");
     const isPhoneValid = phoneClean.length === 10;
     const isFormValid = hostel.trim() !== "" && room.trim() !== "" && isPhoneValid;
 
-    // Flat delivery fee
-    const deliveryFee = 5;
+    // Filter items by category to determine original delivery charge
+    const campusShopsItems = items.filter(item => item.category === "Campus Shops");
+    const otherItems = items.filter(item => item.category !== "Campus Shops");
+
+    let originalDeliveryFee = 5; // Start with base 5
+    if (campusShopsItems.length > 0) {
+        // If there's a campus shop item, base delivery is 10
+        originalDeliveryFee = 10;
+        if (otherItems.length > 0) {
+            // Mixed items means higher fee normally
+            originalDeliveryFee = 15;
+        }
+    }
+
+    // Apply promo code logic
+    const deliveryFee = promoApplied ? 5 : originalDeliveryFee;
     const orderTotal = totalPrice + deliveryFee;
+
+    const handleApplyPromo = () => {
+        if (promoCode.trim().toUpperCase() === "CRICKET5") {
+            setPromoApplied(true);
+            toast({ title: "Promo Applied!", description: "Delivery fee reduced to ₹5. Enjoy the match!" });
+        } else {
+            setPromoApplied(false);
+            toast({ title: "Invalid Code", description: "The promo code entered is not valid.", variant: "destructive" });
+        }
+    };
 
     const createOrder = async (paymentId?: string) => {
         const itemsSummary = items.map(i => `${i.quantity}x ${i.title} (₹${i.price})`).join("\n");
@@ -146,6 +172,36 @@ export default function Cart() {
                             </AnimatePresence>
                         </div>
 
+                        {/* Promo Code Section */}
+                        <div className="rounded-xl p-4 border border-white/10 mb-4 flex gap-2 items-end" style={{ backgroundColor: "#120805" }}>
+                            <div className="flex-1">
+                                <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">Promo Code</label>
+                                <input
+                                    type="text"
+                                    value={promoCode}
+                                    onChange={(e) => {
+                                        setPromoCode(e.target.value.toUpperCase());
+                                        if (promoApplied && e.target.value.toUpperCase() !== "CRICKET5") {
+                                            setPromoApplied(false); // Reset if they start typing something else
+                                        }
+                                    }}
+                                    placeholder="Enter CRICKET5"
+                                    className="w-full bg-[#1A0F0A] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-cyan-500/50 transition-colors placeholder:text-white/20 uppercase"
+                                    disabled={promoApplied}
+                                />
+                            </div>
+                            <button
+                                onClick={handleApplyPromo}
+                                disabled={!promoCode.trim() || promoApplied}
+                                className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${promoApplied
+                                    ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
+                                    : "bg-white/10 text-white hover:bg-white/15 border border-transparent disabled:opacity-50"
+                                    }`}
+                            >
+                                {promoApplied ? "Applied!" : "Apply"}
+                            </button>
+                        </div>
+
                         {/* Price Summary */}
                         <div className="rounded-xl p-4 border border-orange-500/15 mb-4" style={{ backgroundColor: "#120805" }}>
                             <div className="flex justify-between items-center text-sm text-muted-foreground mb-2">
@@ -153,8 +209,13 @@ export default function Cart() {
                                 <span>₹{totalPrice}</span>
                             </div>
                             <div className="flex justify-between items-center text-sm text-neon-cyan mb-3">
-                                <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> Delivery</span>
-                                <span>+ ₹{deliveryFee}</span>
+                                <span className="flex items-center gap-1">
+                                    <Clock className="w-3 h-3" /> Delivery
+                                </span>
+                                <div className="flex items-center gap-2">
+                                    {promoApplied && <span className="text-muted-foreground line-through text-xs">₹{campusShopsItems.length > 0 ? (otherItems.length > 0 ? 15 : 10) : 5}</span>}
+                                    <span className={promoApplied ? "text-emerald-400 font-bold" : ""}>+ ₹{deliveryFee}</span>
+                                </div>
                             </div>
                             <div className="border-t border-white/10 pt-3 flex justify-between items-center">
                                 <span className="font-bold text-white">Total</span>

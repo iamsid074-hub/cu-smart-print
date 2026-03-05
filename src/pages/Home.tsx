@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronRight, ChevronLeft, Grid3X3, Laptop, BookOpen, Shirt, Bike, Headphones, Camera, Sofa, Utensils, Loader2, ShoppingBag, ShoppingCart, X, MapPin, Phone, Home as HomeIcon, Zap, UtensilsCrossed, Package, Rocket, ShieldCheck, BadgePercent, Users, Plus, Shield, Ban, Headset, ExternalLink } from "lucide-react";
 import ProductCard from "@/components/ProductCard";
+import PromoBanner from "@/components/PromoBanner";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
@@ -432,6 +433,11 @@ export default function Home() {
             <span style={{ color: '#FF6B6B' }}>looking for</span>?
           </h1>
         </motion.div>
+
+        {/* ─── Promo Banner ─── */}
+        <div className="mb-8 sm:mb-12">
+          <PromoBanner />
+        </div>
 
         {/* ─── FEATURE CARDS CAROUSEL ─── */}
         <FeatureCarousel />
