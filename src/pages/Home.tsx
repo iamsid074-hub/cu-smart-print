@@ -560,94 +560,6 @@ export default function Home() {
           `}</style>
         </motion.section>
 
-        {/* ─── TRUST & SAFETY ─── */}
-        <section className="mb-10 sm:mb-16">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="rounded-2xl sm:rounded-3xl overflow-hidden"
-            style={{ background: 'linear-gradient(135deg, rgba(16,185,129,0.06), rgba(6,182,212,0.04))', border: '1px solid rgba(16,185,129,0.12)' }}
-          >
-            {/* Header */}
-            <div className="px-5 pt-5 pb-3 sm:px-8 sm:pt-7 sm:pb-4 text-center">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full mb-3" style={{ background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.2)' }}>
-                <Shield className="w-3.5 h-3.5 text-emerald-400" />
-                <span className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-emerald-400">Safe & Trusted</span>
-              </div>
-              <h2 className="text-lg sm:text-2xl font-black mb-1" style={{ ...fontH, color: '#EDE6DE' }}>Your Safety is Our Priority</h2>
-              <p className="text-xs sm:text-sm max-w-lg mx-auto" style={{ color: 'rgba(255,255,255,0.4)' }}>CU Bazzar is run with full transparency. Every delivery is handled personally with zero tolerance for prohibited items.</p>
-            </div>
-
-            {/* Trust Pillars */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 px-4 pb-5 sm:px-6 sm:pb-7">
-              {[
-                {
-                  icon: Package,
-                  title: "Personal Delivery",
-                  desc: "Platform owner personally handles every single delivery. No third parties.",
-                  color: "#10B981",
-                  bg: "rgba(16,185,129,0.08)",
-                  border: "rgba(16,185,129,0.15)",
-                },
-                {
-                  icon: Ban,
-                  title: "No Illegal Items",
-                  desc: "Strict zero-tolerance policy. No drugs, alcohol, weapons, or prohibited goods.",
-                  color: "#F43F5E",
-                  bg: "rgba(244,63,94,0.08)",
-                  border: "rgba(244,63,94,0.15)",
-                },
-                {
-                  icon: ShieldCheck,
-                  title: "Direct Accountability",
-                  desc: "Real person, real responsibility. We stand behind every order and transaction.",
-                  color: "#3B82F6",
-                  bg: "rgba(59,130,246,0.08)",
-                  border: "rgba(59,130,246,0.15)",
-                },
-                {
-                  icon: Headset,
-                  title: "24/7 Help Center",
-                  desc: "Need help? Our support is available round the clock. Instant response guaranteed.",
-                  color: "#A78BFA",
-                  bg: "rgba(167,139,250,0.08)",
-                  border: "rgba(167,139,250,0.15)",
-                },
-              ].map((item, i) => (
-                <motion.div
-                  key={item.title}
-                  initial={{ opacity: 0, y: 16 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.08 }}
-                  className="rounded-xl sm:rounded-2xl p-3.5 sm:p-5 flex flex-col transition-all duration-300 hover:-translate-y-0.5"
-                  style={{ background: item.bg, border: `1px solid ${item.border}` }}
-                >
-                  <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center mb-3" style={{ background: item.bg, border: `1px solid ${item.border}` }}>
-                    <item.icon className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: item.color }} />
-                  </div>
-                  <h3 className="text-xs sm:text-sm font-bold mb-1" style={{ color: '#EDE6DE' }}>{item.title}</h3>
-                  <p className="text-[10px] sm:text-xs leading-relaxed" style={{ color: 'rgba(255,255,255,0.35)' }}>{item.desc}</p>
-                </motion.div>
-              ))}
-            </div>
-
-            {/* Help Center CTA */}
-            <div className="px-4 pb-5 sm:px-6 sm:pb-7">
-              <Link
-                to="/help"
-                className="flex items-center justify-center gap-2 w-full sm:w-auto sm:mx-auto px-6 py-3 rounded-xl text-sm font-semibold transition-all hover:brightness-110 active:scale-[0.98]"
-                style={{ background: 'rgba(16,185,129,0.12)', border: '1px solid rgba(16,185,129,0.2)', color: '#10B981' }}
-              >
-                <Headset className="w-4 h-4" />
-                Visit Help Center
-                <ExternalLink className="w-3.5 h-3.5 opacity-60" />
-              </Link>
-            </div>
-          </motion.div>
-        </section>
-
         {/* ─── CAMPUS ESSENTIALS ─── */}
         <section className="mb-10 sm:mb-16">
           <div className="flex items-center justify-between mb-4 sm:mb-8">
@@ -933,6 +845,94 @@ export default function Home() {
               ))
             )}
           </div>
+        </section>
+
+        {/* ─── TRUST & SAFETY ─── */}
+        <section className="mb-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="rounded-2xl sm:rounded-3xl overflow-hidden"
+            style={{ background: 'linear-gradient(135deg, rgba(16,185,129,0.06), rgba(6,182,212,0.04))', border: '1px solid rgba(16,185,129,0.12)' }}
+          >
+            {/* Header */}
+            <div className="px-5 pt-5 pb-3 sm:px-8 sm:pt-7 sm:pb-4 text-center">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full mb-3" style={{ background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.2)' }}>
+                <Shield className="w-3.5 h-3.5 text-emerald-400" />
+                <span className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-emerald-400">Safe & Trusted</span>
+              </div>
+              <h2 className="text-lg sm:text-2xl font-black mb-1" style={{ ...fontH, color: '#EDE6DE' }}>Your Safety is Our Priority</h2>
+              <p className="text-xs sm:text-sm max-w-lg mx-auto" style={{ color: 'rgba(255,255,255,0.4)' }}>CU Bazzar is run with full transparency. Every delivery is handled personally with zero tolerance for prohibited items.</p>
+            </div>
+
+            {/* Trust Pillars */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 px-4 pb-5 sm:px-6 sm:pb-7">
+              {[
+                {
+                  icon: Package,
+                  title: "Personal Delivery",
+                  desc: "Platform owner personally handles every single delivery. No third parties.",
+                  color: "#10B981",
+                  bg: "rgba(16,185,129,0.08)",
+                  border: "rgba(16,185,129,0.15)",
+                },
+                {
+                  icon: Ban,
+                  title: "No Illegal Items",
+                  desc: "Strict zero-tolerance policy. No drugs, alcohol, weapons, or prohibited goods.",
+                  color: "#F43F5E",
+                  bg: "rgba(244,63,94,0.08)",
+                  border: "rgba(244,63,94,0.15)",
+                },
+                {
+                  icon: ShieldCheck,
+                  title: "Direct Accountability",
+                  desc: "Real person, real responsibility. We stand behind every order and transaction.",
+                  color: "#3B82F6",
+                  bg: "rgba(59,130,246,0.08)",
+                  border: "rgba(59,130,246,0.15)",
+                },
+                {
+                  icon: Headset,
+                  title: "24/7 Help Center",
+                  desc: "Need help? Our support is available round the clock. Instant response guaranteed.",
+                  color: "#A78BFA",
+                  bg: "rgba(167,139,250,0.08)",
+                  border: "rgba(167,139,250,0.15)",
+                },
+              ].map((item, i) => (
+                <motion.div
+                  key={item.title}
+                  initial={{ opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.08 }}
+                  className="rounded-xl sm:rounded-2xl p-3.5 sm:p-5 flex flex-col transition-all duration-300 hover:-translate-y-0.5"
+                  style={{ background: item.bg, border: `1px solid ${item.border}` }}
+                >
+                  <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center mb-3" style={{ background: item.bg, border: `1px solid ${item.border}` }}>
+                    <item.icon className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: item.color }} />
+                  </div>
+                  <h3 className="text-xs sm:text-sm font-bold mb-1" style={{ color: '#EDE6DE' }}>{item.title}</h3>
+                  <p className="text-[10px] sm:text-xs leading-relaxed" style={{ color: 'rgba(255,255,255,0.35)' }}>{item.desc}</p>
+                </motion.div>
+              ))}
+            </div>
+
+            {/* Help Center CTA */}
+            <div className="px-4 pb-5 sm:px-6 sm:pb-7">
+              <Link
+                to="/help"
+                className="flex items-center justify-center gap-2 w-full sm:w-auto sm:mx-auto px-6 py-3 rounded-xl text-sm font-semibold transition-all hover:brightness-110 active:scale-[0.98]"
+                style={{ background: 'rgba(16,185,129,0.12)', border: '1px solid rgba(16,185,129,0.2)', color: '#10B981' }}
+              >
+                <Headset className="w-4 h-4" />
+                Visit Help Center
+                <ExternalLink className="w-3.5 h-3.5 opacity-60" />
+              </Link>
+            </div>
+          </motion.div>
         </section>
 
       </div>
