@@ -40,24 +40,24 @@ export const campusEssentials: CampusEssentialItem[] = [
         id: "ce-notebook-70",
         title: "Notebook (Long)",
         price: 70,
-        // slim notebook
-        image: "https://images.unsplash.com/photo-1517842645767-c639042777db?q=80&w=400&auto=format&fit=crop",
+        // classmate notebook (user-provided image)
+        image: "/notebook-70.png",
         category: "notebook",
     },
     {
         id: "ce-notebook-100",
         title: "Ruled Notebook A4",
         price: 100,
-        // lined paper with pen
-        image: "https://images.unsplash.com/photo-1455390582262-044cdead277a?q=80&w=400&auto=format&fit=crop",
+        // classmate flamingo notebook (user-provided image)
+        image: "/notebook-100.png",
         category: "notebook",
     },
     {
         id: "ce-spiral-120",
         title: "Spiral Notebook A4",
         price: 120,
-        // spiral-bound notebook
-        image: "https://images.unsplash.com/photo-1612198790700-0738f4e49b2f?q=80&w=400&auto=format&fit=crop",
+        // unigo spiral notebook (user-provided image)
+        image: "/spiral-notebook.png",
         category: "notebook",
         badge: "Best Seller",
     },
@@ -75,8 +75,8 @@ export const campusEssentials: CampusEssentialItem[] = [
         id: "ce-pen-20",
         title: "Gel Pen (Black)",
         price: 20,
-        // black pen writing on paper
-        image: "https://images.unsplash.com/photo-1471107340929-a87cd0f5b5f3?q=80&w=400&auto=format&fit=crop",
+        // hauser XO gel pen (user-provided image)
+        image: "/gel-pen-black.png",
         category: "stationery",
     },
     {
