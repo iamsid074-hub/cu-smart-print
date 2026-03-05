@@ -160,7 +160,7 @@ export default function HelpCenter() {
                             title: "WhatsApp Support",
                             desc: "Instant response",
                             action: "Chat Now",
-                            href: "https://wa.me/917888365798?text=Hi%2C%20I%20need%20help%20with%20CU%20Bazzar",
+                            href: "https://wa.me/919466166750?text=Hi%2C%20I%20need%20help%20with%20CU%20Bazzar",
                             color: "#25D366",
                             bg: "rgba(37,211,102,0.08)",
                             border: "rgba(37,211,102,0.15)",
@@ -169,8 +169,8 @@ export default function HelpCenter() {
                             icon: Phone,
                             title: "Call Us",
                             desc: "Available 8AM – 12AM",
-                            action: "7888365798",
-                            href: "tel:+917888365798",
+                            action: "9466166750",
+                            href: "tel:+919466166750",
                             color: "#3B82F6",
                             bg: "rgba(59,130,246,0.08)",
                             border: "rgba(59,130,246,0.15)",
@@ -179,8 +179,8 @@ export default function HelpCenter() {
                             icon: Mail,
                             title: "Email",
                             desc: "Response within 24h",
-                            action: "cubazzar@gmail.com",
-                            href: "mailto:cubazzar@gmail.com",
+                            action: "iamsid074@gmail.com",
+                            href: "mailto:iamsid074@gmail.com",
                             color: "#A78BFA",
                             bg: "rgba(167,139,250,0.08)",
                             border: "rgba(167,139,250,0.15)",
@@ -220,8 +220,8 @@ export default function HelpCenter() {
                                 key={section.title}
                                 onClick={() => setActiveSection(i)}
                                 className={`flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg text-xs sm:text-sm font-semibold flex-shrink-0 transition-all whitespace-nowrap ${activeSection === i
-                                        ? "text-white"
-                                        : "text-muted-foreground hover:text-white hover:bg-white/5"
+                                    ? "text-white"
+                                    : "text-muted-foreground hover:text-white hover:bg-white/5"
                                     }`}
                                 style={activeSection === i ? { background: `rgba(${section.color === '#10B981' ? '16,185,129' : section.color === '#3B82F6' ? '59,130,246' : section.color === '#F43F5E' ? '244,63,94' : '167,139,250'},0.15)`, border: `1px solid ${section.color}33` } : { border: '1px solid rgba(255,255,255,0.06)' }}
                             >
@@ -320,7 +320,7 @@ export default function HelpCenter() {
                 <div className="text-center py-8">
                     <p className="text-sm mb-3" style={{ color: 'rgba(255,255,255,0.4)' }}>Still need help?</p>
                     <a
-                        href="https://wa.me/917888365798?text=Hi%2C%20I%20need%20help%20with%20CU%20Bazzar"
+                        href="https://wa.me/919466166750?text=Hi%2C%20I%20need%20help%20with%20CU%20Bazzar"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold text-white transition-all hover:scale-105 active:scale-95"
