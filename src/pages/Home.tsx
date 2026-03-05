@@ -337,8 +337,8 @@ export default function Home() {
         seller_id: ADMIN_SELLER_ID,
         base_price: item.price,
         commission: 0,
-        delivery_charge: 5,
-        total_price: item.price + 5,
+        delivery_charge: 10,
+        total_price: item.price + 10,
         delivery_location: `${buyHostel} [CE: ${item.title}]`,
         delivery_room: buyRoom || null,
         buyer_phone: phoneClean,
@@ -617,7 +617,7 @@ export default function Home() {
                   {/* Price */}
                   <div className="flex items-baseline gap-1.5 mb-3">
                     <span className="text-lg sm:text-xl font-extrabold" style={{ color: '#FF6B6B' }}>₹{item.price}</span>
-                    <span className="text-[10px] font-medium" style={{ color: 'rgba(255,255,255,0.25)' }}>+ ₹5 delivery</span>
+                    <span className="text-[10px] font-medium" style={{ color: 'rgba(255,255,255,0.25)' }}>+ ₹10 delivery</span>
                   </div>
 
                   {/* Add to Cart button */}
@@ -716,13 +716,13 @@ export default function Home() {
                   <PaymentSelector
                     selected={buyPaymentMethod}
                     onChange={setBuyPaymentMethod}
-                    totalAmount={(buyItem?.price || 0) + 5}
+                    totalAmount={(buyItem?.price || 0) + 10}
                     disabled={buyLoading}
                   />
 
                   <div className="flex items-center gap-2 mt-1 px-1">
                     <Zap className="w-3.5 h-3.5" style={{ color: '#4DB8AC' }} />
-                    <span className="text-[11px]" style={{ color: '#4DB8AC' }}>Delivered by Campus Store · ₹5 delivery fee included</span>
+                    <span className="text-[11px]" style={{ color: '#4DB8AC' }}>Delivered by Campus Store · ₹10 delivery fee included</span>
                   </div>
                 </div>
 
@@ -738,7 +738,7 @@ export default function Home() {
                     {buyLoading ? (
                       <Loader2 className="w-5 h-5 animate-spin mx-auto" />
                     ) : (
-                      <>{buyPaymentMethod === "online" ? `Pay ₹${buyItem.price + 5} Online` : `COD · ₹${buyItem.price + 5}`}</>
+                      <>{buyPaymentMethod === "online" ? `Pay ₹${buyItem.price + 10} Online` : `COD · ₹${buyItem.price + 10}`}</>
                     )}
                   </motion.button>
                 </div>

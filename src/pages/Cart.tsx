@@ -33,13 +33,13 @@ export default function Cart() {
     const campusShopsItems = items.filter(item => item.category === "Campus Shops");
     const otherItems = items.filter(item => item.category !== "Campus Shops");
 
-    let originalDeliveryFee = 5; // Start with base 5
+    let originalDeliveryFee = 10; // Start with base 10
     if (campusShopsItems.length > 0) {
-        // If there's a campus shop item, base delivery is 10
-        originalDeliveryFee = 10;
+        // If there's a campus shop item, base delivery is 15
+        originalDeliveryFee = 15;
         if (otherItems.length > 0) {
             // Mixed items means higher fee normally
-            originalDeliveryFee = 15;
+            originalDeliveryFee = 20;
         }
     }
 
@@ -213,7 +213,7 @@ export default function Cart() {
                                     <Clock className="w-3 h-3" /> Delivery
                                 </span>
                                 <div className="flex items-center gap-2">
-                                    {promoApplied && <span className="text-muted-foreground line-through text-xs">₹{campusShopsItems.length > 0 ? (otherItems.length > 0 ? 15 : 10) : 5}</span>}
+                                    {promoApplied && <span className="text-muted-foreground line-through text-xs">₹{campusShopsItems.length > 0 ? (otherItems.length > 0 ? 20 : 15) : 10}</span>}
                                     <span className={promoApplied ? "text-emerald-400 font-bold" : ""}>+ ₹{deliveryFee}</span>
                                 </div>
                             </div>
