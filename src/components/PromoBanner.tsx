@@ -1,4 +1,4 @@
-import { Link } from "react";
+import { Link } from "react-router-dom";
 import { Copy, CheckCircle2, ChevronRight, Zap } from "lucide-react";
 import { useState } from "react";
 import { motion } from "framer-motion";
