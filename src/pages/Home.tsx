@@ -846,6 +846,30 @@ export default function Home() {
             )}
           </div>
         </section>
+
+        {/* ─── SEO Footer — helps search engines discover all spelling variations ─── */}
+        <footer className="mt-16 pt-8 pb-6" style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+          <div className="text-center mb-6">
+            <h2 className="text-sm font-bold mb-2" style={{ color: 'rgba(255,255,255,0.3)' }}>CU Bazzar — Chandigarh University Campus Marketplace</h2>
+            <p className="text-[11px] leading-relaxed max-w-2xl mx-auto" style={{ color: 'rgba(255,255,255,0.15)' }}>
+              CU Bazzar (also known as CU Bazaar, CU Bazar, CUBazar, CUBazzar, CUBazaar) is the #1 student marketplace at Chandigarh University.
+              Whether you search for "cu bazzar", "cu bazaar", "cu bazar", "cubazar", "cubazzar", "chandigarh university bazar",
+              "chandigarh university marketplace", "CU market", or "CU campus market" — you'll find us here at cubazzar.shop.
+              Buy & sell products, order campus food delivered to your hostel room, and connect with fellow CU students.
+            </p>
+          </div>
+          <div className="flex flex-wrap justify-center gap-1.5 mb-4">
+            {["CU Bazzar", "CU Bazaar", "CU Bazar", "CUBazar", "CUBazzar", "CU Market", "CU Marketplace", "Chandigarh University Bazaar", "Campus Marketplace"].map(tag => (
+              <span key={tag} className="px-2 py-0.5 rounded text-[9px] font-medium"
+                style={{ background: 'rgba(255,255,255,0.03)', color: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.04)' }}>
+                {tag}
+              </span>
+            ))}
+          </div>
+          <p className="text-center text-[10px]" style={{ color: 'rgba(255,255,255,0.1)' }}>
+            © {new Date().getFullYear()} CU Bazzar · cubazzar.shop · Made with ❤️ for CU Students
+          </p>
+        </footer>
       </div>
     </div>
   );
