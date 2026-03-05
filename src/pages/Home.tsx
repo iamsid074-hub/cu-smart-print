@@ -578,36 +578,43 @@ export default function Home() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.04 }}
-                className="group rounded-xl sm:rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1"
-                style={{ backgroundColor: '#3F3832', border: '1px solid #544B43', boxShadow: '0 2px 12px rgba(0,0,0,0.2)' }}
+                className="group rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-lg flex flex-col"
+                style={{
+                  backgroundColor: '#2A2420',
+                  border: '1px solid rgba(255,255,255,0.06)',
+                }}
               >
-                <div className="relative h-24 sm:h-32 overflow-hidden" style={{ backgroundColor: 'rgba(255,255,255,0.02)' }}>
+                {/* Image — full view, no crop */}
+                <div className="relative bg-white/[0.03] flex items-center justify-center p-3 sm:p-4" style={{ minHeight: '140px' }}>
                   <img src={item.image} alt={item.title} loading="lazy"
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    className="max-h-[130px] sm:max-h-[150px] w-auto max-w-full object-contain group-hover:scale-105 transition-transform duration-500 rounded-lg"
+                    style={{ filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.3))' }}
                     onError={(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400'; }}
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#3F3832] to-transparent opacity-60" />
                   {item.badge && (
-                    <div className="absolute top-1.5 left-1.5 sm:top-2 sm:left-2 px-1.5 py-0.5 rounded-md text-[9px] sm:text-[10px] font-bold text-white" style={{ background: '#FF6B6B' }}>
+                    <div className="absolute top-2 left-2 px-2 py-0.5 rounded-md text-[10px] font-bold text-white"
+                      style={{ background: 'linear-gradient(135deg, #FF6B6B, #FF4757)' }}>
                       {item.badge}
                     </div>
                   )}
                 </div>
-                <div className="p-2.5 sm:p-3">
-                  <p className="text-[11px] sm:text-xs font-semibold line-clamp-1 mb-1" style={{ color: '#EDE6DE' }}>{item.title}</p>
-                  <div className="flex items-center justify-between mb-1.5">
-                    <p className="text-sm sm:text-base font-bold" style={{ color: '#FF6B6B' }}>₹{item.price}</p>
-                    <div className="flex items-center gap-0.5 text-[9px]" style={{ color: '#4DB8AC' }}>
-                      <Zap className="w-2.5 h-2.5" /> Fast
-                    </div>
+
+                {/* Divider */}
+                <div style={{ height: '1px', background: 'rgba(255,255,255,0.06)' }} />
+
+                {/* Content */}
+                <div className="p-3 sm:p-3.5 flex flex-col flex-1">
+                  <p className="text-xs sm:text-sm font-semibold line-clamp-2 mb-2 leading-snug" style={{ color: '#EDE6DE' }}>{item.title}</p>
+                  <div className="flex items-center justify-between mt-auto">
+                    <p className="text-base sm:text-lg font-bold" style={{ color: '#FF6B6B' }}>₹{item.price}</p>
+                    <button
+                      onClick={() => setBuyItem(item)}
+                      className="px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg text-white text-[11px] sm:text-xs font-semibold transition-all hover:scale-105 active:scale-95"
+                      style={{ background: 'linear-gradient(135deg, #FF6B6B, #FF4757)', boxShadow: '0 2px 8px rgba(255,107,107,0.25)' }}
+                    >
+                      Buy Now
+                    </button>
                   </div>
-                  <button
-                    onClick={() => setBuyItem(item)}
-                    className="w-full py-1.5 sm:py-2 rounded-lg text-white text-[10px] sm:text-xs font-semibold transition-all hover:opacity-90 active:scale-[0.97]"
-                    style={{ background: '#FF6B6B' }}
-                  >
-                    Buy Now
-                  </button>
                 </div>
               </motion.div>
             ))}
