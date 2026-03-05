@@ -20,9 +20,9 @@ export const campusEssentials: CampusEssentialItem[] = [
     {
         id: "ce-practical-file",
         title: "Practical File (100 pages)",
-        price: 60,
-        // ruled pages / practical file
-        image: "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?q=80&w=400&auto=format&fit=crop",
+        price: 50,
+        // CU practical notebook (user-provided image)
+        image: "/practical-file.jpg",
         category: "practical",
         badge: "Popular",
     },
