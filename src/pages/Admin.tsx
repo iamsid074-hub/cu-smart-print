@@ -415,9 +415,9 @@ function ItemOrdersSection({ orders, loading, onUpdateStatus, onVerifyUpi }: {
                                         <div className="flex-1 min-w-0">
                                             <p className="font-bold text-sm text-white truncate">{order.products?.title || "Product Removed"}</p>
                                             <p className="text-neon-fire font-bold text-lg">₹{order.total_price.toLocaleString()}</p>
-                                            <div className="flex items-center gap-2 mt-1">
-                                                {order.products?.category && <span className="inline-block px-2 py-0.5 rounded-lg bg-white/10 text-xs text-muted-foreground font-mono">{order.products.category}</span>}
-                                                <span className={`inline-block px-2 py-0.5 rounded-lg text-xs font-bold ${order.payment_status === 'verifying' ? 'bg-orange-500/15 text-orange-400' : order.payment_status === 'paid' ? 'bg-green-500/15 text-green-400' : 'bg-yellow-500/15 text-yellow-400'}`}>
+                                            <div className="flex flex-wrap items-center gap-2 mt-1">
+                                                {order.products?.category && <span className="inline-block px-2 py-0.5 rounded-lg bg-white/10 text-xs text-muted-foreground font-mono truncate max-w-full">{order.products.category}</span>}
+                                                <span className={`inline-block px-2 py-0.5 rounded-lg text-xs font-bold truncate max-w-full ${order.payment_status === 'verifying' ? 'bg-orange-500/15 text-orange-400' : order.payment_status === 'paid' ? 'bg-green-500/15 text-green-400' : 'bg-yellow-500/15 text-yellow-400'}`}>
                                                     {order.payment_status === 'verifying' ? `🟡 Verify UTR: ${order.razorpay_payment_id || 'N/A'}` : order.payment_status === 'paid' ? '💳 Paid Online' : '💵 COD'}
                                                 </span>
                                             </div>
@@ -438,7 +438,7 @@ function ItemOrdersSection({ orders, loading, onUpdateStatus, onVerifyUpi }: {
                                                 <button onClick={() => copyPhone(order.buyer_phone || order.buyer?.phone_number || "")} className="p-0.5 rounded hover:bg-white/10"><Copy className="w-3 h-3 text-muted-foreground" /></button>
                                             </div>
                                         )}
-                                        <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1"><MapPin className="w-3 h-3" /> {order.delivery_location}{order.delivery_room && `, Room ${order.delivery_room}`}</p>
+                                        <p className="text-xs text-muted-foreground flex items-start gap-1 mt-1 break-words"><MapPin className="w-3 h-3 flex-shrink-0 mt-0.5" /> <span className="flex-1 min-w-0">{order.delivery_location}{order.delivery_room && `, Room ${order.delivery_room}`}</span></p>
                                     </div>
                                     <div className="glass rounded-xl p-3 border border-neon-orange/20">
                                         <p className="text-xs text-neon-orange font-bold uppercase tracking-wider mb-2 flex items-center gap-1"><Star className="w-3 h-3" /> Seller</p>
@@ -450,7 +450,7 @@ function ItemOrdersSection({ orders, loading, onUpdateStatus, onVerifyUpi }: {
                                                 <button onClick={() => copyPhone(order.seller?.phone_number || "")} className="p-0.5 rounded hover:bg-white/10"><Copy className="w-3 h-3 text-muted-foreground" /></button>
                                             </div>
                                         )}
-                                        {order.seller?.hostel_block && <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1"><MapPin className="w-3 h-3" /> {order.seller.hostel_block}</p>}
+                                        {order.seller?.hostel_block && <p className="text-xs text-muted-foreground flex items-start gap-1 mt-1 break-words"><MapPin className="w-3 h-3 flex-shrink-0 mt-0.5" /> <span className="flex-1 min-w-0">{order.seller.hostel_block}</span></p>}
                                     </div>
                                     {action && (
                                         <div className="flex flex-col sm:flex-row gap-2">
@@ -587,7 +587,7 @@ function FoodOrdersSection({ orders, loading, onUpdateStatus, onVerifyUpi }: {
                                             </div>
                                         )}
                                         <div className="mt-2 flex flex-col items-start gap-2">
-                                            <span className={`inline-block px-2 py-0.5 rounded-lg text-xs font-bold ${order.payment_status === 'verifying' ? 'bg-orange-500/15 text-orange-400' : order.payment_status === 'paid' ? 'bg-green-500/15 text-green-400' : 'bg-yellow-500/15 text-yellow-400'}`}>
+                                            <span className={`inline-block w-full sm:w-auto truncate px-2 py-1 rounded-lg text-xs font-bold ${order.payment_status === 'verifying' ? 'bg-orange-500/15 text-orange-400' : order.payment_status === 'paid' ? 'bg-green-500/15 text-green-400' : 'bg-yellow-500/15 text-yellow-400'}`}>
                                                 {order.payment_status === 'verifying' ? `🟡 Verify UTR: ${order.razorpay_payment_id || 'N/A'}` : order.payment_status === 'paid' ? '💳 Paid Online' : '💵 Cash on Delivery'}
                                             </span>
                                             {order.payment_status === 'verifying' && (
@@ -609,7 +609,7 @@ function FoodOrdersSection({ orders, loading, onUpdateStatus, onVerifyUpi }: {
                                                 <button onClick={() => copyPhone(order.buyer_phone || "")} className="p-0.5 rounded hover:bg-white/10" title="Copy"><Copy className="w-3 h-3 text-muted-foreground" /></button>
                                             </div>
                                         )}
-                                        <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1"><MapPin className="w-3 h-3" /> {hostel}</p>
+                                        <p className="text-xs text-muted-foreground flex items-start gap-1 mt-1 break-words"><MapPin className="w-3 h-3 flex-shrink-0 mt-0.5" /> <span className="flex-1 min-w-0">{hostel}</span></p>
                                     </div>
 
                                     {/* Action */}
@@ -981,7 +981,7 @@ export default function Admin() {
             </aside>
 
             {/* ── Main Content ─────────────────────────────────────────────────────── */}
-            <main className="flex-1 lg:ml-64 min-h-screen">
+            <main className="flex-1 lg:ml-64 min-h-screen w-full max-w-[100vw] overflow-x-hidden">
                 {/* Top Bar */}
                 <div className="sticky top-0 z-20 glass-heavy border-b border-white/5 px-4 sm:px-6 h-16 flex items-center gap-4">
                     <button
