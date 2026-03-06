@@ -36,10 +36,10 @@ const spring = { type: "spring" as const, stiffness: 380, damping: 28 };
 // Flash sale config
 const FLASH_SALE = {
     active: true,
-    title: "Spiral Notebook",
-    originalPrice: 120,
-    salePrice: 60,
-    discount: "50% OFF",
+    title: "Buy 1 Pen (₹10) → Get 1 Free",
+    originalPrice: 20,
+    salePrice: 15,
+    discount: "₹10 Pen + ₹5 Pen FREE!",
     endsAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
     link: "/browse",
 };
