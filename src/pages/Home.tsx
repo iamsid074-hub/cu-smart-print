@@ -542,7 +542,7 @@ export default function Home() {
         >
           {/* Animated border wrapper */}
           <div className="relative rounded-3xl sm:rounded-[2rem] p-[3px] overflow-hidden" style={{
-            background: 'linear-gradient(135deg, #FFD700, #F59E0B, #EC4899, #231942)',
+            background: 'linear-gradient(135deg, #e0b1cb, #d4a0be, #EC4899, #231942)',
             backgroundSize: '300% 300%',
             animation: 'sale-border-shift 4s ease infinite',
             boxShadow: '0 10px 40px -10px rgba(35,25,66,0.5)'
@@ -571,23 +571,23 @@ export default function Home() {
                       style={{ background: 'linear-gradient(90deg, rgba(255,215,0,0.15), rgba(245,158,11,0.05))', border: '1px solid rgba(255,215,0,0.3)' }}
                     >
                       <span className="relative flex h-2.5 w-2.5">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ backgroundColor: '#FFD700' }}></span>
-                        <span className="relative inline-flex rounded-full h-2.5 w-2.5" style={{ backgroundColor: '#F59E0B' }}></span>
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ backgroundColor: '#e0b1cb' }}></span>
+                        <span className="relative inline-flex rounded-full h-2.5 w-2.5" style={{ backgroundColor: '#d4a0be' }}></span>
                       </span>
-                      <span className="text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] text-[#FFD700]">Summer Sale · Special Offer</span>
+                      <span className="text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] text-[#e0b1cb]">Summer Sale · Special Offer</span>
                     </motion.div>
 
                     <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black leading-[1.1] mb-4 text-white tracking-tight" style={fontH}>
                       <span>Something </span>
-                      <span className="relative text-transparent bg-clip-text bg-gradient-to-r from-[#FFD700] to-[#F59E0B] drop-shadow-sm">
+                      <span className="relative text-transparent bg-clip-text bg-gradient-to-r from-[#e0b1cb] to-[#d4a0be] drop-shadow-sm">
                         massive
-                        <svg className="absolute -bottom-2 left-0 w-full" viewBox="0 0 120 8" fill="none"><path d="M2 5C30 2 90 2 118 5" stroke="#FFD700" strokeWidth="3" strokeLinecap="round" opacity="0.6" /></svg>
+                        <svg className="absolute -bottom-2 left-0 w-full" viewBox="0 0 120 8" fill="none"><path d="M2 5C30 2 90 2 118 5" stroke="#e0b1cb" strokeWidth="3" strokeLinecap="round" opacity="0.6" /></svg>
                       </span>
                       <span> is coming</span>
                     </h2>
 
                     <p className="text-base sm:text-lg mb-2 max-w-md text-slate-300 font-medium">
-                      March 20 · Up to <strong className="text-[#FFD700] font-black tracking-wide text-xl">70% OFF</strong> on everything
+                      March 20 · Up to <strong className="text-[#e0b1cb] font-black tracking-wide text-xl">70% OFF</strong> on everything
                     </p>
                     <p className="text-sm sm:text-base mb-8 text-slate-400 font-medium tracking-wide">
                       Exclusive for CU Students · Limited stock 🚀
@@ -605,7 +605,7 @@ export default function Home() {
                           <div key={i} className="flex items-center gap-1 sm:gap-1.5">
                             <div className="rounded-xl px-3 py-2.5 sm:px-4 sm:py-3 text-center min-w-[50px] sm:min-w-[64px] border border-white/10 bg-white/5 backdrop-blur-md shadow-inner">
                               <div className="text-xl sm:text-3xl font-black font-mono text-white tracking-wider">{t.value}</div>
-                              <div className="text-[8px] sm:text-[10px] font-bold uppercase tracking-widest text-[#FFD700]">{t.label}</div>
+                              <div className="text-[8px] sm:text-[10px] font-bold uppercase tracking-widest text-[#e0b1cb]">{t.label}</div>
                             </div>
                             {i < 3 && <span className="text-xl sm:text-2xl font-black text-white/30">:</span>}
                           </div>
@@ -627,7 +627,7 @@ export default function Home() {
                         70<span className="text-4xl sm:text-6xl lg:text-8xl">%</span>
                       </motion.div>
                       <div className="absolute top-0 right-[-20px] sm:right-[-40px]">
-                        <span className="px-3 py-1 rounded-full bg-[#FFD700] text-slate-900 text-xs sm:text-sm font-black transform rotate-12 inline-block">UP TO</span>
+                        <span className="px-3 py-1 rounded-full bg-[#e0b1cb] text-slate-900 text-xs sm:text-sm font-black transform rotate-12 inline-block">UP TO</span>
                       </div>
                     </div>
 
