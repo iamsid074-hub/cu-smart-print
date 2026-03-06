@@ -96,7 +96,7 @@ export default function PromoBanner() {
             </Link>
 
             {/* ─── MOBILE BANNER (shown only on phones) ─── */}
-            <Link to="/food" className="sm:hidden block relative w-full aspect-[4/5] overflow-hidden rounded-[2rem] shadow-2xl border border-white/10 -mx-4 w-[calc(100%+2rem)]">
+            <Link to="/food" className="sm:hidden block relative w-full aspect-[4/5] overflow-hidden rounded-[2rem] shadow-2xl border border-white/10">
                 <div
                     className="absolute inset-0 bg-cover bg-center transition-transform duration-700"
                     style={{ backgroundImage: 'url(/cricket_bg_mobile.png)' }}
