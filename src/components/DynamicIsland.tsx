@@ -348,12 +348,12 @@ export default function DynamicIsland() {
         return "diBreathe 4s ease-in-out infinite";
     };
 
-    // Pill width — subtract enough for right-side actions (cart/profile pill ~100px + hamburger ~44px + gaps + navbar padding ≈ 200px)
+    // Pill width
     const getPillWidth = () => {
-        if (isSearchOpen) return "min(420px, calc(100vw - 200px))";
-        if (showingNotif) return "min(280px, calc(100vw - 200px))";
-        if (showingIdle && pageContext) return "min(220px, calc(100vw - 200px))";
-        if (showingIdle && idleMode === "flash" && !pageContext) return "min(250px, calc(100vw - 200px))";
+        if (isSearchOpen) return "min(420px, calc(100vw - 120px))";
+        if (showingNotif) return "min(280px, calc(100vw - 120px))";
+        if (showingIdle && pageContext) return "min(220px, calc(100vw - 160px))";
+        if (showingIdle && idleMode === "flash" && !pageContext) return "min(250px, calc(100vw - 160px))";
         return 150;
     };
 
