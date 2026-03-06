@@ -35,7 +35,7 @@ const spring = { type: "spring" as const, stiffness: 380, damping: 28 };
 
 // Flash sale config
 const FLASH_SALE = {
-    active: true,
+    active: false,
     title: "Buy 1 Pen (₹10) → Get 1 Free",
     originalPrice: 20,
     salePrice: 15,

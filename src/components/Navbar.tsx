@@ -83,7 +83,7 @@ export default function Navbar() {
       transition={{ duration: 0.5, ease: [0.34, 1.56, 0.64, 1] }}
       className="fixed top-2 left-2 right-2 sm:top-4 sm:left-4 sm:right-4 z-50 border rounded-3xl sm:rounded-[2rem] shadow-sm" style={{ background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)', borderColor: 'rgba(226,232,240,0.8)' }}
     >
-      <div className="max-w-7xl mx-auto px-3 sm:px-6 h-16 flex items-center gap-2 sm:gap-4 overflow-hidden">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 h-16 flex items-center gap-2 sm:gap-4">
         {/* Dynamic Island — logo + expandable search */}
         <DynamicIsland />
 
