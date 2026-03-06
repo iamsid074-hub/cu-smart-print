@@ -88,7 +88,7 @@ export default function Browse() {
                                     value={searchQuery}
                                     onChange={e => setSearchQuery(e.target.value)}
                                     placeholder="Search products..."
-                                    className="w-full rounded-2xl pl-10 pr-4 h-[44px] text-sm focus:outline-none transition-all bg-white text-slate-900 border border-slate-200 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 shadow-sm"
+                                    className="w-full rounded-2xl pl-10 pr-4 h-[44px] text-sm focus:outline-none transition-all bg-white text-slate-900 border border-slate-200 focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20 shadow-sm"
                                 />
                             </div>
                         </div>
@@ -103,8 +103,8 @@ export default function Browse() {
                                     key={cat.id}
                                     onClick={() => handleCategoryClick(cat.id)}
                                     className={`flex items-center gap-1.5 px-5 py-2.5 rounded-3xl font-bold transition-all duration-300 flex-shrink-0 text-xs sm:text-sm whitespace-nowrap border ${isActive
-                                            ? 'bg-violet-600 text-white border-violet-600 shadow-[0_4px_15px_rgba(139,92,246,0.3)]'
-                                            : 'bg-white text-slate-600 border-slate-200 hover:border-violet-300 hover:bg-violet-50 shadow-sm'
+                                            ? 'bg-brand text-white border-brand shadow-[0_4px_15px_rgba(35,25,66,0.3)]'
+                                            : 'bg-white text-slate-600 border-slate-200 hover:border-brand-muted hover:bg-brand-50 shadow-sm'
                                         }`}
                                 >
                                     <span>{cat.emoji}</span>
@@ -119,7 +119,7 @@ export default function Browse() {
                 {
                     loading ? (
                         <div className="flex flex-col items-center justify-center py-32 gap-4">
-                            <Loader2 className="w-10 h-10 animate-spin text-violet-600" />
+                            <Loader2 className="w-10 h-10 animate-spin text-brand" />
                             <p className="text-sm font-medium text-slate-500">Loading products...</p>
                         </div>
                     ) : filtered.length === 0 ? (
@@ -128,8 +128,8 @@ export default function Browse() {
                             animate={{ opacity: 1, scale: 1 }}
                             className="rounded-3xl sm:rounded-[2.5rem] p-10 sm:p-16 text-center bg-white border border-slate-200 shadow-sm flex flex-col items-center"
                         >
-                            <div className="w-20 h-20 rounded-3xl flex items-center justify-center mb-6 bg-violet-50 border border-violet-100">
-                                <Package className="w-10 h-10 text-violet-500" />
+                            <div className="w-20 h-20 rounded-3xl flex items-center justify-center mb-6 bg-brand-50 border border-brand-50">
+                                <Package className="w-10 h-10 text-brand-accent" />
                             </div>
                             <h3 className="text-xl sm:text-2xl font-black text-slate-900 mb-2">
                                 {searchQuery ? "No matches found" : "No items yet"}
@@ -143,7 +143,7 @@ export default function Browse() {
                                 {searchQuery && (
                                     <button
                                         onClick={() => setSearchQuery("")}
-                                        className="px-6 py-3 rounded-2xl text-sm font-bold text-white transition-all bg-violet-600 shadow-[0_4px_12px_rgba(139,92,246,0.2)] hover:shadow-[0_6px_15px_rgba(139,92,246,0.3)] hover:scale-105"
+                                        className="px-6 py-3 rounded-2xl text-sm font-bold text-white transition-all bg-brand shadow-[0_4px_12px_rgba(35,25,66,0.2)] hover:shadow-[0_6px_15px_rgba(35,25,66,0.3)] hover:scale-105"
                                     >
                                         Clear Search
                                     </button>

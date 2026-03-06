@@ -202,9 +202,9 @@ export default function Profile() {
                             >
                                 {/* Pulsing ring hint */}
                                 {!isEditing && (
-                                    <span className="absolute inset-0 rounded-full animate-ping opacity-40 bg-violet-600" style={{ animationDuration: '2s' }} />
+                                    <span className="absolute inset-0 rounded-full animate-ping opacity-40 bg-brand" style={{ animationDuration: '2s' }} />
                                 )}
-                                <div className="relative w-14 h-14 rounded-full overflow-hidden transition-all group-hover:scale-105 bg-white border-2 border-violet-500">
+                                <div className="relative w-14 h-14 rounded-full overflow-hidden transition-all group-hover:scale-105 bg-white border-2 border-brand-accent">
                                     {profile?.avatar_url ? (
                                         <img src={profile.avatar_url} alt="" className="w-full h-full object-cover" />
                                     ) : (
@@ -223,7 +223,7 @@ export default function Profile() {
                             {!isEditing && (
                                 <button
                                     onClick={() => setShowProfileCard(true)}
-                                    className="text-[10px] font-medium px-2 py-0.5 rounded-full transition-colors bg-white text-violet-600 border border-violet-200 hover:bg-violet-50"
+                                    className="text-[10px] font-medium px-2 py-0.5 rounded-full transition-colors bg-white text-brand border border-brand-muted hover:bg-brand-50"
                                 >
                                     View Card
                                 </button>
@@ -235,7 +235,7 @@ export default function Profile() {
                             {isEditing ? (
                                 <div className="space-y-2">
                                     <input value={fullName} onChange={e => setFullName(e.target.value)} placeholder="Name"
-                                        className="text-base font-semibold w-full rounded-md px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-violet-300 bg-white text-slate-900 border border-slate-200" />
+                                        className="text-base font-semibold w-full rounded-md px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-brand-muted bg-white text-slate-900 border border-slate-200" />
                                     <div className="flex gap-2">
                                         <div className="flex items-center gap-1 px-2.5 py-1.5 rounded-md flex-1 bg-white border border-slate-200">
                                             <span className="text-xs text-slate-400">@</span>
@@ -245,9 +245,9 @@ export default function Profile() {
                                     </div>
                                     <div className="flex gap-2">
                                         <input value={hostelBlock} onChange={e => setHostelBlock(e.target.value)} placeholder="Hostel + Room"
-                                            className="text-xs rounded-md px-2.5 py-1.5 flex-1 focus:outline-none focus:ring-1 focus:ring-violet-300 bg-white text-slate-900 border border-slate-200" />
+                                            className="text-xs rounded-md px-2.5 py-1.5 flex-1 focus:outline-none focus:ring-1 focus:ring-brand-muted bg-white text-slate-900 border border-slate-200" />
                                         <input value={phoneNumber} onChange={e => setPhoneNumber(e.target.value)} placeholder="Phone"
-                                            className="text-xs rounded-md px-2.5 py-1.5 flex-1 focus:outline-none focus:ring-1 focus:ring-violet-300 bg-white text-slate-900 border border-slate-200" />
+                                            className="text-xs rounded-md px-2.5 py-1.5 flex-1 focus:outline-none focus:ring-1 focus:ring-brand-muted bg-white text-slate-900 border border-slate-200" />
                                     </div>
                                 </div>
                             ) : (
@@ -297,7 +297,7 @@ export default function Profile() {
                         <button
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id)}
-                            className={`relative pb-3 text-sm font-bold transition-colors flex items-center gap-1.5 ${activeTab === tab.id ? 'text-violet-600' : 'text-slate-500 hover:text-slate-700'}`}
+                            className={`relative pb-3 text-sm font-bold transition-colors flex items-center gap-1.5 ${activeTab === tab.id ? 'text-brand' : 'text-slate-500 hover:text-slate-700'}`}
                         >
                             {tab.label}
                             {tab.count !== undefined && tab.count > 0 && (
@@ -306,7 +306,7 @@ export default function Profile() {
                                 </span>
                             )}
                             {activeTab === tab.id && (
-                                <motion.div layoutId="tab-underline" className="absolute bottom-0 left-0 right-0 h-[2px] bg-violet-600 rounded-t-full" />
+                                <motion.div layoutId="tab-underline" className="absolute bottom-0 left-0 right-0 h-[2px] bg-brand rounded-t-full" />
                             )}
                         </button>
                     ))}
@@ -326,7 +326,7 @@ export default function Profile() {
                                         <p className="text-sm font-medium text-slate-500">No listings yet</p>
                                         <p className="text-xs mt-1 text-slate-400">Start selling items to your campus community.</p>
                                         <button onClick={() => navigate('/list')}
-                                            className="mt-4 px-4 py-2 rounded-md text-xs font-bold transition-colors flex items-center gap-1.5 bg-white text-violet-600 border border-violet-200 hover:bg-violet-50">
+                                            className="mt-4 px-4 py-2 rounded-md text-xs font-bold transition-colors flex items-center gap-1.5 bg-white text-brand border border-brand-muted hover:bg-brand-50">
                                             <Plus className="w-3.5 h-3.5" /> Create a Listing
                                         </button>
                                     </div>
@@ -342,7 +342,7 @@ export default function Profile() {
                                                 <div className="flex-1 min-w-0">
                                                     <p className="text-sm font-bold truncate text-slate-900">{item.title}</p>
                                                     <div className="flex items-center gap-2 mt-0.5">
-                                                        <span className="text-sm font-black text-violet-600">₹{item.price}</span>
+                                                        <span className="text-sm font-black text-brand">₹{item.price}</span>
                                                         <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${item.status === 'sold' ? 'bg-slate-100 text-slate-500' : 'bg-emerald-50 text-emerald-600'}`}>
                                                             {item.status === 'sold' ? 'Sold' : 'Active'}
                                                         </span>
@@ -387,7 +387,7 @@ export default function Profile() {
                                                     <div className="flex-1 min-w-0">
                                                         <p className="text-sm font-bold truncate text-slate-900">{order.products?.title || "Product"}</p>
                                                         <div className="flex items-center gap-2 mt-0.5">
-                                                            <span className="text-sm font-black text-violet-600">₹{order.total_price}</span>
+                                                            <span className="text-sm font-black text-brand">₹{order.total_price}</span>
                                                             <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${order.status === "pending" ? 'bg-orange-50 text-orange-600' :
                                                                 order.status === "seller_accepted" ? 'bg-emerald-50 text-emerald-600' :
                                                                     'bg-red-50 text-red-600'
@@ -438,7 +438,7 @@ export default function Profile() {
                                     <p className="text-sm font-medium text-slate-500">No saved items</p>
                                     <p className="text-xs mt-1 text-slate-400">Tap the heart on products to save them here.</p>
                                     <button onClick={() => navigate('/browse')}
-                                        className="mt-4 px-4 py-2 rounded-md text-xs font-bold transition-colors flex items-center gap-1.5 bg-white text-violet-600 border border-violet-200 hover:bg-violet-50">
+                                        className="mt-4 px-4 py-2 rounded-md text-xs font-bold transition-colors flex items-center gap-1.5 bg-white text-brand border border-brand-muted hover:bg-brand-50">
                                         Browse Products
                                     </button>
                                 </div>
@@ -463,7 +463,7 @@ export default function Profile() {
                             </button>
 
                             {/* Header bg */}
-                            <div className="h-20 relative bg-gradient-to-br from-violet-500 to-fuchsia-600">
+                            <div className="h-20 relative bg-gradient-to-br from-brand-accent to-fuchsia-600">
                                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,rgba(255,255,255,0.2),transparent_60%)]" />
                             </div>
 
@@ -485,7 +485,7 @@ export default function Profile() {
                             {/* Content */}
                             <div className="px-5 pb-5 pt-3 text-center profile-card-content">
                                 <h3 className="text-lg font-bold text-slate-900">{profile?.full_name || "Student"}</h3>
-                                <p className="text-xs font-bold mt-0.5 text-violet-600">@{profile?.username || "user"}</p>
+                                <p className="text-xs font-bold mt-0.5 text-brand">@{profile?.username || "user"}</p>
 
                                 {/* Bio / Email */}
                                 <p className="text-xs mt-3 leading-relaxed text-slate-500">
@@ -522,7 +522,7 @@ export default function Profile() {
                                         <Edit2 className="w-3.5 h-3.5" /> Edit Profile
                                     </button>
                                     <button onClick={() => navigate('/browse')}
-                                        className="flex-1 py-2.5 rounded-lg text-xs font-bold transition-colors flex items-center justify-center gap-1.5 bg-violet-50 text-violet-600 border border-violet-200 hover:bg-violet-100">
+                                        className="flex-1 py-2.5 rounded-lg text-xs font-bold transition-colors flex items-center justify-center gap-1.5 bg-brand-50 text-brand border border-brand-muted hover:bg-brand-50">
                                         <Globe className="w-3.5 h-3.5" /> Browse
                                     </button>
                                 </div>

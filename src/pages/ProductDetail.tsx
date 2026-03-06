@@ -150,7 +150,7 @@ export default function ProductDetail() {
     if (loading) {
         return (
             <div className="min-h-screen bg-slate-50 pt-24 pb-16 px-4 flex justify-center py-20">
-                <Loader2 className="w-10 h-10 animate-spin text-violet-600" />
+                <Loader2 className="w-10 h-10 animate-spin text-brand" />
             </div>
         );
     }
@@ -159,7 +159,7 @@ export default function ProductDetail() {
         return (
             <div className="min-h-screen bg-slate-50 pt-24 pb-16 px-4 text-center">
                 <h1 className="text-3xl font-bold mb-4 text-slate-900">Product Not Found</h1>
-                <button onClick={() => navigate(-1)} className="text-violet-600 underline font-semibold">Go back</button>
+                <button onClick={() => navigate(-1)} className="text-brand underline font-semibold">Go back</button>
             </div>
         );
     }
@@ -272,7 +272,7 @@ export default function ProductDetail() {
                                 title="Share this product"
                                 className={`w-12 h-12 flex items-center justify-center rounded-full shadow-sm transition-all duration-300 ${copied
                                     ? 'bg-emerald-50 text-emerald-500 scale-110'
-                                    : 'bg-white/80 backdrop-blur-md text-slate-400 hover:text-violet-500 hover:bg-white'
+                                    : 'bg-white/80 backdrop-blur-md text-slate-400 hover:text-brand-accent hover:bg-white'
                                     }`}
                             >
                                 {copied
@@ -299,7 +299,7 @@ export default function ProductDetail() {
                     >
                         <div className="flex items-start justify-between gap-4 mb-4">
                             <div>
-                                <span className="text-xs font-bold uppercase tracking-wider text-violet-600 mb-2 block">{product.category}</span>
+                                <span className="text-xs font-bold uppercase tracking-wider text-brand mb-2 block">{product.category}</span>
                                 <h1 className="text-3xl md:text-5xl font-extrabold leading-tight mb-2 text-slate-900">
                                     {product.title}
                                 </h1>
@@ -319,8 +319,8 @@ export default function ProductDetail() {
                         </div>
 
                         <div className="flex flex-wrap items-center gap-3 mb-8">
-                            <div className="px-5 py-2.5 rounded-full bg-violet-50 text-violet-700 text-sm font-bold flex items-center gap-2">
-                                <BadgeCheck className="w-4 h-4 text-violet-600" /> {product.condition}
+                            <div className="px-5 py-2.5 rounded-full bg-brand-50 text-brand text-sm font-bold flex items-center gap-2">
+                                <BadgeCheck className="w-4 h-4 text-brand" /> {product.condition}
                             </div>
                             <div className="px-5 py-2.5 rounded-full bg-slate-100 text-slate-600 text-sm font-bold flex items-center gap-2">
                                 <Clock className="w-4 h-4 text-slate-500" /> {product.age || 'Unknown age'}
@@ -330,7 +330,7 @@ export default function ProductDetail() {
                         {/* Seller Info box */}
                         <div className="p-6 sm:p-8 rounded-3xl bg-white shadow-[0_4px_20px_rgba(0,0,0,0.03)] mb-8 w-full flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
                             <div className="flex items-center gap-4">
-                                <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-violet-400 to-fuchsia-400 p-[3px] shadow-sm">
+                                <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-brand-accent to-brand-light p-[3px] shadow-sm">
                                     <div className="w-full h-full rounded-full bg-white overflow-hidden flex items-center justify-center">
                                         {product.profiles?.avatar_url ? (
                                             <img src={product.profiles.avatar_url} alt="Seller" className="w-full h-full object-cover" />
@@ -341,7 +341,7 @@ export default function ProductDetail() {
                                 </div>
                                 <div>
                                     <p className="font-bold text-lg text-slate-900">{product.profiles?.full_name || "Student User"}</p>
-                                    <p className="text-sm text-violet-600 font-medium">@{product.profiles?.username || "student"}</p>
+                                    <p className="text-sm text-brand font-medium">@{product.profiles?.username || "student"}</p>
                                     {product.profiles?.hostel_block && (
                                         <p className="text-xs text-slate-500 mt-1 flex items-center gap-1">
                                             <MapPin className="w-3 h-3" /> {product.profiles.hostel_block}
@@ -355,7 +355,7 @@ export default function ProductDetail() {
                                     <Dialog open={isBuyModalOpen} onOpenChange={setIsBuyModalOpen}>
                                         <DialogTrigger asChild>
                                             <button
-                                                className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-violet-600 hover:bg-violet-700 text-white font-bold shadow-sm transition-transform flex items-center justify-center gap-2 active:scale-95"
+                                                className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-brand hover:bg-brand text-white font-bold shadow-sm transition-transform flex items-center justify-center gap-2 active:scale-95"
                                             >
                                                 <ShoppingBag className="w-5 h-5" /> Buy Now
                                             </button>
@@ -381,15 +381,15 @@ export default function ProductDetail() {
                                                             <p className="font-semibold text-slate-900">₹{product.price.toLocaleString()}</p>
                                                         </div>
                                                         <div className="flex items-center justify-between mt-1">
-                                                            <div className="flex items-center gap-1 text-sm text-violet-600">
+                                                            <div className="flex items-center gap-1 text-sm text-brand">
                                                                 <Clock className="w-3 h-3" /> Delivery
                                                             </div>
-                                                            <p className="font-semibold text-violet-600">+ ₹{deliveryFee}</p>
+                                                            <p className="font-semibold text-brand">+ ₹{deliveryFee}</p>
                                                         </div>
                                                         <div className="w-full h-[1px] bg-slate-200 my-2.5" />
                                                         <div className="flex items-center justify-between">
                                                             <p className="text-sm font-bold text-slate-900">Total</p>
-                                                            <p className="font-black text-violet-600 text-lg">₹{totalAmount.toLocaleString()}</p>
+                                                            <p className="font-black text-brand text-lg">₹{totalAmount.toLocaleString()}</p>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -403,7 +403,7 @@ export default function ProductDetail() {
                                                             required
                                                             value={deliveryLocation}
                                                             onChange={e => setDeliveryLocation(e.target.value)}
-                                                            className="w-full bg-slate-50 rounded-2xl px-5 py-4 text-sm text-slate-900 focus:outline-none focus:ring-4 focus:ring-violet-50 transition-all placeholder:text-slate-400"
+                                                            className="w-full bg-slate-50 rounded-2xl px-5 py-4 text-sm text-slate-900 focus:outline-none focus:ring-4 focus:ring-brand-50 transition-all placeholder:text-slate-400"
                                                             placeholder="e.g. Zakir Hussain Block A"
                                                         />
                                                     </div>
@@ -414,7 +414,7 @@ export default function ProductDetail() {
                                                             required
                                                             value={deliveryRoom}
                                                             onChange={e => setDeliveryRoom(e.target.value)}
-                                                            className="w-full bg-slate-50 rounded-2xl px-5 py-4 text-sm text-slate-900 focus:outline-none focus:ring-4 focus:ring-violet-50 transition-all placeholder:text-slate-400"
+                                                            className="w-full bg-slate-50 rounded-2xl px-5 py-4 text-sm text-slate-900 focus:outline-none focus:ring-4 focus:ring-brand-50 transition-all placeholder:text-slate-400"
                                                             placeholder="e.g. 402"
                                                         />
                                                     </div>
@@ -427,8 +427,8 @@ export default function ProductDetail() {
                                                             onChange={e => setPhone(e.target.value.replace(/\D/g, "").slice(0, 10))}
                                                             maxLength={10}
                                                             className={`w-full bg-slate-50 rounded-2xl px-5 py-4 text-sm text-slate-900 focus:outline-none focus:ring-4 transition-all placeholder:text-slate-400 ${phone.length > 0 && phone.length !== 10
-                                                                    ? 'border border-red-300 focus:ring-red-50 focus:border-red-400'
-                                                                    : 'border border-transparent focus:ring-violet-50 focus:border-violet-200'
+                                                                ? 'border border-red-300 focus:ring-red-50 focus:border-red-400'
+                                                                : 'border border-transparent focus:ring-brand-50 focus:border-brand-muted'
                                                                 }`}
                                                             placeholder="e.g. 9876543210"
                                                         />
@@ -446,7 +446,7 @@ export default function ProductDetail() {
                                                     <button
                                                         type="submit"
                                                         disabled={isSubmitting || !deliveryLocation.trim() || !deliveryRoom.trim() || phone.length !== 10}
-                                                        className="w-full py-4 mt-4 rounded-full bg-violet-600 text-white font-bold tracking-wide hover:bg-violet-700 hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                                                        className="w-full py-4 mt-4 rounded-full bg-brand text-white font-bold tracking-wide hover:bg-brand hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                                                     >
                                                         {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : `Pay ₹${totalAmount.toLocaleString()} Online`}
                                                     </button>

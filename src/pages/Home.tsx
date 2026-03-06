@@ -20,9 +20,9 @@ const fontH: React.CSSProperties = { fontFamily: "'Space Grotesk', sans-serif" }
 const categories = [
   { icon: Laptop, label: "Electronics", count: "New", gradient: "from-cyan-400 to-blue-500", image: "https://images.unsplash.com/photo-1498049794561-7780e7231661?q=80&w=600&auto=format&fit=crop" },
   { icon: BookOpen, label: "Books", count: "Popular", gradient: "from-orange-400 to-rose-500", image: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?q=80&w=600&auto=format&fit=crop" },
-  { icon: Shirt, label: "Fashion", count: "New", gradient: "from-pink-400 to-violet-500", image: "https://images.unsplash.com/photo-1445205170230-053b83016050?q=80&w=600&auto=format&fit=crop" },
+  { icon: Shirt, label: "Fashion", count: "New", gradient: "from-pink-400 to-brand-accent", image: "https://images.unsplash.com/photo-1445205170230-053b83016050?q=80&w=600&auto=format&fit=crop" },
   { icon: Bike, label: "Sports", count: "", gradient: "from-teal-400 to-cyan-500", image: "https://images.unsplash.com/photo-1517649763962-0c623066013b?q=80&w=600&auto=format&fit=crop" },
-  { icon: Headphones, label: "Audio", count: "", gradient: "from-indigo-400 to-violet-500", image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=600&auto=format&fit=crop" },
+  { icon: Headphones, label: "Audio", count: "", gradient: "from-indigo-400 to-brand-accent", image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=600&auto=format&fit=crop" },
   { icon: Camera, label: "Camera", count: "", gradient: "from-amber-400 to-orange-500", image: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=600&auto=format&fit=crop" },
   { icon: Sofa, label: "Furniture", count: "", gradient: "from-rose-400 to-pink-500", image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?q=80&w=600&auto=format&fit=crop" },
   { icon: Utensils, label: "Kitchen", count: "", gradient: "from-emerald-400 to-teal-500", image: "https://images.unsplash.com/photo-1556910103-1c02745aae4d?q=80&w=600&auto=format&fit=crop" },
@@ -80,7 +80,7 @@ const featureCards: FeatureCardType[] = [
     desc: "Every transaction is campus-verified. Buy and sell with full confidence in our student community.",
     cta: "Learn More",
     link: "/browse",
-    gradient: "from-violet-500/20 via-purple-500/10 to-indigo-500/20",
+    gradient: "from-brand-accent/20 via-purple-500/10 to-indigo-500/20",
     iconColor: "#A78BFA",
     borderColor: "rgba(167,139,250,0.25)",
   },
@@ -287,7 +287,7 @@ function FeatureCarousel() {
             style={{
               width: activeIdx === i ? 16 : 5,
               height: 5,
-              backgroundColor: activeIdx === i ? '#8B5CF6' : '#E2E8F0',
+              backgroundColor: activeIdx === i ? '#231942' : '#E2E8F0',
             }}
           />
         ))}
@@ -308,8 +308,8 @@ const sliderItems = [
 function AnimatedProductSlider() {
   return (
     <div className="w-full relative overflow-hidden h-32 flex items-center">
-      <div className="absolute inset-y-0 left-0 w-8 sm:w-16 bg-gradient-to-r from-[#8B5CF6] to-transparent z-10 pointer-events-none" />
-      <div className="absolute inset-y-0 right-0 w-8 sm:w-16 bg-gradient-to-l from-[#8B5CF6] to-transparent z-10 pointer-events-none" />
+      <div className="absolute inset-y-0 left-0 w-8 sm:w-16 bg-gradient-to-r from-[#231942] to-transparent z-10 pointer-events-none" />
+      <div className="absolute inset-y-0 right-0 w-8 sm:w-16 bg-gradient-to-l from-[#231942] to-transparent z-10 pointer-events-none" />
 
       <motion.div
         animate={{ x: ["0%", "-50%"] }}
@@ -483,7 +483,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-slate-50 pt-[4.5rem] pb-20">
       {/* ─── Top Purple Header Section ─── */}
-      <div className="bg-[#8B5CF6] px-4 pt-8 pb-14 sm:px-6 lg:px-10 rounded-3xl sm:rounded-[2.5rem] mb-8 relative overflow-hidden shadow-sm mx-2 sm:mx-0 mt-2 sm:mt-0">
+      <div className="bg-[#231942] px-4 pt-8 pb-14 sm:px-6 lg:px-10 rounded-3xl sm:rounded-[2.5rem] mb-8 relative overflow-hidden shadow-sm mx-2 sm:mx-0 mt-2 sm:mt-0">
         <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent pointer-events-none" />
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none" />
         <div className="max-w-[1600px] mx-auto relative z-10">
@@ -542,15 +542,15 @@ export default function Home() {
         >
           {/* Animated border wrapper */}
           <div className="relative rounded-3xl sm:rounded-[2rem] p-[3px] overflow-hidden" style={{
-            background: 'linear-gradient(135deg, #FFD700, #F59E0B, #EC4899, #8B5CF6)',
+            background: 'linear-gradient(135deg, #FFD700, #F59E0B, #EC4899, #231942)',
             backgroundSize: '300% 300%',
             animation: 'sale-border-shift 4s ease infinite',
-            boxShadow: '0 10px 40px -10px rgba(139,92,246,0.5)'
+            boxShadow: '0 10px 40px -10px rgba(35,25,66,0.5)'
           }}>
             <div className="relative rounded-3xl sm:rounded-[2rem] overflow-hidden bg-slate-900" style={{ backgroundImage: 'radial-gradient(circle at top right, #312e81, #0f172a)' }}>
 
               {/* Glowing orbs */}
-              <div className="absolute top-0 right-0 w-64 h-64 sm:w-96 sm:h-96 rounded-full blur-[100px] pointer-events-none" style={{ background: 'rgba(139,92,246,0.25)' }} />
+              <div className="absolute top-0 right-0 w-64 h-64 sm:w-96 sm:h-96 rounded-full blur-[100px] pointer-events-none" style={{ background: 'rgba(35,25,66,0.25)' }} />
               <div className="absolute bottom-0 left-0 w-48 h-48 sm:w-72 sm:h-72 rounded-full blur-[80px] pointer-events-none" style={{ background: 'rgba(236,72,153,0.15)' }} />
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 rounded-full blur-[60px] pointer-events-none" style={{ background: 'rgba(245,158,11,0.1)' }} />
 
@@ -635,7 +635,7 @@ export default function Home() {
                       onClick={handleRemindMe}
                       whileHover={{ y: -2, scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className={`group relative px-8 py-4 sm:px-10 sm:py-5 rounded-2xl font-black text-white text-sm sm:text-base overflow-hidden transition-all duration-300 ${isReminded ? 'bg-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.4)]' : 'bg-gradient-to-r from-violet-600 to-fuchsia-600 shadow-[0_10px_30px_rgba(139,92,246,0.5)] hover:shadow-[0_15px_40px_rgba(139,92,246,0.7)] hover:from-violet-500 hover:to-fuchsia-500'}`}
+                      className={`group relative px-8 py-4 sm:px-10 sm:py-5 rounded-2xl font-black text-white text-sm sm:text-base overflow-hidden transition-all duration-300 ${isReminded ? 'bg-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.4)]' : 'bg-gradient-to-r from-brand to-fuchsia-600 shadow-[0_10px_30px_rgba(35,25,66,0.5)] hover:shadow-[0_15px_40px_rgba(35,25,66,0.7)] hover:from-brand-accent hover:to-fuchsia-500'}`}
                     >
                       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
                       <span className="relative flex items-center gap-2 tracking-wide uppercase" style={fontH}>
@@ -678,7 +678,7 @@ export default function Home() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.04 }}
-                className="group relative rounded-3xl overflow-hidden transition-all duration-300 hover:-translate-y-1.5 flex flex-col bg-white shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-[0_12px_35px_rgba(139,92,246,0.1)]"
+                className="group relative rounded-3xl overflow-hidden transition-all duration-300 hover:-translate-y-1.5 flex flex-col bg-white shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-[0_12px_35px_rgba(35,25,66,0.1)]"
               >
                 {/* Badge */}
                 {item.badge && (
@@ -702,7 +702,7 @@ export default function Home() {
 
                   {/* Price */}
                   <div className="flex items-baseline gap-1.5 mb-3">
-                    <span className="text-lg sm:text-xl font-extrabold text-violet-600">₹{item.price}</span>
+                    <span className="text-lg sm:text-xl font-extrabold text-brand">₹{item.price}</span>
                     <span className="text-[10px] font-medium text-slate-400">+ ₹10 delivery</span>
                   </div>
 
@@ -712,7 +712,7 @@ export default function Home() {
                       addItem({ id: item.id, title: item.title, price: item.price, image: item.image, category: item.category });
                       toast.success(`${item.title} added to cart`);
                     }}
-                    className="w-full mt-auto py-2.5 sm:py-3 rounded-2xl text-violet-700 bg-violet-50 hover:bg-violet-100 text-[11px] sm:text-xs font-bold flex items-center justify-center gap-1.5 transition-all duration-200 active:scale-[0.97]"
+                    className="w-full mt-auto py-2.5 sm:py-3 rounded-2xl text-brand bg-brand-50 hover:bg-brand-50 text-[11px] sm:text-xs font-bold flex items-center justify-center gap-1.5 transition-all duration-200 active:scale-[0.97]"
                   >
                     <ShoppingCart className="w-3.5 h-3.5" />
                     Add to Cart
@@ -746,7 +746,7 @@ export default function Home() {
                     </div>
                     <div>
                       <p className="text-sm font-bold text-slate-900" style={fontH}>{buyItem.title}</p>
-                      <p className="text-base font-bold text-violet-600">₹{buyItem.price}</p>
+                      <p className="text-base font-bold text-brand">₹{buyItem.price}</p>
                     </div>
                   </div>
                   <button onClick={() => setBuyItem(null)} className="p-1.5 rounded-lg transition-colors text-slate-400 hover:bg-slate-50 hover:text-slate-600">
@@ -763,7 +763,7 @@ export default function Home() {
                     <input
                       value={buyHostel} onChange={(e) => setBuyHostel(e.target.value)}
                       placeholder="Hostel Block (e.g. BH-1)"
-                      className="w-full rounded-xl pl-10 pr-4 h-[48px] text-sm focus:outline-none transition-all bg-slate-50 border border-slate-200 text-slate-900 focus:bg-white focus:border-violet-300 focus:ring-4 focus:ring-violet-50"
+                      className="w-full rounded-xl pl-10 pr-4 h-[48px] text-sm focus:outline-none transition-all bg-slate-50 border border-slate-200 text-slate-900 focus:bg-white focus:border-brand-muted focus:ring-4 focus:ring-brand-50"
                     />
                   </div>
 
@@ -772,7 +772,7 @@ export default function Home() {
                     <input
                       value={buyRoom} onChange={(e) => setBuyRoom(e.target.value)}
                       placeholder="Room Number *"
-                      className="w-full rounded-xl pl-10 pr-4 h-[48px] text-sm focus:outline-none transition-all bg-slate-50 border border-slate-200 text-slate-900 focus:bg-white focus:border-violet-300 focus:ring-4 focus:ring-violet-50"
+                      className="w-full rounded-xl pl-10 pr-4 h-[48px] text-sm focus:outline-none transition-all bg-slate-50 border border-slate-200 text-slate-900 focus:bg-white focus:border-brand-muted focus:ring-4 focus:ring-brand-50"
                     />
                   </div>
 
@@ -783,7 +783,7 @@ export default function Home() {
                       placeholder="10-digit Phone Number *"
                       type="tel"
                       maxLength={10}
-                      className={`w-full rounded-xl pl-10 pr-4 h-[48px] text-sm focus:outline-none transition-all bg-slate-50 text-slate-900 border focus:bg-white focus:ring-4 ${buyPhone.length > 0 && buyPhone.length !== 10 ? 'border-red-300 focus:border-red-400 focus:ring-red-50' : 'border-slate-200 focus:border-violet-300 focus:ring-violet-50'}`}
+                      className={`w-full rounded-xl pl-10 pr-4 h-[48px] text-sm focus:outline-none transition-all bg-slate-50 text-slate-900 border focus:bg-white focus:ring-4 ${buyPhone.length > 0 && buyPhone.length !== 10 ? 'border-red-300 focus:border-red-400 focus:ring-red-50' : 'border-slate-200 focus:border-brand-muted focus:ring-brand-50'}`}
                     />
                   </div>
                   {buyPhone.length > 0 && buyPhone.length !== 10 && (
@@ -810,7 +810,7 @@ export default function Home() {
                     disabled={buyLoading || !buyHostel.trim() || !buyRoom.trim() || buyPhone.length !== 10}
                     whileTap={{ scale: 0.97 }}
                     className="w-full py-3.5 rounded-xl text-white font-bold text-sm transition-all disabled:opacity-40 disabled:cursor-not-allowed"
-                    style={{ ...fontH, background: (!buyHostel.trim() || !buyRoom.trim() || buyPhone.length !== 10) ? '#cbd5e1' : '#8B5CF6', boxShadow: (!buyHostel.trim() || !buyRoom.trim() || buyPhone.length !== 10) ? 'none' : '0 4px 16px rgba(139,92,246,0.3)' }}
+                    style={{ ...fontH, background: (!buyHostel.trim() || !buyRoom.trim() || buyPhone.length !== 10) ? '#cbd5e1' : '#231942', boxShadow: (!buyHostel.trim() || !buyRoom.trim() || buyPhone.length !== 10) ? 'none' : '0 4px 16px rgba(35,25,66,0.3)' }}
                   >
                     {buyLoading ? (
                       <Loader2 className="w-5 h-5 animate-spin mx-auto" />
@@ -921,7 +921,7 @@ export default function Home() {
                   </div>
                   <div className="p-2.5 sm:p-3 border-t border-slate-50">
                     <p className="text-[11px] sm:text-xs font-semibold line-clamp-1 mb-1 text-slate-900">{product.title}</p>
-                    <p className="text-sm font-bold text-violet-600">₹{product.price.toLocaleString()}</p>
+                    <p className="text-sm font-bold text-brand">₹{product.price.toLocaleString()}</p>
                   </div>
                 </Link>
               ))
@@ -978,7 +978,7 @@ export default function Home() {
                   icon: Headset,
                   title: "24/7 Help Center",
                   desc: "Need help? Our support is available round the clock. Instant response guaranteed.",
-                  color: "#8B5CF6",
+                  color: "#231942",
                   bg: "#ffffff",
                   border: "#ede9fe",
                 },

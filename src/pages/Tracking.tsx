@@ -157,7 +157,7 @@ export default function Tracking() {
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-50 pt-20 flex items-center justify-center">
-        <Loader2 className="w-10 h-10 animate-spin text-violet-500" />
+        <Loader2 className="w-10 h-10 animate-spin text-brand-accent" />
       </div>
     );
   }
@@ -173,7 +173,7 @@ export default function Tracking() {
             <Package className="w-16 h-16 text-slate-300 mb-4" />
             <h2 className="text-xl font-bold mb-2 text-slate-900">No active orders</h2>
             <p className="text-slate-500 max-w-sm mb-6 font-medium">Your tracking information will appear here once you place an order.</p>
-            <Link to="/home" className="px-6 py-3 font-bold text-white bg-violet-600 hover:bg-violet-700 transition-colors shadow-sm rounded-xl">Browse Marketplace</Link>
+            <Link to="/home" className="px-6 py-3 font-bold text-white bg-brand hover:bg-brand transition-colors shadow-sm rounded-xl">Browse Marketplace</Link>
           </motion.div>
         ) : isRejected ? (
           <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
@@ -187,7 +187,7 @@ export default function Tracking() {
             <p className="text-slate-500 mb-6 text-sm font-medium">
               {order.status === "seller_rejected" ? "The order couldn't be fulfilled. Please try again." : "This order has been cancelled."}
             </p>
-            <Link to="/home" className="px-6 py-3 font-bold text-white bg-violet-600 hover:bg-violet-700 transition-colors shadow-sm rounded-xl inline-block">Browse Again</Link>
+            <Link to="/home" className="px-6 py-3 font-bold text-white bg-brand hover:bg-brand transition-colors shadow-sm rounded-xl inline-block">Browse Again</Link>
           </motion.div>
         ) : (
           <>
@@ -196,10 +196,10 @@ export default function Tracking() {
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
                 className={`w-full border rounded-2xl p-4 mb-6 flex justify-between items-center ${type === "food"
                   ? "bg-orange-50 border-orange-200"
-                  : "bg-violet-50 border-violet-200"
+                  : "bg-brand-50 border-brand-muted"
                   }`}>
                 <div className="flex items-center gap-4">
-                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${type === "food" ? "bg-white text-orange-500 shadow-sm border border-orange-100" : "bg-white text-violet-600 shadow-sm border border-violet-100"}`}>
+                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${type === "food" ? "bg-white text-orange-500 shadow-sm border border-orange-100" : "bg-white text-brand shadow-sm border border-brand-50"}`}>
                     {order.status === "delivering" ? (
                       <Truck className={`w-6 h-6 animate-pulse`} />
                     ) : (
@@ -207,7 +207,7 @@ export default function Tracking() {
                     )}
                   </div>
                   <div>
-                    <p className={`text-xs font-bold uppercase tracking-wider ${type === "food" ? "text-orange-600" : "text-violet-600"}`}>
+                    <p className={`text-xs font-bold uppercase tracking-wider ${type === "food" ? "text-orange-600" : "text-brand"}`}>
                       {order.status === "delivering" ? "Estimated Delivery" : "Status"}
                     </p>
                     <p className="text-slate-900 font-black text-xl">{deliveryInfo.text}</p>
@@ -234,7 +234,7 @@ export default function Tracking() {
                     </p>
                     <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${type === "food"
                       ? "bg-orange-50 text-orange-600"
-                      : "bg-violet-50 text-violet-600"
+                      : "bg-brand-50 text-brand"
                       }`}>
                       {type === "food" ? "🍕 Food" : "📦 Item"}
                     </span>
@@ -246,7 +246,7 @@ export default function Tracking() {
                 </div>
                 {order.total_price > 0 && (
                   <div className="text-right flex-shrink-0">
-                    <p className="text-violet-600 font-black text-lg sm:text-xl">₹{order.total_price?.toLocaleString()}</p>
+                    <p className="text-brand font-black text-lg sm:text-xl">₹{order.total_price?.toLocaleString()}</p>
                     <p className={`text-[10px] font-bold mt-1 ${order.payment_status === 'verifying' ? 'text-orange-500' : order.payment_status === 'paid' ? 'text-emerald-500' : 'text-slate-500'}`}>
                       {order.payment_status === 'verifying' ? '🟡 Verifying Payment...' : order.payment_status === 'paid' ? '💳 Paid Online ✓' : '💵 Pay on Delivery'}
                     </p>
@@ -293,9 +293,9 @@ export default function Tracking() {
               <div className="flex items-center justify-between mb-8">
                 <h2 className="font-bold text-lg text-slate-900">Delivery Progress</h2>
                 <div className="flex items-center gap-3">
-                  <div className="text-xs font-bold text-violet-600">{progressPercent}%</div>
+                  <div className="text-xs font-bold text-brand">{progressPercent}%</div>
                   <div className="w-24 h-2 bg-slate-100 rounded-full overflow-hidden">
-                    <motion.div className={`h-full rounded-full ${type === "food" ? "bg-orange-500" : "bg-violet-600"}`}
+                    <motion.div className={`h-full rounded-full ${type === "food" ? "bg-orange-500" : "bg-brand"}`}
                       initial={{ width: 0 }} animate={{ width: `${progressPercent}%` }} transition={{ duration: 1.2, ease: "easeOut" }} />
                   </div>
                 </div>
@@ -306,7 +306,7 @@ export default function Tracking() {
                 <div className="absolute left-[21px] top-5 bottom-5 w-0.5 bg-slate-200" />
                 {/* Active line progress */}
                 <motion.div
-                  className={`absolute left-[21px] top-5 w-0.5 ${type === "food" ? "bg-orange-500" : "bg-violet-600"}`}
+                  className={`absolute left-[21px] top-5 w-0.5 ${type === "food" ? "bg-orange-500" : "bg-brand"}`}
                   initial={{ height: 0 }}
                   animate={{ height: `${progressPercent}%` }}
                   transition={{ duration: 1.5, ease: "easeInOut" }}
@@ -319,8 +319,8 @@ export default function Tracking() {
                     return (
                       <motion.div key={step.key} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: 0.3 + i * 0.08 }} className="flex items-start gap-5 relative">
-                        <div className={`relative z-10 w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300 ring-4 ring-white ${isDone ? (type === "food" ? "bg-orange-500 text-white" : "bg-violet-600 text-white") :
-                            isActive ? (type === "food" ? "bg-orange-100 text-orange-600 border-2 border-orange-500" : "bg-violet-100 text-violet-600 border-2 border-violet-600") :
+                        <div className={`relative z-10 w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300 ring-4 ring-white ${isDone ? (type === "food" ? "bg-orange-500 text-white" : "bg-brand text-white") :
+                            isActive ? (type === "food" ? "bg-orange-100 text-orange-600 border-2 border-orange-500" : "bg-brand-50 text-brand border-2 border-brand") :
                               "bg-slate-100 text-slate-400"
                           }`}>
                           {isDone ? <CheckCircle className="w-5 h-5 flex-shrink-0" /> :
@@ -328,7 +328,7 @@ export default function Tracking() {
                         </div>
                         <div className="flex-1 pt-1.5 pb-2">
                           <div className="flex items-center flex-wrap gap-2">
-                            <p className={`font-bold text-sm transition-colors duration-300 ${isActive ? (type === "food" ? "text-orange-600" : "text-violet-600") :
+                            <p className={`font-bold text-sm transition-colors duration-300 ${isActive ? (type === "food" ? "text-orange-600" : "text-brand") :
                               isDone ? "text-slate-900" : "text-slate-500"
                               }`}>
                               {step.label}
@@ -336,7 +336,7 @@ export default function Tracking() {
                             {isActive && (
                               <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold tracking-widest uppercase ${type === "food"
                                 ? "bg-orange-100 text-orange-600"
-                                : "bg-violet-100 text-violet-600"
+                                : "bg-brand-50 text-brand"
                                 }`}>Now</span>
                             )}
                           </div>

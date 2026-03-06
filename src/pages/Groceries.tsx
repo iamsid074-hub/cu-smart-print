@@ -66,7 +66,7 @@ export default function Groceries() {
                             placeholder="Search groceries, snacks..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full bg-slate-100 border border-slate-200 text-slate-900 rounded-xl py-2.5 pl-10 pr-4 text-sm focus:outline-none focus:border-violet-300 focus:bg-white focus:ring-4 focus:ring-violet-50 transition-all placeholder:text-slate-400"
+                            className="w-full bg-slate-100 border border-slate-200 text-slate-900 rounded-xl py-2.5 pl-10 pr-4 text-sm focus:outline-none focus:border-brand-muted focus:bg-white focus:ring-4 focus:ring-brand-50 transition-all placeholder:text-slate-400"
                         />
                     </div>
                 </div>
@@ -78,7 +78,7 @@ export default function Groceries() {
                             key={cat}
                             onClick={() => { setActiveTab(cat); setSearchQuery(""); }}
                             className={`whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-semibold transition-all ${activeTab === cat
-                                ? "bg-violet-100 text-violet-700 border border-violet-200"
+                                ? "bg-brand-50 text-brand border border-brand-muted"
                                 : "bg-white text-slate-600 hover:bg-slate-50 border border-slate-200 shadow-sm"
                                 }`}
                         >
@@ -125,13 +125,13 @@ export default function Groceries() {
 
                                     {/* Details */}
                                     <div className="p-3 flex flex-col flex-1 border-t border-slate-50 relative z-20 bg-white">
-                                        <span className="text-[10px] uppercase tracking-wider text-violet-500 font-bold mb-1 truncate">{item.category}</span>
+                                        <span className="text-[10px] uppercase tracking-wider text-brand-accent font-bold mb-1 truncate">{item.category}</span>
                                         <h3 className="text-sm font-bold text-slate-900 line-clamp-2 leading-tight mb-auto">{item.title}</h3>
 
                                         <div className="flex items-end justify-between mt-3 z-30 relative block">
                                             <div>
                                                 <span className="text-xs text-slate-500 block mb-0.5">{item.variants || "Standard"}</span>
-                                                <span className="text-base font-black text-violet-600">₹{item.price}</span>
+                                                <span className="text-base font-black text-brand">₹{item.price}</span>
                                             </div>
                                             <button
                                                 onClick={(e) => handleAddToCart(e, item)}

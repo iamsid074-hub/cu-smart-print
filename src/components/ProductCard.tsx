@@ -36,7 +36,7 @@ interface ProductCardProps {
 
 const conditionColors: Record<string, string> = {
   New: "bg-emerald-100 text-emerald-700",
-  "Like New": "bg-violet-100 text-violet-700",
+  "Like New": "bg-brand-50 text-brand",
   Good: "bg-amber-100 text-amber-700",
   Fair: "bg-slate-100 text-slate-600",
 };
@@ -102,11 +102,11 @@ export default function ProductCard({
         viewport={{ once: true }}
         transition={{ duration: 0.5, delay, ease: [0.34, 1.56, 0.64, 1] }}
         whileHover={{ y: -8, scale: 1.02 }}
-        className="relative bg-white rounded-3xl overflow-hidden group cursor-pointer h-full shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-[0_12px_35px_rgba(139,92,246,0.12)] transition-shadow duration-300"
+        className="relative bg-white rounded-3xl overflow-hidden group cursor-pointer h-full shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-[0_12px_35px_rgba(35,25,66,0.12)] transition-shadow duration-300"
       >
         {/* Badge */}
         {badge && (
-          <div className="absolute top-3 left-3 z-10 px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#8B5CF6] text-white shadow-sm uppercase tracking-wider">
+          <div className="absolute top-3 left-3 z-10 px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#231942] text-white shadow-sm uppercase tracking-wider">
             {badge}
           </div>
         )}
@@ -126,7 +126,7 @@ export default function ProductCard({
           <motion.button
             onClick={handleShare}
             whileTap={{ scale: 0.75 }}
-            className="bg-white/80 backdrop-blur-md w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:text-violet-500 hover:bg-white shadow-sm transition-colors"
+            className="bg-white/80 backdrop-blur-md w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:text-brand-accent hover:bg-white shadow-sm transition-colors"
           >
             <Share2 className="w-3.5 h-3.5" />
           </motion.button>
@@ -163,7 +163,7 @@ export default function ProductCard({
             {/* Seller */}
             <div className="flex items-center gap-1 mb-3">
               <span className="text-xs text-slate-500 font-medium">{seller}</span>
-              <BadgeCheck className="w-3.5 h-3.5 text-violet-500 ml-0.5" />
+              <BadgeCheck className="w-3.5 h-3.5 text-brand-accent ml-0.5" />
               {rating && (
                 <>
                   <Star className="w-3 h-3 text-amber-400 fill-current ml-1" />
@@ -189,7 +189,7 @@ export default function ProductCard({
                 toast({ title: `${title} added to cart` });
               }}
               whileTap={{ scale: 0.9 }}
-              className="px-4 py-2.5 bg-violet-50 hover:bg-violet-100 text-violet-700 text-xs font-bold rounded-2xl transition-all flex items-center gap-1.5 active:scale-95 group-hover:bg-violet-600 group-hover:text-white"
+              className="px-4 py-2.5 bg-brand-50 hover:bg-brand-50 text-brand text-xs font-bold rounded-2xl transition-all flex items-center gap-1.5 active:scale-95 group-hover:bg-brand group-hover:text-white"
             >
               <ShoppingCart className="w-3.5 h-3.5" /> Cart
             </motion.button>

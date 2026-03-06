@@ -103,7 +103,7 @@ export default function Navbar() {
                 {location.pathname === link.path && (
                   <motion.div
                     layoutId="active-nav-pill"
-                    className="absolute inset-0 rounded-full" style={{ background: '#8B5CF6', boxShadow: '0 2px 10px rgba(139,92,246,0.3)' }}
+                    className="absolute inset-0 rounded-full" style={{ background: '#231942', boxShadow: '0 2px 10px rgba(35,25,66,0.3)' }}
                     transition={{ type: "spring", stiffness: 300, damping: 30 }}
                   />
                 )}
@@ -131,7 +131,7 @@ export default function Navbar() {
 
             {/* Profile Avatar */}
             <div className="pl-1 pr-1.5">
-              <Link to="/profile" className="w-9 h-9 rounded-full flex items-center justify-center cursor-pointer transition-all transform hover:scale-105 border" style={{ background: '#8B5CF6', borderColor: '#7C3AED' }}>
+              <Link to="/profile" className="w-9 h-9 rounded-full flex items-center justify-center cursor-pointer transition-all transform hover:scale-105 border" style={{ background: '#231942', borderColor: '#1a1235' }}>
                 <User className="w-4.5 h-4.5 text-white" />
               </Link>
             </div>
@@ -162,7 +162,7 @@ export default function Navbar() {
                 ? "text-white"
                 : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
                 }`}
-              style={location.pathname === link.path ? { background: '#8B5CF6' } : undefined}
+              style={location.pathname === link.path ? { background: '#231942' } : undefined}
             >
               {link.label}
             </Link>

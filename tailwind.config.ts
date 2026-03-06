@@ -70,6 +70,13 @@ export default {
           DEFAULT: "hsl(var(--glass-bg) / 0.6)",
           heavy: "hsl(var(--glass-bg) / 0.85)",
         },
+        brand: {
+          DEFAULT: "#231942",
+          accent: "#5E548E",
+          light: "#8C79A5",
+          muted: "#B8A9C9",
+          50: "#F3F0F7",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",

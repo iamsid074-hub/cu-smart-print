@@ -6,7 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
 
-const avatarGradients = ["from-violet-400 to-fuchsia-400", "from-cyan-400 to-blue-400", "from-pink-400 to-rose-400", "from-amber-400 to-orange-400", "from-emerald-400 to-teal-400"];
+const avatarGradients = ["from-brand-accent to-brand-light", "from-cyan-400 to-blue-400", "from-pink-400 to-rose-400", "from-amber-400 to-orange-400", "from-emerald-400 to-teal-400"];
 
 type Profile = { id: string; username: string | null; full_name: string; avatar_url: string | null; online?: boolean };
 type Message = { id: string; sender_id: string; receiver_id: string; content: string; created_at: string };
@@ -168,7 +168,7 @@ export default function Chat() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: i * 0.05 }}
                 onClick={() => setActiveContact(profile)}
-                className={`w-full flex items-center gap-3 px-4 py-3 hover:bg-slate-50 transition-colors text-left ${activeContact?.id === profile.id ? "bg-violet-50 border-r-2 border-violet-500" : ""}`}
+                className={`w-full flex items-center gap-3 px-4 py-3 hover:bg-slate-50 transition-colors text-left ${activeContact?.id === profile.id ? "bg-brand-50 border-r-2 border-brand-accent" : ""}`}
               >
                 {/* Avatar */}
                 <div className="relative flex-shrink-0">
@@ -186,7 +186,7 @@ export default function Chat() {
                 <div className="flex-1 min-w-0">
                   <div className="flex flex-col items-start justify-center">
                     <span className="font-semibold text-sm text-slate-900">{profile.full_name}</span>
-                    <span className="text-xs text-violet-500 font-medium -mt-0.5">@{profile.username || "unknown"}</span>
+                    <span className="text-xs text-brand-accent font-medium -mt-0.5">@{profile.username || "unknown"}</span>
                   </div>
                 </div>
               </motion.button>
@@ -247,13 +247,13 @@ export default function Chat() {
                     className={`flex ${isSentByMe ? "justify-end" : "justify-start"}`}
                   >
                     <div className={`max-w-xs lg:max-w-md px-4 py-2.5 rounded-[1.25rem] ${isSentByMe
-                      ? "bg-violet-600 text-white rounded-br-md shadow-sm"
+                      ? "bg-brand text-white rounded-br-md shadow-sm"
                       : "bg-white text-slate-900 rounded-bl-md shadow-[0_2px_8px_rgba(0,0,0,0.04)]"
                       }`}>
                       <p className="text-sm leading-relaxed">{msg.content}</p>
                       <div className={`flex items-center justify-end gap-1 mt-1 ${isSentByMe ? "text-white/70" : "text-slate-400"}`}>
                         <span className="text-[10px]">{formatTime(msg.created_at)}</span>
-                        {isSentByMe && <CheckCheck className="w-3 h-3 text-violet-200" />}
+                        {isSentByMe && <CheckCheck className="w-3 h-3 text-brand-muted" />}
                       </div>
                     </div>
                   </motion.div>
@@ -281,7 +281,7 @@ export default function Chat() {
                 whileTap={{ scale: 0.9 }}
                 onClick={sendMessage}
                 disabled={!input.trim()}
-                className="w-8 h-8 rounded-full bg-violet-600 flex items-center justify-center text-white disabled:opacity-40 transition-opacity shadow-sm"
+                className="w-8 h-8 rounded-full bg-brand flex items-center justify-center text-white disabled:opacity-40 transition-opacity shadow-sm"
               >
                 <Send className="w-4 h-4" />
               </motion.button>

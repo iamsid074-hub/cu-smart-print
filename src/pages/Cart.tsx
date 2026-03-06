@@ -126,11 +126,11 @@ export default function Cart() {
 
                 {items.length === 0 ? (
                     <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
-                        className="rounded-3xl p-12 text-center bg-white shadow-[0_4px_20px_rgba(0,0,0,0.03)] focus:outline-none focus:ring-4 focus:ring-violet-50">
+                        className="rounded-3xl p-12 text-center bg-white shadow-[0_4px_20px_rgba(0,0,0,0.03)] focus:outline-none focus:ring-4 focus:ring-brand-50">
                         <ShoppingCart className="w-16 h-16 text-slate-300 mx-auto mb-4" />
                         <h2 className="text-xl font-bold text-slate-900 mb-2">Cart is empty</h2>
                         <p className="text-slate-500 text-sm mb-6">Add some snacks from the food menu!</p>
-                        <Link to="/food" className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full font-bold text-white text-sm bg-violet-600 hover:bg-violet-700 shadow-sm transition-all focus:ring-4 focus:ring-violet-200">
+                        <Link to="/food" className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full font-bold text-white text-sm bg-brand hover:bg-brand shadow-sm transition-all focus:ring-4 focus:ring-brand-muted">
                             <ShoppingBag className="w-4 h-4" /> Browse Food Menu
                         </Link>
                     </motion.div>
@@ -141,13 +141,13 @@ export default function Cart() {
                             <AnimatePresence>
                                 {items.map((item) => (
                                     <motion.div key={item.id} layout initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }}
-                                        className="rounded-3xl p-4 bg-white shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_30px_rgba(139,92,246,0.1)] transition-shadow duration-300 flex gap-3 sm:gap-4 items-center">
+                                        className="rounded-3xl p-4 bg-white shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_30px_rgba(35,25,66,0.1)] transition-shadow duration-300 flex gap-3 sm:gap-4 items-center">
                                         <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl overflow-hidden bg-slate-50 flex-shrink-0">
                                             <img src={item.image} alt={item.title} className="w-full h-full object-cover mix-blend-multiply" />
                                         </div>
                                         <div className="flex-1 min-w-0">
                                             <p className="text-sm font-bold text-slate-900 truncate">{item.title}</p>
-                                            <p className="text-violet-600 font-bold">₹{item.price}</p>
+                                            <p className="text-brand font-bold">₹{item.price}</p>
                                         </div>
                                         <div className="flex items-center gap-2 flex-shrink-0">
                                             <button onClick={() => updateQuantity(item.id, item.quantity - 1)}
@@ -187,7 +187,7 @@ export default function Cart() {
                                         }
                                     }}
                                     placeholder="Enter CRICKET5"
-                                    className="w-full bg-slate-50 rounded-2xl px-5 py-3 text-sm text-slate-900 focus:outline-none focus:ring-4 focus:ring-violet-50 transition-all placeholder:text-slate-400 uppercase"
+                                    className="w-full bg-slate-50 rounded-2xl px-5 py-3 text-sm text-slate-900 focus:outline-none focus:ring-4 focus:ring-brand-50 transition-all placeholder:text-slate-400 uppercase"
                                     disabled={promoApplied}
                                 />
                             </div>
@@ -228,14 +228,14 @@ export default function Cart() {
 
                             <div className="border-t border-slate-100 pt-4 flex justify-between items-center">
                                 <span className="font-bold text-slate-900">Total details</span>
-                                <span className="text-xl sm:text-2xl font-black text-violet-600">₹{orderTotal}</span>
+                                <span className="text-xl sm:text-2xl font-black text-brand">₹{orderTotal}</span>
                             </div>
                         </div>
 
                         {/* Checkout */}
                         {!showCheckout ? (
                             <motion.button whileTap={{ scale: 0.97 }} onClick={() => setShowCheckout(true)}
-                                className="w-full py-4 rounded-full font-bold text-white text-[15px] flex items-center justify-center gap-2 bg-violet-600 hover:bg-violet-700 shadow-[0_4px_20px_rgba(139,92,246,0.3)] transition-all">
+                                className="w-full py-4 rounded-full font-bold text-white text-[15px] flex items-center justify-center gap-2 bg-brand hover:bg-brand shadow-[0_4px_20px_rgba(35,25,66,0.3)] transition-all">
                                 <ShoppingBag className="w-5 h-5" /> Proceed to Secure Checkout
                             </motion.button>
                         ) : (
@@ -247,9 +247,9 @@ export default function Cart() {
                                     <div className="relative">
                                         <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                                         <input value={hostel} onChange={e => setHostel(e.target.value)} placeholder="Hostel Block (e.g. BH-1) *"
-                                            className="w-full bg-slate-50 rounded-2xl pl-12 pr-4 h-[52px] text-sm text-slate-900 focus:outline-none focus:bg-white focus:ring-4 focus:ring-violet-50 transition-all placeholder:text-slate-400" />
+                                            className="w-full bg-slate-50 rounded-2xl pl-12 pr-4 h-[52px] text-sm text-slate-900 focus:outline-none focus:bg-white focus:ring-4 focus:ring-brand-50 transition-all placeholder:text-slate-400" />
                                     </div>
-                                    <div className="relative flex items-center bg-slate-50 rounded-2xl h-[52px] overflow-hidden focus-within:bg-white focus-within:ring-4 focus-within:ring-violet-50 transition-all">
+                                    <div className="relative flex items-center bg-slate-50 rounded-2xl h-[52px] overflow-hidden focus-within:bg-white focus-within:ring-4 focus-within:ring-brand-50 transition-all">
                                         <div className="flex items-center justify-center w-14 bg-slate-100/50">
                                             <div className="w-6 h-6 flex items-center justify-center font-bold text-slate-400 text-xs text-center rounded bg-white shadow-sm">R</div>
                                         </div>
@@ -260,7 +260,7 @@ export default function Cart() {
                                         <div className="relative">
                                             <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                                             <input value={phone} onChange={e => setPhone(e.target.value.replace(/\D/g, "").slice(0, 10))} type="tel" placeholder="10-digit Phone Number *" maxLength={10}
-                                                className={`w-full bg-slate-50 rounded-2xl pl-12 pr-4 h-[52px] text-sm text-slate-900 focus:outline-none focus:bg-white focus:ring-4 transition-all placeholder:text-slate-400 ${phone.length > 0 && !isPhoneValid ? "border border-red-300 focus:border-red-400 focus:ring-red-50" : "border border-transparent focus:ring-violet-50 focus:border-violet-100"
+                                                className={`w-full bg-slate-50 rounded-2xl pl-12 pr-4 h-[52px] text-sm text-slate-900 focus:outline-none focus:bg-white focus:ring-4 transition-all placeholder:text-slate-400 ${phone.length > 0 && !isPhoneValid ? "border border-red-300 focus:border-red-400 focus:ring-red-50" : "border border-transparent focus:ring-brand-50 focus:border-brand-50"
                                                     }`} />
                                         </div>
                                         {phone.length > 0 && !isPhoneValid && (
@@ -281,7 +281,7 @@ export default function Cart() {
 
                                 <button onClick={handleCheckout} disabled={submitting || !isFormValid}
                                     className="w-full py-4 mt-4 rounded-full font-bold text-white text-[15px] flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-                                    style={{ background: isFormValid ? "#8B5CF6" : "#cbd5e1", boxShadow: isFormValid ? "0 4px 20px rgba(139,92,246,0.3)" : "none" }}>
+                                    style={{ background: isFormValid ? "#231942" : "#cbd5e1", boxShadow: isFormValid ? "0 4px 20px rgba(35,25,66,0.3)" : "none" }}>
                                     {submitting ? <Loader2 className="w-5 h-5 animate-spin" /> :
                                         `Pay Securely · ₹${orderTotal}`}
                                 </button>

@@ -216,7 +216,7 @@ export default function UpiPaymentModal({
                                         </button>
                                         <button
                                             onClick={handleRetry}
-                                            className="flex-1 py-3 rounded-xl text-white font-bold text-sm transition-all hover:scale-[1.02] active:scale-[0.98] shadow-sm bg-violet-600 hover:bg-violet-700"
+                                            className="flex-1 py-3 rounded-xl text-white font-bold text-sm transition-all hover:scale-[1.02] active:scale-[0.98] shadow-sm bg-brand hover:bg-brand"
                                         >
                                             Retry
                                         </button>

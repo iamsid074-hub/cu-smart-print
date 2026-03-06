@@ -88,7 +88,7 @@ export default function Index() {
 
   const testimonials = [
     { name: "Priya S.", year: "3rd Year, CSE", quote: "Sold my calculus notes in under 2 hours. Way faster than putting up hostel notices.", avatar: "P", gradient: "from-rose-400 to-orange-400", rotate: -4 },
-    { name: "Arjun K.", year: "2nd Year, ECE", quote: "Got a barely-used scientific calculator for ₹200. The senior was right in my block.", avatar: "A", gradient: "from-violet-400 to-indigo-400", rotate: 3 },
+    { name: "Arjun K.", year: "2nd Year, ECE", quote: "Got a barely-used scientific calculator for ₹200. The senior was right in my block.", avatar: "A", gradient: "from-brand-light to-indigo-400", rotate: 3 },
     { name: "Sneha R.", year: "4th Year, BCA", quote: "Cleared out all my textbooks before graduating. Made ₹3K in a weekend.", avatar: "S", gradient: "from-emerald-400 to-teal-400", rotate: -2 },
     { name: "Rohit M.", year: "1st Year, MBA", quote: "Got my entire first-semester stationery kit from a senior for half the market price.", avatar: "R", gradient: "from-amber-400 to-yellow-500", rotate: 5 },
   ];

@@ -165,7 +165,7 @@ export default function FoodMenu() {
         <div className="min-h-screen bg-slate-50 pt-[5.5rem] pb-16 px-4 sm:px-6 overflow-x-hidden relative">
 
             {/* Soft Ambient Glows (Light Mode) */}
-            <div className="absolute top-0 left-1/4 w-96 h-96 bg-violet-500/5 rounded-full blur-[120px] pointer-events-none" />
+            <div className="absolute top-0 left-1/4 w-96 h-96 bg-brand-accent/5 rounded-full blur-[120px] pointer-events-none" />
             <div className="absolute top-1/3 right-1/4 w-96 h-96 bg-emerald-500/5 rounded-full blur-[120px] pointer-events-none" />
 
             <div className="max-w-6xl mx-auto relative z-10">
@@ -200,8 +200,8 @@ export default function FoodMenu() {
                                         onClick={() => { setExpandedShop(isOpen ? null : shop.id); setExpandedMenuCat(null); }}
                                         className="w-full flex items-center gap-3 p-4 sm:p-5 text-left transition-colors hover:bg-slate-50"
                                     >
-                                        <div className="w-11 h-11 rounded-2xl bg-violet-50 border border-violet-100 flex items-center justify-center flex-shrink-0">
-                                            <Store className="w-5 h-5 text-violet-500" />
+                                        <div className="w-11 h-11 rounded-2xl bg-brand-50 border border-brand-50 flex items-center justify-center flex-shrink-0">
+                                            <Store className="w-5 h-5 text-brand-accent" />
                                         </div>
                                         <div className="flex-1 min-w-0">
                                             <div className="flex items-center gap-2">
@@ -235,7 +235,7 @@ export default function FoodMenu() {
                                                                 key={mc.category}
                                                                 onClick={() => setExpandedMenuCat(expandedMenuCat === mc.category ? null : mc.category)}
                                                                 className={`flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${expandedMenuCat === mc.category
-                                                                    ? 'bg-violet-100 text-violet-700 border border-violet-200'
+                                                                    ? 'bg-brand-50 text-brand border border-brand-muted'
                                                                     : 'bg-slate-50 text-slate-600 border border-slate-100 hover:bg-slate-100'
                                                                     }`}
                                                             >
@@ -258,7 +258,7 @@ export default function FoodMenu() {
                                                                         >
                                                                             <span className="text-sm font-medium text-slate-700 flex-1 min-w-0 truncate pr-3">{item.name}</span>
                                                                             <div className="flex items-center gap-2 flex-shrink-0">
-                                                                                <span className="text-sm font-bold text-violet-600">₹{item.price}</span>
+                                                                                <span className="text-sm font-bold text-brand">₹{item.price}</span>
                                                                                 <button
                                                                                     onClick={() => {
                                                                                         addItem({

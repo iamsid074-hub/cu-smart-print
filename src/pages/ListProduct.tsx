@@ -195,8 +195,8 @@ export default function ListProduct() {
               <div key={s.id} className="flex items-center gap-2">
                 <motion.div
                   whileHover={{ scale: 1.1 }}
-                  className={`w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 cursor-pointer ${step > s.id ? "bg-violet-600 text-white shadow-[0_4px_16px_rgba(139,92,246,0.3)]"
-                    : step === s.id ? "bg-violet-600 text-white shadow-[0_4px_16px_rgba(139,92,246,0.3)] scale-110"
+                  className={`w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 cursor-pointer ${step > s.id ? "bg-brand text-white shadow-[0_4px_16px_rgba(35,25,66,0.3)]"
+                    : step === s.id ? "bg-brand text-white shadow-[0_4px_16px_rgba(35,25,66,0.3)] scale-110"
                       : "bg-slate-100 text-slate-400 border border-slate-200"
                     }`}
                   onClick={() => s.id < step && setStep(s.id)}
@@ -206,7 +206,7 @@ export default function ListProduct() {
                 {i < steps.length - 1 && (
                   <div className="hidden sm:block w-12 h-1 bg-slate-100 overflow-hidden rounded-full">
                     <motion.div
-                      className="h-full bg-violet-600 rounded-full"
+                      className="h-full bg-brand rounded-full"
                       initial={{ width: "0%" }}
                       animate={{ width: step > s.id ? "100%" : "0%" }}
                       transition={{ duration: 0.4 }}
@@ -218,7 +218,7 @@ export default function ListProduct() {
           </div>
           <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
             <motion.div
-              className="h-full bg-violet-600 rounded-full"
+              className="h-full bg-brand rounded-full"
               animate={{ width: `${progress}%` }}
               transition={{ duration: 0.4, ease: "easeInOut" }}
             />
@@ -246,7 +246,7 @@ export default function ListProduct() {
                     value={formData.title}
                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                     placeholder="e.g. MacBook Air M2 – 8GB/256GB"
-                    className="w-full bg-slate-50 rounded-2xl px-5 py-3.5 text-sm text-slate-900 placeholder:text-slate-400 outline-none border border-slate-200 focus:border-violet-500 focus:ring-4 focus:ring-violet-50 transition-all font-medium"
+                    className="w-full bg-slate-50 rounded-2xl px-5 py-3.5 text-sm text-slate-900 placeholder:text-slate-400 outline-none border border-slate-200 focus:border-brand-accent focus:ring-4 focus:ring-brand-50 transition-all font-medium"
                   />
                 </div>
                 <div>
@@ -257,7 +257,7 @@ export default function ListProduct() {
                         key={cat}
                         onClick={() => setFormData({ ...formData, category: cat })}
                         className={`px-3 py-2.5 rounded-2xl text-[13px] font-bold transition-all duration-200 ${formData.category === cat
-                          ? "bg-violet-600 text-white shadow-md border border-violet-600"
+                          ? "bg-brand text-white shadow-md border border-brand"
                           : "bg-white border border-slate-200 text-slate-600 hover:text-slate-900 hover:border-slate-300 hover:bg-slate-50"
                           }`}
                       >
@@ -290,7 +290,7 @@ export default function ListProduct() {
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                     placeholder="Describe your item — condition, specs, any defects..."
-                    className="w-full bg-slate-50 rounded-2xl px-5 py-3.5 text-sm text-slate-900 placeholder:text-slate-400 outline-none border border-slate-200 focus:border-violet-500 focus:ring-4 focus:ring-violet-50 transition-all font-medium resize-none"
+                    className="w-full bg-slate-50 rounded-2xl px-5 py-3.5 text-sm text-slate-900 placeholder:text-slate-400 outline-none border border-slate-200 focus:border-brand-accent focus:ring-4 focus:ring-brand-50 transition-all font-medium resize-none"
                   />
                 </div>
               </motion.div>
@@ -300,7 +300,7 @@ export default function ListProduct() {
             {step === 2 && (
               <motion.div key="step2" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }} transition={{ duration: 0.3 }}>
                 <h2 className="font-extrabold text-2xl mb-2 text-slate-900">Add a Photo</h2>
-                <p className="text-sm text-slate-500 mb-6">Pick the correct image for <span className="text-violet-600 font-bold">{formData.title || 'your item'}</span></p>
+                <p className="text-sm text-slate-500 mb-6">Pick the correct image for <span className="text-brand font-bold">{formData.title || 'your item'}</span></p>
 
                 {/* Live preview */}
                 {imagePreview && (
@@ -341,11 +341,11 @@ export default function ListProduct() {
                       handleImageSelect(e.dataTransfer.files[0]);
                     }
                   }}
-                  className={`border-2 border-dashed rounded-3xl p-10 text-center transition-all duration-300 cursor-pointer ${dragOver ? 'border-violet-400 bg-violet-50' : imagePreview ? 'border-transparent hidden' : 'border-slate-200 bg-slate-50 hover:bg-slate-100'
+                  className={`border-2 border-dashed rounded-3xl p-10 text-center transition-all duration-300 cursor-pointer ${dragOver ? 'border-brand-light bg-brand-50' : imagePreview ? 'border-transparent hidden' : 'border-slate-200 bg-slate-50 hover:bg-slate-100'
                     }`}
                   onClick={() => fileInputRef.current?.click()}
                 >
-                  <Upload className={`w-12 h-12 mx-auto mb-4 transition-colors ${dragOver ? 'text-violet-500' : 'text-slate-400'}`} />
+                  <Upload className={`w-12 h-12 mx-auto mb-4 transition-colors ${dragOver ? 'text-brand-accent' : 'text-slate-400'}`} />
                   <p className="font-bold text-slate-700 mb-1.5 text-lg">Drop photo here to upload</p>
                   <p className="text-sm text-slate-500">JPG · PNG · WEBP &nbsp;·&nbsp; Max 5 MB</p>
                   <input
@@ -371,13 +371,13 @@ export default function ListProduct() {
                   <div>
                     <label className="text-sm font-bold text-slate-600 mb-2 block">Your Price (₹) *</label>
                     <div className="relative">
-                      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-violet-600 font-extrabold text-lg">₹</span>
+                      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-brand font-extrabold text-lg">₹</span>
                       <input
                         type="number"
                         value={formData.price}
                         onChange={(e) => setFormData({ ...formData, price: e.target.value })}
                         placeholder="0"
-                        className="w-full bg-slate-50 rounded-2xl pl-10 pr-5 py-4 text-base font-bold text-slate-900 placeholder:text-slate-400 outline-none border border-slate-200 focus:border-violet-500 focus:ring-4 focus:ring-violet-50 transition-all"
+                        className="w-full bg-slate-50 rounded-2xl pl-10 pr-5 py-4 text-base font-bold text-slate-900 placeholder:text-slate-400 outline-none border border-slate-200 focus:border-brand-accent focus:ring-4 focus:ring-brand-50 transition-all"
                         min="1"
                       />
                     </div>
@@ -391,7 +391,7 @@ export default function ListProduct() {
                         value={formData.originalPrice}
                         onChange={(e) => setFormData({ ...formData, originalPrice: e.target.value })}
                         placeholder="0"
-                        className="w-full bg-slate-50 rounded-2xl pl-10 pr-5 py-4 text-base font-bold text-slate-900 placeholder:text-slate-400 outline-none border border-slate-200 focus:border-violet-500 focus:ring-4 focus:ring-violet-50 transition-all"
+                        className="w-full bg-slate-50 rounded-2xl pl-10 pr-5 py-4 text-base font-bold text-slate-900 placeholder:text-slate-400 outline-none border border-slate-200 focus:border-brand-accent focus:ring-4 focus:ring-brand-50 transition-all"
                       />
                     </div>
                   </div>
@@ -434,7 +434,7 @@ export default function ListProduct() {
                       onChange={(e) => { setFormData({ ...formData, sellerPhone: e.target.value }); setErrors(prev => ({ ...prev, sellerPhone: "" })); }}
                       placeholder="e.g. 9876543210"
                       type="tel"
-                      className={`w-full bg-slate-50 rounded-2xl pl-11 pr-5 py-4 text-base font-bold text-slate-900 placeholder:text-slate-400 outline-none border transition-all ${errors.sellerPhone ? "border-rose-400 focus:border-rose-500 focus:ring-4 focus:ring-rose-50" : "border-slate-200 focus:border-violet-500 focus:ring-4 focus:ring-violet-50"}`}
+                      className={`w-full bg-slate-50 rounded-2xl pl-11 pr-5 py-4 text-base font-bold text-slate-900 placeholder:text-slate-400 outline-none border transition-all ${errors.sellerPhone ? "border-rose-400 focus:border-rose-500 focus:ring-4 focus:ring-rose-50" : "border-slate-200 focus:border-brand-accent focus:ring-4 focus:ring-brand-50"}`}
                     />
                   </div>
                   {errors.sellerPhone && <p className="text-xs text-rose-500 mt-2 font-bold flex items-center gap-1"><AlertCircle className="w-3.5 h-3.5" /> {errors.sellerPhone}</p>}
@@ -447,7 +447,7 @@ export default function ListProduct() {
                     value={formData.sellerHostel}
                     onChange={(e) => { setFormData({ ...formData, sellerHostel: e.target.value }); setErrors(prev => ({ ...prev, sellerHostel: "" })); }}
                     placeholder="e.g. Zakir Hussain Block A"
-                    className={`w-full bg-slate-50 rounded-2xl px-5 py-4 text-base font-bold text-slate-900 placeholder:text-slate-400 outline-none border transition-all ${errors.sellerHostel ? "border-rose-400 focus:border-rose-500 focus:ring-4 focus:ring-rose-50" : "border-slate-200 focus:border-violet-500 focus:ring-4 focus:ring-violet-50"}`}
+                    className={`w-full bg-slate-50 rounded-2xl px-5 py-4 text-base font-bold text-slate-900 placeholder:text-slate-400 outline-none border transition-all ${errors.sellerHostel ? "border-rose-400 focus:border-rose-500 focus:ring-4 focus:ring-rose-50" : "border-slate-200 focus:border-brand-accent focus:ring-4 focus:ring-brand-50"}`}
                   />
                   {errors.sellerHostel && <p className="text-xs text-rose-500 mt-2 font-bold flex items-center gap-1"><AlertCircle className="w-3.5 h-3.5" /> {errors.sellerHostel}</p>}
                 </div>
@@ -459,7 +459,7 @@ export default function ListProduct() {
                     value={formData.sellerRoom}
                     onChange={(e) => { setFormData({ ...formData, sellerRoom: e.target.value }); setErrors(prev => ({ ...prev, sellerRoom: "" })); }}
                     placeholder="e.g. 402"
-                    className={`w-full bg-slate-50 rounded-2xl px-5 py-4 text-base font-bold text-slate-900 placeholder:text-slate-400 outline-none border transition-all ${errors.sellerRoom ? "border-rose-400 focus:border-rose-500 focus:ring-4 focus:ring-rose-50" : "border-slate-200 focus:border-violet-500 focus:ring-4 focus:ring-violet-50"}`}
+                    className={`w-full bg-slate-50 rounded-2xl px-5 py-4 text-base font-bold text-slate-900 placeholder:text-slate-400 outline-none border transition-all ${errors.sellerRoom ? "border-rose-400 focus:border-rose-500 focus:ring-4 focus:ring-rose-50" : "border-slate-200 focus:border-brand-accent focus:ring-4 focus:ring-brand-50"}`}
                   />
                   {errors.sellerRoom && <p className="text-xs text-rose-500 mt-2 font-bold flex items-center gap-1"><AlertCircle className="w-3.5 h-3.5" /> {errors.sellerRoom}</p>}
                 </div>
@@ -472,7 +472,7 @@ export default function ListProduct() {
                       key={spot}
                       onClick={() => setFormData({ ...formData, meetup: spot })}
                       className={`mr-2 mb-2 px-4 py-2.5 rounded-2xl text-[13px] font-bold transition-all ${formData.meetup === spot
-                        ? "bg-violet-600 text-white shadow-md border border-violet-600"
+                        ? "bg-brand text-white shadow-md border border-brand"
                         : "bg-white border border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50"
                         }`}
                     >
@@ -520,7 +520,7 @@ export default function ListProduct() {
                   </div>
                 </div>
                 <div>
-                  <button onClick={() => window.location.href = '/profile'} className="px-8 py-4 bg-violet-600 hover:bg-violet-700 text-white font-bold rounded-full shadow-md transition-all">
+                  <button onClick={() => window.location.href = '/profile'} className="px-8 py-4 bg-brand hover:bg-brand text-white font-bold rounded-full shadow-md transition-all">
                     Keep Selling
                   </button>
                 </div>
@@ -545,7 +545,7 @@ export default function ListProduct() {
                 whileTap={{ scale: 0.95 }}
                 onClick={handleNext}
                 disabled={loading || (step === 4 && (!formData.sellerPhone.trim() || !formData.sellerHostel.trim() || !formData.sellerRoom.trim()))}
-                className="px-8 py-3.5 rounded-full bg-violet-600 hover:bg-violet-700 text-white text-sm font-bold shadow-[0_4px_16px_rgba(139,92,246,0.3)] disabled:opacity-50 flex items-center gap-2 transition-all"
+                className="px-8 py-3.5 rounded-full bg-brand hover:bg-brand text-white text-sm font-bold shadow-[0_4px_16px_rgba(35,25,66,0.3)] disabled:opacity-50 flex items-center gap-2 transition-all"
               >
                 {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : step === 4 ? "Publish" : "Continue"} {!loading && <ChevronRight className="w-4 h-4 ml-1" />}
               </motion.button>
