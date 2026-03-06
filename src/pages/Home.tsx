@@ -63,6 +63,16 @@ const featureCards = [
     borderColor: "rgba(96,165,250,0.25)",
   },
   {
+    icon: ShoppingBag,
+    title: "Groceries & Daily Needs",
+    desc: "Milk, snacks, personal care, and more. Delivered straight to your hostel block daily.",
+    cta: "Shop Groceries",
+    link: "/groceries",
+    gradient: "from-emerald-500/20 via-green-500/10 to-teal-500/20",
+    iconColor: "#10B981",
+    borderColor: "rgba(16,185,129,0.25)",
+  },
+  {
     icon: ShieldCheck,
     title: "100% Safe & Verified",
     desc: "Every transaction is campus-verified. Buy and sell with full confidence in our student community.",
