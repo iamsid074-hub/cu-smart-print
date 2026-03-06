@@ -18,6 +18,7 @@ import Cart from "./pages/Cart";
 import Admin from "./pages/Admin";
 import TermsAndConditions from "./pages/TermsAndConditions";
 import HelpCenter from "./pages/HelpCenter";
+import ResetPassword from "./pages/ResetPassword";
 import Navbar from "./components/Navbar";
 import UsernameSetup from "./components/UsernameSetup";
 import { useSiteGate, ClosedScreen, MaintenanceScreen } from "./components/SiteGate";
@@ -68,12 +69,13 @@ function AppLayout() {
   const location = useLocation();
   const isLanding = location.pathname === "/";
   const isLogin = location.pathname === "/login";
+  const isResetPassword = location.pathname === "/reset-password";
   const isAdmin = location.pathname.startsWith("/admin");
   const { user } = useAuth();
   const { gate } = useSiteGate();
 
   // Show gate screens for non-admin, non-login, non-landing pages
-  if (gate && !isAdmin && !isLogin && !isLanding) {
+  if (gate && !isAdmin && !isLogin && !isLanding && !isResetPassword) {
     if (gate === "maintenance") return <MaintenanceScreen />;
     if (gate === "closed") return <ClosedScreen />;
   }
@@ -86,6 +88,7 @@ function AppLayout() {
         {/* We wrap Home in ProtectedRoute so users are gated there too if they bypass somehow */}
         <Route path="/home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
         <Route path="/login" element={user ? <Navigate to="/home" replace /> : <Login />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
 
         {/* Protected Routes */}
 
