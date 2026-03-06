@@ -225,10 +225,10 @@ export default function Login() {
                                 ) : (
                                     <form onSubmit={handleForgotPassword} className="space-y-4">
                                         <div>
-                                            <p className="text-sm mb-1" style={{ color: 'rgba(232,222,212,0.35)' }}>Enter your university email and we'll send a reset link.</p>
+                                            <p className="text-sm mb-1" style={{ color: 'rgba(232,222,212,0.35)' }}>Enter your email address and we'll send a reset link.</p>
                                         </div>
                                         <div>
-                                            <label className="block text-sm mb-1.5 font-medium" style={{ color: 'rgba(232,222,212,0.4)' }}>University email</label>
+                                            <label className="block text-sm mb-1.5 font-medium" style={{ color: 'rgba(232,222,212,0.4)' }}>Email Address</label>
                                             <div className="relative rounded-xl transition-all duration-300" style={{ boxShadow: focusedField === 'reset-email' ? '0 0 0 2px rgba(255,107,107,0.35)' : '0 0 0 1px rgba(61,52,44,0.6)' }}>
                                                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                                                     <Mail className="h-4 w-4" style={{ color: focusedField === 'reset-email' ? '#FF6B6B' : 'rgba(232,222,212,0.2)' }} />
@@ -237,7 +237,7 @@ export default function Login() {
                                                     onFocus={() => setFocusedField('reset-email')} onBlur={() => setFocusedField(null)}
                                                     className="w-full rounded-xl pl-10 pr-4 h-[52px] text-sm focus:outline-none transition-colors"
                                                     style={{ backgroundColor: 'rgba(255,255,255,0.03)', color: '#E8DED4' }}
-                                                    placeholder="you@cuchd.in" />
+                                                    placeholder="you@example.com" />
                                             </div>
                                         </div>
                                         <motion.button type="submit" disabled={loading} whileHover={{ y: -1 }} whileTap={{ scale: 0.985 }}
@@ -256,7 +256,7 @@ export default function Login() {
                                 <form onSubmit={handleSubmit} className="space-y-4">
                                     {/* Email */}
                                     <div>
-                                        <label className="block text-sm mb-1.5 font-medium" style={{ color: "rgba(232,222,212,0.4)" }}>University email</label>
+                                        <label className="block text-sm mb-1.5 font-medium" style={{ color: "rgba(232,222,212,0.4)" }}>Email Address</label>
                                         <div className="relative rounded-xl transition-all duration-300" style={{
                                             boxShadow: focusedField === "email"
                                                 ? "0 0 0 2px rgba(255,107,107,0.35), 0 0 16px rgba(255,107,107,0.08)"
@@ -272,7 +272,7 @@ export default function Login() {
                                                 onBlur={() => setFocusedField(null)}
                                                 className="w-full rounded-xl pl-10 pr-4 h-[52px] text-sm focus:outline-none transition-colors"
                                                 style={{ backgroundColor: "rgba(255,255,255,0.03)", color: "#E8DED4" }}
-                                                placeholder="you@cuchd.in"
+                                                placeholder="you@example.com"
                                             />
                                         </div>
                                     </div>
