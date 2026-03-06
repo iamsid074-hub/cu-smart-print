@@ -41,7 +41,7 @@ const FLASH_SALE = {
     salePrice: 15,
     discount: "₹10 Pen + ₹5 Pen FREE!",
     endsAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
-    link: "/browse",
+    link: "/product/ce-pen-10",
 };
 
 export default function DynamicIsland() {
