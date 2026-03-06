@@ -165,16 +165,7 @@ export default function Tracking() {
   return (
     <div className="min-h-screen bg-background pt-20 pb-16 px-4">
       <div className="max-w-2xl mx-auto">
-        {/* Header */}
-        <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="mb-8 flex items-center justify-between">
-          <div>
-            <p className="text-muted-foreground text-sm font-mono mb-1">LIVE ORDER TRACKING</p>
-            <h1 className="text-3xl font-bold">Track Your <span className="text-neon-cyan">Order</span></h1>
-          </div>
-          <Link to="/home" className="flex items-center gap-1 text-sm text-muted-foreground hover:text-white transition-colors">
-            <ArrowLeft className="w-4 h-4" /> Home
-          </Link>
-        </motion.div>
+        {/* Header removed for Dynamic Island */}
 
         {!order ? (
           <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}

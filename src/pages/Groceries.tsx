@@ -46,7 +46,7 @@ export default function Groceries() {
                     <button onClick={() => navigate(-1)} className="p-2 -ml-2 hover:bg-white/10 rounded-full transition-colors">
                         <ChevronLeft className="w-6 h-6" />
                     </button>
-                    <h1 className="text-xl font-bold flex-1 text-center">Daily Needs</h1>
+                    <div className="flex-1" />
                     <Link to="/cart" className="p-2 -mr-2 relative hover:bg-white/10 rounded-full transition-colors text-neon-cyan">
                         <ShoppingCart className="w-6 h-6" />
                         {cartCount > 0 && (
@@ -78,8 +78,8 @@ export default function Groceries() {
                             key={cat}
                             onClick={() => { setActiveTab(cat); setSearchQuery(""); }}
                             className={`whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-semibold transition-all ${activeTab === cat
-                                    ? "bg-neon-cyan text-black shadow-[0_0_15px_rgba(0,240,255,0.3)]"
-                                    : "bg-white/5 text-muted-foreground hover:bg-white/10 hover:text-white border border-white/5"
+                                ? "bg-neon-cyan text-black shadow-[0_0_15px_rgba(0,240,255,0.3)]"
+                                : "bg-white/5 text-muted-foreground hover:bg-white/10 hover:text-white border border-white/5"
                                 }`}
                         >
                             {cat}
@@ -135,9 +135,9 @@ export default function Groceries() {
                                             </div>
                                             <button
                                                 onClick={(e) => handleAddToCart(e, item)}
-                                                className="w-8 h-8 rounded-full bg-white/5 hover:bg-neon-cyan hover:text-black border border-white/10 flex items-center justify-center transition-all"
+                                                className="w-[36px] h-[36px] rounded-lg bg-[#F3F4F6] border border-[#E5E7EB] flex items-center justify-center text-black hover:bg-[#10B981] hover:border-[#10B981] hover:text-white transition-colors shadow-sm"
                                             >
-                                                <Plus className="w-4 h-4" />
+                                                <Plus className="w-4 h-4 text-current transition-colors" />
                                             </button>
                                         </div>
                                     </div>

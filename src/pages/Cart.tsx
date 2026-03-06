@@ -113,7 +113,6 @@ export default function Cart() {
                             <Link to="/food" className="text-muted-foreground hover:text-white transition-colors">
                                 <ArrowLeft className="w-4 h-4" />
                             </Link>
-                            <h1 className="text-2xl sm:text-3xl font-black text-white">Your Cart</h1>
                         </div>
                         <p className="text-sm text-muted-foreground">{totalItems} item{totalItems !== 1 ? "s" : ""} in cart</p>
                     </div>
@@ -150,15 +149,15 @@ export default function Cart() {
                                             <p className="text-sm font-bold text-white truncate">{item.title}</p>
                                             <p className="text-orange-400 font-bold">₹{item.price}</p>
                                         </div>
-                                        <div className="flex items-center gap-1.5 flex-shrink-0">
+                                        <div className="flex items-center gap-2 flex-shrink-0">
                                             <button onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                                                className="w-7 h-7 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors">
-                                                <Minus className="w-3 h-3 text-white" />
+                                                className="w-[36px] h-[36px] rounded-lg bg-[#F3F4F6] border border-[#E5E7EB] flex items-center justify-center text-black hover:bg-[#10B981] hover:border-[#10B981] hover:text-white transition-colors">
+                                                <Minus className="w-4 h-4 text-current transition-colors" />
                                             </button>
-                                            <span className="w-6 text-center text-sm font-bold text-white">{item.quantity}</span>
+                                            <span className="w-[30px] text-center text-base font-bold text-white">{item.quantity}</span>
                                             <button onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                                                className="w-7 h-7 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors">
-                                                <Plus className="w-3 h-3 text-white" />
+                                                className="w-[36px] h-[36px] rounded-lg bg-[#F3F4F6] border border-[#E5E7EB] flex items-center justify-center text-black hover:bg-[#10B981] hover:border-[#10B981] hover:text-white transition-colors">
+                                                <Plus className="w-4 h-4 text-current transition-colors" />
                                             </button>
                                         </div>
                                         <div className="flex flex-col items-end flex-shrink-0">

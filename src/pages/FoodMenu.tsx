@@ -170,25 +170,7 @@ export default function FoodMenu() {
             <div className="absolute bottom-0 left-1/2 w-96 h-96 bg-yellow-500/10 rounded-full blur-[120px] pointer-events-none" />
 
             <div className="max-w-6xl mx-auto relative z-10">
-                {/* Header */}
-                <motion.div
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="text-center mb-8 md:mb-12"
-                >
-                    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400 font-semibold text-sm mb-4 backdrop-blur-md">
-                        <Pizza className="w-4 h-4" /> CU Food Menu
-                    </div>
-                    <h1 className="text-3xl sm:text-4xl md:text-6xl font-black mb-3 md:mb-4 tracking-tight leading-tight">
-                        Late night cravings?<br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-red-500 to-yellow-500 drop-shadow-[0_0_20px_rgba(249,115,22,0.4)]">
-                            Delivered fast 🚀
-                        </span>
-                    </h1>
-                    <p className="text-muted-foreground max-w-lg mx-auto text-sm sm:text-base md:text-lg px-2">
-                        Get snacks, drinks, chocolates and instant food delivered straight to your hostel room for just ₹5 delivery.
-                    </p>
-                </motion.div>
+                {/* Header removed for Dynamic Island */}
 
 
 
@@ -290,9 +272,9 @@ export default function FoodMenu() {
                                                                                         });
                                                                                         toast({ title: `${item.name} added`, description: `From ${shop.name}` });
                                                                                     }}
-                                                                                    className="w-7 h-7 rounded-lg bg-orange-500/10 border border-orange-500/20 flex items-center justify-center text-orange-400 opacity-0 group-hover:opacity-100 sm:opacity-100 transition-opacity hover:bg-orange-500/20"
+                                                                                    className="w-[36px] h-[36px] rounded-lg bg-[#F3F4F6] border border-[#E5E7EB] flex items-center justify-center text-black hover:bg-[#10B981] hover:border-[#10B981] hover:text-white transition-colors opacity-0 group-hover:opacity-100 sm:opacity-100"
                                                                                 >
-                                                                                    <Plus className="w-3.5 h-3.5" />
+                                                                                    <Plus className="w-4 h-4 text-current transition-colors" />
                                                                                 </button>
                                                                             </div>
                                                                         </div>

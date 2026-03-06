@@ -30,8 +30,19 @@ const categories = [
 
 // campusEssentials imported from @/config/campusEssentials
 
-/* ─── Feature Cards Carousel ─── */
-const featureCards = [
+type FeatureCardType = {
+  icon: any;
+  title: string;
+  desc: string;
+  cta: string;
+  link: string;
+  gradient: string;
+  iconColor: string;
+  borderColor: string;
+  badge?: string;
+};
+
+const featureCards: FeatureCardType[] = [
   {
     icon: UtensilsCrossed,
     title: "Food Delivery to Your Room",
@@ -71,6 +82,7 @@ const featureCards = [
     gradient: "from-emerald-500/20 via-green-500/10 to-teal-500/20",
     iconColor: "#10B981",
     borderColor: "rgba(16,185,129,0.25)",
+    badge: "NEW!"
   },
   {
     icon: ShieldCheck,
@@ -92,19 +104,10 @@ const featureCards = [
     iconColor: "#FBBF24",
     borderColor: "rgba(251,191,36,0.25)",
   },
-  {
-    icon: Users,
-    title: "Buy from Your Batchmates",
-    desc: "Shop from students you know and trust. Rate sellers, chat directly, and meet on campus.",
-    cta: "Join In",
-    link: "/browse",
-    gradient: "from-pink-500/20 via-rose-500/10 to-fuchsia-500/20",
-    iconColor: "#F472B6",
-    borderColor: "rgba(244,114,182,0.25)",
-  },
+
 ];
 
-function FeatureCard({ card, index }: { card: typeof featureCards[0]; index: number }) {
+function FeatureCard({ card, index }: { card: FeatureCardType; index: number }) {
   const cardRef = useRef<HTMLDivElement>(null);
   const [tilt, setTilt] = useState({ x: 0, y: 0, active: false });
 
@@ -127,22 +130,21 @@ function FeatureCard({ card, index }: { card: typeof featureCards[0]; index: num
       whileInView={{ opacity: 1, y: 0, scale: 1 }}
       viewport={{ once: true }}
       transition={{ delay: index * 0.08, duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
-      style={{ scrollSnapAlign: 'start' }}
-      className="flex-shrink-0"
+      className="w-full flex"
     >
-      <Link to={card.link} className="block">
+      <Link to={card.link} className="block w-full h-full">
         <div
           ref={cardRef}
           onMouseMove={handleMouseMove}
           onMouseLeave={handleMouseLeave}
-          className="w-[68vw] sm:w-[230px] lg:w-[260px] rounded-xl overflow-hidden cursor-pointer"
+          className="w-full h-full rounded-2xl overflow-hidden cursor-pointer"
           style={{ perspective: '800px' }}
         >
           <div
-            className="relative p-4 rounded-xl transition-transform duration-200 ease-out"
+            className="relative p-5 sm:p-6 rounded-2xl transition-transform duration-200 ease-out h-full flex flex-col justify-between"
             style={{
               transform: tilt.active
-                ? `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) scale(1.03)`
+                ? `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) scale(1.02)`
                 : 'rotateX(0) rotateY(0) scale(1)',
               transformStyle: 'preserve-3d',
               border: `1px solid ${card.borderColor}`,
@@ -152,33 +154,42 @@ function FeatureCard({ card, index }: { card: typeof featureCards[0]; index: num
             {/* Cursor light reflection */}
             {tilt.active && (
               <div
-                className="absolute inset-0 rounded-xl pointer-events-none"
+                className="absolute inset-0 rounded-2xl pointer-events-none z-0"
                 style={{
                   background: `radial-gradient(circle at ${(tilt.y / 14 + 0.5) * 100}% ${(-tilt.x / 14 + 0.5) * 100}%, ${card.iconColor}15, transparent 60%)`,
                 }}
               />
             )}
 
-            <div className="flex items-start gap-3 relative z-10">
+            {card.badge && (
+              <div className="absolute top-3 right-3 z-20">
+                <span className="px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-wider shadow-lg"
+                  style={{ backgroundColor: card.iconColor, color: '#000' }}>
+                  {card.badge}
+                </span>
+              </div>
+            )}
+
+            <div className="flex flex-col items-start gap-4 relative z-10 h-full">
               <div
-                className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"
+                className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
                 style={{ backgroundColor: `${card.iconColor}15` }}
               >
-                <card.icon className="w-[18px] h-[18px]" style={{ color: card.iconColor }} />
+                <card.icon className="w-6 h-6" style={{ color: card.iconColor }} />
               </div>
               <div className="flex-1 min-w-0">
-                <h3 className="text-[13px] font-bold leading-tight mb-1" style={{ ...fontH, color: '#EDE6DE' }}>
+                <h3 className="text-base sm:text-lg font-bold leading-tight mb-2" style={{ ...fontH, color: '#EDE6DE' }}>
                   {card.title}
                 </h3>
-                <p className="text-[11px] leading-relaxed line-clamp-2" style={{ color: '#AEA397' }}>
+                <p className="text-xs sm:text-sm leading-relaxed" style={{ color: '#AEA397' }}>
                   {card.desc}
                 </p>
               </div>
             </div>
 
-            <div className="mt-2.5 flex items-center gap-0.5 relative z-10">
-              <span className="text-[10px] font-semibold" style={{ color: card.iconColor }}>{card.cta}</span>
-              <ChevronRight className="w-3 h-3" style={{ color: card.iconColor }} />
+            <div className="mt-6 flex items-center gap-1.5 relative z-10 w-fit pb-1 border-b" style={{ borderColor: `${card.iconColor}40` }}>
+              <span className="text-xs font-bold" style={{ color: card.iconColor }}>{card.cta}</span>
+              <ChevronRight className="w-3.5 h-3.5" style={{ color: card.iconColor }} />
             </div>
           </div>
         </div>
@@ -187,86 +198,16 @@ function FeatureCard({ card, index }: { card: typeof featureCards[0]; index: num
   );
 }
 
-function FeatureCarousel() {
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const [activeIdx, setActiveIdx] = useState(0);
-  const cardCount = featureCards.length;
-
-  const scrollToIdx = useCallback((idx: number) => {
-    const el = scrollRef.current;
-    if (!el) return;
-    const card = el.children[idx] as HTMLElement;
-    if (card) {
-      el.scrollTo({ left: card.offsetLeft - 16, behavior: "smooth" });
-    }
-  }, []);
-
-  const handleScroll = useCallback(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-    const scrollLeft = el.scrollLeft;
-    const cardWidth = (el.children[0] as HTMLElement)?.offsetWidth || 230;
-    const gap = 12;
-    const idx = Math.round(scrollLeft / (cardWidth + gap));
-    setActiveIdx(Math.min(idx, cardCount - 1));
-  }, [cardCount]);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setActiveIdx((prev) => {
-        const next = (prev + 1) % cardCount;
-        scrollToIdx(next);
-        return next;
-      });
-    }, 5000);
-    return () => clearInterval(timer);
-  }, [cardCount, scrollToIdx]);
-
+function FeatureGrid() {
   return (
-    <section className="mb-8 sm:mb-10">
-      <div className="flex items-center justify-between mb-3 sm:mb-4">
-        <h2 className="text-sm sm:text-base font-bold" style={fontH}>What we offer</h2>
-        <div className="hidden sm:flex items-center gap-1.5">
-          <button
-            onClick={() => { const prev = Math.max(activeIdx - 1, 0); setActiveIdx(prev); scrollToIdx(prev); }}
-            className="w-7 h-7 rounded-full flex items-center justify-center transition-all hover:scale-110"
-            style={{ backgroundColor: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}
-          >
-            <ChevronLeft className="w-3.5 h-3.5" style={{ color: '#AEA397' }} />
-          </button>
-          <button
-            onClick={() => { const next = Math.min(activeIdx + 1, cardCount - 1); setActiveIdx(next); scrollToIdx(next); }}
-            className="w-7 h-7 rounded-full flex items-center justify-center transition-all hover:scale-110"
-            style={{ backgroundColor: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}
-          >
-            <ChevronRight className="w-3.5 h-3.5" style={{ color: '#AEA397' }} />
-          </button>
-        </div>
+    <section className="mb-10 sm:mb-16">
+      <div className="flex items-center justify-between mb-5 sm:mb-6">
+        <h2 className="text-lg sm:text-2xl font-bold" style={fontH}>What we offer</h2>
       </div>
 
-      <div
-        ref={scrollRef}
-        onScroll={handleScroll}
-        className="flex gap-3 overflow-x-auto scrollbar-hide pb-2 -mx-1 px-1"
-        style={{ scrollSnapType: 'x mandatory', WebkitOverflowScrolling: 'touch' }}
-      >
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-5">
         {featureCards.map((card, i) => (
           <FeatureCard key={card.title} card={card} index={i} />
-        ))}
-      </div>
-
-      <div className="flex justify-center gap-1.5 mt-2">
-        {featureCards.map((_, i) => (
-          <button
-            key={i}
-            onClick={() => { setActiveIdx(i); scrollToIdx(i); }}
-            className="transition-all duration-300 rounded-full"
-            style={{
-              width: activeIdx === i ? 16 : 5,
-              height: 5,
-              backgroundColor: activeIdx === i ? '#FF6B6B' : 'rgba(255,255,255,0.12)',
-            }}
-          />
         ))}
       </div>
     </section>
@@ -449,8 +390,8 @@ export default function Home() {
           <PromoBanner />
         </div>
 
-        {/* ─── FEATURE CARDS CAROUSEL ─── */}
-        <FeatureCarousel />
+        {/* ─── FEATURE CARDS GRID ─── */}
+        <FeatureGrid />
 
         {/* ─── 🔥 SUMMER SALE BANNER ─── */}
         <motion.section

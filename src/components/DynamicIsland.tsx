@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, X, ShoppingCart, Truck, Zap, ChevronRight, CheckCircle, Package } from "lucide-react";
-import { useNavigate, Link } from "react-router-dom";
+import { Search, X, ShoppingCart, Truck, Zap, ChevronRight, CheckCircle, Package, Utensils, MapPin, ShoppingBag } from "lucide-react";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
@@ -17,7 +17,7 @@ import { supabase } from "@/lib/supabase";
    Auto-dismiss timers return to next-highest priority.
    ═══════════════════════════════════════════════════════════════════ */
 
-type IslandView = "default" | "search" | "cart" | "delivery" | "flash";
+type IslandView = "default" | "search" | "cart" | "delivery" | "flash" | "context";
 type ActiveOrder = { id: string; status: string; delivery_location: string; delivery_room: string | null; total_price: number; title: string };
 
 // Notification that can appear in the compact pill
@@ -50,8 +50,22 @@ export default function DynamicIsland() {
     const inputRef = useRef<HTMLInputElement>(null);
     const islandRef = useRef<HTMLDivElement>(null);
     const navigate = useNavigate();
+    const location = useLocation();
     const { items: cartItems, totalItems: cartCount, totalPrice: cartTotal, removeItem, lastAction } = useCart();
     const { user } = useAuth();
+
+    // ─── PAGE CONTEXT ───
+    const getPageContext = () => {
+        const p = location.pathname;
+        if (p === '/food') return { id: 'food', title: '🍔 CU Food Menu', subtitle: 'Order from campus restaurants', icon: Utensils, actions: [{ label: 'Browse Menu', link: '/food' }, { label: 'View Cart', link: '/cart' }] };
+        if (p === '/sell') return { id: 'sell', title: '📦 Sell Your Item', subtitle: 'List in 30 seconds, earn cash', icon: Package, actions: [{ label: 'Quick Sell', link: '/sell' }, { label: 'My Listings', link: '/profile' }] };
+        if (p === '/tracking') return { id: 'tracking', title: '📍 Track Orders', subtitle: 'See all your orders', icon: MapPin, actions: [{ label: 'Active Orders', link: '/tracking' }, { label: 'Past Orders', link: '/profile' }] };
+        if (p === '/browse') return { id: 'browse', title: '🛍️ Browse Products', subtitle: 'Find what you need', icon: Search, actions: [{ label: 'Filters', link: '/browse' }, { label: 'Sort', link: '/browse' }] };
+        if (p === '/groceries') return { id: 'groceries', title: '🛒 Grocery & Essentials', subtitle: '30 min delivery', icon: ShoppingBag, actions: [{ label: 'Dairy', link: '/groceries' }, { label: 'Snacks', link: '/groceries' }, { label: 'Beverages', link: '/groceries' }] };
+        if (p === '/cart') return { id: 'cart_page', title: '🛒 Shopping Cart', subtitle: 'Ready to checkout', icon: ShoppingCart, actions: [{ label: 'Checkout', link: '/cart' }, { label: 'Continue Shopping', link: '/browse' }] };
+        return null;
+    };
+    const pageContext = getPageContext();
 
     // ─── Active order tracking ───
     const [activeOrder, setActiveOrder] = useState<ActiveOrder | null>(null);
@@ -302,7 +316,8 @@ export default function DynamicIsland() {
             if (activeNotif.type === "cart-add" || activeNotif.type === "cart-remove") { open("cart"); return; }
         }
         if (activeNotif?.type === "delivery") { open("delivery"); return; }
-        if (idleMode === "flash" && !activeNotif && FLASH_SALE.active) { open("flash"); return; }
+        if (pageContext && !activeNotif) { open("context"); return; }
+        if (idleMode === "flash" && !activeNotif && FLASH_SALE.active && !pageContext) { open("flash"); return; }
         if (cartCount > 0 && !activeNotif) { open("cart"); return; }
         open("search");
     };
@@ -316,7 +331,7 @@ export default function DynamicIsland() {
     };
 
     // Determine pill appearance
-    const isDropdownOpen = view === "cart" || view === "delivery" || view === "flash";
+    const isDropdownOpen = view === "cart" || view === "delivery" || view === "flash" || view === "context";
     const isSearchOpen = view === "search";
     const isExpanded = isDropdownOpen || isSearchOpen;
 
@@ -337,7 +352,8 @@ export default function DynamicIsland() {
     const getPillWidth = () => {
         if (isSearchOpen) return "min(420px, calc(100vw - 120px))";
         if (showingNotif) return "min(280px, calc(100vw - 120px))";
-        if (showingIdle && idleMode === "flash") return "min(250px, calc(100vw - 160px))";
+        if (showingIdle && pageContext) return "min(220px, calc(100vw - 160px))";
+        if (showingIdle && idleMode === "flash" && !pageContext) return "min(250px, calc(100vw - 160px))";
         return 150;
     };
 
@@ -459,37 +475,47 @@ export default function DynamicIsland() {
                                 <ChevronRight style={{ width: 12, height: 12, color: `${activeNotif!.color}66`, marginLeft: "auto", flexShrink: 0 }} />
                             </motion.div>
                         ) : (
-                            /* ─── IDLE STATE (logo ↔ flash sale cycling) ─── */
+                            /* ─── IDLE STATE (logo ↔ flash sale cycling OR PAGE CONTEXT) ─── */
                             <motion.div
-                                key={`idle-${idleMode}`}
+                                key={`idle-${pageContext ? pageContext.id : idleMode}`}
                                 initial={{ opacity: 0, scale: 0.85 }}
                                 animate={{ opacity: 1, scale: 1 }}
                                 exit={{ opacity: 0, scale: 0.85 }}
                                 transition={{ duration: 0.18 }}
                                 style={{ display: "flex", alignItems: "center", gap: 7, padding: "0 14px", height: "100%", width: "100%" }}
                             >
-                                <div style={{ width: 7, height: 7, borderRadius: "50%", background: "#30D158", flexShrink: 0, animation: "greenPulse 2s ease-in-out infinite" }} />
-
-                                {idleMode === "logo" && (
+                                {pageContext ? (
                                     <>
-                                        <div style={{ width: 22, height: 22, borderRadius: "50%", overflow: "hidden", border: "1.5px solid rgba(255,255,255,0.1)", flexShrink: 0 }}>
-                                            <img src="/logo.png" alt="CU" style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                                                onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
-                                        </div>
-                                        <span style={{ fontWeight: 700, fontSize: 13, whiteSpace: "nowrap", display: "flex", gap: 4 }}>
-                                            <span style={{ color: "#FF6B6B" }}>CU</span>
-                                            <span style={{ color: "#fff" }}>BAZZAR</span>
-                                        </span>
+                                        <div style={{ width: 7, height: 7, borderRadius: "50%", background: "#4DB8AC", flexShrink: 0, animation: "greenPulse 2s ease-in-out infinite" }} />
+                                        <span style={{ fontSize: 13, fontWeight: 700, color: "#fff", whiteSpace: "nowrap" }}>{pageContext.title}</span>
+                                        <ChevronRight style={{ width: 12, height: 12, color: "rgba(255,255,255,0.4)", marginLeft: "auto", flexShrink: 0 }} />
                                     </>
-                                )}
-                                {idleMode === "flash" && (
-                                    <div style={{ display: "flex", alignItems: "center", gap: 5, flex: 1, minWidth: 0 }}>
-                                        <Zap style={{ width: 13, height: 13, color: "#FFD60A", fill: "#FFD60A", flexShrink: 0 }} />
-                                        <span style={{ fontSize: 12, fontWeight: 700, color: "#FFD60A", whiteSpace: "nowrap" }}>
-                                            Flash Sale · {FLASH_SALE.discount}
-                                        </span>
-                                        <ChevronRight style={{ width: 12, height: 12, color: "rgba(255,200,0,0.4)", marginLeft: "auto", flexShrink: 0 }} />
-                                    </div>
+                                ) : (
+                                    <>
+                                        <div style={{ width: 7, height: 7, borderRadius: "50%", background: "#30D158", flexShrink: 0, animation: "greenPulse 2s ease-in-out infinite" }} />
+
+                                        {idleMode === "logo" && (
+                                            <>
+                                                <div style={{ width: 22, height: 22, borderRadius: "50%", overflow: "hidden", border: "1.5px solid rgba(255,255,255,0.1)", flexShrink: 0 }}>
+                                                    <img src="/logo.png" alt="CU" style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                                                        onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
+                                                </div>
+                                                <span style={{ fontWeight: 700, fontSize: 13, whiteSpace: "nowrap", display: "flex", gap: 4 }}>
+                                                    <span style={{ color: "#FF6B6B" }}>CU</span>
+                                                    <span style={{ color: "#fff" }}>BAZZAR</span>
+                                                </span>
+                                            </>
+                                        )}
+                                        {idleMode === "flash" && (
+                                            <div style={{ display: "flex", alignItems: "center", gap: 5, flex: 1, minWidth: 0 }}>
+                                                <Zap style={{ width: 13, height: 13, color: "#FFD60A", fill: "#FFD60A", flexShrink: 0 }} />
+                                                <span style={{ fontSize: 12, fontWeight: 700, color: "#FFD60A", whiteSpace: "nowrap" }}>
+                                                    Flash Sale · {FLASH_SALE.discount}
+                                                </span>
+                                                <ChevronRight style={{ width: 12, height: 12, color: "rgba(255,200,0,0.4)", marginLeft: "auto", flexShrink: 0 }} />
+                                            </div>
+                                        )}
+                                    </>
                                 )}
                             </motion.div>
                         )}
@@ -651,6 +677,33 @@ export default function DynamicIsland() {
                                         style={{ padding: "10px 14px", borderRadius: 12, background: "linear-gradient(135deg, #FF6B6B, #FF3366)", color: "#fff", fontSize: 13, fontWeight: 700, textAlign: "center", textDecoration: "none", boxShadow: "0 2px 12px rgba(255,107,107,0.3)" }}>
                                         Grab Deal Now 🔥
                                     </Link>
+                                </div>
+                            )}
+
+                            {view === "context" && pageContext && (
+                                /* ═══ PAGE CONTEXT DROPDOWN ═══ */
+                                <div style={{ padding: "14px 16px", display: "flex", flexDirection: "column", gap: 10 }}>
+                                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                                        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                                            <pageContext.icon style={{ width: 14, height: 14, color: "#4DB8AC" }} />
+                                            <span style={{ fontSize: 14, fontWeight: 700, color: "#fff" }}>{pageContext.title.replace(/^[\u0000-\u26FF]+\s?/, '')}</span>
+                                        </div>
+                                        <button onClick={(e) => { e.stopPropagation(); close(); navigate(-1); }}
+                                            style={{ background: "rgba(255,255,255,0.06)", border: "none", borderRadius: "50%", width: 26, height: 26, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
+                                            <X style={{ width: 12, height: 12, color: "rgba(255,255,255,0.5)" }} />
+                                        </button>
+                                    </div>
+                                    <div style={{ fontSize: 13, color: "rgba(255,255,255,0.7)" }}>
+                                        {pageContext.subtitle}
+                                    </div>
+                                    <div style={{ display: "flex", gap: 8, marginTop: 4, flexWrap: "wrap" }}>
+                                        {pageContext.actions.map((act, i) => (
+                                            <Link key={i} to={act.link} onClick={() => close()}
+                                                style={{ flex: 1, padding: "9px 12px", borderRadius: 12, background: i === 0 ? "#4DB8AC" : "rgba(255,255,255,0.08)", color: "#fff", fontSize: 13, fontWeight: 600, textAlign: "center", textDecoration: "none", minWidth: "100px", boxShadow: i === 0 ? "0 2px 10px rgba(77,184,172,0.3)" : "none" }}>
+                                                {act.label}
+                                            </Link>
+                                        ))}
+                                    </div>
                                 </div>
                             )}
                         </motion.div>

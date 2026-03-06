@@ -74,15 +74,7 @@ export default function Browse() {
                 >
                     <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-6">
                         <div>
-                            <div className="flex items-center gap-2 mb-2">
-                                <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #FF6B6B, #FF4444)' }}>
-                                    <ShoppingBag className="w-4 h-4 text-white" />
-                                </div>
-                                <span className="text-xs font-bold uppercase tracking-widest" style={{ color: '#FF6B6B' }}>Marketplace</span>
-                            </div>
-                            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white leading-tight">
-                                Browse <span style={{ color: '#FF6B6B' }}>Products</span>
-                            </h1>
+                            <div style={{ height: "1.5rem" }} />
                             <p className="text-sm mt-1" style={{ color: '#8F8175' }}>
                                 {filtered.length} {filtered.length === 1 ? 'item' : 'items'} available from CU students
                             </p>
@@ -135,86 +127,88 @@ export default function Browse() {
                 </motion.div>
 
                 {/* ── Content ──────────────────────────────────────────── */}
-                {loading ? (
-                    <div className="flex flex-col items-center justify-center py-32 gap-4">
-                        <Loader2 className="w-10 h-10 animate-spin" style={{ color: '#FF6B6B' }} />
-                        <p className="text-sm font-medium" style={{ color: '#8F8175' }}>Loading products...</p>
-                    </div>
-                ) : filtered.length === 0 ? (
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        className="rounded-2xl sm:rounded-3xl p-10 sm:p-16 text-center border flex flex-col items-center"
-                        style={{ backgroundColor: '#120805', borderColor: '#3D342C' }}
-                    >
-                        <div className="w-20 h-20 rounded-2xl flex items-center justify-center mb-6" style={{ background: 'rgba(255,107,107,0.08)', border: '1px solid rgba(255,107,107,0.15)' }}>
-                            <Package className="w-10 h-10" style={{ color: '#FF6B6B', opacity: 0.6 }} />
+                {
+                    loading ? (
+                        <div className="flex flex-col items-center justify-center py-32 gap-4">
+                            <Loader2 className="w-10 h-10 animate-spin" style={{ color: '#FF6B6B' }} />
+                            <p className="text-sm font-medium" style={{ color: '#8F8175' }}>Loading products...</p>
                         </div>
-                        <h3 className="text-xl sm:text-2xl font-black text-white mb-2">
-                            {searchQuery ? "No matches found" : "No items yet"}
-                        </h3>
-                        <p className="text-sm max-w-sm mb-6" style={{ color: '#8F8175' }}>
-                            {searchQuery
-                                ? `No products match "${searchQuery}". Try a different search or category.`
-                                : `No products listed in ${activeCategory === "All" ? "any category" : activeCategory} right now. Check back soon!`}
-                        </p>
-                        <div className="flex gap-3 flex-wrap justify-center">
-                            {searchQuery && (
-                                <button
-                                    onClick={() => setSearchQuery("")}
-                                    className="px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-all"
-                                    style={{ background: '#FF6B6B', boxShadow: '0 4px 12px rgba(255,107,107,0.2)' }}
-                                >
-                                    Clear Search
-                                </button>
-                            )}
-                            {activeCategory !== "All" && (
-                                <button
-                                    onClick={() => handleCategoryClick("All")}
-                                    className="px-5 py-2.5 rounded-xl text-sm font-bold transition-all"
+                    ) : filtered.length === 0 ? (
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            className="rounded-2xl sm:rounded-3xl p-10 sm:p-16 text-center border flex flex-col items-center"
+                            style={{ backgroundColor: '#120805', borderColor: '#3D342C' }}
+                        >
+                            <div className="w-20 h-20 rounded-2xl flex items-center justify-center mb-6" style={{ background: 'rgba(255,107,107,0.08)', border: '1px solid rgba(255,107,107,0.15)' }}>
+                                <Package className="w-10 h-10" style={{ color: '#FF6B6B', opacity: 0.6 }} />
+                            </div>
+                            <h3 className="text-xl sm:text-2xl font-black text-white mb-2">
+                                {searchQuery ? "No matches found" : "No items yet"}
+                            </h3>
+                            <p className="text-sm max-w-sm mb-6" style={{ color: '#8F8175' }}>
+                                {searchQuery
+                                    ? `No products match "${searchQuery}". Try a different search or category.`
+                                    : `No products listed in ${activeCategory === "All" ? "any category" : activeCategory} right now. Check back soon!`}
+                            </p>
+                            <div className="flex gap-3 flex-wrap justify-center">
+                                {searchQuery && (
+                                    <button
+                                        onClick={() => setSearchQuery("")}
+                                        className="px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-all"
+                                        style={{ background: '#FF6B6B', boxShadow: '0 4px 12px rgba(255,107,107,0.2)' }}
+                                    >
+                                        Clear Search
+                                    </button>
+                                )}
+                                {activeCategory !== "All" && (
+                                    <button
+                                        onClick={() => handleCategoryClick("All")}
+                                        className="px-5 py-2.5 rounded-xl text-sm font-bold transition-all"
+                                        style={{ backgroundColor: 'rgba(255,255,255,0.06)', color: '#E8DED4', border: '1px solid #3D342C' }}
+                                    >
+                                        View All Items
+                                    </button>
+                                )}
+                                <Link
+                                    to="/list"
+                                    className="px-5 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center gap-1.5"
                                     style={{ backgroundColor: 'rgba(255,255,255,0.06)', color: '#E8DED4', border: '1px solid #3D342C' }}
                                 >
-                                    View All Items
-                                </button>
-                            )}
-                            <Link
-                                to="/list"
-                                className="px-5 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center gap-1.5"
-                                style={{ backgroundColor: 'rgba(255,255,255,0.06)', color: '#E8DED4', border: '1px solid #3D342C' }}
-                            >
-                                <Sparkles className="w-3.5 h-3.5" /> Sell Something
-                            </Link>
-                        </div>
-                    </motion.div>
-                ) : (
-                    <AnimatePresence mode="wait">
-                        <motion.div
-                            key={activeCategory + searchQuery}
-                            initial={{ opacity: 0, y: 12 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -12 }}
-                            transition={{ duration: 0.25 }}
-                            className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 lg:gap-5"
-                        >
-                            {filtered.map((p, i) => (
-                                <ProductCard
-                                    key={p.id}
-                                    id={p.id}
-                                    image={p.image_url || ''}
-                                    title={p.title}
-                                    price={p.price}
-                                    originalPrice={p.original_price || undefined}
-                                    condition={p.condition as any}
-                                    category={p.category}
-                                    rating={4.5}
-                                    seller={p.profiles?.full_name || "Student"}
-                                    delay={i * 0.04}
-                                />
-                            ))}
+                                    <Sparkles className="w-3.5 h-3.5" /> Sell Something
+                                </Link>
+                            </div>
                         </motion.div>
-                    </AnimatePresence>
-                )}
-            </div>
-        </div>
+                    ) : (
+                        <AnimatePresence mode="wait">
+                            <motion.div
+                                key={activeCategory + searchQuery}
+                                initial={{ opacity: 0, y: 12 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -12 }}
+                                transition={{ duration: 0.25 }}
+                                className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 lg:gap-5"
+                            >
+                                {filtered.map((p, i) => (
+                                    <ProductCard
+                                        key={p.id}
+                                        id={p.id}
+                                        image={p.image_url || ''}
+                                        title={p.title}
+                                        price={p.price}
+                                        originalPrice={p.original_price || undefined}
+                                        condition={p.condition as any}
+                                        category={p.category}
+                                        rating={4.5}
+                                        seller={p.profiles?.full_name || "Student"}
+                                        delay={i * 0.04}
+                                    />
+                                ))}
+                            </motion.div>
+                        </AnimatePresence>
+                    )
+                }
+            </div >
+        </div >
     );
 }
