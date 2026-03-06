@@ -82,7 +82,7 @@ function StatCard({ icon: Icon, label, value, gradient, delay = 0 }: {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay, duration: 0.4 }}
-            className="glass-heavy rounded-2xl p-6 border border-white/10 relative overflow-hidden group hover:border-white/20 transition-all"
+            className="bg-black/20 backdrop-blur-xl rounded-2xl p-6 border border-white/10 relative overflow-hidden group hover:border-white/20 transition-all"
         >
             <div className={`absolute inset-0 bg-gradient-to-br ${gradient} opacity-5 group-hover:opacity-10 transition-opacity`} />
             <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center mb-4 shadow-lg`}>
@@ -122,7 +122,7 @@ function ConfirmDialog({ message, onConfirm, onCancel }: {
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.9, opacity: 0 }}
                 onClick={(e) => e.stopPropagation()}
-                className="glass-heavy border border-red-500/30 rounded-2xl p-6 max-w-sm w-full shadow-2xl"
+                className="bg-black/20 backdrop-blur-xl border border-red-500/30 rounded-2xl p-6 max-w-sm w-full shadow-2xl"
             >
                 <div className="flex items-center gap-3 mb-4">
                     <div className="w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center">
@@ -134,7 +134,7 @@ function ConfirmDialog({ message, onConfirm, onCancel }: {
                 <div className="flex gap-3">
                     <button
                         onClick={onCancel}
-                        className="flex-1 py-2.5 rounded-xl glass border border-white/10 text-sm font-semibold text-muted-foreground hover:text-white hover:border-white/20 transition-all"
+                        className="flex-1 py-2.5 rounded-xl bg-black/10 backdrop-blur-md border border-white/10 text-sm font-semibold text-muted-foreground hover:text-white hover:border-white/20 transition-all"
                     >
                         Cancel
                     </button>
@@ -171,7 +171,7 @@ function DashboardSection({ stats, recentProducts, recentOrders, loading }: {
             {/* Recent Activity */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Recent Products */}
-                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="glass-heavy rounded-2xl border border-white/10 overflow-hidden">
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="bg-black/20 backdrop-blur-xl rounded-2xl border border-white/10 overflow-hidden">
                     <div className="p-5 border-b border-white/5 flex items-center gap-2">
                         <Box className="w-4 h-4 text-neon-cyan" />
                         <h3 className="font-bold text-sm">Recent Uploads</h3>
@@ -195,7 +195,7 @@ function DashboardSection({ stats, recentProducts, recentOrders, loading }: {
                 </motion.div>
 
                 {/* Recent Orders */}
-                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.28 }} className="glass-heavy rounded-2xl border border-white/10 overflow-hidden">
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.28 }} className="bg-black/20 backdrop-blur-xl rounded-2xl border border-white/10 overflow-hidden">
                     <div className="p-5 border-b border-white/5 flex items-center gap-2">
                         <ShoppingBag className="w-4 h-4 text-neon-orange" />
                         <h3 className="font-bold text-sm">Recent Orders</h3>
@@ -238,7 +238,7 @@ function ProductsSection({ products, loading, onDelete }: {
             {loading ? (
                 <div className="flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin text-neon-cyan" /></div>
             ) : products.length === 0 ? (
-                <div className="glass-heavy rounded-2xl p-12 text-center border border-white/10">
+                <div className="bg-black/20 backdrop-blur-xl rounded-2xl p-12 text-center border border-white/10">
                     <Package className="w-12 h-12 text-muted-foreground mx-auto mb-3 opacity-40" />
                     <p className="text-muted-foreground">No products found</p>
                 </div>
@@ -250,7 +250,7 @@ function ProductsSection({ products, loading, onDelete }: {
                             initial={{ opacity: 0, y: 16 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: i * 0.04 }}
-                            className="glass-heavy rounded-2xl border border-white/10 overflow-hidden group hover:border-white/20 transition-all"
+                            className="bg-black/20 backdrop-blur-xl rounded-2xl border border-white/10 overflow-hidden group hover:border-white/20 transition-all"
                         >
                             {/* Product Image */}
                             <div className="relative h-44 overflow-hidden bg-white/5">
@@ -386,7 +386,7 @@ function ItemOrdersSection({ orders, loading, onUpdateStatus, onVerifyUpi }: {
             {loading ? (
                 <div className="flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin text-neon-cyan" /></div>
             ) : filtered.length === 0 ? (
-                <div className="glass-heavy rounded-2xl p-12 text-center border border-white/10">
+                <div className="bg-black/20 backdrop-blur-xl rounded-2xl p-12 text-center border border-white/10">
                     <ShoppingCart className="w-12 h-12 text-muted-foreground mx-auto mb-3 opacity-40" />
                     <p className="text-muted-foreground">No item orders found</p>
                 </div>
@@ -396,7 +396,7 @@ function ItemOrdersSection({ orders, loading, onUpdateStatus, onVerifyUpi }: {
                         const action = nextStatus[order.status];
                         return (
                             <motion.div key={order.id} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}
-                                className="glass-heavy rounded-2xl border border-white/10 overflow-hidden hover:border-white/20 transition-all">
+                                className="bg-black/20 backdrop-blur-xl rounded-2xl border border-white/10 overflow-hidden hover:border-white/20 transition-all">
                                 <div className="p-4 border-b border-white/5 flex items-center gap-3">
                                     <div className="flex-1 min-w-0">
                                         <p className="text-xs text-muted-foreground font-mono">ORDER #{order.id.slice(0, 8).toUpperCase()}</p>
@@ -428,7 +428,7 @@ function ItemOrdersSection({ orders, loading, onUpdateStatus, onVerifyUpi }: {
                                             )}
                                         </div>
                                     </div>
-                                    <div className="glass rounded-xl p-3 border border-neon-cyan/20">
+                                    <div className="bg-black/10 backdrop-blur-md rounded-xl p-3 border border-neon-cyan/20">
                                         <p className="text-xs text-neon-cyan font-bold uppercase tracking-wider mb-2 flex items-center gap-1"><User className="w-3 h-3" /> Buyer</p>
                                         <p className="text-sm font-semibold text-white">{order.buyer?.full_name || "Unknown"}</p>
                                         {(order.buyer_phone || order.buyer?.phone_number) && (
@@ -440,7 +440,7 @@ function ItemOrdersSection({ orders, loading, onUpdateStatus, onVerifyUpi }: {
                                         )}
                                         <p className="text-xs text-muted-foreground flex items-start gap-1 mt-1 break-words"><MapPin className="w-3 h-3 flex-shrink-0 mt-0.5" /> <span className="flex-1 min-w-0">{order.delivery_location}{order.delivery_room && `, Room ${order.delivery_room}`}</span></p>
                                     </div>
-                                    <div className="glass rounded-xl p-3 border border-neon-orange/20">
+                                    <div className="bg-black/10 backdrop-blur-md rounded-xl p-3 border border-neon-orange/20">
                                         <p className="text-xs text-neon-orange font-bold uppercase tracking-wider mb-2 flex items-center gap-1"><Star className="w-3 h-3" /> Seller</p>
                                         <p className="text-sm font-semibold text-white">{order.seller?.full_name || "Unknown"}</p>
                                         {order.seller?.phone_number && (
@@ -533,7 +533,7 @@ function FoodOrdersSection({ orders, loading, onUpdateStatus, onVerifyUpi }: {
             {loading ? (
                 <div className="flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin text-orange-400" /></div>
             ) : filtered.length === 0 ? (
-                <div className="glass-heavy rounded-2xl p-12 text-center border border-white/10">
+                <div className="bg-black/20 backdrop-blur-xl rounded-2xl p-12 text-center border border-white/10">
                     <UtensilsCrossed className="w-12 h-12 text-muted-foreground mx-auto mb-3 opacity-40" />
                     <p className="text-muted-foreground">No food orders found</p>
                 </div>
@@ -544,7 +544,7 @@ function FoodOrdersSection({ orders, loading, onUpdateStatus, onVerifyUpi }: {
                         const { hostel, items, notes } = parseFoodDetails(order);
                         return (
                             <motion.div key={order.id} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}
-                                className="glass-heavy rounded-2xl border border-orange-500/15 overflow-hidden hover:border-orange-500/30 transition-all">
+                                className="bg-black/20 backdrop-blur-xl rounded-2xl border border-orange-500/15 overflow-hidden hover:border-orange-500/30 transition-all">
                                 {/* Header */}
                                 <div className="p-4 border-b border-white/5 flex items-center gap-3" style={{ background: 'rgba(255,107,0,0.03)' }}>
                                     <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(255,107,0,0.12)' }}>
@@ -599,7 +599,7 @@ function FoodOrdersSection({ orders, loading, onUpdateStatus, onVerifyUpi }: {
                                     </div>
 
                                     {/* Buyer + Delivery */}
-                                    <div className="glass rounded-xl p-3 border border-neon-cyan/20">
+                                    <div className="bg-black/10 backdrop-blur-md rounded-xl p-3 border border-neon-cyan/20">
                                         <p className="text-xs text-neon-cyan font-bold uppercase tracking-wider mb-2 flex items-center gap-1"><User className="w-3 h-3" /> Deliver To</p>
                                         <p className="text-sm font-semibold text-white">{order.buyer?.full_name || "Student"}</p>
                                         {order.buyer_phone && (
@@ -659,7 +659,7 @@ function NotificationsSection({ notifications, loading, onMarkRead, onMarkAllRea
             {loading ? (
                 <div className="flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin text-neon-cyan" /></div>
             ) : notifications.length === 0 ? (
-                <div className="glass-heavy rounded-2xl p-12 text-center border border-white/10">
+                <div className="bg-black/20 backdrop-blur-xl rounded-2xl p-12 text-center border border-white/10">
                     <Bell className="w-12 h-12 text-muted-foreground mx-auto mb-3 opacity-40" />
                     <p className="text-muted-foreground">No notifications yet</p>
                     <p className="text-xs text-muted-foreground mt-1">You'll be notified when new products are listed or orders are placed</p>
@@ -676,7 +676,7 @@ function NotificationsSection({ notifications, loading, onMarkRead, onMarkAllRea
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ delay: i * 0.04 }}
                                 onClick={() => !n.is_read && onMarkRead(n.id)}
-                                className={`glass-heavy rounded-2xl border transition-all cursor-pointer ${n.is_read ? "border-white/5 opacity-60" : "border-white/15 hover:border-white/25"}`}
+                                className={`bg-black/20 backdrop-blur-xl rounded-2xl border transition-all cursor-pointer ${n.is_read ? "border-white/5 opacity-60" : "border-white/15 hover:border-white/25"}`}
                             >
                                 <div className="p-4 flex items-start gap-4">
                                     {/* Icon */}
@@ -918,18 +918,18 @@ export default function Admin() {
 
     if (!isAdmin) {
         return (
-            <div className="min-h-screen bg-background flex items-center justify-center p-4">
+            <div className="min-h-screen bg-brand flex items-center justify-center p-4">
                 <motion.div
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="glass-heavy rounded-3xl p-12 text-center border border-red-500/20 max-w-md w-full"
+                    className="bg-black/20 backdrop-blur-xl rounded-3xl p-12 text-center border border-red-500/20 max-w-md w-full"
                 >
                     <div className="w-16 h-16 rounded-full bg-black/20 flex items-center justify-center mx-auto mb-4 overflow-hidden border border-white/10">
                         <img src="/logo.png" alt="CU Bazzar" className="w-10 h-10 object-contain" />
                     </div>
                     <h1 className="text-2xl font-black text-white mb-2">Access Denied</h1>
                     <p className="text-muted-foreground mb-6">You don't have admin privileges to access this area.</p>
-                    <button onClick={() => navigate("/home")} className="btn-liquid-glass px-6 py-3 text-white font-bold rounded-xl">
+                    <button onClick={() => navigate("/home")} className="btn-liquid-bg-black/10 backdrop-blur-md px-6 py-3 text-white font-bold rounded-xl">
                         Return Home
                     </button>
                 </motion.div>
@@ -938,7 +938,7 @@ export default function Admin() {
     }
 
     return (
-        <div className="min-h-screen bg-background flex">
+        <div className="min-h-screen bg-brand flex">
             {/* ── Sidebar ──────────────────────────────────────────────────────────── */}
             {/* Overlay for mobile */}
             <AnimatePresence>
@@ -958,7 +958,7 @@ export default function Admin() {
                 initial={false}
                 animate={{ x: sidebarOpen ? 0 : "-100%" }}
                 transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                className="fixed top-0 left-0 h-full w-64 z-50 lg:hidden glass-heavy border-r border-white/10 flex flex-col"
+                className="fixed top-0 left-0 h-full w-64 z-50 lg:hidden bg-black/20 backdrop-blur-xl border-r border-white/10 flex flex-col"
             >
                 <SidebarContent
                     navItems={navItems}
@@ -970,7 +970,7 @@ export default function Admin() {
             </motion.aside>
 
             {/* Desktop Sidebar (always visible) */}
-            <aside className="hidden lg:flex w-64 flex-col fixed top-0 left-0 h-full glass-heavy border-r border-white/10 z-30">
+            <aside className="hidden lg:flex w-64 flex-col fixed top-0 left-0 h-full bg-black/20 backdrop-blur-xl border-r border-white/10 z-30">
                 <SidebarContent
                     navItems={navItems}
                     section={section}
@@ -983,10 +983,10 @@ export default function Admin() {
             {/* ── Main Content ─────────────────────────────────────────────────────── */}
             <main className="flex-1 lg:ml-64 min-h-screen w-full max-w-[100vw] overflow-x-hidden">
                 {/* Top Bar */}
-                <div className="sticky top-0 z-20 glass-heavy border-b border-white/5 px-4 sm:px-6 h-16 flex items-center gap-4">
+                <div className="sticky top-0 z-20 bg-black/20 backdrop-blur-xl border-b border-white/5 px-4 sm:px-6 h-16 flex items-center gap-4">
                     <button
                         onClick={() => setSidebarOpen(!sidebarOpen)}
-                        className="lg:hidden p-2 rounded-lg glass border border-white/10 text-muted-foreground hover:text-white transition-colors"
+                        className="lg:hidden p-2 rounded-lg bg-black/10 backdrop-blur-md border border-white/10 text-muted-foreground hover:text-white transition-colors"
                     >
                         {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
                     </button>
@@ -1000,7 +1000,7 @@ export default function Admin() {
                     {/* Notification bell in topbar */}
                     <button
                         onClick={() => setSection("notifications")}
-                        className="relative p-2.5 rounded-full glass border border-white/10 hover:border-white/20 transition-colors"
+                        className="relative p-2.5 rounded-full bg-black/10 backdrop-blur-md border border-white/10 hover:border-white/20 transition-colors"
                     >
                         <Bell className="w-5 h-5 text-muted-foreground" />
                         {unreadCount > 0 && (
@@ -1017,7 +1017,7 @@ export default function Admin() {
                         title={maintenanceMode ? "Maintenance ON — click to disable" : "Site is live — click to enable maintenance"}
                         className={`relative p-2.5 rounded-full border transition-all ${maintenanceMode
                             ? 'bg-amber-500/20 border-amber-500/40 hover:bg-amber-500/30'
-                            : 'glass border-white/10 hover:border-white/20'
+                            : 'bg-black/10 backdrop-blur-md border-white/10 hover:border-white/20'
                             }`}
                     >
                         <Wrench className={`w-4 h-4 ${maintenanceMode ? 'text-amber-400' : 'text-muted-foreground'}`} />
@@ -1156,7 +1156,7 @@ function SidebarContent({
 
             {/* Admin User Info */}
             <div className="p-4 border-t border-white/5">
-                <div className="glass rounded-xl p-3 border border-white/10 mb-3">
+                <div className="bg-black/10 backdrop-blur-md rounded-xl p-3 border border-white/10 mb-3">
                     <div className="flex items-center gap-3">
                         <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-neon-blue to-neon-cyan flex items-center justify-center flex-shrink-0">
                             <User className="w-4 h-4 text-white" />
