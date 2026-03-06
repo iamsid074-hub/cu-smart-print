@@ -119,7 +119,7 @@ export default function HelpCenter() {
                             help you?
                         </span>
                     </h1>
-                    <p className="text-muted-foreground max-w-md mx-auto text-sm sm:text-base">
+                    <p className="text-slate-500 max-w-md mx-auto text-sm sm:text-base">
                         Find answers, get support, and learn about our safety policies.
                     </p>
                 </motion.div>
@@ -129,7 +129,7 @@ export default function HelpCenter() {
                     initial={{ opacity: 0, y: 16 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.1 }}
-                    className="mb-10 rounded-2xl p-5 sm:p-7 bg-white shadow-sm border border-slate-200"
+                    className="mb-10 rounded-3xl p-5 sm:p-7 bg-white shadow-[0_4px_20px_rgba(0,0,0,0.03)]"
                 >
                     <div className="flex items-start gap-4">
                         <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 bg-emerald-50 border border-emerald-100">
@@ -217,11 +217,11 @@ export default function HelpCenter() {
                             <button
                                 key={section.title}
                                 onClick={() => setActiveSection(i)}
-                                className={`flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg text-xs sm:text-sm font-semibold flex-shrink-0 transition-all whitespace-nowrap ${activeSection === i
+                                className={`flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-semibold flex-shrink-0 transition-all whitespace-nowrap ${activeSection === i
                                     ? "text-white"
-                                    : "text-muted-foreground hover:text-white hover:bg-white/5"
+                                    : "text-slate-500 hover:text-slate-900 hover:bg-slate-100"
                                     }`}
-                                style={activeSection === i ? { background: `rgba(${section.color === '#10B981' ? '16,185,129' : section.color === '#3B82F6' ? '59,130,246' : section.color === '#F43F5E' ? '244,63,94' : '167,139,250'},0.15)`, border: `1px solid ${section.color}33` } : { border: '1px solid rgba(255,255,255,0.06)' }}
+                                style={activeSection === i ? { background: `rgba(${section.color === '#10B981' ? '16,185,129' : section.color === '#3B82F6' ? '59,130,246' : section.color === '#F43F5E' ? '244,63,94' : '167,139,250'},0.15)`, border: `1px solid ${section.color}33` } : { border: '1px solid rgba(0,0,0,0.06)' }}
                             >
                                 <section.icon className="w-3.5 h-3.5" style={{ color: activeSection === i ? section.color : undefined }} />
                                 {section.title}
@@ -245,7 +245,7 @@ export default function HelpCenter() {
                                 return (
                                     <div
                                         key={faqId}
-                                        className={`rounded-xl overflow-hidden transition-all bg-white border shadow-sm ${isOpen ? 'border-slate-300' : 'border-slate-200'}`}
+                                        className={`rounded-2xl overflow-hidden transition-all bg-white shadow-[0_2px_10px_rgba(0,0,0,0.03)] ${isOpen ? 'ring-1 ring-slate-200' : ''}`}
                                     >
                                         <button
                                             onClick={() => setOpenFaq(isOpen ? null : faqId)}
@@ -283,7 +283,7 @@ export default function HelpCenter() {
                     initial={{ opacity: 0, y: 16 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    className="rounded-2xl p-5 sm:p-7 mb-10 bg-rose-50 border border-rose-100"
+                    className="rounded-3xl p-5 sm:p-7 mb-10 bg-rose-50"
                 >
                     <div className="flex items-center gap-2 mb-4">
                         <AlertTriangle className="w-5 h-5 text-rose-500" />
@@ -318,7 +318,7 @@ export default function HelpCenter() {
                         href="https://wa.me/919466166750?text=Hi%2C%20I%20need%20help%20with%20CU%20Bazzar"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold text-white transition-all hover:scale-105 active:scale-95"
+                        className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full text-sm font-semibold text-white transition-all hover:scale-105 active:scale-95"
                         style={{ background: '#25D366', boxShadow: '0 4px 16px rgba(37,211,102,0.25)' }}
                     >
                         <MessageCircle className="w-4 h-4" />

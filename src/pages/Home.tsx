@@ -678,7 +678,7 @@ export default function Home() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.04 }}
-                className="group relative rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1.5 flex flex-col bg-white border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.03)]"
+                className="group relative rounded-3xl overflow-hidden transition-all duration-300 hover:-translate-y-1.5 flex flex-col bg-white shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-[0_12px_35px_rgba(139,92,246,0.1)]"
               >
                 {/* Badge */}
                 {item.badge && (
@@ -697,7 +697,7 @@ export default function Home() {
                 </div>
 
                 {/* Content */}
-                <div className="p-3 sm:p-4 flex flex-col flex-1 border-t border-slate-50">
+                <div className="p-4 sm:p-5 flex flex-col flex-1">
                   <p className="text-xs sm:text-[13px] font-semibold line-clamp-2 mb-2.5 leading-snug text-slate-800">{item.title}</p>
 
                   {/* Price */}
@@ -712,7 +712,7 @@ export default function Home() {
                       addItem({ id: item.id, title: item.title, price: item.price, image: item.image, category: item.category });
                       toast.success(`${item.title} added to cart`);
                     }}
-                    className="w-full mt-auto py-2 sm:py-2.5 rounded-xl text-violet-700 bg-violet-50 hover:bg-violet-100 text-[11px] sm:text-xs font-semibold flex items-center justify-center gap-1.5 transition-all duration-200 active:scale-[0.97]"
+                    className="w-full mt-auto py-2.5 sm:py-3 rounded-2xl text-violet-700 bg-violet-50 hover:bg-violet-100 text-[11px] sm:text-xs font-bold flex items-center justify-center gap-1.5 transition-all duration-200 active:scale-[0.97]"
                   >
                     <ShoppingCart className="w-3.5 h-3.5" />
                     Add to Cart

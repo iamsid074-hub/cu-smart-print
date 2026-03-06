@@ -102,8 +102,7 @@ export default function ProductCard({
         viewport={{ once: true }}
         transition={{ duration: 0.5, delay, ease: [0.34, 1.56, 0.64, 1] }}
         whileHover={{ y: -8, scale: 1.02 }}
-        className="relative bg-white rounded-2xl overflow-hidden group cursor-pointer h-full border border-slate-100"
-        style={{ boxShadow: "0 4px 20px rgba(0,0,0,0.05)" }}
+        className="relative bg-white rounded-3xl overflow-hidden group cursor-pointer h-full shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-[0_12px_35px_rgba(139,92,246,0.12)] transition-shadow duration-300"
       >
         {/* Badge */}
         {badge && (
@@ -190,7 +189,7 @@ export default function ProductCard({
                 toast({ title: `${title} added to cart` });
               }}
               whileTap={{ scale: 0.9 }}
-              className="px-3 py-2 bg-violet-50 hover:bg-violet-100 text-violet-700 text-xs font-bold rounded-lg transition-colors flex items-center gap-1"
+              className="px-4 py-2.5 bg-violet-50 hover:bg-violet-100 text-violet-700 text-xs font-bold rounded-2xl transition-all flex items-center gap-1.5 active:scale-95 group-hover:bg-violet-600 group-hover:text-white"
             >
               <ShoppingCart className="w-3.5 h-3.5" /> Cart
             </motion.button>

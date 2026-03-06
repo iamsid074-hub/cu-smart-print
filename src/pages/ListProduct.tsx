@@ -184,7 +184,7 @@ export default function ListProduct() {
   }
 
   return (
-    <div className="min-h-screen bg-background pt-20 pb-16 px-4">
+    <div className="min-h-screen bg-slate-50 pt-20 pb-16 px-4">
       <div className="max-w-2xl mx-auto">
         {/* Header removed for Dynamic Island */}
 
@@ -357,7 +357,7 @@ export default function ListProduct() {
                   />
                 </div>
 
-                <p className="text-xs text-muted-foreground mt-3 text-center">
+                <p className="text-xs text-slate-500 mt-3 text-center">
                   💡 Check the preview above to confirm it's the correct photo before continuing.
                 </p>
               </motion.div>
@@ -415,7 +415,7 @@ export default function ListProduct() {
                   >
                     <div className={`w-5 h-5 rounded-full bg-white shadow transition-all duration-300 mt-0.5 ${formData.negotiable ? "ml-6.5" : "ml-0.5"}`} style={{ marginLeft: formData.negotiable ? "calc(100% - 1.375rem)" : "2px" }} />
                   </div>
-                  <span className="text-sm font-medium text-foreground">Price is negotiable</span>
+                  <span className="text-sm font-medium text-slate-900">Price is negotiable</span>
                 </label>
               </motion.div>
             )}

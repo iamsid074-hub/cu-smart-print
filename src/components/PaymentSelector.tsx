@@ -21,13 +21,13 @@ export default function PaymentSelector({ selected, onChange, totalAmount, disab
                 type="button"
                 disabled={disabled}
                 onClick={() => onChange("online")}
-                className={`w-full rounded-xl p-3.5 flex items-center gap-3 transition-all border ${selected === "online" ? 'bg-violet-50 border-violet-200 shadow-sm' : 'bg-white border-slate-200 hover:border-violet-100 hover:bg-slate-50'}`}
+                className={`w-full rounded-2xl p-4 flex items-center gap-3 transition-all border ${selected === "online" ? 'bg-violet-50 border-violet-200 shadow-sm' : 'bg-white border-slate-200 hover:border-violet-100 hover:bg-slate-50'}`}
                 style={{
                     cursor: disabled ? 'not-allowed' : 'pointer',
                     opacity: disabled ? 0.5 : 1,
                 }}
             >
-                <div className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${selected === "online" ? 'bg-violet-100' : 'bg-slate-100'}`}>
+                <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 ${selected === "online" ? 'bg-violet-100' : 'bg-slate-100'}`}>
                     <Smartphone className={`w-4 h-4 ${selected === "online" ? 'text-violet-600' : 'text-slate-500'}`} />
                 </div>
                 <div className="flex-1 min-w-0 text-left">
@@ -46,13 +46,13 @@ export default function PaymentSelector({ selected, onChange, totalAmount, disab
                 type="button"
                 disabled={disabled}
                 onClick={() => onChange("cod")}
-                className={`w-full rounded-xl p-3.5 flex items-center gap-3 transition-all border ${selected === "cod" ? 'bg-orange-50 border-orange-200 shadow-sm' : 'bg-white border-slate-200 hover:border-orange-100 hover:bg-slate-50'}`}
+                className={`w-full rounded-2xl p-4 flex items-center gap-3 transition-all border ${selected === "cod" ? 'bg-orange-50 border-orange-200 shadow-sm' : 'bg-white border-slate-200 hover:border-orange-100 hover:bg-slate-50'}`}
                 style={{
                     cursor: disabled ? 'not-allowed' : 'pointer',
                     opacity: disabled ? 0.5 : 1,
                 }}
             >
-                <div className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${selected === "cod" ? 'bg-orange-100' : 'bg-slate-100'}`}>
+                <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 ${selected === "cod" ? 'bg-orange-100' : 'bg-slate-100'}`}>
                     <Banknote className={`w-4 h-4 ${selected === "cod" ? 'text-orange-600' : 'text-slate-500'}`} />
                 </div>
                 <div className="flex-1 min-w-0 text-left">

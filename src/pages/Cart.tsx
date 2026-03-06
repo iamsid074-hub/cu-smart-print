@@ -118,7 +118,7 @@ export default function Cart() {
                         <p className="text-sm text-slate-500 ml-8">{totalItems} item{totalItems !== 1 ? "s" : ""} in cart</p>
                     </div>
                     {items.length > 0 && (
-                        <button onClick={clearCart} className="text-xs text-red-500 hover:text-red-700 font-semibold transition-colors bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg border border-red-100">
+                        <button onClick={clearCart} className="text-xs text-red-500 hover:text-red-700 font-semibold transition-colors bg-red-50 hover:bg-red-100 px-4 py-2 rounded-full">
                             Clear All
                         </button>
                     )}
@@ -126,11 +126,11 @@ export default function Cart() {
 
                 {items.length === 0 ? (
                     <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
-                        className="rounded-2xl p-12 text-center bg-white border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.03)]">
+                        className="rounded-3xl p-12 text-center bg-white shadow-[0_4px_20px_rgba(0,0,0,0.03)] focus:outline-none focus:ring-4 focus:ring-violet-50">
                         <ShoppingCart className="w-16 h-16 text-slate-300 mx-auto mb-4" />
                         <h2 className="text-xl font-bold text-slate-900 mb-2">Cart is empty</h2>
                         <p className="text-slate-500 text-sm mb-6">Add some snacks from the food menu!</p>
-                        <Link to="/food" className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-white text-sm bg-violet-600 hover:bg-violet-700 shadow-sm transition-colors">
+                        <Link to="/food" className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full font-bold text-white text-sm bg-violet-600 hover:bg-violet-700 shadow-sm transition-all focus:ring-4 focus:ring-violet-200">
                             <ShoppingBag className="w-4 h-4" /> Browse Food Menu
                         </Link>
                     </motion.div>
@@ -141,8 +141,8 @@ export default function Cart() {
                             <AnimatePresence>
                                 {items.map((item) => (
                                     <motion.div key={item.id} layout initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }}
-                                        className="rounded-xl p-3 sm:p-4 border border-slate-100 bg-white shadow-sm flex gap-3 sm:gap-4 items-center">
-                                        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-lg overflow-hidden bg-slate-50 flex-shrink-0 border border-slate-100">
+                                        className="rounded-3xl p-4 bg-white shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_30px_rgba(139,92,246,0.1)] transition-shadow duration-300 flex gap-3 sm:gap-4 items-center">
+                                        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl overflow-hidden bg-slate-50 flex-shrink-0">
                                             <img src={item.image} alt={item.title} className="w-full h-full object-cover mix-blend-multiply" />
                                         </div>
                                         <div className="flex-1 min-w-0">
@@ -151,12 +151,12 @@ export default function Cart() {
                                         </div>
                                         <div className="flex items-center gap-2 flex-shrink-0">
                                             <button onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                                                className="w-[32px] h-[32px] sm:w-[36px] sm:h-[36px] rounded-lg bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600 hover:bg-emerald-500 hover:text-white transition-colors">
+                                                className="w-[32px] h-[32px] sm:w-[36px] sm:h-[36px] rounded-[14px] bg-emerald-50 flex items-center justify-center text-emerald-600 hover:bg-emerald-500 hover:text-white transition-colors">
                                                 <Minus className="w-4 h-4 text-current transition-colors" />
                                             </button>
                                             <span className="w-[24px] sm:w-[30px] text-center text-sm sm:text-base font-bold text-slate-900">{item.quantity}</span>
                                             <button onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                                                className="w-[32px] h-[32px] sm:w-[36px] sm:h-[36px] rounded-lg bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600 hover:bg-emerald-500 hover:text-white transition-colors">
+                                                className="w-[32px] h-[32px] sm:w-[36px] sm:h-[36px] rounded-[14px] bg-emerald-50 flex items-center justify-center text-emerald-600 hover:bg-emerald-500 hover:text-white transition-colors">
                                                 <Plus className="w-4 h-4 text-current transition-colors" />
                                             </button>
                                         </div>
@@ -172,7 +172,7 @@ export default function Cart() {
                         </div>
 
                         {/* Promo Code Section */}
-                        <div className="rounded-xl p-4 border border-slate-100 bg-white shadow-sm mb-4 flex gap-2 items-end">
+                        <div className="rounded-3xl p-5 bg-white shadow-[0_4px_20px_rgba(0,0,0,0.03)] mb-4 flex gap-3 items-end">
                             <div className="flex-1">
                                 <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5 flex items-center gap-1">
                                     <CheckCircle className="w-3 h-3 text-emerald-500" /> Apply Promo Code
@@ -187,16 +187,16 @@ export default function Cart() {
                                         }
                                     }}
                                     placeholder="Enter CRICKET5"
-                                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-violet-300 focus:ring-4 focus:ring-violet-50 transition-all placeholder:text-slate-400 uppercase"
+                                    className="w-full bg-slate-50 rounded-2xl px-5 py-3 text-sm text-slate-900 focus:outline-none focus:ring-4 focus:ring-violet-50 transition-all placeholder:text-slate-400 uppercase"
                                     disabled={promoApplied}
                                 />
                             </div>
                             <button
                                 onClick={handleApplyPromo}
                                 disabled={!promoCode.trim() || promoApplied}
-                                className={`px-5 py-2.5 rounded-lg text-sm font-bold transition-all ${promoApplied
-                                    ? "bg-emerald-50 text-emerald-600 border border-emerald-200"
-                                    : "bg-slate-100 text-slate-600 hover:bg-slate-200 border border-transparent disabled:opacity-50"
+                                className={`px-6 py-3 rounded-full text-sm font-bold transition-all ${promoApplied
+                                    ? "bg-emerald-50 text-emerald-600"
+                                    : "bg-slate-100 text-slate-600 hover:bg-slate-200 disabled:opacity-50"
                                     }`}
                             >
                                 {promoApplied ? "Applied!" : "Apply"}
@@ -204,7 +204,7 @@ export default function Cart() {
                         </div>
 
                         {/* Price Summary */}
-                        <div className="rounded-xl p-4 sm:p-5 border border-slate-100 bg-white shadow-sm mb-4">
+                        <div className="rounded-3xl p-5 sm:p-6 bg-white shadow-[0_4px_20px_rgba(0,0,0,0.03)] mb-4">
                             <div className="flex justify-between items-center text-sm text-slate-600 mb-3">
                                 <span>Subtotal ({totalItems} items)</span>
                                 <span className="font-medium text-slate-900">₹{totalPrice}</span>
@@ -220,7 +220,7 @@ export default function Cart() {
                             </div>
 
                             {promoApplied && (
-                                <div className="mb-4 bg-emerald-50 border border-emerald-100 rounded-lg p-2.5 flex items-center gap-2 text-emerald-700 text-xs sm:text-sm font-medium">
+                                <div className="mb-4 bg-emerald-50 rounded-2xl p-4 flex items-center gap-2 text-emerald-700 text-xs sm:text-sm font-medium">
                                     <CheckCircle className="w-4 h-4 flex-shrink-0" />
                                     <span>You saved ₹{(campusShopsItems.length > 0 ? (otherItems.length > 0 ? 20 : 15) : 10) - 5} on delivery!</span>
                                 </div>
@@ -235,32 +235,32 @@ export default function Cart() {
                         {/* Checkout */}
                         {!showCheckout ? (
                             <motion.button whileTap={{ scale: 0.97 }} onClick={() => setShowCheckout(true)}
-                                className="w-full py-4 rounded-xl font-bold text-white text-[15px] flex items-center justify-center gap-2 bg-violet-600 hover:bg-violet-700 shadow-[0_4px_20px_rgba(139,92,246,0.3)] transition-all">
+                                className="w-full py-4 rounded-full font-bold text-white text-[15px] flex items-center justify-center gap-2 bg-violet-600 hover:bg-violet-700 shadow-[0_4px_20px_rgba(139,92,246,0.3)] transition-all">
                                 <ShoppingBag className="w-5 h-5" /> Proceed to Secure Checkout
                             </motion.button>
                         ) : (
                             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-                                className="rounded-xl p-4 sm:p-5 border border-slate-100 bg-white shadow-sm space-y-4">
-                                <h3 className="font-bold text-slate-900 text-base border-b border-slate-50 pb-2">Delivery Details</h3>
+                                className="rounded-3xl p-5 bg-white shadow-[0_4px_20px_rgba(0,0,0,0.03)] space-y-4">
+                                <h3 className="font-bold text-slate-900 text-base border-slate-50 pb-2">Delivery Details</h3>
 
                                 <div className="space-y-3 pt-1">
                                     <div className="relative">
-                                        <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                        <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                                         <input value={hostel} onChange={e => setHostel(e.target.value)} placeholder="Hostel Block (e.g. BH-1) *"
-                                            className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 h-[48px] text-sm text-slate-900 focus:outline-none focus:bg-white focus:border-violet-300 focus:ring-4 focus:ring-violet-50 transition-all placeholder:text-slate-400" />
+                                            className="w-full bg-slate-50 rounded-2xl pl-12 pr-4 h-[52px] text-sm text-slate-900 focus:outline-none focus:bg-white focus:ring-4 focus:ring-violet-50 transition-all placeholder:text-slate-400" />
                                     </div>
-                                    <div className="relative flex items-center bg-slate-50 border border-slate-200 rounded-xl h-[48px] overflow-hidden focus-within:bg-white focus-within:border-violet-300 focus-within:ring-4 focus-within:ring-violet-50 transition-all">
-                                        <div className="flex items-center justify-center w-12 border-r border-slate-200 bg-slate-100/50">
-                                            <div className="w-5 h-5 flex items-center justify-center font-bold text-slate-400 text-[10px] text-center border border-slate-300 rounded bg-white">R</div>
+                                    <div className="relative flex items-center bg-slate-50 rounded-2xl h-[52px] overflow-hidden focus-within:bg-white focus-within:ring-4 focus-within:ring-violet-50 transition-all">
+                                        <div className="flex items-center justify-center w-14 bg-slate-100/50">
+                                            <div className="w-6 h-6 flex items-center justify-center font-bold text-slate-400 text-xs text-center rounded bg-white shadow-sm">R</div>
                                         </div>
                                         <input value={room} onChange={e => setRoom(e.target.value)} placeholder="Room Number *"
                                             className="w-full h-full bg-transparent px-3 text-sm text-slate-900 focus:outline-none placeholder:text-slate-400" />
                                     </div>
                                     <div>
                                         <div className="relative">
-                                            <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                            <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                                             <input value={phone} onChange={e => setPhone(e.target.value.replace(/\D/g, "").slice(0, 10))} type="tel" placeholder="10-digit Phone Number *" maxLength={10}
-                                                className={`w-full bg-slate-50 border rounded-xl pl-10 pr-4 h-[48px] text-sm text-slate-900 focus:outline-none focus:bg-white focus:ring-4 transition-all placeholder:text-slate-400 ${phone.length > 0 && !isPhoneValid ? "border-red-300 focus:border-red-400 focus:ring-red-50" : "border-slate-200 focus:border-violet-300 focus:ring-violet-50"
+                                                className={`w-full bg-slate-50 rounded-2xl pl-12 pr-4 h-[52px] text-sm text-slate-900 focus:outline-none focus:bg-white focus:ring-4 transition-all placeholder:text-slate-400 ${phone.length > 0 && !isPhoneValid ? "border border-red-300 focus:border-red-400 focus:ring-red-50" : "border border-transparent focus:ring-violet-50 focus:border-violet-100"
                                                     }`} />
                                         </div>
                                         {phone.length > 0 && !isPhoneValid && (
@@ -280,7 +280,7 @@ export default function Cart() {
                                 </div>
 
                                 <button onClick={handleCheckout} disabled={submitting || !isFormValid}
-                                    className="w-full py-4 mt-2 rounded-xl font-bold text-white text-[15px] flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                                    className="w-full py-4 mt-4 rounded-full font-bold text-white text-[15px] flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                                     style={{ background: isFormValid ? "#8B5CF6" : "#cbd5e1", boxShadow: isFormValid ? "0 4px 20px rgba(139,92,246,0.3)" : "none" }}>
                                     {submitting ? <Loader2 className="w-5 h-5 animate-spin" /> :
                                         `Pay Securely · ₹${orderTotal}`}
