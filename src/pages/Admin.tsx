@@ -453,14 +453,14 @@ function ItemOrdersSection({ orders, loading, onUpdateStatus, onVerifyUpi }: {
                                         {order.seller?.hostel_block && <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1"><MapPin className="w-3 h-3" /> {order.seller.hostel_block}</p>}
                                     </div>
                                     {action && (
-                                        <div className="flex gap-2">
+                                        <div className="flex flex-col sm:flex-row gap-2">
                                             <button onClick={() => onUpdateStatus(order.id, action.status, (action as any).timestamps)}
-                                                className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl border text-sm font-bold transition-all ${action.color}`}>
+                                                className={`flex-1 flex w-full sm:w-auto items-center justify-center gap-2 py-2.5 rounded-xl border text-sm font-bold transition-all ${action.color}`}>
                                                 <action.icon className="w-4 h-4" /> {action.label}
                                             </button>
                                             {order.status === 'pending' && (
                                                 <button onClick={() => onUpdateStatus(order.id, 'cancelled')}
-                                                    className="px-4 py-2.5 rounded-xl border border-red-500/30 bg-red-500/10 text-red-400 text-sm font-bold hover:bg-red-500/20 transition-all">
+                                                    className="px-4 w-full sm:w-auto py-2.5 rounded-xl border border-red-500/30 bg-red-500/10 text-red-400 text-sm font-bold hover:bg-red-500/20 transition-all">
                                                     Decline
                                                 </button>
                                             )}
@@ -614,14 +614,14 @@ function FoodOrdersSection({ orders, loading, onUpdateStatus, onVerifyUpi }: {
 
                                     {/* Action */}
                                     {action && (
-                                        <div className="flex gap-2">
+                                        <div className="flex flex-col sm:flex-row gap-2">
                                             <button onClick={() => onUpdateStatus(order.id, action.status, (action as any).timestamps)}
-                                                className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl border text-sm font-bold transition-all ${action.color}`}>
+                                                className={`flex-1 flex w-full sm:w-auto items-center justify-center gap-2 py-2.5 rounded-xl border text-sm font-bold transition-all ${action.color}`}>
                                                 <action.icon className="w-4 h-4" /> {action.label}
                                             </button>
                                             {order.status === 'pending' && (
                                                 <button onClick={() => onUpdateStatus(order.id, 'cancelled')}
-                                                    className="px-4 py-2.5 rounded-xl border border-red-500/30 bg-red-500/10 text-red-400 text-sm font-bold hover:bg-red-500/20 transition-all">
+                                                    className="px-4 w-full sm:w-auto py-2.5 rounded-xl border border-red-500/30 bg-red-500/10 text-red-400 text-sm font-bold hover:bg-red-500/20 transition-all">
                                                     Decline
                                                 </button>
                                             )}
@@ -924,8 +924,8 @@ export default function Admin() {
                     animate={{ opacity: 1, scale: 1 }}
                     className="glass-heavy rounded-3xl p-12 text-center border border-red-500/20 max-w-md w-full"
                 >
-                    <div className="w-16 h-16 rounded-full bg-red-500/15 flex items-center justify-center mx-auto mb-4">
-                        <Shield className="w-8 h-8 text-red-400" />
+                    <div className="w-16 h-16 rounded-full bg-black/20 flex items-center justify-center mx-auto mb-4 overflow-hidden border border-white/10">
+                        <img src="/logo.png" alt="CU Bazzar" className="w-10 h-10 object-contain" />
                     </div>
                     <h1 className="text-2xl font-black text-white mb-2">Access Denied</h1>
                     <p className="text-muted-foreground mb-6">You don't have admin privileges to access this area.</p>
@@ -1027,8 +1027,8 @@ export default function Admin() {
                     </button>
 
                     <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-neon-orange to-neon-pink flex items-center justify-center">
-                            <Shield className="w-4 h-4 text-white" />
+                        <div className="w-8 h-8 rounded-full bg-black/20 border border-white/10 overflow-hidden flex items-center justify-center p-1.5">
+                            <img src="/logo.png" alt="Admin" className="w-full h-full object-contain" />
                         </div>
                         <span className="text-sm font-bold text-white hidden sm:block">{profile?.full_name?.split(" ")[0] || "Admin"}</span>
                     </div>
@@ -1117,8 +1117,8 @@ function SidebarContent({
             {/* Logo */}
             <div className="p-6 border-b border-white/5">
                 <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-neon-orange to-neon-pink flex items-center justify-center shadow-lg">
-                        <Shield className="w-5 h-5 text-white" />
+                    <div className="w-10 h-10 rounded-xl bg-black/20 border border-white/10 overflow-hidden flex items-center justify-center p-2 shadow-lg">
+                        <img src="/logo.png" alt="CU Bazzar" className="w-full h-full object-contain" />
                     </div>
                     <div>
                         <p className="font-black text-white text-sm leading-tight">Admin Portal</p>
