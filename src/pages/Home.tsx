@@ -128,11 +128,11 @@ function FeatureCard({ card, index }: { card: FeatureCardType; index: number }) 
           ref={cardRef}
           onMouseMove={handleMouseMove}
           onMouseLeave={handleMouseLeave}
-          className="w-[68vw] sm:w-[230px] lg:w-[260px] h-full rounded-xl overflow-hidden cursor-pointer"
+          className="w-[68vw] sm:w-[230px] lg:w-[260px] h-full rounded-[2rem] overflow-hidden cursor-pointer"
           style={{ perspective: '800px' }}
         >
           <div
-            className="relative p-4 rounded-xl transition-transform duration-200 ease-out h-full flex flex-col justify-between bg-white border border-slate-900 shadow-[2px_2px_0px_rgba(15,23,42,0.1)] hover:shadow-[4px_4px_0px_rgba(15,23,42,0.15)]"
+            className="relative p-5 rounded-[2rem] transition-transform duration-200 ease-out h-full flex flex-col justify-between bg-white border border-slate-900 shadow-[2px_2px_0px_rgba(15,23,42,0.1)] hover:shadow-[4px_4px_0px_rgba(15,23,42,0.15)]"
             style={{
               transform: tilt.active
                 ? `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) scale(1.03)`
@@ -143,7 +143,7 @@ function FeatureCard({ card, index }: { card: FeatureCardType; index: number }) 
             {/* Cursor light reflection */}
             {tilt.active && (
               <div
-                className="absolute inset-0 rounded-xl pointer-events-none z-0"
+                className="absolute inset-0 rounded-3xl pointer-events-none z-0"
                 style={{
                   background: `radial-gradient(circle at ${(tilt.y / 14 + 0.5) * 100}% ${(-tilt.x / 14 + 0.5) * 100}%, ${card.iconColor}10, transparent 60%)`,
                 }}
@@ -152,7 +152,7 @@ function FeatureCard({ card, index }: { card: FeatureCardType; index: number }) 
 
             <div className="flex flex-col items-start gap-3 relative z-10 h-full">
               <div
-                className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"
+                className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
                 style={{ backgroundColor: `${card.iconColor}15` }}
               >
                 <card.icon className="w-[18px] h-[18px]" style={{ color: card.iconColor }} />
