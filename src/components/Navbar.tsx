@@ -81,7 +81,7 @@ export default function Navbar() {
       initial={{ y: -80, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5, ease: [0.34, 1.56, 0.64, 1] }}
-      className="fixed top-0 left-0 right-0 z-50 border-b" style={{ background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)', borderColor: 'rgba(226,232,240,0.8)' }}
+      className="fixed top-2 left-2 right-2 sm:top-4 sm:left-4 sm:right-4 z-50 border rounded-3xl sm:rounded-[2rem] shadow-sm" style={{ background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)', borderColor: 'rgba(226,232,240,0.8)' }}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center gap-2 sm:gap-4">
         {/* Dynamic Island — logo + expandable search */}
@@ -151,7 +151,7 @@ export default function Navbar() {
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="lg:hidden border-t px-4 py-4 flex flex-col gap-2 shadow-lg" style={{ backgroundColor: '#ffffff', borderColor: '#E2E8F0' }}
+          className="lg:hidden border-t px-4 py-4 flex flex-col gap-2 rounded-b-3xl sm:rounded-b-[2rem]" style={{ backgroundColor: '#ffffff', borderColor: '#E2E8F0' }}
         >
           {navLinks.map((link) => (
             <Link

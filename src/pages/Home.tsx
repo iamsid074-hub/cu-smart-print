@@ -450,7 +450,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-slate-50 pt-[4.5rem] pb-20">
       {/* ─── Top Purple Header Section ─── */}
-      <div className="bg-[#8B5CF6] px-4 pt-8 pb-14 sm:px-6 lg:px-10 rounded-b-3xl sm:rounded-b-[2.5rem] mb-8 relative overflow-hidden shadow-sm">
+      <div className="bg-[#8B5CF6] px-4 pt-8 pb-14 sm:px-6 lg:px-10 rounded-3xl sm:rounded-[2.5rem] mb-8 relative overflow-hidden shadow-sm mx-2 sm:mx-0 mt-2 sm:mt-0">
         <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent pointer-events-none" />
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none" />
         <div className="max-w-[1600px] mx-auto relative z-10">
@@ -468,10 +468,7 @@ export default function Home() {
               <span className="text-emerald-300">Marketplace</span>
             </h1>
 
-            <Link to="/browse" className="flex items-center bg-white/20 hover:bg-white/30 transition-colors backdrop-blur-md px-4 py-3.5 rounded-2xl cursor-pointer text-white shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-white/20 max-w-2xl">
-              <Search className="w-5 h-5 mr-3 text-white" />
-              <span className="text-sm font-medium text-white">Search for books, gadgets, food...</span>
-            </Link>
+
           </motion.div>
         </div>
       </div>
@@ -498,12 +495,12 @@ export default function Home() {
           className="mb-8 sm:mb-12"
         >
           {/* Animated border wrapper */}
-          <div className="relative rounded-2xl sm:rounded-3xl p-[2px] overflow-hidden" style={{
+          <div className="relative rounded-3xl sm:rounded-[2rem] p-[2px] overflow-hidden" style={{
             background: 'linear-gradient(135deg, #8B5CF6, #10B981, #3B82F6)',
             backgroundSize: '300% 300%',
             animation: 'sale-border-shift 4s ease infinite',
           }}>
-            <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden" style={{ backgroundColor: '#ffffff' }}>
+            <div className="relative rounded-3xl sm:rounded-[2rem] overflow-hidden" style={{ backgroundColor: '#ffffff' }}>
 
               {/* Glowing orbs */}
               <div className="absolute top-0 right-0 w-64 h-64 sm:w-96 sm:h-96 rounded-full blur-[100px] pointer-events-none" style={{ background: 'rgba(139,92,246,0.15)' }} />
@@ -689,7 +686,7 @@ export default function Home() {
               <motion.div
                 initial={{ y: 100, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 100, opacity: 0 }}
                 transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-                className="w-full sm:max-w-[420px] rounded-t-2xl sm:rounded-2xl overflow-hidden bg-white shadow-2xl"
+                className="w-full sm:max-w-[420px] rounded-t-3xl sm:rounded-3xl overflow-hidden bg-white shadow-2xl"
                 onClick={(e) => e.stopPropagation()}
               >
                 {/* Header */}
@@ -796,7 +793,7 @@ export default function Home() {
               <Link
                 key={cat.label}
                 to={`/browse?category=${cat.label}`}
-                className="group relative flex-shrink-0 w-32 h-40 sm:w-48 sm:h-56 rounded-2xl sm:rounded-3xl overflow-hidden transition-all duration-500 ease-out hover:-translate-y-2"
+                className="group relative flex-shrink-0 w-32 h-40 sm:w-48 sm:h-56 rounded-3xl sm:rounded-[2rem] overflow-hidden transition-all duration-500 ease-out hover:-translate-y-2"
                 style={{ border: '1px solid #544B43' }}
               >
                 {/* Photo bg */}
@@ -854,7 +851,7 @@ export default function Home() {
             ) : (
               freshMapped.map((product) => (
                 <Link to={`/product/${product.id}`} key={`fresh-${product.id}`}
-                  className="rounded-xl sm:rounded-2xl overflow-hidden group block transition-all hover:-translate-y-1 bg-white border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.03)]"
+                  className="rounded-2xl sm:rounded-3xl overflow-hidden group block transition-all hover:-translate-y-1 bg-white border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.03)]"
                 >
                   <div className="relative h-28 sm:h-36 overflow-hidden bg-slate-50">
                     <img src={product.image || `https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=400`} alt={product.title}
@@ -889,7 +886,7 @@ export default function Home() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="rounded-2xl sm:rounded-3xl overflow-hidden bg-emerald-50 border border-emerald-100/50"
+            className="rounded-3xl sm:rounded-[2rem] overflow-hidden bg-emerald-50 border border-emerald-100/50"
           >
             {/* Header */}
             <div className="px-5 pt-5 pb-3 sm:px-8 sm:pt-7 sm:pb-4 text-center">
@@ -943,7 +940,7 @@ export default function Home() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.08 }}
-                  className="rounded-xl sm:rounded-2xl p-3.5 sm:p-5 flex flex-col transition-all duration-300 hover:-translate-y-0.5 shadow-sm"
+                  className="rounded-2xl sm:rounded-3xl p-3.5 sm:p-5 flex flex-col transition-all duration-300 hover:-translate-y-0.5 shadow-sm"
                   style={{ background: item.bg, border: `1px solid ${item.border}` }}
                 >
                   <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center mb-3" style={{ background: `${item.color}10`, border: `1px solid ${item.color}20` }}>

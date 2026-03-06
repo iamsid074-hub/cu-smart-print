@@ -97,10 +97,10 @@ export default function HelpCenter() {
     const [activeSection, setActiveSection] = useState(0);
 
     return (
-        <div className="min-h-screen bg-[#0D0907] pt-24 pb-16 px-4 sm:px-6 overflow-x-hidden relative">
+        <div className="min-h-screen bg-slate-50 pt-24 pb-16 px-4 sm:px-6 overflow-x-hidden relative">
             {/* Ambient Glows */}
-            <div className="absolute top-0 left-1/4 w-96 h-96 bg-emerald-500/8 rounded-full blur-[120px] pointer-events-none" />
-            <div className="absolute top-1/3 right-1/4 w-96 h-96 bg-blue-500/6 rounded-full blur-[120px] pointer-events-none" />
+            <div className="absolute top-0 left-1/4 w-96 h-96 bg-emerald-500/5 rounded-full blur-[120px] pointer-events-none" />
+            <div className="absolute top-1/3 right-1/4 w-96 h-96 bg-blue-500/5 rounded-full blur-[120px] pointer-events-none" />
 
             <div className="max-w-4xl mx-auto relative z-10">
                 {/* Header */}
@@ -129,18 +129,17 @@ export default function HelpCenter() {
                     initial={{ opacity: 0, y: 16 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.1 }}
-                    className="mb-10 rounded-2xl p-5 sm:p-7"
-                    style={{ background: 'linear-gradient(135deg, rgba(16,185,129,0.08), rgba(6,182,212,0.05))', border: '1px solid rgba(16,185,129,0.15)' }}
+                    className="mb-10 rounded-2xl p-5 sm:p-7 bg-white shadow-sm border border-slate-200"
                 >
                     <div className="flex items-start gap-4">
-                        <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(16,185,129,0.15)', border: '1px solid rgba(16,185,129,0.2)' }}>
-                            <Shield className="w-6 h-6 text-emerald-400" />
+                        <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 bg-emerald-50 border border-emerald-100">
+                            <Shield className="w-6 h-6 text-emerald-500" />
                         </div>
                         <div>
-                            <h2 className="text-base sm:text-lg font-bold mb-1.5" style={{ color: '#EDE6DE' }}>Our Safety Commitment</h2>
-                            <p className="text-xs sm:text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.5)' }}>
-                                CU Bazzar is run by a <strong className="text-emerald-300">real person with real accountability</strong>. Every delivery is handled personally by the platform owner — no anonymous drivers, no middlemen.
-                                We maintain a <strong className="text-rose-300">strict zero-tolerance policy</strong> against drugs, alcohol, weapons, and any prohibited items. Violations are reported to Chandigarh University authorities immediately.
+                            <h2 className="text-base sm:text-lg font-bold mb-1.5 text-slate-900">Our Safety Commitment</h2>
+                            <p className="text-xs sm:text-sm leading-relaxed text-slate-600">
+                                CU Bazzar is run by a <strong className="text-emerald-600">real person with real accountability</strong>. Every delivery is handled personally by the platform owner — no anonymous drivers, no middlemen.
+                                We maintain a <strong className="text-rose-600">strict zero-tolerance policy</strong> against drugs, alcohol, weapons, and any prohibited items. Violations are reported to Chandigarh University authorities immediately.
                                 Your safety and trust are our foundation.
                             </p>
                         </div>
@@ -191,15 +190,14 @@ export default function HelpCenter() {
                             href={item.href}
                             target={item.href.startsWith("http") ? "_blank" : undefined}
                             rel={item.href.startsWith("http") ? "noopener noreferrer" : undefined}
-                            className="rounded-xl sm:rounded-2xl p-4 sm:p-5 flex items-center gap-3 transition-all duration-200 hover:-translate-y-0.5 hover:brightness-110 group"
-                            style={{ background: item.bg, border: `1px solid ${item.border}` }}
+                            className="rounded-xl sm:rounded-2xl p-4 sm:p-5 flex items-center gap-3 transition-all duration-200 hover:-translate-y-0.5 bg-white shadow-sm border border-slate-200 group"
                         >
                             <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: item.bg, border: `1px solid ${item.border}` }}>
                                 <item.icon className="w-5 h-5" style={{ color: item.color }} />
                             </div>
                             <div className="min-w-0">
-                                <p className="text-xs sm:text-sm font-bold" style={{ color: '#EDE6DE' }}>{item.title}</p>
-                                <p className="text-[10px] sm:text-xs" style={{ color: 'rgba(255,255,255,0.35)' }}>{item.desc}</p>
+                                <p className="text-xs sm:text-sm font-bold text-slate-900">{item.title}</p>
+                                <p className="text-[10px] sm:text-xs text-slate-500">{item.desc}</p>
                                 <p className="text-[10px] sm:text-xs font-semibold mt-0.5 group-hover:underline" style={{ color: item.color }}>{item.action}</p>
                             </div>
                         </a>
@@ -208,8 +206,8 @@ export default function HelpCenter() {
 
                 {/* ─── FAQ Section ─── */}
                 <div className="mb-10">
-                    <h2 className="text-lg sm:text-xl font-bold mb-5" style={{ ...fontH, color: '#EDE6DE' }}>
-                        <HelpCircle className="w-5 h-5 inline-block mr-2 text-emerald-400" style={{ verticalAlign: '-2px' }} />
+                    <h2 className="text-lg sm:text-xl font-bold mb-5 text-slate-900" style={fontH}>
+                        <HelpCircle className="w-5 h-5 inline-block mr-2 text-emerald-500" style={{ verticalAlign: '-2px' }} />
                         Frequently Asked Questions
                     </h2>
 
@@ -247,16 +245,15 @@ export default function HelpCenter() {
                                 return (
                                     <div
                                         key={faqId}
-                                        className="rounded-xl overflow-hidden transition-all"
-                                        style={{ background: isOpen ? 'rgba(255,255,255,0.04)' : 'rgba(255,255,255,0.02)', border: `1px solid ${isOpen ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.04)'}` }}
+                                        className={`rounded-xl overflow-hidden transition-all bg-white border shadow-sm ${isOpen ? 'border-slate-300' : 'border-slate-200'}`}
                                     >
                                         <button
                                             onClick={() => setOpenFaq(isOpen ? null : faqId)}
-                                            className="w-full flex items-center justify-between px-4 py-3.5 sm:px-5 sm:py-4 text-left"
+                                            className="w-full flex items-center justify-between px-4 py-3.5 sm:px-5 sm:py-4 text-left hover:bg-slate-50"
                                         >
-                                            <span className="text-xs sm:text-sm font-semibold pr-4" style={{ color: '#EDE6DE' }}>{faq.q}</span>
+                                            <span className="text-xs sm:text-sm font-semibold pr-4 text-slate-900">{faq.q}</span>
                                             <motion.div animate={{ rotate: isOpen ? 180 : 0 }} transition={{ duration: 0.2 }}>
-                                                <ChevronDown className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                                                <ChevronDown className="w-4 h-4 text-slate-400 flex-shrink-0" />
                                             </motion.div>
                                         </button>
                                         <AnimatePresence>
@@ -266,9 +263,9 @@ export default function HelpCenter() {
                                                     animate={{ height: "auto", opacity: 1 }}
                                                     exit={{ height: 0, opacity: 0 }}
                                                     transition={{ duration: 0.25 }}
-                                                    className="overflow-hidden"
+                                                    className="overflow-hidden bg-slate-50"
                                                 >
-                                                    <p className="px-4 pb-4 sm:px-5 sm:pb-5 text-xs sm:text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.45)' }}>
+                                                    <p className="px-4 pb-4 sm:px-5 sm:pb-5 pt-2 text-xs sm:text-sm leading-relaxed text-slate-600">
                                                         {faq.a}
                                                     </p>
                                                 </motion.div>
@@ -286,12 +283,11 @@ export default function HelpCenter() {
                     initial={{ opacity: 0, y: 16 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    className="rounded-2xl p-5 sm:p-7 mb-10"
-                    style={{ background: 'rgba(244,63,94,0.06)', border: '1px solid rgba(244,63,94,0.12)' }}
+                    className="rounded-2xl p-5 sm:p-7 mb-10 bg-rose-50 border border-rose-100"
                 >
                     <div className="flex items-center gap-2 mb-4">
-                        <AlertTriangle className="w-5 h-5 text-rose-400" />
-                        <h3 className="text-sm sm:text-base font-bold text-rose-300">Prohibited Items — Zero Tolerance</h3>
+                        <AlertTriangle className="w-5 h-5 text-rose-500" />
+                        <h3 className="text-sm sm:text-base font-bold text-rose-700">Prohibited Items — Zero Tolerance</h3>
                     </div>
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                         {[
@@ -305,20 +301,19 @@ export default function HelpCenter() {
                             "🚫 University-prohibited items",
                             "🚫 Exam cheating material",
                         ].map(item => (
-                            <div key={item} className="px-3 py-2 rounded-lg text-[11px] sm:text-xs font-medium"
-                                style={{ background: 'rgba(244,63,94,0.06)', border: '1px solid rgba(244,63,94,0.08)', color: 'rgba(255,255,255,0.5)' }}>
+                            <div key={item} className="px-3 py-2 rounded-lg text-[11px] sm:text-xs font-medium bg-white border border-rose-100 text-rose-600 shadow-sm">
                                 {item}
                             </div>
                         ))}
                     </div>
-                    <p className="mt-4 text-[10px] sm:text-xs leading-relaxed" style={{ color: 'rgba(255,255,255,0.3)' }}>
-                        Listing or attempting to trade any prohibited item will result in <strong className="text-rose-300">immediate permanent ban</strong> from the platform and reporting to Chandigarh University administration and law enforcement as applicable.
+                    <p className="mt-4 text-[10px] sm:text-xs leading-relaxed text-rose-600/80">
+                        Listing or attempting to trade any prohibited item will result in <strong className="text-rose-700">immediate permanent ban</strong> from the platform and reporting to Chandigarh University administration and law enforcement as applicable.
                     </p>
                 </motion.div>
 
                 {/* ─── Still need help? ─── */}
                 <div className="text-center py-8">
-                    <p className="text-sm mb-3" style={{ color: 'rgba(255,255,255,0.4)' }}>Still need help?</p>
+                    <p className="text-sm mb-3 text-slate-500">Still need help?</p>
                     <a
                         href="https://wa.me/919466166750?text=Hi%2C%20I%20need%20help%20with%20CU%20Bazzar"
                         target="_blank"

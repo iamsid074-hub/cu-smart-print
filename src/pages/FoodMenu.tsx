@@ -193,14 +193,14 @@ export default function FoodMenu() {
                                     initial={{ opacity: 0, y: 16 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: si * 0.06 }}
-                                    className="rounded-2xl border border-slate-100 overflow-hidden bg-white shadow-[0_4px_20px_rgba(0,0,0,0.03)]"
+                                    className="rounded-3xl border border-slate-100 overflow-hidden bg-white shadow-[0_4px_20px_rgba(0,0,0,0.03)]"
                                 >
                                     {/* Shop header — click to expand */}
                                     <button
                                         onClick={() => { setExpandedShop(isOpen ? null : shop.id); setExpandedMenuCat(null); }}
                                         className="w-full flex items-center gap-3 p-4 sm:p-5 text-left transition-colors hover:bg-slate-50"
                                     >
-                                        <div className="w-11 h-11 rounded-xl bg-violet-50 border border-violet-100 flex items-center justify-center flex-shrink-0">
+                                        <div className="w-11 h-11 rounded-2xl bg-violet-50 border border-violet-100 flex items-center justify-center flex-shrink-0">
                                             <Store className="w-5 h-5 text-violet-500" />
                                         </div>
                                         <div className="flex-1 min-w-0">
@@ -297,12 +297,12 @@ export default function FoodMenu() {
                     viewport={{ once: true }}
                     className="mt-12 sm:mt-16 mb-8"
                 >
-                    <div className="relative rounded-2xl sm:rounded-3xl p-[2px] overflow-hidden" style={{
+                    <div className="relative rounded-3xl sm:rounded-[2rem] p-[2px] overflow-hidden" style={{
                         background: 'linear-gradient(135deg, #FF6B00, #FF4444, #FF6B00, #FFAA00, #FF6B00)',
                         backgroundSize: '300% 300%',
                         animation: 'sale-border-shift 4s ease infinite',
                     }}>
-                        <div className="rounded-2xl sm:rounded-3xl p-6 sm:p-8 lg:p-10 bg-white">
+                        <div className="rounded-3xl sm:rounded-[2rem] p-6 sm:p-8 lg:p-10 bg-white">
                             <div className="flex flex-col sm:flex-row sm:items-center gap-6">
                                 <div className="flex-1">
                                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full mb-3 bg-orange-50 border border-orange-100">
@@ -357,7 +357,7 @@ export default function FoodMenu() {
                             <motion.div
                                 initial={{ y: 100, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 100, opacity: 0 }}
                                 transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-                                className="w-full sm:max-w-[480px] max-h-[90vh] overflow-y-auto rounded-t-2xl sm:rounded-2xl bg-white shadow-2xl"
+                                className="w-full sm:max-w-[480px] max-h-[90vh] overflow-y-auto rounded-t-3xl sm:rounded-3xl bg-white shadow-2xl"
                                 onClick={(e) => e.stopPropagation()}
                             >
                                 {/* Header */}
@@ -387,7 +387,7 @@ export default function FoodMenu() {
                                             value={customItems}
                                             onChange={(e) => setCustomItems(e.target.value)}
                                             rows={4}
-                                            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:bg-white focus:border-orange-400 focus:ring-4 focus:ring-orange-50 transition-all placeholder:text-slate-400 resize-none"
+                                            className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:bg-white focus:border-orange-400 focus:ring-4 focus:ring-orange-50 transition-all placeholder:text-slate-400 resize-none"
                                             placeholder={"e.g.\n2x Maggi (Masala)\n1x Red Bull\n3x Dairy Milk Silk\n1x Notebook"}
                                         />
                                         <p className="text-[10px] text-slate-500 mt-1 px-1">List each item with quantity. One per line works best.</p>
@@ -400,7 +400,7 @@ export default function FoodMenu() {
                                             value={customNotes}
                                             onChange={(e) => setCustomNotes(e.target.value)}
                                             rows={2}
-                                            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:bg-white focus:border-orange-400 focus:ring-4 focus:ring-orange-50 transition-all placeholder:text-slate-400 resize-none"
+                                            className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:bg-white focus:border-orange-400 focus:ring-4 focus:ring-orange-50 transition-all placeholder:text-slate-400 resize-none"
                                             placeholder="Brand preferences, spice level, etc. (optional)"
                                         />
                                     </div>
@@ -413,7 +413,7 @@ export default function FoodMenu() {
                                                 value={customHostel}
                                                 onChange={(e) => setCustomHostel(e.target.value)}
                                                 placeholder="Hostel Block + Room (e.g. BH-1, 402)"
-                                                className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 h-[48px] text-sm text-slate-900 focus:outline-none focus:bg-white focus:border-orange-400 focus:ring-4 focus:ring-orange-50 transition-all placeholder:text-slate-400"
+                                                className="w-full bg-slate-50 border border-slate-200 rounded-full pl-10 pr-4 h-[48px] text-sm text-slate-900 focus:outline-none focus:bg-white focus:border-orange-400 focus:ring-4 focus:ring-orange-50 transition-all placeholder:text-slate-400"
                                             />
                                         </div>
                                         <div className="relative">
@@ -424,7 +424,7 @@ export default function FoodMenu() {
                                                 type="tel"
                                                 maxLength={10}
                                                 placeholder="Phone Number (10 digits)"
-                                                className={`w-full bg-slate-50 border rounded-xl pl-10 pr-4 h-[48px] text-sm text-slate-900 focus:outline-none focus:bg-white focus:ring-4 transition-all placeholder:text-slate-400 ${customPhone.length > 0 && customPhone.length !== 10 ? 'border-red-300 focus:border-red-400 focus:ring-red-50' : 'border-slate-200 focus:border-orange-400 focus:ring-orange-50'}`}
+                                                className={`w-full bg-slate-50 border rounded-full pl-10 pr-4 h-[48px] text-sm text-slate-900 focus:outline-none focus:bg-white focus:ring-4 transition-all placeholder:text-slate-400 ${customPhone.length > 0 && customPhone.length !== 10 ? 'border-red-300 focus:border-red-400 focus:ring-red-50' : 'border-slate-200 focus:border-orange-400 focus:ring-orange-50'}`}
                                             />
                                         </div>
                                     </div>
@@ -440,7 +440,7 @@ export default function FoodMenu() {
                                     <button
                                         onClick={handleCustomOrder}
                                         disabled={customSubmitting}
-                                        className="w-full py-3.5 rounded-xl text-white font-bold text-sm transition-all disabled:opacity-50 flex items-center justify-center gap-2 bg-gradient-to-r from-orange-500 to-red-500 shadow-[0_4px_16px_rgba(249,115,22,0.3)] hover:shadow-[0_4px_20px_rgba(249,115,22,0.4)]"
+                                        className="w-full py-3.5 rounded-full text-white font-bold text-sm transition-all disabled:opacity-50 flex items-center justify-center gap-2 bg-gradient-to-r from-orange-500 to-red-500 shadow-[0_4px_16px_rgba(249,115,22,0.3)] hover:shadow-[0_4px_20px_rgba(249,115,22,0.4)]"
                                     >
                                         {customSubmitting ? (
                                             <Loader2 className="w-5 h-5 animate-spin" />

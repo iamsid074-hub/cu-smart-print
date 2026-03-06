@@ -6,10 +6,10 @@
 
 @layer base {
   /* ─── Clean Light Mode ─── */
-  --background: 0 0% 98%;
-  /* #FAFAFA */
-  --foreground: 222.2 84% 4.9%;
-  /* #0F172A */
+  --background: 265 25% 98%;
+  /* #F9F8FC Tinted Purple White */
+  --foreground: 240 10% 4%;
+  /* #09090B Very Dark Gray */
 
   --card: 0 0% 100%;
   /* #FFFFFF */
