@@ -58,7 +58,7 @@ export default function DynamicIsland() {
     const getPageContext = () => {
         const p = location.pathname;
         if (p === '/food') return { id: 'food', title: '🍔 CU Food Menu', subtitle: 'Order from campus restaurants', icon: Utensils, actions: [{ label: 'Browse Menu', link: '/food' }, { label: 'View Cart', link: '/cart' }] };
-        if (p === '/sell') return { id: 'sell', title: '📦 Sell Your Item', subtitle: 'List in 30 seconds, earn cash', icon: Package, actions: [{ label: 'Quick Sell', link: '/sell' }, { label: 'My Listings', link: '/profile' }] };
+        if (p === '/sell' || p === '/list') return { id: 'sell', title: '📦 Sell Your Item', subtitle: 'List in 30 seconds, earn cash', icon: Package, actions: [{ label: 'Quick Sell', link: '/list' }, { label: 'My Listings', link: '/profile' }] };
         if (p === '/tracking') return { id: 'tracking', title: '📍 Track Orders', subtitle: 'See all your orders', icon: MapPin, actions: [{ label: 'Active Orders', link: '/tracking' }, { label: 'Past Orders', link: '/profile' }] };
         if (p === '/browse') return { id: 'browse', title: '🛍️ Browse Products', subtitle: 'Find what you need', icon: Search, actions: [{ label: 'Filters', link: '/browse' }, { label: 'Sort', link: '/browse' }] };
         if (p === '/groceries') return { id: 'groceries', title: '🛒 Grocery & Essentials', subtitle: '30 min delivery', icon: ShoppingBag, actions: [{ label: 'Dairy', link: '/groceries' }, { label: 'Snacks', link: '/groceries' }, { label: 'Beverages', link: '/groceries' }] };
