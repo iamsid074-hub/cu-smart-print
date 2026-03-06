@@ -195,18 +195,18 @@ export default function ListProduct() {
               <div key={s.id} className="flex items-center gap-2">
                 <motion.div
                   whileHover={{ scale: 1.1 }}
-                  className={`w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 cursor-pointer ${step > s.id ? "bg-gradient-fire text-white shadow-neon-fire"
-                    : step === s.id ? "bg-gradient-fire text-white shadow-neon-fire animate-glow-pulse"
-                      : "glass text-muted-foreground border border-white/10"
+                  className={`w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 cursor-pointer ${step > s.id ? "bg-violet-600 text-white shadow-[0_4px_16px_rgba(139,92,246,0.3)]"
+                    : step === s.id ? "bg-violet-600 text-white shadow-[0_4px_16px_rgba(139,92,246,0.3)] scale-110"
+                      : "bg-slate-100 text-slate-400 border border-slate-200"
                     }`}
                   onClick={() => s.id < step && setStep(s.id)}
                 >
                   {step > s.id ? <CheckCircle className="w-4 h-4" /> : <s.icon className="w-4 h-4" />}
                 </motion.div>
                 {i < steps.length - 1 && (
-                  <div className="hidden sm:block w-12 h-0.5 bg-secondary overflow-hidden rounded-full">
+                  <div className="hidden sm:block w-12 h-1 bg-slate-100 overflow-hidden rounded-full">
                     <motion.div
-                      className="h-full bg-gradient-fire rounded-full"
+                      className="h-full bg-violet-600 rounded-full"
                       initial={{ width: "0%" }}
                       animate={{ width: step > s.id ? "100%" : "0%" }}
                       transition={{ duration: 0.4 }}
@@ -216,18 +216,18 @@ export default function ListProduct() {
               </div>
             ))}
           </div>
-          <div className="h-1 bg-secondary rounded-full overflow-hidden">
+          <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
             <motion.div
-              className="h-full bg-gradient-fire rounded-full"
+              className="h-full bg-violet-600 rounded-full"
               animate={{ width: `${progress}%` }}
               transition={{ duration: 0.4, ease: "easeInOut" }}
             />
           </div>
-          <p className="text-xs text-muted-foreground mt-2 font-mono">Step {step} of {steps.length} · {steps[step - 1].label}</p>
+          <p className="text-xs text-slate-500 mt-3 font-semibold text-center sm:text-left">Step {step} of {steps.length} · {steps[step - 1].label}</p>
         </div>
 
         {/* Form card */}
-        <div className="glass rounded-3xl p-6 sm:p-8 border border-white/5">
+        <div className="bg-white rounded-3xl sm:rounded-[2rem] p-6 sm:p-10 border border-slate-100 shadow-[0_8px_30px_rgba(0,0,0,0.04)]">
           <AnimatePresence mode="wait">
             {/* Step 1: Details */}
             {step === 1 && (
@@ -239,26 +239,26 @@ export default function ListProduct() {
                 transition={{ duration: 0.3 }}
                 className="space-y-5"
               >
-                <h2 className="font-bold text-xl mb-6">Item Details</h2>
+                <h2 className="font-extrabold text-2xl mb-6 text-slate-900">Item Details</h2>
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground mb-2 block">Title *</label>
+                  <label className="text-sm font-bold text-slate-600 mb-2 block">Title *</label>
                   <input
                     value={formData.title}
                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                     placeholder="e.g. MacBook Air M2 – 8GB/256GB"
-                    className="w-full glass rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground outline-none border border-white/10 focus:border-neon-orange/50 transition-all"
+                    className="w-full bg-slate-50 rounded-2xl px-5 py-3.5 text-sm text-slate-900 placeholder:text-slate-400 outline-none border border-slate-200 focus:border-violet-500 focus:ring-4 focus:ring-violet-50 transition-all font-medium"
                   />
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground mb-2 block">Category *</label>
-                  <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                  <label className="text-sm font-bold text-slate-600 mb-2 block">Category *</label>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                     {categories.map((cat) => (
                       <button
                         key={cat}
                         onClick={() => setFormData({ ...formData, category: cat })}
-                        className={`px-3 py-2 rounded-xl text-xs font-medium transition-all duration-200 ${formData.category === cat
-                          ? "bg-gradient-fire text-white shadow-neon-fire"
-                          : "glass border border-white/10 text-muted-foreground hover:text-foreground hover:border-white/20"
+                        className={`px-3 py-2.5 rounded-2xl text-[13px] font-bold transition-all duration-200 ${formData.category === cat
+                          ? "bg-violet-600 text-white shadow-md border border-violet-600"
+                          : "bg-white border border-slate-200 text-slate-600 hover:text-slate-900 hover:border-slate-300 hover:bg-slate-50"
                           }`}
                       >
                         {cat}
@@ -267,15 +267,15 @@ export default function ListProduct() {
                   </div>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground mb-2 block">Condition *</label>
-                  <div className="grid grid-cols-2 gap-2">
+                  <label className="text-sm font-bold text-slate-600 mb-2 block">Condition *</label>
+                  <div className="grid grid-cols-2 gap-2.5">
                     {conditions.map((cond) => (
                       <button
                         key={cond}
                         onClick={() => setFormData({ ...formData, condition: cond })}
-                        className={`px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${formData.condition === cond
-                          ? "bg-gradient-ocean text-white shadow-neon-ocean"
-                          : "glass border border-white/10 text-muted-foreground hover:border-white/20"
+                        className={`px-4 py-3 rounded-2xl text-[13px] font-bold transition-all ${formData.condition === cond
+                          ? "bg-emerald-500 text-white shadow-md border border-emerald-500"
+                          : "bg-white border border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50"
                           }`}
                       >
                         {cond}
@@ -284,13 +284,13 @@ export default function ListProduct() {
                   </div>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground mb-2 block">Description</label>
+                  <label className="text-sm font-bold text-slate-600 mb-2 block">Description</label>
                   <textarea
-                    rows={3}
+                    rows={4}
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                     placeholder="Describe your item — condition, specs, any defects..."
-                    className="w-full glass rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground outline-none border border-white/10 focus:border-neon-orange/50 transition-all resize-none"
+                    className="w-full bg-slate-50 rounded-2xl px-5 py-3.5 text-sm text-slate-900 placeholder:text-slate-400 outline-none border border-slate-200 focus:border-violet-500 focus:ring-4 focus:ring-violet-50 transition-all font-medium resize-none"
                   />
                 </div>
               </motion.div>
@@ -299,24 +299,24 @@ export default function ListProduct() {
             {/* Step 2: Photos */}
             {step === 2 && (
               <motion.div key="step2" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }} transition={{ duration: 0.3 }}>
-                <h2 className="font-bold text-xl mb-2">Add a Photo</h2>
-                <p className="text-sm text-muted-foreground mb-5">Pick the correct image for <span className="text-neon-cyan font-semibold">{formData.title || 'your item'}</span></p>
+                <h2 className="font-extrabold text-2xl mb-2 text-slate-900">Add a Photo</h2>
+                <p className="text-sm text-slate-500 mb-6">Pick the correct image for <span className="text-violet-600 font-bold">{formData.title || 'your item'}</span></p>
 
                 {/* Live preview */}
                 {imagePreview && (
-                  <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="mb-4 relative rounded-2xl overflow-hidden border border-white/10" style={{ height: 220 }}>
+                  <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="mb-6 relative rounded-3xl overflow-hidden border border-slate-200 shadow-sm" style={{ height: 240 }}>
                     <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                    <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between">
-                      <span className="text-xs text-white/80 truncate max-w-[70%]">{imageFile?.name}</span>
+                    <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
+                      <span className="text-sm font-medium text-white truncate max-w-[70%]">{imageFile?.name}</span>
                       <button
                         onClick={removeImage}
-                        className="text-xs font-bold text-red-400 bg-black/50 px-2 py-0.5 rounded-full hover:bg-red-500/30 transition-colors"
+                        className="text-xs font-bold text-rose-100 bg-rose-500/80 hover:bg-rose-500 px-3 py-1.5 rounded-full backdrop-blur-md transition-colors shadow-sm"
                       >
                         ✕ Remove
                       </button>
                     </div>
-                    <div className="absolute top-3 left-3 px-2 py-0.5 rounded-full text-xs font-bold bg-green-500/80 text-white">
+                    <div className="absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/90 backdrop-blur-md text-white shadow-sm">
                       ✓ Preview
                     </div>
                   </motion.div>
@@ -324,9 +324,9 @@ export default function ListProduct() {
 
                 {/* Error message */}
                 {imageError && (
-                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-4 flex items-start gap-2 glass rounded-xl p-3 border border-red-500/30 bg-red-500/5">
-                    <AlertCircle className="w-4 h-4 text-red-400 mt-0.5 flex-shrink-0" />
-                    <p className="text-xs text-red-400">{imageError}</p>
+                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-5 flex items-start gap-2 bg-rose-50 rounded-2xl p-4 border border-rose-100">
+                    <AlertCircle className="w-5 h-5 text-rose-500 flex-shrink-0" />
+                    <p className="text-sm text-rose-600 font-medium">{imageError}</p>
                   </motion.div>
                 )}
 
@@ -341,13 +341,13 @@ export default function ListProduct() {
                       handleImageSelect(e.dataTransfer.files[0]);
                     }
                   }}
-                  className={`border-2 border-dashed rounded-2xl p-8 text-center transition-all duration-300 cursor-pointer ${dragOver ? 'border-neon-orange/60 bg-neon-orange/5' : imagePreview ? 'border-white/10' : 'border-white/15 hover:border-white/30'
+                  className={`border-2 border-dashed rounded-3xl p-10 text-center transition-all duration-300 cursor-pointer ${dragOver ? 'border-violet-400 bg-violet-50' : imagePreview ? 'border-transparent hidden' : 'border-slate-200 bg-slate-50 hover:bg-slate-100'
                     }`}
                   onClick={() => fileInputRef.current?.click()}
                 >
-                  <Upload className={`w-10 h-10 mx-auto mb-3 transition-colors ${dragOver ? 'text-neon-orange' : 'text-muted-foreground'}`} />
-                  <p className="font-semibold text-foreground mb-1">{imagePreview ? 'Replace photo' : 'Drop photo here'}</p>
-                  <p className="text-xs text-muted-foreground">JPG · PNG · WEBP · GIF &nbsp;·&nbsp; Max 5 MB</p>
+                  <Upload className={`w-12 h-12 mx-auto mb-4 transition-colors ${dragOver ? 'text-violet-500' : 'text-slate-400'}`} />
+                  <p className="font-bold text-slate-700 mb-1.5 text-lg">Drop photo here to upload</p>
+                  <p className="text-sm text-slate-500">JPG · PNG · WEBP &nbsp;·&nbsp; Max 5 MB</p>
                   <input
                     type="file"
                     accept="image/jpeg,image/png,image/webp,image/gif"
@@ -365,33 +365,33 @@ export default function ListProduct() {
 
             {/* Step 3: Pricing */}
             {step === 3 && (
-              <motion.div key="step3" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }} transition={{ duration: 0.3 }} className="space-y-5">
-                <h2 className="font-bold text-xl mb-6">Set Your Price</h2>
-                <div className="grid grid-cols-2 gap-4">
+              <motion.div key="step3" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }} transition={{ duration: 0.3 }} className="space-y-6">
+                <h2 className="font-extrabold text-2xl mb-6 text-slate-900">Set Your Price</h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <div>
-                    <label className="text-sm font-medium text-muted-foreground mb-2 block">Your Price (₹) *</label>
+                    <label className="text-sm font-bold text-slate-600 mb-2 block">Your Price (₹) *</label>
                     <div className="relative">
-                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-neon-orange font-bold">₹</span>
+                      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-violet-600 font-extrabold text-lg">₹</span>
                       <input
                         type="number"
                         value={formData.price}
                         onChange={(e) => setFormData({ ...formData, price: e.target.value })}
                         placeholder="0"
-                        className="w-full glass rounded-xl pl-8 pr-4 py-3 text-sm text-foreground placeholder:text-muted-foreground outline-none border border-white/10 focus:border-neon-orange/50 transition-all"
+                        className="w-full bg-slate-50 rounded-2xl pl-10 pr-5 py-4 text-base font-bold text-slate-900 placeholder:text-slate-400 outline-none border border-slate-200 focus:border-violet-500 focus:ring-4 focus:ring-violet-50 transition-all"
                         min="1"
                       />
                     </div>
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-muted-foreground mb-2 block">Original Price (₹)</label>
+                    <label className="text-sm font-bold text-slate-600 mb-2 block">Original Price (₹)</label>
                     <div className="relative">
-                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">₹</span>
+                      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-lg">₹</span>
                       <input
                         type="number"
                         value={formData.originalPrice}
                         onChange={(e) => setFormData({ ...formData, originalPrice: e.target.value })}
                         placeholder="0"
-                        className="w-full glass rounded-xl pl-8 pr-4 py-3 text-sm text-foreground placeholder:text-muted-foreground outline-none border border-white/10 focus:border-neon-orange/50 transition-all"
+                        className="w-full bg-slate-50 rounded-2xl pl-10 pr-5 py-4 text-base font-bold text-slate-900 placeholder:text-slate-400 outline-none border border-slate-200 focus:border-violet-500 focus:ring-4 focus:ring-violet-50 transition-all"
                       />
                     </div>
                   </div>
@@ -399,12 +399,12 @@ export default function ListProduct() {
 
                 {/* Discount preview */}
                 {formData.price && formData.originalPrice && Number(formData.originalPrice) > Number(formData.price) && (
-                  <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="glass rounded-xl p-4 border-neon-fire">
-                    <p className="text-sm text-muted-foreground">Discount preview:</p>
-                    <p className="text-2xl font-bold text-neon-fire">
+                  <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="bg-emerald-50 rounded-2xl p-5 border border-emerald-100">
+                    <p className="text-sm font-bold text-emerald-800">Discount preview:</p>
+                    <p className="text-3xl font-black text-emerald-600 mt-1 mb-1">
                       {Math.round((1 - Number(formData.price) / Number(formData.originalPrice)) * 100)}% OFF
                     </p>
-                    <p className="text-xs text-muted-foreground">Buyers save ₹{(Number(formData.originalPrice) - Number(formData.price)).toLocaleString()}</p>
+                    <p className="text-sm font-medium text-emerald-700">Buyers save ₹{(Number(formData.originalPrice) - Number(formData.price)).toLocaleString()}</p>
                   </motion.div>
                 )}
 
@@ -426,54 +426,54 @@ export default function ListProduct() {
 
                 {/* Seller Phone */}
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground mb-2 block">Your Phone Number *</label>
+                  <label className="text-sm font-bold text-slate-600 mb-2 block">Your Phone Number *</label>
                   <div className="relative">
-                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neon-orange" />
+                    <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                     <input
                       value={formData.sellerPhone}
                       onChange={(e) => { setFormData({ ...formData, sellerPhone: e.target.value }); setErrors(prev => ({ ...prev, sellerPhone: "" })); }}
                       placeholder="e.g. 9876543210"
                       type="tel"
-                      className={`w-full glass rounded-xl pl-10 pr-4 py-3 text-sm text-foreground placeholder:text-muted-foreground outline-none border transition-all ${errors.sellerPhone ? "border-red-500/50 focus:border-red-500" : "border-white/10 focus:border-neon-orange/50"}`}
+                      className={`w-full bg-slate-50 rounded-2xl pl-11 pr-5 py-4 text-base font-bold text-slate-900 placeholder:text-slate-400 outline-none border transition-all ${errors.sellerPhone ? "border-rose-400 focus:border-rose-500 focus:ring-4 focus:ring-rose-50" : "border-slate-200 focus:border-violet-500 focus:ring-4 focus:ring-violet-50"}`}
                     />
                   </div>
-                  {errors.sellerPhone && <p className="text-xs text-red-400 mt-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" /> {errors.sellerPhone}</p>}
+                  {errors.sellerPhone && <p className="text-xs text-rose-500 mt-2 font-bold flex items-center gap-1"><AlertCircle className="w-3.5 h-3.5" /> {errors.sellerPhone}</p>}
                 </div>
 
                 {/* Seller Hostel */}
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground mb-2 block">Your Hostel / Block *</label>
+                  <label className="text-sm font-bold text-slate-600 mb-2 block">Your Hostel / Block *</label>
                   <input
                     value={formData.sellerHostel}
                     onChange={(e) => { setFormData({ ...formData, sellerHostel: e.target.value }); setErrors(prev => ({ ...prev, sellerHostel: "" })); }}
                     placeholder="e.g. Zakir Hussain Block A"
-                    className={`w-full glass rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground outline-none border transition-all ${errors.sellerHostel ? "border-red-500/50 focus:border-red-500" : "border-white/10 focus:border-neon-orange/50"}`}
+                    className={`w-full bg-slate-50 rounded-2xl px-5 py-4 text-base font-bold text-slate-900 placeholder:text-slate-400 outline-none border transition-all ${errors.sellerHostel ? "border-rose-400 focus:border-rose-500 focus:ring-4 focus:ring-rose-50" : "border-slate-200 focus:border-violet-500 focus:ring-4 focus:ring-violet-50"}`}
                   />
-                  {errors.sellerHostel && <p className="text-xs text-red-400 mt-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" /> {errors.sellerHostel}</p>}
+                  {errors.sellerHostel && <p className="text-xs text-rose-500 mt-2 font-bold flex items-center gap-1"><AlertCircle className="w-3.5 h-3.5" /> {errors.sellerHostel}</p>}
                 </div>
 
                 {/* Seller Room */}
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground mb-2 block">Your Room Number *</label>
+                  <label className="text-sm font-bold text-slate-600 mb-2 block">Your Room Number *</label>
                   <input
                     value={formData.sellerRoom}
                     onChange={(e) => { setFormData({ ...formData, sellerRoom: e.target.value }); setErrors(prev => ({ ...prev, sellerRoom: "" })); }}
                     placeholder="e.g. 402"
-                    className={`w-full glass rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground outline-none border transition-all ${errors.sellerRoom ? "border-red-500/50 focus:border-red-500" : "border-white/10 focus:border-neon-orange/50"}`}
+                    className={`w-full bg-slate-50 rounded-2xl px-5 py-4 text-base font-bold text-slate-900 placeholder:text-slate-400 outline-none border transition-all ${errors.sellerRoom ? "border-rose-400 focus:border-rose-500 focus:ring-4 focus:ring-rose-50" : "border-slate-200 focus:border-violet-500 focus:ring-4 focus:ring-violet-50"}`}
                   />
-                  {errors.sellerRoom && <p className="text-xs text-red-400 mt-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" /> {errors.sellerRoom}</p>}
+                  {errors.sellerRoom && <p className="text-xs text-rose-500 mt-2 font-bold flex items-center gap-1"><AlertCircle className="w-3.5 h-3.5" /> {errors.sellerRoom}</p>}
                 </div>
 
                 {/* Meetup Location */}
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground mb-2 block">Preferred Meetup Spot</label>
+                  <label className="text-sm font-bold text-slate-600 mb-3 block">Preferred Meetup Spot</label>
                   {["Main Gate", "Library", "Canteen", "C-Block Lobby", "Sports Complex"].map((spot) => (
                     <button
                       key={spot}
                       onClick={() => setFormData({ ...formData, meetup: spot })}
-                      className={`mr-2 mb-2 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${formData.meetup === spot
-                        ? "bg-gradient-ocean text-white shadow-neon-ocean"
-                        : "glass border border-white/10 text-muted-foreground hover:border-white/20"
+                      className={`mr-2 mb-2 px-4 py-2.5 rounded-2xl text-[13px] font-bold transition-all ${formData.meetup === spot
+                        ? "bg-violet-600 text-white shadow-md border border-violet-600"
+                        : "bg-white border border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50"
                         }`}
                     >
                       📍 {spot}
@@ -483,8 +483,8 @@ export default function ListProduct() {
 
                 {/* Validation hint */}
                 {(!formData.sellerPhone || !formData.sellerHostel || !formData.sellerRoom) && (
-                  <div className="glass rounded-xl p-3 border border-yellow-500/20 bg-yellow-500/5">
-                    <p className="text-xs text-yellow-400 flex items-center gap-1"><AlertCircle className="w-3 h-3" /> All seller details are required to publish</p>
+                  <div className="bg-amber-50 rounded-2xl p-4 border border-amber-200">
+                    <p className="text-sm font-bold text-amber-600 flex items-center gap-1.5"><AlertCircle className="w-4 h-4" /> All seller details are required to publish</p>
                   </div>
                 )}
               </motion.div>
@@ -506,20 +506,24 @@ export default function ListProduct() {
                 >
                   🎉
                 </motion.div>
-                <h2 className="font-bold text-2xl mb-3 text-neon-fire">Listing Live!</h2>
-                <p className="text-muted-foreground mb-6">Your item is now visible to students on campus.</p>
-                <div className="glass rounded-2xl p-4 mb-6 text-left">
-                  <div className="flex items-center gap-3">
-                    <Package className="w-8 h-8 text-neon-cyan" />
-                    <div>
-                      <p className="font-semibold">{formData.title || "Your Item"}</p>
-                      <p className="text-neon-fire font-bold">₹{formData.price || "0"}</p>
+                <h2 className="font-black text-3xl mb-3 text-slate-900">Listing Live!</h2>
+                <p className="text-slate-500 font-medium mb-6">Your item is now visible to students on campus.</p>
+                <div className="bg-slate-50 border border-slate-200 rounded-3xl p-5 mb-8 text-left shadow-sm inline-block">
+                  <div className="flex items-center gap-4">
+                    <div className="w-14 h-14 bg-emerald-100 rounded-2xl flex items-center justify-center border border-emerald-200">
+                      <Package className="w-7 h-7 text-emerald-600" />
+                    </div>
+                    <div className="pr-4">
+                      <p className="font-bold text-slate-900 text-lg line-clamp-1">{formData.title || "Your Item"}</p>
+                      <p className="text-emerald-600 font-black text-xl">₹{formData.price || "0"}</p>
                     </div>
                   </div>
                 </div>
-                <button onClick={() => window.location.href = '/profile'} className="premium-glass-button px-6 py-3 text-white font-bold shadow-neon-fire w-full">
-                  Keep Selling
-                </button>
+                <div>
+                  <button onClick={() => window.location.href = '/profile'} className="px-8 py-4 bg-violet-600 hover:bg-violet-700 text-white font-bold rounded-full shadow-md transition-all">
+                    Keep Selling
+                  </button>
+                </div>
               </motion.div>
             )}
           </AnimatePresence>
@@ -532,7 +536,7 @@ export default function ListProduct() {
                 whileTap={{ scale: 0.95 }}
                 onClick={back}
                 disabled={step === 1}
-                className="px-5 py-2.5 rounded-xl glass border border-white/10 text-sm font-medium text-muted-foreground hover:text-foreground disabled:opacity-30 transition-all"
+                className="px-6 py-3.5 rounded-3xl bg-slate-100 border border-slate-200 text-sm font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-200 disabled:opacity-30 transition-all"
               >
                 Back
               </motion.button>
@@ -541,9 +545,9 @@ export default function ListProduct() {
                 whileTap={{ scale: 0.95 }}
                 onClick={handleNext}
                 disabled={loading || (step === 4 && (!formData.sellerPhone.trim() || !formData.sellerHostel.trim() || !formData.sellerRoom.trim()))}
-                className="premium-glass-button flex items-center gap-2 px-6 py-2.5 text-white text-sm font-bold shadow-neon-fire disabled:opacity-50"
+                className="px-8 py-3.5 rounded-full bg-violet-600 hover:bg-violet-700 text-white text-sm font-bold shadow-[0_4px_16px_rgba(139,92,246,0.3)] disabled:opacity-50 flex items-center gap-2 transition-all"
               >
-                {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : step === 4 ? "Publish" : "Continue"} {!loading && <ChevronRight className="w-4 h-4" />}
+                {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : step === 4 ? "Publish" : "Continue"} {!loading && <ChevronRight className="w-4 h-4 ml-1" />}
               </motion.button>
             </div>
           )}
