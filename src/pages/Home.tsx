@@ -184,9 +184,10 @@ function GroceryBanner() {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.1 }}
+      className="-mx-4 sm:mx-0"
     >
       <Link to="/groceries" className="block mb-6 sm:mb-8 transition-transform active:scale-[0.98]">
-        <div className="relative overflow-hidden rounded-xl border border-emerald-600 bg-gradient-to-r from-emerald-500 to-emerald-600 shadow-md">
+        <div className="relative overflow-hidden rounded-[2rem] border border-emerald-600 bg-gradient-to-r from-emerald-500 to-emerald-600 shadow-md">
           <div className="absolute top-0 right-0 bottom-0 w-32 bg-gradient-to-l from-emerald-400/30 to-transparent pointer-events-none" />
           <div className="px-4 py-3 xl:px-5 xl:py-3.5 flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
@@ -538,10 +539,10 @@ export default function Home() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, ease: "easeOut" }}
-          className="mb-8 sm:mb-12"
+          className="mb-8 sm:mb-12 -mx-4 sm:mx-0"
         >
           {/* Animated border wrapper */}
-          <div className="relative rounded-3xl sm:rounded-[2rem] p-[3px] overflow-hidden" style={{
+          <div className="relative rounded-[2rem] p-[3px] overflow-hidden" style={{
             background: 'linear-gradient(135deg, #e0b1cb, #d4a0be, #EC4899, #231942)',
             backgroundSize: '300% 300%',
             animation: 'sale-border-shift 4s ease infinite',
