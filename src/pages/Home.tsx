@@ -530,7 +530,7 @@ export default function Home() {
         <GroceryBanner />
 
         {/* ─── FEATURE CARDS CAROUSEL ─── */}
-        <FeatureCarousel />
+        {/* FeatureCarousel removed */}
 
         {/* ─── 🔥 SUMMER SALE BANNER ─── */}
         <motion.section

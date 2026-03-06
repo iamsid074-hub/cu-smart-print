@@ -59,7 +59,7 @@ function ClosedScreen() {
     const timeStr = `${time.hours % 12 || 12}:${time.minutes.toString().padStart(2, "0")} ${time.hours >= 12 ? "PM" : "AM"}`;
 
     return (
-        <div className="min-h-screen flex items-center justify-center p-6" style={{ background: "linear-gradient(135deg, #0A0604 0%, #1A1410 50%, #0D0906 100%)" }}>
+        <div className="min-h-screen flex items-center justify-center p-6 bg-slate-50">
             <motion.div
                 initial={{ opacity: 0, scale: 0.9, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -73,9 +73,9 @@ function ClosedScreen() {
                     className="mb-6"
                 >
                     {time.hours >= 6 && time.hours < 18 ? (
-                        <Sun className="w-20 h-20 mx-auto text-amber-400 drop-shadow-[0_0_30px_rgba(251,191,36,0.4)]" />
+                        <Sun className="w-20 h-20 mx-auto text-amber-500 drop-shadow-[0_0_30px_rgba(251,191,36,0.3)]" />
                     ) : (
-                        <Moon className="w-20 h-20 mx-auto text-indigo-300 drop-shadow-[0_0_30px_rgba(165,180,252,0.4)]" />
+                        <Moon className="w-20 h-20 mx-auto text-brand-accent drop-shadow-[0_0_30px_rgba(94,84,142,0.3)]" />
                     )}
                 </motion.div>
 
@@ -83,54 +83,54 @@ function ClosedScreen() {
                 <div className="flex items-center justify-center gap-2 mb-3">
                     <img src="/logo.png" alt="CU Bazaar" className="w-10 h-10 rounded-full" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
                     <span className="text-2xl font-black">
-                        <span style={{ color: "#FF6B6B" }}>CU</span>{" "}
-                        <span className="text-white">BAZZAR</span>
+                        <span className="text-brand">CU</span>{" "}
+                        <span className="text-slate-900">BAZZAR</span>
                     </span>
                 </div>
 
-                <h1 className="text-3xl font-black text-white mb-2">We're Closed</h1>
-                <p className="text-muted-foreground mb-8">
+                <h1 className="text-3xl font-black text-slate-900 mb-2">We're Closed</h1>
+                <p className="text-slate-500 mb-8">
                     Come back during business hours!
                 </p>
 
                 {/* Operating hours cards */}
                 <div className="space-y-3 mb-8">
-                    <div className={`rounded-2xl p-4 border flex items-center gap-4 ${itemsOpen ? "border-green-500/30 bg-green-500/5" : "border-white/10 bg-white/5"}`}>
-                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${itemsOpen ? "bg-green-500/15" : "bg-white/10"}`}>
-                            <ShoppingBag className={`w-6 h-6 ${itemsOpen ? "text-green-400" : "text-muted-foreground"}`} />
+                    <div className={`rounded-2xl p-4 flex items-center gap-4 shadow-sm ${itemsOpen ? "bg-emerald-50 ring-1 ring-emerald-200" : "bg-white ring-1 ring-slate-100"}`}>
+                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${itemsOpen ? "bg-emerald-100" : "bg-slate-100"}`}>
+                            <ShoppingBag className={`w-6 h-6 ${itemsOpen ? "text-emerald-600" : "text-slate-400"}`} />
                         </div>
                         <div className="text-left flex-1">
-                            <p className="text-sm font-bold text-white">Item Orders</p>
-                            <p className="text-xs text-muted-foreground">6:00 AM – 10:00 PM</p>
+                            <p className="text-sm font-bold text-slate-900">Item Orders</p>
+                            <p className="text-xs text-slate-500">6:00 AM – 10:00 PM</p>
                         </div>
-                        <span className={`text-xs font-bold px-3 py-1 rounded-full ${itemsOpen ? "bg-green-500/20 text-green-400" : "bg-red-500/20 text-red-400"}`}>
+                        <span className={`text-xs font-bold px-3 py-1 rounded-full ${itemsOpen ? "bg-emerald-100 text-emerald-700" : "bg-red-50 text-red-500"}`}>
                             {itemsOpen ? "OPEN" : "CLOSED"}
                         </span>
                     </div>
 
-                    <div className={`rounded-2xl p-4 border flex items-center gap-4 ${foodOpen ? "border-green-500/30 bg-green-500/5" : "border-white/10 bg-white/5"}`}>
-                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${foodOpen ? "bg-green-500/15" : "bg-white/10"}`}>
-                            <UtensilsCrossed className={`w-6 h-6 ${foodOpen ? "text-green-400" : "text-muted-foreground"}`} />
+                    <div className={`rounded-2xl p-4 flex items-center gap-4 shadow-sm ${foodOpen ? "bg-emerald-50 ring-1 ring-emerald-200" : "bg-white ring-1 ring-slate-100"}`}>
+                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${foodOpen ? "bg-emerald-100" : "bg-slate-100"}`}>
+                            <UtensilsCrossed className={`w-6 h-6 ${foodOpen ? "text-emerald-600" : "text-slate-400"}`} />
                         </div>
                         <div className="text-left flex-1">
-                            <p className="text-sm font-bold text-white">Food Orders</p>
-                            <p className="text-xs text-muted-foreground">6:00 PM – 12:00 AM</p>
+                            <p className="text-sm font-bold text-slate-900">Food Orders</p>
+                            <p className="text-xs text-slate-500">6:00 PM – 12:00 AM</p>
                         </div>
-                        <span className={`text-xs font-bold px-3 py-1 rounded-full ${foodOpen ? "bg-green-500/20 text-green-400" : "bg-red-500/20 text-red-400"}`}>
+                        <span className={`text-xs font-bold px-3 py-1 rounded-full ${foodOpen ? "bg-emerald-100 text-emerald-700" : "bg-red-50 text-red-500"}`}>
                             {foodOpen ? "OPEN" : "CLOSED"}
                         </span>
                     </div>
                 </div>
 
                 {/* Current time + next open */}
-                <div className="rounded-2xl p-4 border border-white/10 bg-white/5">
+                <div className="rounded-2xl p-4 bg-white ring-1 ring-slate-100 shadow-sm">
                     <div className="flex items-center justify-center gap-2 mb-2">
-                        <Clock className="w-4 h-4 text-muted-foreground" />
-                        <span className="text-sm text-muted-foreground">Current Time (IST)</span>
+                        <Clock className="w-4 h-4 text-slate-400" />
+                        <span className="text-sm text-slate-500">Current Time (IST)</span>
                     </div>
-                    <p className="text-3xl font-black text-white mb-1" style={{ fontVariantNumeric: "tabular-nums" }}>{timeStr}</p>
-                    <p className="text-xs text-muted-foreground">
-                        Opens at <span className="text-white font-semibold">{getNextOpenTime()}</span>
+                    <p className="text-3xl font-black text-slate-900 mb-1" style={{ fontVariantNumeric: "tabular-nums" }}>{timeStr}</p>
+                    <p className="text-xs text-slate-500">
+                        Opens at <span className="text-brand font-semibold">{getNextOpenTime()}</span>
                     </p>
                 </div>
             </motion.div>
@@ -141,7 +141,7 @@ function ClosedScreen() {
 // ─── Maintenance Screen ─────────────────────────────────────────────────────────
 function MaintenanceScreen() {
     return (
-        <div className="min-h-screen flex items-center justify-center p-6" style={{ background: "linear-gradient(135deg, #0A0604 0%, #1A1410 50%, #0D0906 100%)" }}>
+        <div className="min-h-screen flex items-center justify-center p-6 bg-slate-50">
             <motion.div
                 initial={{ opacity: 0, scale: 0.9, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -153,23 +153,23 @@ function MaintenanceScreen() {
                     transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
                     className="mb-6"
                 >
-                    <Wrench className="w-20 h-20 mx-auto text-amber-400 drop-shadow-[0_0_30px_rgba(251,191,36,0.3)]" />
+                    <Wrench className="w-20 h-20 mx-auto text-amber-500 drop-shadow-[0_0_30px_rgba(251,191,36,0.2)]" />
                 </motion.div>
 
                 <div className="flex items-center justify-center gap-2 mb-3">
                     <img src="/logo.png" alt="CU Bazaar" className="w-10 h-10 rounded-full" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
                     <span className="text-2xl font-black">
-                        <span style={{ color: "#FF6B6B" }}>CU</span>{" "}
-                        <span className="text-white">BAZZAR</span>
+                        <span className="text-brand">CU</span>{" "}
+                        <span className="text-slate-900">BAZZAR</span>
                     </span>
                 </div>
 
-                <h1 className="text-3xl font-black text-white mb-2">Under Maintenance</h1>
-                <p className="text-muted-foreground mb-8">
+                <h1 className="text-3xl font-black text-slate-900 mb-2">Under Maintenance</h1>
+                <p className="text-slate-500 mb-8">
                     We're making things better! Be back shortly.
                 </p>
 
-                <div className="rounded-2xl p-6 border border-amber-500/20 bg-amber-500/5">
+                <div className="rounded-2xl p-6 bg-amber-50 ring-1 ring-amber-200 shadow-sm">
                     <motion.div
                         className="flex justify-center gap-1.5 mb-3"
                         initial={{ opacity: 0 }}
@@ -178,13 +178,13 @@ function MaintenanceScreen() {
                         {[0, 1, 2].map((i) => (
                             <motion.div
                                 key={i}
-                                className="w-2.5 h-2.5 rounded-full bg-amber-400"
+                                className="w-2.5 h-2.5 rounded-full bg-amber-500"
                                 animate={{ opacity: [0.3, 1, 0.3], scale: [0.8, 1.2, 0.8] }}
                                 transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.3 }}
                             />
                         ))}
                     </motion.div>
-                    <p className="text-sm text-amber-200/80">
+                    <p className="text-sm text-amber-800">
                         Our team is working on improvements.<br />
                         Please check back in a few minutes.
                     </p>
