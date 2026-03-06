@@ -63,7 +63,7 @@ export default function Browse() {
         : products;
 
     return (
-        <div className="min-h-screen pt-20 pb-20 px-4 sm:px-6" style={{ backgroundColor: '#0A0505' }}>
+        <div className="min-h-screen pt-24 pb-20 px-4 sm:px-6 bg-slate-50">
             <div className="max-w-7xl mx-auto">
 
                 {/* ── Hero Header ─────────────────────────────────────── */}
@@ -75,7 +75,7 @@ export default function Browse() {
                     <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-6">
                         <div>
                             <div style={{ height: "1.5rem" }} />
-                            <p className="text-sm mt-1" style={{ color: '#8F8175' }}>
+                            <p className="text-sm mt-1 text-slate-500 font-medium">
                                 {filtered.length} {filtered.length === 1 ? 'item' : 'items'} available from CU students
                             </p>
                         </div>
@@ -83,40 +83,29 @@ export default function Browse() {
                         {/* Search Bar */}
                         <div className="w-full sm:w-80">
                             <div className="relative">
-                                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: '#8F8175' }} />
+                                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                                 <input
                                     value={searchQuery}
                                     onChange={e => setSearchQuery(e.target.value)}
                                     placeholder="Search products..."
-                                    className="w-full rounded-xl pl-10 pr-4 h-[44px] text-sm focus:outline-none transition-all"
-                                    style={{
-                                        backgroundColor: 'rgba(255,255,255,0.04)',
-                                        color: '#E8DED4',
-                                        border: '1px solid #3D342C',
-                                    }}
+                                    className="w-full rounded-2xl pl-10 pr-4 h-[44px] text-sm focus:outline-none transition-all bg-white text-slate-900 border border-slate-200 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 shadow-sm"
                                 />
                             </div>
                         </div>
                     </div>
 
                     {/* ── Category Pills ────────────────────────────────── */}
-                    <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide -mx-1 px-1" style={{ WebkitOverflowScrolling: 'touch' }}>
+                    <div className="flex gap-2 overflow-x-auto pb-4 scrollbar-hide -mx-1 px-1" style={{ WebkitOverflowScrolling: 'touch' }}>
                         {categories.map((cat) => {
                             const isActive = activeCategory === cat.id;
                             return (
                                 <button
                                     key={cat.id}
                                     onClick={() => handleCategoryClick(cat.id)}
-                                    className="flex items-center gap-1.5 px-4 py-2 rounded-full font-bold transition-all duration-300 flex-shrink-0 text-xs sm:text-sm whitespace-nowrap"
-                                    style={isActive ? {
-                                        background: '#FF6B6B',
-                                        color: '#fff',
-                                        boxShadow: '0 0 20px rgba(255,107,107,0.3)',
-                                    } : {
-                                        backgroundColor: 'rgba(255,255,255,0.04)',
-                                        border: '1px solid #3D342C',
-                                        color: '#8F8175',
-                                    }}
+                                    className={`flex items-center gap-1.5 px-5 py-2.5 rounded-3xl font-bold transition-all duration-300 flex-shrink-0 text-xs sm:text-sm whitespace-nowrap border ${isActive
+                                            ? 'bg-violet-600 text-white border-violet-600 shadow-[0_4px_15px_rgba(139,92,246,0.3)]'
+                                            : 'bg-white text-slate-600 border-slate-200 hover:border-violet-300 hover:bg-violet-50 shadow-sm'
+                                        }`}
                                 >
                                     <span>{cat.emoji}</span>
                                     {cat.label}
@@ -130,23 +119,22 @@ export default function Browse() {
                 {
                     loading ? (
                         <div className="flex flex-col items-center justify-center py-32 gap-4">
-                            <Loader2 className="w-10 h-10 animate-spin" style={{ color: '#FF6B6B' }} />
-                            <p className="text-sm font-medium" style={{ color: '#8F8175' }}>Loading products...</p>
+                            <Loader2 className="w-10 h-10 animate-spin text-violet-600" />
+                            <p className="text-sm font-medium text-slate-500">Loading products...</p>
                         </div>
                     ) : filtered.length === 0 ? (
                         <motion.div
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
-                            className="rounded-2xl sm:rounded-3xl p-10 sm:p-16 text-center border flex flex-col items-center"
-                            style={{ backgroundColor: '#120805', borderColor: '#3D342C' }}
+                            className="rounded-3xl sm:rounded-[2.5rem] p-10 sm:p-16 text-center bg-white border border-slate-200 shadow-sm flex flex-col items-center"
                         >
-                            <div className="w-20 h-20 rounded-2xl flex items-center justify-center mb-6" style={{ background: 'rgba(255,107,107,0.08)', border: '1px solid rgba(255,107,107,0.15)' }}>
-                                <Package className="w-10 h-10" style={{ color: '#FF6B6B', opacity: 0.6 }} />
+                            <div className="w-20 h-20 rounded-3xl flex items-center justify-center mb-6 bg-violet-50 border border-violet-100">
+                                <Package className="w-10 h-10 text-violet-500" />
                             </div>
-                            <h3 className="text-xl sm:text-2xl font-black text-white mb-2">
+                            <h3 className="text-xl sm:text-2xl font-black text-slate-900 mb-2">
                                 {searchQuery ? "No matches found" : "No items yet"}
                             </h3>
-                            <p className="text-sm max-w-sm mb-6" style={{ color: '#8F8175' }}>
+                            <p className="text-sm max-w-sm mb-6 text-slate-500">
                                 {searchQuery
                                     ? `No products match "${searchQuery}". Try a different search or category.`
                                     : `No products listed in ${activeCategory === "All" ? "any category" : activeCategory} right now. Check back soon!`}
@@ -155,8 +143,7 @@ export default function Browse() {
                                 {searchQuery && (
                                     <button
                                         onClick={() => setSearchQuery("")}
-                                        className="px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-all"
-                                        style={{ background: '#FF6B6B', boxShadow: '0 4px 12px rgba(255,107,107,0.2)' }}
+                                        className="px-6 py-3 rounded-2xl text-sm font-bold text-white transition-all bg-violet-600 shadow-[0_4px_12px_rgba(139,92,246,0.2)] hover:shadow-[0_6px_15px_rgba(139,92,246,0.3)] hover:scale-105"
                                     >
                                         Clear Search
                                     </button>
@@ -164,18 +151,16 @@ export default function Browse() {
                                 {activeCategory !== "All" && (
                                     <button
                                         onClick={() => handleCategoryClick("All")}
-                                        className="px-5 py-2.5 rounded-xl text-sm font-bold transition-all"
-                                        style={{ backgroundColor: 'rgba(255,255,255,0.06)', color: '#E8DED4', border: '1px solid #3D342C' }}
+                                        className="px-6 py-3 rounded-2xl text-sm font-bold transition-all bg-white text-slate-700 border border-slate-200 hover:border-slate-300 shadow-sm hover:scale-105"
                                     >
                                         View All Items
                                     </button>
                                 )}
                                 <Link
                                     to="/list"
-                                    className="px-5 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center gap-1.5"
-                                    style={{ backgroundColor: 'rgba(255,255,255,0.06)', color: '#E8DED4', border: '1px solid #3D342C' }}
+                                    className="px-6 py-3 rounded-2xl text-sm font-bold transition-all flex items-center gap-2 bg-white text-slate-700 border border-slate-200 hover:border-slate-300 shadow-sm hover:scale-105"
                                 >
-                                    <Sparkles className="w-3.5 h-3.5" /> Sell Something
+                                    <Sparkles className="w-4 h-4 text-amber-500" /> Sell Something
                                 </Link>
                             </div>
                         </motion.div>
