@@ -296,6 +296,39 @@ function FeatureCarousel() {
   );
 }
 
+const sliderItems = [
+  { img: "https://images.unsplash.com/photo-1527443154391-507e9dc6c5cc?q=80&w=200&auto=format&fit=crop", label: "Stationery" },
+  { img: "https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=200&auto=format&fit=crop", label: "Snacks" },
+  { img: "https://images.unsplash.com/photo-1498049794561-7780e7231661?q=80&w=200&auto=format&fit=crop", label: "Electronics" },
+  { img: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?q=80&w=200&auto=format&fit=crop", label: "Books" },
+  { img: "https://images.unsplash.com/photo-1621939514649-280e2ee25f60?q=80&w=200&auto=format&fit=crop", label: "Munchies" },
+  { img: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=200&auto=format&fit=crop", label: "Audio" },
+];
+
+function AnimatedProductSlider() {
+  return (
+    <div className="w-full relative overflow-hidden h-32 flex items-center">
+      <div className="absolute inset-y-0 left-0 w-8 sm:w-16 bg-gradient-to-r from-[#8B5CF6] to-transparent z-10 pointer-events-none" />
+      <div className="absolute inset-y-0 right-0 w-8 sm:w-16 bg-gradient-to-l from-[#8B5CF6] to-transparent z-10 pointer-events-none" />
+
+      <motion.div
+        animate={{ x: ["0%", "-50%"] }}
+        transition={{ repeat: Infinity, ease: "linear", duration: 30 }}
+        className="flex gap-4 w-max"
+      >
+        {[...sliderItems, ...sliderItems].map((item, i) => (
+          <div key={i} className="flex flex-col items-center justify-center bg-white/10 hover:bg-white/20 transition-colors backdrop-blur-md rounded-2xl p-3 w-28 h-28 border border-white/20 flex-shrink-0 cursor-pointer shadow-lg">
+            <div className="w-14 h-14 rounded-full overflow-hidden mb-2 shadow-inner bg-white/20">
+              <img src={item.img} alt={item.label} className="w-full h-full object-cover" />
+            </div>
+            <span className="text-white text-xs font-bold tracking-wide shadow-sm">{item.label}</span>
+          </div>
+        ))}
+      </motion.div>
+    </div>
+  );
+}
+
 export default function Home() {
   const { user } = useAuth();
   const { addItem } = useCart();
@@ -454,22 +487,35 @@ export default function Home() {
         <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent pointer-events-none" />
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none" />
         <div className="max-w-[1600px] mx-auto relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="pt-2 pb-2"
-          >
-            <p className="text-sm mb-1.5 font-medium text-white/90">
-              Welcome back, Student 👋
-            </p>
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white mb-6" style={fontH}>
-              Discover Campus <br className="hidden sm:block" />
-              <span className="text-emerald-300">Marketplace</span>
-            </h1>
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 pt-2 pb-2">
 
+            {/* Left text area */}
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="flex-shrink-0"
+            >
+              <p className="text-sm mb-1.5 font-medium text-white/90">
+                Welcome back, Student 👋
+              </p>
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white mb-2 lg:mb-0" style={fontH}>
+                Discover Campus <br className="hidden sm:block" />
+                <span className="text-emerald-300">Marketplace</span>
+              </h1>
+            </motion.div>
 
-          </motion.div>
+            {/* Right slider area filling the empty space */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="w-full lg:w-[55%] overflow-hidden"
+            >
+              <AnimatedProductSlider />
+            </motion.div>
+
+          </div>
         </div>
       </div>
 
