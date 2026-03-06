@@ -184,8 +184,9 @@ function GroceryBanner() {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.1 }}
+      className="w-full"
     >
-      <Link to="/groceries" className="block mb-6 sm:mb-8 transition-transform active:scale-[0.98]">
+      <Link to="/groceries" className="block transition-transform active:scale-[0.98]">
         <div className="relative overflow-hidden rounded-[2rem] border border-emerald-600 bg-gradient-to-r from-emerald-500 to-emerald-600 shadow-md">
           <div className="absolute top-0 right-0 bottom-0 w-32 bg-gradient-to-l from-emerald-400/30 to-transparent pointer-events-none" />
           <div className="px-4 py-3 xl:px-5 xl:py-3.5 flex items-center justify-between gap-4">
@@ -519,22 +520,22 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="max-w-[1600px] mx-auto">
+      <div className="max-w-[1600px] mx-auto px-3 sm:px-6 lg:px-10">
 
         {/* ─── Promo Banner ─── */}
-        <div className="mb-6 sm:mb-12">
+        <div className="mb-6 sm:mb-10 w-full">
           <PromoBanner />
         </div>
 
         {/* ─── GROCERIES BANNER ─── */}
-        <div>
+        <div className="mb-6 sm:mb-8 w-full">
           <GroceryBanner />
         </div>
 
         {/* ─── FEATURE CARDS CAROUSEL ─── */}
         {/* FeatureCarousel removed */}
 
-        <div className="px-2 sm:px-6 lg:px-10">
+        <div className="w-full">
           {/* ─── 🔥 SUMMER SALE BANNER ─── */}
           <motion.section
             initial={{ opacity: 0, y: 20 }}
