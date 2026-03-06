@@ -39,18 +39,18 @@ export default function Groceries() {
     const cartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
 
     return (
-        <div className="min-h-screen bg-background pb-24">
+        <div className="min-h-screen bg-slate-50 pb-24">
             {/* Header */}
-            <header className="sticky top-0 z-40 bg-background/80 backdrop-blur-xl border-b border-white/5 pt-14 pb-4 px-4">
+            <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-xl border-b border-slate-100 pt-14 pb-4 px-4 shadow-sm">
                 <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
-                    <button onClick={() => navigate(-1)} className="p-2 -ml-2 hover:bg-white/10 rounded-full transition-colors">
+                    <button onClick={() => navigate(-1)} className="p-2 -ml-2 text-slate-700 hover:bg-slate-100 rounded-full transition-colors">
                         <ChevronLeft className="w-6 h-6" />
                     </button>
                     <div className="flex-1" />
-                    <Link to="/cart" className="p-2 -mr-2 relative hover:bg-white/10 rounded-full transition-colors text-neon-cyan">
+                    <Link to="/cart" className="p-2 -mr-2 relative text-slate-700 hover:bg-slate-100 rounded-full transition-colors">
                         <ShoppingCart className="w-6 h-6" />
                         {cartCount > 0 && (
-                            <span className="absolute top-0 right-0 w-4 h-4 rounded-full bg-neon-fire text-[10px] font-bold flex items-center justify-center text-white">
+                            <span className="absolute top-0 right-0 w-4 h-4 rounded-full bg-emerald-500 text-[10px] font-bold flex items-center justify-center text-white">
                                 {cartCount}
                             </span>
                         )}
@@ -60,13 +60,13 @@ export default function Groceries() {
                 {/* Search Bar */}
                 <div className="max-w-7xl mx-auto mt-4 px-2">
                     <div className="relative">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                         <input
                             type="text"
                             placeholder="Search groceries, snacks..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full bg-white/5 border border-white/10 rounded-xl py-2.5 pl-10 pr-4 text-sm focus:outline-none focus:border-neon-cyan focus:ring-1 focus:ring-neon-cyan transition-all"
+                            className="w-full bg-slate-100 border border-slate-200 text-slate-900 rounded-xl py-2.5 pl-10 pr-4 text-sm focus:outline-none focus:border-violet-300 focus:bg-white focus:ring-4 focus:ring-violet-50 transition-all placeholder:text-slate-400"
                         />
                     </div>
                 </div>
@@ -78,8 +78,8 @@ export default function Groceries() {
                             key={cat}
                             onClick={() => { setActiveTab(cat); setSearchQuery(""); }}
                             className={`whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-semibold transition-all ${activeTab === cat
-                                ? "bg-neon-cyan text-black shadow-[0_0_15px_rgba(0,240,255,0.3)]"
-                                : "bg-white/5 text-muted-foreground hover:bg-white/10 hover:text-white border border-white/5"
+                                ? "bg-violet-100 text-violet-700 border border-violet-200"
+                                : "bg-white text-slate-600 hover:bg-slate-50 border border-slate-200 shadow-sm"
                                 }`}
                         >
                             {cat}
@@ -92,11 +92,11 @@ export default function Groceries() {
             <main className="max-w-7xl mx-auto px-4 pt-6">
                 {filteredItems.length === 0 ? (
                     <div className="py-20 text-center flex flex-col items-center">
-                        <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-4">
-                            <Search className="w-8 h-8 text-muted-foreground" />
+                        <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mb-4">
+                            <Search className="w-8 h-8 text-slate-400" />
                         </div>
-                        <h3 className="text-xl font-bold mb-2">No items found</h3>
-                        <p className="text-muted-foreground">Try adjusting your search or category.</p>
+                        <h3 className="text-xl font-bold mb-2 text-slate-900">No items found</h3>
+                        <p className="text-slate-500">Try adjusting your search or category.</p>
                     </div>
                 ) : (
                     <motion.div layout className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-6">
@@ -109,33 +109,33 @@ export default function Groceries() {
                                     animate={{ opacity: 1, scale: 1 }}
                                     exit={{ opacity: 0, scale: 0.9 }}
                                     transition={{ duration: 0.2 }}
-                                    className="group relative bg-[#111] border border-white/5 rounded-2xl overflow-hidden hover:border-white/20 transition-all flex flex-col"
+                                    className="group relative bg-white border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.03)] rounded-2xl overflow-hidden hover:-translate-y-1 transition-all flex flex-col"
                                 >
                                     <Link to={`/product/${item.id}`} className="absolute inset-0 z-10" />
 
                                     {/* Image */}
-                                    <div className="aspect-square bg-black/50 p-4 flex items-center justify-center relative">
-                                        <img src={item.image} alt={item.title} className="w-full h-full object-contain mix-blend-screen opacity-90 group-hover:scale-105 transition-transform duration-300" />
+                                    <div className="aspect-square bg-slate-50 p-4 flex items-center justify-center relative">
+                                        <img src={item.image} alt={item.title} className="w-full h-full object-contain mix-blend-multiply opacity-90 group-hover:scale-105 transition-transform duration-300" />
                                         {item.badge && (
-                                            <div className="absolute top-2 left-2 bg-gradient-fire text-white text-[10px] font-black uppercase px-2 py-0.5 rounded shadow-neon-fire z-20">
+                                            <div className="absolute top-2 left-2 bg-gradient-to-r from-orange-400 to-red-400 text-white text-[10px] font-black uppercase px-2 py-0.5 rounded shadow-sm z-20">
                                                 {item.badge}
                                             </div>
                                         )}
                                     </div>
 
                                     {/* Details */}
-                                    <div className="p-3 flex flex-col flex-1 border-t border-white/5 relative z-20 bg-background/50 backdrop-blur-md">
-                                        <span className="text-[10px] uppercase tracking-wider text-neon-cyan/70 font-bold mb-1 truncate">{item.category}</span>
-                                        <h3 className="text-sm font-bold text-white line-clamp-2 leading-tight mb-auto">{item.title}</h3>
+                                    <div className="p-3 flex flex-col flex-1 border-t border-slate-50 relative z-20 bg-white">
+                                        <span className="text-[10px] uppercase tracking-wider text-violet-500 font-bold mb-1 truncate">{item.category}</span>
+                                        <h3 className="text-sm font-bold text-slate-900 line-clamp-2 leading-tight mb-auto">{item.title}</h3>
 
-                                        <div className="flex items-end justify-between mt-3">
+                                        <div className="flex items-end justify-between mt-3 z-30 relative block">
                                             <div>
-                                                <span className="text-xs text-muted-foreground block mb-0.5">{item.variants || "Standard"}</span>
-                                                <span className="text-base font-black text-neon-cyan">₹{item.price}</span>
+                                                <span className="text-xs text-slate-500 block mb-0.5">{item.variants || "Standard"}</span>
+                                                <span className="text-base font-black text-violet-600">₹{item.price}</span>
                                             </div>
                                             <button
                                                 onClick={(e) => handleAddToCart(e, item)}
-                                                className="w-[36px] h-[36px] rounded-lg bg-[#F3F4F6] border border-[#E5E7EB] flex items-center justify-center text-black hover:bg-[#10B981] hover:border-[#10B981] hover:text-white transition-colors shadow-sm"
+                                                className="w-[36px] h-[36px] rounded-lg bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600 hover:bg-emerald-500 hover:border-emerald-500 hover:text-white transition-colors shadow-sm relative z-40"
                                             >
                                                 <Plus className="w-4 h-4 text-current transition-colors" />
                                             </button>

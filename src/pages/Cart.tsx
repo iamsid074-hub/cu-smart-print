@@ -104,20 +104,21 @@ export default function Cart() {
     };
 
     return (
-        <div className="min-h-screen bg-[#0A0505] pt-24 pb-24 px-4 sm:px-6">
+        <div className="min-h-screen bg-slate-50 pt-[5.5rem] pb-24 px-4 sm:px-6">
             <div className="max-w-2xl mx-auto">
                 {/* Header */}
                 <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="mb-6 flex items-center justify-between">
                     <div>
                         <div className="flex items-center gap-2 mb-1">
-                            <Link to="/food" className="text-muted-foreground hover:text-white transition-colors">
-                                <ArrowLeft className="w-4 h-4" />
+                            <Link to="/food" className="text-slate-500 hover:text-slate-900 transition-colors p-1 -ml-1">
+                                <ArrowLeft className="w-5 h-5" />
                             </Link>
+                            <h1 className="text-xl font-bold text-slate-900">Secure Checkout</h1>
                         </div>
-                        <p className="text-sm text-muted-foreground">{totalItems} item{totalItems !== 1 ? "s" : ""} in cart</p>
+                        <p className="text-sm text-slate-500 ml-8">{totalItems} item{totalItems !== 1 ? "s" : ""} in cart</p>
                     </div>
                     {items.length > 0 && (
-                        <button onClick={clearCart} className="text-xs text-red-400 hover:text-red-300 font-semibold transition-colors">
+                        <button onClick={clearCart} className="text-xs text-red-500 hover:text-red-700 font-semibold transition-colors bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg border border-red-100">
                             Clear All
                         </button>
                     )}
@@ -125,12 +126,11 @@ export default function Cart() {
 
                 {items.length === 0 ? (
                     <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
-                        className="rounded-2xl p-12 text-center border border-white/10" style={{ backgroundColor: "#120805" }}>
-                        <ShoppingCart className="w-16 h-16 text-muted-foreground mx-auto mb-4 opacity-40" />
-                        <h2 className="text-xl font-bold text-white mb-2">Cart is empty</h2>
-                        <p className="text-muted-foreground text-sm mb-6">Add some snacks from the food menu!</p>
-                        <Link to="/food" className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-white text-sm"
-                            style={{ background: "linear-gradient(135deg, #FF6B00, #FF4444)" }}>
+                        className="rounded-2xl p-12 text-center bg-white border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.03)]">
+                        <ShoppingCart className="w-16 h-16 text-slate-300 mx-auto mb-4" />
+                        <h2 className="text-xl font-bold text-slate-900 mb-2">Cart is empty</h2>
+                        <p className="text-slate-500 text-sm mb-6">Add some snacks from the food menu!</p>
+                        <Link to="/food" className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-white text-sm bg-violet-600 hover:bg-violet-700 shadow-sm transition-colors">
                             <ShoppingBag className="w-4 h-4" /> Browse Food Menu
                         </Link>
                     </motion.div>
@@ -141,29 +141,29 @@ export default function Cart() {
                             <AnimatePresence>
                                 {items.map((item) => (
                                     <motion.div key={item.id} layout initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }}
-                                        className="rounded-xl p-3 sm:p-4 border border-white/10 flex gap-3 sm:gap-4 items-center" style={{ backgroundColor: "#120805" }}>
-                                        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-lg overflow-hidden bg-white/5 flex-shrink-0">
-                                            <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
+                                        className="rounded-xl p-3 sm:p-4 border border-slate-100 bg-white shadow-sm flex gap-3 sm:gap-4 items-center">
+                                        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-lg overflow-hidden bg-slate-50 flex-shrink-0 border border-slate-100">
+                                            <img src={item.image} alt={item.title} className="w-full h-full object-cover mix-blend-multiply" />
                                         </div>
                                         <div className="flex-1 min-w-0">
-                                            <p className="text-sm font-bold text-white truncate">{item.title}</p>
-                                            <p className="text-orange-400 font-bold">₹{item.price}</p>
+                                            <p className="text-sm font-bold text-slate-900 truncate">{item.title}</p>
+                                            <p className="text-violet-600 font-bold">₹{item.price}</p>
                                         </div>
                                         <div className="flex items-center gap-2 flex-shrink-0">
                                             <button onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                                                className="w-[36px] h-[36px] rounded-lg bg-[#F3F4F6] border border-[#E5E7EB] flex items-center justify-center text-black hover:bg-[#10B981] hover:border-[#10B981] hover:text-white transition-colors">
+                                                className="w-[32px] h-[32px] sm:w-[36px] sm:h-[36px] rounded-lg bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600 hover:bg-emerald-500 hover:text-white transition-colors">
                                                 <Minus className="w-4 h-4 text-current transition-colors" />
                                             </button>
-                                            <span className="w-[30px] text-center text-base font-bold text-white">{item.quantity}</span>
+                                            <span className="w-[24px] sm:w-[30px] text-center text-sm sm:text-base font-bold text-slate-900">{item.quantity}</span>
                                             <button onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                                                className="w-[36px] h-[36px] rounded-lg bg-[#F3F4F6] border border-[#E5E7EB] flex items-center justify-center text-black hover:bg-[#10B981] hover:border-[#10B981] hover:text-white transition-colors">
+                                                className="w-[32px] h-[32px] sm:w-[36px] sm:h-[36px] rounded-lg bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600 hover:bg-emerald-500 hover:text-white transition-colors">
                                                 <Plus className="w-4 h-4 text-current transition-colors" />
                                             </button>
                                         </div>
                                         <div className="flex flex-col items-end flex-shrink-0">
-                                            <p className="text-sm font-bold text-white">₹{item.price * item.quantity}</p>
-                                            <button onClick={() => removeItem(item.id)} className="mt-1 p-1 text-red-400/60 hover:text-red-400 transition-colors">
-                                                <Trash2 className="w-3.5 h-3.5" />
+                                            <p className="text-sm font-bold text-slate-900">₹{item.price * item.quantity}</p>
+                                            <button onClick={() => removeItem(item.id)} className="mt-1 p-1 text-slate-400 hover:text-red-500 transition-colors">
+                                                <Trash2 className="w-4 h-4 sm:w-[18px] sm:h-[18px]" />
                                             </button>
                                         </div>
                                     </motion.div>
@@ -172,9 +172,11 @@ export default function Cart() {
                         </div>
 
                         {/* Promo Code Section */}
-                        <div className="rounded-xl p-4 border border-white/10 mb-4 flex gap-2 items-end" style={{ backgroundColor: "#120805" }}>
+                        <div className="rounded-xl p-4 border border-slate-100 bg-white shadow-sm mb-4 flex gap-2 items-end">
                             <div className="flex-1">
-                                <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">Promo Code</label>
+                                <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5 flex items-center gap-1">
+                                    <CheckCircle className="w-3 h-3 text-emerald-500" /> Apply Promo Code
+                                </label>
                                 <input
                                     type="text"
                                     value={promoCode}
@@ -185,16 +187,16 @@ export default function Cart() {
                                         }
                                     }}
                                     placeholder="Enter CRICKET5"
-                                    className="w-full bg-[#1A0F0A] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-cyan-500/50 transition-colors placeholder:text-white/20 uppercase"
+                                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-violet-300 focus:ring-4 focus:ring-violet-50 transition-all placeholder:text-slate-400 uppercase"
                                     disabled={promoApplied}
                                 />
                             </div>
                             <button
                                 onClick={handleApplyPromo}
                                 disabled={!promoCode.trim() || promoApplied}
-                                className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${promoApplied
-                                    ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
-                                    : "bg-white/10 text-white hover:bg-white/15 border border-transparent disabled:opacity-50"
+                                className={`px-5 py-2.5 rounded-lg text-sm font-bold transition-all ${promoApplied
+                                    ? "bg-emerald-50 text-emerald-600 border border-emerald-200"
+                                    : "bg-slate-100 text-slate-600 hover:bg-slate-200 border border-transparent disabled:opacity-50"
                                     }`}
                             >
                                 {promoApplied ? "Applied!" : "Apply"}
@@ -202,69 +204,86 @@ export default function Cart() {
                         </div>
 
                         {/* Price Summary */}
-                        <div className="rounded-xl p-4 border border-orange-500/15 mb-4" style={{ backgroundColor: "#120805" }}>
-                            <div className="flex justify-between items-center text-sm text-muted-foreground mb-2">
+                        <div className="rounded-xl p-4 sm:p-5 border border-slate-100 bg-white shadow-sm mb-4">
+                            <div className="flex justify-between items-center text-sm text-slate-600 mb-3">
                                 <span>Subtotal ({totalItems} items)</span>
-                                <span>₹{totalPrice}</span>
+                                <span className="font-medium text-slate-900">₹{totalPrice}</span>
                             </div>
-                            <div className="flex justify-between items-center text-sm text-neon-cyan mb-3">
-                                <span className="flex items-center gap-1">
-                                    <Clock className="w-3 h-3" /> Delivery
+                            <div className="flex justify-between items-center text-sm text-slate-600 mb-4">
+                                <span className="flex items-center gap-1.5">
+                                    <Clock className="w-4 h-4 text-emerald-500" /> Delivery Fee
                                 </span>
                                 <div className="flex items-center gap-2">
-                                    {promoApplied && <span className="text-muted-foreground line-through text-xs">₹{campusShopsItems.length > 0 ? (otherItems.length > 0 ? 20 : 15) : 10}</span>}
-                                    <span className={promoApplied ? "text-emerald-400 font-bold" : ""}>+ ₹{deliveryFee}</span>
+                                    {promoApplied && <span className="text-slate-400 line-through text-xs">₹{campusShopsItems.length > 0 ? (otherItems.length > 0 ? 20 : 15) : 10}</span>}
+                                    <span className={promoApplied ? "text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded" : "font-medium text-slate-900"}>+ ₹{deliveryFee}</span>
                                 </div>
                             </div>
-                            <div className="border-t border-white/10 pt-3 flex justify-between items-center">
-                                <span className="font-bold text-white">Total</span>
-                                <span className="text-xl font-black text-orange-400">₹{orderTotal}</span>
+
+                            {promoApplied && (
+                                <div className="mb-4 bg-emerald-50 border border-emerald-100 rounded-lg p-2.5 flex items-center gap-2 text-emerald-700 text-xs sm:text-sm font-medium">
+                                    <CheckCircle className="w-4 h-4 flex-shrink-0" />
+                                    <span>You saved ₹{(campusShopsItems.length > 0 ? (otherItems.length > 0 ? 20 : 15) : 10) - 5} on delivery!</span>
+                                </div>
+                            )}
+
+                            <div className="border-t border-slate-100 pt-4 flex justify-between items-center">
+                                <span className="font-bold text-slate-900">Total details</span>
+                                <span className="text-xl sm:text-2xl font-black text-violet-600">₹{orderTotal}</span>
                             </div>
                         </div>
 
                         {/* Checkout */}
                         {!showCheckout ? (
                             <motion.button whileTap={{ scale: 0.97 }} onClick={() => setShowCheckout(true)}
-                                className="w-full py-3.5 rounded-xl font-bold text-white text-sm flex items-center justify-center gap-2"
-                                style={{ background: "linear-gradient(135deg, #FF6B00, #FF4444)", boxShadow: "0 4px 16px rgba(255,107,0,0.25)" }}>
-                                <ShoppingBag className="w-4 h-4" /> Proceed to Checkout
+                                className="w-full py-4 rounded-xl font-bold text-white text-[15px] flex items-center justify-center gap-2 bg-violet-600 hover:bg-violet-700 shadow-[0_4px_20px_rgba(139,92,246,0.3)] transition-all">
+                                <ShoppingBag className="w-5 h-5" /> Proceed to Secure Checkout
                             </motion.button>
                         ) : (
                             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-                                className="rounded-xl p-4 border border-orange-500/15 space-y-3" style={{ backgroundColor: "#120805" }}>
-                                <h3 className="font-bold text-white text-sm">Delivery Details</h3>
-                                <div className="relative">
-                                    <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-orange-200/40" />
-                                    <input value={hostel} onChange={e => setHostel(e.target.value)} placeholder="Hostel Block (e.g. BH-1) *"
-                                        className="w-full bg-black/40 border border-orange-500/20 rounded-xl pl-10 pr-4 h-[48px] text-sm text-orange-50 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all placeholder:text-orange-200/20" />
-                                </div>
-                                <input value={room} onChange={e => setRoom(e.target.value)} placeholder="Room Number *"
-                                    className="w-full bg-black/40 border border-orange-500/20 rounded-xl px-4 h-[48px] text-sm text-orange-50 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all placeholder:text-orange-200/20" />
-                                <div>
+                                className="rounded-xl p-4 sm:p-5 border border-slate-100 bg-white shadow-sm space-y-4">
+                                <h3 className="font-bold text-slate-900 text-base border-b border-slate-50 pb-2">Delivery Details</h3>
+
+                                <div className="space-y-3 pt-1">
                                     <div className="relative">
-                                        <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-orange-200/40" />
-                                        <input value={phone} onChange={e => setPhone(e.target.value.replace(/\D/g, "").slice(0, 10))} type="tel" placeholder="10-digit Phone Number *" maxLength={10}
-                                            className={`w-full bg-black/40 border rounded-xl pl-10 pr-4 h-[48px] text-sm text-orange-50 focus:outline-none focus:ring-1 transition-all placeholder:text-orange-200/20 ${phone.length > 0 && !isPhoneValid ? "border-red-500/50 focus:border-red-500 focus:ring-red-500" : "border-orange-500/20 focus:border-orange-500 focus:ring-orange-500"
-                                                }`} />
+                                        <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                        <input value={hostel} onChange={e => setHostel(e.target.value)} placeholder="Hostel Block (e.g. BH-1) *"
+                                            className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 h-[48px] text-sm text-slate-900 focus:outline-none focus:bg-white focus:border-violet-300 focus:ring-4 focus:ring-violet-50 transition-all placeholder:text-slate-400" />
                                     </div>
-                                    {phone.length > 0 && !isPhoneValid && (
-                                        <p className="text-[11px] text-red-400 mt-1 px-1">Phone must be exactly 10 digits</p>
-                                    )}
+                                    <div className="relative flex items-center bg-slate-50 border border-slate-200 rounded-xl h-[48px] overflow-hidden focus-within:bg-white focus-within:border-violet-300 focus-within:ring-4 focus-within:ring-violet-50 transition-all">
+                                        <div className="flex items-center justify-center w-12 border-r border-slate-200 bg-slate-100/50">
+                                            <div className="w-5 h-5 flex items-center justify-center font-bold text-slate-400 text-[10px] text-center border border-slate-300 rounded bg-white">R</div>
+                                        </div>
+                                        <input value={room} onChange={e => setRoom(e.target.value)} placeholder="Room Number *"
+                                            className="w-full h-full bg-transparent px-3 text-sm text-slate-900 focus:outline-none placeholder:text-slate-400" />
+                                    </div>
+                                    <div>
+                                        <div className="relative">
+                                            <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                            <input value={phone} onChange={e => setPhone(e.target.value.replace(/\D/g, "").slice(0, 10))} type="tel" placeholder="10-digit Phone Number *" maxLength={10}
+                                                className={`w-full bg-slate-50 border rounded-xl pl-10 pr-4 h-[48px] text-sm text-slate-900 focus:outline-none focus:bg-white focus:ring-4 transition-all placeholder:text-slate-400 ${phone.length > 0 && !isPhoneValid ? "border-red-300 focus:border-red-400 focus:ring-red-50" : "border-slate-200 focus:border-violet-300 focus:ring-violet-50"
+                                                    }`} />
+                                        </div>
+                                        {phone.length > 0 && !isPhoneValid && (
+                                            <p className="text-[11px] text-red-500 mt-1 px-1 font-medium">Phone must be exactly 10 digits</p>
+                                        )}
+                                    </div>
                                 </div>
 
                                 {/* Payment Method Selector */}
-                                <PaymentSelector
-                                    selected={paymentMethod}
-                                    onChange={setPaymentMethod}
-                                    totalAmount={orderTotal}
-                                    disabled={submitting}
-                                />
+                                <div className="pt-2">
+                                    <PaymentSelector
+                                        selected={paymentMethod}
+                                        onChange={setPaymentMethod}
+                                        totalAmount={orderTotal}
+                                        disabled={submitting}
+                                    />
+                                </div>
 
                                 <button onClick={handleCheckout} disabled={submitting || !isFormValid}
-                                    className="w-full py-3.5 rounded-xl font-bold text-white text-sm flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
-                                    style={{ background: isFormValid ? "linear-gradient(135deg, #FF6B00, #FF4444)" : "rgba(255,255,255,0.1)" }}>
+                                    className="w-full py-4 mt-2 rounded-xl font-bold text-white text-[15px] flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                                    style={{ background: isFormValid ? "#8B5CF6" : "#cbd5e1", boxShadow: isFormValid ? "0 4px 20px rgba(139,92,246,0.3)" : "none" }}>
                                     {submitting ? <Loader2 className="w-5 h-5 animate-spin" /> :
-                                        `Pay ₹${orderTotal} Online`}
+                                        `Pay Securely · ₹${orderTotal}`}
                                 </button>
                             </motion.div>
                         )}

@@ -188,11 +188,11 @@ export default function Profile() {
     }, [profile]);
 
     return (
-        <div className="min-h-screen pt-16 pb-24" style={{ backgroundColor: '#0f0f10' }}>
+        <div className="min-h-screen pt-16 pb-24 bg-slate-50">
             <div className="max-w-2xl mx-auto px-4">
 
                 {/* ── PROFILE HEADER STRIP ── */}
-                <div className="py-6 border-b" style={{ borderColor: '#1e1e21' }}>
+                <div className="py-6 border-b border-slate-200">
                     <div className="flex items-center gap-4">
                         {/* Avatar — click to open animated profile card */}
                         <div className="flex flex-col items-center gap-1 flex-shrink-0">
@@ -202,14 +202,14 @@ export default function Profile() {
                             >
                                 {/* Pulsing ring hint */}
                                 {!isEditing && (
-                                    <span className="absolute inset-0 rounded-full animate-ping opacity-40" style={{ backgroundColor: '#ef4444', animationDuration: '2s' }} />
+                                    <span className="absolute inset-0 rounded-full animate-ping opacity-40 bg-violet-600" style={{ animationDuration: '2s' }} />
                                 )}
-                                <div className="relative w-14 h-14 rounded-full overflow-hidden transition-all group-hover:scale-105" style={{ backgroundColor: '#1a1a1d', border: '2px solid #ef4444' }}>
+                                <div className="relative w-14 h-14 rounded-full overflow-hidden transition-all group-hover:scale-105 bg-white border-2 border-violet-500">
                                     {profile?.avatar_url ? (
                                         <img src={profile.avatar_url} alt="" className="w-full h-full object-cover" />
                                     ) : (
                                         <div className="w-full h-full flex items-center justify-center">
-                                            <User className="w-6 h-6" style={{ color: '#555' }} />
+                                            <User className="w-6 h-6 text-slate-400" />
                                         </div>
                                     )}
                                     {isEditing && (
@@ -223,8 +223,7 @@ export default function Profile() {
                             {!isEditing && (
                                 <button
                                     onClick={() => setShowProfileCard(true)}
-                                    className="text-[10px] font-medium px-2 py-0.5 rounded-full transition-colors"
-                                    style={{ backgroundColor: '#1a1a1d', color: '#ef4444', border: '1px solid #2a2a2e' }}
+                                    className="text-[10px] font-medium px-2 py-0.5 rounded-full transition-colors bg-white text-violet-600 border border-violet-200 hover:bg-violet-50"
                                 >
                                     View Card
                                 </button>
@@ -236,36 +235,33 @@ export default function Profile() {
                             {isEditing ? (
                                 <div className="space-y-2">
                                     <input value={fullName} onChange={e => setFullName(e.target.value)} placeholder="Name"
-                                        className="text-base font-semibold w-full rounded-md px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-white/20"
-                                        style={{ backgroundColor: '#1a1a1d', color: '#e0e0e0', border: '1px solid #2a2a2e' }} />
+                                        className="text-base font-semibold w-full rounded-md px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-violet-300 bg-white text-slate-900 border border-slate-200" />
                                     <div className="flex gap-2">
-                                        <div className="flex items-center gap-1 px-2.5 py-1.5 rounded-md flex-1" style={{ backgroundColor: '#1a1a1d', border: '1px solid #2a2a2e' }}>
-                                            <span className="text-xs" style={{ color: '#555' }}>@</span>
+                                        <div className="flex items-center gap-1 px-2.5 py-1.5 rounded-md flex-1 bg-white border border-slate-200">
+                                            <span className="text-xs text-slate-400">@</span>
                                             <input value={profile?.username || ""} onChange={e => setProfile({ ...profile, username: e.target.value.toLowerCase().trim() })}
-                                                className="bg-transparent outline-none text-xs flex-1 min-w-0" style={{ color: '#e0e0e0' }} placeholder="username" maxLength={20} />
+                                                className="bg-transparent outline-none text-xs flex-1 min-w-0 text-slate-900" placeholder="username" maxLength={20} />
                                         </div>
                                     </div>
                                     <div className="flex gap-2">
                                         <input value={hostelBlock} onChange={e => setHostelBlock(e.target.value)} placeholder="Hostel + Room"
-                                            className="text-xs rounded-md px-2.5 py-1.5 flex-1 focus:outline-none"
-                                            style={{ backgroundColor: '#1a1a1d', color: '#e0e0e0', border: '1px solid #2a2a2e' }} />
+                                            className="text-xs rounded-md px-2.5 py-1.5 flex-1 focus:outline-none focus:ring-1 focus:ring-violet-300 bg-white text-slate-900 border border-slate-200" />
                                         <input value={phoneNumber} onChange={e => setPhoneNumber(e.target.value)} placeholder="Phone"
-                                            className="text-xs rounded-md px-2.5 py-1.5 flex-1 focus:outline-none"
-                                            style={{ backgroundColor: '#1a1a1d', color: '#e0e0e0', border: '1px solid #2a2a2e' }} />
+                                            className="text-xs rounded-md px-2.5 py-1.5 flex-1 focus:outline-none focus:ring-1 focus:ring-violet-300 bg-white text-slate-900 border border-slate-200" />
                                     </div>
                                 </div>
                             ) : (
                                 <>
-                                    <h2 className="text-base font-semibold" style={{ color: '#e0e0e0' }}>{profile?.full_name || "Student"}</h2>
-                                    <p className="text-xs" style={{ color: '#777' }}>@{profile?.username || "user"} · {user.email}</p>
-                                    <div className="flex items-center gap-3 mt-1">
+                                    <h2 className="text-base font-bold text-slate-900">{profile?.full_name || "Student"}</h2>
+                                    <p className="text-xs text-slate-500">@{profile?.username || "user"} · {user.email}</p>
+                                    <div className="flex items-center gap-3 mt-1 text-slate-500">
                                         {profile?.hostel_block && (
-                                            <span className="text-xs flex items-center gap-1" style={{ color: '#666' }}>
+                                            <span className="text-[11px] font-medium flex items-center gap-1">
                                                 <MapPin className="w-3 h-3" /> {profile.hostel_block}
                                             </span>
                                         )}
                                         {profile?.phone_number && (
-                                            <span className="text-xs flex items-center gap-1" style={{ color: '#666' }}>
+                                            <span className="text-[11px] font-medium flex items-center gap-1">
                                                 <Phone className="w-3 h-3" /> {profile.phone_number}
                                             </span>
                                         )}
@@ -279,12 +275,7 @@ export default function Profile() {
                             <button
                                 onClick={() => { if (isEditing) handleSaveProfile(); else setIsEditing(true); }}
                                 disabled={loading}
-                                className="px-3 py-1.5 rounded-md text-xs font-medium transition-colors"
-                                style={{
-                                    backgroundColor: isEditing ? '#1a3a2a' : '#1a1a1d',
-                                    color: isEditing ? '#4ade80' : '#999',
-                                    border: `1px solid ${isEditing ? '#2a5a3a' : '#2a2a2e'}`,
-                                }}
+                                className={`px-3 py-1.5 rounded-md text-xs font-bold transition-colors border ${isEditing ? 'bg-emerald-50 text-emerald-600 border-emerald-200 hover:bg-emerald-100' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'}`}
                             >
                                 {loading ? <Loader2 className="w-3 h-3 animate-spin" /> :
                                     isEditing ? <span className="flex items-center gap-1"><Check className="w-3 h-3" /> Save</span> :
@@ -292,35 +283,30 @@ export default function Profile() {
                             </button>
                             <button
                                 onClick={async () => { await signOut(); navigate("/login"); }}
-                                className="px-3 py-1.5 rounded-md text-xs font-medium transition-colors"
-                                style={{ backgroundColor: '#1a1a1d', color: '#ef4444', border: '1px solid #2a2a2e' }}
+                                className="px-3 py-1.5 rounded-md text-xs font-bold transition-colors bg-white text-red-500 border border-slate-200 hover:bg-red-50 hover:border-red-100"
                             >
-                                <LogOut className="w-3 h-3" />
+                                <LogOut className="w-3.5 h-3.5" />
                             </button>
                         </div>
                     </div>
                 </div>
 
                 {/* ── TAB NAVIGATION ── */}
-                <div className="flex gap-6 mt-4 border-b" style={{ borderColor: '#1e1e21' }}>
+                <div className="flex gap-6 mt-4 border-b border-slate-200">
                     {tabs.map(tab => (
                         <button
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id)}
-                            className="relative pb-3 text-sm font-medium transition-colors flex items-center gap-1.5"
-                            style={{ color: activeTab === tab.id ? '#e0e0e0' : '#555' }}
+                            className={`relative pb-3 text-sm font-bold transition-colors flex items-center gap-1.5 ${activeTab === tab.id ? 'text-violet-600' : 'text-slate-500 hover:text-slate-700'}`}
                         >
                             {tab.label}
                             {tab.count !== undefined && tab.count > 0 && (
-                                <span className="text-[10px] px-1.5 py-0.5 rounded-full font-semibold" style={{
-                                    backgroundColor: tab.id === 'orders' ? '#3b2a0a' : '#1a2a1a',
-                                    color: tab.id === 'orders' ? '#f59e0b' : '#4ade80',
-                                }}>
+                                <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold ${tab.id === 'orders' ? 'bg-orange-100 text-orange-600' : 'bg-emerald-100 text-emerald-600'}`}>
                                     {tab.count}
                                 </span>
                             )}
                             {activeTab === tab.id && (
-                                <motion.div layoutId="tab-underline" className="absolute bottom-0 left-0 right-0 h-[2px]" style={{ backgroundColor: '#e0e0e0' }} />
+                                <motion.div layoutId="tab-underline" className="absolute bottom-0 left-0 right-0 h-[2px] bg-violet-600 rounded-t-full" />
                             )}
                         </button>
                     ))}
@@ -334,48 +320,42 @@ export default function Profile() {
                         {activeTab === 'listings' && (
                             <motion.div key="listings" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }}>
                                 {loadingListings ? (
-                                    <div className="flex justify-center py-12"><Loader2 className="w-5 h-5 animate-spin" style={{ color: '#555' }} /></div>
+                                    <div className="flex justify-center py-12"><Loader2 className="w-5 h-5 animate-spin text-slate-400" /></div>
                                 ) : myProducts.length === 0 ? (
                                     <div className="py-12 text-left">
-                                        <p className="text-sm font-medium" style={{ color: '#888' }}>No listings yet</p>
-                                        <p className="text-xs mt-1" style={{ color: '#555' }}>Start selling items to your campus community.</p>
+                                        <p className="text-sm font-medium text-slate-500">No listings yet</p>
+                                        <p className="text-xs mt-1 text-slate-400">Start selling items to your campus community.</p>
                                         <button onClick={() => navigate('/list')}
-                                            className="mt-4 px-4 py-2 rounded-md text-xs font-medium transition-colors flex items-center gap-1.5"
-                                            style={{ backgroundColor: '#1a1a1d', color: '#e0e0e0', border: '1px solid #2a2a2e' }}>
-                                            <Plus className="w-3 h-3" /> Create a Listing
+                                            className="mt-4 px-4 py-2 rounded-md text-xs font-bold transition-colors flex items-center gap-1.5 bg-white text-violet-600 border border-violet-200 hover:bg-violet-50">
+                                            <Plus className="w-3.5 h-3.5" /> Create a Listing
                                         </button>
                                     </div>
                                 ) : (
-                                    <div className="space-y-1">
+                                    <div className="space-y-2">
                                         {myProducts.map(item => (
                                             <div key={item.id}
-                                                className="group flex items-center gap-3 py-3 px-3 rounded-lg transition-colors"
-                                                style={{ backgroundColor: 'transparent' }}
-                                                onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#161618')}
-                                                onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}
+                                                className="group flex items-center gap-3 py-3 px-3 rounded-lg transition-colors bg-white border border-slate-100 shadow-sm hover:border-slate-300"
                                             >
-                                                <div className="w-10 h-10 rounded-md overflow-hidden flex-shrink-0" style={{ backgroundColor: '#1a1a1d' }}>
+                                                <div className="w-12 h-12 rounded-md overflow-hidden flex-shrink-0 bg-slate-50 border border-slate-100">
                                                     <img src={item.image_url || 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=100'} alt="" className="w-full h-full object-cover" />
                                                 </div>
                                                 <div className="flex-1 min-w-0">
-                                                    <p className="text-sm font-medium truncate" style={{ color: '#d0d0d0' }}>{item.title}</p>
+                                                    <p className="text-sm font-bold truncate text-slate-900">{item.title}</p>
                                                     <div className="flex items-center gap-2 mt-0.5">
-                                                        <span className="text-xs font-semibold" style={{ color: '#e0e0e0' }}>₹{item.price}</span>
-                                                        <span className="text-[10px] font-medium px-1.5 py-0.5 rounded" style={
-                                                            item.status === 'sold' ? { backgroundColor: '#2a1a1a', color: '#ef4444' } : { backgroundColor: '#1a2a1a', color: '#4ade80' }
-                                                        }>
+                                                        <span className="text-sm font-black text-violet-600">₹{item.price}</span>
+                                                        <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${item.status === 'sold' ? 'bg-slate-100 text-slate-500' : 'bg-emerald-50 text-emerald-600'}`}>
                                                             {item.status === 'sold' ? 'Sold' : 'Active'}
                                                         </span>
                                                     </div>
                                                 </div>
-                                                <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <div className="flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
                                                     {item.status !== 'sold' && (
-                                                        <button onClick={() => handleMarkSold(item.id)} className="w-7 h-7 rounded-md flex items-center justify-center" style={{ backgroundColor: '#1a2a1a' }} title="Mark Sold">
-                                                            <Tag className="w-3 h-3" style={{ color: '#4ade80' }} />
+                                                        <button onClick={() => handleMarkSold(item.id)} className="w-8 h-8 rounded-md flex items-center justify-center bg-slate-50 border border-slate-200 hover:bg-emerald-50 hover:border-emerald-200 hover:text-emerald-600 text-slate-400 transition-colors" title="Mark Sold">
+                                                            <Tag className="w-3.5 h-3.5" />
                                                         </button>
                                                     )}
-                                                    <button onClick={() => handleDeleteListing(item.id)} className="w-7 h-7 rounded-md flex items-center justify-center" style={{ backgroundColor: '#2a1a1a' }} title="Delete">
-                                                        <Trash2 className="w-3 h-3" style={{ color: '#ef4444' }} />
+                                                    <button onClick={() => handleDeleteListing(item.id)} className="w-8 h-8 rounded-md flex items-center justify-center bg-slate-50 border border-slate-200 hover:bg-red-50 hover:border-red-200 hover:text-red-500 text-slate-400 transition-colors" title="Delete">
+                                                        <Trash2 className="w-3.5 h-3.5" />
                                                     </button>
                                                 </div>
                                             </div>
@@ -389,61 +369,58 @@ export default function Profile() {
                         {activeTab === 'orders' && (
                             <motion.div key="orders" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }}>
                                 {loadingOrders ? (
-                                    <div className="flex justify-center py-12"><Loader2 className="w-5 h-5 animate-spin" style={{ color: '#555' }} /></div>
+                                    <div className="flex justify-center py-12"><Loader2 className="w-5 h-5 animate-spin text-slate-400" /></div>
                                 ) : incomingOrders.length === 0 ? (
                                     <div className="py-12 text-left">
-                                        <p className="text-sm font-medium" style={{ color: '#888' }}>No incoming orders</p>
-                                        <p className="text-xs mt-1" style={{ color: '#555' }}>When someone buys your product, it'll appear here.</p>
+                                        <p className="text-sm font-medium text-slate-500">No incoming orders</p>
+                                        <p className="text-xs mt-1 text-slate-400">When someone buys your product, it'll appear here.</p>
                                     </div>
                                 ) : (
-                                    <div className="space-y-2">
+                                    <div className="space-y-3">
                                         {incomingOrders.map(order => (
-                                            <div key={order.id} className="rounded-lg p-4" style={{ backgroundColor: '#161618', border: '1px solid #1e1e21' }}>
+                                            <div key={order.id} className="rounded-lg p-4 bg-white border border-slate-200 shadow-sm mb-3">
                                                 {/* Order header */}
                                                 <div className="flex items-start gap-3">
-                                                    <div className="w-10 h-10 rounded-md overflow-hidden flex-shrink-0" style={{ backgroundColor: '#1a1a1d' }}>
+                                                    <div className="w-12 h-12 rounded-md overflow-hidden flex-shrink-0 bg-slate-50 border border-slate-100">
                                                         <img src={order.products?.image_url || "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=80"} alt="" className="w-full h-full object-cover" />
                                                     </div>
                                                     <div className="flex-1 min-w-0">
-                                                        <p className="text-sm font-medium truncate" style={{ color: '#d0d0d0' }}>{order.products?.title || "Product"}</p>
+                                                        <p className="text-sm font-bold truncate text-slate-900">{order.products?.title || "Product"}</p>
                                                         <div className="flex items-center gap-2 mt-0.5">
-                                                            <span className="text-xs font-semibold" style={{ color: '#e0e0e0' }}>₹{order.total_price}</span>
-                                                            <span className="text-[10px] font-medium px-1.5 py-0.5 rounded" style={
-                                                                order.status === "pending" ? { backgroundColor: '#3b2a0a', color: '#f59e0b' } :
-                                                                    order.status === "seller_accepted" ? { backgroundColor: '#1a2a1a', color: '#4ade80' } :
-                                                                        { backgroundColor: '#2a1a1a', color: '#ef4444' }
-                                                            }>
+                                                            <span className="text-sm font-black text-violet-600">₹{order.total_price}</span>
+                                                            <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${order.status === "pending" ? 'bg-orange-50 text-orange-600' :
+                                                                order.status === "seller_accepted" ? 'bg-emerald-50 text-emerald-600' :
+                                                                    'bg-red-50 text-red-600'
+                                                                }`}>
                                                                 {order.status === "pending" ? "Pending" : order.status === "seller_accepted" ? "Accepted" : "Rejected"}
                                                             </span>
                                                         </div>
                                                     </div>
-                                                    <span className="text-[10px] flex-shrink-0" style={{ color: '#555' }}>
+                                                    <span className="text-[10px] font-medium flex-shrink-0 text-slate-400">
                                                         {new Date(order.created_at).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}
                                                     </span>
                                                 </div>
 
                                                 {/* Buyer */}
-                                                <div className="mt-3 pt-3 space-y-1" style={{ borderTop: '1px solid #1e1e21' }}>
-                                                    <p className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: '#555' }}>Buyer</p>
-                                                    <p className="text-xs font-medium" style={{ color: '#ccc' }}>{order.buyer?.full_name || "—"}</p>
+                                                <div className="mt-4 pt-3 space-y-1.5 border-t border-slate-100">
+                                                    <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Buyer Details</p>
+                                                    <p className="text-xs font-bold text-slate-900">{order.buyer?.full_name || "—"}</p>
                                                     <div className="flex gap-4">
-                                                        <span className="text-[11px] flex items-center gap-1" style={{ color: '#666' }}><Phone className="w-2.5 h-2.5" /> {order.buyer_phone || "—"}</span>
-                                                        <span className="text-[11px] flex items-center gap-1" style={{ color: '#666' }}><MapPin className="w-2.5 h-2.5" /> {order.delivery_location}</span>
+                                                        <span className="text-[11px] font-medium flex items-center gap-1 text-slate-500"><Phone className="w-3 h-3 text-slate-400" /> {order.buyer_phone || "—"}</span>
+                                                        <span className="text-[11px] font-medium flex items-center gap-1 text-slate-500"><MapPin className="w-3 h-3 text-slate-400" /> {order.delivery_location}</span>
                                                     </div>
                                                 </div>
 
                                                 {/* Actions */}
                                                 {order.status === "pending" && (
-                                                    <div className="flex gap-2 mt-3 pt-3" style={{ borderTop: '1px solid #1e1e21' }}>
+                                                    <div className="flex gap-2.5 mt-4 pt-3 border-t border-slate-100">
                                                         <button onClick={() => handleAcceptOrder(order.id)} disabled={processingOrderId === order.id}
-                                                            className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-md text-xs font-medium transition-colors disabled:opacity-50"
-                                                            style={{ backgroundColor: '#1a2a1a', color: '#4ade80', border: '1px solid #2a3a2a' }}>
-                                                            {processingOrderId === order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <CheckCircle className="w-3 h-3" />} Accept
+                                                            className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-lg text-xs font-bold transition-colors disabled:opacity-50 bg-emerald-50 text-emerald-600 border border-emerald-200 hover:bg-emerald-100">
+                                                            {processingOrderId === order.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <CheckCircle className="w-3.5 h-3.5" />} Accept
                                                         </button>
                                                         <button onClick={() => handleRejectOrder(order.id)} disabled={processingOrderId === order.id}
-                                                            className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-md text-xs font-medium transition-colors disabled:opacity-50"
-                                                            style={{ backgroundColor: '#2a1a1a', color: '#ef4444', border: '1px solid #3a2a2a' }}>
-                                                            <XCircle className="w-3 h-3" /> Reject
+                                                            className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-lg text-xs font-bold transition-colors disabled:opacity-50 bg-white text-red-500 border border-red-200 hover:bg-red-50">
+                                                            <XCircle className="w-3.5 h-3.5" /> Reject
                                                         </button>
                                                     </div>
                                                 )}
@@ -458,11 +435,10 @@ export default function Profile() {
                         {activeTab === 'saved' && (
                             <motion.div key="saved" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }}>
                                 <div className="py-12 text-left">
-                                    <p className="text-sm font-medium" style={{ color: '#888' }}>No saved items</p>
-                                    <p className="text-xs mt-1" style={{ color: '#555' }}>Tap the heart on products to save them here.</p>
+                                    <p className="text-sm font-medium text-slate-500">No saved items</p>
+                                    <p className="text-xs mt-1 text-slate-400">Tap the heart on products to save them here.</p>
                                     <button onClick={() => navigate('/browse')}
-                                        className="mt-4 px-4 py-2 rounded-md text-xs font-medium transition-colors flex items-center gap-1.5"
-                                        style={{ backgroundColor: '#1a1a1d', color: '#e0e0e0', border: '1px solid #2a2a2e' }}>
+                                        className="mt-4 px-4 py-2 rounded-md text-xs font-bold transition-colors flex items-center gap-1.5 bg-white text-violet-600 border border-violet-200 hover:bg-violet-50">
                                         Browse Products
                                     </button>
                                 </div>
@@ -480,26 +456,26 @@ export default function Profile() {
 
                     {/* Card */}
                     <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 profile-card-appear">
-                        <div className="w-[300px] rounded-xl overflow-hidden" style={{ backgroundColor: '#161618', border: '1px solid #1e1e21', boxShadow: '0 20px 60px rgba(0,0,0,0.6)' }}>
+                        <div className="w-[300px] bg-white rounded-xl overflow-hidden border border-slate-100 shadow-[0_20px_60px_rgba(0,0,0,0.1)]">
                             {/* Close */}
-                            <button onClick={() => setShowProfileCard(false)} className="absolute top-3 right-3 z-10 w-7 h-7 rounded-full flex items-center justify-center transition-colors" style={{ backgroundColor: '#1a1a1d' }}>
-                                <X className="w-3.5 h-3.5" style={{ color: '#999' }} />
+                            <button onClick={() => setShowProfileCard(false)} className="absolute top-3 right-3 z-10 w-7 h-7 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center transition-colors hover:bg-white/40">
+                                <X className="w-4 h-4 text-white" />
                             </button>
 
                             {/* Header bg */}
-                            <div className="h-20 relative" style={{ background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)' }}>
-                                <div className="absolute inset-0" style={{ background: 'radial-gradient(circle at 70% 30%, rgba(255,107,107,0.15), transparent 60%)' }} />
+                            <div className="h-20 relative bg-gradient-to-br from-violet-500 to-fuchsia-600">
+                                <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,rgba(255,255,255,0.2),transparent_60%)]" />
                             </div>
 
                             {/* Avatar overlapping header */}
                             <div className="flex justify-center -mt-10 relative z-10">
-                                <div className="w-20 h-20 rounded-full p-[2px] profile-card-avatar" style={{ background: '#161618' }}>
-                                    <div className="w-full h-full rounded-full overflow-hidden" style={{ border: '2px solid #2a2a2e' }}>
+                                <div className="w-20 h-20 rounded-full p-1 bg-white profile-card-avatar">
+                                    <div className="w-full h-full rounded-full overflow-hidden border-2 border-slate-100 bg-slate-50">
                                         {profile?.avatar_url ? (
                                             <img src={profile.avatar_url} alt="" className="w-full h-full object-cover" />
                                         ) : (
-                                            <div className="w-full h-full flex items-center justify-center" style={{ backgroundColor: '#1a1a1d' }}>
-                                                <User className="w-8 h-8" style={{ color: '#555' }} />
+                                            <div className="w-full h-full flex items-center justify-center">
+                                                <User className="w-8 h-8 text-slate-300" />
                                             </div>
                                         )}
                                     </div>
@@ -508,48 +484,46 @@ export default function Profile() {
 
                             {/* Content */}
                             <div className="px-5 pb-5 pt-3 text-center profile-card-content">
-                                <h3 className="text-lg font-semibold" style={{ color: '#e0e0e0' }}>{profile?.full_name || "Student"}</h3>
-                                <p className="text-xs font-medium mt-0.5" style={{ color: '#ef4444' }}>@{profile?.username || "user"}</p>
+                                <h3 className="text-lg font-bold text-slate-900">{profile?.full_name || "Student"}</h3>
+                                <p className="text-xs font-bold mt-0.5 text-violet-600">@{profile?.username || "user"}</p>
 
                                 {/* Bio / Email */}
-                                <p className="text-xs mt-3 leading-relaxed" style={{ color: '#888' }}>
+                                <p className="text-xs mt-3 leading-relaxed text-slate-500">
                                     CU Bazzar member · Campus marketplace user
                                 </p>
 
                                 {/* Divider */}
-                                <div className="my-4 h-px" style={{ backgroundColor: '#1e1e21' }} />
+                                <div className="my-4 h-px bg-slate-100" />
 
                                 {/* Info grid */}
                                 <div className="grid grid-cols-2 gap-2">
-                                    <div className="flex items-center gap-2 px-3 py-2 rounded-lg text-left" style={{ backgroundColor: '#1a1a1d' }}>
-                                        <Mail className="w-3.5 h-3.5 flex-shrink-0" style={{ color: '#555' }} />
-                                        <span className="text-[11px] truncate" style={{ color: '#999' }}>{user.email?.split('@')[0]}</span>
+                                    <div className="flex items-center gap-2 px-3 py-2 rounded-lg text-left bg-slate-50 border border-slate-100">
+                                        <Mail className="w-3.5 h-3.5 flex-shrink-0 text-slate-400" />
+                                        <span className="text-[11px] truncate font-medium text-slate-600">{user.email?.split('@')[0]}</span>
                                     </div>
-                                    <div className="flex items-center gap-2 px-3 py-2 rounded-lg text-left" style={{ backgroundColor: '#1a1a1d' }}>
-                                        <MapPin className="w-3.5 h-3.5 flex-shrink-0" style={{ color: '#555' }} />
-                                        <span className="text-[11px] truncate" style={{ color: '#999' }}>{profile?.hostel_block || "—"}</span>
+                                    <div className="flex items-center gap-2 px-3 py-2 rounded-lg text-left bg-slate-50 border border-slate-100">
+                                        <MapPin className="w-3.5 h-3.5 flex-shrink-0 text-slate-400" />
+                                        <span className="text-[11px] truncate font-medium text-slate-600">{profile?.hostel_block || "—"}</span>
                                     </div>
-                                    <div className="flex items-center gap-2 px-3 py-2 rounded-lg text-left" style={{ backgroundColor: '#1a1a1d' }}>
-                                        <Phone className="w-3.5 h-3.5 flex-shrink-0" style={{ color: '#555' }} />
-                                        <span className="text-[11px] truncate" style={{ color: '#999' }}>{profile?.phone_number || "—"}</span>
+                                    <div className="flex items-center gap-2 px-3 py-2 rounded-lg text-left bg-slate-50 border border-slate-100">
+                                        <Phone className="w-3.5 h-3.5 flex-shrink-0 text-slate-400" />
+                                        <span className="text-[11px] truncate font-medium text-slate-600">{profile?.phone_number || "—"}</span>
                                     </div>
-                                    <div className="flex items-center gap-2 px-3 py-2 rounded-lg text-left" style={{ backgroundColor: '#1a1a1d' }}>
-                                        <Package className="w-3.5 h-3.5 flex-shrink-0" style={{ color: '#555' }} />
-                                        <span className="text-[11px] truncate" style={{ color: '#999' }}>{myProducts.length} listings</span>
+                                    <div className="flex items-center gap-2 px-3 py-2 rounded-lg text-left bg-slate-50 border border-slate-100">
+                                        <Package className="w-3.5 h-3.5 flex-shrink-0 text-slate-400" />
+                                        <span className="text-[11px] truncate font-medium text-slate-600">{myProducts.length} listings</span>
                                     </div>
                                 </div>
 
                                 {/* Actions */}
                                 <div className="flex gap-2 mt-4">
                                     <button onClick={() => { setShowProfileCard(false); setIsEditing(true); }}
-                                        className="flex-1 py-2 rounded-lg text-xs font-medium transition-colors flex items-center justify-center gap-1.5"
-                                        style={{ backgroundColor: '#1a1a1d', color: '#e0e0e0', border: '1px solid #2a2a2e' }}>
-                                        <Edit2 className="w-3 h-3" /> Edit Profile
+                                        className="flex-1 py-2.5 rounded-lg text-xs font-bold transition-colors flex items-center justify-center gap-1.5 bg-white text-slate-700 border border-slate-200 hover:bg-slate-50">
+                                        <Edit2 className="w-3.5 h-3.5" /> Edit Profile
                                     </button>
                                     <button onClick={() => navigate('/browse')}
-                                        className="flex-1 py-2 rounded-lg text-xs font-medium transition-colors flex items-center justify-center gap-1.5"
-                                        style={{ backgroundColor: '#1a2a1a', color: '#4ade80', border: '1px solid #2a3a2a' }}>
-                                        <Globe className="w-3 h-3" /> Browse
+                                        className="flex-1 py-2.5 rounded-lg text-xs font-bold transition-colors flex items-center justify-center gap-1.5 bg-violet-50 text-violet-600 border border-violet-200 hover:bg-violet-100">
+                                        <Globe className="w-3.5 h-3.5" /> Browse
                                     </button>
                                 </div>
                             </div>
@@ -579,7 +553,7 @@ export default function Profile() {
                     100% { opacity: 1; transform: translateY(0); }
                 }
                 .profile-card-backdrop {
-                    background: rgba(0,0,0,0.7);
+                    background: rgba(0,0,0,0.3);
                     backdrop-filter: blur(4px);
                     animation: profileCardBackdropIn 0.25s ease forwards;
                 }

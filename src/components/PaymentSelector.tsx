@@ -10,33 +10,33 @@ interface PaymentSelectorProps {
 export default function PaymentSelector({ selected, onChange, totalAmount, disabled }: PaymentSelectorProps) {
     return (
         <div className="space-y-2">
-            <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: '#8F8175' }}>Payment Method</p>
+            <p className="text-xs font-bold uppercase tracking-wider mb-2 text-slate-500 relative flex items-center gap-2">
+                <span className="bg-slate-200 h-px flex-1"></span>
+                Payment Method
+                <span className="bg-slate-200 h-px flex-1"></span>
+            </p>
 
             {/* Online Payment (UPI) */}
             <button
                 type="button"
                 disabled={disabled}
                 onClick={() => onChange("online")}
-                className="w-full rounded-xl p-3.5 flex items-center gap-3 transition-all"
+                className={`w-full rounded-xl p-3.5 flex items-center gap-3 transition-all border ${selected === "online" ? 'bg-violet-50 border-violet-200 shadow-sm' : 'bg-white border-slate-200 hover:border-violet-100 hover:bg-slate-50'}`}
                 style={{
-                    background: selected === "online" ? 'rgba(77,184,172,0.08)' : 'rgba(255,255,255,0.02)',
-                    border: selected === "online" ? '1.5px solid rgba(77,184,172,0.3)' : '1.5px solid rgba(255,255,255,0.08)',
-                    boxShadow: selected === "online" ? '0 0 20px rgba(77,184,172,0.08), inset 0 1px 0 rgba(255,255,255,0.05)' : 'none',
-                    backdropFilter: 'blur(12px)',
                     cursor: disabled ? 'not-allowed' : 'pointer',
                     opacity: disabled ? 0.5 : 1,
                 }}
             >
-                <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: selected === "online" ? 'rgba(77,184,172,0.15)' : 'rgba(255,255,255,0.05)' }}>
-                    <Smartphone className="w-4 h-4" style={{ color: selected === "online" ? '#4DB8AC' : '#8F8175' }} />
+                <div className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${selected === "online" ? 'bg-violet-100' : 'bg-slate-100'}`}>
+                    <Smartphone className={`w-4 h-4 ${selected === "online" ? 'text-violet-600' : 'text-slate-500'}`} />
                 </div>
                 <div className="flex-1 min-w-0 text-left">
-                    <p className="text-sm font-bold" style={{ color: '#E8DED4' }}>Pay via UPI</p>
-                    <p className="text-[10px]" style={{ color: '#6B5F54' }}>GPay · PhonePe · Paytm · ₹{totalAmount}</p>
+                    <p className={`text-sm font-bold ${selected === "online" ? 'text-violet-900' : 'text-slate-900'}`}>Pay via UPI</p>
+                    <p className={`text-[11px] font-medium mt-0.5 ${selected === "online" ? 'text-violet-600' : 'text-slate-500'}`}>GPay · PhonePe · Paytm</p>
                 </div>
                 <div className="flex items-center gap-1.5 flex-shrink-0">
-                    <div className="w-4 h-4 rounded-full border-2 flex items-center justify-center" style={{ borderColor: selected === "online" ? '#4DB8AC' : '#6B5F54' }}>
-                        {selected === "online" && <div className="w-2 h-2 rounded-full" style={{ backgroundColor: '#4DB8AC' }} />}
+                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${selected === "online" ? 'border-violet-600 bg-white' : 'border-slate-300'}`}>
+                        {selected === "online" && <div className="w-2.5 h-2.5 rounded-full bg-violet-600" />}
                     </div>
                 </div>
             </button>
@@ -46,26 +46,22 @@ export default function PaymentSelector({ selected, onChange, totalAmount, disab
                 type="button"
                 disabled={disabled}
                 onClick={() => onChange("cod")}
-                className="w-full rounded-xl p-3.5 flex items-center gap-3 transition-all"
+                className={`w-full rounded-xl p-3.5 flex items-center gap-3 transition-all border ${selected === "cod" ? 'bg-orange-50 border-orange-200 shadow-sm' : 'bg-white border-slate-200 hover:border-orange-100 hover:bg-slate-50'}`}
                 style={{
-                    background: selected === "cod" ? 'rgba(255,183,77,0.08)' : 'rgba(255,255,255,0.02)',
-                    border: selected === "cod" ? '1.5px solid rgba(255,183,77,0.3)' : '1.5px solid rgba(255,255,255,0.08)',
-                    boxShadow: selected === "cod" ? '0 0 20px rgba(255,183,77,0.08), inset 0 1px 0 rgba(255,255,255,0.05)' : 'none',
-                    backdropFilter: 'blur(12px)',
                     cursor: disabled ? 'not-allowed' : 'pointer',
                     opacity: disabled ? 0.5 : 1,
                 }}
             >
-                <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: selected === "cod" ? 'rgba(255,183,77,0.15)' : 'rgba(255,255,255,0.05)' }}>
-                    <Banknote className="w-4 h-4" style={{ color: selected === "cod" ? '#FFB74D' : '#8F8175' }} />
+                <div className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${selected === "cod" ? 'bg-orange-100' : 'bg-slate-100'}`}>
+                    <Banknote className={`w-4 h-4 ${selected === "cod" ? 'text-orange-600' : 'text-slate-500'}`} />
                 </div>
                 <div className="flex-1 min-w-0 text-left">
-                    <p className="text-sm font-bold" style={{ color: '#E8DED4' }}>Cash on Delivery</p>
-                    <p className="text-[10px]" style={{ color: '#6B5F54' }}>Pay when you receive · ₹{totalAmount}</p>
+                    <p className={`text-sm font-bold ${selected === "cod" ? 'text-orange-900' : 'text-slate-900'}`}>Cash on Delivery</p>
+                    <p className={`text-[11px] font-medium mt-0.5 ${selected === "cod" ? 'text-orange-600' : 'text-slate-500'}`}>Pay when you receive</p>
                 </div>
                 <div className="flex items-center gap-1.5 flex-shrink-0">
-                    <div className="w-4 h-4 rounded-full border-2 flex items-center justify-center" style={{ borderColor: selected === "cod" ? '#FFB74D' : '#6B5F54' }}>
-                        {selected === "cod" && <div className="w-2 h-2 rounded-full" style={{ backgroundColor: '#FFB74D' }} />}
+                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${selected === "cod" ? 'border-orange-600 bg-white' : 'border-slate-300'}`}>
+                        {selected === "cod" && <div className="w-2.5 h-2.5 rounded-full bg-orange-600" />}
                     </div>
                 </div>
             </button>

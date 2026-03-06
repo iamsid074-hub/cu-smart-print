@@ -156,36 +156,38 @@ export default function Tracking() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background pt-20 flex items-center justify-center">
-        <Loader2 className="w-10 h-10 animate-spin text-neon-cyan" />
+      <div className="min-h-screen bg-slate-50 pt-20 flex items-center justify-center">
+        <Loader2 className="w-10 h-10 animate-spin text-violet-500" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background pt-20 pb-16 px-4">
+    <div className="min-h-screen bg-slate-50 pt-20 pb-16 px-4">
       <div className="max-w-2xl mx-auto">
         {/* Header removed for Dynamic Island */}
 
         {!order ? (
           <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
-            className="glass rounded-3xl p-12 text-center border border-white/5 flex flex-col items-center justify-center min-h-[400px]">
-            <Package className="w-16 h-16 text-muted-foreground mb-4 opacity-50" />
-            <h2 className="text-xl font-bold mb-2">No active orders</h2>
-            <p className="text-muted-foreground max-w-sm mb-6">Your tracking information will appear here once you place an order.</p>
-            <Link to="/home" className="premium-glass-button px-6 py-3 font-bold text-white rounded-xl">Browse Marketplace</Link>
+            className="bg-white rounded-3xl p-12 text-center border border-slate-200 shadow-sm flex flex-col items-center justify-center min-h-[400px]">
+            <Package className="w-16 h-16 text-slate-300 mb-4" />
+            <h2 className="text-xl font-bold mb-2 text-slate-900">No active orders</h2>
+            <p className="text-slate-500 max-w-sm mb-6 font-medium">Your tracking information will appear here once you place an order.</p>
+            <Link to="/home" className="px-6 py-3 font-bold text-white bg-violet-600 hover:bg-violet-700 transition-colors shadow-sm rounded-xl">Browse Marketplace</Link>
           </motion.div>
         ) : isRejected ? (
           <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
-            className="glass rounded-3xl p-10 text-center border border-red-500/20">
-            <AlertCircle className="w-14 h-14 text-red-400 mx-auto mb-4" />
-            <h2 className="text-xl font-bold mb-2 text-red-400">
+            className="bg-white rounded-3xl p-10 text-center border border-red-100 shadow-sm">
+            <div className="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
+              <AlertCircle className="w-10 h-10 text-red-500" />
+            </div>
+            <h2 className="text-xl font-bold mb-2 text-red-600">
               {order.status === "seller_rejected" ? "Order Rejected" : "Order Cancelled"}
             </h2>
-            <p className="text-muted-foreground mb-6 text-sm">
+            <p className="text-slate-500 mb-6 text-sm font-medium">
               {order.status === "seller_rejected" ? "The order couldn't be fulfilled. Please try again." : "This order has been cancelled."}
             </p>
-            <Link to="/home" className="premium-glass-button px-6 py-3 font-bold text-white rounded-xl">Browse Again</Link>
+            <Link to="/home" className="px-6 py-3 font-bold text-white bg-violet-600 hover:bg-violet-700 transition-colors shadow-sm rounded-xl inline-block">Browse Again</Link>
           </motion.div>
         ) : (
           <>
@@ -193,59 +195,59 @@ export default function Tracking() {
             {!isCompleted && (
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
                 className={`w-full border rounded-2xl p-4 mb-6 flex justify-between items-center ${type === "food"
-                  ? "bg-gradient-to-r from-orange-500/15 to-red-500/15 border-orange-500/25 shadow-[0_0_20px_rgba(255,107,0,0.1)]"
-                  : "bg-gradient-to-r from-neon-blue/20 to-neon-cyan/20 border-neon-cyan/30 shadow-[0_0_20px_rgba(0,255,255,0.1)]"
+                  ? "bg-orange-50 border-orange-200"
+                  : "bg-violet-50 border-violet-200"
                   }`}>
-                <div className="flex items-center gap-3">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${type === "food" ? "bg-orange-500/20" : "bg-neon-cyan/20"}`}>
+                <div className="flex items-center gap-4">
+                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${type === "food" ? "bg-white text-orange-500 shadow-sm border border-orange-100" : "bg-white text-violet-600 shadow-sm border border-violet-100"}`}>
                     {order.status === "delivering" ? (
-                      <Truck className={`w-5 h-5 animate-pulse ${type === "food" ? "text-orange-400" : "text-neon-cyan"}`} />
+                      <Truck className={`w-6 h-6 animate-pulse`} />
                     ) : (
-                      <Clock className={`w-5 h-5 ${type === "food" ? "text-orange-400" : "text-neon-cyan"}`} />
+                      <Clock className={`w-6 h-6`} />
                     )}
                   </div>
                   <div>
-                    <p className={`text-xs font-bold uppercase tracking-wider ${type === "food" ? "text-orange-400" : "text-neon-cyan"}`}>
+                    <p className={`text-xs font-bold uppercase tracking-wider ${type === "food" ? "text-orange-600" : "text-violet-600"}`}>
                       {order.status === "delivering" ? "Estimated Delivery" : "Status"}
                     </p>
-                    <p className="text-white font-black text-xl">{deliveryInfo.text}</p>
+                    <p className="text-slate-900 font-black text-xl">{deliveryInfo.text}</p>
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="text-xs text-muted-foreground">{deliveryInfo.subtext}</p>
+                  <p className="text-xs font-medium text-slate-500">{deliveryInfo.subtext}</p>
                 </div>
               </motion.div>
             )}
 
             {/* ── Order Summary Card ───────────────────────────────────── */}
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-              className="glass rounded-3xl p-5 sm:p-6 mb-6 border border-white/5">
+              className="bg-white rounded-3xl p-5 sm:p-6 mb-6 border border-slate-200 shadow-sm">
               <div className="flex items-start gap-4 mb-4">
                 {/* Order image */}
-                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl bg-black/40 overflow-hidden border border-white/10 flex-shrink-0">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl bg-slate-50 overflow-hidden border border-slate-100 flex-shrink-0">
                   <img src={details?.image} alt="" className="w-full h-full object-cover" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1 flex-wrap">
-                    <p className="text-xs text-muted-foreground font-mono">
+                    <p className="text-xs text-slate-500 font-mono font-medium">
                       {type === "food" ? "FOOD" : "ORDER"} #{order.id.slice(0, 8).toUpperCase()}
                     </p>
                     <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${type === "food"
-                      ? "bg-orange-500/15 border border-orange-500/30 text-orange-400"
-                      : "bg-neon-cyan/15 border border-neon-cyan/30 text-neon-cyan"
+                      ? "bg-orange-50 text-orange-600"
+                      : "bg-violet-50 text-violet-600"
                       }`}>
                       {type === "food" ? "🍕 Food" : "📦 Item"}
                     </span>
                   </div>
-                  <p className="font-semibold line-clamp-2 text-sm sm:text-base">{details?.title}</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">
+                  <p className="font-bold text-slate-900 line-clamp-2 text-sm sm:text-base">{details?.title}</p>
+                  <p className="text-xs font-medium text-slate-500 mt-0.5">
                     {new Date(order.created_at).toLocaleString("en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
                   </p>
                 </div>
                 {order.total_price > 0 && (
                   <div className="text-right flex-shrink-0">
-                    <p className="text-neon-fire font-bold text-lg sm:text-xl">₹{order.total_price?.toLocaleString()}</p>
-                    <p className={`text-xs font-bold ${order.payment_status === 'verifying' ? 'text-orange-400' : order.payment_status === 'paid' ? 'text-green-400' : 'text-yellow-400'}`}>
+                    <p className="text-violet-600 font-black text-lg sm:text-xl">₹{order.total_price?.toLocaleString()}</p>
+                    <p className={`text-[10px] font-bold mt-1 ${order.payment_status === 'verifying' ? 'text-orange-500' : order.payment_status === 'paid' ? 'text-emerald-500' : 'text-slate-500'}`}>
                       {order.payment_status === 'verifying' ? '🟡 Verifying Payment...' : order.payment_status === 'paid' ? '💳 Paid Online ✓' : '💵 Pay on Delivery'}
                     </p>
                   </div>
@@ -253,32 +255,32 @@ export default function Tracking() {
               </div>
 
               {/* Delivery Info */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
-                <div className="glass rounded-xl p-3 border border-white/5">
-                  <p className="text-xs text-neon-cyan font-bold uppercase mb-1 flex items-center gap-1"><MapPin className="w-3 h-3" /> Delivery To</p>
-                  <p className="text-sm font-semibold">{details?.hostel}</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4 pt-4 border-t border-slate-100">
+                <div className="bg-slate-50 rounded-xl p-3 border border-slate-100">
+                  <p className="text-[10px] text-slate-400 font-bold uppercase mb-1 tracking-wider flex items-center gap-1"><MapPin className="w-3 h-3" /> Delivery To</p>
+                  <p className="text-sm font-bold text-slate-900">{details?.hostel}</p>
                   {order.delivery_room && !order.delivery_room.includes("[CUSTOM FOOD ORDER]") && (
-                    <p className="text-xs text-muted-foreground">Room {order.delivery_room}</p>
+                    <p className="text-xs font-medium text-slate-500">Room {order.delivery_room}</p>
                   )}
                 </div>
-                <div className="glass rounded-xl p-3 border border-white/5">
-                  <p className="text-xs text-neon-orange font-bold uppercase mb-1 flex items-center gap-1"><Phone className="w-3 h-3" /> Contact</p>
-                  <p className="text-sm font-semibold">{order.buyer_phone || "—"}</p>
+                <div className="bg-slate-50 rounded-xl p-3 border border-slate-100">
+                  <p className="text-[10px] text-slate-400 font-bold uppercase mb-1 tracking-wider flex items-center gap-1"><Phone className="w-3 h-3" /> Contact</p>
+                  <p className="text-sm font-bold text-slate-900">{order.buyer_phone || "—"}</p>
                 </div>
               </div>
 
               {/* Food items list (only for food orders) */}
               {type === "food" && details?.items && (
-                <div className="mt-3 rounded-xl p-3 border border-orange-500/15" style={{ background: 'rgba(255,107,0,0.04)' }}>
-                  <p className="text-xs text-orange-400 font-bold uppercase mb-1.5">Items Ordered</p>
+                <div className="mt-3 rounded-xl p-4 bg-orange-50 border border-orange-100">
+                  <p className="text-[10px] text-orange-600/70 font-bold tracking-wider uppercase mb-2">Items Ordered</p>
                   {details.items.split("\n").filter(Boolean).map((line: string, i: number) => (
-                    <p key={i} className="text-sm text-white flex items-start gap-2">
+                    <p key={i} className="text-sm text-slate-800 font-medium flex items-start gap-2 mb-1">
                       <span className="text-orange-400 mt-0.5">•</span> {line.trim()}
                     </p>
                   ))}
                   {details.notes && (
-                    <p className="text-xs text-muted-foreground italic mt-1.5 pt-1.5 border-t border-orange-500/10">
-                      Notes: {details.notes}
+                    <p className="text-xs text-slate-500 font-medium mt-3 pt-3 border-t border-orange-200/50">
+                      <span className="font-bold text-slate-600">Notes:</span> {details.notes}
                     </p>
                   )}
                 </div>
@@ -287,56 +289,58 @@ export default function Tracking() {
 
             {/* ── Progress Timeline ─────────────────────────────────────── */}
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
-              className="glass rounded-3xl p-5 sm:p-6 mb-6 border border-white/5">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="font-bold text-lg">Delivery Progress</h2>
-                <div className="flex items-center gap-2">
-                  <div className="text-xs text-muted-foreground">{progressPercent}%</div>
-                  <div className="w-20 h-1.5 bg-white/10 rounded-full overflow-hidden">
-                    <motion.div className={`h-full rounded-full ${type === "food" ? "bg-gradient-to-r from-orange-500 to-red-500" : "bg-gradient-to-r from-neon-orange to-neon-cyan"}`}
+              className="bg-white rounded-3xl p-5 sm:p-6 mb-6 border border-slate-200 shadow-sm">
+              <div className="flex items-center justify-between mb-8">
+                <h2 className="font-bold text-lg text-slate-900">Delivery Progress</h2>
+                <div className="flex items-center gap-3">
+                  <div className="text-xs font-bold text-violet-600">{progressPercent}%</div>
+                  <div className="w-24 h-2 bg-slate-100 rounded-full overflow-hidden">
+                    <motion.div className={`h-full rounded-full ${type === "food" ? "bg-orange-500" : "bg-violet-600"}`}
                       initial={{ width: 0 }} animate={{ width: `${progressPercent}%` }} transition={{ duration: 1.2, ease: "easeOut" }} />
                   </div>
                 </div>
               </div>
 
               <div className="relative">
-                <div className="absolute left-5 top-5 bottom-5 w-0.5 bg-secondary" />
+                {/* Background line */}
+                <div className="absolute left-[21px] top-5 bottom-5 w-0.5 bg-slate-200" />
+                {/* Active line progress */}
                 <motion.div
-                  className={`absolute left-5 top-5 w-0.5 ${type === "food" ? "bg-gradient-to-b from-orange-500 to-red-500 shadow-[0_0_10px_rgba(255,107,0,0.6)]" : "bg-gradient-to-b from-neon-orange to-neon-cyan shadow-[0_0_10px_rgba(255,100,0,0.6)]"}`}
+                  className={`absolute left-[21px] top-5 w-0.5 ${type === "food" ? "bg-orange-500" : "bg-violet-600"}`}
                   initial={{ height: 0 }}
                   animate={{ height: `${progressPercent}%` }}
                   transition={{ duration: 1.5, ease: "easeInOut" }}
                 />
 
-                <div className="space-y-5">
+                <div className="space-y-6">
                   {steps.map((step, i) => {
                     const isDone = i < currentStepIndex;
                     const isActive = i === currentStepIndex;
                     return (
                       <motion.div key={step.key} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.3 + i * 0.08 }} className="flex items-start gap-4 relative">
-                        <div className={`relative z-10 w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300 ${isDone ? (type === "food" ? "bg-gradient-to-r from-orange-500 to-red-500 shadow-lg" : "bg-gradient-fire shadow-neon-fire") :
-                          isActive ? (type === "food" ? "bg-orange-500/30 shadow-lg border border-orange-500/50" : "bg-gradient-ocean shadow-neon-ocean animate-glow-pulse") :
-                            "bg-secondary border border-white/10"
+                        transition={{ delay: 0.3 + i * 0.08 }} className="flex items-start gap-5 relative">
+                        <div className={`relative z-10 w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300 ring-4 ring-white ${isDone ? (type === "food" ? "bg-orange-500 text-white" : "bg-violet-600 text-white") :
+                            isActive ? (type === "food" ? "bg-orange-100 text-orange-600 border-2 border-orange-500" : "bg-violet-100 text-violet-600 border-2 border-violet-600") :
+                              "bg-slate-100 text-slate-400"
                           }`}>
-                          {isDone ? <CheckCircle className="w-5 h-5 text-white" /> :
-                            <step.icon className={`w-5 h-5 ${isActive ? "text-white" : "text-muted-foreground"}`} />}
+                          {isDone ? <CheckCircle className="w-5 h-5 flex-shrink-0" /> :
+                            <step.icon className={`w-5 h-5 flex-shrink-0`} />}
                         </div>
-                        <div className="flex-1 pb-2">
-                          <div className="flex items-center flex-wrap gap-1">
-                            <p className={`font-semibold text-sm transition-colors duration-300 ${isActive ? (type === "food" ? "text-orange-400" : "text-neon-cyan") :
-                              isDone ? "text-foreground" : "text-muted-foreground"
+                        <div className="flex-1 pt-1.5 pb-2">
+                          <div className="flex items-center flex-wrap gap-2">
+                            <p className={`font-bold text-sm transition-colors duration-300 ${isActive ? (type === "food" ? "text-orange-600" : "text-violet-600") :
+                              isDone ? "text-slate-900" : "text-slate-500"
                               }`}>
                               {step.label}
                             </p>
                             {isActive && (
                               <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold tracking-widest uppercase ${type === "food"
-                                ? "bg-orange-500/20 border border-orange-500/40 text-orange-400"
-                                : "bg-neon-cyan/20 border border-neon-cyan/40 text-neon-cyan"
+                                ? "bg-orange-100 text-orange-600"
+                                : "bg-violet-100 text-violet-600"
                                 }`}>Now</span>
                             )}
                           </div>
-                          <p className={`text-xs mt-0.5 transition-colors duration-300 ${isDone || isActive ? "text-muted-foreground" : "text-muted-foreground/40"}`}>
+                          <p className={`text-xs mt-1 font-medium transition-colors duration-300 ${isDone || isActive ? "text-slate-500" : "text-slate-400"}`}>
                             {step.desc}
                           </p>
                         </div>
@@ -350,13 +354,13 @@ export default function Tracking() {
             {/* ── Completed Banner ──────────────────────────────────────── */}
             {isCompleted && (
               <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
-                className="glass rounded-2xl p-6 border border-green-500/30 bg-green-500/5 text-center">
-                <p className="text-2xl mb-2">🎉</p>
-                <p className="font-bold text-green-400 text-lg">Order Delivered!</p>
-                <p className="text-muted-foreground text-sm mt-1">
+                className="bg-emerald-50 rounded-2xl p-6 border border-emerald-200 text-center shadow-sm">
+                <p className="text-3xl mb-3">🎉</p>
+                <p className="font-black text-emerald-600 text-xl">Order Delivered!</p>
+                <p className="text-emerald-700/80 font-medium text-sm mt-1.5">
                   {type === "food" ? "Enjoy your food!" : "We hope you enjoy your purchase!"}
                 </p>
-                <Link to="/home" className="inline-block mt-4 px-6 py-2 rounded-xl bg-green-500/20 border border-green-500/30 text-green-400 text-sm font-bold hover:bg-green-500/30 transition-all">
+                <Link to="/home" className="inline-block mt-5 px-6 py-3 rounded-xl bg-emerald-600 text-white shadow-sm text-sm font-bold hover:bg-emerald-700 transition-colors">
                   Continue Shopping
                 </Link>
               </motion.div>

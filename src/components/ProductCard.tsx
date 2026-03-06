@@ -35,10 +35,10 @@ interface ProductCardProps {
 }
 
 const conditionColors: Record<string, string> = {
-  New: "bg-gradient-ocean text-white",
-  "Like New": "bg-gradient-fire text-white",
-  Good: "text-neon-yellow border border-yellow-500/30 bg-yellow-500/10",
-  Fair: "text-muted-foreground border border-white/10 bg-white/5",
+  New: "bg-emerald-100 text-emerald-700",
+  "Like New": "bg-violet-100 text-violet-700",
+  Good: "bg-amber-100 text-amber-700",
+  Fair: "bg-slate-100 text-slate-600",
 };
 
 export default function ProductCard({
@@ -102,12 +102,12 @@ export default function ProductCard({
         viewport={{ once: true }}
         transition={{ duration: 0.5, delay, ease: [0.34, 1.56, 0.64, 1] }}
         whileHover={{ y: -8, scale: 1.02 }}
-        className="relative glass rounded-2xl overflow-hidden group cursor-pointer h-full"
-        style={{ boxShadow: "0 4px 24px hsl(240 20% 2% / 0.5)" }}
+        className="relative bg-white rounded-2xl overflow-hidden group cursor-pointer h-full border border-slate-100"
+        style={{ boxShadow: "0 4px 20px rgba(0,0,0,0.05)" }}
       >
         {/* Badge */}
         {badge && (
-          <div className="absolute top-3 left-3 z-10 px-2 py-0.5 rounded-full text-xs font-bold bg-gradient-fire text-white shadow-neon-fire">
+          <div className="absolute top-3 left-3 z-10 px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#8B5CF6] text-white shadow-sm uppercase tracking-wider">
             {badge}
           </div>
         )}
@@ -117,9 +117,9 @@ export default function ProductCard({
           <motion.button
             onClick={handleFav}
             whileTap={{ scale: 0.75 }}
-            className={`w-8 h-8 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 ${isFav
-              ? 'bg-pink-500/90 text-white shadow-pink-500/30'
-              : 'premium-glass-button text-white/80 hover:text-neon-pink'
+            className={`w-8 h-8 rounded-full flex items-center justify-center shadow-sm transition-all duration-300 ${isFav
+              ? 'bg-pink-50 text-pink-500 shadow-pink-100'
+              : 'bg-white/80 backdrop-blur-md text-slate-400 hover:text-pink-500 hover:bg-white'
               }`}
           >
             <Heart className={`w-4 h-4 transition-all ${isFav ? 'fill-current scale-110' : ''}`} />
@@ -127,17 +127,17 @@ export default function ProductCard({
           <motion.button
             onClick={handleShare}
             whileTap={{ scale: 0.75 }}
-            className="premium-glass-button w-8 h-8 rounded-full flex items-center justify-center text-white/80 hover:text-neon-cyan shadow-lg transition-colors"
+            className="bg-white/80 backdrop-blur-md w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:text-violet-500 hover:bg-white shadow-sm transition-colors"
           >
             <Share2 className="w-3.5 h-3.5" />
           </motion.button>
         </div>
 
         {/* Image */}
-        <div className="relative overflow-hidden h-44 bg-white/5">
+        <div className="relative overflow-hidden h-44 bg-slate-50">
           {/* Skeleton shimmer while loading */}
           {!imgLoaded && !imgError && (
-            <div className="absolute inset-0 animate-pulse" style={{ background: 'linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.09) 50%, rgba(255,255,255,0.04) 75%)', backgroundSize: '200% 100%' }} />
+            <div className="absolute inset-0 animate-pulse" style={{ background: 'linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%)', backgroundSize: '200% 100%' }} />
           )}
           <img
             src={displaySrc}
@@ -147,40 +147,39 @@ export default function ProductCard({
             onLoad={() => setImgLoaded(true)}
             onError={() => { setImgError(true); setImgLoaded(true); }}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent opacity-60" />
         </div>
 
         {/* Content */}
         <div className="p-4 flex flex-col justify-between h-[calc(100%-11rem)]">
           <div>
             <div className="flex items-start justify-between gap-2 mb-2">
-              <h3 className="font-semibold text-sm text-foreground leading-tight line-clamp-2">{title}</h3>
+              <h3 className="font-semibold text-sm text-slate-900 leading-tight line-clamp-2">{title}</h3>
             </div>
 
             {/* Condition */}
-            <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium mb-3 ${conditionColors[condition]}`}>
+            <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] uppercase tracking-wider font-bold mb-3 ${conditionColors[condition]}`}>
               {condition}
             </span>
 
             {/* Seller */}
             <div className="flex items-center gap-1 mb-3">
-              <span className="text-xs text-muted-foreground">{seller}</span>
-              <BadgeCheck className="w-3.5 h-3.5 text-neon-cyan ml-0.5" />
+              <span className="text-xs text-slate-500 font-medium">{seller}</span>
+              <BadgeCheck className="w-3.5 h-3.5 text-violet-500 ml-0.5" />
               {rating && (
                 <>
                   <Star className="w-3 h-3 text-amber-400 fill-current ml-1" />
-                  <span className="text-xs text-muted-foreground">{rating}</span>
+                  <span className="text-xs text-slate-500 font-medium">{rating}</span>
                 </>
               )}
             </div>
           </div>
 
           {/* Price */}
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between mt-auto">
             <div>
-              <span className="font-bold text-lg text-neon-fire">₹{price.toLocaleString()}</span>
+              <span className="font-extrabold text-lg text-slate-900">₹{price.toLocaleString()}</span>
               {originalPrice && (
-                <span className="text-xs text-muted-foreground line-through ml-2">₹{originalPrice.toLocaleString()}</span>
+                <span className="text-xs text-slate-400 line-through ml-2">₹{originalPrice.toLocaleString()}</span>
               )}
             </div>
             <motion.button
@@ -191,7 +190,7 @@ export default function ProductCard({
                 toast({ title: `${title} added to cart` });
               }}
               whileTap={{ scale: 0.9 }}
-              className="premium-glass-button px-3 py-2 bg-white/10 hover:bg-white/20 text-white text-xs font-bold rounded-lg shadow-glass transition-colors flex items-center gap-1"
+              className="px-3 py-2 bg-violet-50 hover:bg-violet-100 text-violet-700 text-xs font-bold rounded-lg transition-colors flex items-center gap-1"
             >
               <ShoppingCart className="w-3.5 h-3.5" /> Cart
             </motion.button>

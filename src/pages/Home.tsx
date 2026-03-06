@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronRight, ChevronLeft, Grid3X3, Laptop, BookOpen, Shirt, Bike, Headphones, Camera, Sofa, Utensils, Loader2, ShoppingBag, ShoppingCart, X, MapPin, Phone, Home as HomeIcon, Zap, UtensilsCrossed, Package, Rocket, ShieldCheck, BadgePercent, Users, Plus, Shield, Ban, Headset, ExternalLink } from "lucide-react";
+import { ChevronRight, ChevronLeft, Grid3X3, Laptop, BookOpen, Shirt, Bike, Headphones, Camera, Sofa, Utensils, Loader2, ShoppingBag, ShoppingCart, X, MapPin, Phone, Home as HomeIcon, Zap, UtensilsCrossed, Package, Rocket, ShieldCheck, BadgePercent, Users, Plus, Shield, Ban, Headset, ExternalLink, Search } from "lucide-react";
 import ProductCard from "@/components/ProductCard";
 import PromoBanner from "@/components/PromoBanner";
 import { supabase } from "@/lib/supabase";
@@ -132,14 +132,12 @@ function FeatureCard({ card, index }: { card: FeatureCardType; index: number }) 
           style={{ perspective: '800px' }}
         >
           <div
-            className="relative p-4 rounded-xl transition-transform duration-200 ease-out h-full flex flex-col justify-between"
+            className="relative p-4 rounded-xl transition-transform duration-200 ease-out h-full flex flex-col justify-between bg-white border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.03)]"
             style={{
               transform: tilt.active
                 ? `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) scale(1.03)`
                 : 'rotateX(0) rotateY(0) scale(1)',
               transformStyle: 'preserve-3d',
-              border: `1px solid ${card.borderColor}`,
-              background: `linear-gradient(135deg, ${card.iconColor}0a, ${card.iconColor}04)`,
             }}
           >
             {/* Cursor light reflection */}
@@ -147,7 +145,7 @@ function FeatureCard({ card, index }: { card: FeatureCardType; index: number }) 
               <div
                 className="absolute inset-0 rounded-xl pointer-events-none z-0"
                 style={{
-                  background: `radial-gradient(circle at ${(tilt.y / 14 + 0.5) * 100}% ${(-tilt.x / 14 + 0.5) * 100}%, ${card.iconColor}15, transparent 60%)`,
+                  background: `radial-gradient(circle at ${(tilt.y / 14 + 0.5) * 100}% ${(-tilt.x / 14 + 0.5) * 100}%, ${card.iconColor}10, transparent 60%)`,
                 }}
               />
             )}
@@ -160,10 +158,10 @@ function FeatureCard({ card, index }: { card: FeatureCardType; index: number }) 
                 <card.icon className="w-[18px] h-[18px]" style={{ color: card.iconColor }} />
               </div>
               <div className="flex-1 min-w-0">
-                <h3 className="text-[13px] font-bold leading-tight mb-1.5" style={{ ...fontH, color: '#EDE6DE' }}>
+                <h3 className="text-[13px] font-bold leading-tight mb-1.5 text-slate-900" style={fontH}>
                   {card.title}
                 </h3>
-                <p className="text-[11px] leading-relaxed line-clamp-3" style={{ color: '#AEA397' }}>
+                <p className="text-[11px] leading-relaxed line-clamp-3 text-slate-500">
                   {card.desc}
                 </p>
               </div>
@@ -188,24 +186,24 @@ function GroceryBanner() {
       transition={{ delay: 0.1 }}
     >
       <Link to="/groceries" className="block mb-6 sm:mb-8 transition-transform active:scale-[0.98]">
-        <div className="relative overflow-hidden rounded-xl border" style={{ borderColor: 'rgba(16,185,129,0.3)', background: 'linear-gradient(90deg, rgba(16,185,129,0.1), rgba(16,185,129,0.02))' }}>
-          <div className="absolute top-0 right-0 bottom-0 w-32 bg-gradient-to-l from-[#10B981]/10 to-transparent pointer-events-none" />
+        <div className="relative overflow-hidden rounded-xl border border-emerald-100 bg-gradient-to-r from-emerald-50 to-white shadow-sm">
+          <div className="absolute top-0 right-0 bottom-0 w-32 bg-gradient-to-l from-emerald-100/30 to-transparent pointer-events-none" />
           <div className="px-4 py-3 xl:px-5 xl:py-3.5 flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 hidden xs:flex" style={{ backgroundColor: 'rgba(16,185,129,0.15)' }}>
-                <ShoppingBag className="w-4 h-4 text-emerald-400" />
+              <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 hidden xs:flex bg-emerald-100">
+                <ShoppingBag className="w-4 h-4 text-emerald-600" />
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <h3 className="text-sm border-b border-transparent sm:text-base font-bold text-white">Groceries & Daily Needs</h3>
-                  <span className="px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-wider bg-emerald-500 text-black">NEW</span>
+                  <h3 className="text-sm border-b border-transparent sm:text-base font-bold text-slate-900">Groceries & Daily Needs</h3>
+                  <span className="px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-wider bg-emerald-500 text-white">NEW</span>
                 </div>
-                <p className="text-[11px] sm:text-xs text-emerald-100/60 leading-tight">Delivered straight to your hostel block daily.</p>
+                <p className="text-[11px] sm:text-xs text-emerald-700/80 leading-tight">Delivered straight to your hostel block daily.</p>
               </div>
             </div>
             <div className="flex flex-shrink-0 items-center gap-1">
-              <span className="text-xs font-bold text-emerald-400 hidden sm:block">Shop Now</span>
-              <ChevronRight className="w-4 h-4 text-emerald-400" />
+              <span className="text-xs font-bold text-emerald-600 hidden sm:block">Shop Now</span>
+              <ChevronRight className="w-4 h-4 text-emerald-600" />
             </div>
           </div>
         </div>
@@ -256,17 +254,15 @@ function FeatureCarousel() {
         <div className="hidden sm:flex items-center gap-1.5">
           <button
             onClick={() => { const prev = Math.max(activeIdx - 1, 0); setActiveIdx(prev); scrollToIdx(prev); }}
-            className="w-7 h-7 rounded-full flex items-center justify-center transition-all hover:scale-110"
-            style={{ backgroundColor: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}
+            className="w-7 h-7 rounded-full flex items-center justify-center transition-all hover:scale-110 bg-white border border-slate-200 shadow-sm text-slate-400"
           >
-            <ChevronLeft className="w-3.5 h-3.5" style={{ color: '#AEA397' }} />
+            <ChevronLeft className="w-3.5 h-3.5" />
           </button>
           <button
             onClick={() => { const next = Math.min(activeIdx + 1, cardCount - 1); setActiveIdx(next); scrollToIdx(next); }}
-            className="w-7 h-7 rounded-full flex items-center justify-center transition-all hover:scale-110"
-            style={{ backgroundColor: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}
+            className="w-7 h-7 rounded-full flex items-center justify-center transition-all hover:scale-110 bg-white border border-slate-200 shadow-sm text-slate-400"
           >
-            <ChevronRight className="w-3.5 h-3.5" style={{ color: '#AEA397' }} />
+            <ChevronRight className="w-3.5 h-3.5" />
           </button>
         </div>
       </div>
@@ -291,7 +287,7 @@ function FeatureCarousel() {
             style={{
               width: activeIdx === i ? 16 : 5,
               height: 5,
-              backgroundColor: activeIdx === i ? '#FF6B6B' : 'rgba(255,255,255,0.12)',
+              backgroundColor: activeIdx === i ? '#8B5CF6' : '#E2E8F0',
             }}
           />
         ))}
@@ -452,24 +448,35 @@ export default function Home() {
   }));
 
   return (
-    <div className="min-h-screen bg-background pt-20 pb-20">
-      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-10">
+    <div className="min-h-screen bg-slate-50 pt-[4.5rem] pb-20">
+      {/* ─── Top Purple Header Section ─── */}
+      <div className="bg-[#8B5CF6] px-4 pt-8 pb-14 sm:px-6 lg:px-10 rounded-b-3xl sm:rounded-b-[2.5rem] mb-8 relative overflow-hidden shadow-sm">
+        <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent pointer-events-none" />
+        <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none" />
+        <div className="max-w-[1600px] mx-auto relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="pt-2 pb-2"
+          >
+            <p className="text-sm mb-1.5 font-medium text-white/90">
+              Welcome back, Student 👋
+            </p>
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white mb-6" style={fontH}>
+              Discover Campus <br className="hidden sm:block" />
+              <span className="text-emerald-300">Marketplace</span>
+            </h1>
 
-        {/* ─── Header ─── */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="pt-5 pb-6 sm:py-10"
-        >
-          <p className="text-xs sm:text-sm mb-1 sm:mb-2 font-medium tracking-wide" style={{ color: '#AEA397' }}>
-            Hey there, Student 👋
-          </p>
-          <h1 className="text-2xl sm:text-4xl lg:text-5xl font-bold tracking-tight" style={fontH}>
-            What are you{" "}
-            <span style={{ color: '#FF6B6B' }}>looking for</span>?
-          </h1>
-        </motion.div>
+            <Link to="/browse" className="flex items-center bg-white/20 hover:bg-white/30 transition-colors backdrop-blur-md px-4 py-3.5 rounded-2xl cursor-pointer text-white shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-white/20 max-w-2xl">
+              <Search className="w-5 h-5 mr-3 text-white" />
+              <span className="text-sm font-medium text-white">Search for books, gadgets, food...</span>
+            </Link>
+          </motion.div>
+        </div>
+      </div>
+
+      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-10">
 
         {/* ─── Promo Banner ─── */}
         <div className="mb-8 sm:mb-12">
@@ -492,16 +499,16 @@ export default function Home() {
         >
           {/* Animated border wrapper */}
           <div className="relative rounded-2xl sm:rounded-3xl p-[2px] overflow-hidden" style={{
-            background: 'linear-gradient(135deg, #FF6B6B, #F0C040, #FF6B6B, #4DB8AC, #FF6B6B)',
+            background: 'linear-gradient(135deg, #8B5CF6, #10B981, #3B82F6)',
             backgroundSize: '300% 300%',
             animation: 'sale-border-shift 4s ease infinite',
           }}>
-            <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden" style={{ backgroundColor: '#261F1B' }}>
+            <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden" style={{ backgroundColor: '#ffffff' }}>
 
               {/* Glowing orbs */}
-              <div className="absolute top-0 right-0 w-64 h-64 sm:w-96 sm:h-96 rounded-full blur-[100px] pointer-events-none" style={{ background: 'rgba(255,107,107,0.15)' }} />
-              <div className="absolute bottom-0 left-0 w-48 h-48 sm:w-72 sm:h-72 rounded-full blur-[80px] pointer-events-none" style={{ background: 'rgba(240,192,64,0.08)' }} />
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 rounded-full blur-[60px] pointer-events-none" style={{ background: 'rgba(77,184,172,0.06)' }} />
+              <div className="absolute top-0 right-0 w-64 h-64 sm:w-96 sm:h-96 rounded-full blur-[100px] pointer-events-none" style={{ background: 'rgba(139,92,246,0.15)' }} />
+              <div className="absolute bottom-0 left-0 w-48 h-48 sm:w-72 sm:h-72 rounded-full blur-[80px] pointer-events-none" style={{ background: 'rgba(16,185,129,0.1)' }} />
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 rounded-full blur-[60px] pointer-events-none" style={{ background: 'rgba(59,130,246,0.08)' }} />
 
 
               <div className="relative z-10 p-5 sm:p-8 lg:p-10">
@@ -515,28 +522,28 @@ export default function Home() {
                       whileInView={{ opacity: 1, x: 0 }}
                       viewport={{ once: true }}
                       className="inline-flex items-center gap-2 px-3 py-1 rounded-full mb-4"
-                      style={{ background: 'rgba(255,107,107,0.12)', border: '1px solid rgba(255,107,107,0.2)' }}
+                      style={{ background: 'rgba(139,92,246,0.1)', border: '1px solid rgba(139,92,246,0.2)' }}
                     >
                       <span className="relative flex h-2 w-2">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ backgroundColor: '#FF6B6B' }}></span>
-                        <span className="relative inline-flex rounded-full h-2 w-2" style={{ backgroundColor: '#FF6B6B' }}></span>
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ backgroundColor: '#8B5CF6' }}></span>
+                        <span className="relative inline-flex rounded-full h-2 w-2" style={{ backgroundColor: '#8B5CF6' }}></span>
                       </span>
-                      <span className="text-[10px] sm:text-xs font-bold uppercase tracking-widest" style={{ color: '#FF6B6B' }}>Summer Sale · Limited Time</span>
+                      <span className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-violet-600">Summer Sale · Limited Time</span>
                     </motion.div>
 
-                    <h2 className="text-2xl sm:text-4xl lg:text-5xl font-bold leading-[1.1] mb-2" style={fontH}>
-                      <span style={{ color: '#EDE6DE' }}>Something </span>
-                      <span className="relative" style={{ color: '#FF6B6B' }}>
+                    <h2 className="text-2xl sm:text-4xl lg:text-5xl font-bold leading-[1.1] mb-2 text-slate-900" style={fontH}>
+                      <span>Something </span>
+                      <span className="relative text-violet-600">
                         massive
-                        <svg className="absolute -bottom-1 left-0 w-full" viewBox="0 0 120 8" fill="none"><path d="M2 5C30 2 90 2 118 5" stroke="#FF6B6B" strokeWidth="2.5" strokeLinecap="round" opacity="0.5" /></svg>
+                        <svg className="absolute -bottom-1 left-0 w-full" viewBox="0 0 120 8" fill="none"><path d="M2 5C30 2 90 2 118 5" stroke="#8B5CF6" strokeWidth="2.5" strokeLinecap="round" opacity="0.3" /></svg>
                       </span>
-                      <span style={{ color: '#EDE6DE' }}> is coming</span>
+                      <span> is coming</span>
                     </h2>
 
-                    <p className="text-sm sm:text-base mb-1 max-w-md" style={{ color: 'rgba(232,222,212,0.5)' }}>
-                      March 20 · Up to <strong style={{ color: '#F0C040' }}>70% off</strong> on everything
+                    <p className="text-sm sm:text-base mb-1 max-w-md text-slate-500">
+                      March 20 · Up to <strong className="text-emerald-500">70% off</strong> on everything
                     </p>
-                    <p className="text-xs sm:text-sm mb-5" style={{ color: 'rgba(232,222,212,0.25)' }}>
+                    <p className="text-xs sm:text-sm mb-5 text-slate-400">
                       Exclusive for CU Students · First come, first served 🎯
                     </p>
 
@@ -550,11 +557,11 @@ export default function Home() {
                           { value: timeLeft.seconds, label: "Sec" }
                         ].map((t, i) => (
                           <div key={i} className="flex items-center gap-1 sm:gap-1.5">
-                            <div className="rounded-xl px-2.5 py-2 sm:px-3.5 sm:py-2.5 text-center min-w-[44px] sm:min-w-[56px]" style={{ backgroundColor: 'rgba(255,107,107,0.08)', border: '1px solid rgba(255,107,107,0.15)' }}>
-                              <div className="text-lg sm:text-2xl font-bold font-mono" style={{ color: '#EDE6DE' }}>{t.value}</div>
-                              <div className="text-[8px] sm:text-[10px] font-semibold uppercase tracking-wider" style={{ color: '#AEA397' }}>{t.label}</div>
+                            <div className="rounded-xl px-2.5 py-2 sm:px-3.5 sm:py-2.5 text-center min-w-[44px] sm:min-w-[56px] border border-violet-100 bg-violet-50">
+                              <div className="text-lg sm:text-2xl font-bold font-mono text-violet-600">{t.value}</div>
+                              <div className="text-[8px] sm:text-[10px] font-semibold uppercase tracking-wider text-violet-400">{t.label}</div>
                             </div>
-                            {i < 3 && <span className="text-lg font-bold" style={{ color: 'rgba(255,107,107,0.3)' }}>:</span>}
+                            {i < 3 && <span className="text-lg font-bold text-violet-300">:</span>}
                           </div>
                         ))}
                       </div>
@@ -568,13 +575,13 @@ export default function Home() {
                       <motion.div
                         animate={{ scale: [1, 1.03, 1] }}
                         transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
-                        className="text-5xl sm:text-7xl lg:text-8xl font-black select-none"
-                        style={{ ...fontH, color: 'rgba(255,107,107,0.12)', lineHeight: 1 }}
+                        className="text-5xl sm:text-7xl lg:text-8xl font-black select-none text-violet-50"
+                        style={{ ...fontH, lineHeight: 1 }}
                       >
                         70<span className="text-3xl sm:text-5xl">%</span>
                       </motion.div>
                       <div className="absolute inset-0 flex items-center justify-center">
-                        <span className="text-lg sm:text-2xl font-bold" style={{ color: '#FF6B6B' }}>UP TO</span>
+                        <span className="text-lg sm:text-2xl font-bold text-violet-500">UP TO</span>
                       </div>
                     </div>
 
@@ -582,8 +589,7 @@ export default function Home() {
                       onClick={handleRemindMe}
                       whileHover={{ y: -2, scale: 1.04 }}
                       whileTap={{ scale: 0.96 }}
-                      className={`group relative px-6 py-3 sm:px-8 sm:py-3.5 rounded-xl font-bold text-white text-xs sm:text-sm overflow-hidden transition-shadow ${isReminded ? 'bg-green-500' : ''}`}
-                      style={{ background: isReminded ? '#10B981' : '#FF6B6B', boxShadow: isReminded ? '0 4px 20px rgba(16,185,129,0.3)' : '0 4px 20px rgba(255,107,107,0.3)' }}
+                      className={`group relative px-6 py-3 sm:px-8 sm:py-3.5 rounded-xl font-bold text-white text-xs sm:text-sm overflow-hidden transition-shadow ${isReminded ? 'bg-emerald-500' : 'bg-violet-600 shadow-[0_4px_20px_rgba(139,92,246,0.3)] hover:shadow-[0_4px_25px_rgba(139,92,246,0.5)]'}`}
                     >
                       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
                       <span className="relative flex items-center gap-2" style={fontH}>
@@ -626,17 +632,11 @@ export default function Home() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.04 }}
-                className="group relative rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1.5 flex flex-col"
-                style={{
-                  backgroundColor: '#1E1814',
-                  border: '1px solid rgba(255,255,255,0.05)',
-                  boxShadow: '0 2px 16px rgba(0,0,0,0.2)',
-                }}
+                className="group relative rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1.5 flex flex-col bg-white border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.03)]"
               >
                 {/* Badge */}
                 {item.badge && (
-                  <div className="absolute top-2.5 left-2.5 z-10 px-2 py-0.5 rounded-full text-[10px] font-bold tracking-wide uppercase"
-                    style={{ background: 'rgba(255,107,107,0.9)', color: '#fff', backdropFilter: 'blur(4px)', letterSpacing: '0.04em' }}>
+                  <div className="absolute top-2.5 left-2.5 z-10 px-2 py-0.5 rounded-full text-[10px] font-bold tracking-wide uppercase bg-emerald-500 text-white shadow-sm">
                     {item.badge}
                   </div>
                 )}
@@ -651,13 +651,13 @@ export default function Home() {
                 </div>
 
                 {/* Content */}
-                <div className="p-3 sm:p-4 flex flex-col flex-1" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
-                  <p className="text-xs sm:text-[13px] font-semibold line-clamp-2 mb-2.5 leading-snug" style={{ color: '#D4C8BC' }}>{item.title}</p>
+                <div className="p-3 sm:p-4 flex flex-col flex-1 border-t border-slate-50">
+                  <p className="text-xs sm:text-[13px] font-semibold line-clamp-2 mb-2.5 leading-snug text-slate-800">{item.title}</p>
 
                   {/* Price */}
                   <div className="flex items-baseline gap-1.5 mb-3">
-                    <span className="text-lg sm:text-xl font-extrabold" style={{ color: '#FF6B6B' }}>₹{item.price}</span>
-                    <span className="text-[10px] font-medium" style={{ color: 'rgba(255,255,255,0.25)' }}>+ ₹10 delivery</span>
+                    <span className="text-lg sm:text-xl font-extrabold text-violet-600">₹{item.price}</span>
+                    <span className="text-[10px] font-medium text-slate-400">+ ₹10 delivery</span>
                   </div>
 
                   {/* Add to Cart button */}
@@ -666,12 +666,7 @@ export default function Home() {
                       addItem({ id: item.id, title: item.title, price: item.price, image: item.image, category: item.category });
                       toast.success(`${item.title} added to cart`);
                     }}
-                    className="w-full mt-auto py-2 sm:py-2.5 rounded-xl text-white text-[11px] sm:text-xs font-semibold flex items-center justify-center gap-1.5 transition-all duration-200 hover:brightness-110 active:scale-[0.97]"
-                    style={{
-                      background: 'linear-gradient(135deg, rgba(255,107,107,0.15), rgba(255,71,87,0.15))',
-                      border: '1px solid rgba(255,107,107,0.25)',
-                      color: '#FF6B6B',
-                    }}
+                    className="w-full mt-auto py-2 sm:py-2.5 rounded-xl text-violet-700 bg-violet-50 hover:bg-violet-100 text-[11px] sm:text-xs font-semibold flex items-center justify-center gap-1.5 transition-all duration-200 active:scale-[0.97]"
                   >
                     <ShoppingCart className="w-3.5 h-3.5" />
                     Add to Cart
@@ -694,63 +689,59 @@ export default function Home() {
               <motion.div
                 initial={{ y: 100, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 100, opacity: 0 }}
                 transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-                className="w-full sm:max-w-[420px] rounded-t-2xl sm:rounded-2xl overflow-hidden"
-                style={{ backgroundColor: '#3F3832', border: '1px solid #544B43' }}
+                className="w-full sm:max-w-[420px] rounded-t-2xl sm:rounded-2xl overflow-hidden bg-white shadow-2xl"
                 onClick={(e) => e.stopPropagation()}
               >
                 {/* Header */}
-                <div className="flex items-center justify-between p-4 sm:p-5" style={{ borderBottom: '1px solid #544B43' }}>
+                <div className="flex items-center justify-between p-4 sm:p-5 border-b border-slate-100">
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0" style={{ border: '1px solid #544B43' }}>
+                    <div className="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 border border-slate-100">
                       <img src={buyItem.image} alt={buyItem.title} className="w-full h-full object-cover" />
                     </div>
                     <div>
-                      <p className="text-sm font-bold" style={{ ...fontH, color: '#EDE6DE' }}>{buyItem.title}</p>
-                      <p className="text-base font-bold" style={{ color: '#FF6B6B' }}>₹{buyItem.price}</p>
+                      <p className="text-sm font-bold text-slate-900" style={fontH}>{buyItem.title}</p>
+                      <p className="text-base font-bold text-violet-600">₹{buyItem.price}</p>
                     </div>
                   </div>
-                  <button onClick={() => setBuyItem(null)} className="p-1.5 rounded-lg transition-colors" style={{ color: '#AEA397' }}>
+                  <button onClick={() => setBuyItem(null)} className="p-1.5 rounded-lg transition-colors text-slate-400 hover:bg-slate-50 hover:text-slate-600">
                     <X className="w-5 h-5" />
                   </button>
                 </div>
 
                 {/* Form */}
                 <div className="p-4 sm:p-5 space-y-3">
-                  <p className="text-xs font-medium mb-3" style={{ color: '#AEA397' }}>Where should we deliver? ⚡</p>
+                  <p className="text-xs font-medium mb-3 text-slate-500">Where should we deliver? ⚡</p>
 
                   <div className="relative">
-                    <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: '#AEA397' }} />
+                    <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                     <input
                       value={buyHostel} onChange={(e) => setBuyHostel(e.target.value)}
                       placeholder="Hostel Block (e.g. BH-1)"
-                      className="w-full rounded-xl pl-10 pr-4 h-[48px] text-sm focus:outline-none transition-all"
-                      style={{ backgroundColor: 'rgba(255,255,255,0.04)', color: '#EDE6DE', border: '1px solid #544B43' }}
+                      className="w-full rounded-xl pl-10 pr-4 h-[48px] text-sm focus:outline-none transition-all bg-slate-50 border border-slate-200 text-slate-900 focus:bg-white focus:border-violet-300 focus:ring-4 focus:ring-violet-50"
                     />
                   </div>
 
                   <div className="relative">
-                    <HomeIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: '#AEA397' }} />
+                    <HomeIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                     <input
                       value={buyRoom} onChange={(e) => setBuyRoom(e.target.value)}
                       placeholder="Room Number *"
-                      className="w-full rounded-xl pl-10 pr-4 h-[48px] text-sm focus:outline-none transition-all"
-                      style={{ backgroundColor: 'rgba(255,255,255,0.04)', color: '#EDE6DE', border: '1px solid #544B43' }}
+                      className="w-full rounded-xl pl-10 pr-4 h-[48px] text-sm focus:outline-none transition-all bg-slate-50 border border-slate-200 text-slate-900 focus:bg-white focus:border-violet-300 focus:ring-4 focus:ring-violet-50"
                     />
                   </div>
 
                   <div className="relative">
-                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: '#AEA397' }} />
+                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                     <input
                       value={buyPhone} onChange={(e) => setBuyPhone(e.target.value.replace(/\D/g, "").slice(0, 10))}
                       placeholder="10-digit Phone Number *"
                       type="tel"
                       maxLength={10}
-                      className="w-full rounded-xl pl-10 pr-4 h-[48px] text-sm focus:outline-none transition-all"
-                      style={{ backgroundColor: 'rgba(255,255,255,0.04)', color: '#EDE6DE', border: buyPhone.length > 0 && buyPhone.length !== 10 ? '1px solid rgba(255,80,80,0.5)' : '1px solid #544B43' }}
+                      className={`w-full rounded-xl pl-10 pr-4 h-[48px] text-sm focus:outline-none transition-all bg-slate-50 text-slate-900 border focus:bg-white focus:ring-4 ${buyPhone.length > 0 && buyPhone.length !== 10 ? 'border-red-300 focus:border-red-400 focus:ring-red-50' : 'border-slate-200 focus:border-violet-300 focus:ring-violet-50'}`}
                     />
                   </div>
                   {buyPhone.length > 0 && buyPhone.length !== 10 && (
-                    <p className="text-[11px] mt-1 px-1" style={{ color: '#FF5050' }}>Phone must be exactly 10 digits</p>
+                    <p className="text-[11px] mt-1 px-1 text-red-500">Phone must be exactly 10 digits</p>
                   )}
 
                   <PaymentSelector
@@ -767,13 +758,13 @@ export default function Home() {
                 </div>
 
                 {/* Footer */}
-                <div className="p-4 sm:p-5" style={{ borderTop: '1px solid #544B43' }}>
+                <div className="p-4 sm:p-5 border-t border-slate-100">
                   <motion.button
                     onClick={handleQuickBuy}
                     disabled={buyLoading || !buyHostel.trim() || !buyRoom.trim() || buyPhone.length !== 10}
                     whileTap={{ scale: 0.97 }}
                     className="w-full py-3.5 rounded-xl text-white font-bold text-sm transition-all disabled:opacity-40 disabled:cursor-not-allowed"
-                    style={{ ...fontH, background: (!buyHostel.trim() || !buyRoom.trim() || buyPhone.length !== 10) ? 'rgba(255,255,255,0.1)' : '#FF6B6B', boxShadow: '0 4px 16px rgba(255,107,107,0.25)' }}
+                    style={{ ...fontH, background: (!buyHostel.trim() || !buyRoom.trim() || buyPhone.length !== 10) ? '#cbd5e1' : '#8B5CF6', boxShadow: (!buyHostel.trim() || !buyRoom.trim() || buyPhone.length !== 10) ? 'none' : '0 4px 16px rgba(139,92,246,0.3)' }}
                   >
                     {buyLoading ? (
                       <Loader2 className="w-5 h-5 animate-spin mx-auto" />
@@ -863,9 +854,9 @@ export default function Home() {
             ) : (
               freshMapped.map((product) => (
                 <Link to={`/product/${product.id}`} key={`fresh-${product.id}`}
-                  className="rounded-xl sm:rounded-2xl overflow-hidden group block transition-all hover:-translate-y-1"
-                  style={{ backgroundColor: '#3F3832', border: '1px solid #544B43' }}>
-                  <div className="relative h-28 sm:h-36 overflow-hidden">
+                  className="rounded-xl sm:rounded-2xl overflow-hidden group block transition-all hover:-translate-y-1 bg-white border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.03)]"
+                >
+                  <div className="relative h-28 sm:h-36 overflow-hidden bg-slate-50">
                     <img src={product.image || `https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=400`} alt={product.title}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                       onError={(e) => {
@@ -881,11 +872,10 @@ export default function Home() {
                         };
                         (e.target as HTMLImageElement).src = (cat && FALLBACKS[cat]) || 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=400';
                       }} />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#3F3832]/80 to-transparent" />
                   </div>
-                  <div className="p-2.5 sm:p-3">
-                    <p className="text-[11px] sm:text-xs font-semibold line-clamp-1 mb-1" style={{ color: '#EDE6DE' }}>{product.title}</p>
-                    <p className="text-sm font-bold" style={{ color: '#FF6B6B' }}>₹{product.price.toLocaleString()}</p>
+                  <div className="p-2.5 sm:p-3 border-t border-slate-50">
+                    <p className="text-[11px] sm:text-xs font-semibold line-clamp-1 mb-1 text-slate-900">{product.title}</p>
+                    <p className="text-sm font-bold text-violet-600">₹{product.price.toLocaleString()}</p>
                   </div>
                 </Link>
               ))
@@ -899,17 +889,16 @@ export default function Home() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="rounded-2xl sm:rounded-3xl overflow-hidden"
-            style={{ background: 'linear-gradient(135deg, rgba(16,185,129,0.06), rgba(6,182,212,0.04))', border: '1px solid rgba(16,185,129,0.12)' }}
+            className="rounded-2xl sm:rounded-3xl overflow-hidden bg-emerald-50 border border-emerald-100/50"
           >
             {/* Header */}
             <div className="px-5 pt-5 pb-3 sm:px-8 sm:pt-7 sm:pb-4 text-center">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full mb-3" style={{ background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.2)' }}>
-                <Shield className="w-3.5 h-3.5 text-emerald-400" />
-                <span className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-emerald-400">Safe & Trusted</span>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full mb-3 bg-emerald-100 border border-emerald-200">
+                <Shield className="w-3.5 h-3.5 text-emerald-600" />
+                <span className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-emerald-700">Safe & Trusted</span>
               </div>
-              <h2 className="text-lg sm:text-2xl font-black mb-1" style={{ ...fontH, color: '#EDE6DE' }}>Your Safety is Our Priority</h2>
-              <p className="text-xs sm:text-sm max-w-lg mx-auto" style={{ color: 'rgba(255,255,255,0.4)' }}>CU Bazzar is run with full transparency. Every delivery is handled personally with zero tolerance for prohibited items.</p>
+              <h2 className="text-lg sm:text-2xl font-black mb-1 text-slate-900" style={fontH}>Your Safety is Our Priority</h2>
+              <p className="text-xs sm:text-sm max-w-lg mx-auto text-slate-600">CU Bazzar is run with full transparency. Every delivery is handled personally with zero tolerance for prohibited items.</p>
             </div>
 
             {/* Trust Pillars */}
@@ -920,32 +909,32 @@ export default function Home() {
                   title: "Personal Delivery",
                   desc: "Platform owner personally handles every single delivery. No third parties.",
                   color: "#10B981",
-                  bg: "rgba(16,185,129,0.08)",
-                  border: "rgba(16,185,129,0.15)",
+                  bg: "#ffffff",
+                  border: "#d1fae5",
                 },
                 {
                   icon: Ban,
                   title: "No Illegal Items",
                   desc: "Strict zero-tolerance policy. No drugs, alcohol, weapons, or prohibited goods.",
                   color: "#F43F5E",
-                  bg: "rgba(244,63,94,0.08)",
-                  border: "rgba(244,63,94,0.15)",
+                  bg: "#ffffff",
+                  border: "#ffe4e6",
                 },
                 {
                   icon: ShieldCheck,
                   title: "Direct Accountability",
                   desc: "Real person, real responsibility. We stand behind every order and transaction.",
                   color: "#3B82F6",
-                  bg: "rgba(59,130,246,0.08)",
-                  border: "rgba(59,130,246,0.15)",
+                  bg: "#ffffff",
+                  border: "#dbeafe",
                 },
                 {
                   icon: Headset,
                   title: "24/7 Help Center",
                   desc: "Need help? Our support is available round the clock. Instant response guaranteed.",
-                  color: "#A78BFA",
-                  bg: "rgba(167,139,250,0.08)",
-                  border: "rgba(167,139,250,0.15)",
+                  color: "#8B5CF6",
+                  bg: "#ffffff",
+                  border: "#ede9fe",
                 },
               ].map((item, i) => (
                 <motion.div
@@ -954,14 +943,14 @@ export default function Home() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.08 }}
-                  className="rounded-xl sm:rounded-2xl p-3.5 sm:p-5 flex flex-col transition-all duration-300 hover:-translate-y-0.5"
+                  className="rounded-xl sm:rounded-2xl p-3.5 sm:p-5 flex flex-col transition-all duration-300 hover:-translate-y-0.5 shadow-sm"
                   style={{ background: item.bg, border: `1px solid ${item.border}` }}
                 >
-                  <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center mb-3" style={{ background: item.bg, border: `1px solid ${item.border}` }}>
+                  <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center mb-3" style={{ background: `${item.color}10`, border: `1px solid ${item.color}20` }}>
                     <item.icon className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: item.color }} />
                   </div>
-                  <h3 className="text-xs sm:text-sm font-bold mb-1" style={{ color: '#EDE6DE' }}>{item.title}</h3>
-                  <p className="text-[10px] sm:text-xs leading-relaxed" style={{ color: 'rgba(255,255,255,0.35)' }}>{item.desc}</p>
+                  <h3 className="text-xs sm:text-sm font-bold mb-1 text-slate-900">{item.title}</h3>
+                  <p className="text-[10px] sm:text-xs leading-relaxed text-slate-500">{item.desc}</p>
                 </motion.div>
               ))}
             </div>
@@ -970,8 +959,7 @@ export default function Home() {
             <div className="px-4 pb-5 sm:px-6 sm:pb-7">
               <Link
                 to="/help"
-                className="flex items-center justify-center gap-2 w-full sm:w-auto sm:mx-auto px-6 py-3 rounded-xl text-sm font-semibold transition-all hover:brightness-110 active:scale-[0.98]"
-                style={{ background: 'rgba(16,185,129,0.12)', border: '1px solid rgba(16,185,129,0.2)', color: '#10B981' }}
+                className="flex items-center justify-center gap-2 w-full sm:w-auto sm:mx-auto px-6 py-3 rounded-xl text-sm font-semibold transition-all hover:scale-105 active:scale-[0.98] bg-white border border-emerald-200 text-emerald-600 shadow-sm"
               >
                 <Headset className="w-4 h-4" />
                 Visit Help Center

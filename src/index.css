@@ -5,82 +5,79 @@
 @tailwind utilities;
 
 @layer base {
-  :root {
-    /* ─── Warm Dark Mode (bright) ─── */
-    --background: 18 14% 18%;
-    /* #332C27 – warm charcoal */
-    --foreground: 30 20% 92%;
-    /* #EDE6DE */
+  /* ─── Clean Light Mode ─── */
+  --background: 0 0% 98%;
+  /* #FAFAFA */
+  --foreground: 222.2 84% 4.9%;
+  /* #0F172A */
 
-    --card: 18 12% 24%;
-    /* #3F3832 – visible card */
-    --card-foreground: 30 20% 92%;
+  --card: 0 0% 100%;
+  /* #FFFFFF */
+  --card-foreground: 222.2 84% 4.9%;
 
-    --popover: 18 12% 24%;
-    --popover-foreground: 30 20% 92%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222.2 84% 4.9%;
 
-    /* Coral primary */
-    --primary: 0 100% 71%;
-    /* #FF6B6B */
-    --primary-foreground: 0 0% 100%;
+  /* Purple primary */
+  --primary: 267 90% 60%;
+  /* #9b3aff ish */
+  --primary-foreground: 0 0% 100%;
 
-    /* Warm teal accent */
-    --accent: 174 40% 50%;
-    /* #4DB8AC */
-    --accent-foreground: 30 20% 92%;
+  /* Emerald green accent */
+  --accent: 142 71% 45%;
+  /* #10b981 */
+  --accent-foreground: 0 0% 100%;
 
-    /* Secondary */
-    --secondary: 18 10% 26%;
-    --secondary-foreground: 30 20% 92%;
+  /* Secondary */
+  --secondary: 210 40% 96.1%;
+  --secondary-foreground: 222.2 47.4% 11.2%;
 
-    /* Muted tones */
-    --muted: 18 8% 26%;
-    --muted-foreground: 25 12% 65%;
-    /* #AEA397 – clearly readable */
+  /* Muted tones */
+  --muted: 210 40% 96.1%;
+  --muted-foreground: 215.4 16.3% 46.9%;
+  /* #64748B */
 
-    --destructive: 0 85% 60%;
-    --destructive-foreground: 0 0% 100%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 210 40% 98%;
 
-    --border: 18 8% 32%;
-    /* #544B43 – clearly visible */
-    --input: 18 10% 20%;
-    --ring: 0 100% 71%;
+  --border: 214.3 31.8% 91.4%;
+  /* #E2E8F0 */
+  --input: 214.3 31.8% 91.4%;
+  --ring: 267 90% 60%;
 
-    --radius: 0.75rem;
+  --radius: 1rem;
 
-    /* Accent palette */
-    --neon-orange: 0 100% 71%;
-    --neon-pink: 330 60% 55%;
-    --neon-cyan: 174 40% 50%;
-    --neon-blue: 215 55% 55%;
-    --neon-yellow: 40 80% 55%;
+  /* Accent palette */
+  --neon-orange: 24 98% 50%;
+  --neon-pink: 330 80% 60%;
+  --neon-cyan: 190 90% 45%;
+  --neon-blue: 220 90% 55%;
+  --neon-yellow: 45 95% 50%;
 
-    /* Glass */
-    --glass-bg: 18 12% 22%;
-    --glass-border: 18 8% 32%;
+  /* Glass */
+  --glass-bg: 0 0% 100%;
+  --glass-border: 214.3 31.8% 91.4%;
 
-    /* Gradients */
-    --gradient-fire: linear-gradient(135deg, #FF6B6B, #FF8E8E);
-    --gradient-ocean: linear-gradient(135deg, #4DB8AC, #3D9B8F);
-    --gradient-aurora: linear-gradient(135deg, #FF6B6B, #9B59B6, #4DB8AC);
-    --gradient-card: linear-gradient(145deg, #3F3832, #362F2A);
+  /* Gradients */
+  --gradient-fire: linear-gradient(135deg, hsl(267, 90%, 60%), hsl(267, 80%, 75%));
+  --gradient-ocean: linear-gradient(135deg, #10b981, #34d399);
+  --gradient-aurora: linear-gradient(135deg, hsl(267, 90%, 60%), #10b981, #3b82f6);
+  --gradient-card: linear-gradient(145deg, #ffffff, #f8fafc);
 
-    /* Shadows */
-    --shadow-neon-fire: 0 4px 20px rgba(255, 107, 107, 0.2);
-    --shadow-neon-ocean: 0 4px 20px rgba(77, 184, 172, 0.2);
-    --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.15);
-    --shadow-glass: 0 4px 16px rgba(0, 0, 0, 0.12);
+  /* Shadows */
+  --shadow-neon-fire: 0 4px 20px rgba(139, 92, 246, 0.2);
+  --shadow-neon-ocean: 0 4px 20px rgba(16, 185, 129, 0.2);
+  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.05);
+  --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.08);
 
-    /* Sidebar */
-    --sidebar-background: 18 14% 14%;
-    --sidebar-foreground: 30 20% 92%;
-    --sidebar-primary: 0 100% 71%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 18 10% 26%;
-    --sidebar-accent-foreground: 30 20% 92%;
-    --sidebar-border: 18 8% 32%;
-    --sidebar-ring: 0 100% 71%;
-  }
+  /* Sidebar */
+  --sidebar-background: 0 0% 100%;
+  --sidebar-foreground: 222.2 84% 4.9%;
+  --sidebar-primary: 267 90% 60%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 210 40% 96.1%;
+  --sidebar-accent-foreground: 222.2 47.4% 11.2%;
+  --sidebar-border: 214.3 31.8% 91.4%;
 }
 
 @layer base {

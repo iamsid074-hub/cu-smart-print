@@ -130,12 +130,7 @@ export default function UpiPaymentModal({
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.9, y: 30 }}
                         transition={{ type: "spring", stiffness: 350, damping: 30 }}
-                        className="relative w-full max-w-sm mx-4 rounded-[24px] overflow-hidden"
-                        style={{
-                            background: '#0D0606',
-                            border: '1px solid rgba(255,255,255,0.12)',
-                            boxShadow: '0 25px 60px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.05), inset 0 1px 0 rgba(255,255,255,0.06)'
-                        }}
+                        className="relative w-full max-w-sm mx-4 bg-white rounded-[24px] overflow-hidden border border-slate-100 shadow-[0_25px_60px_rgba(0,0,0,0.1)]"
                     >
                         <AnimatePresence mode="wait">
                             {/* ───────── LOADING / OPENING CHECKOUT ───────── */}
@@ -150,11 +145,11 @@ export default function UpiPaymentModal({
                                     <div className="relative">
                                         <Loader2 className="w-14 h-14 text-green-400 animate-spin" />
                                         <div className="absolute inset-0 flex items-center justify-center">
-                                            <CreditCard className="w-6 h-6 text-green-400/60" />
+                                            <CreditCard className="w-6 h-6 text-emerald-500/60" />
                                         </div>
                                     </div>
-                                    <p className="text-lg font-bold text-white">Opening Checkout...</p>
-                                    <p className="text-xs text-muted-foreground text-center">
+                                    <p className="text-lg font-bold text-slate-900">Opening Checkout...</p>
+                                    <p className="text-xs text-slate-500 text-center">
                                         Preparing secure payment of ₹{amount.toLocaleString()}
                                     </p>
                                 </motion.div>
@@ -169,9 +164,9 @@ export default function UpiPaymentModal({
                                     exit={{ opacity: 0 }}
                                     className="flex flex-col items-center justify-center py-16 px-6 space-y-4"
                                 >
-                                    <Loader2 className="w-14 h-14 text-green-400 animate-spin" />
-                                    <p className="text-lg font-bold text-white">Verifying Payment...</p>
-                                    <p className="text-xs text-muted-foreground">Confirming with payment gateway</p>
+                                    <Loader2 className="w-14 h-14 text-emerald-500 animate-spin" />
+                                    <p className="text-lg font-bold text-slate-900">Verifying Payment...</p>
+                                    <p className="text-xs text-slate-500">Confirming with payment gateway</p>
                                 </motion.div>
                             )}
 
@@ -189,10 +184,10 @@ export default function UpiPaymentModal({
                                         animate={{ scale: 1 }}
                                         transition={{ type: "spring", stiffness: 400, delay: 0.1 }}
                                     >
-                                        <CheckCircle className="w-20 h-20 text-green-400" />
+                                        <CheckCircle className="w-20 h-20 text-emerald-500" />
                                     </motion.div>
-                                    <p className="text-xl font-black text-white">Payment Successful! 🎉</p>
-                                    <p className="text-sm text-green-400 font-medium">Order placed — redirecting...</p>
+                                    <p className="text-xl font-black text-slate-900">Payment Successful! 🎉</p>
+                                    <p className="text-sm text-emerald-600 font-medium">Order placed — redirecting...</p>
                                 </motion.div>
                             )}
 
@@ -206,23 +201,22 @@ export default function UpiPaymentModal({
                                     className="flex flex-col items-center justify-center py-12 px-6 space-y-5"
                                 >
                                     <div className="w-16 h-16 rounded-full bg-red-500/15 flex items-center justify-center">
-                                        <AlertCircle className="w-9 h-9 text-red-400" />
+                                        <AlertCircle className="w-9 h-9 text-red-500" />
                                     </div>
                                     <div className="text-center space-y-1">
-                                        <p className="text-lg font-bold text-white">Payment Failed</p>
-                                        <p className="text-sm text-muted-foreground">{errorMsg}</p>
+                                        <p className="text-lg font-bold text-slate-900">Payment Failed</p>
+                                        <p className="text-sm text-slate-500">{errorMsg}</p>
                                     </div>
                                     <div className="flex gap-3 w-full">
                                         <button
                                             onClick={onClose}
-                                            className="flex-1 py-3 rounded-xl text-muted-foreground font-medium text-sm border border-white/10 hover:bg-white/5 transition-all"
+                                            className="flex-1 py-3 rounded-xl text-slate-600 font-medium text-sm border border-slate-200 hover:bg-slate-50 transition-all shadow-sm"
                                         >
                                             Cancel
                                         </button>
                                         <button
                                             onClick={handleRetry}
-                                            className="flex-1 py-3 rounded-xl text-white font-bold text-sm transition-all hover:scale-[1.02] active:scale-[0.98]"
-                                            style={{ background: 'linear-gradient(135deg, #10B981, #059669)' }}
+                                            className="flex-1 py-3 rounded-xl text-white font-bold text-sm transition-all hover:scale-[1.02] active:scale-[0.98] shadow-sm bg-violet-600 hover:bg-violet-700"
                                         >
                                             Retry
                                         </button>
