@@ -132,7 +132,7 @@ function FeatureCard({ card, index }: { card: FeatureCardType; index: number }) 
           style={{ perspective: '800px' }}
         >
           <div
-            className="relative p-4 rounded-xl transition-transform duration-200 ease-out h-full flex flex-col justify-between bg-white border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.03)]"
+            className="relative p-4 rounded-xl transition-transform duration-200 ease-out h-full flex flex-col justify-between bg-white border border-slate-900 shadow-[2px_2px_0px_rgba(15,23,42,0.1)] hover:shadow-[4px_4px_0px_rgba(15,23,42,0.15)]"
             style={{
               transform: tilt.active
                 ? `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) scale(1.03)`
@@ -186,24 +186,24 @@ function GroceryBanner() {
       transition={{ delay: 0.1 }}
     >
       <Link to="/groceries" className="block mb-6 sm:mb-8 transition-transform active:scale-[0.98]">
-        <div className="relative overflow-hidden rounded-xl border border-emerald-100 bg-gradient-to-r from-emerald-50 to-white shadow-sm">
-          <div className="absolute top-0 right-0 bottom-0 w-32 bg-gradient-to-l from-emerald-100/30 to-transparent pointer-events-none" />
+        <div className="relative overflow-hidden rounded-xl border border-emerald-600 bg-gradient-to-r from-emerald-500 to-emerald-600 shadow-md">
+          <div className="absolute top-0 right-0 bottom-0 w-32 bg-gradient-to-l from-emerald-400/30 to-transparent pointer-events-none" />
           <div className="px-4 py-3 xl:px-5 xl:py-3.5 flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 hidden xs:flex bg-emerald-100">
-                <ShoppingBag className="w-4 h-4 text-emerald-600" />
+              <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 hidden xs:flex bg-emerald-400/30">
+                <ShoppingBag className="w-4 h-4 text-white" />
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <h3 className="text-sm border-b border-transparent sm:text-base font-bold text-slate-900">Groceries & Daily Needs</h3>
-                  <span className="px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-wider bg-emerald-500 text-white">NEW</span>
+                  <h3 className="text-sm border-b border-transparent sm:text-base font-bold text-white">Groceries & Daily Needs</h3>
+                  <span className="px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-wider bg-emerald-800 text-emerald-100">NEW</span>
                 </div>
-                <p className="text-[11px] sm:text-xs text-emerald-700/80 leading-tight">Delivered straight to your hostel block daily.</p>
+                <p className="text-[11px] sm:text-xs text-emerald-50 leading-tight">Delivered straight to your hostel block daily.</p>
               </div>
             </div>
             <div className="flex flex-shrink-0 items-center gap-1">
-              <span className="text-xs font-bold text-emerald-600 hidden sm:block">Shop Now</span>
-              <ChevronRight className="w-4 h-4 text-emerald-600" />
+              <span className="text-xs font-bold text-white hidden sm:block">Shop Now</span>
+              <ChevronRight className="w-4 h-4 text-white" />
             </div>
           </div>
         </div>
@@ -495,21 +495,24 @@ export default function Home() {
           className="mb-8 sm:mb-12"
         >
           {/* Animated border wrapper */}
-          <div className="relative rounded-3xl sm:rounded-[2rem] p-[2px] overflow-hidden" style={{
-            background: 'linear-gradient(135deg, #8B5CF6, #10B981, #3B82F6)',
+          <div className="relative rounded-3xl sm:rounded-[2rem] p-[3px] overflow-hidden" style={{
+            background: 'linear-gradient(135deg, #FFD700, #F59E0B, #EC4899, #8B5CF6)',
             backgroundSize: '300% 300%',
             animation: 'sale-border-shift 4s ease infinite',
+            boxShadow: '0 10px 40px -10px rgba(139,92,246,0.5)'
           }}>
-            <div className="relative rounded-3xl sm:rounded-[2rem] overflow-hidden" style={{ backgroundColor: '#ffffff' }}>
+            <div className="relative rounded-3xl sm:rounded-[2rem] overflow-hidden bg-slate-900" style={{ backgroundImage: 'radial-gradient(circle at top right, #312e81, #0f172a)' }}>
 
               {/* Glowing orbs */}
-              <div className="absolute top-0 right-0 w-64 h-64 sm:w-96 sm:h-96 rounded-full blur-[100px] pointer-events-none" style={{ background: 'rgba(139,92,246,0.15)' }} />
-              <div className="absolute bottom-0 left-0 w-48 h-48 sm:w-72 sm:h-72 rounded-full blur-[80px] pointer-events-none" style={{ background: 'rgba(16,185,129,0.1)' }} />
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 rounded-full blur-[60px] pointer-events-none" style={{ background: 'rgba(59,130,246,0.08)' }} />
+              <div className="absolute top-0 right-0 w-64 h-64 sm:w-96 sm:h-96 rounded-full blur-[100px] pointer-events-none" style={{ background: 'rgba(139,92,246,0.25)' }} />
+              <div className="absolute bottom-0 left-0 w-48 h-48 sm:w-72 sm:h-72 rounded-full blur-[80px] pointer-events-none" style={{ background: 'rgba(236,72,153,0.15)' }} />
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 rounded-full blur-[60px] pointer-events-none" style={{ background: 'rgba(245,158,11,0.1)' }} />
 
+              {/* Grid pattern overlay */}
+              <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
 
-              <div className="relative z-10 p-5 sm:p-8 lg:p-10">
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
+              <div className="relative z-10 p-6 sm:p-10 lg:p-12">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-8">
 
                   {/* Left — Main content */}
                   <div className="flex-1">
@@ -518,30 +521,30 @@ export default function Home() {
                       initial={{ opacity: 0, x: -10 }}
                       whileInView={{ opacity: 1, x: 0 }}
                       viewport={{ once: true }}
-                      className="inline-flex items-center gap-2 px-3 py-1 rounded-full mb-4"
-                      style={{ background: 'rgba(139,92,246,0.1)', border: '1px solid rgba(139,92,246,0.2)' }}
+                      className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-6"
+                      style={{ background: 'linear-gradient(90deg, rgba(255,215,0,0.15), rgba(245,158,11,0.05))', border: '1px solid rgba(255,215,0,0.3)' }}
                     >
-                      <span className="relative flex h-2 w-2">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ backgroundColor: '#8B5CF6' }}></span>
-                        <span className="relative inline-flex rounded-full h-2 w-2" style={{ backgroundColor: '#8B5CF6' }}></span>
+                      <span className="relative flex h-2.5 w-2.5">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ backgroundColor: '#FFD700' }}></span>
+                        <span className="relative inline-flex rounded-full h-2.5 w-2.5" style={{ backgroundColor: '#F59E0B' }}></span>
                       </span>
-                      <span className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-violet-600">Summer Sale · Limited Time</span>
+                      <span className="text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] text-[#FFD700]">Summer Sale · Special Offer</span>
                     </motion.div>
 
-                    <h2 className="text-2xl sm:text-4xl lg:text-5xl font-bold leading-[1.1] mb-2 text-slate-900" style={fontH}>
+                    <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black leading-[1.1] mb-4 text-white tracking-tight" style={fontH}>
                       <span>Something </span>
-                      <span className="relative text-violet-600">
+                      <span className="relative text-transparent bg-clip-text bg-gradient-to-r from-[#FFD700] to-[#F59E0B] drop-shadow-sm">
                         massive
-                        <svg className="absolute -bottom-1 left-0 w-full" viewBox="0 0 120 8" fill="none"><path d="M2 5C30 2 90 2 118 5" stroke="#8B5CF6" strokeWidth="2.5" strokeLinecap="round" opacity="0.3" /></svg>
+                        <svg className="absolute -bottom-2 left-0 w-full" viewBox="0 0 120 8" fill="none"><path d="M2 5C30 2 90 2 118 5" stroke="#FFD700" strokeWidth="3" strokeLinecap="round" opacity="0.6" /></svg>
                       </span>
                       <span> is coming</span>
                     </h2>
 
-                    <p className="text-sm sm:text-base mb-1 max-w-md text-slate-500">
-                      March 20 · Up to <strong className="text-emerald-500">70% off</strong> on everything
+                    <p className="text-base sm:text-lg mb-2 max-w-md text-slate-300 font-medium">
+                      March 20 · Up to <strong className="text-[#FFD700] font-black tracking-wide text-xl">70% OFF</strong> on everything
                     </p>
-                    <p className="text-xs sm:text-sm mb-5 text-slate-400">
-                      Exclusive for CU Students · First come, first served 🎯
+                    <p className="text-sm sm:text-base mb-8 text-slate-400 font-medium tracking-wide">
+                      Exclusive for CU Students · Limited stock 🚀
                     </p>
 
                     {/* Countdown */}
@@ -554,11 +557,11 @@ export default function Home() {
                           { value: timeLeft.seconds, label: "Sec" }
                         ].map((t, i) => (
                           <div key={i} className="flex items-center gap-1 sm:gap-1.5">
-                            <div className="rounded-xl px-2.5 py-2 sm:px-3.5 sm:py-2.5 text-center min-w-[44px] sm:min-w-[56px] border border-violet-100 bg-violet-50">
-                              <div className="text-lg sm:text-2xl font-bold font-mono text-violet-600">{t.value}</div>
-                              <div className="text-[8px] sm:text-[10px] font-semibold uppercase tracking-wider text-violet-400">{t.label}</div>
+                            <div className="rounded-xl px-3 py-2.5 sm:px-4 sm:py-3 text-center min-w-[50px] sm:min-w-[64px] border border-white/10 bg-white/5 backdrop-blur-md shadow-inner">
+                              <div className="text-xl sm:text-3xl font-black font-mono text-white tracking-wider">{t.value}</div>
+                              <div className="text-[8px] sm:text-[10px] font-bold uppercase tracking-widest text-[#FFD700]">{t.label}</div>
                             </div>
-                            {i < 3 && <span className="text-lg font-bold text-violet-300">:</span>}
+                            {i < 3 && <span className="text-xl sm:text-2xl font-black text-white/30">:</span>}
                           </div>
                         ))}
                       </div>
@@ -566,30 +569,30 @@ export default function Home() {
                   </div>
 
                   {/* Right — Big discount + CTA */}
-                  <div className="flex flex-row sm:flex-col items-center sm:items-end gap-4">
+                  <div className="flex flex-row sm:flex-col items-center sm:items-end gap-6">
                     {/* Giant percentage */}
                     <div className="relative">
                       <motion.div
-                        animate={{ scale: [1, 1.03, 1] }}
-                        transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
-                        className="text-5xl sm:text-7xl lg:text-8xl font-black select-none text-violet-50"
-                        style={{ ...fontH, lineHeight: 1 }}
+                        animate={{ scale: [1, 1.05, 1], rotate: [0, 2, -2, 0] }}
+                        transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+                        className="text-6xl sm:text-8xl lg:text-[140px] font-black select-none text-transparent bg-clip-text bg-gradient-to-br from-white to-white/20"
+                        style={{ ...fontH, lineHeight: 1, filter: 'drop-shadow(0 10px 20px rgba(0,0,0,0.5))' }}
                       >
-                        70<span className="text-3xl sm:text-5xl">%</span>
+                        70<span className="text-4xl sm:text-6xl lg:text-8xl">%</span>
                       </motion.div>
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <span className="text-lg sm:text-2xl font-bold text-violet-500">UP TO</span>
+                      <div className="absolute top-0 right-[-20px] sm:right-[-40px]">
+                        <span className="px-3 py-1 rounded-full bg-[#FFD700] text-slate-900 text-xs sm:text-sm font-black transform rotate-12 inline-block">UP TO</span>
                       </div>
                     </div>
 
                     <motion.button
                       onClick={handleRemindMe}
-                      whileHover={{ y: -2, scale: 1.04 }}
-                      whileTap={{ scale: 0.96 }}
-                      className={`group relative px-6 py-3 sm:px-8 sm:py-3.5 rounded-xl font-bold text-white text-xs sm:text-sm overflow-hidden transition-shadow ${isReminded ? 'bg-emerald-500' : 'bg-violet-600 shadow-[0_4px_20px_rgba(139,92,246,0.3)] hover:shadow-[0_4px_25px_rgba(139,92,246,0.5)]'}`}
+                      whileHover={{ y: -2, scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className={`group relative px-8 py-4 sm:px-10 sm:py-5 rounded-2xl font-black text-white text-sm sm:text-base overflow-hidden transition-all duration-300 ${isReminded ? 'bg-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.4)]' : 'bg-gradient-to-r from-violet-600 to-fuchsia-600 shadow-[0_10px_30px_rgba(139,92,246,0.5)] hover:shadow-[0_15px_40px_rgba(139,92,246,0.7)] hover:from-violet-500 hover:to-fuchsia-500'}`}
                     >
-                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
-                      <span className="relative flex items-center gap-2" style={fontH}>
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
+                      <span className="relative flex items-center gap-2 tracking-wide uppercase" style={fontH}>
                         {isReminded ? "Reminder Set ✓" : "Remind Me 🔔"}
                       </span>
                     </motion.button>
