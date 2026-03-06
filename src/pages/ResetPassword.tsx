@@ -14,8 +14,27 @@ export default function ResetPassword() {
     const [done, setDone] = useState(false);
     const navigate = useNavigate();
 
-    // Supabase handles the token via the URL hash automatically
+    // Check if user came from a custom direct email link with token_hash
     useEffect(() => {
+        const queryParams = new URLSearchParams(window.location.search);
+        const tokenHash = queryParams.get('token_hash');
+        const type = queryParams.get('type') as any;
+
+        if (tokenHash && type === 'recovery') {
+            setLoading(true);
+            supabase.auth.verifyOtp({ token_hash: tokenHash, type })
+                .then(({ error }) => {
+                    if (error) {
+                        toast.error("Invalid or expired reset link. Try requesting a new one.");
+                    } else {
+                        // clear URL params so it doesn't re-verify on refresh
+                        window.history.replaceState({}, document.title, window.location.pathname);
+                        toast.success("Ready to set your new password!");
+                    }
+                })
+                .finally(() => setLoading(false));
+        }
+
         const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
             if (event === "PASSWORD_RECOVERY") {
                 // User is in password recovery mode — form is shown
