@@ -94,7 +94,7 @@ export default function Navbar() {
               <Link
                 key={link.path}
                 to={link.path}
-                className={`px-5 py-2.5 rounded-full text-sm font-bold transition-all duration-300 relative overflow-hidden ${location.pathname === link.path
+                className={`px-5 py-2.5 rounded-full text-sm font-bold transition-all duration-300 relative ${location.pathname === link.path
                   ? "text-white shadow-md"
                   : "text-slate-500 hover:text-slate-900"
                   }`}
@@ -103,11 +103,11 @@ export default function Navbar() {
                 {location.pathname === link.path && (
                   <motion.div
                     layoutId="active-nav-pill"
-                    className="absolute inset-0 rounded-full -z-10" style={{ background: '#8B5CF6', boxShadow: '0 2px 10px rgba(139,92,246,0.3)' }}
+                    className="absolute inset-0 rounded-full" style={{ background: '#8B5CF6', boxShadow: '0 2px 10px rgba(139,92,246,0.3)' }}
                     transition={{ type: "spring", stiffness: 300, damping: 30 }}
                   />
                 )}
-                {link.label}
+                <span className="relative z-10">{link.label}</span>
               </Link>
             ))}
           </div>
