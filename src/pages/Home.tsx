@@ -257,6 +257,7 @@ function HeroCarousel() {
     <div>
       <div
         className="relative w-full rounded-2xl sm:rounded-3xl overflow-hidden border border-white/20 group"
+        style={{ aspectRatio: '16/9' }}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
@@ -267,7 +268,7 @@ function HeroCarousel() {
             initial={false}
             animate={{ opacity: i === current ? 1 : 0, scale: i === current ? 1 : 1.05 }}
             transition={{ duration: 0.8, ease: "easeInOut" }}
-            className={i === 0 ? "relative w-full" : "absolute inset-0"}
+            className="absolute inset-0"
             style={{ zIndex: i === current ? 1 : 0 }}
           >
             <img
