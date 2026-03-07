@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ShoppingCart, Search, Plus } from "lucide-react";
+import { Search, Plus } from "lucide-react";
 import { groceryItems } from "@/config/grocery";
 import { useCart } from "@/contexts/CartContext";
 import { useToast } from "@/hooks/use-toast";
@@ -36,37 +36,25 @@ export default function Groceries() {
         toast({ title: "Added to cart", description: `${item.title} has been added.` });
     };
 
-    const cartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
+
 
     return (
         <div className="min-h-screen bg-slate-50 pb-24">
             {/* Header */}
-            <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-xl border-b border-slate-100 pt-14 pb-4 px-4 shadow-sm">
-                <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
-                    <button onClick={() => navigate(-1)} className="p-2 -ml-2 text-slate-700 hover:bg-slate-100 rounded-full transition-colors">
-                        <ChevronLeft className="w-6 h-6" />
-                    </button>
-                    <div className="flex-1" />
-                    <Link to="/cart" className="p-2 -mr-2 relative text-slate-700 hover:bg-slate-100 rounded-full transition-colors">
-                        <ShoppingCart className="w-6 h-6" />
-                        {cartCount > 0 && (
-                            <span className="absolute top-0 right-0 w-4 h-4 rounded-full bg-emerald-500 text-[10px] font-bold flex items-center justify-center text-white">
-                                {cartCount}
-                            </span>
-                        )}
-                    </Link>
-                </div>
+            <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-xl border-b border-slate-100 pt-[4.5rem] pb-4 px-4 shadow-sm">
 
                 {/* Search Bar */}
-                <div className="max-w-7xl mx-auto mt-4 px-2">
-                    <div className="relative">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <div className="max-w-7xl mx-auto px-2">
+                    <div className="relative group">
+                        <div className="absolute left-4 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-[#231942]/10 flex items-center justify-center transition-colors group-focus-within:bg-[#231942]">
+                            <Search className="w-4 h-4 text-[#231942] group-focus-within:text-white transition-colors" />
+                        </div>
                         <input
                             type="text"
                             placeholder="Search groceries, snacks..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full bg-slate-100 border border-slate-200 text-slate-900 rounded-xl py-2.5 pl-10 pr-4 text-sm focus:outline-none focus:border-brand-muted focus:bg-white focus:ring-4 focus:ring-brand-50 transition-all placeholder:text-slate-400"
+                            className="w-full bg-white border-2 border-slate-200 text-slate-900 rounded-2xl py-3.5 pl-14 pr-5 text-sm font-medium focus:outline-none focus:border-[#231942] focus:bg-white focus:shadow-[0_0_0_4px_rgba(35,25,66,0.08)] transition-all placeholder:text-slate-400 shadow-sm"
                         />
                     </div>
                 </div>
