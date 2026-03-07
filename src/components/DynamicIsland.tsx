@@ -31,7 +31,7 @@ interface IslandNotification {
     expiresAt: number;     // timestamp when this auto-dismisses (0 = never)
 }
 
-const spring = { type: "spring" as const, stiffness: 380, damping: 28 };
+const spring = { type: "spring" as const, stiffness: 450, damping: 32, mass: 0.8 };
 
 // Flash sale config
 const FLASH_SALE = {
@@ -405,6 +405,7 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
                     layout
                     animate={{
                         width: isDropdownOpen ? "min(360px, calc(100vw - 32px))" : getPillWidth(),
+                        height: isDropdownOpen ? "auto" : 40,
                         borderRadius: isDropdownOpen ? 32 : 50,
                     }}
                     transition={spring}
@@ -539,10 +540,10 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
                     <AnimatePresence>
                         {isDropdownOpen && (
                             <motion.div
-                                initial={{ opacity: 0, filter: "blur(8px)", scale: 0.95 }}
-                                animate={{ opacity: 1, filter: "blur(0px)", scale: 1 }}
-                                exit={{ opacity: 0, filter: "blur(8px)", scale: 0.95 }}
-                                transition={{ duration: 0.25, ease: [0.34, 1.56, 0.64, 1] }}
+                                initial={{ opacity: 0, filter: "blur(8px)" }}
+                                animate={{ opacity: 1, filter: "blur(0px)" }}
+                                exit={{ opacity: 0, filter: "blur(4px)" }}
+                                transition={{ duration: 0.15, ease: "easeOut" }}
                                 style={{
                                     width: "100%",
                                     overflow: "hidden",
