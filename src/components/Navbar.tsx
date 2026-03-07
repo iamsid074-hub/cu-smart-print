@@ -121,8 +121,8 @@ export default function Navbar() {
 
 
 
-            {/* Cart Icon */}
-            <Link to="/cart" className="relative p-2.5 rounded-full hover:bg-slate-200 transition-colors text-slate-500 hover:text-slate-900 flex items-center justify-center">
+            {/* Cart Icon — hidden on mobile when island is wide */}
+            <Link to="/cart" className={`relative p-2.5 rounded-full hover:bg-slate-200 transition-colors text-slate-500 hover:text-slate-900 flex items-center justify-center ${islandExpanded ? 'hidden lg:flex' : ''}`}>
               <ShoppingCart className="w-5 h-5" />
               {cartCount > 0 && (
                 <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] rounded-full bg-[#10B981] text-white text-[10px] font-black flex items-center justify-center px-1 shadow-[0_0_8px_rgba(16,185,129,0.4)] border-2 border-white">
