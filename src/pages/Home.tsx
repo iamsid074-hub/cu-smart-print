@@ -256,8 +256,7 @@ function HeroCarousel() {
   return (
     <div>
       <div
-        className="relative w-full rounded-2xl sm:rounded-3xl overflow-hidden border border-white/20 group"
-        style={{ aspectRatio: '16/9' }}
+        className="relative w-full rounded-2xl sm:rounded-3xl overflow-hidden border border-white/20 group max-h-[200px] sm:max-h-[300px]"
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
