@@ -31,8 +31,8 @@ interface IslandNotification {
     expiresAt: number;     // timestamp when this auto-dismisses (0 = never)
 }
 
-// Extremely wavy/liquid spring physics for morph animation
-const spring = { type: "spring" as const, stiffness: 320, damping: 28, mass: 1.1 };
+// Simple, fast ease animation instead of complex spring physics
+const spring = { type: "tween", duration: 0.25, ease: "easeOut" };
 
 // Flash sale config
 const FLASH_SALE = {
