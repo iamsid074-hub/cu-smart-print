@@ -102,7 +102,7 @@ export default function ProductCard({
         viewport={{ once: true }}
         transition={{ duration: 0.5, delay, ease: [0.34, 1.56, 0.64, 1] }}
         whileHover={{ y: -8, scale: 1.02 }}
-        className="relative bg-white rounded-3xl overflow-hidden group cursor-pointer h-full shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-[0_12px_35px_rgba(35,25,66,0.12)] transition-shadow duration-300"
+        className="relative bg-white rounded-2xl overflow-hidden group cursor-pointer h-full border-2 border-slate-200 shadow-[0_2px_8px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.12)] hover:border-brand-accent/40 transition-all duration-300"
       >
         {/* Badge */}
         {badge && (
@@ -133,7 +133,7 @@ export default function ProductCard({
         </div>
 
         {/* Image */}
-        <div className="relative overflow-hidden h-44 bg-slate-50">
+        <div className="relative overflow-hidden h-44 bg-slate-100/80">
           {/* Skeleton shimmer while loading */}
           {!imgLoaded && !imgError && (
             <div className="absolute inset-0 animate-pulse" style={{ background: 'linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%)', backgroundSize: '200% 100%' }} />
@@ -189,7 +189,7 @@ export default function ProductCard({
                 toast({ title: `${title} added to cart` });
               }}
               whileTap={{ scale: 0.9 }}
-              className="px-4 py-2.5 bg-brand-50 hover:bg-brand-50 text-brand text-xs font-bold rounded-2xl transition-all flex items-center gap-1.5 active:scale-95 group-hover:bg-brand group-hover:text-white"
+              className="px-4 py-2.5 bg-emerald-50 hover:bg-emerald-500 text-emerald-700 hover:text-white text-xs font-bold rounded-xl transition-all flex items-center gap-1.5 active:scale-95 border border-emerald-200 hover:border-emerald-500"
             >
               <ShoppingCart className="w-3.5 h-3.5" /> Cart
             </motion.button>

@@ -109,12 +109,12 @@ export default function Groceries() {
                                     animate={{ opacity: 1, scale: 1 }}
                                     exit={{ opacity: 0, scale: 0.9 }}
                                     transition={{ duration: 0.2 }}
-                                    className="group relative bg-white border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.03)] rounded-2xl overflow-hidden hover:-translate-y-1 transition-all flex flex-col"
+                                    className="group relative bg-white border-2 border-slate-200 shadow-[0_2px_8px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.12)] hover:border-emerald-300 rounded-2xl overflow-hidden hover:-translate-y-1 transition-all duration-300 flex flex-col"
                                 >
                                     <Link to={`/product/${item.id}`} className="absolute inset-0 z-10" />
 
                                     {/* Image */}
-                                    <div className="aspect-square bg-slate-50 p-4 flex items-center justify-center relative">
+                                    <div className="aspect-square bg-slate-100/80 p-4 flex items-center justify-center relative">
                                         <img src={item.image} alt={item.title} className="w-full h-full object-contain mix-blend-multiply opacity-90 group-hover:scale-105 transition-transform duration-300" />
                                         {item.badge && (
                                             <div className="absolute top-2 left-2 bg-gradient-to-r from-orange-400 to-red-400 text-white text-[10px] font-black uppercase px-2 py-0.5 rounded shadow-sm z-20">
@@ -124,7 +124,7 @@ export default function Groceries() {
                                     </div>
 
                                     {/* Details */}
-                                    <div className="p-3 flex flex-col flex-1 border-t border-slate-50 relative z-20 bg-white">
+                                    <div className="p-3 flex flex-col flex-1 border-t border-slate-100 relative z-20 bg-white">
                                         <span className="text-[10px] uppercase tracking-wider text-brand-accent font-bold mb-1 truncate">{item.category}</span>
                                         <h3 className="text-sm font-bold text-slate-900 line-clamp-2 leading-tight mb-auto">{item.title}</h3>
 

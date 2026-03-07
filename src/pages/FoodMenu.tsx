@@ -193,7 +193,7 @@ export default function FoodMenu() {
                                     initial={{ opacity: 0, y: 16 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: si * 0.06 }}
-                                    className="rounded-3xl border border-slate-100 overflow-hidden bg-white shadow-[0_4px_20px_rgba(0,0,0,0.03)]"
+                                    className="rounded-2xl border-2 border-slate-200 overflow-hidden bg-white shadow-[0_2px_8px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.12)] hover:border-brand-accent/30 transition-all duration-300"
                                 >
                                     {/* Shop header — click to expand */}
                                     <button
