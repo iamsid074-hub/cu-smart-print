@@ -213,89 +213,116 @@ function GroceryBanner() {
   );
 }
 
-function FeatureCarousel() {
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const [activeIdx, setActiveIdx] = useState(0);
-  const cardCount = featureCards.length;
+const heroSlides = [
+  { src: "/banners/community.png", alt: "We Love CU Bazzar" },
+  { src: "/banners/sell.png", alt: "Sell your unwanted stuff on CU Bazzar" },
+  { src: "/banners/delivery.png", alt: "Room Delivery at CU Bazzar" },
+];
 
-  const scrollToIdx = useCallback((idx: number) => {
-    const el = scrollRef.current;
-    if (!el) return;
-    const card = el.children[idx] as HTMLElement;
-    if (card) {
-      el.scrollTo({ left: card.offsetLeft - 16, behavior: "smooth" });
-    }
-  }, []);
+function HeroCarousel() {
+  const [current, setCurrent] = useState(0);
+  const [progress, setProgress] = useState(0);
+  const count = heroSlides.length;
+  const INTERVAL = 5000;
 
-  const handleScroll = useCallback(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-    const scrollLeft = el.scrollLeft;
-    const cardWidth = (el.children[0] as HTMLElement)?.offsetWidth || 230;
-    const gap = 12;
-    const idx = Math.round(scrollLeft / (cardWidth + gap));
-    setActiveIdx(Math.min(idx, cardCount - 1));
-  }, [cardCount]);
-
+  // Autoplay with progress bar
   useEffect(() => {
+    const step = 50; // ms
+    let elapsed = 0;
     const timer = setInterval(() => {
-      setActiveIdx((prev) => {
-        const next = (prev + 1) % cardCount;
-        scrollToIdx(next);
-        return next;
-      });
-    }, 5000);
+      elapsed += step;
+      setProgress((elapsed / INTERVAL) * 100);
+      if (elapsed >= INTERVAL) {
+        setCurrent((p) => (p + 1) % count);
+        elapsed = 0;
+        setProgress(0);
+      }
+    }, step);
     return () => clearInterval(timer);
-  }, [cardCount, scrollToIdx]);
+  }, [current, count]);
+
+  const goTo = (idx: number) => { setCurrent(idx); setProgress(0); };
+  const prev = () => goTo((current - 1 + count) % count);
+  const next = () => goTo((current + 1) % count);
+
+  // Touch/swipe support
+  const touchRef = useRef<number>(0);
+  const handleTouchStart = (e: React.TouchEvent) => { touchRef.current = e.touches[0].clientX; };
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    const diff = touchRef.current - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 50) diff > 0 ? next() : prev();
+  };
 
   return (
-    <section className="mb-8 sm:mb-10">
-      <div className="flex items-center justify-between mb-3 sm:mb-4">
-        <h2 className="text-lg sm:text-2xl font-bold" style={fontH}>What we offer</h2>
-        <div className="hidden sm:flex items-center gap-1.5">
-          <button
-            onClick={() => { const prev = Math.max(activeIdx - 1, 0); setActiveIdx(prev); scrollToIdx(prev); }}
-            className="w-7 h-7 rounded-full flex items-center justify-center transition-all hover:scale-110 bg-white border border-slate-200 shadow-sm text-slate-400"
-          >
-            <ChevronLeft className="w-3.5 h-3.5" />
-          </button>
-          <button
-            onClick={() => { const next = Math.min(activeIdx + 1, cardCount - 1); setActiveIdx(next); scrollToIdx(next); }}
-            className="w-7 h-7 rounded-full flex items-center justify-center transition-all hover:scale-110 bg-white border border-slate-200 shadow-sm text-slate-400"
-          >
-            <ChevronRight className="w-3.5 h-3.5" />
-          </button>
-        </div>
-      </div>
-
+    <section className="mb-6 sm:mb-10">
       <div
-        ref={scrollRef}
-        onScroll={handleScroll}
-        className="flex gap-3 overflow-x-auto scrollbar-hide pb-2 -mx-1 px-1 h-[200px]"
-        style={{ scrollSnapType: 'x mandatory', WebkitOverflowScrolling: 'touch' }}
+        className="relative w-full rounded-2xl sm:rounded-3xl overflow-hidden shadow-[0_4px_24px_rgba(0,0,0,0.12)] border-2 border-slate-200 group"
+        style={{ aspectRatio: '16/7' }}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
       >
-        {featureCards.map((card, i) => (
-          <FeatureCard key={card.title} card={card} index={i} />
+        {/* Slides with crossfade */}
+        {heroSlides.map((slide, i) => (
+          <motion.div
+            key={slide.src}
+            initial={false}
+            animate={{ opacity: i === current ? 1 : 0, scale: i === current ? 1 : 1.05 }}
+            transition={{ duration: 0.8, ease: "easeInOut" }}
+            className="absolute inset-0"
+            style={{ zIndex: i === current ? 1 : 0 }}
+          >
+            <img
+              src={slide.src}
+              alt={slide.alt}
+              className="w-full h-full object-cover"
+              loading={i === 0 ? "eager" : "lazy"}
+            />
+          </motion.div>
         ))}
-      </div>
 
-      <div className="flex justify-center gap-1.5 mt-2">
-        {featureCards.map((_, i) => (
-          <button
-            key={i}
-            onClick={() => { setActiveIdx(i); scrollToIdx(i); }}
-            className="transition-all duration-300 rounded-full"
-            style={{
-              width: activeIdx === i ? 16 : 5,
-              height: 5,
-              backgroundColor: activeIdx === i ? '#231942' : '#E2E8F0',
-            }}
-          />
-        ))}
+        {/* Gradient overlay at bottom for dots */}
+        <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-black/50 to-transparent z-10 pointer-events-none" />
+
+        {/* Navigation arrows */}
+        <button
+          onClick={prev}
+          className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white/40 hover:scale-110"
+        >
+          <ChevronLeft className="w-5 h-5" />
+        </button>
+        <button
+          onClick={next}
+          className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white/40 hover:scale-110"
+        >
+          <ChevronRight className="w-5 h-5" />
+        </button>
+
+        {/* Dots + progress */}
+        <div className="absolute bottom-3 sm:bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2">
+          {heroSlides.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => goTo(i)}
+              className="relative h-1.5 rounded-full overflow-hidden transition-all duration-300"
+              style={{
+                width: i === current ? 32 : 8,
+                backgroundColor: i === current ? 'rgba(255,255,255,0.3)' : 'rgba(255,255,255,0.5)',
+              }}
+            >
+              {i === current && (
+                <motion.div
+                  className="absolute inset-y-0 left-0 bg-white rounded-full"
+                  style={{ width: `${progress}%` }}
+                />
+              )}
+            </button>
+          ))}
+        </div>
       </div>
     </section>
   );
 }
+
 
 const sliderItems = [
   { img: "https://images.unsplash.com/photo-1527443154391-507e9dc6c5cc?q=80&w=200&auto=format&fit=crop", label: "Stationery" },
@@ -532,8 +559,8 @@ export default function Home() {
           <GroceryBanner />
         </div>
 
-        {/* ─── FEATURE CARDS CAROUSEL ─── */}
-        {/* FeatureCarousel removed */}
+        {/* ─── HERO IMAGE CAROUSEL ─── */}
+        <HeroCarousel />
 
         <div className="w-full">
           {/* ─── 🔥 SUMMER SALE BANNER ─── */}
