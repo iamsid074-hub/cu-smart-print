@@ -407,7 +407,7 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
                     animate={{
                         width: isDropdownOpen ? "min(360px, calc(100vw - 32px))" : getPillWidth(),
                         height: isDropdownOpen ? "auto" : 40,
-                        borderRadius: isDropdownOpen ? 32 : 50,
+                        borderRadius: isDropdownOpen ? 40 : 50,
                     }}
                     transition={spring}
                     onClick={() => { if (!isExpanded) handleCollapsedClick(); }}
@@ -438,6 +438,7 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
                         transition={{ duration: 0.15 }}
                         style={{ height: 40, width: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}
                     >
+                        {/* We add AnimatePresence here because it manages the pill content fading out */}
                         <AnimatePresence mode="wait">
                             {isSearchOpen ? (
                                 /* ─── SEARCH (inline in pill) ─── */
@@ -550,9 +551,11 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
                                 exit={{ opacity: 0, filter: "blur(4px)" }}
                                 transition={{ duration: 0.15, ease: "easeOut" }}
                                 style={{
-                                    width: "100%",
+                                    width: "calc(100vw - 32px)",
+                                    maxWidth: 360,
                                     overflow: "hidden",
                                     paddingBottom: view === "context" ? 12 : 16,
+                                    margin: "0 auto",
                                 }}
                             >
                                 {view === "cart" && (
