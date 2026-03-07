@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Bell, User, Zap, Menu, X, ShoppingCart } from "lucide-react";
 import DynamicIsland from "./DynamicIsland";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
@@ -32,6 +32,8 @@ export default function Navbar() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [hasUnread, setHasUnread] = useState(false);
   const { totalItems: cartCount } = useCart();
+  const [islandExpanded, setIslandExpanded] = useState(false);
+  const handleIslandExpand = useCallback((expanded: boolean) => setIslandExpanded(expanded), []);
 
   useEffect(() => {
     if (!user) return;
@@ -85,7 +87,7 @@ export default function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-3 sm:px-6 h-16 flex items-center gap-2 sm:gap-4">
         {/* Dynamic Island — logo + expandable search */}
-        <DynamicIsland />
+        <DynamicIsland onExpandChange={handleIslandExpand} />
 
         {/* Nav links - Center Pill Dock */}
         <div className="hidden lg:flex flex-1 justify-center relative z-10">
@@ -129,16 +131,32 @@ export default function Navbar() {
               )}
             </Link>
 
-            {/* Profile Avatar */}
+            {/* Profile Avatar — on mobile: show menu icon when island is expanded */}
             <div className="pl-1 pr-1.5">
-              <Link to="/profile" className="w-9 h-9 rounded-full flex items-center justify-center cursor-pointer transition-all transform hover:scale-105 border" style={{ background: '#231942', borderColor: '#1a1235' }}>
+              {/* Desktop: always profile */}
+              <Link to="/profile" className="hidden lg:flex w-9 h-9 rounded-full items-center justify-center cursor-pointer transition-all transform hover:scale-105 border" style={{ background: '#231942', borderColor: '#1a1235' }}>
                 <User className="w-4.5 h-4.5 text-white" />
               </Link>
+              {/* Mobile: profile when collapsed, menu when expanded */}
+              {islandExpanded ? (
+                <button
+                  className="lg:hidden w-9 h-9 rounded-full flex items-center justify-center cursor-pointer transition-all transform hover:scale-105 border"
+                  style={{ background: '#231942', borderColor: '#1a1235' }}
+                  onClick={() => setMenuOpen(!menuOpen)}
+                >
+                  {menuOpen ? <X className="w-4 h-4 text-white" /> : <Menu className="w-4 h-4 text-white" />}
+                </button>
+              ) : (
+                <Link to="/profile" className="lg:hidden w-9 h-9 rounded-full flex items-center justify-center cursor-pointer transition-all transform hover:scale-105 border" style={{ background: '#231942', borderColor: '#1a1235' }}>
+                  <User className="w-4.5 h-4.5 text-white" />
+                </Link>
+              )}
             </div>
           </div>
 
+          {/* Menu button — hidden when island is expanded (menu is in profile spot) */}
           <button
-            className="lg:hidden p-2 text-slate-500 hover:text-slate-900 bg-white border border-slate-200 rounded-xl shadow-sm"
+            className={`lg:hidden p-2 text-slate-500 hover:text-slate-900 bg-white border border-slate-200 rounded-xl shadow-sm ${islandExpanded ? 'hidden' : ''}`}
             onClick={() => setMenuOpen(!menuOpen)}
           >
             {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}

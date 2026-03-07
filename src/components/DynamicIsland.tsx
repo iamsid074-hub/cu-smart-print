@@ -44,7 +44,7 @@ const FLASH_SALE = {
     link: "/product/ce-pen-10",
 };
 
-export default function DynamicIsland() {
+export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (expanded: boolean) => void }) {
     const [view, setView] = useState<IslandView>("default");
     const [query, setQuery] = useState("");
     const inputRef = useRef<HTMLInputElement>(null);
@@ -334,6 +334,11 @@ export default function DynamicIsland() {
     const isDropdownOpen = view === "cart" || view === "delivery" || view === "flash" || view === "context";
     const isSearchOpen = view === "search";
     const isExpanded = isDropdownOpen || isSearchOpen;
+
+    // Notify parent when expanded state changes
+    useEffect(() => {
+        onExpandChange?.(isExpanded);
+    }, [isExpanded, onExpandChange]);
 
     // What compact content to show
     const showingNotif = !isExpanded && activeNotif;
