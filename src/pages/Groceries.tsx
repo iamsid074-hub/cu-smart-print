@@ -39,9 +39,9 @@ export default function Groceries() {
 
 
     return (
-        <div className="min-h-screen bg-slate-50 pb-24">
+        <div className="min-h-screen bg-slate-50 pt-[80px] sm:pt-[88px] pb-24">
             {/* Header */}
-            <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-xl border-b border-slate-100 pt-[4.5rem] pb-4 px-4 shadow-sm">
+            <header className="sticky top-[72px] sm:top-[80px] z-40 bg-white/80 backdrop-blur-xl border-b border-slate-100 pt-2 pb-4 px-4 shadow-sm">
 
                 {/* Search Bar */}
                 <div className="max-w-7xl mx-auto px-2">
