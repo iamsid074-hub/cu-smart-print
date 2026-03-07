@@ -31,7 +31,8 @@ interface IslandNotification {
     expiresAt: number;     // timestamp when this auto-dismisses (0 = never)
 }
 
-const spring = { type: "spring" as const, stiffness: 450, damping: 32, mass: 0.8 };
+// Extremely wavy/liquid spring physics for morph animation
+const spring = { type: "spring" as const, stiffness: 350, damping: 24, mass: 1.2 };
 
 // Flash sale config
 const FLASH_SALE = {
@@ -431,8 +432,12 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
                         transformOrigin: "top left",
                     }}
                 >
-                    {/* TOP HEADER ROW: Always 40px tall, holds the normal pill content */}
-                    <div style={{ height: 40, width: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    {/* TOP HEADER ROW: Always 40px tall, holds the normal pill content. Fades out when expanded (unless search). */}
+                    <motion.div
+                        animate={{ opacity: (isExpanded && !isSearchOpen) ? 0 : 1 }}
+                        transition={{ duration: 0.15 }}
+                        style={{ height: 40, width: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}
+                    >
                         <AnimatePresence mode="wait">
                             {isSearchOpen ? (
                                 /* ─── SEARCH (inline in pill) ─── */
@@ -534,7 +539,7 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
                                 </motion.div>
                             )}
                         </AnimatePresence>
-                    </div>
+                    </motion.div>
 
                     {/* ═══ DROPDOWN CONTENT ROW: Morphs open underneath ═══ */}
                     <AnimatePresence>
