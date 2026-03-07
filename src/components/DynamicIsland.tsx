@@ -335,14 +335,18 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
     const isSearchOpen = view === "search";
     const isExpanded = isDropdownOpen || isSearchOpen;
 
-    // Notify parent when expanded state changes
-    useEffect(() => {
-        onExpandChange?.(isExpanded);
-    }, [isExpanded, onExpandChange]);
-
     // What compact content to show
     const showingNotif = !isExpanded && activeNotif;
     const showingIdle = !isExpanded && !activeNotif;
+
+    // The pill is "wide" when it's NOT in compact default logo/flash mode
+    // This includes: search, dropdown, notification, and page context
+    const isPillWide = isExpanded || showingNotif || (showingIdle && !!pageContext);
+
+    // Notify parent when wide state changes (for navbar icon swap)
+    useEffect(() => {
+        onExpandChange?.(isPillWide);
+    }, [isPillWide, onExpandChange]);
 
     // Glow animation based on content
     const getAnimation = () => {
