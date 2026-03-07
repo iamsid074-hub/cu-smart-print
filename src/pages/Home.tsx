@@ -257,7 +257,6 @@ function HeroCarousel() {
     <div>
       <div
         className="relative w-full rounded-2xl sm:rounded-3xl overflow-hidden border border-white/20 group"
-        style={{ aspectRatio: '16/7' }}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
@@ -268,13 +267,13 @@ function HeroCarousel() {
             initial={false}
             animate={{ opacity: i === current ? 1 : 0, scale: i === current ? 1 : 1.05 }}
             transition={{ duration: 0.8, ease: "easeInOut" }}
-            className="absolute inset-0"
+            className={i === 0 ? "relative w-full" : "absolute inset-0"}
             style={{ zIndex: i === current ? 1 : 0 }}
           >
             <img
               src={slide.src}
               alt={slide.alt}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover block"
               loading={i === 0 ? "eager" : "lazy"}
             />
           </motion.div>
