@@ -433,291 +433,295 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
                     }}
                 >
                     {/* TOP HEADER ROW: Always 40px tall, holds the normal pill content. Fades out when expanded (unless search). */}
+                    <motion.div
+                        animate={{ opacity: (isExpanded && !isSearchOpen) ? 0 : 1 }}
+                        transition={{ duration: 0.15 }}
+                        style={{ height: 40, width: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}
                     >
-                    <AnimatePresence mode="wait">
-                        {isSearchOpen ? (
-                            /* ─── SEARCH (inline in pill) ─── */
-                            <motion.div key="search" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                                transition={{ duration: 0.2, delay: 0.08 }}
-                                style={{ display: "flex", alignItems: "center", gap: 6, padding: "0 6px 0 12px", height: "100%", width: "100%" }}>
-                                <div style={{ width: 7, height: 7, borderRadius: "50%", background: "#30D158", flexShrink: 0, animation: "greenPulse 2s ease-in-out infinite" }} />
-                                <div style={{ flex: 1, display: "flex", alignItems: "center", background: "rgba(255,255,255,0.08)", borderRadius: 24, padding: "0 4px 0 10px", height: 30, border: "1px solid rgba(255,255,255,0.06)", minWidth: 0 }}>
-                                    <Search style={{ width: 12, height: 12, color: "rgba(255,255,255,0.35)", flexShrink: 0 }} />
-                                    <input ref={inputRef} type="text" value={query} onChange={(e) => setQuery(e.target.value)}
-                                        onKeyDown={(e) => { if (e.key === "Enter") handleSearch(); }}
-                                        placeholder="Search products..."
-                                        style={{ flex: 1, background: "none", border: "none", outline: "none", color: "#fff", fontSize: 13, padding: "0 6px", fontFamily: "inherit", minWidth: 0 }} />
-                                    {query && (
-                                        <button onClick={(e) => { e.stopPropagation(); setQuery(""); inputRef.current?.focus(); }}
-                                            style={{ background: "rgba(255,255,255,0.1)", border: "none", borderRadius: "50%", width: 18, height: 18, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0 }}>
-                                            <X style={{ width: 10, height: 10, color: "rgba(255,255,255,0.6)" }} />
-                                        </button>
-                                    )}
-                                </div>
-                                <button onClick={(e) => { e.stopPropagation(); handleSearch(); }}
-                                    style={{ width: 28, height: 28, borderRadius: "50%", border: "none", background: query.trim() ? "#FF6B6B" : "rgba(255,255,255,0.08)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0, transition: "all 0.2s" }}>
-                                    <Search style={{ width: 13, height: 13, color: query.trim() ? "#fff" : "rgba(255,255,255,0.4)" }} />
-                                </button>
-                                <button onClick={(e) => { e.stopPropagation(); close(); }}
-                                    style={{ width: 26, height: 26, borderRadius: "50%", border: "none", background: "rgba(255,255,255,0.06)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0 }}>
-                                    <X style={{ width: 12, height: 12, color: "rgba(255,255,255,0.5)" }} />
-                                </button>
-                            </motion.div>
-                        ) : showingNotif ? (
-                            /* ─── PRIORITY NOTIFICATION (P1/P2 active) ─── */
-                            <motion.div
-                                key={`notif-${activeNotif!.id}`}
-                                initial={{ opacity: 0, scale: 0.85, y: -2 }}
-                                animate={{ opacity: 1, scale: 1, y: 0 }}
-                                exit={{ opacity: 0, scale: 0.85 }}
-                                transition={{ duration: 0.22, ease: [0.34, 1.56, 0.64, 1] }}
-                                style={{ display: "flex", alignItems: "center", gap: 7, padding: "0 14px", height: "100%", width: "100%" }}
-                            >
-                                {/* Colored indicator dot */}
-                                <div style={{ width: 7, height: 7, borderRadius: "50%", background: activeNotif!.color, flexShrink: 0, boxShadow: `0 0 6px ${activeNotif!.color}` }} />
-
-                                {/* Icon */}
-                                {activeNotif!.icon === "cart" && <ShoppingCart style={{ width: 14, height: 14, color: activeNotif!.color, flexShrink: 0 }} />}
-                                {activeNotif!.icon === "truck" && <Truck style={{ width: 14, height: 14, color: activeNotif!.color, flexShrink: 0 }} />}
-                                {activeNotif!.icon === "check" && <CheckCircle style={{ width: 14, height: 14, color: activeNotif!.color, flexShrink: 0 }} />}
-                                {activeNotif!.icon === "package" && <Package style={{ width: 14, height: 14, color: activeNotif!.color, flexShrink: 0 }} />}
-
-                                {/* Label */}
-                                <span style={{ fontSize: 12, fontWeight: 600, color: "#fff", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", flex: 1 }}>
-                                    {activeNotif!.label}
-                                </span>
-
-                                <ChevronRight style={{ width: 12, height: 12, color: `${activeNotif!.color}66`, marginLeft: "auto", flexShrink: 0 }} />
-                            </motion.div>
-                        ) : (
-                            /* ─── IDLE STATE (logo ↔ flash sale cycling OR PAGE CONTEXT) ─── */
-                            <motion.div
-                                key={`idle-${pageContext ? pageContext.id : idleMode}`}
-                                initial={{ opacity: 0, scale: 0.85 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                exit={{ opacity: 0, scale: 0.85 }}
-                                transition={{ duration: 0.18 }}
-                                style={{ display: "flex", alignItems: "center", gap: 7, padding: "0 14px", height: "100%", width: "100%" }}
-                            >
-                                {pageContext ? (
-                                    <>
-                                        <div style={{ width: 7, height: 7, borderRadius: "50%", background: "#4DB8AC", flexShrink: 0, animation: "greenPulse 2s ease-in-out infinite" }} />
-                                        <span style={{ fontSize: 13, fontWeight: 700, color: "#fff", whiteSpace: "nowrap" }}>{pageContext.title}</span>
-                                        <ChevronRight style={{ width: 12, height: 12, color: "rgba(255,255,255,0.4)", marginLeft: "auto", flexShrink: 0 }} />
-                                    </>
-                                ) : (
-                                    <>
-                                        <div style={{ width: 7, height: 7, borderRadius: "50%", background: "#30D158", flexShrink: 0, animation: "greenPulse 2s ease-in-out infinite" }} />
-
-                                        {idleMode === "logo" && (
-                                            <>
-                                                <div style={{ width: 22, height: 22, borderRadius: "50%", overflow: "hidden", border: "1.5px solid rgba(255,255,255,0.1)", flexShrink: 0 }}>
-                                                    <img src="/logo.png" alt="CU" style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                                                        onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
-                                                </div>
-                                                <span style={{ fontWeight: 700, fontSize: 13, whiteSpace: "nowrap", display: "flex", gap: 4 }}>
-                                                    <span style={{ color: "#FF6B6B" }}>CU</span>
-                                                    <span style={{ color: "#fff" }}>BAZZAR</span>
-                                                </span>
-                                            </>
+                        <AnimatePresence mode="wait">
+                            {isSearchOpen ? (
+                                /* ─── SEARCH (inline in pill) ─── */
+                                <motion.div key="search" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                                    transition={{ duration: 0.2, delay: 0.08 }}
+                                    style={{ display: "flex", alignItems: "center", gap: 6, padding: "0 6px 0 12px", height: "100%", width: "100%" }}>
+                                    <div style={{ width: 7, height: 7, borderRadius: "50%", background: "#30D158", flexShrink: 0, animation: "greenPulse 2s ease-in-out infinite" }} />
+                                    <div style={{ flex: 1, display: "flex", alignItems: "center", background: "rgba(255,255,255,0.08)", borderRadius: 24, padding: "0 4px 0 10px", height: 30, border: "1px solid rgba(255,255,255,0.06)", minWidth: 0 }}>
+                                        <Search style={{ width: 12, height: 12, color: "rgba(255,255,255,0.35)", flexShrink: 0 }} />
+                                        <input ref={inputRef} type="text" value={query} onChange={(e) => setQuery(e.target.value)}
+                                            onKeyDown={(e) => { if (e.key === "Enter") handleSearch(); }}
+                                            placeholder="Search products..."
+                                            style={{ flex: 1, background: "none", border: "none", outline: "none", color: "#fff", fontSize: 13, padding: "0 6px", fontFamily: "inherit", minWidth: 0 }} />
+                                        {query && (
+                                            <button onClick={(e) => { e.stopPropagation(); setQuery(""); inputRef.current?.focus(); }}
+                                                style={{ background: "rgba(255,255,255,0.1)", border: "none", borderRadius: "50%", width: 18, height: 18, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0 }}>
+                                                <X style={{ width: 10, height: 10, color: "rgba(255,255,255,0.6)" }} />
+                                            </button>
                                         )}
-                                        {idleMode === "flash" && (
-                                            <div style={{ display: "flex", alignItems: "center", gap: 5, flex: 1, minWidth: 0 }}>
-                                                <Zap style={{ width: 13, height: 13, color: "#FFD60A", fill: "#FFD60A", flexShrink: 0 }} />
-                                                <span style={{ fontSize: 12, fontWeight: 700, color: "#FFD60A", whiteSpace: "nowrap" }}>
-                                                    Flash Sale · {FLASH_SALE.discount}
+                                    </div>
+                                    <button onClick={(e) => { e.stopPropagation(); handleSearch(); }}
+                                        style={{ width: 28, height: 28, borderRadius: "50%", border: "none", background: query.trim() ? "#FF6B6B" : "rgba(255,255,255,0.08)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0, transition: "all 0.2s" }}>
+                                        <Search style={{ width: 13, height: 13, color: query.trim() ? "#fff" : "rgba(255,255,255,0.4)" }} />
+                                    </button>
+                                    <button onClick={(e) => { e.stopPropagation(); close(); }}
+                                        style={{ width: 26, height: 26, borderRadius: "50%", border: "none", background: "rgba(255,255,255,0.06)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0 }}>
+                                        <X style={{ width: 12, height: 12, color: "rgba(255,255,255,0.5)" }} />
+                                    </button>
+                                </motion.div>
+                            ) : showingNotif ? (
+                                /* ─── PRIORITY NOTIFICATION (P1/P2 active) ─── */
+                                <motion.div
+                                    key={`notif-${activeNotif!.id}`}
+                                    initial={{ opacity: 0, scale: 0.85, y: -2 }}
+                                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                                    exit={{ opacity: 0, scale: 0.85 }}
+                                    transition={{ duration: 0.22, ease: [0.34, 1.56, 0.64, 1] }}
+                                    style={{ display: "flex", alignItems: "center", gap: 7, padding: "0 14px", height: "100%", width: "100%" }}
+                                >
+                                    {/* Colored indicator dot */}
+                                    <div style={{ width: 7, height: 7, borderRadius: "50%", background: activeNotif!.color, flexShrink: 0, boxShadow: `0 0 6px ${activeNotif!.color}` }} />
+
+                                    {/* Icon */}
+                                    {activeNotif!.icon === "cart" && <ShoppingCart style={{ width: 14, height: 14, color: activeNotif!.color, flexShrink: 0 }} />}
+                                    {activeNotif!.icon === "truck" && <Truck style={{ width: 14, height: 14, color: activeNotif!.color, flexShrink: 0 }} />}
+                                    {activeNotif!.icon === "check" && <CheckCircle style={{ width: 14, height: 14, color: activeNotif!.color, flexShrink: 0 }} />}
+                                    {activeNotif!.icon === "package" && <Package style={{ width: 14, height: 14, color: activeNotif!.color, flexShrink: 0 }} />}
+
+                                    {/* Label */}
+                                    <span style={{ fontSize: 12, fontWeight: 600, color: "#fff", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", flex: 1 }}>
+                                        {activeNotif!.label}
+                                    </span>
+
+                                    <ChevronRight style={{ width: 12, height: 12, color: `${activeNotif!.color}66`, marginLeft: "auto", flexShrink: 0 }} />
+                                </motion.div>
+                            ) : (
+                                /* ─── IDLE STATE (logo ↔ flash sale cycling OR PAGE CONTEXT) ─── */
+                                <motion.div
+                                    key={`idle-${pageContext ? pageContext.id : idleMode}`}
+                                    initial={{ opacity: 0, scale: 0.85 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    exit={{ opacity: 0, scale: 0.85 }}
+                                    transition={{ duration: 0.18 }}
+                                    style={{ display: "flex", alignItems: "center", gap: 7, padding: "0 14px", height: "100%", width: "100%" }}
+                                >
+                                    {pageContext ? (
+                                        <>
+                                            <div style={{ width: 7, height: 7, borderRadius: "50%", background: "#4DB8AC", flexShrink: 0, animation: "greenPulse 2s ease-in-out infinite" }} />
+                                            <span style={{ fontSize: 13, fontWeight: 700, color: "#fff", whiteSpace: "nowrap" }}>{pageContext.title}</span>
+                                            <ChevronRight style={{ width: 12, height: 12, color: "rgba(255,255,255,0.4)", marginLeft: "auto", flexShrink: 0 }} />
+                                        </>
+                                    ) : (
+                                        <>
+                                            <div style={{ width: 7, height: 7, borderRadius: "50%", background: "#30D158", flexShrink: 0, animation: "greenPulse 2s ease-in-out infinite" }} />
+
+                                            {idleMode === "logo" && (
+                                                <>
+                                                    <div style={{ width: 22, height: 22, borderRadius: "50%", overflow: "hidden", border: "1.5px solid rgba(255,255,255,0.1)", flexShrink: 0 }}>
+                                                        <img src="/logo.png" alt="CU" style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                                                            onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
+                                                    </div>
+                                                    <span style={{ fontWeight: 700, fontSize: 13, whiteSpace: "nowrap", display: "flex", gap: 4 }}>
+                                                        <span style={{ color: "#FF6B6B" }}>CU</span>
+                                                        <span style={{ color: "#fff" }}>BAZZAR</span>
+                                                    </span>
+                                                </>
+                                            )}
+                                            {idleMode === "flash" && (
+                                                <div style={{ display: "flex", alignItems: "center", gap: 5, flex: 1, minWidth: 0 }}>
+                                                    <Zap style={{ width: 13, height: 13, color: "#FFD60A", fill: "#FFD60A", flexShrink: 0 }} />
+                                                    <span style={{ fontSize: 12, fontWeight: 700, color: "#FFD60A", whiteSpace: "nowrap" }}>
+                                                        Flash Sale · {FLASH_SALE.discount}
+                                                    </span>
+                                                    <ChevronRight style={{ width: 12, height: 12, color: "rgba(255,200,0,0.4)", marginLeft: "auto", flexShrink: 0 }} />
+                                                </div>
+                                            )}
+                                        </>
+                                    )}
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+                    </motion.div>
+
+                    {/* ═══ DROPDOWN CONTENT ROW: Morphs open underneath ═══ */}
+                    <AnimatePresence>
+                        {isDropdownOpen && (
+                            <motion.div
+                                initial={{ opacity: 0, filter: "blur(8px)" }}
+                                animate={{ opacity: 1, filter: "blur(0px)" }}
+                                exit={{ opacity: 0, filter: "blur(4px)" }}
+                                transition={{ duration: 0.15, ease: "easeOut" }}
+                                style={{
+                                    width: "100%",
+                                    overflow: "hidden",
+                                    paddingBottom: view === "context" ? 12 : 16,
+                                }}
+                            >
+                                {view === "cart" && (
+                                    /* ═══ CART PREVIEW ═══ */
+                                    <div style={{ padding: "14px 16px", display: "flex", flexDirection: "column", gap: 8 }}>
+                                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                                            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                                                <ShoppingCart style={{ width: 14, height: 14, color: "#FF6B6B" }} />
+                                                <span style={{ fontSize: 14, fontWeight: 700, color: "#fff" }}>Cart · ₹{cartTotal}</span>
+                                            </div>
+                                            <button onClick={(e) => { e.stopPropagation(); close(); }}
+                                                style={{ background: "rgba(255,255,255,0.06)", border: "none", borderRadius: "50%", width: 26, height: 26, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
+                                                <X style={{ width: 12, height: 12, color: "rgba(255,255,255,0.5)" }} />
+                                            </button>
+                                        </div>
+                                        <div style={{ maxHeight: 180, overflowY: "auto", display: "flex", flexDirection: "column", gap: 2 }}>
+                                            {cartItems.slice(0, 5).map((item) => (
+                                                <div key={item.id} style={{
+                                                    display: "flex", alignItems: "center", justifyContent: "space-between",
+                                                    padding: "8px 0", borderBottom: "1px solid rgba(255,255,255,0.05)",
+                                                }}>
+                                                    <span style={{ fontSize: 13, color: "rgba(255,255,255,0.85)", flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                                                        {item.title} {item.quantity > 1 ? `×${item.quantity}` : ""}
+                                                    </span>
+                                                    <span style={{ fontSize: 13, fontWeight: 600, color: "#fff", marginLeft: 10, flexShrink: 0 }}>₹{item.price * item.quantity}</span>
+                                                    <button onClick={(e) => { e.stopPropagation(); removeItem(item.id); }}
+                                                        style={{ background: "none", border: "none", cursor: "pointer", marginLeft: 8, padding: 2, flexShrink: 0 }}>
+                                                        <X style={{ width: 11, height: 11, color: "rgba(255,255,255,0.3)" }} />
+                                                    </button>
+                                                </div>
+                                            ))}
+                                            {cartItems.length > 5 && (
+                                                <span style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", textAlign: "center", padding: 6 }}>
+                                                    +{cartItems.length - 5} more items
                                                 </span>
-                                                <ChevronRight style={{ width: 12, height: 12, color: "rgba(255,200,0,0.4)", marginLeft: "auto", flexShrink: 0 }} />
+                                            )}
+                                            {cartItems.length === 0 && (
+                                                <span style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", textAlign: "center", padding: 16 }}>
+                                                    Cart is empty
+                                                </span>
+                                            )}
+                                        </div>
+                                        {cartItems.length > 0 && (
+                                            <div style={{ display: "flex", gap: 8, marginTop: 4 }}>
+                                                <Link to="/cart" onClick={() => close()}
+                                                    style={{ flex: 1, padding: "9px 12px", borderRadius: 12, background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.85)", fontSize: 13, fontWeight: 600, textAlign: "center", textDecoration: "none" }}>
+                                                    View Cart
+                                                </Link>
+                                                <Link to="/cart" onClick={() => close()}
+                                                    style={{ flex: 1, padding: "9px 12px", borderRadius: 12, background: "#FF6B6B", color: "#fff", fontSize: 13, fontWeight: 600, textAlign: "center", textDecoration: "none", boxShadow: "0 2px 10px rgba(255,107,107,0.3)" }}>
+                                                    Checkout Now
+                                                </Link>
                                             </div>
                                         )}
-                                    </>
+                                    </div>
+                                )}
+
+                                {view === "delivery" && activeOrder && (
+                                    /* ═══ DELIVERY TRACKING ═══ */
+                                    <div style={{ padding: "14px 16px", display: "flex", flexDirection: "column", gap: 10 }}>
+                                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                                            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                                                <Truck style={{ width: 14, height: 14, color: "#30D158" }} />
+                                                <span style={{ fontSize: 14, fontWeight: 700, color: "#fff" }}>
+                                                    {activeOrder.status === "delivering" ? "On the way!" : statusLabel[activeOrder.status] || "Processing"}
+                                                </span>
+                                            </div>
+                                            <button onClick={(e) => { e.stopPropagation(); close(); }}
+                                                style={{ background: "rgba(255,255,255,0.06)", border: "none", borderRadius: "50%", width: 26, height: 26, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
+                                                <X style={{ width: 12, height: 12, color: "rgba(255,255,255,0.5)" }} />
+                                            </button>
+                                        </div>
+                                        <div style={{ fontSize: 13, color: "rgba(255,255,255,0.7)", lineHeight: 1.5 }}>
+                                            "{activeOrder.title}" is {activeOrder.status === "delivering" ? "on the way" : "being processed"}
+                                        </div>
+                                        {/* Status progress bar */}
+                                        <div style={{ display: "flex", gap: 4, alignItems: "center" }}>
+                                            {["pending", "confirmed", "picked", "delivering"].map((s, i) => {
+                                                const orderIdx = ["pending", "seller_accepted", "confirmed", "picked", "delivering"].indexOf(activeOrder.status);
+                                                const done = orderIdx >= (i === 0 ? 0 : i + 1);
+                                                return (
+                                                    <div key={s} style={{ display: "flex", alignItems: "center", gap: 4, flex: 1 }}>
+                                                        <div style={{
+                                                            width: 18, height: 18, borderRadius: "50%", flexShrink: 0,
+                                                            background: done ? "#30D158" : "rgba(255,255,255,0.1)",
+                                                            display: "flex", alignItems: "center", justifyContent: "center",
+                                                            fontSize: 9, color: "#fff",
+                                                        }}>{done ? "✓" : ""}</div>
+                                                        {i < 3 && <div style={{ flex: 1, height: 2, borderRadius: 1, background: done ? "#30D158" : "rgba(255,255,255,0.1)" }} />}
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                        <div style={{ fontSize: 12, color: "rgba(255,255,255,0.5)" }}>
+                                            📍 {activeOrder.delivery_location?.replace(/\[.*?\]/g, "").trim()}{activeOrder.delivery_room && !activeOrder.delivery_room.includes("[") ? `, Room ${activeOrder.delivery_room}` : ""}
+                                        </div>
+                                        <Link to={`/tracking?order=${activeOrder.id}`} onClick={() => close()}
+                                            style={{ padding: "9px 12px", borderRadius: 12, background: "rgba(48,209,88,0.15)", border: "1px solid rgba(48,209,88,0.3)", color: "#30D158", fontSize: 13, fontWeight: 600, textAlign: "center", textDecoration: "none" }}>
+                                            Track Delivery
+                                        </Link>
+                                    </div>
+                                )}
+
+                                {view === "flash" && (
+                                    /* ═══ FLASH SALE ═══ */
+                                    <div style={{ padding: "14px 16px", display: "flex", flexDirection: "column", gap: 10 }}>
+                                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                                            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                                                <Zap style={{ width: 14, height: 14, color: "#FFD60A", fill: "#FFD60A" }} />
+                                                <span style={{ fontSize: 14, fontWeight: 700, color: "#FFD60A" }}>⚡ Flash Sale</span>
+                                            </div>
+                                            <button onClick={(e) => { e.stopPropagation(); close(); }}
+                                                style={{ background: "rgba(255,255,255,0.06)", border: "none", borderRadius: "50%", width: 26, height: 26, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
+                                                <X style={{ width: 12, height: 12, color: "rgba(255,255,255,0.5)" }} />
+                                            </button>
+                                        </div>
+                                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                                            <div>
+                                                <div style={{ fontSize: 14, fontWeight: 600, color: "#fff" }}>{FLASH_SALE.title}</div>
+                                                <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 4 }}>
+                                                    <span style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", textDecoration: "line-through" }}>₹{FLASH_SALE.originalPrice}</span>
+                                                    <span style={{ fontSize: 18, fontWeight: 700, color: "#FF6B6B" }}>₹{FLASH_SALE.salePrice}</span>
+                                                    <span style={{ fontSize: 11, fontWeight: 700, background: "rgba(255,214,10,0.15)", color: "#FFD60A", padding: "2px 8px", borderRadius: 6 }}>{FLASH_SALE.discount}</span>
+                                                </div>
+                                            </div>
+                                            <div style={{ textAlign: "right" }}>
+                                                <div style={{ fontSize: 10, color: "rgba(255,255,255,0.4)" }}>Ends in</div>
+                                                <div style={{ fontSize: 16, fontWeight: 700, color: "#FFD60A", fontVariantNumeric: "tabular-nums" }}>{saleTimeLeft}</div>
+                                            </div>
+                                        </div>
+                                        <Link to={FLASH_SALE.link} onClick={() => close()}
+                                            style={{ padding: "10px 14px", borderRadius: 12, background: "linear-gradient(135deg, #FF6B6B, #FF3366)", color: "#fff", fontSize: 13, fontWeight: 700, textAlign: "center", textDecoration: "none", boxShadow: "0 2px 12px rgba(255,107,107,0.3)" }}>
+                                            Grab Deal Now 🔥
+                                        </Link>
+                                    </div>
+                                )}
+
+                                {view === "context" && pageContext && (
+                                    /* ═══ PAGE CONTEXT DROPDOWN ═══ */
+                                    <div style={{ padding: "0 16px", display: "flex", flexDirection: "column", gap: 8 }}>
+                                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                                            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                                                <pageContext.icon style={{ width: 14, height: 14, color: "#4DB8AC" }} />
+                                                {/* eslint-disable-next-line no-control-regex */}
+                                                <span style={{ fontSize: 14, fontWeight: 700, color: "#fff" }}>{pageContext.title.replace(/^[\u0000-\u26FF]+\s?/, '')}</span>
+                                            </div>
+                                            <button onClick={(e) => { e.stopPropagation(); close(); navigate(-1); }}
+                                                style={{ background: "rgba(255,255,255,0.06)", border: "none", borderRadius: "50%", width: 26, height: 26, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
+                                                <X style={{ width: 12, height: 12, color: "rgba(255,255,255,0.5)" }} />
+                                            </button>
+                                        </div>
+                                        <div style={{ fontSize: 13, color: "rgba(255,255,255,0.7)", marginTop: -4 }}>
+                                            {pageContext.subtitle}
+                                        </div>
+                                        <div style={{ display: "flex", gap: 8, marginTop: 2, flexWrap: "wrap" }}>
+                                            {pageContext.actions.map((act, i) => (
+                                                <Link key={i} to={act.link} onClick={() => close()}
+                                                    style={{ flex: 1, padding: "9px 12px", borderRadius: 12, background: i === 0 ? "#4DB8AC" : "rgba(255,255,255,0.08)", color: "#fff", fontSize: 13, fontWeight: 600, textAlign: "center", textDecoration: "none", minWidth: "100px", boxShadow: i === 0 ? "0 2px 10px rgba(77,184,172,0.3)" : "none" }}>
+                                                    {act.label}
+                                                </Link>
+                                            ))}
+                                        </div>
+                                    </div>
                                 )}
                             </motion.div>
                         )}
                     </AnimatePresence>
                 </motion.div>
-
-                {/* ═══ DROPDOWN CONTENT ROW: Morphs open underneath ═══ */}
-                <AnimatePresence>
-                    {isDropdownOpen && (
-                        <motion.div
-                            initial={{ opacity: 0, filter: "blur(8px)" }}
-                            animate={{ opacity: 1, filter: "blur(0px)" }}
-                            exit={{ opacity: 0, filter: "blur(4px)" }}
-                            transition={{ duration: 0.15, ease: "easeOut" }}
-                            style={{
-                                width: "100%",
-                                overflow: "hidden",
-                                paddingBottom: view === "context" ? 12 : 16,
-                            }}
-                        >
-                            {view === "cart" && (
-                                /* ═══ CART PREVIEW ═══ */
-                                <div style={{ padding: "14px 16px", display: "flex", flexDirection: "column", gap: 8 }}>
-                                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                                        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                                            <ShoppingCart style={{ width: 14, height: 14, color: "#FF6B6B" }} />
-                                            <span style={{ fontSize: 14, fontWeight: 700, color: "#fff" }}>Cart · ₹{cartTotal}</span>
-                                        </div>
-                                        <button onClick={(e) => { e.stopPropagation(); close(); }}
-                                            style={{ background: "rgba(255,255,255,0.06)", border: "none", borderRadius: "50%", width: 26, height: 26, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
-                                            <X style={{ width: 12, height: 12, color: "rgba(255,255,255,0.5)" }} />
-                                        </button>
-                                    </div>
-                                    <div style={{ maxHeight: 180, overflowY: "auto", display: "flex", flexDirection: "column", gap: 2 }}>
-                                        {cartItems.slice(0, 5).map((item) => (
-                                            <div key={item.id} style={{
-                                                display: "flex", alignItems: "center", justifyContent: "space-between",
-                                                padding: "8px 0", borderBottom: "1px solid rgba(255,255,255,0.05)",
-                                            }}>
-                                                <span style={{ fontSize: 13, color: "rgba(255,255,255,0.85)", flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                                                    {item.title} {item.quantity > 1 ? `×${item.quantity}` : ""}
-                                                </span>
-                                                <span style={{ fontSize: 13, fontWeight: 600, color: "#fff", marginLeft: 10, flexShrink: 0 }}>₹{item.price * item.quantity}</span>
-                                                <button onClick={(e) => { e.stopPropagation(); removeItem(item.id); }}
-                                                    style={{ background: "none", border: "none", cursor: "pointer", marginLeft: 8, padding: 2, flexShrink: 0 }}>
-                                                    <X style={{ width: 11, height: 11, color: "rgba(255,255,255,0.3)" }} />
-                                                </button>
-                                            </div>
-                                        ))}
-                                        {cartItems.length > 5 && (
-                                            <span style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", textAlign: "center", padding: 6 }}>
-                                                +{cartItems.length - 5} more items
-                                            </span>
-                                        )}
-                                        {cartItems.length === 0 && (
-                                            <span style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", textAlign: "center", padding: 16 }}>
-                                                Cart is empty
-                                            </span>
-                                        )}
-                                    </div>
-                                    {cartItems.length > 0 && (
-                                        <div style={{ display: "flex", gap: 8, marginTop: 4 }}>
-                                            <Link to="/cart" onClick={() => close()}
-                                                style={{ flex: 1, padding: "9px 12px", borderRadius: 12, background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.85)", fontSize: 13, fontWeight: 600, textAlign: "center", textDecoration: "none" }}>
-                                                View Cart
-                                            </Link>
-                                            <Link to="/cart" onClick={() => close()}
-                                                style={{ flex: 1, padding: "9px 12px", borderRadius: 12, background: "#FF6B6B", color: "#fff", fontSize: 13, fontWeight: 600, textAlign: "center", textDecoration: "none", boxShadow: "0 2px 10px rgba(255,107,107,0.3)" }}>
-                                                Checkout Now
-                                            </Link>
-                                        </div>
-                                    )}
-                                </div>
-                            )}
-
-                            {view === "delivery" && activeOrder && (
-                                /* ═══ DELIVERY TRACKING ═══ */
-                                <div style={{ padding: "14px 16px", display: "flex", flexDirection: "column", gap: 10 }}>
-                                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                                        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                                            <Truck style={{ width: 14, height: 14, color: "#30D158" }} />
-                                            <span style={{ fontSize: 14, fontWeight: 700, color: "#fff" }}>
-                                                {activeOrder.status === "delivering" ? "On the way!" : statusLabel[activeOrder.status] || "Processing"}
-                                            </span>
-                                        </div>
-                                        <button onClick={(e) => { e.stopPropagation(); close(); }}
-                                            style={{ background: "rgba(255,255,255,0.06)", border: "none", borderRadius: "50%", width: 26, height: 26, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
-                                            <X style={{ width: 12, height: 12, color: "rgba(255,255,255,0.5)" }} />
-                                        </button>
-                                    </div>
-                                    <div style={{ fontSize: 13, color: "rgba(255,255,255,0.7)", lineHeight: 1.5 }}>
-                                        "{activeOrder.title}" is {activeOrder.status === "delivering" ? "on the way" : "being processed"}
-                                    </div>
-                                    {/* Status progress bar */}
-                                    <div style={{ display: "flex", gap: 4, alignItems: "center" }}>
-                                        {["pending", "confirmed", "picked", "delivering"].map((s, i) => {
-                                            const orderIdx = ["pending", "seller_accepted", "confirmed", "picked", "delivering"].indexOf(activeOrder.status);
-                                            const done = orderIdx >= (i === 0 ? 0 : i + 1);
-                                            return (
-                                                <div key={s} style={{ display: "flex", alignItems: "center", gap: 4, flex: 1 }}>
-                                                    <div style={{
-                                                        width: 18, height: 18, borderRadius: "50%", flexShrink: 0,
-                                                        background: done ? "#30D158" : "rgba(255,255,255,0.1)",
-                                                        display: "flex", alignItems: "center", justifyContent: "center",
-                                                        fontSize: 9, color: "#fff",
-                                                    }}>{done ? "✓" : ""}</div>
-                                                    {i < 3 && <div style={{ flex: 1, height: 2, borderRadius: 1, background: done ? "#30D158" : "rgba(255,255,255,0.1)" }} />}
-                                                </div>
-                                            );
-                                        })}
-                                    </div>
-                                    <div style={{ fontSize: 12, color: "rgba(255,255,255,0.5)" }}>
-                                        📍 {activeOrder.delivery_location?.replace(/\[.*?\]/g, "").trim()}{activeOrder.delivery_room && !activeOrder.delivery_room.includes("[") ? `, Room ${activeOrder.delivery_room}` : ""}
-                                    </div>
-                                    <Link to={`/tracking?order=${activeOrder.id}`} onClick={() => close()}
-                                        style={{ padding: "9px 12px", borderRadius: 12, background: "rgba(48,209,88,0.15)", border: "1px solid rgba(48,209,88,0.3)", color: "#30D158", fontSize: 13, fontWeight: 600, textAlign: "center", textDecoration: "none" }}>
-                                        Track Delivery
-                                    </Link>
-                                </div>
-                            )}
-
-                            {view === "flash" && (
-                                /* ═══ FLASH SALE ═══ */
-                                <div style={{ padding: "14px 16px", display: "flex", flexDirection: "column", gap: 10 }}>
-                                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                                        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                                            <Zap style={{ width: 14, height: 14, color: "#FFD60A", fill: "#FFD60A" }} />
-                                            <span style={{ fontSize: 14, fontWeight: 700, color: "#FFD60A" }}>⚡ Flash Sale</span>
-                                        </div>
-                                        <button onClick={(e) => { e.stopPropagation(); close(); }}
-                                            style={{ background: "rgba(255,255,255,0.06)", border: "none", borderRadius: "50%", width: 26, height: 26, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
-                                            <X style={{ width: 12, height: 12, color: "rgba(255,255,255,0.5)" }} />
-                                        </button>
-                                    </div>
-                                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                                        <div>
-                                            <div style={{ fontSize: 14, fontWeight: 600, color: "#fff" }}>{FLASH_SALE.title}</div>
-                                            <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 4 }}>
-                                                <span style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", textDecoration: "line-through" }}>₹{FLASH_SALE.originalPrice}</span>
-                                                <span style={{ fontSize: 18, fontWeight: 700, color: "#FF6B6B" }}>₹{FLASH_SALE.salePrice}</span>
-                                                <span style={{ fontSize: 11, fontWeight: 700, background: "rgba(255,214,10,0.15)", color: "#FFD60A", padding: "2px 8px", borderRadius: 6 }}>{FLASH_SALE.discount}</span>
-                                            </div>
-                                        </div>
-                                        <div style={{ textAlign: "right" }}>
-                                            <div style={{ fontSize: 10, color: "rgba(255,255,255,0.4)" }}>Ends in</div>
-                                            <div style={{ fontSize: 16, fontWeight: 700, color: "#FFD60A", fontVariantNumeric: "tabular-nums" }}>{saleTimeLeft}</div>
-                                        </div>
-                                    </div>
-                                    <Link to={FLASH_SALE.link} onClick={() => close()}
-                                        style={{ padding: "10px 14px", borderRadius: 12, background: "linear-gradient(135deg, #FF6B6B, #FF3366)", color: "#fff", fontSize: 13, fontWeight: 700, textAlign: "center", textDecoration: "none", boxShadow: "0 2px 12px rgba(255,107,107,0.3)" }}>
-                                        Grab Deal Now 🔥
-                                    </Link>
-                                </div>
-                            )}
-
-                            {view === "context" && pageContext && (
-                                /* ═══ PAGE CONTEXT DROPDOWN ═══ */
-                                <div style={{ padding: "0 16px", display: "flex", flexDirection: "column", gap: 8 }}>
-                                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                                        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                                            <pageContext.icon style={{ width: 14, height: 14, color: "#4DB8AC" }} />
-                                            {/* eslint-disable-next-line no-control-regex */}
-                                            <span style={{ fontSize: 14, fontWeight: 700, color: "#fff" }}>{pageContext.title.replace(/^[\u0000-\u26FF]+\s?/, '')}</span>
-                                        </div>
-                                        <button onClick={(e) => { e.stopPropagation(); close(); navigate(-1); }}
-                                            style={{ background: "rgba(255,255,255,0.06)", border: "none", borderRadius: "50%", width: 26, height: 26, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
-                                            <X style={{ width: 12, height: 12, color: "rgba(255,255,255,0.5)" }} />
-                                        </button>
-                                    </div>
-                                    <div style={{ fontSize: 13, color: "rgba(255,255,255,0.7)", marginTop: -4 }}>
-                                        {pageContext.subtitle}
-                                    </div>
-                                    <div style={{ display: "flex", gap: 8, marginTop: 2, flexWrap: "wrap" }}>
-                                        {pageContext.actions.map((act, i) => (
-                                            <Link key={i} to={act.link} onClick={() => close()}
-                                                style={{ flex: 1, padding: "9px 12px", borderRadius: 12, background: i === 0 ? "#4DB8AC" : "rgba(255,255,255,0.08)", color: "#fff", fontSize: 13, fontWeight: 600, textAlign: "center", textDecoration: "none", minWidth: "100px", boxShadow: i === 0 ? "0 2px 10px rgba(77,184,172,0.3)" : "none" }}>
-                                                {act.label}
-                                            </Link>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-                        </motion.div>
-                    )}
-                </AnimatePresence>
             </motion.div>
-        </motion.div >
         </>
     );
 }
