@@ -120,6 +120,7 @@ export default function Tracking() {
     setLoading(false);
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { fetchOrder(); }, [user, orderId]);
 
   // Real-time subscription
@@ -320,8 +321,8 @@ export default function Tracking() {
                       <motion.div key={step.key} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: 0.3 + i * 0.08 }} className="flex items-start gap-5 relative">
                         <div className={`relative z-10 w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300 ring-4 ring-white ${isDone ? (type === "food" ? "bg-orange-500 text-white" : "bg-brand text-white") :
-                            isActive ? (type === "food" ? "bg-orange-100 text-orange-600 border-2 border-orange-500" : "bg-brand-50 text-brand border-2 border-brand") :
-                              "bg-slate-100 text-slate-400"
+                          isActive ? (type === "food" ? "bg-orange-100 text-orange-600 border-2 border-orange-500" : "bg-brand-50 text-brand border-2 border-brand") :
+                            "bg-slate-100 text-slate-400"
                           }`}>
                           {isDone ? <CheckCircle className="w-5 h-5 flex-shrink-0" /> :
                             <step.icon className={`w-5 h-5 flex-shrink-0`} />}

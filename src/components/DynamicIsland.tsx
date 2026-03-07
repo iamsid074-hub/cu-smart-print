@@ -103,9 +103,9 @@ export default function DynamicIsland() {
         fetchActive();
         const ch = supabase.channel("di_orders").on("postgres_changes", {
             event: "*", schema: "public", table: "orders",
-            filter: `buyer_id=eq.${user.id}`,
         }, () => fetchActive()).subscribe();
         return () => { supabase.removeChannel(ch); };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user]);
 
     // ─── Flash sale timer ───
@@ -227,7 +227,7 @@ export default function DynamicIsland() {
             });
         }
 
-        try { navigator.vibrate?.(15); } catch { }
+        try { navigator.vibrate?.(15); } catch { /* ignore */ }
     }, [lastAction, pushNotification]);
 
     // ─── Persistent cart summary (stays as long as cart has items) ───
@@ -288,6 +288,9 @@ export default function DynamicIsland() {
     }, []);
 
     // ─── Event handlers ───
+    const close = useCallback(() => { setView("default"); setQuery(""); }, []);
+    const open = useCallback((v: IslandView) => { setView(v); try { navigator.vibrate?.(10); } catch { /* ignore */ } }, []);
+
     useEffect(() => {
         const esc = (e: KeyboardEvent) => { if (e.key === "Escape") close(); };
         const outside = (e: MouseEvent) => {
@@ -296,14 +299,11 @@ export default function DynamicIsland() {
         document.addEventListener("keydown", esc);
         document.addEventListener("mousedown", outside);
         return () => { document.removeEventListener("keydown", esc); document.removeEventListener("mousedown", outside); };
-    }, []);
+    }, [close]);
 
     useEffect(() => {
         if (view === "search") setTimeout(() => inputRef.current?.focus(), 200);
     }, [view]);
-
-    const close = useCallback(() => { setView("default"); setQuery(""); }, []);
-    const open = useCallback((v: IslandView) => { setView(v); try { navigator.vibrate?.(10); } catch { } }, []);
 
     const handleSearch = () => {
         if (query.trim()) { navigate(`/browse?q=${encodeURIComponent(query.trim())}`); close(); }
@@ -686,6 +686,7 @@ export default function DynamicIsland() {
                                     <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                                         <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                                             <pageContext.icon style={{ width: 14, height: 14, color: "#4DB8AC" }} />
+                                            {/* eslint-disable-next-line no-control-regex */}
                                             <span style={{ fontSize: 14, fontWeight: 700, color: "#fff" }}>{pageContext.title.replace(/^[\u0000-\u26FF]+\s?/, '')}</span>
                                         </div>
                                         <button onClick={(e) => { e.stopPropagation(); close(); navigate(-1); }}

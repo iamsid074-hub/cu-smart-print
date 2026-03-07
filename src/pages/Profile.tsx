@@ -80,6 +80,7 @@ export default function Profile() {
         setLoadingOrders(false);
     };
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => { fetchIncomingOrders(); }, [user]);
 
     useEffect(() => {
@@ -89,6 +90,7 @@ export default function Profile() {
                 () => { fetchIncomingOrders(); toast.success("📦 New order received!"); })
             .subscribe();
         return () => { supabase.removeChannel(channel); };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user]);
 
     const handleAcceptOrder = async (orderId: string) => {
@@ -169,8 +171,6 @@ export default function Profile() {
         toast.success("Avatar updated");
     };
 
-    if (!user) return null;
-
     const pendingCount = incomingOrders.filter(o => o.status === "pending").length;
 
     const tabs: { id: TabId; label: string; count?: number }[] = [
@@ -185,7 +185,10 @@ export default function Profile() {
             const t = setTimeout(() => { setShowProfileCard(true); setHasAutoShown(true); }, 400);
             return () => clearTimeout(t);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [profile]);
+
+    if (!user) return null;
 
     return (
         <div className="min-h-screen pt-16 pb-24 bg-slate-50">

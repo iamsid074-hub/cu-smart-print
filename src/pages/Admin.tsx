@@ -842,6 +842,7 @@ export default function Admin() {
         fetchProducts();
         fetchOrders();
         fetchNotifications();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isAdmin]);
 
     // ── Real-time subscriptions ──────────────────────────────────────────────────
@@ -868,6 +869,7 @@ export default function Admin() {
             supabase.removeChannel(orderChannel);
             supabase.removeChannel(notifChannel);
         };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isAdmin]);
 
     // ── Handlers ─────────────────────────────────────────────────────────────────

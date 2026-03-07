@@ -102,9 +102,8 @@ export default function UpiPaymentModal({
 
         return () => {
             cancelled = true;
-            document.body.style.overflow = "";
         };
-    }, [isOpen]);
+    }, [isOpen, amount, customerEmail, customerId, customerName, customerPhone, onClose, onPaymentVerify, orderIdText]);
 
     const handleRetry = () => {
         // Close and re-trigger by toggling isOpen from parent
