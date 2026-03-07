@@ -256,7 +256,7 @@ function HeroCarousel() {
   return (
     <div>
       <div
-        className="relative w-full rounded-2xl sm:rounded-3xl overflow-hidden border border-white/20 group aspect-video"
+        className="relative w-full rounded-2xl sm:rounded-3xl overflow-hidden border border-white/20 group aspect-video max-h-[280px] sm:max-h-[450px]"
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
