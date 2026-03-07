@@ -254,9 +254,9 @@ function HeroCarousel() {
   };
 
   return (
-    <section className="mb-6 sm:mb-10">
+    <div>
       <div
-        className="relative w-full rounded-2xl sm:rounded-3xl overflow-hidden shadow-[0_4px_24px_rgba(0,0,0,0.12)] border-2 border-slate-200 group"
+        className="relative w-full rounded-2xl sm:rounded-3xl overflow-hidden border border-white/20 group"
         style={{ aspectRatio: '16/7' }}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
@@ -319,7 +319,7 @@ function HeroCarousel() {
           ))}
         </div>
       </div>
-    </section>
+    </div>
   );
 }
 
@@ -515,35 +515,30 @@ export default function Home() {
         <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent pointer-events-none" />
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none" />
         <div className="max-w-[1600px] mx-auto relative z-10">
-          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 pt-2 pb-2">
+          {/* Title */}
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="text-center mb-6"
+          >
+            <p className="text-sm mb-1.5 font-medium text-white/90">
+              Welcome back, Student 👋
+            </p>
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white" style={fontH}>
+              Discover Campus{' '}
+              <span className="text-emerald-300">Marketplace</span>
+            </h1>
+          </motion.div>
 
-            {/* Left text area */}
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="flex-shrink-0"
-            >
-              <p className="text-sm mb-1.5 font-medium text-white/90">
-                Welcome back, Student 👋
-              </p>
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white mb-2 lg:mb-0" style={fontH}>
-                Discover Campus <br className="hidden sm:block" />
-                <span className="text-emerald-300">Marketplace</span>
-              </h1>
-            </motion.div>
-
-            {/* Right slider area filling the empty space */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="w-full lg:w-[55%] overflow-hidden"
-            >
-              <AnimatedProductSlider />
-            </motion.div>
-
-          </div>
+          {/* Hero Image Carousel */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
+            <HeroCarousel />
+          </motion.div>
         </div>
       </div>
 
@@ -559,8 +554,7 @@ export default function Home() {
           <GroceryBanner />
         </div>
 
-        {/* ─── HERO IMAGE CAROUSEL ─── */}
-        <HeroCarousel />
+
 
         <div className="w-full">
           {/* ─── 🔥 SUMMER SALE BANNER ─── */}
