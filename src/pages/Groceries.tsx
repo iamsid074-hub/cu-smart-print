@@ -6,7 +6,7 @@ import { groceryItems } from "@/config/grocery";
 import { useCart } from "@/contexts/CartContext";
 import { useToast } from "@/hooks/use-toast";
 
-const categories = ["All", "Dairy & Breakfast", "Beverages", "Instant Foods", "Snacks", "Personal Care", "Household Essentials", "Extras"];
+const categories = ["All", "Milk & Dairy", "Soft Drinks", "Fresh Fruits", "Packet Foods", "Personal Care", "Household Essentials"];
 
 export default function Groceries() {
     const navigate = useNavigate();

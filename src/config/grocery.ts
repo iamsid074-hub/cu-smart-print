@@ -5,466 +5,220 @@ export interface GroceryItem {
     title: string;
     price: number;
     image: string;
-    category: "Dairy & Breakfast" | "Beverages" | "Instant Foods" | "Snacks" | "Personal Care" | "Household Essentials" | "Extras";
+    category: "Milk & Dairy" | "Soft Drinks" | "Fresh Fruits" | "Packet Foods" | "Personal Care" | "Household Essentials";
     badge?: string;
     variants?: string;
 }
 
 export const groceryItems: GroceryItem[] = [
-    // ─── CATEGORY 1: DAIRY & BREAKFAST (15 items) ───
+    // ─── CATEGORY 1: MILK & DAIRY ───
     {
-        id: "gr-dairy-1",
-        title: "Milk (500ml)",
-        price: 30,
+        id: "gr-milk-1",
+        title: "Amul Taaza Milk (500ml)",
+        price: 26,
         image: "https://images.unsplash.com/photo-1563636619-e9143da7973b?q=80&w=400&auto=format&fit=crop",
-        category: "Dairy & Breakfast",
-        variants: "Amul / Mother Dairy (Subject to availability)",
+        category: "Milk & Dairy",
         badge: "Daily Essential"
     },
     {
-        id: "gr-dairy-2",
-        title: "Bread Loaf (400g)",
-        price: 45,
-        image: "https://images.unsplash.com/photo-1509440159596-0249088772ff?q=80&w=400&auto=format&fit=crop",
-        category: "Dairy & Breakfast",
-        variants: "White / Brown"
+        id: "gr-milk-2",
+        title: "Amul Gold Milk (500ml)",
+        price: 32,
+        image: "https://images.unsplash.com/photo-1550583724-b2692b85b150?q=80&w=400&auto=format&fit=crop",
+        category: "Milk & Dairy"
     },
     {
-        id: "gr-dairy-3",
-        title: "Butter (100g)",
+        id: "gr-milk-3",
+        title: "Amul Diamond Milk (500ml)",
+        price: 33,
+        image: "https://images.unsplash.com/photo-1631451095765-2c91616fc9e6?q=80&w=400&auto=format&fit=crop",
+        category: "Milk & Dairy"
+    },
+    {
+        id: "gr-milk-4",
+        title: "Amul Butter (100g)",
         price: 60,
         image: "https://images.unsplash.com/photo-1588195538326-c5b1e9f80a1b?q=80&w=400&auto=format&fit=crop",
-        category: "Dairy & Breakfast",
-        variants: "Amul / Britannia (Salted)"
+        category: "Milk & Dairy"
     },
     {
-        id: "gr-dairy-4",
-        title: "Eggs (Pack of 6)",
-        price: 45,
-        image: "https://images.unsplash.com/photo-1582722872445-44dc5f7e3c8f?q=80&w=400&auto=format&fit=crop",
-        category: "Dairy & Breakfast"
-    },
-    {
-        id: "gr-dairy-5",
+        id: "gr-milk-5",
         title: "Cheese Slices (10 pcs)",
         price: 90,
-        image: "https://images.unsplash.com/photo-1550583724-b2692b85b150?q=80&w=400&auto=format&fit=crop",
-        category: "Dairy & Breakfast"
-    },
-    {
-        id: "gr-dairy-6",
-        title: "Paneer (200g)",
-        price: 90,
-        image: "https://images.unsplash.com/photo-1631451095765-2c91616fc9e6?q=80&w=400&auto=format&fit=crop",
-        category: "Dairy & Breakfast"
-    },
-    {
-        id: "gr-dairy-7",
-        title: "Curd / Yogurt (400g)",
-        price: 35,
         image: "https://images.unsplash.com/photo-1488477181946-6428a0291777?q=80&w=400&auto=format&fit=crop",
-        category: "Dairy & Breakfast"
-    },
-    {
-        id: "gr-dairy-8",
-        title: "Mayonnaise (250g)",
-        price: 120,
-        image: "https://images.unsplash.com/photo-1585848790074-ce7ab5ebfac7?q=80&w=400&auto=format&fit=crop",
-        category: "Dairy & Breakfast",
-        variants: "Eggless"
-    },
-    {
-        id: "gr-dairy-9",
-        title: "Peanut Butter (340g)",
-        price: 200,
-        image: "https://images.unsplash.com/photo-1583096114844-06ce5a5f2ec3?q=80&w=400&auto=format&fit=crop",
-        category: "Dairy & Breakfast",
-        variants: "Crunchy / Creamy"
-    },
-    {
-        id: "gr-dairy-10",
-        title: "Mixed Fruit Jam (200g)",
-        price: 70,
-        image: "https://images.unsplash.com/photo-1599380678280-9ea3c0a525ac?q=80&w=400&auto=format&fit=crop",
-        category: "Dairy & Breakfast"
-    },
-    {
-        id: "gr-dairy-11",
-        title: "Cornflakes (250g)",
-        price: 100,
-        image: "https://images.unsplash.com/photo-1596541539207-6c3bddf2d242?q=80&w=400&auto=format&fit=crop",
-        category: "Dairy & Breakfast",
-        variants: "Kellogg's / Bagrry's"
-    },
-    {
-        id: "gr-dairy-12",
-        title: "Oats (500g)",
-        price: 125,
-        image: "https://images.unsplash.com/photo-1517673132405-a56a62b18caf?q=80&w=400&auto=format&fit=crop",
-        category: "Dairy & Breakfast",
-        variants: "Saffola / Quaker"
-    },
-    {
-        id: "gr-dairy-13",
-        title: "Muesli (500g)",
-        price: 240,
-        image: "https://images.unsplash.com/photo-1554316654-20a221f7362a?q=80&w=400&auto=format&fit=crop",
-        category: "Dairy & Breakfast"
-    },
-    {
-        id: "gr-dairy-14",
-        title: "Honey (250g)",
-        price: 175,
-        image: "https://images.unsplash.com/photo-1587049352851-8d4e89134780?q=80&w=400&auto=format&fit=crop",
-        category: "Dairy & Breakfast"
-    },
-    {
-        id: "gr-dairy-15",
-        title: "Chocolate Spread (350g)",
-        price: 380,
-        image: "https://images.unsplash.com/photo-1549495115-321159b36cc9?q=80&w=400&auto=format&fit=crop",
-        category: "Dairy & Breakfast",
-        variants: "Nutella"
+        category: "Milk & Dairy"
     },
 
-    // ─── CATEGORY 2: BEVERAGES (15 items) ───
+    // ─── CATEGORY 2: SOFT DRINKS ───
     {
-        id: "gr-bev-1",
-        title: "Tea Powder (250g)",
-        price: 115,
-        image: "https://images.unsplash.com/photo-1576092768241-dec231879fc3?q=80&w=400&auto=format&fit=crop",
-        category: "Beverages",
-        variants: "Tata Tea / Red Label"
-    },
-    {
-        id: "gr-bev-2",
-        title: "Coffee Powder (50g)",
-        price: 220,
-        image: "https://images.unsplash.com/photo-1559525839-b184a4d698c7?q=80&w=400&auto=format&fit=crop",
-        category: "Beverages",
-        variants: "Nescafe Classic"
-    },
-    {
-        id: "gr-bev-3",
-        title: "Green Tea (25 bags)",
-        price: 170,
-        image: "https://images.unsplash.com/photo-1627435601361-b8474dc7ea7a?q=80&w=400&auto=format&fit=crop",
-        category: "Beverages"
-    },
-    {
-        id: "gr-bev-4",
-        title: "Coffee Sachets (Pack of 10)",
-        price: 115,
-        image: "https://images.unsplash.com/photo-1620061555546-5fd78ce3f1e9?q=80&w=400&auto=format&fit=crop",
-        category: "Beverages"
-    },
-    {
-        id: "gr-bev-5",
-        title: "Health Drink Powder (500g)",
-        price: 280,
-        image: "https://images.unsplash.com/photo-1556881286-fc6915169721?q=80&w=400&auto=format&fit=crop",
-        category: "Beverages",
-        variants: "Bournvita / Horlicks"
-    },
-    {
-        id: "gr-bev-6",
-        title: "Fruit Juice (1L)",
-        price: 100,
-        image: "https://images.unsplash.com/photo-1622597467836-f308ce4509cc?q=80&w=400&auto=format&fit=crop",
-        category: "Beverages",
-        variants: "Real / Tropicana"
-    },
-    {
-        id: "gr-bev-7",
-        title: "Soft Drink Bottle (600ml)",
-        price: 45,
-        image: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?q=80&w=400&auto=format&fit=crop",
-        category: "Beverages",
-        variants: "Coke / Pepsi / Sprite"
-    },
-    {
-        id: "gr-bev-8",
-        title: "Energy Drink Can (250ml)",
-        price: 115,
-        image: "https://images.unsplash.com/photo-1525999147711-8453965bacc1?q=80&w=400&auto=format&fit=crop",
-        category: "Beverages",
-        variants: "Red Bull / Sting"
-    },
-    {
-        id: "gr-bev-9",
-        title: "Flavoured Milk (200ml)",
-        price: 25,
-        image: "https://images.unsplash.com/photo-1550583724-b2692b85b150?q=80&w=400&auto=format&fit=crop",
-        category: "Beverages",
-        variants: "Amul Kool"
-    },
-    {
-        id: "gr-bev-10",
-        title: "Mineral Water (1L)",
+        id: "gr-drink-1",
+        title: "Coca Cola (Small)",
         price: 20,
-        image: "https://images.unsplash.com/photo-1523362628745-0c100150b504?q=80&w=400&auto=format&fit=crop",
-        category: "Beverages"
+        image: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?q=80&w=400&auto=format&fit=crop",
+        category: "Soft Drinks"
     },
     {
-        id: "gr-bev-11",
-        title: "Sports Drink (500ml)",
-        price: 85,
-        image: "https://images.unsplash.com/photo-1525999147711-8453965bacc1?q=80&w=400&auto=format&fit=crop",
-        category: "Beverages",
-        variants: "Gatorade"
+        id: "gr-drink-2",
+        title: "Coca Cola (Medium)",
+        price: 40,
+        image: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?q=80&w=400&auto=format&fit=crop",
+        category: "Soft Drinks"
     },
     {
-        id: "gr-bev-12",
-        title: "Coconut Water Pack (200ml)",
-        price: 35,
-        image: "https://images.unsplash.com/photo-1523362628745-0c100150b504?q=80&w=400&auto=format&fit=crop",
-        category: "Beverages"
+        id: "gr-drink-3",
+        title: "Sprite (Small)",
+        price: 20,
+        image: "https://images.unsplash.com/photo-1625772299849-22a00c619b02?q=80&w=400&auto=format&fit=crop",
+        category: "Soft Drinks"
     },
     {
-        id: "gr-bev-13",
-        title: "Iced Tea (500ml)",
-        price: 55,
-        image: "https://images.unsplash.com/photo-1556881286-fc6915169721?q=80&w=400&auto=format&fit=crop",
-        category: "Beverages",
-        variants: "Lipton Peach / Lemon"
+        id: "gr-drink-4",
+        title: "Sprite (Medium)",
+        price: 40,
+        image: "https://images.unsplash.com/photo-1625772299849-22a00c619b02?q=80&w=400&auto=format&fit=crop",
+        category: "Soft Drinks"
     },
     {
-        id: "gr-bev-14",
-        title: "Instant Drink Powder (500g)",
-        price: 135,
+        id: "gr-drink-5",
+        title: "Fanta (Small)",
+        price: 20,
+        image: "https://images.unsplash.com/photo-1624517452488-04869289c4ca?q=80&w=400&auto=format&fit=crop",
+        category: "Soft Drinks"
+    },
+    {
+        id: "gr-drink-6",
+        title: "Fanta (Medium)",
+        price: 40,
+        image: "https://images.unsplash.com/photo-1624517452488-04869289c4ca?q=80&w=400&auto=format&fit=crop",
+        category: "Soft Drinks"
+    },
+    {
+        id: "gr-drink-7",
+        title: "Mountain Dew (Small)",
+        price: 20,
         image: "https://images.unsplash.com/photo-1622597467836-f308ce4509cc?q=80&w=400&auto=format&fit=crop",
-        category: "Beverages",
-        variants: "Tang / Rasna"
+        category: "Soft Drinks"
     },
     {
-        id: "gr-bev-15",
-        title: "Milkshake Powder (200g)",
-        price: 120,
-        image: "https://images.unsplash.com/photo-1572490122747-3968b75cc699?q=80&w=400&auto=format&fit=crop",
-        category: "Beverages"
+        id: "gr-drink-8",
+        title: "Mountain Dew (Medium)",
+        price: 40,
+        image: "https://images.unsplash.com/photo-1622597467836-f308ce4509cc?q=80&w=400&auto=format&fit=crop",
+        category: "Soft Drinks"
     },
-
-    // ─── CATEGORY 3: INSTANT FOODS (12 items) ───
     {
-        id: "gr-inst-1",
-        title: "Maggi Noodles (Pack of 4)",
-        price: 55,
-        image: "https://images.unsplash.com/photo-1612929633738-8fe01f72813c?q=80&w=400&auto=format&fit=crop",
-        category: "Instant Foods",
+        id: "gr-drink-9",
+        title: "Red Bull Energy Drink",
+        price: 125,
+        image: "https://images.unsplash.com/photo-1595180630018-b22306236b2f?q=80&w=400&auto=format&fit=crop",
+        category: "Soft Drinks",
         badge: "Bestseller"
     },
     {
-        id: "gr-inst-2",
-        title: "Yippee / Top Ramen (Single)",
-        price: 14,
-        image: "https://images.unsplash.com/photo-1585032226651-759b368d7246?q=80&w=400&auto=format&fit=crop",
-        category: "Instant Foods"
+        id: "gr-drink-10",
+        title: "Monster Energy Drink",
+        price: 110,
+        image: "https://images.unsplash.com/photo-1624517452488-04869289c4ca?q=80&w=400&auto=format&fit=crop",
+        category: "Soft Drinks"
     },
     {
-        id: "gr-inst-3",
-        title: "Cup Noodles",
-        price: 35,
-        image: "https://images.unsplash.com/photo-1595180630018-b22306236b2f?q=80&w=400&auto=format&fit=crop",
-        category: "Instant Foods"
-    },
-    {
-        id: "gr-inst-4",
-        title: "Instant Pasta",
-        price: 40,
-        image: "https://images.unsplash.com/photo-1563379926898-05f4575a45d8?q=80&w=400&auto=format&fit=crop",
-        category: "Instant Foods",
-        variants: "Maggi Pazzta"
-    },
-    {
-        id: "gr-inst-5",
-        title: "Ready-to-Eat Meal Pack",
-        price: 55,
-        image: "https://images.unsplash.com/photo-1606850780554-b55ea4dd8b70?q=80&w=400&auto=format&fit=crop",
-        category: "Instant Foods",
-        variants: "MTR / Haldiram's"
-    },
-    {
-        id: "gr-inst-6",
-        title: "Instant Idli/Dosa Mix (500g)",
-        price: 100,
-        image: "https://images.unsplash.com/photo-1630383249896-424e48b4e724?q=80&w=400&auto=format&fit=crop",
-        category: "Instant Foods"
-    },
-    {
-        id: "gr-inst-7",
-        title: "Microwave Popcorn (3 Pack)",
-        price: 115,
-        image: "https://images.unsplash.com/photo-1578849278619-e73505e9610f?q=80&w=400&auto=format&fit=crop",
-        category: "Instant Foods",
-        variants: "Act II"
-    },
-    {
-        id: "gr-inst-8",
-        title: "Instant Soup Packet",
+        id: "gr-drink-11",
+        title: "Frooti / Maaza",
         price: 20,
-        image: "https://images.unsplash.com/photo-1547592180-85f173990554?q=80&w=400&auto=format&fit=crop",
-        category: "Instant Foods",
-        variants: "Knorr"
-    },
-    {
-        id: "gr-inst-9",
-        title: "Flavored Instant Oats (6 Pack)",
-        price: 175,
-        image: "https://images.unsplash.com/photo-1517673132405-a56a62b18caf?q=80&w=400&auto=format&fit=crop",
-        category: "Instant Foods"
-    },
-    {
-        id: "gr-inst-10",
-        title: "Sandwich Spread (200g)",
-        price: 90,
-        image: "https://images.unsplash.com/photo-1585848790074-ce7ab5ebfac7?q=80&w=400&auto=format&fit=crop",
-        category: "Instant Foods",
-        variants: "Veeba Mint / Tandoori"
-    },
-    {
-        id: "gr-inst-11",
-        title: "Ready-to-Fry Papad (10 Pack)",
-        price: 40,
-        image: "https://images.unsplash.com/photo-1601050690597-df0568f70950?q=80&w=400&auto=format&fit=crop",
-        category: "Instant Foods"
-    },
-    {
-        id: "gr-inst-12",
-        title: "Ching's Instant Soup",
-        price: 25,
-        image: "https://images.unsplash.com/photo-1547592180-85f173990554?q=80&w=400&auto=format&fit=crop",
-        category: "Instant Foods"
+        image: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?q=80&w=400&auto=format&fit=crop",
+        category: "Soft Drinks",
+        variants: "Mango"
     },
 
-    // ─── CATEGORY 4: SNACKS (18 items) ───
+    // ─── CATEGORY 3: FRESH FRUITS ───
     {
-        id: "gr-snack-1",
-        title: "Lays Chips (52g)",
-        price: 20,
-        image: "https://images.unsplash.com/photo-1566478989037-e624b0e224e7?q=80&w=400&auto=format&fit=crop",
-        category: "Snacks",
-        variants: "Classic / Masala / Cream & Onion"
+        id: "gr-fruit-1",
+        title: "Fresh Pineapple",
+        price: 80,
+        image: "https://images.unsplash.com/photo-1550258987-190a2d41a8ba?q=80&w=400&auto=format&fit=crop",
+        category: "Fresh Fruits"
     },
     {
-        id: "gr-snack-2",
-        title: "Kurkure (78g)",
-        price: 20,
-        image: "https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?q=80&w=400&auto=format&fit=crop",
-        category: "Snacks"
+        id: "gr-fruit-2",
+        title: "Apples (1kg)",
+        price: 200,
+        image: "https://images.unsplash.com/photo-1560806887-1e4cd0b6faa6?q=80&w=400&auto=format&fit=crop",
+        category: "Fresh Fruits"
     },
     {
-        id: "gr-snack-3",
-        title: "Bingo Chips (52g)",
-        price: 15,
-        image: "https://images.unsplash.com/photo-1566478989037-e624b0e224e7?q=80&w=400&auto=format&fit=crop",
-        category: "Snacks"
+        id: "gr-fruit-3",
+        title: "Oranges (1kg)",
+        price: 80,
+        image: "https://images.unsplash.com/photo-1582979512210-99b6a53386f9?q=80&w=400&auto=format&fit=crop",
+        category: "Fresh Fruits"
     },
     {
-        id: "gr-snack-4",
-        title: "Parle-G Biscuits (250g)",
-        price: 30,
-        image: "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?q=80&w=400&auto=format&fit=crop",
-        category: "Snacks"
+        id: "gr-fruit-4",
+        title: "Guava (1kg)",
+        price: 160,
+        image: "https://images.unsplash.com/photo-1536511132770-e5058c7e8c46?q=80&w=400&auto=format&fit=crop",
+        category: "Fresh Fruits"
+    },
+
+    // ─── CATEGORY 4: PACKET FOODS ───
+    {
+        id: "gr-pack-1",
+        title: "Maggi Noodles (Small)",
+        price: 14,
+        image: "https://images.unsplash.com/photo-1612929633738-8fe01f72813c?q=80&w=400&auto=format&fit=crop",
+        category: "Packet Foods"
     },
     {
-        id: "gr-snack-5",
-        title: "Good Day Cookies (200g)",
-        price: 40,
-        image: "https://images.unsplash.com/photo-1499636136210-6f4ee915583e?q=80&w=400&auto=format&fit=crop",
-        category: "Snacks"
-    },
-    {
-        id: "gr-snack-6",
-        title: "Dark Fantasy Cookies (75g)",
-        price: 35,
-        image: "https://images.unsplash.com/photo-1618923850107-d1a234d7a73a?q=80&w=400&auto=format&fit=crop",
-        category: "Snacks",
+        id: "gr-pack-2",
+        title: "Maggi Noodles (Pack of 4)",
+        price: 55,
+        image: "https://images.unsplash.com/photo-1612929633738-8fe01f72813c?q=80&w=400&auto=format&fit=crop",
+        category: "Packet Foods",
         badge: "Popular"
     },
     {
-        id: "gr-snack-7",
-        title: "Oreo Biscuits (120g)",
+        id: "gr-pack-3",
+        title: "Quaker / Saffola Oats (500g)",
+        price: 125,
+        image: "https://images.unsplash.com/photo-1517673132405-a56a62b18caf?q=80&w=400&auto=format&fit=crop",
+        category: "Packet Foods"
+    },
+    {
+        id: "gr-pack-4",
+        title: "Lays Chips",
+        price: 20,
+        image: "https://images.unsplash.com/photo-1566478989037-e624b0e224e7?q=80&w=400&auto=format&fit=crop",
+        category: "Packet Foods",
+        variants: "Blue / Green / Yellow"
+    },
+    {
+        id: "gr-pack-5",
+        title: "Kurkure",
+        price: 20,
+        image: "https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?q=80&w=400&auto=format&fit=crop",
+        category: "Packet Foods"
+    },
+    {
+        id: "gr-pack-6",
+        title: "Parle-G / Good Day Biscuits",
+        price: 30,
+        image: "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?q=80&w=400&auto=format&fit=crop",
+        category: "Packet Foods"
+    },
+    {
+        id: "gr-pack-7",
+        title: "Oreo Biscuits",
         price: 35,
         image: "https://images.unsplash.com/photo-1558024920-b41e1887dc32?q=80&w=400&auto=format&fit=crop",
-        category: "Snacks"
+        category: "Packet Foods"
     },
     {
-        id: "gr-snack-8",
-        title: "Hide & Seek Cookies (100g)",
-        price: 30,
-        image: "https://images.unsplash.com/photo-1499636136210-6f4ee915583e?q=80&w=400&auto=format&fit=crop",
-        category: "Snacks"
-    },
-    {
-        id: "gr-snack-9",
-        title: "Monaco Biscuits (200g)",
-        price: 35,
-        image: "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?q=80&w=400&auto=format&fit=crop",
-        category: "Snacks"
-    },
-    {
-        id: "gr-snack-10",
-        title: "Sunfeast Marie Light (250g)",
+        id: "gr-pack-8",
+        title: "Amul Ice Cream Cup",
         price: 40,
-        image: "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?q=80&w=400&auto=format&fit=crop",
-        category: "Snacks"
-    },
-    {
-        id: "gr-snack-11",
-        title: "Dairy Milk Chocolate (38g)",
-        price: 45,
-        image: "https://images.unsplash.com/photo-1548842145-6a5fc1a62d09?q=80&w=400&auto=format&fit=crop",
-        category: "Snacks"
-    },
-    {
-        id: "gr-snack-12",
-        title: "KitKat Bar (37g)",
-        price: 45,
-        image: "https://images.unsplash.com/photo-1621503125745-728bce8cde27?q=80&w=400&auto=format&fit=crop",
-        category: "Snacks"
-    },
-    {
-        id: "gr-snack-13",
-        title: "Perk / Munch (28g)",
-        price: 25,
-        image: "https://images.unsplash.com/photo-1614561266012-eaf09df4433d?q=80&w=400&auto=format&fit=crop",
-        category: "Snacks"
-    },
-    {
-        id: "gr-snack-14",
-        title: "Namkeen Mix / Bhujia (200g)",
-        price: 70,
-        image: "https://images.unsplash.com/photo-1589131665476-cda1b392b95b?q=80&w=400&auto=format&fit=crop",
-        category: "Snacks",
-        variants: "Haldiram's"
-    },
-    {
-        id: "gr-snack-15",
-        title: "Ready-to-Eat Popcorn (60g)",
-        price: 50,
-        image: "https://images.unsplash.com/photo-1572889614486-9a57ba8d6978?q=80&w=400&auto=format&fit=crop",
-        category: "Snacks"
-    },
-    {
-        id: "gr-snack-16",
-        title: "Yoga Bar / Energy Bar (38g)",
-        price: 45,
-        image: "https://images.unsplash.com/photo-1622219808307-e435965a39cb?q=80&w=400&auto=format&fit=crop",
-        category: "Snacks"
-    },
-    {
-        id: "gr-snack-17",
-        title: "Protein Bar (60g)",
-        price: 100,
-        image: "https://images.unsplash.com/photo-1622219808298-b8054063c8ef?q=80&w=400&auto=format&fit=crop",
-        category: "Snacks"
-    },
-    {
-        id: "gr-snack-18",
-        title: "Choco Pie (Pack of 6)",
-        price: 70,
-        image: "https://images.unsplash.com/photo-1588612194646-6081e7d4dcf8?q=80&w=400&auto=format&fit=crop",
-        category: "Snacks"
+        image: "https://images.unsplash.com/photo-1572490122747-3968b75cc699?q=80&w=400&auto=format&fit=crop",
+        category: "Packet Foods",
+        variants: "Vanilla / Choco"
     },
 
     // ─── CATEGORY 5: PERSONAL CARE (15 items) ───
@@ -652,68 +406,5 @@ export const groceryItems: GroceryItem[] = [
         price: 100,
         image: "https://images.unsplash.com/photo-1629837943542-a27dd252b412?q=80&w=400&auto=format&fit=crop",
         category: "Household Essentials"
-    },
-
-    // ─── CATEGORY 7: EXTRAS (10 items) ───
-    {
-        id: "gr-extra-1",
-        title: "Whisper Sanitary Pads (20 pcs)",
-        price: 175,
-        image: "https://images.unsplash.com/photo-1584483765101-7fa1c7ad1f1e?q=80&w=400&auto=format&fit=crop",
-        category: "Extras"
-    },
-    {
-        id: "gr-extra-2",
-        title: "Condoms (Pack of 3)",
-        price: 115,
-        image: "https://images.unsplash.com/photo-1584483765101-7fa1c7ad1f1e?q=80&w=400&auto=format&fit=crop",
-        category: "Extras",
-        variants: "Discreet Packaging"
-    },
-    {
-        id: "gr-extra-3",
-        title: "Pain Relief Spray (35g)",
-        price: 150,
-        image: "https://images.unsplash.com/photo-1595532542520-222a7620eead?q=80&w=400&auto=format&fit=crop",
-        category: "Extras",
-        variants: "Moov / Volini"
-    },
-    {
-        id: "gr-extra-4",
-        title: "Band-Aid (Pack of 10)",
-        price: 40,
-        image: "https://images.unsplash.com/photo-1584483765101-7fa1c7ad1f1e?q=80&w=400&auto=format&fit=crop",
-        category: "Extras"
-    },
-    {
-        id: "gr-extra-5",
-        title: "Vicks VapoRub (25ml)",
-        price: 90,
-        image: "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?q=80&w=400&auto=format&fit=crop",
-        category: "Extras"
-    },
-    {
-        id: "gr-extra-6",
-        title: "Cough Lozenges (Pack of 8)",
-        price: 75,
-        image: "https://images.unsplash.com/photo-1584483765101-7fa1c7ad1f1e?q=80&w=400&auto=format&fit=crop",
-        category: "Extras",
-        variants: "Strepsils / Vicks"
-    },
-    {
-        id: "gr-extra-7",
-        title: "Multivitamin Tablets",
-        price: 300,
-        image: "https://images.unsplash.com/photo-1584308666744-24d5e1f0e4b8?q=80&w=400&auto=format&fit=crop",
-        category: "Extras",
-        variants: "Revital / Supradyn"
-    },
-    {
-        id: "gr-extra-8",
-        title: "Protein Powder Jar (500g)",
-        price: 1150,
-        image: "https://images.unsplash.com/photo-1579722820308-d74e5088dcc9?q=80&w=400&auto=format&fit=crop",
-        category: "Extras",
-        variants: "MuscleBlaze"
     }
 ];
