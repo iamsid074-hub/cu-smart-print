@@ -32,7 +32,7 @@ interface IslandNotification {
 }
 
 // Extremely wavy/liquid spring physics for morph animation
-const spring = { type: "spring" as const, stiffness: 350, damping: 24, mass: 1.2 };
+const spring = { type: "spring" as const, stiffness: 320, damping: 28, mass: 1.1 };
 
 // Flash sale config
 const FLASH_SALE = {
@@ -407,11 +407,11 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
                     animate={{
                         width: isDropdownOpen ? "min(360px, calc(100vw - 32px))" : getPillWidth(),
                         height: isDropdownOpen ? "auto" : 40,
-                        borderRadius: isDropdownOpen ? 24 : 50,
                     }}
                     transition={spring}
                     onClick={() => { if (!isExpanded) handleCollapsedClick(); }}
                     style={{
+                        borderRadius: isDropdownOpen ? 32 : 50,
                         position: "absolute",
                         top: 0,
                         left: 0,
