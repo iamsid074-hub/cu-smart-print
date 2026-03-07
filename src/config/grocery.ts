@@ -22,8 +22,8 @@ export const groceryItems: GroceryItem[] = [
     },
     {
         id: "gr-milk-2",
-        title: "Amul Gold Milk (500ml)",
-        price: 32,
+        title: "Amul Gold Milk 500 ml",
+        price: 33,
         image: "https://images.unsplash.com/photo-1550583724-b2692b85b150?q=80&w=400&auto=format&fit=crop",
         category: "Milk & Dairy"
     },
@@ -36,15 +36,15 @@ export const groceryItems: GroceryItem[] = [
     },
     {
         id: "gr-milk-4",
-        title: "Amul Butter (100g)",
-        price: 60,
+        title: "Amul Butter 100 gm",
+        price: 58,
         image: "https://images.unsplash.com/photo-1588195538326-c5b1e9f80a1b?q=80&w=400&auto=format&fit=crop",
         category: "Milk & Dairy"
     },
     {
         id: "gr-milk-5",
-        title: "Cheese Slices (10 pcs)",
-        price: 90,
+        title: "Amul Cheese Slices - Rich In Protein, Wholesome, No Added Sugar, 100 g (5 Slices)",
+        price: 75,
         image: "https://images.unsplash.com/photo-1488477181946-6428a0291777?q=80&w=400&auto=format&fit=crop",
         category: "Milk & Dairy"
     },
