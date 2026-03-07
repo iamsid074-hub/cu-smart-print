@@ -109,7 +109,7 @@ export default function Groceries() {
                                     animate={{ opacity: 1, scale: 1 }}
                                     exit={{ opacity: 0, scale: 0.9 }}
                                     transition={{ duration: 0.2 }}
-                                    className="group relative bg-white border-2 border-slate-200 shadow-[0_2px_8px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.12)] hover:border-emerald-300 rounded-2xl overflow-hidden hover:-translate-y-1 transition-all duration-300 flex flex-col"
+                                    className="group relative bg-[#faf5f8] border-2 border-slate-200 shadow-[0_2px_8px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.12)] hover:border-[#e0b1cb] rounded-2xl overflow-hidden hover:-translate-y-1 transition-all duration-300 flex flex-col"
                                 >
                                     <Link to={`/product/${item.id}`} className="absolute inset-0 z-10" />
 

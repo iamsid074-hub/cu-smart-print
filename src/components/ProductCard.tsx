@@ -102,7 +102,7 @@ export default function ProductCard({
         viewport={{ once: true }}
         transition={{ duration: 0.5, delay, ease: [0.34, 1.56, 0.64, 1] }}
         whileHover={{ y: -8, scale: 1.02 }}
-        className="relative bg-white rounded-2xl overflow-hidden group cursor-pointer h-full border-2 border-slate-200 shadow-[0_2px_8px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.12)] hover:border-brand-accent/40 transition-all duration-300"
+        className="relative bg-[#faf5f8] rounded-2xl overflow-hidden group cursor-pointer h-full border-2 border-slate-200 shadow-[0_2px_8px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.12)] hover:border-[#e0b1cb] transition-all duration-300"
       >
         {/* Badge */}
         {badge && (

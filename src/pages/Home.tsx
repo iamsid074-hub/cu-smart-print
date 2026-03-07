@@ -682,7 +682,7 @@ export default function Home() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.04 }}
-                  className="group relative rounded-3xl overflow-hidden transition-all duration-300 hover:-translate-y-1.5 flex flex-col bg-white shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-[0_12px_35px_rgba(35,25,66,0.1)]"
+                  className="group relative rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1.5 flex flex-col bg-[#faf5f8] border-2 border-slate-200 shadow-[0_2px_8px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.12)] hover:border-[#e0b1cb]"
                 >
                   {/* Badge */}
                   {item.badge && (
