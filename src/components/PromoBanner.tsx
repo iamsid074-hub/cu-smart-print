@@ -114,53 +114,61 @@ export default function PromoBanner() {
             </Link>
 
             {/* ─── MOBILE BANNER (shown only on phones) ─── */}
-            <Link to="/food" className="sm:hidden block relative w-full aspect-[4/5] overflow-hidden rounded-[2rem] shadow-2xl border border-white/10">
-                <div
-                    className="absolute inset-0 bg-cover bg-center transition-transform duration-700"
-                    style={{ backgroundImage: 'url(/banners/india_victory_mobile.png)' }}
-                />
-                <div className="absolute inset-0 bg-gradient-to-b from-[#0D0907]/90 via-[#0D0907]/40 to-[#0D0907]/95" />
+            <Link to="/food" className="sm:hidden block relative w-full overflow-hidden rounded-[1.5rem] shadow-xl">
+                {/* Clean gradient background — no noisy image */}
+                <div className="relative w-full px-5 py-8 flex flex-col items-center text-center"
+                    style={{ background: 'linear-gradient(160deg, #0f172a 0%, #1e1b4b 40%, #312e81 100%)' }}
+                >
+                    {/* Subtle ambient glow */}
+                    <div className="absolute top-0 right-0 w-40 h-40 bg-[#FF9933]/15 rounded-full blur-[80px] pointer-events-none" />
+                    <div className="absolute bottom-0 left-0 w-40 h-40 bg-[#138808]/15 rounded-full blur-[80px] pointer-events-none" />
 
-                <div className="absolute inset-0 flex flex-col p-5 h-full">
-                    {/* Top: Match Info */}
-                    <div className="flex justify-center w-full mt-2">
-                        <div className="px-4 py-2 rounded-full bg-white/10 border border-white/20 backdrop-blur-md flex items-center gap-2 shadow-[0_0_15px_rgba(255,255,255,0.15)]">
-                            <span className="text-lg">🇮🇳</span>
-                            <span className="text-[10px] font-black text-white uppercase tracking-widest">Victory Offer 🏆</span>
-                        </div>
+                    {/* Badge */}
+                    <div className="relative z-10 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 border border-white/15 mb-5">
+                        <span className="text-sm">🇮🇳</span>
+                        <span className="text-[10px] font-bold text-white/90 uppercase tracking-widest">India Wins T20 World Cup</span>
+                        <span className="text-sm">🏆</span>
                     </div>
 
-                    {/* Center Space to see the image */}
-                    <div className="flex-grow" />
+                    {/* Trophy */}
+                    <div className="relative z-10 text-6xl mb-4 drop-shadow-[0_0_20px_rgba(255,200,50,0.3)]">🏆</div>
 
-                    {/* Bottom: Offer & CTA */}
-                    <div className="flex flex-col items-center text-center w-full pb-2">
-                        <h2 className="text-white text-5xl font-black italic uppercase leading-[0.9] drop-shadow-[0_0_20px_rgba(0,0,0,0.8)] mb-3" style={fontH}>
-                            Only ₹12 <br />
-                            <span className="text-[#FF9933] text-5xl">DELIVERY</span>
-                        </h2>
+                    {/* Title */}
+                    <h2 className="relative z-10 text-white text-2xl font-black uppercase tracking-tight leading-tight mb-1.5" style={fontH}>
+                        Victory Celebration
+                    </h2>
+                    <p className="relative z-10 text-white/60 text-sm font-medium mb-6">
+                        Special delivery offer for 3 days
+                    </p>
 
-                        {timeLeft && (
-                            <div className="bg-black/60 backdrop-blur-md px-5 py-2 rounded-xl border border-white/10 mb-4 inline-flex flex-col items-center shadow-lg">
-                                <p className="text-[9px] text-white/70 font-bold uppercase tracking-widest mb-0.5">Offer Ends In</p>
-                                <div className="flex items-center gap-1.5 text-lg font-black text-white font-mono">
-                                    <span>{String(timeLeft.hours).padStart(2, '0')}</span>
-                                    <span className="text-white/50 animate-pulse">:</span>
-                                    <span>{String(timeLeft.minutes).padStart(2, '0')}</span>
-                                    <span className="text-white/50 animate-pulse">:</span>
-                                    <span className="text-[#FF9933]">{String(timeLeft.seconds).padStart(2, '0')}</span>
+                    {/* Countdown Timer */}
+                    {timeLeft && (
+                        <div className="relative z-10 flex items-center gap-3 mb-6">
+                            {[
+                                { val: timeLeft.hours, label: 'HRS' },
+                                { val: timeLeft.minutes, label: 'MIN' },
+                                { val: timeLeft.seconds, label: 'SEC' },
+                            ].map((t, i) => (
+                                <div key={t.label} className="flex items-center gap-3">
+                                    <div className="flex flex-col items-center">
+                                        <div className="w-16 h-16 rounded-xl bg-white/10 border border-white/10 flex items-center justify-center">
+                                            <span className="text-2xl font-black text-white font-mono">{String(t.val).padStart(2, '0')}</span>
+                                        </div>
+                                        <span className="text-[9px] font-bold text-white/40 mt-1.5 tracking-widest">{t.label}</span>
+                                    </div>
+                                    {i < 2 && <span className="text-white/30 text-xl font-bold mb-4 animate-pulse">:</span>}
                                 </div>
-                            </div>
-                        )}
+                            ))}
+                        </div>
+                    )}
 
-                        <button className="flex items-center justify-center gap-2 w-full py-4 rounded-xl font-bold text-white text-[15px] active:scale-[0.98] transition-all relative overflow-hidden"
-                            style={{ background: 'linear-gradient(135deg, #138808 0%, #0d5f05 100%)', boxShadow: '0 8px 25px rgba(19,136,8,0.4)' }}
-                        >
-                            <div className="absolute inset-0 bg-white/20 translate-y-[-100%] active:translate-y-0 transition-transform duration-200" />
-                            Claim Offer Now
-                            <ChevronRight className="w-4 h-4" />
-                        </button>
-                    </div>
+                    {/* CTA Button */}
+                    <button className="relative z-10 flex items-center justify-center gap-2 w-full py-3.5 rounded-xl font-bold text-white text-sm active:scale-[0.97] transition-all"
+                        style={{ background: 'linear-gradient(135deg, #138808 0%, #0d5f05 100%)', boxShadow: '0 4px 20px rgba(19,136,8,0.35)' }}
+                    >
+                        Order Food Now
+                        <ChevronRight className="w-4 h-4" />
+                    </button>
                 </div>
             </Link>
         </div>
