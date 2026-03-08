@@ -21,14 +21,17 @@ export default function BottomNav() {
             transition={{ duration: 0.5, ease: [0.34, 1.56, 0.64, 1] }}
             className="fixed bottom-4 sm:bottom-6 left-1/2 z-50 w-[94vw] sm:w-[92vw] max-w-[380px]"
         >
+            {/* Global Liquid Blur Behind Entire Bar */}
+            <div className="absolute inset-x-4 -inset-y-2 bg-[#1e293b]/40 rounded-full blur-2xl pointer-events-none" />
+
             <div
-                className="flex items-center justify-between px-2 sm:px-3 py-2 relative"
+                className="flex items-center justify-between px-2 sm:px-3 py-2 relative border border-white/50"
                 style={{
-                    background: "rgba(255, 255, 255, 0.98)",
+                    background: "rgba(255, 255, 255, 0.95)",
                     backdropFilter: "blur(40px) saturate(200%)",
                     WebkitBackdropFilter: "blur(40px) saturate(200%)",
                     borderRadius: 50,
-                    boxShadow: "0 10px 40px -10px rgba(0,0,0,0.2), 0 0 0 1px rgba(0,0,0,0.02)",
+                    boxShadow: "0 20px 60px -15px rgba(0,0,0,0.3), 0 0 0 1px rgba(0,0,0,0.05)",
                 }}
             >
                 {/* Home */}
