@@ -8,10 +8,10 @@ export default function Navbar() {
 
   return (
     <motion.nav
-      initial={{ y: 80, opacity: 0 }}
+      initial={{ y: -80, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5, ease: [0.34, 1.56, 0.64, 1] }}
-      className="fixed bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center justify-center"
+      className="fixed top-4 sm:top-6 left-1/2 -translate-x-1/2 z-50 flex items-center justify-center"
     >
       <DynamicIsland onExpandChange={handleIslandExpand} />
     </motion.nav>

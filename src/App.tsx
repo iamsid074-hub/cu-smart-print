@@ -20,6 +20,7 @@ import TermsAndConditions from "./pages/TermsAndConditions";
 import HelpCenter from "./pages/HelpCenter";
 import ResetPassword from "./pages/ResetPassword";
 import Navbar from "./components/Navbar";
+import BottomNav from "./components/BottomNav";
 import UsernameSetup from "./components/UsernameSetup";
 import { useSiteGate, ClosedScreen, MaintenanceScreen } from "./components/SiteGate";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
@@ -82,7 +83,12 @@ function AppLayout() {
 
   return (
     <>
-      {!isLanding && !isLogin && !isAdmin && <Navbar />}
+      {!isLanding && !isLogin && !isAdmin && (
+        <>
+          <Navbar />
+          <BottomNav />
+        </>
+      )}
       <Routes>
         <Route path="/" element={user ? <Navigate to="/home" replace /> : <Index />} />
         {/* We wrap Home in ProtectedRoute so users are gated there too if they bypass somehow */}

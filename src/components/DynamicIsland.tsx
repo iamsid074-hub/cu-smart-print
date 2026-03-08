@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, X, ShoppingCart, Truck, Zap, ChevronRight, CheckCircle, Package, Utensils, MapPin, Home as HomeIcon, Compass, Bookmark, User } from "lucide-react";
+import { Search, X, ShoppingCart, Truck, Zap, ChevronRight, CheckCircle, Package, Utensils, MapPin, ShoppingBag } from "lucide-react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
@@ -32,7 +32,7 @@ interface IslandNotification {
 }
 
 // Simple, fast ease animation instead of complex spring physics
-const spring: any = { type: "tween", duration: 0.25, ease: "easeOut" };
+const spring = { type: "tween", duration: 0.25, ease: "easeOut" };
 
 // Flash sale config
 const FLASH_SALE = {
@@ -61,7 +61,9 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
         if (p === '/food') return { id: 'food', title: '🍔 CU Food Menu', subtitle: 'Order from campus restaurants', icon: Utensils, actions: [{ label: 'Browse Menu', link: '/food' }, { label: 'View Cart', link: '/cart' }] };
         if (p === '/sell' || p === '/list') return { id: 'sell', title: '📦 Sell Your Item', subtitle: 'List in 30 seconds, earn cash', icon: Package, actions: [{ label: 'Quick Sell', link: '/list' }, { label: 'My Listings', link: '/profile' }] };
         if (p === '/tracking') return { id: 'tracking', title: '📍 Track Orders', subtitle: 'See all your orders', icon: MapPin, actions: [{ label: 'Active Orders', link: '/tracking' }, { label: 'Past Orders', link: '/profile' }] };
-        return null; // Removed '/browse' and '/cart' contexts as they are now main nav items
+        if (p === '/browse') return { id: 'browse', title: '🛍️ Browse Products', subtitle: 'Find what you need', icon: Search, actions: [{ label: 'Filters', link: '/browse' }, { label: 'Sort', link: '/browse' }] };
+        if (p === '/cart') return { id: 'cart_page', title: '🛒 Shopping Cart', subtitle: 'Ready to checkout', icon: ShoppingCart, actions: [{ label: 'Checkout', link: '/cart' }, { label: 'Continue Shopping', link: '/browse' }] };
+        return null;
     };
     const pageContext = getPageContext();
 
@@ -276,12 +278,12 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
     }, [activeOrder, justDelivered, pushNotification]);
 
     // ─── Flash sale as P3 idle content ───
-    const [idleMode, setIdleMode] = useState<"nav" | "flash">("nav");
+    const [idleMode, setIdleMode] = useState<"logo" | "flash">("logo");
     useEffect(() => {
         if (!FLASH_SALE.active) return;
         const id = setInterval(() => {
-            setIdleMode(prev => prev === "nav" ? "flash" : "nav");
-        }, 12000); // cycle slower so nav is mostly visible
+            setIdleMode(prev => prev === "logo" ? "flash" : "logo");
+        }, 8000);
         return () => clearInterval(id);
     }, []);
 
@@ -357,15 +359,12 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
 
     // Pill width
     const getPillWidth = () => {
-        if (isSearchOpen) return "min(420px, calc(100vw - 32px))";
-        if (showingNotif) return "min(320px, calc(100vw - 32px))";
-        if (showingIdle && pageContext) return "min(280px, calc(100vw - 32px))";
-        if (showingIdle && idleMode === "flash" && !pageContext) return "min(280px, calc(100vw - 32px))";
-        return "min(360px, calc(100vw - 24px))"; // Main nav width
+        if (isSearchOpen) return "min(420px, calc(100vw - 120px))";
+        if (showingNotif) return "min(280px, calc(100vw - 120px))";
+        if (showingIdle && pageContext) return "min(220px, calc(100vw - 160px))";
+        if (showingIdle && idleMode === "flash" && !pageContext) return "min(250px, calc(100vw - 160px))";
+        return 150;
     };
-
-    // For styling
-    const isLightIdle = showingIdle && !pageContext && idleMode === "nav";
 
     return (
         <>
@@ -416,7 +415,7 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
                         top: 0,
                         left: 0,
                         cursor: isExpanded ? "default" : "pointer",
-                        background: isLightIdle ? "rgba(248, 250, 252, 0.95)" : "rgba(0, 0, 0, 0.94)",
+                        background: "rgba(0, 0, 0, 0.94)",
                         backdropFilter: "blur(40px) saturate(180%)",
                         WebkitBackdropFilter: "blur(40px) saturate(180%)",
                         overflow: "hidden",
@@ -427,16 +426,16 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
                         animation: getAnimation(),
                         boxShadow: isExpanded
                             ? "0 8px 40px rgba(0,0,0,0.6), 0 0 0 0.5px rgba(255,255,255,0.1)"
-                            : (isLightIdle ? "0 4px 24px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.04)" : undefined),
-                        border: isLightIdle ? undefined : "0.5px solid rgba(255,255,255,0.06)",
+                            : undefined,
+                        border: "0.5px solid rgba(255,255,255,0.06)",
                         transformOrigin: "top left",
                     }}
                 >
-                    {/* TOP HEADER ROW: Always 64px tall for nav state, 40px otherwise. */}
+                    {/* TOP HEADER ROW: Always 40px tall, holds the normal pill content. Fades out when expanded (unless search). */}
                     <motion.div
                         animate={{ opacity: (isExpanded && !isSearchOpen) ? 0 : 1 }}
                         transition={{ duration: 0.15 }}
-                        style={{ height: isLightIdle ? 64 : 40, width: "100%", display: "flex", alignItems: "center", justifyItems: "center", transition: "height 0.25s ease-out" }}
+                        style={{ height: 40, width: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}
                     >
                         {/* We add AnimatePresence here because it manages the pill content fading out */}
                         <AnimatePresence mode="wait">
@@ -514,50 +513,17 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
                                         <>
                                             <div style={{ width: 7, height: 7, borderRadius: "50%", background: "#30D158", flexShrink: 0, animation: "greenPulse 2s ease-in-out infinite" }} />
 
-                                            {idleMode === "nav" && (
-                                                <div style={{ display: 'flex', width: '100%', height: '100%', alignItems: 'center', justifyContent: 'space-between', padding: '0 8px' }}>
-                                                    {/* Home */}
-                                                    <Link to="/home" onClick={(e) => isExpanded && e.preventDefault()} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, textDecoration: 'none', padding: '0 8px' }}>
-                                                        <HomeIcon strokeWidth={2.5} style={{ width: 22, height: 22, color: location.pathname === '/home' ? '#0f172a' : '#64748b' }} fill={location.pathname === '/home' ? '#0f172a' : 'none'} />
-                                                        <span style={{ fontSize: 10, fontWeight: 600, color: location.pathname === '/home' ? '#0f172a' : '#94a3b8' }}>Home</span>
-                                                    </Link>
-
-                                                    {/* Explore */}
-                                                    <Link to="/browse" onClick={(e) => isExpanded && e.preventDefault()} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, textDecoration: 'none', padding: '0 8px' }}>
-                                                        <Compass strokeWidth={2.5} style={{ width: 22, height: 22, color: location.pathname.startsWith('/browse') ? '#0f172a' : '#64748b' }} />
-                                                        <span style={{ fontSize: 10, fontWeight: 600, color: location.pathname.startsWith('/browse') ? '#0f172a' : '#94a3b8' }}>Explore</span>
-                                                    </Link>
-
-                                                    {/* Cart (Center elevated style) */}
-                                                    <Link to="/cart" onClick={(e) => isExpanded && e.preventDefault()} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textDecoration: 'none', padding: '0 12px' }}>
-                                                        <div style={{ background: '#f8fafc', borderRadius: 24, padding: '10px 24px', boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.03), 0 2px 8px rgba(0,0,0,0.06)', position: 'relative' }}>
-                                                            <ShoppingCart strokeWidth={2} style={{ width: 22, height: 22, color: '#0f172a' }} />
-                                                            {cartCount > 0 && (
-                                                                <div style={{ position: 'absolute', top: 4, right: 14, background: '#ef4444', color: 'white', fontSize: 10, fontWeight: 'bold', width: 16, height: 16, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1.5px solid #f8fafc' }}>
-                                                                    {cartCount > 9 ? '9+' : cartCount}
-                                                                </div>
-                                                            )}
-                                                        </div>
-                                                    </Link>
-
-                                                    {/* Saved (Bookmarks/Tracking) */}
-                                                    <Link to="/tracking" onClick={(e) => isExpanded && e.preventDefault()} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, textDecoration: 'none', padding: '0 8px' }}>
-                                                        <Bookmark strokeWidth={2.5} style={{ width: 22, height: 22, color: location.pathname.startsWith('/tracking') ? '#0f172a' : '#64748b' }} />
-                                                        <span style={{ fontSize: 10, fontWeight: 600, color: location.pathname.startsWith('/tracking') ? '#0f172a' : '#94a3b8' }}>Saved</span>
-                                                    </Link>
-
-                                                    {/* Profile */}
-                                                    <Link to="/profile" onClick={(e) => isExpanded && e.preventDefault()} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, textDecoration: 'none', padding: '0 8px' }}>
-                                                        <div style={{ width: 24, height: 24, borderRadius: '50%', background: '#e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
-                                                            {user ? (
-                                                                <User strokeWidth={2} style={{ width: 16, height: 16, color: '#475569' }} fill="#94a3b8" />
-                                                            ) : (
-                                                                <User strokeWidth={2} style={{ width: 16, height: 16, color: '#475569' }} />
-                                                            )}
-                                                        </div>
-                                                        <span style={{ fontSize: 10, fontWeight: 600, color: location.pathname.startsWith('/profile') ? '#0f172a' : '#94a3b8' }}>Profile</span>
-                                                    </Link>
-                                                </div>
+                                            {idleMode === "logo" && (
+                                                <>
+                                                    <div style={{ width: 22, height: 22, borderRadius: "50%", overflow: "hidden", border: "1.5px solid rgba(255,255,255,0.1)", flexShrink: 0 }}>
+                                                        <img src="/logo.png" alt="CU" style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                                                            onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
+                                                    </div>
+                                                    <span style={{ fontWeight: 700, fontSize: 13, whiteSpace: "nowrap", display: "flex", gap: 4 }}>
+                                                        <span style={{ color: "#FF6B6B" }}>CU</span>
+                                                        <span style={{ color: "#fff" }}>BAZZAR</span>
+                                                    </span>
+                                                </>
                                             )}
                                             {idleMode === "flash" && (
                                                 <div style={{ display: "flex", alignItems: "center", gap: 5, flex: 1, minWidth: 0 }}>

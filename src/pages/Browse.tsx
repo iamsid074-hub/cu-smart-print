@@ -63,7 +63,7 @@ export default function Browse() {
         : products;
 
     return (
-        <div className="min-h-screen pt-6 pb-32 px-4 sm:px-6 bg-slate-50">
+        <div className="min-h-screen pt-24 pb-32 px-4 sm:px-6 bg-slate-50">
             <div className="max-w-7xl mx-auto">
 
                 {/* ── Hero Header ─────────────────────────────────────── */}
