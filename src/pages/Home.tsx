@@ -572,35 +572,24 @@ export default function Home() {
               </Link>
             </div>
 
-            <div className="flex gap-3 sm:gap-5 overflow-x-auto scrollbar-hide pb-4 -mx-1 px-1">
+            <div className="flex justify-start gap-4 sm:gap-8 overflow-x-auto scrollbar-hide pb-4 -mx-2 px-2 pt-2">
               {categories.map((cat) => (
                 <Link
                   key={cat.label}
                   to={`/browse?category=${cat.label}`}
-                  className="group relative flex-shrink-0 w-32 h-40 sm:w-48 sm:h-56 rounded-3xl sm:rounded-[2rem] overflow-hidden transition-all duration-500 ease-out hover:-translate-y-2"
-                  style={{ border: '1px solid #544B43' }}
+                  className="group flex flex-col items-center flex-shrink-0 gap-2 w-[76px] sm:w-[88px] transition-transform duration-300 hover:-translate-y-1"
                 >
-                  {/* Photo bg */}
-                  <div className="absolute inset-0 z-0">
-                    <img src={cat.image} alt={cat.label} className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700 ease-out" />
-                    <div className="absolute inset-0 bg-black/60 group-hover:bg-black/40 transition-colors duration-500" />
+                  <div className={`w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br ${cat.gradient} flex items-center justify-center transform group-hover:scale-105 transition-transform duration-300 shadow-lg border border-white/10`}>
+                    <cat.icon className="w-6 h-6 sm:w-7 sm:h-7 text-white drop-shadow-md" />
                   </div>
-                  {/* Gradient overlay */}
-                  <div className={`absolute inset-0 bg-gradient-to-t ${cat.gradient} opacity-30 mix-blend-overlay z-0`} />
-                  <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/90 to-transparent z-0" />
-
-                  <div className="relative h-full flex flex-col items-center justify-end p-3 sm:p-5 text-center z-10">
-                    <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-br ${cat.gradient} flex items-center justify-center mb-2 sm:mb-3 transform group-hover:scale-110 transition-transform duration-500 shadow-lg`}>
-                      <cat.icon className="w-5 h-5 sm:w-6 sm:h-6 text-white drop-shadow-sm" />
-                    </div>
-                    <h3 className="font-bold text-sm sm:text-lg text-white tracking-wide mb-0.5 sm:mb-1">{cat.label}</h3>
-                    <span className="text-[10px] sm:text-xs px-2 py-0.5 rounded-full text-white/70 font-medium" style={{ backgroundColor: 'rgba(0,0,0,0.4)' }}>
+                  <div className="text-center flex flex-col items-center">
+                    <h3 className="font-bold text-xs sm:text-sm text-white/90 group-hover:text-white transition-colors leading-tight">{cat.label}</h3>
+                    <span className="text-[9px] sm:text-[10px] mt-0.5 px-1.5 py-0.5 rounded-full bg-white/10 text-white/60 font-medium">
                       {cat.count}
                     </span>
                   </div>
                 </Link>
               ))}
-
             </div>
           </section>
 

@@ -157,8 +157,8 @@ function DashboardSection({ stats, recentProducts, recentOrders, loading }: {
     return (
         <div className="space-y-8">
             <div>
-                <h2 className="text-2xl font-black mb-1">Admin Dashboard</h2>
-                <p className="text-muted-foreground text-sm">Full platform overview at a glance</p>
+                <h2 className="text-2xl font-black mb-1 text-white">Admin Dashboard</h2>
+                <p className="text-white/70 text-sm">Full platform overview at a glance</p>
             </div>
 
             {/* Stats */}
@@ -172,21 +172,21 @@ function DashboardSection({ stats, recentProducts, recentOrders, loading }: {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Recent Products */}
                 <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="bg-black/20 backdrop-blur-xl rounded-2xl border border-white/10 overflow-hidden">
-                    <div className="p-5 border-b border-white/5 flex items-center gap-2">
+                    <div className="p-5 border-b border-white/5 flex items-center gap-2 text-white">
                         <Box className="w-4 h-4 text-neon-cyan" />
                         <h3 className="font-bold text-sm">Recent Uploads</h3>
                     </div>
                     <div className="divide-y divide-white/5">
                         {recentProducts.length === 0 ? (
-                            <p className="text-muted-foreground text-sm p-5">No products yet.</p>
+                            <p className="text-white/70 text-sm p-5">No products yet.</p>
                         ) : recentProducts.map((p) => (
                             <div key={p.id} className="flex items-center gap-3 p-4 hover:bg-white/5 transition-colors">
                                 <div className="w-10 h-10 rounded-lg overflow-hidden bg-white/5 flex-shrink-0">
                                     <img src={p.image_url || "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=80"} alt={p.title} className="w-full h-full object-cover" />
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                    <p className="text-sm font-semibold truncate">{p.title}</p>
-                                    <p className="text-xs text-muted-foreground">{p.profiles?.full_name || "Unknown"}</p>
+                                    <p className="text-sm font-semibold truncate text-white">{p.title}</p>
+                                    <p className="text-xs text-white/60">{p.profiles?.full_name || "Unknown"}</p>
                                 </div>
                                 <p className="text-sm font-bold text-neon-fire flex-shrink-0">₹{p.price.toLocaleString()}</p>
                             </div>
@@ -196,21 +196,21 @@ function DashboardSection({ stats, recentProducts, recentOrders, loading }: {
 
                 {/* Recent Orders */}
                 <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.28 }} className="bg-black/20 backdrop-blur-xl rounded-2xl border border-white/10 overflow-hidden">
-                    <div className="p-5 border-b border-white/5 flex items-center gap-2">
+                    <div className="p-5 border-b border-white/5 flex items-center gap-2 text-white">
                         <ShoppingBag className="w-4 h-4 text-neon-orange" />
                         <h3 className="font-bold text-sm">Recent Orders</h3>
                     </div>
                     <div className="divide-y divide-white/5">
                         {recentOrders.length === 0 ? (
-                            <p className="text-muted-foreground text-sm p-5">No orders yet.</p>
+                            <p className="text-white/70 text-sm p-5">No orders yet.</p>
                         ) : recentOrders.map((o) => (
                             <div key={o.id} className="flex items-center gap-3 p-4 hover:bg-white/5 transition-colors">
                                 <div className="w-10 h-10 rounded-lg overflow-hidden bg-white/5 flex-shrink-0">
                                     <img src={o.products?.image_url || "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=80"} alt="" className="w-full h-full object-cover" />
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                    <p className="text-sm font-semibold truncate">{o.products?.title || "Product"}</p>
-                                    <p className="text-xs text-muted-foreground">{o.buyer?.full_name || "Buyer"}</p>
+                                    <p className="text-sm font-semibold truncate text-white">{o.products?.title || "Product"}</p>
+                                    <p className="text-xs text-white/60">{o.buyer?.full_name || "Buyer"}</p>
                                 </div>
                                 <StatusBadge status={o.status} />
                             </div>
@@ -228,10 +228,10 @@ function ProductsSection({ products, loading, onDelete }: {
 }) {
     return (
         <div className="space-y-6">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between text-white">
                 <div>
                     <h2 className="text-2xl font-black mb-1">Product Management</h2>
-                    <p className="text-muted-foreground text-sm">{products.length} products listed on the platform</p>
+                    <p className="text-white/70 text-sm">{products.length} products listed on the platform</p>
                 </div>
             </div>
 
@@ -239,8 +239,8 @@ function ProductsSection({ products, loading, onDelete }: {
                 <div className="flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin text-neon-cyan" /></div>
             ) : products.length === 0 ? (
                 <div className="bg-black/20 backdrop-blur-xl rounded-2xl p-12 text-center border border-white/10">
-                    <Package className="w-12 h-12 text-muted-foreground mx-auto mb-3 opacity-40" />
-                    <p className="text-muted-foreground">No products found</p>
+                    <Package className="w-12 h-12 text-white/40 mx-auto mb-3" />
+                    <p className="text-white/70">No products found</p>
                 </div>
             ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
@@ -286,11 +286,11 @@ function ProductsSection({ products, loading, onDelete }: {
                                     <div className="min-w-0">
                                         <p className="text-xs font-semibold text-white truncate">{product.profiles?.full_name || "Unknown Seller"}</p>
                                         {product.profiles?.hostel_block && (
-                                            <p className="text-xs text-muted-foreground truncate">{product.profiles.hostel_block}</p>
+                                            <p className="text-xs text-white/60 truncate">{product.profiles.hostel_block}</p>
                                         )}
                                     </div>
                                 </div>
-                                <div className="flex items-center gap-2 text-xs text-muted-foreground mb-4">
+                                <div className="flex items-center gap-2 text-xs text-white/60 mb-4">
                                     <Calendar className="w-3.5 h-3.5" />
                                     <span>{new Date(product.created_at).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}</span>
                                 </div>
@@ -333,7 +333,7 @@ function FilterBar({ active, onChange }: { active: string; onChange: (f: string)
                 <button
                     key={f.id}
                     onClick={() => onChange(f.id)}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex-shrink-0 ${active === f.id ? 'bg-neon-orange/20 text-neon-orange border border-neon-orange/30' : 'bg-white/5 text-muted-foreground hover:bg-white/10 border border-white/5'}`}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex-shrink-0 ${active === f.id ? 'bg-neon-orange/20 text-neon-orange border border-neon-orange/30' : 'bg-white/10 text-white/80 hover:bg-white/20 hover:text-white border border-white/10'}`}
                 >
                     {f.label}
                 </button>
@@ -375,10 +375,10 @@ function ItemOrdersSection({ orders, loading, onUpdateStatus, onVerifyUpi }: {
 
     return (
         <div className="space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-white">
                 <div>
                     <h2 className="text-2xl font-black mb-1 flex items-center gap-2"><ShoppingCart className="w-6 h-6 text-neon-cyan" /> Item Orders</h2>
-                    <p className="text-muted-foreground text-sm">{itemOrders.length} total • {itemOrders.filter(o => !['completed', 'cancelled', 'seller_rejected'].includes(o.status)).length} active</p>
+                    <p className="text-white/70 text-sm">{itemOrders.length} total • {itemOrders.filter(o => !['completed', 'cancelled', 'seller_rejected'].includes(o.status)).length} active</p>
                 </div>
                 <FilterBar active={filter} onChange={setFilter} />
             </div>
@@ -387,8 +387,8 @@ function ItemOrdersSection({ orders, loading, onUpdateStatus, onVerifyUpi }: {
                 <div className="flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin text-neon-cyan" /></div>
             ) : filtered.length === 0 ? (
                 <div className="bg-black/20 backdrop-blur-xl rounded-2xl p-12 text-center border border-white/10">
-                    <ShoppingCart className="w-12 h-12 text-muted-foreground mx-auto mb-3 opacity-40" />
-                    <p className="text-muted-foreground">No item orders found</p>
+                    <ShoppingCart className="w-12 h-12 text-white/40 mx-auto mb-3" />
+                    <p className="text-white/70">No item orders found</p>
                 </div>
             ) : (
                 <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
@@ -399,8 +399,8 @@ function ItemOrdersSection({ orders, loading, onUpdateStatus, onVerifyUpi }: {
                                 className="bg-black/20 backdrop-blur-xl rounded-2xl border border-white/10 overflow-hidden hover:border-white/20 transition-all">
                                 <div className="p-4 border-b border-white/5 flex items-center gap-3">
                                     <div className="flex-1 min-w-0">
-                                        <p className="text-xs text-muted-foreground font-mono">ORDER #{order.id.slice(0, 8).toUpperCase()}</p>
-                                        <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1">
+                                        <p className="text-xs text-white/50 font-mono">ORDER #{order.id.slice(0, 8).toUpperCase()}</p>
+                                        <p className="text-xs text-white/60 mt-0.5 flex items-center gap-1">
                                             <Clock className="w-3 h-3" />
                                             {new Date(order.created_at).toLocaleString("en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
                                         </p>
@@ -416,7 +416,7 @@ function ItemOrdersSection({ orders, loading, onUpdateStatus, onVerifyUpi }: {
                                             <p className="font-bold text-sm text-white truncate">{order.products?.title || "Product Removed"}</p>
                                             <p className="text-neon-fire font-bold text-lg">₹{order.total_price.toLocaleString()}</p>
                                             <div className="flex flex-wrap items-center gap-2 mt-1">
-                                                {order.products?.category && <span className="inline-block px-2 py-0.5 rounded-lg bg-white/10 text-xs text-muted-foreground font-mono truncate max-w-full">{order.products.category}</span>}
+                                                {order.products?.category && <span className="inline-block px-2 py-0.5 rounded-lg bg-white/10 text-xs text-white/70 font-mono truncate max-w-full">{order.products.category}</span>}
                                                 <span className={`inline-block px-2 py-0.5 rounded-lg text-xs font-bold truncate max-w-full ${order.payment_status === 'verifying' ? 'bg-orange-500/15 text-orange-400' : order.payment_status === 'paid' ? 'bg-green-500/15 text-green-400' : 'bg-yellow-500/15 text-yellow-400'}`}>
                                                     {order.payment_status === 'verifying' ? `🟡 Verify UTR: ${order.razorpay_payment_id || 'N/A'}` : order.payment_status === 'paid' ? '💳 Paid Online' : '💵 COD'}
                                                 </span>
@@ -434,11 +434,11 @@ function ItemOrdersSection({ orders, loading, onUpdateStatus, onVerifyUpi }: {
                                         {(order.buyer_phone || order.buyer?.phone_number) && (
                                             <div className="flex items-center gap-2 mt-1">
                                                 <Phone className="w-3 h-3 text-neon-cyan" />
-                                                <span className="text-xs text-muted-foreground">{order.buyer_phone || order.buyer?.phone_number}</span>
-                                                <button onClick={() => copyPhone(order.buyer_phone || order.buyer?.phone_number || "")} className="p-0.5 rounded hover:bg-white/10"><Copy className="w-3 h-3 text-muted-foreground" /></button>
+                                                <span className="text-xs text-white/70">{order.buyer_phone || order.buyer?.phone_number}</span>
+                                                <button onClick={() => copyPhone(order.buyer_phone || order.buyer?.phone_number || "")} className="p-0.5 rounded hover:bg-white/20"><Copy className="w-3 h-3 text-white/70" /></button>
                                             </div>
                                         )}
-                                        <p className="text-xs text-muted-foreground flex items-start gap-1 mt-1 break-words"><MapPin className="w-3 h-3 flex-shrink-0 mt-0.5" /> <span className="flex-1 min-w-0">{order.delivery_location}{order.delivery_room && `, Room ${order.delivery_room}`}</span></p>
+                                        <p className="text-xs text-white/70 flex items-start gap-1 mt-1 break-words"><MapPin className="w-3 h-3 flex-shrink-0 mt-0.5" /> <span className="flex-1 min-w-0">{order.delivery_location}{order.delivery_room && `, Room ${order.delivery_room}`}</span></p>
                                     </div>
                                     <div className="bg-black/10 backdrop-blur-md rounded-xl p-3 border border-neon-orange/20">
                                         <p className="text-xs text-neon-orange font-bold uppercase tracking-wider mb-2 flex items-center gap-1"><Star className="w-3 h-3" /> Seller</p>
@@ -446,11 +446,11 @@ function ItemOrdersSection({ orders, loading, onUpdateStatus, onVerifyUpi }: {
                                         {order.seller?.phone_number && (
                                             <div className="flex items-center gap-2 mt-1">
                                                 <Phone className="w-3 h-3 text-neon-orange" />
-                                                <span className="text-xs text-muted-foreground">{order.seller.phone_number}</span>
-                                                <button onClick={() => copyPhone(order.seller?.phone_number || "")} className="p-0.5 rounded hover:bg-white/10"><Copy className="w-3 h-3 text-muted-foreground" /></button>
+                                                <span className="text-xs text-white/70">{order.seller.phone_number}</span>
+                                                <button onClick={() => copyPhone(order.seller?.phone_number || "")} className="p-0.5 rounded hover:bg-white/20"><Copy className="w-3 h-3 text-white/70" /></button>
                                             </div>
                                         )}
-                                        {order.seller?.hostel_block && <p className="text-xs text-muted-foreground flex items-start gap-1 mt-1 break-words"><MapPin className="w-3 h-3 flex-shrink-0 mt-0.5" /> <span className="flex-1 min-w-0">{order.seller.hostel_block}</span></p>}
+                                        {order.seller?.hostel_block && <p className="text-xs text-white/70 flex items-start gap-1 mt-1 break-words"><MapPin className="w-3 h-3 flex-shrink-0 mt-0.5" /> <span className="flex-1 min-w-0">{order.seller.hostel_block}</span></p>}
                                     </div>
                                     {action && (
                                         <div className="flex flex-col sm:flex-row gap-2">
