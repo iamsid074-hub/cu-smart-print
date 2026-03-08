@@ -4,7 +4,7 @@ import { Package, Truck, Home as HomeIcon, CheckCircle, Clock, Loader2, ArrowLef
 import { Link, useSearchParams } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
-import { campusEssentials } from "@/config/campusEssentials";
+
 
 // ─── Detect order type ──────────────────────────────────────────────────────────
 function getOrderType(order: any): "food" | "item" {
@@ -57,13 +57,7 @@ function parseOrderDetails(order: any) {
     return { type, hostel, items, notes, title: items.split("\n")[0] || "Custom Food Order", image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=200&h=200&fit=crop" };
   }
 
-  // Item order — may be Campus Essential [CE: title]
-  const ceMatch = loc.match(/^(.+?)\s*\[CE:\s*(.+?)\]$/);
-  if (ceMatch) {
-    const ceTitle = ceMatch[2];
-    const ceItem = campusEssentials.find(e => e.title === ceTitle);
-    return { type, hostel: ceMatch[1].trim(), items: "", notes: "", title: ceTitle, image: ceItem?.image || order.products?.image_url || "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=200" };
-  }
+
 
   // Regular product order
   return { type, hostel: loc, items: "", notes: "", title: order.products?.title || "Product", image: order.products?.image_url || "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=200" };

@@ -19,7 +19,6 @@ import Admin from "./pages/Admin";
 import TermsAndConditions from "./pages/TermsAndConditions";
 import HelpCenter from "./pages/HelpCenter";
 import ResetPassword from "./pages/ResetPassword";
-import Groceries from "./pages/Groceries";
 import Navbar from "./components/Navbar";
 import UsernameSetup from "./components/UsernameSetup";
 import { useSiteGate, ClosedScreen, MaintenanceScreen } from "./components/SiteGate";
@@ -100,7 +99,6 @@ function AppLayout() {
         <Route path="/browse" element={<ProtectedRoute><Browse /></ProtectedRoute>} />
         <Route path="/product/:id" element={<ProtectedRoute><ProductDetail /></ProtectedRoute>} />
         <Route path="/food" element={<ProtectedRoute><FoodMenu /></ProtectedRoute>} />
-        <Route path="/groceries" element={<ProtectedRoute><Groceries /></ProtectedRoute>} />
         <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
 
         {/* Admin Route */}

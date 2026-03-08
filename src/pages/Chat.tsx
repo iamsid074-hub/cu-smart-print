@@ -1,15 +1,43 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLocation } from "react-router-dom";
-import { Send, Phone, Video, MoreVertical, ArrowLeft, Search, CheckCheck, Smile, MessageCircle } from "lucide-react";
+import {
+  Send,
+  Phone,
+  Video,
+  MoreVertical,
+  ArrowLeft,
+  Search,
+  CheckCheck,
+  Smile,
+  MessageCircle,
+} from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
 
-const avatarGradients = ["from-brand-accent to-brand-light", "from-cyan-400 to-blue-400", "from-pink-400 to-rose-400", "from-amber-400 to-orange-400", "from-emerald-400 to-teal-400"];
+const avatarGradients = [
+  "from-brand-accent to-brand-light",
+  "from-cyan-400 to-blue-400",
+  "from-pink-400 to-rose-400",
+  "from-amber-400 to-orange-400",
+  "from-emerald-400 to-teal-400",
+];
 
-type Profile = { id: string; username: string | null; full_name: string; avatar_url: string | null; online?: boolean };
-type Message = { id: string; sender_id: string; receiver_id: string; content: string; created_at: string };
+type Profile = {
+  id: string;
+  username: string | null;
+  full_name: string;
+  avatar_url: string | null;
+  online?: boolean;
+};
+type Message = {
+  id: string;
+  sender_id: string;
+  receiver_id: string;
+  content: string;
+  created_at: string;
+};
 
 export default function Chat() {
   const { user } = useAuth();
@@ -25,7 +53,7 @@ export default function Chat() {
     if (location.state?.contact) {
       setActiveContact(location.state.contact as Profile);
       // clean up history state if you don't want it to reopen every reload
-      window.history.replaceState({}, document.title)
+      window.history.replaceState({}, document.title);
     }
   }, [location.state]);
 
@@ -37,7 +65,10 @@ export default function Chat() {
         return;
       }
 
-      let query = supabase.from("profiles").select("id, username, full_name, avatar_url").neq("id", user.id);
+      let query = supabase
+        .from("profiles")
+        .select("id, username, full_name, avatar_url")
+        .neq("id", user.id);
       query = query.ilike("username", `%${searchQuery.trim()}%`);
 
       const { data, error } = await query.limit(20);
@@ -61,7 +92,9 @@ export default function Chat() {
       const { data, error } = await supabase
         .from("messages")
         .select("*")
-        .or(`and(sender_id.eq.${user.id},receiver_id.eq.${activeContact.id}),and(sender_id.eq.${activeContact.id},receiver_id.eq.${user.id})`)
+        .or(
+          `and(sender_id.eq.${user.id},receiver_id.eq.${activeContact.id}),and(sender_id.eq.${activeContact.id},receiver_id.eq.${user.id})`,
+        )
         .order("created_at", { ascending: true });
 
       if (!error && data) {
@@ -72,13 +105,13 @@ export default function Chat() {
     fetchHistory();
 
     const channel = supabase
-      .channel('chat_room')
+      .channel("chat_room")
       .on(
-        'postgres_changes',
+        "postgres_changes",
         {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'messages',
+          event: "INSERT",
+          schema: "public",
+          table: "messages",
           filter: `receiver_id=eq.${user.id}`,
         },
         (payload) => {
@@ -86,7 +119,7 @@ export default function Chat() {
           if (newMsg.sender_id === activeContact.id) {
             setMessages((prev) => [...prev, newMsg]);
           }
-        }
+        },
       )
       .subscribe();
 
@@ -106,38 +139,51 @@ export default function Chat() {
     setInput("");
 
     const tempId = crypto.randomUUID();
-    setMessages((prev) => [...prev, {
-      id: tempId,
-      sender_id: user.id,
-      receiver_id: activeContact.id,
-      content: newMsgContent,
-      created_at: new Date().toISOString()
-    }]);
+    setMessages((prev) => [
+      ...prev,
+      {
+        id: tempId,
+        sender_id: user.id,
+        receiver_id: activeContact.id,
+        content: newMsgContent,
+        created_at: new Date().toISOString(),
+      },
+    ]);
 
     const { error } = await supabase.from("messages").insert({
       sender_id: user.id,
       receiver_id: activeContact.id,
-      content: newMsgContent
+      content: newMsgContent,
     });
 
     if (error) {
       toast.error("Failed to send message: " + error.message);
-      setMessages((prev) => prev.filter(m => m.id !== tempId));
+      setMessages((prev) => prev.filter((m) => m.id !== tempId));
     }
   };
 
   const formatTime = (isoString: string) => {
-    return new Date(isoString).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    return new Date(isoString).toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
   };
 
   const getInitials = (name: string) => {
-    return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+    return name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .substring(0, 2)
+      .toUpperCase();
   };
 
   return (
     <div className="min-h-screen bg-slate-50 pt-16 flex">
       {/* Sidebar */}
-      <div className={`w-full md:w-80 flex-shrink-0 flex flex-col border-r border-slate-100 ${activeContact ? "hidden md:flex" : "flex"}`}>
+      <div
+        className={`w-full md:w-80 flex-shrink-0 flex flex-col border-r border-slate-100 ${activeContact ? "hidden md:flex" : "flex"}`}
+      >
         {/* Header */}
         <div className="p-4 border-b border-slate-100">
           <h2 className="font-bold text-lg mb-3">Messages</h2>
@@ -157,8 +203,14 @@ export default function Chat() {
           {profiles.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-center p-6 opacity-60">
               <MessageCircle className="w-12 h-12 text-slate-500 mb-4" />
-              <p className="text-sm font-medium">{searchQuery ? "No users found" : "No active chats"}</p>
-              <p className="text-xs text-slate-500 mt-1">{searchQuery ? "Try a different search term" : "Search for a user to start chatting!"}</p>
+              <p className="text-sm font-medium">
+                {searchQuery ? "No users found" : "No active chats"}
+              </p>
+              <p className="text-xs text-slate-500 mt-1">
+                {searchQuery
+                  ? "Try a different search term"
+                  : "Search for a user to start chatting!"}
+              </p>
             </div>
           ) : (
             profiles.map((profile, i) => (
@@ -173,9 +225,15 @@ export default function Chat() {
                 {/* Avatar */}
                 <div className="relative flex-shrink-0">
                   {profile.avatar_url ? (
-                    <img src={profile.avatar_url} alt={profile.full_name} className="w-11 h-11 rounded-full object-cover" />
+                    <img
+                      src={profile.avatar_url}
+                      alt={profile.full_name}
+                      className="w-11 h-11 rounded-full object-cover"
+                    />
                   ) : (
-                    <div className={`w-11 h-11 rounded-full bg-gradient-to-br ${avatarGradients[i % 5]} flex items-center justify-center text-white text-xs font-bold`}>
+                    <div
+                      className={`w-11 h-11 rounded-full bg-gradient-to-br ${avatarGradients[i % 5]} flex items-center justify-center text-white text-xs font-bold`}
+                    >
                       {getInitials(profile.full_name || "User")}
                     </div>
                   )}
@@ -185,8 +243,12 @@ export default function Chat() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex flex-col items-start justify-center">
-                    <span className="font-semibold text-sm text-slate-900">{profile.full_name}</span>
-                    <span className="text-xs text-brand-accent font-mono -mt-0.5">@{profile.username || "unknown"}</span>
+                    <span className="font-semibold text-sm text-slate-900">
+                      {profile.full_name}
+                    </span>
+                    <span className="text-xs text-brand-accent font-mono -mt-0.5">
+                      @{profile.username || "unknown"}
+                    </span>
                   </div>
                 </div>
               </motion.button>
@@ -197,17 +259,28 @@ export default function Chat() {
 
       {/* Chat window */}
       {activeContact ? (
-        <div className={`flex-1 flex flex-col ${!activeContact ? "hidden md:flex" : "flex"}`}>
+        <div
+          className={`flex-1 flex flex-col ${!activeContact ? "hidden md:flex" : "flex"}`}
+        >
           {/* Chat header */}
           <div className="flex items-center gap-3 px-4 py-3 border-b border-slate-100 bg-white shadow-sm">
-            <button onClick={() => setActiveContact(null)} className="md:hidden p-1 text-slate-500">
+            <button
+              onClick={() => setActiveContact(null)}
+              className="md:hidden p-1 text-slate-500"
+            >
               <ArrowLeft className="w-5 h-5" />
             </button>
             <div className="relative flex-shrink-0">
               {activeContact.avatar_url ? (
-                <img src={activeContact.avatar_url} alt={activeContact.full_name} className="w-10 h-10 rounded-full object-cover" />
+                <img
+                  src={activeContact.avatar_url}
+                  alt={activeContact.full_name}
+                  className="w-10 h-10 rounded-full object-cover"
+                />
               ) : (
-                <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${avatarGradients[Math.abs(activeContact.id.charCodeAt(0)) % 5]} flex items-center justify-center text-white text-xs font-bold`}>
+                <div
+                  className={`w-10 h-10 rounded-full bg-gradient-to-br ${avatarGradients[Math.abs(activeContact.id.charCodeAt(0)) % 5]} flex items-center justify-center text-white text-xs font-bold`}
+                >
                   {getInitials(activeContact.full_name || "User")}
                 </div>
               )}
@@ -215,14 +288,24 @@ export default function Chat() {
             <div className="flex-1 leading-tight">
               <p className="font-semibold text-sm">{activeContact.full_name}</p>
               <div className="flex items-center gap-2">
-                <p className="text-xs text-slate-500 font-mono">@{activeContact.username || "unknown"}</p>
-                <p className="text-xs text-emerald-500">{activeContact.online ? "● Online" : ""}</p>
+                <p className="text-xs text-slate-500 font-mono">
+                  @{activeContact.username || "unknown"}
+                </p>
+                <p className="text-xs text-emerald-500">
+                  {activeContact.online ? "● Online" : ""}
+                </p>
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <button className="p-2 rounded-full hover:bg-slate-100 text-slate-500 hover:text-slate-900 transition-colors"><Phone className="w-4 h-4" /></button>
-              <button className="p-2 rounded-full hover:bg-slate-100 text-slate-500 hover:text-slate-900 transition-colors"><Video className="w-4 h-4" /></button>
-              <button className="p-2 rounded-full hover:bg-slate-100 text-slate-500 hover:text-slate-900 transition-colors"><MoreVertical className="w-4 h-4" /></button>
+              <button className="p-2 rounded-full hover:bg-slate-100 text-slate-500 hover:text-slate-900 transition-colors">
+                <Phone className="w-4 h-4" />
+              </button>
+              <button className="p-2 rounded-full hover:bg-slate-100 text-slate-500 hover:text-slate-900 transition-colors">
+                <Video className="w-4 h-4" />
+              </button>
+              <button className="p-2 rounded-full hover:bg-slate-100 text-slate-500 hover:text-slate-900 transition-colors">
+                <MoreVertical className="w-4 h-4" />
+              </button>
             </div>
           </div>
 
@@ -230,7 +313,9 @@ export default function Chat() {
           <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-3">
             {messages.length === 0 && (
               <div className="text-center mt-10">
-                <span className="text-xs text-slate-500 bg-slate-100 px-3 py-1 rounded-full">Say hello to {activeContact.full_name}! 👋</span>
+                <span className="text-xs text-slate-500 bg-slate-100 px-3 py-1 rounded-full">
+                  Say hello to {activeContact.full_name}! 👋
+                </span>
               </div>
             )}
 
@@ -246,14 +331,23 @@ export default function Chat() {
                     transition={{ ease: [0.34, 1.56, 0.64, 1] }}
                     className={`flex ${isSentByMe ? "justify-end" : "justify-start"}`}
                   >
-                    <div className={`max-w-xs lg:max-w-md px-4 py-2.5 rounded-2xl ${isSentByMe
-                      ? "bg-brand text-white rounded-br-md shadow-sm"
-                      : "bg-white shadow-[0_2px_8px_rgba(0,0,0,0.04)] text-slate-900 rounded-bl-md"
-                      }`}>
+                    <div
+                      className={`max-w-xs lg:max-w-md px-4 py-2.5 rounded-2xl ${
+                        isSentByMe
+                          ? "bg-brand text-white rounded-br-md shadow-sm"
+                          : "bg-white shadow-[0_2px_8px_rgba(0,0,0,0.04)] text-slate-900 rounded-bl-md"
+                      }`}
+                    >
                       <p className="text-sm leading-relaxed">{msg.content}</p>
-                      <div className={`flex items-center justify-end gap-1 mt-1 ${isSentByMe ? "text-white/70" : "text-slate-500"}`}>
-                        <span className="text-[10px]">{formatTime(msg.created_at)}</span>
-                        {isSentByMe && <CheckCheck className="w-3 h-3 text-emerald-500" />}
+                      <div
+                        className={`flex items-center justify-end gap-1 mt-1 ${isSentByMe ? "text-white/70" : "text-slate-500"}`}
+                      >
+                        <span className="text-[10px]">
+                          {formatTime(msg.created_at)}
+                        </span>
+                        {isSentByMe && (
+                          <CheckCheck className="w-3 h-3 text-emerald-500" />
+                        )}
                       </div>
                     </div>
                   </motion.div>
@@ -292,8 +386,12 @@ export default function Chat() {
         <div className="hidden md:flex flex-1 items-center justify-center">
           <div className="text-center">
             <div className="text-5xl mb-4">💬</div>
-            <h3 className="font-semibold text-lg text-slate-900 mb-2">Select a conversation</h3>
-            <p className="text-slate-500 text-sm">Choose from your chats to start messaging in real-time</p>
+            <h3 className="font-semibold text-lg text-slate-900 mb-2">
+              Select a conversation
+            </h3>
+            <p className="text-slate-500 text-sm">
+              Choose from your chats to start messaging in real-time
+            </p>
           </div>
         </div>
       )}

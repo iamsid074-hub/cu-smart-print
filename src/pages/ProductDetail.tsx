@@ -8,8 +8,7 @@ import { useCart } from "@/contexts/CartContext";
 import { useToast } from "@/hooks/use-toast";
 import PaymentSelector from "@/components/PaymentSelector";
 import UpiPaymentModal from "@/components/UpiPaymentModal";
-import { campusEssentials, ADMIN_SELLER_ID } from "@/config/campusEssentials";
-import { groceryItems } from "@/config/grocery";
+
 import {
     Dialog,
     DialogContent,
@@ -75,61 +74,7 @@ export default function ProductDetail() {
         async function fetchProduct() {
             if (!id) return;
 
-            // Check if it's a static campus essential first
-            if (id.startsWith('ce-')) {
-                const ceItem = campusEssentials.find(item => item.id === id);
-                if (ceItem) {
-                    setProduct({
-                        id: ceItem.id,
-                        title: ceItem.title,
-                        price: ceItem.price,
-                        category: ceItem.category,
-                        image_url: ceItem.image,
-                        status: 'available',
-                        condition: 'New',
-                        age: 'Brand New',
-                        seller_id: ADMIN_SELLER_ID,
-                        reason_for_selling: 'Official CU Bazzar Campus Essential item. Brand new and sealed.',
-                        created_at: new Date().toISOString(),
-                        profiles: {
-                            full_name: 'CU Bazzar Official',
-                            username: 'admin',
-                            avatar_url: '/logo.png',
-                            hostel_block: 'Campus Store'
-                        }
-                    });
-                    setLoading(false);
-                    return; // exit early
-                }
-            }
 
-            // Check if it's a static grocery item
-            if (id.startsWith('gr-')) {
-                const grItem = groceryItems.find(item => item.id === id);
-                if (grItem) {
-                    setProduct({
-                        id: grItem.id,
-                        title: grItem.title,
-                        price: grItem.price,
-                        category: grItem.category,
-                        image_url: grItem.image,
-                        status: 'available',
-                        condition: 'New',
-                        age: 'Brand New',
-                        seller_id: ADMIN_SELLER_ID,
-                        reason_for_selling: 'Official CU Bazzar Grocery item. Delivered fresh to your hostel.',
-                        created_at: new Date().toISOString(),
-                        profiles: {
-                            full_name: 'CU Bazzar Grocery',
-                            username: 'grocery_admin',
-                            avatar_url: '/logo.png',
-                            hostel_block: 'Campus Commissary'
-                        }
-                    });
-                    setLoading(false);
-                    return; // exit early
-                }
-            }
 
             const { data, error } = await supabase
                 .from("products")

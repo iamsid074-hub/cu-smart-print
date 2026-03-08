@@ -8,9 +8,6 @@ import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
 import { toast } from "sonner";
-import { campusEssentials, ADMIN_SELLER_ID, type CampusEssentialItem } from "@/config/campusEssentials";
-import PaymentSelector from "@/components/PaymentSelector";
-import UpiPaymentModal from "@/components/UpiPaymentModal";
 import type { Database } from "@/types/supabase";
 
 type Product = Database["public"]["Tables"]["products"]["Row"];
@@ -170,41 +167,6 @@ function FeatureCard({ card, index }: { card: FeatureCardType; index: number }) 
             <div className="mt-3 flex items-center gap-0.5 relative z-10 w-fit">
               <span className="text-[10px] font-semibold" style={{ color: card.iconColor }}>{card.cta}</span>
               <ChevronRight className="w-3 h-3" style={{ color: card.iconColor }} />
-            </div>
-          </div>
-        </div>
-      </Link>
-    </motion.div>
-  );
-}
-
-function GroceryBanner() {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.1 }}
-      className="w-full"
-    >
-      <Link to="/groceries" className="block transition-transform active:scale-[0.98]">
-        <div className="relative overflow-hidden rounded-[2rem] border border-emerald-600 bg-gradient-to-r from-emerald-500 to-emerald-600 shadow-md">
-          <div className="absolute top-0 right-0 bottom-0 w-32 bg-gradient-to-l from-emerald-400/30 to-transparent pointer-events-none" />
-          <div className="px-4 py-3 xl:px-5 xl:py-3.5 flex items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 hidden xs:flex bg-emerald-400/30">
-                <ShoppingBag className="w-4 h-4 text-white" />
-              </div>
-              <div>
-                <div className="flex items-center gap-2">
-                  <h3 className="text-sm border-b border-transparent sm:text-base font-bold text-white">Groceries & Daily Needs</h3>
-                  <span className="px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-wider bg-emerald-800 text-emerald-100">NEW</span>
-                </div>
-                <p className="text-[11px] sm:text-xs text-emerald-50 leading-tight">Delivered straight to your hostel block daily.</p>
-              </div>
-            </div>
-            <div className="flex flex-shrink-0 items-center gap-1">
-              <span className="text-xs font-bold text-white hidden sm:block">Shop Now</span>
-              <ChevronRight className="w-4 h-4 text-white" />
             </div>
           </div>
         </div>
@@ -376,88 +338,6 @@ export default function Home() {
       toast.success("Reminder set! We'll notify you when the sale starts");
     }
   };
-  // ── Campus Essentials Quick-Buy ──
-  const [buyItem, setBuyItem] = useState<CampusEssentialItem | null>(null);
-  const [buyHostel, setBuyHostel] = useState("");
-  const [buyRoom, setBuyRoom] = useState("");
-  const [buyPhone, setBuyPhone] = useState("");
-  const [buyLoading, setBuyLoading] = useState(false);
-  const [buyPaymentMethod, setBuyPaymentMethod] = useState<"online" | "cod">("online");
-  const [showUpiModal, setShowUpiModal] = useState(false);
-  const [upiItemSnapshot, setUpiItemSnapshot] = useState<{ price: number; id: string; title: string } | null>(null);
-
-  const handleQuickBuy = async () => {
-    if (!user) { navigate('/login'); return; }
-    if (!buyItem) return;
-    const phoneClean = buyPhone.replace(/\D/g, "");
-    if (!buyHostel.trim() || !buyRoom.trim()) {
-      toast.error("Please fill in your hostel and room number.");
-      return;
-    }
-    if (phoneClean.length !== 10) {
-      toast.error("Phone number must be exactly 10 digits.");
-      return;
-    }
-    setBuyLoading(true);
-    try {
-      if (buyPaymentMethod === "online") {
-        setUpiItemSnapshot({ price: buyItem.price, id: buyItem.id, title: buyItem.title }); // Save before closing
-        setBuyItem(null); // Close delivery details modal first
-        setTimeout(() => setShowUpiModal(true), 150); // Smooth transition
-        setBuyLoading(false);
-        return;
-      }
-
-      await finalizeOrder("cod", null);
-    } catch (err: any) {
-      toast.error(err.message || "Order failed. Please try again.");
-      setBuyLoading(false);
-    }
-  };
-
-  const finalizeOrder = async (method: "online" | "cod", utrNumber: string | null) => {
-    if (!user) return;
-    // Use upiItemSnapshot as buyItem is cleared before UPI modal opens
-    const item = upiItemSnapshot ?? (buyItem ? { price: buyItem.price, id: buyItem.id, title: buyItem.title } : null);
-    if (!item) { toast.error("Order data missing. Please try again."); return; }
-    const phoneClean = buyPhone.replace(/\D/g, "");
-    setBuyLoading(true);
-
-    try {
-      const { data, error } = await supabase.from("orders").insert({
-        product_id: null,
-        buyer_id: user.id,
-        seller_id: ADMIN_SELLER_ID,
-        base_price: item.price,
-        commission: 0,
-        delivery_charge: 10,
-        total_price: item.price + 10,
-        delivery_location: `${buyHostel} [CE: ${item.title}]`,
-        delivery_room: buyRoom || null,
-        buyer_phone: phoneClean,
-        status: 'pending',
-        payment_method: method === "online" ? "cashfree" : "cod",
-        payment_status: method === "online" ? "paid" : "pending",
-        razorpay_payment_id: utrNumber,
-        seller_notified_at: new Date().toISOString(),
-      }).select().single();
-
-      if (error) throw error;
-
-      toast.success(method === "online" ? `Order submitted — admin will verify` : `Order placed for ${item.title}. Pay on delivery.`);
-      setBuyItem(null);
-      setUpiItemSnapshot(null);
-      setBuyHostel(""); setBuyRoom(""); setBuyPhone(""); setBuyPaymentMethod("cod");
-      setShowUpiModal(false);
-      navigate(`/tracking?order=${data.id}`);
-    } catch (err: any) {
-      toast.error(err.message || "Order failed. Please try again.");
-    } finally {
-      setBuyLoading(false);
-    }
-  };
-
-
   useEffect(() => {
     const calculateTimeLeft = () => {
       const targetDate = new Date();
@@ -548,10 +428,7 @@ export default function Home() {
           <PromoBanner />
         </div>
 
-        {/* ─── GROCERIES BANNER ─── */}
-        <div className="mb-6 sm:mb-8 w-full">
-          <GroceryBanner />
-        </div>
+
 
 
 
@@ -682,172 +559,6 @@ export default function Home() {
           `}</style>
           </motion.section>
 
-          {/* ─── CAMPUS ESSENTIALS ─── */}
-          <section className="mb-10 sm:mb-16">
-            <div className="flex items-center justify-between mb-4 sm:mb-8">
-              <div className="flex items-center gap-2 min-w-0">
-                <ShoppingBag className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" style={{ color: '#4DB8AC' }} />
-                <h2 className="text-base sm:text-xl font-bold truncate" style={fontH}>Campus Essentials</h2>
-              </div>
-              <div className="flex items-center gap-1.5 px-2 py-0.5 sm:px-3 sm:py-1 rounded-full text-[10px] sm:text-xs font-semibold flex-shrink-0" style={{ backgroundColor: 'rgba(77,184,172,0.1)', color: '#4DB8AC', border: '1px solid rgba(77,184,172,0.2)' }}>
-                <Zap className="w-3 h-3" /> Fast Delivery
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5">
-              {campusEssentials.map((item, i) => (
-                <motion.div
-                  key={item.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.04 }}
-                  className="group relative rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1.5 flex flex-col bg-[#faf5f8] border-2 border-slate-200 shadow-[0_2px_8px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.12)] hover:border-[#e0b1cb]"
-                >
-                  {/* Badge */}
-                  {item.badge && (
-                    <div className="absolute top-2.5 left-2.5 z-10 px-2 py-0.5 rounded-full text-[10px] font-bold tracking-wide uppercase bg-emerald-500 text-white shadow-sm">
-                      {item.badge}
-                    </div>
-                  )}
-
-                  {/* Image area — warm glow, full view */}
-                  <div className="relative flex items-center justify-center p-4 sm:p-5" style={{ minHeight: '160px', background: 'radial-gradient(ellipse at center, rgba(255,165,80,0.06) 0%, transparent 70%)' }}>
-                    <img src={item.image} alt={item.title} loading="lazy"
-                      className="max-h-[120px] sm:max-h-[140px] w-auto max-w-full object-contain group-hover:scale-110 transition-transform duration-500"
-                      style={{ filter: 'drop-shadow(0 6px 20px rgba(0,0,0,0.4))' }}
-                      onError={(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400'; }}
-                    />
-                  </div>
-
-                  {/* Content */}
-                  <div className="p-4 sm:p-5 flex flex-col flex-1">
-                    <p className="text-xs sm:text-[13px] font-semibold line-clamp-2 mb-2.5 leading-snug text-slate-800">{item.title}</p>
-
-                    {/* Price */}
-                    <div className="flex items-baseline gap-1.5 mb-3">
-                      <span className="text-lg sm:text-xl font-extrabold text-brand">₹{item.price}</span>
-                      <span className="text-[10px] font-medium text-slate-400">+ ₹10 delivery</span>
-                    </div>
-
-                    {/* Add to Cart button */}
-                    <button
-                      onClick={() => {
-                        addItem({ id: item.id, title: item.title, price: item.price, image: item.image, category: item.category });
-                        toast.success(`${item.title} added to cart`);
-                      }}
-                      className="w-full mt-auto py-2.5 sm:py-3 rounded-2xl text-brand bg-brand-50 hover:bg-brand-50 text-[11px] sm:text-xs font-bold flex items-center justify-center gap-1.5 transition-all duration-200 active:scale-[0.97]"
-                    >
-                      <ShoppingCart className="w-3.5 h-3.5" />
-                      Add to Cart
-                    </button>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </section>
-
-          {/* ─── Quick Buy Modal ─── */}
-          <AnimatePresence>
-            {buyItem && (
-              <motion.div
-                initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4"
-                style={{ backgroundColor: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)' }}
-                onClick={() => !buyLoading && setBuyItem(null)}
-              >
-                <motion.div
-                  initial={{ y: 100, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 100, opacity: 0 }}
-                  transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-                  className="w-full sm:max-w-[420px] rounded-t-3xl sm:rounded-3xl overflow-hidden bg-white shadow-2xl"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  {/* Header */}
-                  <div className="flex items-center justify-between p-4 sm:p-5 border-b border-slate-100">
-                    <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 border border-slate-100">
-                        <img src={buyItem.image} alt={buyItem.title} className="w-full h-full object-cover" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-bold text-slate-900" style={fontH}>{buyItem.title}</p>
-                        <p className="text-base font-bold text-brand">₹{buyItem.price}</p>
-                      </div>
-                    </div>
-                    <button onClick={() => setBuyItem(null)} className="p-1.5 rounded-lg transition-colors text-slate-400 hover:bg-slate-50 hover:text-slate-600">
-                      <X className="w-5 h-5" />
-                    </button>
-                  </div>
-
-                  {/* Form */}
-                  <div className="p-4 sm:p-5 space-y-3">
-                    <p className="text-xs font-medium mb-3 text-slate-500">Where should we deliver? ⚡</p>
-
-                    <div className="relative">
-                      <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                      <input
-                        value={buyHostel} onChange={(e) => setBuyHostel(e.target.value)}
-                        placeholder="Hostel Block (e.g. BH-1)"
-                        className="w-full rounded-xl pl-10 pr-4 h-[48px] text-sm focus:outline-none transition-all bg-slate-50 border border-slate-200 text-slate-900 focus:bg-white focus:border-brand-muted focus:ring-4 focus:ring-brand-50"
-                      />
-                    </div>
-
-                    <div className="relative">
-                      <HomeIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                      <input
-                        value={buyRoom} onChange={(e) => setBuyRoom(e.target.value)}
-                        placeholder="Room Number *"
-                        className="w-full rounded-xl pl-10 pr-4 h-[48px] text-sm focus:outline-none transition-all bg-slate-50 border border-slate-200 text-slate-900 focus:bg-white focus:border-brand-muted focus:ring-4 focus:ring-brand-50"
-                      />
-                    </div>
-
-                    <div className="relative">
-                      <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                      <input
-                        value={buyPhone} onChange={(e) => setBuyPhone(e.target.value.replace(/\D/g, "").slice(0, 10))}
-                        placeholder="10-digit Phone Number *"
-                        type="tel"
-                        maxLength={10}
-                        className={`w-full rounded-xl pl-10 pr-4 h-[48px] text-sm focus:outline-none transition-all bg-slate-50 text-slate-900 border focus:bg-white focus:ring-4 ${buyPhone.length > 0 && buyPhone.length !== 10 ? 'border-red-300 focus:border-red-400 focus:ring-red-50' : 'border-slate-200 focus:border-brand-muted focus:ring-brand-50'}`}
-                      />
-                    </div>
-                    {buyPhone.length > 0 && buyPhone.length !== 10 && (
-                      <p className="text-[11px] mt-1 px-1 text-red-500">Phone must be exactly 10 digits</p>
-                    )}
-
-                    <PaymentSelector
-                      selected={buyPaymentMethod}
-                      onChange={setBuyPaymentMethod}
-                      totalAmount={(buyItem?.price || 0) + 10}
-                      disabled={buyLoading}
-                    />
-
-                    <div className="flex items-center gap-2 mt-1 px-1">
-                      <Zap className="w-3.5 h-3.5" style={{ color: '#4DB8AC' }} />
-                      <span className="text-[11px]" style={{ color: '#4DB8AC' }}>Delivered by Campus Store · ₹10 delivery fee included</span>
-                    </div>
-                  </div>
-
-                  {/* Footer */}
-                  <div className="p-4 sm:p-5 border-t border-slate-100">
-                    <motion.button
-                      onClick={handleQuickBuy}
-                      disabled={buyLoading || !buyHostel.trim() || !buyRoom.trim() || buyPhone.length !== 10}
-                      whileTap={{ scale: 0.97 }}
-                      className="w-full py-3.5 rounded-xl text-white font-bold text-sm transition-all disabled:opacity-40 disabled:cursor-not-allowed"
-                      style={{ ...fontH, background: (!buyHostel.trim() || !buyRoom.trim() || buyPhone.length !== 10) ? '#cbd5e1' : '#231942', boxShadow: (!buyHostel.trim() || !buyRoom.trim() || buyPhone.length !== 10) ? 'none' : '0 4px 16px rgba(35,25,66,0.3)' }}
-                    >
-                      {buyLoading ? (
-                        <Loader2 className="w-5 h-5 animate-spin mx-auto" />
-                      ) : (
-                        <>{buyPaymentMethod === "online" ? `Pay ₹${buyItem.price + 10} Online` : `COD · ₹${buyItem.price + 10}`}</>
-                      )}
-                    </motion.button>
-                  </div>
-                </motion.div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
           {/* ─── BROWSE CATEGORIES ─── */}
           <section className="mb-10 sm:mb-16">
             <div className="flex items-center justify-between mb-4 sm:mb-8">
@@ -891,18 +602,7 @@ export default function Home() {
                   </div>
                 </Link>
               ))}
-              {/* UPI Payment Modal */}
-              <UpiPaymentModal
-                isOpen={showUpiModal}
-                onClose={() => { setShowUpiModal(false); setUpiItemSnapshot(null); }}
-                amount={(upiItemSnapshot?.price || 0) + 5}
-                orderIdText={`CE_${upiItemSnapshot?.id || 'TEST'}`}
-                customerId={user?.id || "guest"}
-                customerPhone={buyPhone || "9999999999"}
-                onPaymentVerify={async (utr) => {
-                  await finalizeOrder("online", utr);
-                }}
-              />
+              
             </div>
           </section>
 
