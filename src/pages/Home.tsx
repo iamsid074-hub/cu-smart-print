@@ -607,7 +607,6 @@ export default function Home() {
                 <BookText className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: '#231942' }} />
                 <h2 className="text-base sm:text-xl font-bold" style={fontH}>Campus Essentials</h2>
               </div>
-              <span className="text-[10px] sm:text-xs font-semibold px-3 py-1 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100">₹10 Delivery</span>
             </div>
 
             <div className="flex gap-3 sm:gap-4 overflow-x-auto scrollbar-hide pb-4 -mx-1 px-1">
