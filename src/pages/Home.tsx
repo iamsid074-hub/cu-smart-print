@@ -8,6 +8,7 @@ import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
 import { toast } from "sonner";
+import { campusEssentials, ADMIN_SELLER_ID, type CampusEssentialItem } from "@/config/campusEssentials";
 import type { Database } from "@/types/supabase";
 
 type Product = Database["public"]["Tables"]["products"]["Row"];
@@ -25,7 +26,7 @@ const categories = [
   { icon: Coffee, label: "Kitchen", count: "", gradient: "from-emerald-400 to-teal-500", image: "https://images.unsplash.com/photo-1556910103-1c02745aae4d?q=80&w=600&auto=format&fit=crop" },
 ];
 
-// campusEssentials imported from @/config/campusEssentials
+// campusEssentials imported above from @/config/campusEssentials
 
 type FeatureCardType = {
   icon: any;
@@ -592,6 +593,72 @@ export default function Home() {
               ))}
             </div>
           </section>
+
+          {/* ─── CAMPUS ESSENTIALS ─── */}
+          <motion.section
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="mb-10 sm:mb-16"
+          >
+            <div className="flex items-center justify-between mb-4 sm:mb-6">
+              <div className="flex items-center gap-2">
+                <BookText className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: '#231942' }} />
+                <h2 className="text-base sm:text-xl font-bold" style={fontH}>Campus Essentials</h2>
+              </div>
+              <span className="text-[10px] sm:text-xs font-semibold px-3 py-1 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100">₹10 Delivery</span>
+            </div>
+
+            <div className="flex gap-3 sm:gap-4 overflow-x-auto scrollbar-hide pb-4 -mx-1 px-1">
+              {campusEssentials.map((item) => (
+                <motion.div
+                  key={item.id}
+                  whileHover={{ y: -4 }}
+                  className="flex-shrink-0 w-[150px] sm:w-[170px] rounded-2xl overflow-hidden bg-white shadow-sm border border-slate-100 transition-shadow hover:shadow-md flex flex-col"
+                >
+                  {/* Image */}
+                  <div className="relative h-28 sm:h-32 bg-slate-50 overflow-hidden">
+                    <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
+                    {item.badge && (
+                      <span className="absolute top-2 left-2 text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500 text-white shadow-sm">
+                        {item.badge}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Info */}
+                  <div className="p-3 flex flex-col flex-1">
+                    <p className="text-xs sm:text-sm font-semibold text-slate-800 leading-tight mb-1 line-clamp-2">{item.title}</p>
+                    <p className="text-xs text-slate-400 capitalize mb-2">{item.category}</p>
+                    <div className="mt-auto flex items-center justify-between">
+                      <span className="text-sm sm:text-base font-bold text-[#231942]">₹{item.price}</span>
+                      <button
+                        onClick={() => {
+                          if (!user) { toast.error('Please login first'); navigate('/login'); return; }
+                          addItem({
+                            id: item.id,
+                            title: item.title,
+                            price: item.price,
+                            image: item.image,
+                            category: item.category,
+                          });
+                          toast.success(`${item.title} added to cart`);
+                        }}
+                        className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#231942] text-white flex items-center justify-center hover:bg-[#231942]/90 transition-colors shadow-sm"
+                      >
+                        <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                      </button>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+
+            <p className="text-[10px] sm:text-xs text-slate-400 mt-2 flex items-center gap-1">
+              <Package className="w-3 h-3" /> Delivered by Campus Store · ₹10 delivery fee at checkout
+            </p>
+          </motion.section>
 
           {/* ─── FRESH LISTINGS ─── */}
           <section className="mb-10">
