@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
-import { Package, Truck, Home as HomeIcon, CheckCircle, Clock, Loader2, ArrowLeft, Phone, MapPin, User, Star, AlertCircle, UtensilsCrossed, ShoppingBag } from "lucide-react";
+import { useEffect, useState, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Package, Truck, Home as HomeIcon, CheckCircle, Clock, Loader2, ArrowLeft, Phone, MapPin, User, Star, AlertCircle, UtensilsCrossed, ShoppingBag, X, PartyPopper } from "lucide-react";
 import { Link, useSearchParams } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
@@ -148,6 +148,18 @@ export default function Tracking() {
   const totalSteps = steps.length - 1;
   const progressPercent = !order ? 0 : isCompleted ? 100 : Math.round((currentStepIndex / totalSteps) * 100);
   const deliveryInfo = order ? getDeliveryInfo(order, type) : { text: "", subtext: "" };
+
+  // Thank You panel state
+  const [showThankYou, setShowThankYou] = useState(false);
+  const hasShownRef = useRef(false);
+  useEffect(() => {
+    if (isCompleted && !hasShownRef.current) {
+      hasShownRef.current = true;
+      // Small delay so the progress bar finishes animating first
+      const timer = setTimeout(() => setShowThankYou(true), 800);
+      return () => clearTimeout(timer);
+    }
+  }, [isCompleted]);
 
   if (loading) {
     return (
@@ -346,20 +358,120 @@ export default function Tracking() {
               </div>
             </motion.div>
 
-            {/* ── Completed Banner ──────────────────────────────────────── */}
-            {isCompleted && (
-              <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
-                className="bg-emerald-50 rounded-2xl p-6 border border-emerald-200 text-center shadow-sm">
-                <p className="text-3xl mb-3">🎉</p>
-                <p className="font-black text-emerald-600 text-xl">Order Delivered!</p>
-                <p className="text-emerald-700/80 font-medium text-sm mt-1.5">
-                  {type === "food" ? "Enjoy your food!" : "We hope you enjoy your purchase!"}
-                </p>
-                <Link to="/home" className="inline-block mt-5 px-6 py-3 rounded-xl bg-emerald-600 text-white shadow-sm text-sm font-bold hover:bg-emerald-700 transition-colors">
-                  Continue Shopping
-                </Link>
-              </motion.div>
-            )}
+            {/* ── Thank You Overlay Panel ──────────────────────────────── */}
+            <AnimatePresence>
+              {showThankYou && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="fixed inset-0 z-50 bg-black/30 backdrop-blur-sm flex items-end justify-center"
+                  onClick={() => setShowThankYou(false)}
+                >
+                  <motion.div
+                    initial={{ y: "100%", opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    exit={{ y: "100%", opacity: 0 }}
+                    transition={{ type: "spring", stiffness: 300, damping: 28, mass: 0.8 }}
+                    onClick={(e) => e.stopPropagation()}
+                    className="w-full max-w-lg bg-white rounded-t-3xl shadow-2xl relative overflow-hidden"
+                    style={{ minHeight: "55vh", maxHeight: "70vh" }}
+                  >
+                    {/* Close button */}
+                    <button
+                      onClick={() => setShowThankYou(false)}
+                      className="absolute top-4 right-4 z-10 p-2 rounded-full bg-slate-100 hover:bg-slate-200 transition-colors"
+                    >
+                      <X className="w-5 h-5 text-slate-500" />
+                    </button>
+
+                    {/* Celebration background */}
+                    <div className="absolute top-0 left-0 right-0 h-40 bg-gradient-to-b from-emerald-50 to-transparent" />
+
+                    {/* Content */}
+                    <div className="relative flex flex-col items-center justify-center px-6 pt-12 pb-8 text-center h-full">
+                      {/* Animated checkmark circle */}
+                      <motion.div
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        transition={{ type: "spring", stiffness: 260, damping: 20, delay: 0.2 }}
+                        className="w-24 h-24 rounded-full bg-emerald-100 flex items-center justify-center mb-6 shadow-lg shadow-emerald-200/50"
+                      >
+                        <motion.div
+                          initial={{ scale: 0, rotate: -180 }}
+                          animate={{ scale: 1, rotate: 0 }}
+                          transition={{ type: "spring", stiffness: 200, damping: 15, delay: 0.4 }}
+                        >
+                          <CheckCircle className="w-12 h-12 text-emerald-500" />
+                        </motion.div>
+                      </motion.div>
+
+                      {/* Confetti emojis */}
+                      <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.5 }}
+                        className="text-4xl mb-2"
+                      >
+                        🎉
+                      </motion.div>
+
+                      {/* Title */}
+                      <motion.h2
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.55 }}
+                        className="text-2xl font-black text-slate-900 mb-3"
+                      >
+                        Thank You for Your Order!
+                      </motion.h2>
+
+                      {/* Message */}
+                      <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.65 }}
+                        className="space-y-2 mb-8"
+                      >
+                        <p className="text-slate-600 font-medium">
+                          Thank you for waiting.
+                        </p>
+                        <p className="text-slate-600 font-medium">
+                          Your order has been successfully delivered.
+                        </p>
+                        <p className="text-slate-500 text-sm mt-3">
+                          We hope you enjoy your {type === "food" ? "meal" : "purchase"} from <span className="font-bold text-brand">CU Bazzar</span>.
+                        </p>
+                      </motion.div>
+
+                      {/* Buttons */}
+                      <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.75 }}
+                        className="flex flex-col sm:flex-row gap-3 w-full max-w-xs"
+                      >
+                        <Link
+                          to="/home"
+                          onClick={() => setShowThankYou(false)}
+                          className="flex-1 px-6 py-3.5 rounded-xl bg-brand text-white font-bold text-sm shadow-md hover:shadow-lg transition-all text-center"
+                        >
+                          Continue Shopping
+                        </Link>
+                        <Link
+                          to="/profile"
+                          onClick={() => setShowThankYou(false)}
+                          className="flex-1 px-6 py-3.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-700 font-bold text-sm hover:bg-slate-200 transition-all text-center"
+                        >
+                          View Orders
+                        </Link>
+                      </motion.div>
+                    </div>
+                  </motion.div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </>
         )}
       </div>
