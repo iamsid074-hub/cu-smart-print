@@ -97,7 +97,7 @@ export default function HelpCenter() {
     const [activeSection, setActiveSection] = useState(0);
 
     return (
-        <div className="min-h-screen bg-slate-50 pt-24 pb-16 px-4 sm:px-6 overflow-x-hidden relative">
+        <div className="min-h-screen bg-slate-50 pt-6 pb-32 px-4 sm:px-6 overflow-x-hidden relative">
             {/* Ambient Glows */}
             <div className="absolute top-0 left-1/4 w-96 h-96 bg-emerald-500/5 rounded-full blur-[120px] pointer-events-none" />
             <div className="absolute top-1/3 right-1/4 w-96 h-96 bg-blue-500/5 rounded-full blur-[120px] pointer-events-none" />

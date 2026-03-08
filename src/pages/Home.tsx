@@ -388,7 +388,7 @@ export default function Home() {
   }));
 
   return (
-    <div className="min-h-screen bg-slate-50 pt-[4.5rem] pb-20">
+    <div className="min-h-screen bg-slate-50 pt-6 pb-32">
       {/* ─── Top Purple Header Section ─── */}
       <div className="bg-[#231942] px-4 pt-8 pb-14 sm:px-6 lg:px-10 rounded-3xl sm:rounded-[2.5rem] mb-8 relative overflow-hidden shadow-sm mx-2 sm:mx-0 mt-2 sm:mt-0">
         <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent pointer-events-none" />

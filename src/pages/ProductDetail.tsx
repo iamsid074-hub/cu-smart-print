@@ -181,7 +181,7 @@ export default function ProductDetail() {
     };
 
     return (
-        <div className="min-h-screen bg-slate-50 pt-24 pb-16 px-4">
+        <div className="min-h-screen bg-slate-50 pt-6 pb-32 px-4">
             <div className="max-w-6xl mx-auto">
 
                 <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-slate-500 hover:text-slate-900 mb-6 transition-colors font-medium">

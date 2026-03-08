@@ -191,7 +191,7 @@ export default function Profile() {
     if (!user) return null;
 
     return (
-        <div className="min-h-screen pt-16 pb-24 bg-slate-50">
+        <div className="min-h-screen pt-6 pb-32 bg-slate-50">
             <div className="max-w-2xl mx-auto px-4">
 
                 {/* ── PROFILE HEADER STRIP ── */}

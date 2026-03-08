@@ -63,7 +63,7 @@ export default function Browse() {
         : products;
 
     return (
-        <div className="min-h-screen pt-24 pb-20 px-4 sm:px-6 bg-slate-50">
+        <div className="min-h-screen pt-6 pb-32 px-4 sm:px-6 bg-slate-50">
             <div className="max-w-7xl mx-auto">
 
                 {/* ── Hero Header ─────────────────────────────────────── */}
@@ -103,8 +103,8 @@ export default function Browse() {
                                     key={cat.id}
                                     onClick={() => handleCategoryClick(cat.id)}
                                     className={`flex items-center gap-1.5 px-5 py-2.5 rounded-3xl font-bold transition-all duration-300 flex-shrink-0 text-xs sm:text-sm whitespace-nowrap border ${isActive
-                                            ? 'bg-brand text-white border-brand shadow-[0_4px_15px_rgba(35,25,66,0.3)]'
-                                            : 'bg-white text-slate-600 border-slate-200 hover:border-brand-muted hover:bg-brand-50 shadow-sm'
+                                        ? 'bg-brand text-white border-brand shadow-[0_4px_15px_rgba(35,25,66,0.3)]'
+                                        : 'bg-white text-slate-600 border-slate-200 hover:border-brand-muted hover:bg-brand-50 shadow-sm'
                                         }`}
                                 >
                                     <span>{cat.emoji}</span>

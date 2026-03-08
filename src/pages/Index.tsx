@@ -136,7 +136,7 @@ export default function Index() {
         </motion.div>
 
         {/* Content */}
-        <div className="relative z-10 max-w-5xl mx-auto w-full pt-16 pb-20">
+        <div className="relative z-10 max-w-5xl mx-auto w-full pt-6 pb-32">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
 
             {/* Left — Text */}
