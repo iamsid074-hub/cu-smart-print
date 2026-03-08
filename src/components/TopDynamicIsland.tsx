@@ -89,11 +89,11 @@ export default function TopDynamicIsland() {
 
     switch (islandState) {
         case "browsing":
-            width = 200;
+            width = 220;
             content = <span className="text-sm font-medium tracking-wide">Browsing Food Shops</span>;
             break;
         case "explore":
-            width = 180;
+            width = 190;
             content = <span className="text-sm font-medium tracking-wide">Browsing Items</span>;
             break;
         case "cart":
@@ -136,7 +136,7 @@ export default function TopDynamicIsland() {
             );
             break;
         default:
-            width = 140;
+            width = 160;
             content = <span className="text-[15px] font-bold tracking-widest text-white uppercase">CU Bazzar</span>;
             break;
     }
@@ -172,7 +172,7 @@ export default function TopDynamicIsland() {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: -5, scale: 0.95 }}
                         transition={{ duration: 0.15, ease: "easeInOut" }}
-                        className="flex items-center justify-center w-full h-full pl-10 pr-4 text-white"
+                        className="flex items-center justify-center w-full h-full px-4 text-white"
                     >
                         {content}
                     </motion.div>
