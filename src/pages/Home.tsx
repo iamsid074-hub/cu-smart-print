@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronRight, ChevronLeft, Grid3X3, Smartphone, BookText, Glasses, Dumbbell, Mic, Aperture, Armchair, Coffee, Loader2, ShoppingBag, ShoppingCart, X, MapPin, Phone, Home as HomeIcon, Zap, UtensilsCrossed, Package, Rocket, ShieldCheck, BadgePercent, Users, Plus, Shield, Ban, Headset, ExternalLink, Search } from "lucide-react";
+import { ChevronRight, ChevronLeft, Loader2, ShoppingBag, ShoppingCart, X, MapPin, Phone, Home as HomeIcon, Zap, UtensilsCrossed, Package, Rocket, ShieldCheck, BadgePercent, Users, Plus, Shield, Ban, Headset, ExternalLink, Search } from "lucide-react";
 import ProductCard from "@/components/ProductCard";
 import PromoBanner from "@/components/PromoBanner";
 import { supabase } from "@/lib/supabase";
@@ -15,16 +15,7 @@ type Product = Database["public"]["Tables"]["products"]["Row"];
 
 const fontH: React.CSSProperties = { fontFamily: "'Space Grotesk', sans-serif" };
 
-const categories = [
-  { icon: Smartphone, label: "Electronics", count: "New", gradient: "from-cyan-400 to-blue-500", image: "https://images.unsplash.com/photo-1498049794561-7780e7231661?q=80&w=600&auto=format&fit=crop" },
-  { icon: BookText, label: "Books", count: "Popular", gradient: "from-orange-400 to-rose-500", image: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?q=80&w=600&auto=format&fit=crop" },
-  { icon: Glasses, label: "Fashion", count: "New", gradient: "from-pink-400 to-brand-accent", image: "https://images.unsplash.com/photo-1445205170230-053b83016050?q=80&w=600&auto=format&fit=crop" },
-  { icon: Dumbbell, label: "Sports", count: "", gradient: "from-teal-400 to-cyan-500", image: "https://images.unsplash.com/photo-1517649763962-0c623066013b?q=80&w=600&auto=format&fit=crop" },
-  { icon: Mic, label: "Audio", count: "", gradient: "from-indigo-400 to-brand-accent", image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=600&auto=format&fit=crop" },
-  { icon: Aperture, label: "Camera", count: "", gradient: "from-amber-400 to-orange-500", image: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=600&auto=format&fit=crop" },
-  { icon: Armchair, label: "Furniture", count: "", gradient: "from-rose-400 to-pink-500", image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?q=80&w=600&auto=format&fit=crop" },
-  { icon: Coffee, label: "Kitchen", count: "", gradient: "from-emerald-400 to-teal-500", image: "https://images.unsplash.com/photo-1556910103-1c02745aae4d?q=80&w=600&auto=format&fit=crop" },
-];
+
 
 // campusEssentials imported above from @/config/campusEssentials
 
@@ -560,39 +551,7 @@ export default function Home() {
           `}</style>
           </motion.section>
 
-          {/* ─── BROWSE CATEGORIES ─── */}
-          <section className="mb-10 sm:mb-16">
-            <div className="flex items-center justify-between mb-4 sm:mb-8">
-              <div className="flex items-center gap-2">
-                <Grid3X3 className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: '#4DB8AC' }} />
-                <h2 className="text-base sm:text-xl font-bold" style={fontH}>Browse Categories</h2>
-              </div>
-              <Link to="/browse" className="flex items-center gap-1.5 text-xs sm:text-sm font-bold px-4 py-2 rounded-xl transition-all hover:scale-105 active:scale-95"
-                style={{ background: 'rgba(77,184,172,0.08)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', border: '1px solid rgba(77,184,172,0.15)', color: '#4DB8AC', boxShadow: '0 4px 16px rgba(77,184,172,0.08), inset 0 1px 0 rgba(255,255,255,0.05)' }}>
-                See All <ChevronRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-              </Link>
-            </div>
 
-            <div className="flex justify-start gap-4 sm:gap-8 overflow-x-auto scrollbar-hide pb-4 -mx-2 px-2 pt-2">
-              {categories.map((cat) => (
-                <Link
-                  key={cat.label}
-                  to={`/browse?category=${cat.label}`}
-                  className="group flex flex-col items-center flex-shrink-0 gap-2 w-[76px] sm:w-[88px] transition-transform duration-300 hover:-translate-y-1"
-                >
-                  <div className={`w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br ${cat.gradient} flex items-center justify-center transform group-hover:scale-105 transition-transform duration-300 shadow-lg border border-white/10`}>
-                    <cat.icon className="w-6 h-6 sm:w-7 sm:h-7 text-white drop-shadow-md" />
-                  </div>
-                  <div className="text-center flex flex-col items-center">
-                    <h3 className="font-bold text-xs sm:text-sm text-white/90 group-hover:text-white transition-colors leading-tight">{cat.label}</h3>
-                    <span className="text-[9px] sm:text-[10px] mt-0.5 px-1.5 py-0.5 rounded-full bg-white/10 text-white/60 font-medium">
-                      {cat.count}
-                    </span>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </section>
 
           {/* ─── CAMPUS ESSENTIALS ─── */}
           <motion.section
