@@ -139,7 +139,7 @@ export default function Index() {
                   className="absolute inset-0 flex items-center justify-center flex-col z-10"
                 >
                   <h2 className="text-4xl md:text-6xl font-black italic tracking-tight text-white mb-2" style={fontH}>
-                    Do nothing.
+                    YOUR TRUST.
                   </h2>
                 </motion.div>
               )}
@@ -155,7 +155,7 @@ export default function Index() {
                   className="absolute inset-0 flex items-center justify-center flex-col z-10"
                 >
                   <h2 className="text-4xl md:text-6xl font-black italic tracking-tight" style={{ ...fontH, color: C.accent }}>
-                    Use CU Bazzar.
+                    OUR RESPONSIBILITY.
                   </h2>
                 </motion.div>
               )}
