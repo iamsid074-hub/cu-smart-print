@@ -74,7 +74,7 @@ export default function PromoBanner() {
                         className="flex flex-col items-center"
                     >
                         <h2 className="text-white text-5xl md:text-7xl lg:text-7xl font-black italic tracking-tighter uppercase leading-none drop-shadow-[0_0_30px_rgba(255,255,255,0.4)] text-center" style={fontH}>
-                            Only ₹12 Delivery <br /> <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FF9933] via-white to-[#138808]">For 3 Days</span>
+                            Victory Special Offer <br /> <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FF9933] via-white to-[#138808]">Only For 3 Days</span>
                         </h2>
                         <p className="text-white/95 text-sm md:text-lg lg:text-xl font-bold mt-4 md:mt-6 max-w-2xl bg-[#0D0907]/60 px-6 py-2.5 rounded-full backdrop-blur-md border border-white/10 shadow-lg">
                             Celebrate the victory with CU Bazzar!
