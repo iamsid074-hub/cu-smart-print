@@ -32,7 +32,7 @@ interface IslandNotification {
 }
 
 // Simple, fast ease animation instead of complex spring physics
-const spring = { type: "tween", duration: 0.25, ease: "easeOut" };
+const spring = { type: "tween" as const, duration: 0.25, ease: "easeOut" as const };
 
 // Flash sale config
 const FLASH_SALE = {
@@ -398,7 +398,7 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
       `}</style>
 
             {/* Wrapper reserves space in the navbar for the top pill. It doesn't constrict the absolute child. */}
-            <motion.div ref={islandRef} layout transition={spring} style={{ position: "relative", height: 40, width: getPillWidth(), flexShrink: 0, zIndex: 100 }}>
+            <motion.div ref={islandRef} layout transition={spring} style={{ position: "relative", height: 40, width: getPillWidth(), flexShrink: 0, zIndex: 100, margin: "0 auto" }}>
 
                 {/* ═══ THE MORPHING ISLAND (Absolutely positioned within wrapper) ═══ */}
                 <motion.div
@@ -406,6 +406,7 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
                     animate={{
                         width: isDropdownOpen ? "min(360px, calc(100vw - 32px))" : getPillWidth(),
                         height: isDropdownOpen ? "auto" : 40,
+                        x: "-50%",
                     }}
                     transition={spring}
                     onClick={() => { if (!isExpanded) handleCollapsedClick(); }}
@@ -413,9 +414,9 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
                         borderRadius: isDropdownOpen ? 32 : 50,
                         position: "absolute",
                         top: 0,
-                        left: 0,
+                        left: "50%",
                         cursor: isExpanded ? "default" : "pointer",
-                        background: "rgba(0, 0, 0, 0.94)",
+                        background: "#000",
                         backdropFilter: "blur(40px) saturate(180%)",
                         WebkitBackdropFilter: "blur(40px) saturate(180%)",
                         overflow: "hidden",
@@ -428,7 +429,7 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
                             ? "0 8px 40px rgba(0,0,0,0.6), 0 0 0 0.5px rgba(255,255,255,0.1)"
                             : undefined,
                         border: "0.5px solid rgba(255,255,255,0.06)",
-                        transformOrigin: "top left",
+                        transformOrigin: "top center",
                     }}
                 >
                     {/* TOP HEADER ROW: Always 40px tall, holds the normal pill content. Fades out when expanded (unless search). */}
