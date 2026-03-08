@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Heart, Share2, MapPin, Clock, BadgeCheck, Loader2, ArrowLeft, ShoppingBag, ShoppingCart } from "lucide-react";
+import { Heart, Share2, MapPin, Clock, BadgeCheck, Loader2, ArrowLeft, ShoppingBag, ShoppingCart, CheckCircle } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
 import { useToast } from "@/hooks/use-toast";
 import PaymentSelector from "@/components/PaymentSelector";
 import UpiPaymentModal from "@/components/UpiPaymentModal";
-import { isOfferActive } from "@/utils/offerTimer";
+import { validatePromo, getDeliveryFee, PROMO_CODE } from "@/utils/offerTimer";
 
 import {
     Dialog,
@@ -37,6 +37,8 @@ export default function ProductDetail() {
     const [paymentMethod, setPaymentMethod] = useState<"online" | "cod">("online");
     const [showUpiModal, setShowUpiModal] = useState(false);
     const [copied, setCopied] = useState(false);
+    const [promoCode, setPromoCode] = useState("");
+    const [promoApplied, setPromoApplied] = useState(false);
 
     // ── Favourites (localStorage) ──
     const favKey = `cubazzar_fav_${id}`;
@@ -114,9 +116,17 @@ export default function ProductDetail() {
 
 
 
-    // Flat delivery fee
-    const deliveryFee = isOfferActive() ? 12 : 20;
+    // Delivery fee — ₹20 default, ₹12 with promo
+    const deliveryFee = getDeliveryFee(promoApplied);
     const totalAmount = product ? product.price + deliveryFee : 0;
+
+    const handleApplyPromo = () => {
+        if (validatePromo(promoCode)) {
+            setPromoApplied(true);
+        } else {
+            setPromoApplied(false);
+        }
+    };
 
     const handleBuyNow = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -339,6 +349,37 @@ export default function ProductDetail() {
                                                         </div>
                                                     </div>
                                                 </div>
+
+                                                {/* Promo Code */}
+                                                <div className="flex gap-2 items-end">
+                                                    <div className="flex-1">
+                                                        <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1 flex items-center gap-1">
+                                                            <CheckCircle className="w-3 h-3 text-emerald-500" /> Promo Code
+                                                        </label>
+                                                        <input
+                                                            type="text"
+                                                            value={promoCode}
+                                                            onChange={(e) => {
+                                                                setPromoCode(e.target.value.toUpperCase());
+                                                                if (promoApplied && e.target.value.toUpperCase() !== PROMO_CODE) setPromoApplied(false);
+                                                            }}
+                                                            placeholder="Enter Promo Code"
+                                                            className="w-full bg-slate-50 rounded-xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-50 placeholder:text-slate-400 font-bold uppercase"
+                                                            disabled={promoApplied}
+                                                        />
+                                                    </div>
+                                                    <button
+                                                        type="button"
+                                                        onClick={handleApplyPromo}
+                                                        disabled={!promoCode.trim() || promoApplied}
+                                                        className={`px-5 py-3 rounded-xl text-xs font-bold transition-all ${promoApplied ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-600 hover:bg-slate-200 disabled:opacity-50'}`}
+                                                    >
+                                                        {promoApplied ? '✓ Applied' : 'Apply'}
+                                                    </button>
+                                                </div>
+                                                {promoApplied && (
+                                                    <p className="text-xs text-emerald-600 font-medium -mt-4">🏆 {PROMO_CODE} applied — Delivery ₹12!</p>
+                                                )}
 
                                                 {/* Checkout Form */}
                                                 <form onSubmit={handleBuyNow} className="flex flex-col gap-4">

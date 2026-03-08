@@ -8,7 +8,7 @@ import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
 import PaymentSelector from "@/components/PaymentSelector";
 import UpiPaymentModal from "@/components/UpiPaymentModal";
-import { isOfferActive } from "@/utils/offerTimer";
+import { validatePromo, getDeliveryFee, PROMO_CODE } from "@/utils/offerTimer";
 
 export default function Cart() {
     const { items, removeItem, updateQuantity, clearCart, totalItems, totalPrice } = useCart();
@@ -34,25 +34,19 @@ export default function Cart() {
     const campusShopsItems = items.filter(item => item.category === "Campus Shops");
     const otherItems = items.filter(item => item.category !== "Campus Shops");
 
-    const offerActive = isOfferActive();
-    let originalDeliveryFee = offerActive ? 12 : 20; // Default flat fee or offer fee
+    const originalDeliveryFee = 20;
 
-    // Apply promo code logic
-    const deliveryFee = offerActive ? 12 : (promoApplied ? 14 : originalDeliveryFee);
+    // Apply promo code logic — ₹12 only with valid INDWIN12 during offer
+    const deliveryFee = getDeliveryFee(promoApplied);
     const orderTotal = totalPrice + deliveryFee;
 
     const handleApplyPromo = () => {
-        if (offerActive) {
-            toast({ title: "Victory Offer Active! 🏆", description: "The celebration delivery rate is automatically applied!" });
-            return;
-        }
-
-        if (promoCode.trim().toUpperCase() === "FINAL14") {
+        if (validatePromo(promoCode)) {
             setPromoApplied(true);
-            toast({ title: "Promo Applied!", description: "Delivery fee reduced to ₹14. Enjoy the match!" });
+            toast({ title: "Promo Applied! 🏆", description: `${PROMO_CODE} applied — Delivery reduced to ₹12!` });
         } else {
             setPromoApplied(false);
-            toast({ title: "Invalid Code", description: "The promo code entered is not valid.", variant: "destructive" });
+            toast({ title: "Invalid promo code", description: "Please enter a valid promo code.", variant: "destructive" });
         }
     };
 
@@ -181,7 +175,7 @@ export default function Cart() {
                                     value={promoCode}
                                     onChange={(e) => {
                                         setPromoCode(e.target.value.toUpperCase());
-                                        if (promoApplied && e.target.value.toUpperCase() !== "FINAL14") {
+                                        if (promoApplied && e.target.value.toUpperCase() !== PROMO_CODE) {
                                             setPromoApplied(false); // Reset if they start typing something else
                                         }
                                     }}

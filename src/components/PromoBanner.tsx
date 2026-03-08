@@ -35,7 +35,7 @@ export default function PromoBanner() {
 
     const handleCopy = (e: React.MouseEvent) => {
         e.preventDefault();
-        navigator.clipboard.writeText("FINAL14");
+        navigator.clipboard.writeText("INDWIN12");
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
     };
