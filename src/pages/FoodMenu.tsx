@@ -181,9 +181,6 @@ export default function FoodMenu() {
                             <p className="text-sm text-slate-500">
                                 <span className="text-slate-900 font-bold">{shops.length}</span> campus food shops
                             </p>
-                            <span className="px-2.5 py-1 rounded-lg bg-emerald-50 border border-emerald-100 text-emerald-600 text-xs font-bold flex items-center gap-1">
-                                <BadgeCheck className="w-3 h-3" /> ₹{isOfferActive() ? 12 : 20} Delivery
-                            </span>
                         </div>
 
                         {shops.map((shop, si) => {
