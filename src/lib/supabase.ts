@@ -13,9 +13,11 @@ const proxyFetch: typeof fetch = async (input, init?) => {
             : input instanceof URL ? input.href
                 : (input as Request).url
     // Check if we are running in a Capacitor app (Android/iOS)
+    // window.Capacitor is always injected by the Capacitor runtime in native apps
     const isCapacitor = typeof window !== 'undefined' &&
-        (window.location.origin.includes('capacitor://') ||
-            (window.location.origin.includes('http://localhost') && window.location.port === ''));
+        ((window as any).Capacitor !== undefined ||
+            window.location.origin.includes('capacitor://') ||
+            window.location.origin.includes('localhost'));
 
     // Only use the Vercel proxy if we are in true production WEB, not native mobile
     if (import.meta.env.PROD && url.includes('supabase.co') && !isCapacitor) {
