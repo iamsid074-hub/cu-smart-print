@@ -82,21 +82,21 @@ function StatCard({ icon: Icon, label, value, gradient, delay = 0 }: {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay, duration: 0.4 }}
-            className="bg-black/20 backdrop-blur-xl rounded-2xl p-6 border border-white/10 relative overflow-hidden group hover:border-white/20 transition-all"
+            className="bg-white rounded-2xl p-5 border border-slate-200 relative overflow-hidden group hover:shadow-md transition-all shadow-sm"
         >
-            <div className={`absolute inset-0 bg-gradient-to-br ${gradient} opacity-5 group-hover:opacity-10 transition-opacity`} />
-            <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center mb-4 shadow-lg`}>
-                <Icon className="w-6 h-6 text-white" />
+            <div className={`absolute inset-0 bg-gradient-to-br ${gradient} opacity-[0.04] group-hover:opacity-[0.08] transition-opacity`} />
+            <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center mb-3 shadow-md`}>
+                <Icon className="w-5 h-5 text-white" />
             </div>
-            <p className="text-3xl font-black text-white mb-1">{value}</p>
-            <p className="text-muted-foreground text-sm font-medium">{label}</p>
+            <p className="text-3xl font-black text-slate-900 mb-1">{value}</p>
+            <p className="text-slate-500 text-sm font-medium">{label}</p>
         </motion.div>
     );
 }
 
 // ─── Status Badge ──────────────────────────────────────────────────────────────
 function StatusBadge({ status }: { status: string }) {
-    const cfg = STATUS_CONFIG[status] || { label: status, color: "text-white", bg: "bg-white/10", border: "border-white/20" };
+    const cfg = STATUS_CONFIG[status] || { label: status, color: "text-slate-600", bg: "bg-slate-100", border: "border-slate-200" };
     return (
         <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border ${cfg.color} ${cfg.bg} ${cfg.border}`}>
             <span className={`w-1.5 h-1.5 rounded-full ${cfg.color.replace("text-", "bg-")} animate-pulse`} />
@@ -114,7 +114,7 @@ function ConfirmDialog({ message, onConfirm, onCancel }: {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"
+            className="fixed inset-0 z-[100] bg-black/40 backdrop-blur-sm flex items-center justify-center p-4"
             onClick={onCancel}
         >
             <motion.div
@@ -122,25 +122,25 @@ function ConfirmDialog({ message, onConfirm, onCancel }: {
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.9, opacity: 0 }}
                 onClick={(e) => e.stopPropagation()}
-                className="bg-black/20 backdrop-blur-xl border border-red-500/30 rounded-2xl p-6 max-w-sm w-full shadow-2xl"
+                className="bg-white border border-red-200 rounded-2xl p-6 max-w-sm w-full shadow-2xl"
             >
                 <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center">
-                        <AlertTriangle className="w-5 h-5 text-red-400" />
+                    <div className="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center">
+                        <AlertTriangle className="w-5 h-5 text-red-500" />
                     </div>
-                    <h3 className="font-bold text-white">Confirm Action</h3>
+                    <h3 className="font-bold text-slate-900">Confirm Action</h3>
                 </div>
-                <p className="text-muted-foreground text-sm mb-6 leading-relaxed">{message}</p>
+                <p className="text-slate-600 text-sm mb-6 leading-relaxed">{message}</p>
                 <div className="flex gap-3">
                     <button
                         onClick={onCancel}
-                        className="flex-1 py-2.5 rounded-xl bg-black/10 backdrop-blur-md border border-white/10 text-sm font-semibold text-muted-foreground hover:text-white hover:border-white/20 transition-all"
+                        className="flex-1 py-2.5 rounded-xl bg-slate-100 border border-slate-200 text-sm font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-200 transition-all"
                     >
                         Cancel
                     </button>
                     <button
                         onClick={onConfirm}
-                        className="flex-1 py-2.5 rounded-xl bg-red-500/90 hover:bg-red-500 text-white text-sm font-bold transition-all shadow-lg shadow-red-500/20"
+                        className="flex-1 py-2.5 rounded-xl bg-red-500 hover:bg-red-600 text-white text-sm font-bold transition-all shadow-lg shadow-red-500/20"
                     >
                         Confirm Delete
                     </button>
@@ -167,7 +167,7 @@ function getPriorityColor(status: string): { border: string; bg: string; dot: st
         case "seller_rejected":
             return { border: "border-zinc-500/30", bg: "bg-zinc-500/5", dot: "bg-zinc-500", label: "Cancelled" };
         default:
-            return { border: "border-white/10", bg: "bg-white/5", dot: "bg-white", label: status };
+            return { border: "border-slate-200", bg: "bg-white/5", dot: "bg-white", label: status };
     }
 }
 
@@ -227,10 +227,10 @@ function DashboardSection({ stats, recentProducts, recentOrders, loading, allOrd
         <div className="space-y-6">
             {/* Header */}
             <div>
-                <h2 className="text-2xl font-black mb-1 text-white flex items-center gap-2">
+                <h2 className="text-2xl font-black mb-1 text-slate-900 flex items-center gap-2">
                     <Activity className="w-6 h-6 text-neon-orange" /> Delivery Dashboard
                 </h2>
-                <p className="text-white/70 text-sm">Real-time order management • {allOrders.filter(o => !["completed", "cancelled", "seller_rejected"].includes(o.status)).length} active orders</p>
+                <p className="text-slate-900/70 text-sm">Real-time order management • {allOrders.filter(o => !["completed", "cancelled", "seller_rejected"].includes(o.status)).length} active orders</p>
             </div>
 
             {/* Stats Row */}
@@ -244,13 +244,13 @@ function DashboardSection({ stats, recentProducts, recentOrders, loading, allOrd
             {/* Search + Filters */}
             <div className="flex flex-col sm:flex-row gap-3">
                 <div className="relative flex-1 max-w-sm">
-                    <Eye className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
+                    <Eye className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-900/40" />
                     <input
                         type="text"
                         placeholder="Search order ID, customer..."
                         value={searchQuery}
                         onChange={e => setSearchQuery(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-black/20 backdrop-blur-md border border-white/10 text-sm text-white placeholder:text-white/40 focus:outline-none focus:border-neon-orange/40 transition-colors"
+                        className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white  border border-slate-200 text-sm text-slate-900 placeholder:text-slate-900/40 focus:outline-none focus:border-neon-orange/40 transition-colors"
                     />
                 </div>
                 <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
@@ -258,10 +258,10 @@ function DashboardSection({ stats, recentProducts, recentOrders, loading, allOrd
                         <button
                             key={f.id}
                             onClick={() => setDashFilter(f.id)}
-                            className={`px-3 py-2 rounded-xl text-xs font-bold transition-all flex-shrink-0 flex items-center gap-1.5 ${dashFilter === f.id ? "bg-neon-orange/20 text-neon-orange border border-neon-orange/30" : "bg-white/5 text-white/70 hover:bg-white/10 hover:text-white border border-white/10"}`}
+                            className={`px-3 py-2 rounded-xl text-xs font-bold transition-all flex-shrink-0 flex items-center gap-1.5 ${dashFilter === f.id ? "bg-neon-orange/20 text-neon-orange border border-neon-orange/30" : "bg-white/5 text-slate-900/70 hover:bg-slate-100 hover:text-slate-900 border border-slate-200"}`}
                         >
                             {f.label}
-                            {f.count > 0 && <span className={`min-w-[18px] h-[18px] rounded-full text-[10px] font-black flex items-center justify-center px-1 ${dashFilter === f.id ? "bg-neon-orange text-white" : "bg-white/10 text-white/60"}`}>{f.count}</span>}
+                            {f.count > 0 && <span className={`min-w-[18px] h-[18px] rounded-full text-[10px] font-black flex items-center justify-center px-1 ${dashFilter === f.id ? "bg-neon-orange text-slate-900" : "bg-white/10 text-slate-900/60"}`}>{f.count}</span>}
                         </button>
                     ))}
                 </div>
@@ -271,10 +271,10 @@ function DashboardSection({ stats, recentProducts, recentOrders, loading, allOrd
             {loading ? (
                 <div className="flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin text-neon-orange" /></div>
             ) : filteredOrders.length === 0 ? (
-                <div className="bg-black/20 backdrop-blur-xl rounded-2xl p-12 text-center border border-white/10">
-                    <ShoppingCart className="w-12 h-12 text-white/30 mx-auto mb-3" />
-                    <p className="text-white/60 font-semibold">No orders match this filter</p>
-                    <p className="text-white/40 text-xs mt-1">Try a different filter or search term</p>
+                <div className="bg-white  rounded-2xl p-12 text-center border border-slate-200">
+                    <ShoppingCart className="w-12 h-12 text-slate-900/30 mx-auto mb-3" />
+                    <p className="text-slate-900/60 font-semibold">No orders match this filter</p>
+                    <p className="text-slate-900/40 text-xs mt-1">Try a different filter or search term</p>
                 </div>
             ) : (
                 <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
@@ -294,17 +294,17 @@ function DashboardSection({ stats, recentProducts, recentOrders, loading, allOrd
                                 initial={{ opacity: 0, y: 10 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: Math.min(i * 0.03, 0.3) }}
-                                className={`rounded-2xl border-l-4 ${priority.border} ${priority.bg} bg-black/20 backdrop-blur-xl overflow-hidden hover:bg-black/30 transition-all`}
+                                className={`rounded-2xl border-l-4 ${priority.border} ${priority.bg} bg-white  overflow-hidden hover:bg-black/30 transition-all`}
                             >
                                 {/* Card Header */}
-                                <div className="p-3 sm:p-4 flex items-center gap-3 border-b border-white/5">
+                                <div className="p-3 sm:p-4 flex items-center gap-3 border-b border-slate-200">
                                     <div className={`w-2.5 h-2.5 rounded-full ${priority.dot} ${order.status === "pending" ? "animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.8)]" : ""} flex-shrink-0`} />
                                     <div className="flex-1 min-w-0">
                                         <div className="flex items-center gap-2">
-                                            <span className="text-xs text-white/50 font-mono">#{order.id.slice(0, 8).toUpperCase()}</span>
+                                            <span className="text-xs text-slate-900/50 font-mono">#{order.id.slice(0, 8).toUpperCase()}</span>
                                             {isFood && <span className="text-[10px] px-1.5 py-0.5 rounded bg-orange-500/20 text-orange-400 font-bold">FOOD</span>}
                                         </div>
-                                        <p className="text-[11px] text-white/40 flex items-center gap-1 mt-0.5">
+                                        <p className="text-[11px] text-slate-900/40 flex items-center gap-1 mt-0.5">
                                             <Clock className="w-3 h-3" />
                                             {new Date(order.created_at).toLocaleString("en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
                                         </p>
@@ -317,16 +317,16 @@ function DashboardSection({ stats, recentProducts, recentOrders, loading, allOrd
                                     {/* Item + Price Row */}
                                     <div className="flex items-start gap-3">
                                         {order.products?.image_url && (
-                                            <div className="w-14 h-14 rounded-xl overflow-hidden bg-white/5 flex-shrink-0 border border-white/10">
+                                            <div className="w-14 h-14 rounded-xl overflow-hidden bg-white/5 flex-shrink-0 border border-slate-200">
                                                 <img src={order.products.image_url} alt="" className="w-full h-full object-cover" />
                                             </div>
                                         )}
                                         <div className="flex-1 min-w-0">
-                                            <p className="font-bold text-sm text-white truncate">{isFood ? "Food Order" : (loc.itemTitle || order.products?.title || "Custom Order")}</p>
+                                            <p className="font-bold text-sm text-slate-900 truncate">{isFood ? "Food Order" : (loc.itemTitle || order.products?.title || "Custom Order")}</p>
                                             {isFood && foodItems && (
                                                 <div className="mt-1 space-y-0.5">
                                                     {foodItems.split("\n").filter(Boolean).slice(0, 3).map((line, idx) => (
-                                                        <p key={idx} className="text-xs text-white/60 truncate">• {line.trim()}</p>
+                                                        <p key={idx} className="text-xs text-slate-900/60 truncate">• {line.trim()}</p>
                                                     ))}
                                                 </div>
                                             )}
@@ -335,21 +335,21 @@ function DashboardSection({ stats, recentProducts, recentOrders, loading, allOrd
                                     </div>
 
                                     {/* Customer + Location */}
-                                    <div className="bg-black/20 rounded-xl p-2.5 border border-white/5 space-y-1.5">
+                                    <div className="bg-white rounded-xl p-2.5 border border-slate-200 space-y-1.5">
                                         <div className="flex items-center gap-2">
                                             <User className="w-3.5 h-3.5 text-neon-cyan flex-shrink-0" />
-                                            <span className="text-sm font-semibold text-white truncate">{order.buyer?.full_name || "Customer"}</span>
+                                            <span className="text-sm font-semibold text-slate-900 truncate">{order.buyer?.full_name || "Customer"}</span>
                                         </div>
                                         {(order.buyer_phone || order.buyer?.phone_number) && (
                                             <div className="flex items-center gap-2">
-                                                <Phone className="w-3 h-3 text-white/40 flex-shrink-0" />
-                                                <span className="text-xs text-white/60">{order.buyer_phone || order.buyer?.phone_number}</span>
-                                                <button onClick={() => copyPhone(order.buyer_phone || order.buyer?.phone_number || "")} className="p-0.5 rounded hover:bg-white/10"><Copy className="w-3 h-3 text-white/40" /></button>
+                                                <Phone className="w-3 h-3 text-slate-900/40 flex-shrink-0" />
+                                                <span className="text-xs text-slate-900/60">{order.buyer_phone || order.buyer?.phone_number}</span>
+                                                <button onClick={() => copyPhone(order.buyer_phone || order.buyer?.phone_number || "")} className="p-0.5 rounded hover:bg-slate-100"><Copy className="w-3 h-3 text-slate-900/40" /></button>
                                             </div>
                                         )}
                                         <div className="flex items-start gap-2">
-                                            <MapPin className="w-3 h-3 text-white/40 flex-shrink-0 mt-0.5" />
-                                            <span className="text-xs text-white/60 break-words">{loc.hostel}{loc.room ? `, Room ${loc.room}` : ""}</span>
+                                            <MapPin className="w-3 h-3 text-slate-900/40 flex-shrink-0 mt-0.5" />
+                                            <span className="text-xs text-slate-900/60 break-words">{loc.hostel}{loc.room ? `, Room ${loc.room}` : ""}</span>
                                         </div>
                                     </div>
 
@@ -398,19 +398,19 @@ function ProductsSection({ products, loading, onDelete }: {
 }) {
     return (
         <div className="space-y-6">
-            <div className="flex items-center justify-between text-white">
+            <div className="flex items-center justify-between text-slate-900">
                 <div>
                     <h2 className="text-2xl font-black mb-1">Product Management</h2>
-                    <p className="text-white/70 text-sm">{products.length} products listed on the platform</p>
+                    <p className="text-slate-900/70 text-sm">{products.length} products listed on the platform</p>
                 </div>
             </div>
 
             {loading ? (
                 <div className="flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin text-neon-cyan" /></div>
             ) : products.length === 0 ? (
-                <div className="bg-black/20 backdrop-blur-xl rounded-2xl p-12 text-center border border-white/10">
-                    <Package className="w-12 h-12 text-white/40 mx-auto mb-3" />
-                    <p className="text-white/70">No products found</p>
+                <div className="bg-white  rounded-2xl p-12 text-center border border-slate-200">
+                    <Package className="w-12 h-12 text-slate-900/40 mx-auto mb-3" />
+                    <p className="text-slate-900/70">No products found</p>
                 </div>
             ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
@@ -420,7 +420,7 @@ function ProductsSection({ products, loading, onDelete }: {
                             initial={{ opacity: 0, y: 16 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: i * 0.04 }}
-                            className="bg-black/20 backdrop-blur-xl rounded-2xl border border-white/10 overflow-hidden group hover:border-white/20 transition-all"
+                            className="bg-white  rounded-2xl border border-slate-200 overflow-hidden group hover:border-slate-300 transition-all"
                         >
                             {/* Product Image */}
                             <div className="relative h-44 overflow-hidden bg-white/5">
@@ -448,19 +448,19 @@ function ProductsSection({ products, loading, onDelete }: {
 
                             {/* Product Info */}
                             <div className="p-4">
-                                <h3 className="font-bold text-sm text-white mb-2 line-clamp-2 leading-snug">{product.title}</h3>
+                                <h3 className="font-bold text-sm text-slate-900 mb-2 line-clamp-2 leading-snug">{product.title}</h3>
                                 <div className="flex items-center gap-2 mb-3">
                                     <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-neon-blue to-neon-cyan flex items-center justify-center flex-shrink-0">
                                         <User className="w-3 h-3 text-white" />
                                     </div>
                                     <div className="min-w-0">
-                                        <p className="text-xs font-semibold text-white truncate">{product.profiles?.full_name || "Unknown Seller"}</p>
+                                        <p className="text-xs font-semibold text-slate-900 truncate">{product.profiles?.full_name || "Unknown Seller"}</p>
                                         {product.profiles?.hostel_block && (
-                                            <p className="text-xs text-white/60 truncate">{product.profiles.hostel_block}</p>
+                                            <p className="text-xs text-slate-900/60 truncate">{product.profiles.hostel_block}</p>
                                         )}
                                     </div>
                                 </div>
-                                <div className="flex items-center gap-2 text-xs text-white/60 mb-4">
+                                <div className="flex items-center gap-2 text-xs text-slate-900/60 mb-4">
                                     <Calendar className="w-3.5 h-3.5" />
                                     <span>{new Date(product.created_at).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}</span>
                                 </div>
@@ -535,7 +535,7 @@ function FilterBar({ active, onChange }: { active: string; onChange: (f: string)
                 <button
                     key={f.id}
                     onClick={() => onChange(f.id)}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex-shrink-0 ${active === f.id ? 'bg-neon-orange/20 text-neon-orange border border-neon-orange/30' : 'bg-white/10 text-white/80 hover:bg-white/20 hover:text-white border border-white/10'}`}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex-shrink-0 ${active === f.id ? 'bg-neon-orange/20 text-neon-orange border border-neon-orange/30' : 'bg-white/10 text-slate-900/80 hover:bg-slate-50 hover:text-slate-900 border border-slate-200'}`}
                 >
                     {f.label}
                 </button>
@@ -577,10 +577,10 @@ function ItemOrdersSection({ orders, loading, onUpdateStatus, onVerifyUpi }: {
 
     return (
         <div className="space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-white">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-slate-900">
                 <div>
                     <h2 className="text-2xl font-black mb-1 flex items-center gap-2"><ShoppingCart className="w-6 h-6 text-neon-cyan" /> Item Orders</h2>
-                    <p className="text-white/70 text-sm">{itemOrders.length} total • {itemOrders.filter(o => !['completed', 'cancelled', 'seller_rejected'].includes(o.status)).length} active</p>
+                    <p className="text-slate-900/70 text-sm">{itemOrders.length} total • {itemOrders.filter(o => !['completed', 'cancelled', 'seller_rejected'].includes(o.status)).length} active</p>
                 </div>
                 <FilterBar active={filter} onChange={setFilter} />
             </div>
@@ -588,9 +588,9 @@ function ItemOrdersSection({ orders, loading, onUpdateStatus, onVerifyUpi }: {
             {loading ? (
                 <div className="flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin text-neon-cyan" /></div>
             ) : filtered.length === 0 ? (
-                <div className="bg-black/20 backdrop-blur-xl rounded-2xl p-12 text-center border border-white/10">
-                    <ShoppingCart className="w-12 h-12 text-white/40 mx-auto mb-3" />
-                    <p className="text-white/70">No item orders found</p>
+                <div className="bg-white  rounded-2xl p-12 text-center border border-slate-200">
+                    <ShoppingCart className="w-12 h-12 text-slate-900/40 mx-auto mb-3" />
+                    <p className="text-slate-900/70">No item orders found</p>
                 </div>
             ) : (
                 <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
@@ -598,11 +598,11 @@ function ItemOrdersSection({ orders, loading, onUpdateStatus, onVerifyUpi }: {
                         const action = nextStatus[order.status];
                         return (
                             <motion.div key={order.id} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}
-                                className="bg-black/20 backdrop-blur-xl rounded-2xl border border-white/10 overflow-hidden hover:border-white/20 transition-all">
-                                <div className="p-4 border-b border-white/5 flex items-center gap-3">
+                                className="bg-white  rounded-2xl border border-slate-200 overflow-hidden hover:border-slate-300 transition-all">
+                                <div className="p-4 border-b border-slate-200 flex items-center gap-3">
                                     <div className="flex-1 min-w-0">
-                                        <p className="text-xs text-white/50 font-mono">ORDER #{order.id.slice(0, 8).toUpperCase()}</p>
-                                        <p className="text-xs text-white/60 mt-0.5 flex items-center gap-1">
+                                        <p className="text-xs text-slate-900/50 font-mono">ORDER #{order.id.slice(0, 8).toUpperCase()}</p>
+                                        <p className="text-xs text-slate-900/60 mt-0.5 flex items-center gap-1">
                                             <Clock className="w-3 h-3" />
                                             {new Date(order.created_at).toLocaleString("en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
                                         </p>
@@ -611,14 +611,14 @@ function ItemOrdersSection({ orders, loading, onUpdateStatus, onVerifyUpi }: {
                                 </div>
                                 <div className="p-4 space-y-4">
                                     <div className="flex gap-4">
-                                        <div className="w-20 h-20 rounded-xl overflow-hidden bg-white/5 flex-shrink-0 border border-white/10">
+                                        <div className="w-20 h-20 rounded-xl overflow-hidden bg-white/5 flex-shrink-0 border border-slate-200">
                                             <img src={order.products?.image_url || "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=120"} alt="" className="w-full h-full object-cover" />
                                         </div>
                                         <div className="flex-1 min-w-0">
-                                            <p className="font-bold text-sm text-white truncate">{order.products?.title || "Product Removed"}</p>
+                                            <p className="font-bold text-sm text-slate-900 truncate">{order.products?.title || "Product Removed"}</p>
                                             <p className="text-neon-fire font-bold text-lg">₹{order.total_price.toLocaleString()}</p>
                                             <div className="flex flex-wrap items-center gap-2 mt-1">
-                                                {order.products?.category && <span className="inline-block px-2 py-0.5 rounded-lg bg-white/10 text-xs text-white/70 font-mono truncate max-w-full">{order.products.category}</span>}
+                                                {order.products?.category && <span className="inline-block px-2 py-0.5 rounded-lg bg-white/10 text-xs text-slate-900/70 font-mono truncate max-w-full">{order.products.category}</span>}
                                                 <span className={`inline-block px-2 py-0.5 rounded-lg text-xs font-bold truncate max-w-full ${order.payment_status === 'verifying' ? 'bg-orange-500/15 text-orange-400' : order.payment_status === 'paid' ? 'bg-green-500/15 text-green-400' : 'bg-yellow-500/15 text-yellow-400'}`}>
                                                     {order.payment_status === 'verifying' ? `🟡 Verify UTR: ${order.razorpay_payment_id || 'N/A'}` : order.payment_status === 'paid' ? '💳 Paid Online' : '💵 COD'}
                                                 </span>
@@ -630,29 +630,29 @@ function ItemOrdersSection({ orders, loading, onUpdateStatus, onVerifyUpi }: {
                                             )}
                                         </div>
                                     </div>
-                                    <div className="bg-black/10 backdrop-blur-md rounded-xl p-3 border border-neon-cyan/20">
+                                    <div className="bg-slate-50  rounded-xl p-3 border border-neon-cyan/20">
                                         <p className="text-xs text-neon-cyan font-bold uppercase tracking-wider mb-2 flex items-center gap-1"><User className="w-3 h-3" /> Buyer</p>
-                                        <p className="text-sm font-semibold text-white">{order.buyer?.full_name || "Unknown"}</p>
+                                        <p className="text-sm font-semibold text-slate-900">{order.buyer?.full_name || "Unknown"}</p>
                                         {(order.buyer_phone || order.buyer?.phone_number) && (
                                             <div className="flex items-center gap-2 mt-1">
                                                 <Phone className="w-3 h-3 text-neon-cyan" />
-                                                <span className="text-xs text-white/70">{order.buyer_phone || order.buyer?.phone_number}</span>
-                                                <button onClick={() => copyPhone(order.buyer_phone || order.buyer?.phone_number || "")} className="p-0.5 rounded hover:bg-white/20"><Copy className="w-3 h-3 text-white/70" /></button>
+                                                <span className="text-xs text-slate-900/70">{order.buyer_phone || order.buyer?.phone_number}</span>
+                                                <button onClick={() => copyPhone(order.buyer_phone || order.buyer?.phone_number || "")} className="p-0.5 rounded hover:bg-slate-50"><Copy className="w-3 h-3 text-slate-900/70" /></button>
                                             </div>
                                         )}
-                                        <p className="text-xs text-white/70 flex items-start gap-1 mt-1 break-words"><MapPin className="w-3 h-3 flex-shrink-0 mt-0.5" /> <span className="flex-1 min-w-0">{order.delivery_location}{order.delivery_room && `, Room ${order.delivery_room}`}</span></p>
+                                        <p className="text-xs text-slate-900/70 flex items-start gap-1 mt-1 break-words"><MapPin className="w-3 h-3 flex-shrink-0 mt-0.5" /> <span className="flex-1 min-w-0">{order.delivery_location}{order.delivery_room && `, Room ${order.delivery_room}`}</span></p>
                                     </div>
-                                    <div className="bg-black/10 backdrop-blur-md rounded-xl p-3 border border-neon-orange/20">
+                                    <div className="bg-slate-50  rounded-xl p-3 border border-neon-orange/20">
                                         <p className="text-xs text-neon-orange font-bold uppercase tracking-wider mb-2 flex items-center gap-1"><Star className="w-3 h-3" /> Seller</p>
-                                        <p className="text-sm font-semibold text-white">{order.seller?.full_name || "Unknown"}</p>
+                                        <p className="text-sm font-semibold text-slate-900">{order.seller?.full_name || "Unknown"}</p>
                                         {order.seller?.phone_number && (
                                             <div className="flex items-center gap-2 mt-1">
                                                 <Phone className="w-3 h-3 text-neon-orange" />
-                                                <span className="text-xs text-white/70">{order.seller.phone_number}</span>
-                                                <button onClick={() => copyPhone(order.seller?.phone_number || "")} className="p-0.5 rounded hover:bg-white/20"><Copy className="w-3 h-3 text-white/70" /></button>
+                                                <span className="text-xs text-slate-900/70">{order.seller.phone_number}</span>
+                                                <button onClick={() => copyPhone(order.seller?.phone_number || "")} className="p-0.5 rounded hover:bg-slate-50"><Copy className="w-3 h-3 text-slate-900/70" /></button>
                                             </div>
                                         )}
-                                        {order.seller?.hostel_block && <p className="text-xs text-white/70 flex items-start gap-1 mt-1 break-words"><MapPin className="w-3 h-3 flex-shrink-0 mt-0.5" /> <span className="flex-1 min-w-0">{order.seller.hostel_block}</span></p>}
+                                        {order.seller?.hostel_block && <p className="text-xs text-slate-900/70 flex items-start gap-1 mt-1 break-words"><MapPin className="w-3 h-3 flex-shrink-0 mt-0.5" /> <span className="flex-1 min-w-0">{order.seller.hostel_block}</span></p>}
                                     </div>
                                     {action && (
                                         <div className="flex flex-col sm:flex-row gap-2">
@@ -727,7 +727,7 @@ function FoodOrdersSection({ orders, loading, onUpdateStatus, onVerifyUpi }: {
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
                     <h2 className="text-2xl font-black mb-1 flex items-center gap-2"><UtensilsCrossed className="w-6 h-6 text-orange-400" /> Food Orders</h2>
-                    <p className="text-muted-foreground text-sm">{foodOrders.length} total • {foodOrders.filter(o => !['completed', 'cancelled'].includes(o.status)).length} active</p>
+                    <p className="text-slate-500 text-sm">{foodOrders.length} total • {foodOrders.filter(o => !['completed', 'cancelled'].includes(o.status)).length} active</p>
                 </div>
                 <FilterBar active={filter} onChange={setFilter} />
             </div>
@@ -735,9 +735,9 @@ function FoodOrdersSection({ orders, loading, onUpdateStatus, onVerifyUpi }: {
             {loading ? (
                 <div className="flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin text-orange-400" /></div>
             ) : filtered.length === 0 ? (
-                <div className="bg-black/20 backdrop-blur-xl rounded-2xl p-12 text-center border border-white/10">
-                    <UtensilsCrossed className="w-12 h-12 text-muted-foreground mx-auto mb-3 opacity-40" />
-                    <p className="text-muted-foreground">No food orders found</p>
+                <div className="bg-white  rounded-2xl p-12 text-center border border-slate-200">
+                    <UtensilsCrossed className="w-12 h-12 text-slate-500 mx-auto mb-3 opacity-40" />
+                    <p className="text-slate-500">No food orders found</p>
                 </div>
             ) : (
                 <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
@@ -746,15 +746,15 @@ function FoodOrdersSection({ orders, loading, onUpdateStatus, onVerifyUpi }: {
                         const { hostel, items, notes } = parseFoodDetails(order);
                         return (
                             <motion.div key={order.id} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}
-                                className="bg-black/20 backdrop-blur-xl rounded-2xl border border-orange-500/15 overflow-hidden hover:border-orange-500/30 transition-all">
+                                className="bg-white  rounded-2xl border border-orange-500/15 overflow-hidden hover:border-orange-500/30 transition-all">
                                 {/* Header */}
-                                <div className="p-4 border-b border-white/5 flex items-center gap-3" style={{ background: 'rgba(255,107,0,0.03)' }}>
+                                <div className="p-4 border-b border-slate-200 flex items-center gap-3" style={{ background: 'rgba(255,107,0,0.03)' }}>
                                     <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(255,107,0,0.12)' }}>
                                         <UtensilsCrossed className="w-5 h-5 text-orange-400" />
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                        <p className="text-xs text-muted-foreground font-mono">FOOD #{order.id.slice(0, 8).toUpperCase()}</p>
-                                        <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1">
+                                        <p className="text-xs text-slate-500 font-mono">FOOD #{order.id.slice(0, 8).toUpperCase()}</p>
+                                        <p className="text-xs text-slate-500 mt-0.5 flex items-center gap-1">
                                             <Clock className="w-3 h-3" />
                                             {new Date(order.created_at).toLocaleString("en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
                                         </p>
@@ -770,7 +770,7 @@ function FoodOrdersSection({ orders, loading, onUpdateStatus, onVerifyUpi }: {
                                         </p>
                                         <div className="space-y-1">
                                             {items.split('\n').filter(Boolean).map((line, idx) => (
-                                                <p key={idx} className="text-sm text-white flex items-start gap-2">
+                                                <p key={idx} className="text-sm text-slate-900 flex items-start gap-2">
                                                     <span className="text-orange-400 mt-0.5">•</span>
                                                     <span>{line.trim()}</span>
                                                 </p>
@@ -779,12 +779,12 @@ function FoodOrdersSection({ orders, loading, onUpdateStatus, onVerifyUpi }: {
                                         {notes && (
                                             <div className="mt-2 pt-2 border-t border-orange-500/10">
                                                 <p className="text-[10px] text-orange-300/60 uppercase font-bold mb-0.5">Notes</p>
-                                                <p className="text-xs text-muted-foreground italic">{notes}</p>
+                                                <p className="text-xs text-slate-500 italic">{notes}</p>
                                             </div>
                                         )}
                                         {order.total_price > 0 && (
                                             <div className="mt-2 pt-2 border-t border-orange-500/10 flex items-center justify-between">
-                                                <span className="text-xs text-muted-foreground">Total</span>
+                                                <span className="text-xs text-slate-500">Total</span>
                                                 <span className="text-base font-black text-orange-400">₹{order.total_price.toLocaleString()}</span>
                                             </div>
                                         )}
@@ -801,17 +801,17 @@ function FoodOrdersSection({ orders, loading, onUpdateStatus, onVerifyUpi }: {
                                     </div>
 
                                     {/* Buyer + Delivery */}
-                                    <div className="bg-black/10 backdrop-blur-md rounded-xl p-3 border border-neon-cyan/20">
+                                    <div className="bg-slate-50  rounded-xl p-3 border border-neon-cyan/20">
                                         <p className="text-xs text-neon-cyan font-bold uppercase tracking-wider mb-2 flex items-center gap-1"><User className="w-3 h-3" /> Deliver To</p>
-                                        <p className="text-sm font-semibold text-white">{order.buyer?.full_name || "Student"}</p>
+                                        <p className="text-sm font-semibold text-slate-900">{order.buyer?.full_name || "Student"}</p>
                                         {order.buyer_phone && (
                                             <div className="flex items-center gap-2 mt-1">
                                                 <Phone className="w-3 h-3 text-neon-cyan" />
-                                                <span className="text-xs text-muted-foreground">{order.buyer_phone}</span>
-                                                <button onClick={() => copyPhone(order.buyer_phone || "")} className="p-0.5 rounded hover:bg-white/10" title="Copy"><Copy className="w-3 h-3 text-muted-foreground" /></button>
+                                                <span className="text-xs text-slate-500">{order.buyer_phone}</span>
+                                                <button onClick={() => copyPhone(order.buyer_phone || "")} className="p-0.5 rounded hover:bg-slate-100" title="Copy"><Copy className="w-3 h-3 text-slate-500" /></button>
                                             </div>
                                         )}
-                                        <p className="text-xs text-muted-foreground flex items-start gap-1 mt-1 break-words"><MapPin className="w-3 h-3 flex-shrink-0 mt-0.5" /> <span className="flex-1 min-w-0">{hostel}</span></p>
+                                        <p className="text-xs text-slate-500 flex items-start gap-1 mt-1 break-words"><MapPin className="w-3 h-3 flex-shrink-0 mt-0.5" /> <span className="flex-1 min-w-0">{hostel}</span></p>
                                     </div>
 
                                     {/* Action */}
@@ -849,10 +849,10 @@ function NotificationsSection({ notifications, loading, onMarkRead, onMarkAllRea
             <div className="flex items-center justify-between">
                 <div>
                     <h2 className="text-2xl font-black mb-1">Notifications</h2>
-                    <p className="text-muted-foreground text-sm">{notifications.filter(n => !n.is_read).length} unread notifications</p>
+                    <p className="text-slate-500 text-sm">{notifications.filter(n => !n.is_read).length} unread notifications</p>
                 </div>
                 {notifications.some(n => !n.is_read) && (
-                    <button onClick={onMarkAllRead} className="text-xs font-bold text-neon-cyan hover:text-white transition-colors">
+                    <button onClick={onMarkAllRead} className="text-xs font-bold text-neon-cyan hover:text-slate-900 transition-colors">
                         Mark all read
                     </button>
                 )}
@@ -861,10 +861,10 @@ function NotificationsSection({ notifications, loading, onMarkRead, onMarkAllRea
             {loading ? (
                 <div className="flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin text-neon-cyan" /></div>
             ) : notifications.length === 0 ? (
-                <div className="bg-black/20 backdrop-blur-xl rounded-2xl p-12 text-center border border-white/10">
-                    <Bell className="w-12 h-12 text-muted-foreground mx-auto mb-3 opacity-40" />
-                    <p className="text-muted-foreground">No notifications yet</p>
-                    <p className="text-xs text-muted-foreground mt-1">You'll be notified when new products are listed or orders are placed</p>
+                <div className="bg-white  rounded-2xl p-12 text-center border border-slate-200">
+                    <Bell className="w-12 h-12 text-slate-500 mx-auto mb-3 opacity-40" />
+                    <p className="text-slate-500">No notifications yet</p>
+                    <p className="text-xs text-slate-500 mt-1">You'll be notified when new products are listed or orders are placed</p>
                 </div>
             ) : (
                 <div className="space-y-3">
@@ -878,7 +878,7 @@ function NotificationsSection({ notifications, loading, onMarkRead, onMarkAllRea
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ delay: i * 0.04 }}
                                 onClick={() => !n.is_read && onMarkRead(n.id)}
-                                className={`bg-black/20 backdrop-blur-xl rounded-2xl border transition-all cursor-pointer ${n.is_read ? "border-white/5 opacity-60" : "border-white/15 hover:border-white/25"}`}
+                                className={`bg-white  rounded-2xl border transition-all cursor-pointer ${n.is_read ? "border-slate-200 opacity-60" : "border-white/15 hover:border-slate-300"}`}
                             >
                                 <div className="p-4 flex items-start gap-4">
                                     {/* Icon */}
@@ -897,21 +897,21 @@ function NotificationsSection({ notifications, loading, onMarkRead, onMarkAllRea
 
                                         {isProduct ? (
                                             <div>
-                                                <p className="text-sm font-semibold text-white truncate">{payload.title || "New Product"}</p>
-                                                <p className="text-xs text-muted-foreground">
+                                                <p className="text-sm font-semibold text-slate-900 truncate">{payload.title || "New Product"}</p>
+                                                <p className="text-xs text-slate-500">
                                                     ₹{(payload.price || 0).toLocaleString()} · {payload.category} · {payload.condition}
                                                 </p>
                                             </div>
                                         ) : (
                                             <div>
-                                                <p className="text-sm font-semibold text-white">Order #{(payload.id || "").slice(0, 8).toUpperCase()}</p>
-                                                <p className="text-xs text-muted-foreground">
+                                                <p className="text-sm font-semibold text-slate-900">Order #{(payload.id || "").slice(0, 8).toUpperCase()}</p>
+                                                <p className="text-xs text-slate-500">
                                                     Total: ₹{(payload.total_price || 0).toLocaleString()} · Deliver to: {payload.delivery_location || "N/A"}
                                                 </p>
                                             </div>
                                         )}
 
-                                        <p className="text-xs text-muted-foreground/50 font-mono mt-2 flex items-center gap-1">
+                                        <p className="text-xs text-slate-500/50 font-mono mt-2 flex items-center gap-1">
                                             <Clock className="w-3 h-3" />
                                             {new Date(n.created_at).toLocaleString("en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
                                         </p>
@@ -1147,18 +1147,18 @@ export default function Admin() {
 
     if (!isAdmin) {
         return (
-            <div className="min-h-screen bg-brand flex items-center justify-center p-4">
+            <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
                 <motion.div
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="bg-black/20 backdrop-blur-xl rounded-3xl p-12 text-center border border-red-500/20 max-w-md w-full"
+                    className="bg-white  rounded-3xl p-12 text-center border border-red-500/20 max-w-md w-full"
                 >
-                    <div className="w-16 h-16 rounded-full bg-black/20 flex items-center justify-center mx-auto mb-4 overflow-hidden border border-white/10">
+                    <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center mx-auto mb-4 overflow-hidden border border-slate-200">
                         <img src="/logo.png" alt="CU Bazzar" className="w-10 h-10 object-contain" />
                     </div>
-                    <h1 className="text-2xl font-black text-white mb-2">Access Denied</h1>
-                    <p className="text-muted-foreground mb-6">You don't have admin privileges to access this area.</p>
-                    <button onClick={() => navigate("/home")} className="btn-liquid-bg-black/10 backdrop-blur-md px-6 py-3 text-white font-bold rounded-xl">
+                    <h1 className="text-2xl font-black text-slate-900 mb-2">Access Denied</h1>
+                    <p className="text-slate-500 mb-6">You don't have admin privileges to access this area.</p>
+                    <button onClick={() => navigate("/home")} className="btn-liquid-bg-slate-50  px-6 py-3 text-slate-900 font-bold rounded-xl">
                         Return Home
                     </button>
                 </motion.div>
@@ -1167,7 +1167,7 @@ export default function Admin() {
     }
 
     return (
-        <div className="min-h-screen bg-brand flex">
+        <div className="min-h-screen bg-slate-50 flex">
             {/* ── Sidebar ──────────────────────────────────────────────────────────── */}
             {/* Overlay for mobile */}
             <AnimatePresence>
@@ -1176,7 +1176,7 @@ export default function Admin() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden"
+                        className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm lg:hidden"
                         onClick={() => setSidebarOpen(false)}
                     />
                 )}
@@ -1187,7 +1187,7 @@ export default function Admin() {
                 initial={false}
                 animate={{ x: sidebarOpen ? 0 : "-100%" }}
                 transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                className="fixed top-0 left-0 h-full w-64 z-50 lg:hidden bg-black/20 backdrop-blur-xl border-r border-white/10 flex flex-col"
+                className="fixed top-0 left-0 h-full w-64 z-50 lg:hidden bg-white  border-r border-slate-200 flex flex-col"
             >
                 <SidebarContent
                     navItems={navItems}
@@ -1199,7 +1199,7 @@ export default function Admin() {
             </motion.aside>
 
             {/* Desktop Sidebar (always visible) */}
-            <aside className="hidden lg:flex w-64 flex-col fixed top-0 left-0 h-full bg-black/20 backdrop-blur-xl border-r border-white/10 z-30">
+            <aside className="hidden lg:flex w-64 flex-col fixed top-0 left-0 h-full bg-white  border-r border-slate-200 z-30">
                 <SidebarContent
                     navItems={navItems}
                     section={section}
@@ -1212,16 +1212,16 @@ export default function Admin() {
             {/* ── Main Content ─────────────────────────────────────────────────────── */}
             <main className="flex-1 lg:ml-64 min-h-screen w-full max-w-[100vw] overflow-x-hidden">
                 {/* Top Bar */}
-                <div className="sticky top-0 z-20 bg-black/20 backdrop-blur-xl border-b border-white/5 px-4 sm:px-6 h-16 flex items-center gap-4">
+                <div className="sticky top-0 z-20 bg-white  border-b border-slate-200 px-4 sm:px-6 h-16 flex items-center gap-4">
                     <button
                         onClick={() => setSidebarOpen(!sidebarOpen)}
-                        className="lg:hidden p-2 rounded-lg bg-black/10 backdrop-blur-md border border-white/10 text-muted-foreground hover:text-white transition-colors"
+                        className="lg:hidden p-2 rounded-lg bg-slate-50  border border-slate-200 text-slate-500 hover:text-slate-900 transition-colors"
                     >
                         {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
                     </button>
 
                     <div className="flex-1">
-                        <h1 className="font-bold text-white capitalize hidden sm:block">
+                        <h1 className="font-bold text-slate-900 capitalize hidden sm:block">
                             {navItems.find(n => n.id === section)?.label}
                         </h1>
                     </div>
@@ -1229,9 +1229,9 @@ export default function Admin() {
                     {/* Notification bell in topbar */}
                     <button
                         onClick={() => setSection("notifications")}
-                        className="relative p-2.5 rounded-full bg-black/10 backdrop-blur-md border border-white/10 hover:border-white/20 transition-colors"
+                        className="relative p-2.5 rounded-full bg-slate-50  border border-slate-200 hover:border-slate-300 transition-colors"
                     >
-                        <Bell className="w-5 h-5 text-muted-foreground" />
+                        <Bell className="w-5 h-5 text-slate-500" />
                         {unreadCount > 0 && (
                             <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] rounded-full bg-neon-orange text-white text-[10px] font-black flex items-center justify-center px-1 shadow-[0_0_10px_rgba(255,100,0,0.8)]">
                                 {unreadCount > 9 ? "9+" : unreadCount}
@@ -1246,20 +1246,20 @@ export default function Admin() {
                         title={maintenanceMode ? "Maintenance ON — click to disable" : "Site is live — click to enable maintenance"}
                         className={`relative p-2.5 rounded-full border transition-all ${maintenanceMode
                             ? 'bg-amber-500/20 border-amber-500/40 hover:bg-amber-500/30'
-                            : 'bg-black/10 backdrop-blur-md border-white/10 hover:border-white/20'
+                            : 'bg-slate-50  border-slate-200 hover:border-slate-300'
                             }`}
                     >
-                        <Wrench className={`w-4 h-4 ${maintenanceMode ? 'text-amber-400' : 'text-muted-foreground'}`} />
+                        <Wrench className={`w-4 h-4 ${maintenanceMode ? 'text-amber-400' : 'text-slate-500'}`} />
                         {maintenanceMode && (
                             <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse shadow-[0_0_8px_rgba(251,191,36,0.8)]" />
                         )}
                     </button>
 
                     <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-full bg-black/20 border border-white/10 overflow-hidden flex items-center justify-center p-1.5">
+                        <div className="w-8 h-8 rounded-full bg-white border border-slate-200 overflow-hidden flex items-center justify-center p-1.5">
                             <img src="/logo.png" alt="Admin" className="w-full h-full object-contain" />
                         </div>
-                        <span className="text-sm font-bold text-white hidden sm:block">{profile?.full_name?.split(" ")[0] || "Admin"}</span>
+                        <span className="text-sm font-bold text-slate-900 hidden sm:block">{profile?.full_name?.split(" ")[0] || "Admin"}</span>
                     </div>
                 </div>
 
@@ -1347,37 +1347,37 @@ function SidebarContent({
     return (
         <div className="flex flex-col h-full">
             {/* Logo */}
-            <div className="p-6 border-b border-white/5">
+            <div className="p-6 border-b border-slate-200">
                 <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-black/20 border border-white/10 overflow-hidden flex items-center justify-center p-2 shadow-lg">
+                    <div className="w-10 h-10 rounded-xl bg-white border border-slate-200 overflow-hidden flex items-center justify-center p-2 shadow-lg">
                         <img src="/logo.png" alt="CU Bazzar" className="w-full h-full object-contain" />
                     </div>
                     <div>
-                        <p className="font-black text-white text-sm leading-tight">Admin Portal</p>
-                        <p className="text-xs text-muted-foreground">CU Bazzar Control</p>
+                        <p className="font-black text-slate-900 text-sm leading-tight">Admin Portal</p>
+                        <p className="text-xs text-slate-500">CU Bazzar Control</p>
                     </div>
                 </div>
             </div>
 
             {/* Nav Items */}
             <nav className="flex-1 p-4 space-y-1">
-                <p className="text-xs text-muted-foreground/50 font-bold uppercase tracking-wider px-3 mb-3">Navigation</p>
+                <p className="text-xs text-slate-500/50 font-bold uppercase tracking-wider px-3 mb-3">Navigation</p>
                 {navItems.map(item => (
                     <button
                         key={item.id}
                         onClick={() => setSection(item.id)}
                         className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all group relative ${section === item.id
-                            ? "bg-gradient-to-r from-neon-orange/20 to-neon-pink/10 text-white border border-neon-orange/30 shadow-sm"
-                            : "text-muted-foreground hover:text-white hover:bg-white/5"
+                            ? "bg-gradient-to-r from-neon-orange/20 to-neon-pink/10 text-slate-900 border border-neon-orange/30 shadow-sm"
+                            : "text-slate-500 hover:text-slate-900 hover:bg-slate-100"
                             }`}
                     >
                         {section === item.id && (
                             <motion.div layoutId="admin-nav-active" className="absolute inset-0 rounded-xl bg-gradient-to-r from-neon-orange/10 to-transparent -z-10" />
                         )}
-                        <item.icon className={`w-4.5 h-4.5 flex-shrink-0 ${section === item.id ? "text-neon-orange" : "text-muted-foreground group-hover:text-white"}`} />
+                        <item.icon className={`w-4.5 h-4.5 flex-shrink-0 ${section === item.id ? "text-neon-orange" : "text-slate-500 group-hover:text-slate-900"}`} />
                         <span className="flex-1 text-left">{item.label}</span>
                         {item.badge !== undefined && item.badge > 0 && (
-                            <span className={`min-w-[20px] h-5 rounded-full text-[11px] font-black flex items-center justify-center px-1.5 ${item.id === "notifications" ? "bg-neon-orange text-white" : "bg-white/10 text-muted-foreground"
+                            <span className={`min-w-[20px] h-5 rounded-full text-[11px] font-black flex items-center justify-center px-1.5 ${item.id === "notifications" ? "bg-neon-orange text-white" : "bg-slate-100 text-slate-500"
                                 }`}>
                                 {item.badge > 99 ? "99+" : item.badge}
                             </span>
@@ -1387,14 +1387,14 @@ function SidebarContent({
             </nav>
 
             {/* Admin User Info */}
-            <div className="p-4 border-t border-white/5">
-                <div className="bg-black/10 backdrop-blur-md rounded-xl p-3 border border-white/10 mb-3">
+            <div className="p-4 border-t border-slate-200">
+                <div className="bg-slate-50  rounded-xl p-3 border border-slate-200 mb-3">
                     <div className="flex items-center gap-3">
                         <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-neon-blue to-neon-cyan flex items-center justify-center flex-shrink-0">
                             <User className="w-4 h-4 text-white" />
                         </div>
                         <div className="min-w-0">
-                            <p className="text-xs font-bold text-white truncate">{profile?.full_name || "Admin"}</p>
+                            <p className="text-xs font-bold text-slate-900 truncate">{profile?.full_name || "Admin"}</p>
                             <div className="flex items-center gap-1 mt-0.5">
                                 <div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
                                 <p className="text-[10px] text-green-400 font-semibold">Admin Access</p>
@@ -1404,7 +1404,7 @@ function SidebarContent({
                 </div>
                 <button
                     onClick={onSignOut}
-                    className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-muted-foreground hover:text-red-400 hover:bg-red-400/10 transition-all border border-transparent hover:border-red-400/20"
+                    className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-slate-500 hover:text-red-400 hover:bg-red-400/10 transition-all border border-transparent hover:border-red-400/20"
                 >
                     <LogOut className="w-4 h-4" />
                     Sign Out
