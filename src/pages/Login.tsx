@@ -8,7 +8,7 @@ import { toast } from "sonner";
 const fontH: React.CSSProperties = { fontFamily: "'Space Grotesk', sans-serif" };
 
 export default function Login() {
-    const [isLogin, setIsLogin] = useState(true);
+    const [isLogin, setIsLogin] = useState(false);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
