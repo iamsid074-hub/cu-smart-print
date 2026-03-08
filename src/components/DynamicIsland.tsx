@@ -397,24 +397,24 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
         }
       `}</style>
 
-            {/* Wrapper reserves space in the navbar for the top pill. It doesn't constrict the absolute child. */}
-            <motion.div ref={islandRef} layout transition={spring} style={{ position: "relative", height: 40, width: getPillWidth(), flexShrink: 0, zIndex: 100, margin: "0 auto" }}>
+            {/* Wrapper reserves space in the navbar for the top pill. */}
+            <motion.div ref={islandRef} layout transition={spring} style={{ position: "relative", height: 40, width: getPillWidth(), flexShrink: 0, zIndex: 100 }}>
 
-                {/* ═══ THE MORPHING ISLAND (Absolutely positioned within wrapper) ═══ */}
+                {/* ═══ THE MORPHING ISLAND ═══ */}
                 <motion.div
                     layout
                     animate={{
                         width: isDropdownOpen ? "min(360px, calc(100vw - 32px))" : getPillWidth(),
                         height: isDropdownOpen ? "auto" : 40,
-                        x: "-50%",
+                        x: isDropdownOpen ? "-50%" : "0%",
                     }}
                     transition={spring}
                     onClick={() => { if (!isExpanded) handleCollapsedClick(); }}
                     style={{
                         borderRadius: isDropdownOpen ? 32 : 50,
-                        position: "absolute",
+                        position: isDropdownOpen ? "absolute" : "relative",
                         top: 0,
-                        left: "50%",
+                        left: isDropdownOpen ? "50%" : undefined,
                         cursor: isExpanded ? "default" : "pointer",
                         background: "#000",
                         backdropFilter: "blur(40px) saturate(180%)",
