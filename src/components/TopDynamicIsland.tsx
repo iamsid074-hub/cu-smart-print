@@ -79,8 +79,8 @@ export default function TopDynamicIsland() {
 
     switch (islandState) {
         case "browsing":
-            width = 180;
-            content = <span className="text-sm font-medium tracking-wide">Browsing Items</span>;
+            width = 200;
+            content = <span className="text-sm font-medium tracking-wide">Browsing Food Shops</span>;
             break;
         case "cart":
             width = 160;
@@ -123,7 +123,7 @@ export default function TopDynamicIsland() {
             break;
         default:
             width = 140;
-            content = <span className="text-[15px] font-bold tracking-widest text-[#F0C040] uppercase">CU Bazzar</span>;
+            content = <span className="text-[15px] font-bold tracking-widest text-white uppercase">CU Bazzar</span>;
             break;
     }
 
@@ -141,8 +141,15 @@ export default function TopDynamicIsland() {
                     boxShadow: "0 10px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.1) inset",
                     backdropFilter: "blur(20px)",
                     WebkitBackdropFilter: "blur(20px)",
+                    position: "relative",
                 }}
             >
+                {/* iOS Style Green Indicator Dot */}
+                <motion.div
+                    animate={{ opacity: [0.5, 1, 0.5] }}
+                    transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                    className="absolute left-4 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)] z-10"
+                />
                 <AnimatePresence mode="wait">
                     <motion.div
                         key={islandState}
