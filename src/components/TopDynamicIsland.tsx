@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
 import { CheckCircle2, ShoppingBag } from "lucide-react";
+import { useRef } from "react";
 
 // Fluid, bouncy spring animation mimicking Apple's Dynamic Island
 const springTransition = {
@@ -15,62 +16,69 @@ const springTransition = {
 type IslandState = "default" | "browsing" | "cart" | "profile" | "added" | "updated";
 
 export default function TopDynamicIsland() {
+    const navigate = useNavigate();
     const location = useLocation();
     const { items } = useCart();
-    const [islandState, setIslandState] = useState<IslandState>("default");
 
-    // Track previous cart state to detect "adds" vs "updates"
+    const [islandState, setIslandState] = useState<IslandState>("default");
     const [prevItemsCount, setPrevItemsCount] = useState(items.reduce((acc, item) => acc + item.quantity, 0));
     const [latestAddedItem, setLatestAddedItem] = useState<{ name: string, price: number } | null>(null);
 
-    // Route-based states
-    useEffect(() => {
-        // If we're currently showing a temporary state (like "added"), don't overwrite it immediately
-        if (islandState === "added" || islandState === "updated") return;
+    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-        if (location.pathname.startsWith("/food")) {
-            setIslandState("browsing");
-        } else if (location.pathname === "/cart") {
-            setIslandState("cart");
-        } else if (location.pathname === "/profile") {
-            setIslandState("profile");
-        } else {
+    // Helper to set state and auto-dismiss after 2 seconds
+    const triggerState = (newState: IslandState, data?: { name: string, price: number }) => {
+        if (data) setLatestAddedItem(data);
+        setIslandState(newState);
+
+        if (timeoutRef.current) clearTimeout(timeoutRef.current);
+
+        timeoutRef.current = setTimeout(() => {
             setIslandState("default");
-        }
-    }, [location.pathname, islandState]);
+        }, 2000);
+    };
 
-    // Cart update states
+    // Route-based events (only trigger once per navigation)
+    useEffect(() => {
+        if (location.pathname.startsWith("/food")) {
+            triggerState("browsing");
+        } else if (location.pathname === "/cart") {
+            triggerState("cart");
+        } else if (location.pathname === "/profile") {
+            triggerState("profile");
+        }
+        // If they navigate home, it just does nothing and defaults to CU Bazzar naturally over time.
+    }, [location.pathname]);
+
+    // Cart update events
     useEffect(() => {
         const currentCount = items.reduce((acc, item) => acc + item.quantity, 0);
 
         if (currentCount > prevItemsCount) {
-            // Find the deeply added item to show it
-            // For simplicity, just grab the last item or we assume the context will inform us
-            const added = items[items.length - 1]; // Naive approach for demo
+            const added = items[items.length - 1];
             if (added) {
-                setLatestAddedItem({ name: added.title, price: added.price });
-                setIslandState("added");
+                triggerState("added", { name: added.title, price: added.price });
             } else {
-                setIslandState("updated");
+                triggerState("updated");
             }
-
-            // Auto dismiss after 3 seconds
-            const timer = setTimeout(() => {
-                setIslandState("default"); // The route effect will catch it and map it to the right route next tick
-                // Force a route re-check
-                const path = window.location.pathname;
-                if (path.startsWith("/food")) setIslandState("browsing");
-                else if (path === "/cart") setIslandState("cart");
-                else if (path === "/profile") setIslandState("profile");
-                else setIslandState("default");
-            }, 3000);
-
             setPrevItemsCount(currentCount);
-            return () => clearTimeout(timer);
         } else if (currentCount !== prevItemsCount) {
             setPrevItemsCount(currentCount);
         }
     }, [items, prevItemsCount]);
+
+    useEffect(() => {
+        // Cleanup timeout on unmount
+        return () => {
+            if (timeoutRef.current) clearTimeout(timeoutRef.current);
+        };
+    }, []);
+
+    const handleIslandClick = () => {
+        if (islandState === "added" || islandState === "updated" || islandState === "cart") {
+            navigate("/cart");
+        }
+    };
 
     // Determine size and content based on state
     let width = 200;
@@ -134,7 +142,8 @@ export default function TopDynamicIsland() {
                 initial={false}
                 animate={{ width, height }}
                 transition={springTransition}
-                className="pointer-events-auto flex items-center justify-center overflow-hidden"
+                onClick={handleIslandClick}
+                className={`pointer-events-auto flex items-center justify-center overflow-hidden ${(islandState === "added" || islandState === "updated" || islandState === "cart") ? "cursor-pointer hover:bg-zinc-900 transition-colors" : ""}`}
                 style={{
                     background: "#000",
                     borderRadius: 32,
