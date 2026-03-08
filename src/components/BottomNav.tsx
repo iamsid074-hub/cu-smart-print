@@ -22,38 +22,44 @@ export default function BottomNav() {
             className="fixed bottom-4 sm:bottom-6 left-1/2 z-50 w-[94vw] sm:w-[92vw] max-w-[380px]"
         >
             <div
-                className="flex items-center justify-between px-2 sm:px-3 py-2"
+                className="flex items-center justify-between px-2 sm:px-3 py-2 relative"
                 style={{
-                    background: "rgba(248, 250, 252, 0.95)",
-                    backdropFilter: "blur(40px) saturate(180%)",
-                    WebkitBackdropFilter: "blur(40px) saturate(180%)",
+                    background: "rgba(255, 255, 255, 0.98)",
+                    backdropFilter: "blur(40px) saturate(200%)",
+                    WebkitBackdropFilter: "blur(40px) saturate(200%)",
                     borderRadius: 50,
-                    boxShadow: "0 8px 32px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.04)",
+                    boxShadow: "0 10px 40px -10px rgba(0,0,0,0.2), 0 0 0 1px rgba(0,0,0,0.02)",
                 }}
             >
                 {/* Home */}
-                <Link to="/home" className="flex flex-col items-center justify-center gap-1 text-decoration-none py-1 flex-1">
+                <Link to="/home" className="flex flex-col items-center justify-center gap-1 text-decoration-none py-1 flex-1 relative z-10">
                     <Home strokeWidth={2.5} className={`w-5 h-5 sm:w-[22px] sm:h-[22px] ${location.pathname === '/home' ? 'text-slate-900' : 'text-slate-500 hover:text-slate-700'}`} fill={location.pathname === '/home' ? 'currentColor' : 'none'} />
                     <span className={`text-[9px] sm:text-[10px] font-semibold ${location.pathname === '/home' ? 'text-slate-900' : 'text-slate-400'}`}>Home</span>
                 </Link>
 
                 {/* Explore */}
-                <Link to="/browse" className="flex flex-col items-center justify-center gap-1 text-decoration-none py-1 flex-1">
+                <Link to="/browse" className="flex flex-col items-center justify-center gap-1 text-decoration-none py-1 flex-1 relative z-10">
                     <Compass strokeWidth={2.5} className={`w-5 h-5 sm:w-[22px] sm:h-[22px] ${location.pathname.startsWith('/browse') ? 'text-slate-900' : 'text-slate-500 hover:text-slate-700'}`} />
                     <span className={`text-[9px] sm:text-[10px] font-semibold ${location.pathname.startsWith('/browse') ? 'text-slate-900' : 'text-slate-400'}`}>Explore</span>
                 </Link>
 
-                {/* Cart (Center elevated style) */}
-                <Link to="/cart" className="flex flex-col items-center justify-center text-decoration-none px-1 sm:px-2 flex-shrink-0 relative -top-3">
-                    <div className="bg-slate-900 rounded-full p-3 sm:p-3.5 shadow-[0_8px_16px_rgba(15,23,42,0.3)] border-[3px] border-[#f8fafc] text-white">
-                        <ShoppingCart strokeWidth={2} className="w-5 h-5 sm:w-[22px] sm:h-[22px]" />
-                        {cartCount > 0 && (
-                            <div className="absolute top-1 right-2 sm:right-3 bg-red-500 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center border-2 border-slate-900">
-                                {cartCount > 9 ? '9+' : cartCount}
-                            </div>
-                        )}
-                    </div>
-                </Link>
+                {/* Cart (Center elevated style wrapper) */}
+                <div className="flex-shrink-0 relative -top-4 w-[60px] sm:w-[68px] h-[60px] sm:h-[68px] mx-1 sm:mx-2 flex justify-center items-center z-20">
+                    {/* Liquid Blur Drop Shadow */}
+                    <div className="absolute inset-0 bg-slate-900/40 rounded-full blur-md transform translate-y-2 scale-90 mix-blend-multiply" />
+
+                    {/* Actual Button */}
+                    <Link to="/cart" className="relative flex items-center justify-center w-full h-full text-decoration-none">
+                        <div className="bg-[#111827] rounded-full w-full h-full flex items-center justify-center shadow-[0_8px_20px_rgba(17,24,39,0.5)] border-[4px] border-white text-white">
+                            <ShoppingCart strokeWidth={2.5} className="w-5 h-5 sm:w-[24px] sm:h-[24px]" />
+                            {cartCount > 0 && (
+                                <div className="absolute top-0 right-0 bg-red-500 text-white text-[10px] font-bold w-[18px] h-[18px] rounded-full flex items-center justify-center border-2 border-[#111827]">
+                                    {cartCount > 9 ? '9+' : cartCount}
+                                </div>
+                            )}
+                        </div>
+                    </Link>
+                </div>
 
                 {/* Saved (Bookmarks/Tracking) */}
                 <Link to="/tracking" className="flex flex-col items-center justify-center gap-1 text-decoration-none py-1 flex-1">
