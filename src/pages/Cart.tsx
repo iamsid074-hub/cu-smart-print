@@ -178,7 +178,7 @@ export default function Cart() {
                                             setPromoApplied(false); // Reset if they start typing something else
                                         }
                                     }}
-                                    placeholder="Enter CRICKET5"
+                                    placeholder="Enter FINAL14"
                                     className="w-full bg-slate-50 rounded-2xl px-5 py-3 text-sm text-slate-900 focus:outline-none focus:ring-4 focus:ring-brand-50 transition-all placeholder:text-slate-400 uppercase"
                                     disabled={promoApplied}
                                 />
