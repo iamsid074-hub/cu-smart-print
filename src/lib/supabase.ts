@@ -12,8 +12,13 @@ const proxyFetch: typeof fetch = async (input, init?) => {
         typeof input === 'string' ? input
             : input instanceof URL ? input.href
                 : (input as Request).url
+    // Check if we are running in a Capacitor app (Android/iOS)
+    const isCapacitor = typeof window !== 'undefined' &&
+        (window.location.origin.includes('capacitor://') ||
+            (window.location.origin.includes('http://localhost') && window.location.port === ''));
 
-    if (import.meta.env.PROD && url.includes('supabase.co')) {
+    // Only use the Vercel proxy if we are in true production WEB, not native mobile
+    if (import.meta.env.PROD && url.includes('supabase.co') && !isCapacitor) {
         // Pass the full URL (including query string) as an encoded param
         const proxyUrl = `/api/sb?url=${encodeURIComponent(url)}`
         return fetch(proxyUrl, { ...init, credentials: 'omit' })
