@@ -451,7 +451,7 @@ export default function Profile() {
                 </div>
             </div>
 
-            {/* ── ANIMATED PROFILE CARD OVERLAY ── */}
+            {/* ── REDESIGNED PROFILE CARD OVERLAY ── */}
             {showProfileCard && createPortal(
                 <div className="fixed inset-0 z-[9999]" style={{ isolation: 'isolate' }}>
                     {/* Backdrop */}
@@ -459,73 +459,78 @@ export default function Profile() {
 
                     {/* Card */}
                     <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 profile-card-appear">
-                        <div className="w-[300px] bg-white rounded-xl overflow-hidden border border-slate-100 shadow-[0_20px_60px_rgba(0,0,0,0.1)]">
+                        <div className="w-[320px] rounded-3xl overflow-hidden shadow-[0_25px_80px_rgba(0,0,0,0.35)]"
+                            style={{ background: 'linear-gradient(165deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)' }}
+                        >
                             {/* Close */}
-                            <button onClick={() => setShowProfileCard(false)} className="absolute top-3 right-3 z-10 w-7 h-7 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center transition-colors hover:bg-white/40">
-                                <X className="w-4 h-4 text-white" />
+                            <button onClick={() => setShowProfileCard(false)}
+                                className="absolute top-4 right-4 z-20 w-8 h-8 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center transition-all hover:bg-white/20 hover:scale-110"
+                            >
+                                <X className="w-4 h-4 text-white/80" />
                             </button>
 
-                            {/* Header bg */}
-                            <div className="h-20 relative bg-gradient-to-br from-brand-accent to-fuchsia-600">
-                                <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,rgba(255,255,255,0.2),transparent_60%)]" />
-                            </div>
-
-                            {/* Avatar overlapping header */}
-                            <div className="flex justify-center -mt-10 relative z-10">
-                                <div className="w-20 h-20 rounded-full p-1 bg-white profile-card-avatar">
-                                    <div className="w-full h-full rounded-full overflow-hidden border-2 border-slate-100 bg-slate-50">
-                                        {profile?.avatar_url ? (
-                                            <img src={profile.avatar_url} alt="" className="w-full h-full object-cover" />
-                                        ) : (
-                                            <div className="w-full h-full flex items-center justify-center">
-                                                <User className="w-8 h-8 text-slate-300" />
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
+                            {/* Decorative mesh */}
+                            <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
+                                <div className="absolute -top-10 -right-10 w-40 h-40 bg-brand-accent/20 rounded-full blur-[60px]" />
+                                <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-fuchsia-500/15 rounded-full blur-[60px]" />
+                                <div className="absolute top-1/3 right-0 w-24 h-24 bg-emerald-500/10 rounded-full blur-[50px]" />
                             </div>
 
                             {/* Content */}
-                            <div className="px-5 pb-5 pt-3 text-center profile-card-content">
-                                <h3 className="text-lg font-bold text-slate-900">{profile?.full_name || "Student"}</h3>
-                                <p className="text-xs font-bold mt-0.5 text-brand">@{profile?.username || "user"}</p>
-
-                                {/* Bio / Email */}
-                                <p className="text-xs mt-3 leading-relaxed text-slate-500">
-                                    CU Bazzar member · Campus marketplace user
-                                </p>
-
-                                {/* Divider */}
-                                <div className="my-4 h-px bg-slate-100" />
-
-                                {/* Info grid */}
-                                <div className="grid grid-cols-2 gap-2">
-                                    <div className="flex items-center gap-2 px-3 py-2 rounded-lg text-left bg-slate-50 border border-slate-100">
-                                        <Mail className="w-3.5 h-3.5 flex-shrink-0 text-slate-400" />
-                                        <span className="text-[11px] truncate font-medium text-slate-600">{user.email?.split('@')[0]}</span>
+                            <div className="relative z-10 flex flex-col items-center px-6 pt-10 pb-6">
+                                {/* Avatar */}
+                                <div className="profile-card-avatar mb-5">
+                                    <div className="w-24 h-24 rounded-full p-[3px] bg-gradient-to-br from-brand-accent via-fuchsia-500 to-emerald-400">
+                                        <div className="w-full h-full rounded-full overflow-hidden bg-[#1a1a2e] border-2 border-[#1a1a2e]">
+                                            {profile?.avatar_url ? (
+                                                <img src={profile.avatar_url} alt="" className="w-full h-full object-cover" />
+                                            ) : (
+                                                <div className="w-full h-full flex items-center justify-center">
+                                                    <User className="w-10 h-10 text-white/30" />
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
-                                    <div className="flex items-center gap-2 px-3 py-2 rounded-lg text-left bg-slate-50 border border-slate-100">
-                                        <MapPin className="w-3.5 h-3.5 flex-shrink-0 text-slate-400" />
-                                        <span className="text-[11px] truncate font-medium text-slate-600">{profile?.hostel_block || "—"}</span>
+                                </div>
+
+                                {/* Name & Username */}
+                                <div className="profile-card-content text-center mb-6">
+                                    <h3 className="text-xl font-black text-white tracking-tight">{profile?.full_name || "Student"}</h3>
+                                    <p className="text-sm font-bold text-brand-accent mt-0.5">@{profile?.username || "user"}</p>
+                                    <p className="text-[11px] text-white/40 mt-1.5">CU Bazzar · Campus Marketplace</p>
+                                </div>
+
+                                {/* Info Rows */}
+                                <div className="w-full space-y-2 profile-card-content mb-6">
+                                    <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/5 border border-white/8">
+                                        <Mail className="w-4 h-4 text-white/40 flex-shrink-0" />
+                                        <span className="text-xs font-medium text-white/70 truncate">{user.email}</span>
                                     </div>
-                                    <div className="flex items-center gap-2 px-3 py-2 rounded-lg text-left bg-slate-50 border border-slate-100">
-                                        <Phone className="w-3.5 h-3.5 flex-shrink-0 text-slate-400" />
-                                        <span className="text-[11px] truncate font-medium text-slate-600">{profile?.phone_number || "—"}</span>
+                                    <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/5 border border-white/8">
+                                        <MapPin className="w-4 h-4 text-white/40 flex-shrink-0" />
+                                        <span className="text-xs font-medium text-white/70 truncate">{profile?.hostel_block || "Not set"}</span>
                                     </div>
-                                    <div className="flex items-center gap-2 px-3 py-2 rounded-lg text-left bg-slate-50 border border-slate-100">
-                                        <Package className="w-3.5 h-3.5 flex-shrink-0 text-slate-400" />
-                                        <span className="text-[11px] truncate font-medium text-slate-600">{myProducts.length} listings</span>
+                                    <div className="flex gap-2">
+                                        <div className="flex-1 flex items-center gap-3 px-4 py-3 rounded-xl bg-white/5 border border-white/8">
+                                            <Phone className="w-4 h-4 text-white/40 flex-shrink-0" />
+                                            <span className="text-xs font-medium text-white/70 truncate">{profile?.phone_number || "Not set"}</span>
+                                        </div>
+                                        <div className="flex items-center gap-2 px-4 py-3 rounded-xl bg-white/5 border border-white/8">
+                                            <Package className="w-4 h-4 text-white/40 flex-shrink-0" />
+                                            <span className="text-xs font-bold text-white/70">{myProducts.length}</span>
+                                        </div>
                                     </div>
                                 </div>
 
                                 {/* Actions */}
-                                <div className="flex gap-2 mt-4">
+                                <div className="w-full flex gap-2.5 profile-card-content">
                                     <button onClick={() => { setShowProfileCard(false); setIsEditing(true); }}
-                                        className="flex-1 py-2.5 rounded-lg text-xs font-bold transition-colors flex items-center justify-center gap-1.5 bg-white text-slate-700 border border-slate-200 hover:bg-slate-50">
+                                        className="flex-1 py-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 bg-white/10 text-white border border-white/10 hover:bg-white/15 active:scale-[0.97]">
                                         <Edit2 className="w-3.5 h-3.5" /> Edit Profile
                                     </button>
                                     <button onClick={() => navigate('/browse')}
-                                        className="flex-1 py-2.5 rounded-lg text-xs font-bold transition-colors flex items-center justify-center gap-1.5 bg-brand-50 text-brand border border-brand-muted hover:bg-brand-50">
+                                        className="flex-1 py-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 text-white active:scale-[0.97]"
+                                        style={{ background: 'linear-gradient(135deg, rgba(139,92,246,0.5) 0%, rgba(168,85,247,0.4) 100%)', border: '1px solid rgba(139,92,246,0.3)' }}>
                                         <Globe className="w-3.5 h-3.5" /> Browse
                                     </button>
                                 </div>
@@ -543,31 +548,30 @@ export default function Profile() {
                     to { opacity: 1; }
                 }
                 @keyframes profileCardIn {
-                    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.3); border-radius: 50%; }
-                    60% { opacity: 1; transform: translate(-50%, -50%) scale(1.05); border-radius: 12px; }
-                    100% { transform: translate(-50%, -50%) scale(1); border-radius: 12px; }
+                    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.85); }
+                    100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
                 }
                 @keyframes profileCardAvatarIn {
-                    0% { opacity: 0; transform: scale(0.5) translateY(10px); }
+                    0% { opacity: 0; transform: scale(0.6) translateY(8px); }
                     100% { opacity: 1; transform: scale(1) translateY(0); }
                 }
                 @keyframes profileCardContentIn {
-                    0% { opacity: 0; transform: translateY(12px); }
+                    0% { opacity: 0; transform: translateY(10px); }
                     100% { opacity: 1; transform: translateY(0); }
                 }
                 .profile-card-backdrop {
-                    background: rgba(0,0,0,0.3);
-                    backdrop-filter: blur(4px);
-                    animation: profileCardBackdropIn 0.25s ease forwards;
+                    background: rgba(0,0,0,0.5);
+                    backdrop-filter: blur(8px);
+                    animation: profileCardBackdropIn 0.2s ease forwards;
                 }
                 .profile-card-appear {
-                    animation: profileCardIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+                    animation: profileCardIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
                 }
                 .profile-card-avatar {
-                    animation: profileCardAvatarIn 0.4s 0.3s ease both;
+                    animation: profileCardAvatarIn 0.4s 0.2s ease both;
                 }
                 .profile-card-content {
-                    animation: profileCardContentIn 0.4s 0.35s ease both;
+                    animation: profileCardContentIn 0.35s 0.25s ease both;
                 }
             `}</style>
         </div>
