@@ -262,10 +262,14 @@ export default function Index() {
             {/* Left — Text */}
             <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: showIntro ? 0 : 1, y: showIntro ? 30 : 0 }} transition={{ duration: 0.6, delay: 0.2 }}>
               <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: showIntro ? 0 : 1, x: 0 }} transition={{ delay: 0.3 }}
-                className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full shadow-sm mb-6"
-                style={{ backgroundColor: "rgba(255,255,255,0.04)", border: `1px solid ${C.border}` }}>
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                <span className="text-xs font-semibold tracking-wide" style={{ color: C.muted }}>Live at Chandigarh University</span>
+                className="inline-flex items-center gap-3 px-4 py-2 rounded-2xl mb-8"
+                style={{ backgroundColor: "rgba(255,255,255,0.02)", border: `1px solid ${C.border}` }}>
+                <div className="w-9 h-9 rounded-xl flex items-center justify-center p-0.5" style={{ backgroundColor: C.card, border: `1px solid ${C.border}` }}>
+                  <img src="/logo.png" alt="CU Bazzar Logo" className="w-full h-full object-cover rounded-lg" />
+                </div>
+                <span className="text-xl font-bold tracking-tight" style={{ ...fontH, color: C.text }}>
+                  CU Bazzar
+                </span>
               </motion.div>
 
               <h1 className="text-[2.5rem] sm:text-5xl lg:text-[3.5rem] font-bold leading-[1.1] tracking-tight mb-5" style={{ ...fontH, color: C.text }}>
