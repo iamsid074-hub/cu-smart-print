@@ -349,7 +349,11 @@ function DashboardSection({ stats, recentProducts, recentOrders, loading, allOrd
                                         )}
                                         <div className="flex items-start gap-2">
                                             <MapPin className="w-3 h-3 text-slate-900/40 flex-shrink-0 mt-0.5" />
-                                            <span className="text-xs text-slate-900/60 break-words">{loc.hostel}{loc.room ? `, Room ${loc.room}` : ""}</span>
+                                            <span className="text-xs text-slate-900/60 break-words">{loc.hostel}</span>
+                                        </div>
+                                        <div className="flex items-start gap-2">
+                                            <span className="w-3 h-3 flex items-center justify-center flex-shrink-0 mt-0.5 text-slate-900/40 text-[10px]">🚪</span>
+                                            <span className="text-xs text-slate-900/60 break-words font-medium">Room: {loc.room || "Not provided"}</span>
                                         </div>
                                     </div>
 
@@ -640,7 +644,14 @@ function ItemOrdersSection({ orders, loading, onUpdateStatus, onVerifyUpi }: {
                                                 <button onClick={() => copyPhone(order.buyer_phone || order.buyer?.phone_number || "")} className="p-0.5 rounded hover:bg-slate-50"><Copy className="w-3 h-3 text-slate-900/70" /></button>
                                             </div>
                                         )}
-                                        <p className="text-xs text-slate-900/70 flex items-start gap-1 mt-1 break-words"><MapPin className="w-3 h-3 flex-shrink-0 mt-0.5" /> <span className="flex-1 min-w-0">{order.delivery_location}{order.delivery_room && `, Room ${order.delivery_room}`}</span></p>
+                                        <div className="flex items-start gap-2 mt-1">
+                                            <MapPin className="w-3 h-3 text-slate-900/40 flex-shrink-0 mt-0.5" />
+                                            <span className="text-xs text-slate-900/70 break-words flex-1 min-w-0">{order.delivery_location}</span>
+                                        </div>
+                                        <div className="flex items-start gap-2 mt-1">
+                                            <span className="w-3 h-3 flex items-center justify-center flex-shrink-0 mt-0.5 text-slate-900/40 text-[10px]">🚪</span>
+                                            <span className="text-xs text-slate-900/70 break-words font-medium flex-1 min-w-0">Room: {order.delivery_room || "Not provided"}</span>
+                                        </div>
                                     </div>
                                     <div className="bg-slate-50  rounded-xl p-3 border border-neon-orange/20">
                                         <p className="text-xs text-neon-orange font-bold uppercase tracking-wider mb-2 flex items-center gap-1"><Star className="w-3 h-3" /> Seller</p>
@@ -811,7 +822,14 @@ function FoodOrdersSection({ orders, loading, onUpdateStatus, onVerifyUpi }: {
                                                 <button onClick={() => copyPhone(order.buyer_phone || "")} className="p-0.5 rounded hover:bg-slate-100" title="Copy"><Copy className="w-3 h-3 text-slate-500" /></button>
                                             </div>
                                         )}
-                                        <p className="text-xs text-slate-500 flex items-start gap-1 mt-1 break-words"><MapPin className="w-3 h-3 flex-shrink-0 mt-0.5" /> <span className="flex-1 min-w-0">{hostel}</span></p>
+                                        <div className="flex items-start gap-2 mt-1">
+                                            <MapPin className="w-3 h-3 text-slate-900/40 flex-shrink-0 mt-0.5" />
+                                            <span className="text-xs text-slate-500 break-words flex-1 min-w-0">{hostel}</span>
+                                        </div>
+                                        <div className="flex items-start gap-2 mt-1">
+                                            <span className="w-3 h-3 flex items-center justify-center flex-shrink-0 mt-0.5 text-slate-500 text-[10px]">🚪</span>
+                                            <span className="text-xs text-slate-500 break-words font-medium flex-1 min-w-0">Room: {order.delivery_room ? order.delivery_room.replace('[CUSTOM FOOD ORDER]\n', '').replace('[CUSTOM FOOD ORDER]', '') : "Not provided"}</span>
+                                        </div>
                                     </div>
 
                                     {/* Action */}
