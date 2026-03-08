@@ -52,7 +52,7 @@ export default function BottomNav() {
                     <div className="absolute inset-0 bg-slate-900/40 rounded-full blur-md transform translate-y-2 scale-90 mix-blend-multiply" />
 
                     {/* Actual Button */}
-                    <Link to="/cart" className="relative flex items-center justify-center w-full h-full text-decoration-none">
+                    <Link to="/cart" className="relative flex items-center justify-center w-full h-full text-decoration-none hover:scale-105 active:scale-95 transition-transform duration-200">
                         <div className="bg-[#111827] rounded-full w-full h-full flex items-center justify-center shadow-[0_8px_20px_rgba(17,24,39,0.5)] border-[4px] border-white text-white">
                             <ShoppingCart strokeWidth={2.5} className="w-5 h-5 sm:w-[24px] sm:h-[24px]" />
                             {cartCount > 0 && (
