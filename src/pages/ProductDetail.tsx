@@ -8,6 +8,7 @@ import { useCart } from "@/contexts/CartContext";
 import { useToast } from "@/hooks/use-toast";
 import PaymentSelector from "@/components/PaymentSelector";
 import UpiPaymentModal from "@/components/UpiPaymentModal";
+import { isOfferActive } from "@/utils/offerTimer";
 
 import {
     Dialog,
@@ -114,7 +115,7 @@ export default function ProductDetail() {
 
 
     // Flat delivery fee
-    const deliveryFee = 20;
+    const deliveryFee = isOfferActive() ? 12 : 20;
     const totalAmount = product ? product.price + deliveryFee : 0;
 
     const handleBuyNow = async (e: React.FormEvent) => {

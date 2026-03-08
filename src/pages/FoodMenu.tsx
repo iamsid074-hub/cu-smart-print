@@ -7,6 +7,7 @@ import { useCart } from "@/contexts/CartContext";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
 import UpiPaymentModal from "@/components/UpiPaymentModal";
+import { isOfferActive } from "@/utils/offerTimer";
 import { shops, type Shop, type MenuCategory } from "@/config/shopMenus";
 import {
     Dialog,
@@ -89,8 +90,8 @@ export default function FoodMenu() {
                     seller_id: "7450c873-f51d-469e-a33d-c44ca80beb0c",
                     base_price: upiSnapshot.price,
                     commission: 0,
-                    delivery_charge: 5,
-                    total_price: upiSnapshot.price + 5,
+                    delivery_charge: isOfferActive() ? 12 : 20,
+                    total_price: upiSnapshot.price + (isOfferActive() ? 12 : 20),
                     delivery_location: upiSnapshot.location,
                     delivery_room: `[FOOD] ${upiSnapshot.title}`,
                     buyer_phone: upiSnapshot.phone,
@@ -108,8 +109,8 @@ export default function FoodMenu() {
                     seller_id: "7450c873-f51d-469e-a33d-c44ca80beb0c",
                     base_price: 0,
                     commission: 0,
-                    delivery_charge: 5,
-                    total_price: 5,
+                    delivery_charge: isOfferActive() ? 12 : 20,
+                    total_price: isOfferActive() ? 12 : 20,
                     delivery_location: `${upiSnapshot.location} [Custom Food: ${upiSnapshot.customItems?.split('\n')[0]}...]`,
                     delivery_room: itemSummary,
                     buyer_phone: upiSnapshot.phone,
@@ -181,7 +182,7 @@ export default function FoodMenu() {
                                 <span className="text-slate-900 font-bold">{shops.length}</span> campus food shops
                             </p>
                             <span className="px-2.5 py-1 rounded-lg bg-emerald-50 border border-emerald-100 text-emerald-600 text-xs font-bold flex items-center gap-1">
-                                <BadgeCheck className="w-3 h-3" /> ₹20 Delivery
+                                <BadgeCheck className="w-3 h-3" /> ₹{isOfferActive() ? 12 : 20} Delivery
                             </span>
                         </div>
 
@@ -460,7 +461,7 @@ export default function FoodMenu() {
                 <UpiPaymentModal
                     isOpen={showUpiModal}
                     onClose={() => { setShowUpiModal(false); setUpiSnapshot(null); }}
-                    amount={(upiSnapshot?.price || 0) + 5}
+                    amount={(upiSnapshot?.price || 0) + (isOfferActive() ? 12 : 20)}
                     orderIdText={`FOOD_${upiSnapshot?.foodId || 'X'}`}
                     customerId={user?.id || "guest"}
                     customerPhone={upiSnapshot?.phone || phone || "9999999999"}

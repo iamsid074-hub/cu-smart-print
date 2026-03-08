@@ -8,6 +8,7 @@ import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
 import PaymentSelector from "@/components/PaymentSelector";
 import UpiPaymentModal from "@/components/UpiPaymentModal";
+import { isOfferActive } from "@/utils/offerTimer";
 
 export default function Cart() {
     const { items, removeItem, updateQuantity, clearCart, totalItems, totalPrice } = useCart();
@@ -33,13 +34,19 @@ export default function Cart() {
     const campusShopsItems = items.filter(item => item.category === "Campus Shops");
     const otherItems = items.filter(item => item.category !== "Campus Shops");
 
-    let originalDeliveryFee = 20; // Default flat fee
+    const offerActive = isOfferActive();
+    let originalDeliveryFee = offerActive ? 12 : 20; // Default flat fee or offer fee
 
     // Apply promo code logic
-    const deliveryFee = promoApplied ? 14 : originalDeliveryFee;
+    const deliveryFee = offerActive ? 12 : (promoApplied ? 14 : originalDeliveryFee);
     const orderTotal = totalPrice + deliveryFee;
 
     const handleApplyPromo = () => {
+        if (offerActive) {
+            toast({ title: "Victory Offer Active! 🏆", description: "You already have the best delivery rate of ₹12!" });
+            return;
+        }
+
         if (promoCode.trim().toUpperCase() === "FINAL14") {
             setPromoApplied(true);
             toast({ title: "Promo Applied!", description: "Delivery fee reduced to ₹14. Enjoy the match!" });
