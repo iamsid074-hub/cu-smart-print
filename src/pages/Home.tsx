@@ -563,7 +563,7 @@ export default function Home() {
           >
             <div className="flex items-center justify-between mb-4 sm:mb-6">
               <div className="flex items-center gap-2">
-                <BookText className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: '#231942' }} />
+                <Package className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: '#231942' }} />
                 <h2 className="text-base sm:text-xl font-bold" style={fontH}>Campus Essentials</h2>
               </div>
             </div>
