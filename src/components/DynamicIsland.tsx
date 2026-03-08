@@ -406,15 +406,15 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
                     animate={{
                         width: isDropdownOpen ? "min(360px, calc(100vw - 32px))" : getPillWidth(),
                         height: isDropdownOpen ? "auto" : 40,
-                        x: isDropdownOpen ? "-50%" : "0%",
+                        x: "-50%",
                     }}
                     transition={spring}
                     onClick={() => { if (!isExpanded) handleCollapsedClick(); }}
                     style={{
                         borderRadius: isDropdownOpen ? 32 : 50,
-                        position: isDropdownOpen ? "absolute" : "relative",
+                        position: "absolute",
                         top: 0,
-                        left: isDropdownOpen ? "50%" : undefined,
+                        left: "50%",
                         cursor: isExpanded ? "default" : "pointer",
                         background: "#000",
                         backdropFilter: "blur(40px) saturate(180%)",
