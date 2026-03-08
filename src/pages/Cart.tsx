@@ -43,7 +43,7 @@ export default function Cart() {
 
     const handleApplyPromo = () => {
         if (offerActive) {
-            toast({ title: "Victory Offer Active! 🏆", description: "You already have the best delivery rate of ₹12!" });
+            toast({ title: "Victory Offer Active! 🏆", description: "The celebration delivery rate is automatically applied!" });
             return;
         }
 
