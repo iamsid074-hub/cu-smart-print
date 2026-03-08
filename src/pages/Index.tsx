@@ -84,7 +84,7 @@ export default function Index() {
   const { scrollYProgress } = useScroll({ target: containerRef, offset: ["start start", "end end"] });
   const doodleParallax = useTransform(scrollYProgress, [0, 1], [0, -80]);
 
-  useEffect(() => { const t = setTimeout(() => setShowIntro(false), 1600); return () => clearTimeout(t); }, []);
+  useEffect(() => { const t = setTimeout(() => setShowIntro(false), 2800); return () => clearTimeout(t); }, []);
 
   const testimonials = [
     { name: "Priya S.", year: "3rd Year, CSE", quote: "Sold my calculus notes in under 2 hours. Way faster than putting up hostel notices.", avatar: "P", gradient: "from-rose-400 to-orange-400", rotate: -4 },
@@ -105,16 +105,84 @@ export default function Index() {
       {/* ─── Intro Splash ─── */}
       <AnimatePresence>
         {showIntro && (
-          <motion.div key="intro" initial={{ y: 0 }} exit={{ y: "-100%" }} transition={{ duration: 0.7, ease: [0.76, 0, 0.24, 1] }}
-            className="fixed inset-0 z-[100] flex items-center justify-center flex-col" style={{ backgroundColor: C.bg }}>
-            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.6 }}
-              className="flex flex-col items-center gap-4">
-              <div className="w-24 h-24 md:w-28 md:h-28 rounded-full overflow-hidden shadow-xl flex items-center justify-center p-1.5" style={{ backgroundColor: C.card, border: `2px solid ${C.border}` }}>
-                <img src="/logo.png" alt="CU BAZZAR" className="w-full h-full object-cover rounded-full" />
-              </div>
-              <h1 className="text-4xl sm:text-5xl font-bold tracking-tight" style={{ ...fontH, color: C.text }}>
-                CU <span style={{ color: C.accent }}>BAZZAR</span>
-              </h1>
+          <motion.div
+            key="intro"
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0, scale: 1.1, filter: "blur(10px)" }}
+            transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}
+            className="fixed inset-0 z-[200] flex flex-col items-center justify-center overflow-hidden"
+            style={{ backgroundColor: C.bg }}
+          >
+            {/* Animated Background Orbs */}
+            <motion.div initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 0.5 }} transition={{ duration: 2, ease: "easeOut" }}
+              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60vw] h-[60vw] md:w-[40vw] md:h-[40vw] rounded-full blur-[100px] pointer-events-none" style={{ background: C.accent }} />
+
+            {/* Logo scaling up */}
+            <motion.div
+              initial={{ scale: 0, rotate: -45, opacity: 0 }}
+              animate={{ scale: 1, rotate: 0, opacity: 1 }}
+              transition={{ type: "spring", damping: 14, stiffness: 100, delay: 0.2 }}
+              className="relative z-10 w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden shadow-2xl flex items-center justify-center p-1.5 mb-8"
+              style={{ backgroundColor: C.card, border: `2px solid ${C.border}` }}
+            >
+              <img src="/logo.png" alt="CU BAZZAR" className="w-full h-full object-cover rounded-full relative z-10" />
+              {/* Outer pulsing ring */}
+              <motion.div
+                initial={{ scale: 1, opacity: 0.8 }}
+                animate={{ scale: 1.5, opacity: 0 }}
+                transition={{ duration: 1.5, repeat: Infinity, delay: 0.8 }}
+                className="absolute inset-0 rounded-full border-2"
+                style={{ borderColor: C.accent }}
+              />
+            </motion.div>
+
+            {/* Welcome Text */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.6 }}
+              className="text-xs sm:text-sm font-bold uppercase tracking-[0.3em] mb-4"
+              style={{ color: C.muted, ...fontB }}
+            >
+              Welcome To
+            </motion.div>
+
+            {/* Crazy Character Animation */}
+            <div className="flex overflow-visible relative z-10 perspective-1000">
+              {["C", "U", "\u00A0", "B", "A", "Z", "Z", "A", "R"].map((char, index) => (
+                <motion.span
+                  key={index}
+                  initial={{ y: 80, opacity: 0, rotateX: -90, filter: "blur(10px)" }}
+                  animate={{ y: 0, opacity: 1, rotateX: 0, filter: "blur(0px)" }}
+                  transition={{
+                    duration: 0.8,
+                    ease: [0.34, 1.56, 0.64, 1], // bouncy spring-like ease
+                    delay: 0.8 + index * 0.06,
+                  }}
+                  className="text-5xl sm:text-7xl md:text-8xl font-black italic tracking-tighter origin-bottom inline-block"
+                  style={{
+                    ...fontH,
+                    color: char === "C" || char === "U" ? C.text : C.accent,
+                    textShadow: `0 10px 30px ${char === "C" || char === "U" ? 'rgba(255,255,255,0.1)' : C.accentGlow}`
+                  }}
+                >
+                  {char}
+                </motion.span>
+              ))}
+            </div>
+
+            {/* Bottom Progress Bar */}
+            <motion.div
+              className="absolute bottom-12 left-1/2 -translate-x-1/2 w-48 h-[3px] rounded-full overflow-hidden"
+              style={{ backgroundColor: C.card }}
+            >
+              <motion.div
+                initial={{ width: "0%" }}
+                animate={{ width: "100%" }}
+                transition={{ duration: 2.5, ease: "easeInOut" }}
+                className="h-full"
+                style={{ backgroundColor: C.accent }}
+              />
             </motion.div>
           </motion.div>
         )}
