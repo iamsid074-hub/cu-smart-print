@@ -114,7 +114,7 @@ export default function ProductDetail() {
 
 
     // Flat delivery fee
-    const deliveryFee = 5;
+    const deliveryFee = 20;
     const totalAmount = product ? product.price + deliveryFee : 0;
 
     const handleBuyNow = async (e: React.FormEvent) => {

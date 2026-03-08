@@ -33,24 +33,16 @@ export default function Cart() {
     const campusShopsItems = items.filter(item => item.category === "Campus Shops");
     const otherItems = items.filter(item => item.category !== "Campus Shops");
 
-    let originalDeliveryFee = 10; // Start with base 10
-    if (campusShopsItems.length > 0) {
-        // If there's a campus shop item, base delivery is 15
-        originalDeliveryFee = 15;
-        if (otherItems.length > 0) {
-            // Mixed items means higher fee normally
-            originalDeliveryFee = 20;
-        }
-    }
+    let originalDeliveryFee = 20; // Default flat fee
 
     // Apply promo code logic
-    const deliveryFee = promoApplied ? 5 : originalDeliveryFee;
+    const deliveryFee = promoApplied ? 14 : originalDeliveryFee;
     const orderTotal = totalPrice + deliveryFee;
 
     const handleApplyPromo = () => {
-        if (promoCode.trim().toUpperCase() === "CRICKET5") {
+        if (promoCode.trim().toUpperCase() === "FINAL14") {
             setPromoApplied(true);
-            toast({ title: "Promo Applied!", description: "Delivery fee reduced to ₹5. Enjoy the match!" });
+            toast({ title: "Promo Applied!", description: "Delivery fee reduced to ₹14. Enjoy the match!" });
         } else {
             setPromoApplied(false);
             toast({ title: "Invalid Code", description: "The promo code entered is not valid.", variant: "destructive" });
@@ -182,7 +174,7 @@ export default function Cart() {
                                     value={promoCode}
                                     onChange={(e) => {
                                         setPromoCode(e.target.value.toUpperCase());
-                                        if (promoApplied && e.target.value.toUpperCase() !== "CRICKET5") {
+                                        if (promoApplied && e.target.value.toUpperCase() !== "FINAL14") {
                                             setPromoApplied(false); // Reset if they start typing something else
                                         }
                                     }}
@@ -214,7 +206,7 @@ export default function Cart() {
                                     <Clock className="w-4 h-4 text-emerald-500" /> Delivery Fee
                                 </span>
                                 <div className="flex items-center gap-2">
-                                    {promoApplied && <span className="text-slate-400 line-through text-xs">₹{campusShopsItems.length > 0 ? (otherItems.length > 0 ? 20 : 15) : 10}</span>}
+                                    {promoApplied && <span className="text-slate-400 line-through text-xs">₹{originalDeliveryFee}</span>}
                                     <span className={promoApplied ? "text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded" : "font-medium text-slate-900"}>+ ₹{deliveryFee}</span>
                                 </div>
                             </div>

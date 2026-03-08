@@ -25,7 +25,7 @@ const faqSections = [
             },
             {
                 q: "What is the delivery charge?",
-                a: "Delivery is charged at a flat ₹5 per order, regardless of order size. This keeps it affordable for all students.",
+                a: "Delivery is charged at a flat ₹20 per order. Promo codes occasionally reduce this fee.",
             },
         ],
     },
