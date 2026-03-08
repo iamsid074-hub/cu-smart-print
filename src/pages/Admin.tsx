@@ -281,15 +281,11 @@ function DashboardSection({ stats, recentProducts, recentOrders, loading, allOrd
                     {filteredOrders.map((order, i) => {
                         const priority = getPriorityColor(order.status);
                         const action = nextAction[order.status];
-                        // Parse food details if it's a food order
                         const isFood = isFoodOrder(order);
+                        const loc = parseOrderLocation(order);
                         let foodItems = "";
-                        if (isFood) {
-                            const room = order.delivery_room || "";
-                            if (room.includes("[CUSTOM FOOD ORDER]")) {
-                                const parts = room.replace("[CUSTOM FOOD ORDER]\n", "").split("\n---\n");
-                                foodItems = parts[0] || "";
-                            }
+                        if (loc.items) {
+                            foodItems = loc.items;
                         }
 
                         return (
@@ -326,7 +322,7 @@ function DashboardSection({ stats, recentProducts, recentOrders, loading, allOrd
                                             </div>
                                         )}
                                         <div className="flex-1 min-w-0">
-                                            <p className="font-bold text-sm text-white truncate">{isFood ? "Food Order" : (order.products?.title || "Product")}</p>
+                                            <p className="font-bold text-sm text-white truncate">{isFood ? "Food Order" : (loc.itemTitle || order.products?.title || "Custom Order")}</p>
                                             {isFood && foodItems && (
                                                 <div className="mt-1 space-y-0.5">
                                                     {foodItems.split("\n").filter(Boolean).slice(0, 3).map((line, idx) => (
@@ -353,7 +349,7 @@ function DashboardSection({ stats, recentProducts, recentOrders, loading, allOrd
                                         )}
                                         <div className="flex items-start gap-2">
                                             <MapPin className="w-3 h-3 text-white/40 flex-shrink-0 mt-0.5" />
-                                            <span className="text-xs text-white/60 break-words">{order.delivery_location}{order.delivery_room && !order.delivery_room.includes("[CUSTOM FOOD ORDER]") ? `, Room ${order.delivery_room}` : ""}</span>
+                                            <span className="text-xs text-white/60 break-words">{loc.hostel}{loc.room ? `, Room ${loc.room}` : ""}</span>
                                         </div>
                                     </div>
 
@@ -487,9 +483,41 @@ function ProductsSection({ products, loading, onDelete }: {
 }
 
 // ─── Helper: detect food order ─────────────────────────────────────────────────
+const NON_FOOD_KEYWORDS = ['practical file', 'notebook', 'register', 'pen', 'pencil', 'eraser', 'stapler', 'folder', 'chart', 'paper', 'assignment', 'lab manual', 'journal', 'project', 'file'];
 function isFoodOrder(order: Order): boolean {
-    // Only custom food orders are "food" — Campus Essentials ([CE:]) go to Item Orders
+    // Campus Essentials ([CE:]) go to Item Orders, not food
+    if (order.delivery_location?.includes('[CE:')) return false;
+    // If any non-food keyword appears in the item details, it's not food
+    const loc = (order.delivery_location || '').toLowerCase();
+    const room = (order.delivery_room || '').toLowerCase();
+    const combined = loc + ' ' + room;
+    if (NON_FOOD_KEYWORDS.some(kw => combined.includes(kw))) return false;
     return (order.delivery_location?.includes('[Custom Food:') || order.delivery_room?.includes('[CUSTOM FOOD ORDER]')) && !order.products;
+}
+
+// ─── Helper: parse order location/room cleanly ─────────────────────────────────
+function parseOrderLocation(order: Order): { hostel: string; room: string; items: string; notes: string; itemTitle: string } {
+    let hostel = order.delivery_location || '';
+    let itemTitle = '';
+    // Extract hostel and item title from metadata tags
+    const ceMatch = hostel.match(/^(.+?)\s*\[CE:\s*(.+?)\]$/);
+    const customMatch = hostel.match(/^(.+?)\s*\[Custom Food:\s*(.+?)\]$/);
+    if (ceMatch) { hostel = ceMatch[1].trim(); itemTitle = ceMatch[2]; }
+    else if (customMatch) { hostel = customMatch[1].trim(); itemTitle = customMatch[2]; }
+
+    let items = '';
+    let notes = '';
+    let room = order.delivery_room || '';
+    if (room.includes('[CUSTOM FOOD ORDER]')) {
+        const cleaned = room.replace('[CUSTOM FOOD ORDER]\n', '').replace('[CUSTOM FOOD ORDER]', '');
+        const parts = cleaned.split('\n---\n');
+        items = parts[0] || '';
+        notes = parts[1]?.replace('Notes: ', '') || '';
+        room = ''; // room field is used for metadata, no actual room
+    }
+    if (!items && itemTitle) items = itemTitle;
+
+    return { hostel, room, items, notes, itemTitle };
 }
 
 // ─── Filter Bar Component ──────────────────────────────────────────────────────
