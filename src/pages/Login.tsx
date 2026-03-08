@@ -106,8 +106,8 @@ export default function Login() {
                     {/* Logo */}
                     <div className="mb-10">
                         <div className="flex items-center gap-3 mb-7">
-                            <div className="w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg" style={{ background: "#FF6B6B", borderRadius: "13px", boxShadow: "0 4px 20px rgba(255,107,107,0.25)" }}>
-                                <Sparkles className="w-6 h-6 text-white" />
+                            <div className="w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg p-0.5" style={{ background: "#FF6B6B", borderRadius: "13px", boxShadow: "0 4px 20px rgba(255,107,107,0.25)" }}>
+                                <img src="/logo.png" alt="CU Bazzar" className="w-full h-full object-cover rounded-[11px]" />
                             </div>
                             <span className="text-2xl font-bold tracking-tight" style={{ ...fontH, color: "#E8DED4" }}>CU Bazzar</span>
                         </div>
@@ -180,8 +180,8 @@ export default function Login() {
                 >
                     {/* Mobile brand */}
                     <div className="lg:hidden flex items-center gap-2.5 mb-8">
-                        <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: "#FF6B6B", borderRadius: "10px" }}>
-                            <Sparkles className="w-4 h-4 text-white" />
+                        <div className="w-10 h-10 rounded-xl flex items-center justify-center p-0.5" style={{ background: "#FF6B6B", borderRadius: "10px" }}>
+                            <img src="/logo.png" alt="CU Bazzar" className="w-full h-full object-cover rounded-lg" />
                         </div>
                         <span className="text-lg font-bold" style={{ ...fontH, color: "#E8DED4" }}>CU Bazzar</span>
                     </div>
