@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import {
@@ -150,74 +150,248 @@ function ConfirmDialog({ message, onConfirm, onCancel }: {
     );
 }
 
-// ─── Dashboard Section ─────────────────────────────────────────────────────────
-function DashboardSection({ stats, recentProducts, recentOrders, loading }: {
+// ─── Priority color helpers ─────────────────────────────────────────────────────
+function getPriorityColor(status: string): { border: string; bg: string; dot: string; label: string } {
+    switch (status) {
+        case "pending":
+            return { border: "border-red-500/40", bg: "bg-red-500/5", dot: "bg-red-500", label: "Urgent" };
+        case "seller_accepted":
+        case "confirmed":
+        case "picked":
+            return { border: "border-yellow-500/40", bg: "bg-yellow-500/5", dot: "bg-yellow-500", label: "Preparing" };
+        case "delivering":
+            return { border: "border-blue-500/40", bg: "bg-blue-500/5", dot: "bg-blue-500", label: "In Transit" };
+        case "completed":
+            return { border: "border-green-500/40", bg: "bg-green-500/5", dot: "bg-green-500", label: "Delivered" };
+        case "cancelled":
+        case "seller_rejected":
+            return { border: "border-zinc-500/30", bg: "bg-zinc-500/5", dot: "bg-zinc-500", label: "Cancelled" };
+        default:
+            return { border: "border-white/10", bg: "bg-white/5", dot: "bg-white", label: status };
+    }
+}
+
+// ─── Dashboard Section (Fast Delivery Dashboard) ───────────────────────────────
+function DashboardSection({ stats, recentProducts, recentOrders, loading, allOrders, onUpdateStatus, onVerifyUpi }: {
     stats: Stats; recentProducts: Product[]; recentOrders: Order[]; loading: boolean;
+    allOrders: Order[]; onUpdateStatus: (id: string, status: string, timestamps?: Record<string, string>) => void; onVerifyUpi: (id: string) => void;
 }) {
+    const [dashFilter, setDashFilter] = useState("pending");
+    const [searchQuery, setSearchQuery] = useState("");
+
+    const dashFilters = [
+        { id: "pending", label: "🔴 Pending", count: allOrders.filter(o => o.status === "pending").length },
+        { id: "accepted", label: "🟡 Accepted", count: allOrders.filter(o => ["seller_accepted", "confirmed", "picked"].includes(o.status)).length },
+        { id: "delivering", label: "🚀 Delivering", count: allOrders.filter(o => o.status === "delivering").length },
+        { id: "completed", label: "✅ Completed", count: allOrders.filter(o => o.status === "completed").length },
+        { id: "all", label: "All", count: allOrders.length },
+    ];
+
+    const filteredOrders = allOrders.filter(o => {
+        // Status filter
+        let statusMatch = true;
+        switch (dashFilter) {
+            case "pending": statusMatch = o.status === "pending"; break;
+            case "accepted": statusMatch = ["seller_accepted", "confirmed", "picked"].includes(o.status); break;
+            case "delivering": statusMatch = o.status === "delivering"; break;
+            case "completed": statusMatch = o.status === "completed"; break;
+            default: statusMatch = true;
+        }
+        // Search filter
+        let searchMatch = true;
+        if (searchQuery.trim()) {
+            const q = searchQuery.toLowerCase();
+            searchMatch =
+                o.id.toLowerCase().includes(q) ||
+                (o.buyer?.full_name || "").toLowerCase().includes(q) ||
+                (o.products?.title || "").toLowerCase().includes(q) ||
+                (o.delivery_location || "").toLowerCase().includes(q);
+        }
+        return statusMatch && searchMatch;
+    });
+
+    const nextAction: Record<string, { label: string; status: string; icon: any; color: string; timestamps?: object } | null> = {
+        pending: { label: "Accept Order", status: "confirmed", icon: CheckCircle, color: "bg-blue-500/20 border-blue-500/40 text-blue-400 hover:bg-blue-500/30", timestamps: { accepted_at: new Date().toISOString() } },
+        seller_accepted: { label: "Accept & Process", status: "confirmed", icon: CheckCircle, color: "bg-cyan-500/20 border-cyan-500/40 text-cyan-400 hover:bg-cyan-500/30", timestamps: { accepted_at: new Date().toISOString() } },
+        confirmed: { label: "Picked ✓", status: "picked", icon: Package, color: "bg-purple-500/20 border-purple-500/40 text-purple-400 hover:bg-purple-500/30", timestamps: { picked_at: new Date().toISOString() } },
+        picked: { label: "Out for Delivery 🚀", status: "delivering", icon: Truck, color: "bg-orange-500/20 border-orange-500/40 text-orange-400 hover:bg-orange-500/30", timestamps: { out_for_delivery_at: new Date().toISOString() } },
+        delivering: { label: "Mark Delivered ✅", status: "completed", icon: HomeIcon, color: "bg-green-500/20 border-green-500/40 text-green-400 hover:bg-green-500/30", timestamps: { delivered_at: new Date().toISOString() } },
+        completed: null,
+        cancelled: null,
+        seller_rejected: { label: "Override & Accept", status: "confirmed", icon: CheckCircle, color: "bg-cyan-500/20 border-cyan-500/40 text-cyan-400 hover:bg-cyan-500/30", timestamps: { accepted_at: new Date().toISOString() } },
+    };
+
+    const copyPhone = (phone: string) => { navigator.clipboard.writeText(phone); };
+
     return (
-        <div className="space-y-8">
+        <div className="space-y-6">
+            {/* Header */}
             <div>
-                <h2 className="text-2xl font-black mb-1 text-white">Admin Dashboard</h2>
-                <p className="text-white/70 text-sm">Full platform overview at a glance</p>
+                <h2 className="text-2xl font-black mb-1 text-white flex items-center gap-2">
+                    <Activity className="w-6 h-6 text-neon-orange" /> Delivery Dashboard
+                </h2>
+                <p className="text-white/70 text-sm">Real-time order management • {allOrders.filter(o => !["completed", "cancelled", "seller_rejected"].includes(o.status)).length} active orders</p>
             </div>
 
-            {/* Stats */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <StatCard icon={Package} label="Total Products" value={loading ? "—" : stats.totalProducts} gradient="from-neon-cyan to-neon-blue" delay={0} />
-                <StatCard icon={ShoppingCart} label="Active Orders" value={loading ? "—" : stats.activeOrders} gradient="from-neon-orange to-neon-pink" delay={0.08} />
-                <StatCard icon={Users} label="Total Users" value={loading ? "—" : stats.totalUsers} gradient="from-neon-blue to-neon-pink" delay={0.16} />
+            {/* Stats Row */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <StatCard icon={ShoppingCart} label="Active Orders" value={loading ? "—" : stats.activeOrders} gradient="from-red-500 to-orange-500" delay={0} />
+                <StatCard icon={Package} label="Products" value={loading ? "—" : stats.totalProducts} gradient="from-neon-cyan to-neon-blue" delay={0.05} />
+                <StatCard icon={Users} label="Users" value={loading ? "—" : stats.totalUsers} gradient="from-neon-blue to-neon-pink" delay={0.1} />
+                <StatCard icon={TrendingUp} label="Completed Today" value={loading ? "—" : allOrders.filter(o => { const t = new Date(); t.setHours(0, 0, 0, 0); return o.status === "completed" && new Date(o.created_at) >= t; }).length} gradient="from-green-500 to-emerald-500" delay={0.15} />
             </div>
 
-            {/* Recent Activity */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Recent Products */}
-                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="bg-black/20 backdrop-blur-xl rounded-2xl border border-white/10 overflow-hidden">
-                    <div className="p-5 border-b border-white/5 flex items-center gap-2 text-white">
-                        <Box className="w-4 h-4 text-neon-cyan" />
-                        <h3 className="font-bold text-sm">Recent Uploads</h3>
-                    </div>
-                    <div className="divide-y divide-white/5">
-                        {recentProducts.length === 0 ? (
-                            <p className="text-white/70 text-sm p-5">No products yet.</p>
-                        ) : recentProducts.map((p) => (
-                            <div key={p.id} className="flex items-center gap-3 p-4 hover:bg-white/5 transition-colors">
-                                <div className="w-10 h-10 rounded-lg overflow-hidden bg-white/5 flex-shrink-0">
-                                    <img src={p.image_url || "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=80"} alt={p.title} className="w-full h-full object-cover" />
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                    <p className="text-sm font-semibold truncate text-white">{p.title}</p>
-                                    <p className="text-xs text-white/60">{p.profiles?.full_name || "Unknown"}</p>
-                                </div>
-                                <p className="text-sm font-bold text-neon-fire flex-shrink-0">₹{p.price.toLocaleString()}</p>
-                            </div>
-                        ))}
-                    </div>
-                </motion.div>
-
-                {/* Recent Orders */}
-                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.28 }} className="bg-black/20 backdrop-blur-xl rounded-2xl border border-white/10 overflow-hidden">
-                    <div className="p-5 border-b border-white/5 flex items-center gap-2 text-white">
-                        <ShoppingBag className="w-4 h-4 text-neon-orange" />
-                        <h3 className="font-bold text-sm">Recent Orders</h3>
-                    </div>
-                    <div className="divide-y divide-white/5">
-                        {recentOrders.length === 0 ? (
-                            <p className="text-white/70 text-sm p-5">No orders yet.</p>
-                        ) : recentOrders.map((o) => (
-                            <div key={o.id} className="flex items-center gap-3 p-4 hover:bg-white/5 transition-colors">
-                                <div className="w-10 h-10 rounded-lg overflow-hidden bg-white/5 flex-shrink-0">
-                                    <img src={o.products?.image_url || "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=80"} alt="" className="w-full h-full object-cover" />
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                    <p className="text-sm font-semibold truncate text-white">{o.products?.title || "Product"}</p>
-                                    <p className="text-xs text-white/60">{o.buyer?.full_name || "Buyer"}</p>
-                                </div>
-                                <StatusBadge status={o.status} />
-                            </div>
-                        ))}
-                    </div>
-                </motion.div>
+            {/* Search + Filters */}
+            <div className="flex flex-col sm:flex-row gap-3">
+                <div className="relative flex-1 max-w-sm">
+                    <Eye className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
+                    <input
+                        type="text"
+                        placeholder="Search order ID, customer..."
+                        value={searchQuery}
+                        onChange={e => setSearchQuery(e.target.value)}
+                        className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-black/20 backdrop-blur-md border border-white/10 text-sm text-white placeholder:text-white/40 focus:outline-none focus:border-neon-orange/40 transition-colors"
+                    />
+                </div>
+                <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+                    {dashFilters.map(f => (
+                        <button
+                            key={f.id}
+                            onClick={() => setDashFilter(f.id)}
+                            className={`px-3 py-2 rounded-xl text-xs font-bold transition-all flex-shrink-0 flex items-center gap-1.5 ${dashFilter === f.id ? "bg-neon-orange/20 text-neon-orange border border-neon-orange/30" : "bg-white/5 text-white/70 hover:bg-white/10 hover:text-white border border-white/10"}`}
+                        >
+                            {f.label}
+                            {f.count > 0 && <span className={`min-w-[18px] h-[18px] rounded-full text-[10px] font-black flex items-center justify-center px-1 ${dashFilter === f.id ? "bg-neon-orange text-white" : "bg-white/10 text-white/60"}`}>{f.count}</span>}
+                        </button>
+                    ))}
+                </div>
             </div>
+
+            {/* Order Cards */}
+            {loading ? (
+                <div className="flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin text-neon-orange" /></div>
+            ) : filteredOrders.length === 0 ? (
+                <div className="bg-black/20 backdrop-blur-xl rounded-2xl p-12 text-center border border-white/10">
+                    <ShoppingCart className="w-12 h-12 text-white/30 mx-auto mb-3" />
+                    <p className="text-white/60 font-semibold">No orders match this filter</p>
+                    <p className="text-white/40 text-xs mt-1">Try a different filter or search term</p>
+                </div>
+            ) : (
+                <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+                    {filteredOrders.map((order, i) => {
+                        const priority = getPriorityColor(order.status);
+                        const action = nextAction[order.status];
+                        // Parse food details if it's a food order
+                        const isFood = isFoodOrder(order);
+                        let foodItems = "";
+                        if (isFood) {
+                            const room = order.delivery_room || "";
+                            if (room.includes("[CUSTOM FOOD ORDER]")) {
+                                const parts = room.replace("[CUSTOM FOOD ORDER]\n", "").split("\n---\n");
+                                foodItems = parts[0] || "";
+                            }
+                        }
+
+                        return (
+                            <motion.div
+                                key={order.id}
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: Math.min(i * 0.03, 0.3) }}
+                                className={`rounded-2xl border-l-4 ${priority.border} ${priority.bg} bg-black/20 backdrop-blur-xl overflow-hidden hover:bg-black/30 transition-all`}
+                            >
+                                {/* Card Header */}
+                                <div className="p-3 sm:p-4 flex items-center gap-3 border-b border-white/5">
+                                    <div className={`w-2.5 h-2.5 rounded-full ${priority.dot} ${order.status === "pending" ? "animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.8)]" : ""} flex-shrink-0`} />
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-xs text-white/50 font-mono">#{order.id.slice(0, 8).toUpperCase()}</span>
+                                            {isFood && <span className="text-[10px] px-1.5 py-0.5 rounded bg-orange-500/20 text-orange-400 font-bold">FOOD</span>}
+                                        </div>
+                                        <p className="text-[11px] text-white/40 flex items-center gap-1 mt-0.5">
+                                            <Clock className="w-3 h-3" />
+                                            {new Date(order.created_at).toLocaleString("en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
+                                        </p>
+                                    </div>
+                                    <StatusBadge status={order.status} />
+                                </div>
+
+                                {/* Card Body */}
+                                <div className="p-3 sm:p-4 space-y-3">
+                                    {/* Item + Price Row */}
+                                    <div className="flex items-start gap-3">
+                                        {order.products?.image_url && (
+                                            <div className="w-14 h-14 rounded-xl overflow-hidden bg-white/5 flex-shrink-0 border border-white/10">
+                                                <img src={order.products.image_url} alt="" className="w-full h-full object-cover" />
+                                            </div>
+                                        )}
+                                        <div className="flex-1 min-w-0">
+                                            <p className="font-bold text-sm text-white truncate">{isFood ? "Food Order" : (order.products?.title || "Product")}</p>
+                                            {isFood && foodItems && (
+                                                <div className="mt-1 space-y-0.5">
+                                                    {foodItems.split("\n").filter(Boolean).slice(0, 3).map((line, idx) => (
+                                                        <p key={idx} className="text-xs text-white/60 truncate">• {line.trim()}</p>
+                                                    ))}
+                                                </div>
+                                            )}
+                                            <p className="text-lg font-black text-neon-fire mt-1">₹{order.total_price.toLocaleString()}</p>
+                                        </div>
+                                    </div>
+
+                                    {/* Customer + Location */}
+                                    <div className="bg-black/20 rounded-xl p-2.5 border border-white/5 space-y-1.5">
+                                        <div className="flex items-center gap-2">
+                                            <User className="w-3.5 h-3.5 text-neon-cyan flex-shrink-0" />
+                                            <span className="text-sm font-semibold text-white truncate">{order.buyer?.full_name || "Customer"}</span>
+                                        </div>
+                                        {(order.buyer_phone || order.buyer?.phone_number) && (
+                                            <div className="flex items-center gap-2">
+                                                <Phone className="w-3 h-3 text-white/40 flex-shrink-0" />
+                                                <span className="text-xs text-white/60">{order.buyer_phone || order.buyer?.phone_number}</span>
+                                                <button onClick={() => copyPhone(order.buyer_phone || order.buyer?.phone_number || "")} className="p-0.5 rounded hover:bg-white/10"><Copy className="w-3 h-3 text-white/40" /></button>
+                                            </div>
+                                        )}
+                                        <div className="flex items-start gap-2">
+                                            <MapPin className="w-3 h-3 text-white/40 flex-shrink-0 mt-0.5" />
+                                            <span className="text-xs text-white/60 break-words">{order.delivery_location}{order.delivery_room && !order.delivery_room.includes("[CUSTOM FOOD ORDER]") ? `, Room ${order.delivery_room}` : ""}</span>
+                                        </div>
+                                    </div>
+
+                                    {/* Payment */}
+                                    <div className="flex items-center gap-2 flex-wrap">
+                                        <span className={`inline-flex items-center px-2 py-1 rounded-lg text-[11px] font-bold ${order.payment_status === "verifying" ? "bg-orange-500/15 text-orange-400" : order.payment_status === "paid" ? "bg-green-500/15 text-green-400" : "bg-yellow-500/15 text-yellow-400"}`}>
+                                            {order.payment_status === "verifying" ? "🟡 Verify UTR" : order.payment_status === "paid" ? "💳 Paid" : "💵 COD"}
+                                        </span>
+                                        {order.payment_status === "verifying" && (
+                                            <button onClick={() => onVerifyUpi(order.id)} className="px-2.5 py-1 bg-green-500/20 border border-green-500/30 text-green-400 hover:bg-green-500/30 rounded-lg text-[11px] font-bold flex items-center gap-1 transition-all">
+                                                <CheckCircle className="w-3 h-3" /> Verify UPI
+                                            </button>
+                                        )}
+                                    </div>
+
+                                    {/* Action Buttons */}
+                                    {action && (
+                                        <div className="flex gap-2 pt-1">
+                                            <button
+                                                onClick={() => onUpdateStatus(order.id, action.status, (action as any).timestamps)}
+                                                className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl border text-sm font-bold transition-all ${action.color}`}
+                                            >
+                                                <action.icon className="w-4 h-4" /> {action.label}
+                                            </button>
+                                            {order.status === "pending" && (
+                                                <button onClick={() => onUpdateStatus(order.id, "cancelled")}
+                                                    className="px-4 py-2.5 rounded-xl border border-red-500/30 bg-red-500/10 text-red-400 text-sm font-bold hover:bg-red-500/20 transition-all">
+                                                    ✕
+                                                </button>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+                            </motion.div>
+                        );
+                    })}
+                </div>
+            )}
         </div>
     );
 }
@@ -871,6 +1045,31 @@ export default function Admin() {
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isAdmin]);
+    // ── Audio alert for new orders ────────────────────────────────────────────────
+    const prevPendingCountRef = useRef<number | null>(null);
+    useEffect(() => {
+        const pendingCount = orders.filter(o => o.status === "pending").length;
+        // Skip initial load (when ref is null)
+        if (prevPendingCountRef.current !== null && pendingCount > prevPendingCountRef.current) {
+            // Play a short notification ping
+            try {
+                const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+                const oscillator = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                oscillator.frequency.setValueAtTime(880, audioCtx.currentTime); // A5 note
+                oscillator.type = "sine";
+                gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
+                oscillator.start(audioCtx.currentTime);
+                oscillator.stop(audioCtx.currentTime + 0.5);
+            } catch (e) {
+                // Audio may fail silently on some browsers
+            }
+        }
+        prevPendingCountRef.current = pendingCount;
+    }, [orders]);
 
     // ── Handlers ─────────────────────────────────────────────────────────────────
     const handleDeleteProduct = async (id: string) => {
@@ -1051,7 +1250,10 @@ export default function Admin() {
                                     stats={stats}
                                     recentProducts={recentProducts}
                                     recentOrders={recentOrders}
-                                    loading={loadingStats}
+                                    loading={loadingStats || loadingOrders}
+                                    allOrders={orders}
+                                    onUpdateStatus={handleUpdateOrderStatus}
+                                    onVerifyUpi={handleVerifyUpi}
                                 />
                             )}
                             {section === "products" && (
