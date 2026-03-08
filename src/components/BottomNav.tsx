@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, Compass, ShoppingCart, Bookmark, User } from "lucide-react";
+import { Home, Compass, ShoppingCart, Utensils, User } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { motion } from "framer-motion";
@@ -64,10 +64,10 @@ export default function BottomNav() {
                     </Link>
                 </div>
 
-                {/* Saved (Bookmarks/Tracking) */}
-                <Link to="/tracking" className="flex flex-col items-center justify-center gap-1 text-decoration-none py-1 flex-1">
-                    <Bookmark strokeWidth={2.5} className={`w-5 h-5 sm:w-[22px] sm:h-[22px] ${location.pathname.startsWith('/tracking') ? 'text-slate-900' : 'text-slate-500 hover:text-slate-700'}`} />
-                    <span className={`text-[9px] sm:text-[10px] font-semibold ${location.pathname.startsWith('/tracking') ? 'text-slate-900' : 'text-slate-400'}`}>Saved</span>
+                {/* Food Section */}
+                <Link to="/food" className="flex flex-col items-center justify-center gap-1 text-decoration-none py-1 flex-1">
+                    <Utensils strokeWidth={2.5} className={`w-5 h-5 sm:w-[22px] sm:h-[22px] ${location.pathname.startsWith('/food') ? 'text-slate-900' : 'text-slate-500 hover:text-slate-700'}`} />
+                    <span className={`text-[9px] sm:text-[10px] font-semibold ${location.pathname.startsWith('/food') ? 'text-slate-900' : 'text-slate-400'}`}>Food</span>
                 </Link>
 
                 {/* Profile */}

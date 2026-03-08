@@ -13,7 +13,7 @@ const springTransition = {
     mass: 1.2,
 };
 
-type IslandState = "default" | "browsing" | "cart" | "profile" | "added" | "updated";
+type IslandState = "default" | "browsing" | "explore" | "cart" | "profile" | "added" | "updated";
 
 export default function TopDynamicIsland() {
     const navigate = useNavigate();
@@ -42,6 +42,8 @@ export default function TopDynamicIsland() {
     useEffect(() => {
         if (location.pathname.startsWith("/food")) {
             triggerState("browsing");
+        } else if (location.pathname.startsWith("/browse")) {
+            triggerState("explore");
         } else if (location.pathname === "/cart") {
             triggerState("cart");
         } else if (location.pathname === "/profile") {
@@ -89,6 +91,10 @@ export default function TopDynamicIsland() {
         case "browsing":
             width = 200;
             content = <span className="text-sm font-medium tracking-wide">Browsing Food Shops</span>;
+            break;
+        case "explore":
+            width = 180;
+            content = <span className="text-sm font-medium tracking-wide">Browsing Items</span>;
             break;
         case "cart":
             width = 160;
@@ -166,7 +172,7 @@ export default function TopDynamicIsland() {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: -5, scale: 0.95 }}
                         transition={{ duration: 0.15, ease: "easeInOut" }}
-                        className="flex items-center justify-center w-full h-full px-4 text-white"
+                        className="flex items-center justify-center w-full h-full pl-10 pr-4 text-white"
                     >
                         {content}
                     </motion.div>
