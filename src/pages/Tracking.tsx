@@ -139,9 +139,9 @@ export default function Tracking() {
 
   const handleHiddenCancel = async () => {
     if (!order || isCompleted || isRejected) return;
-    if (window.confirm("Secret Feature: Are you sure you want to cancel this order?")) {
+    if (window.confirm("Are you sure you want to cancel this order?\n\nPlease note: Delivery charges will be deducted upon cancellation. You will not receive a full refund.")) {
       await supabase.from("orders").update({ status: "cancelled" }).eq("id", order.id);
-      window.alert("Order cancelled successfully.");
+      window.alert("Order cancelled successfully. Refund will be processed after deducting delivery charges.");
       fetchOrder();
     }
   };
