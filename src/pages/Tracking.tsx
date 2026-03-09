@@ -137,6 +137,15 @@ export default function Tracking() {
     return () => clearInterval(interval);
   }, []);
 
+  const handleHiddenCancel = async () => {
+    if (!order || isCompleted || isRejected) return;
+    if (window.confirm("Secret Feature: Are you sure you want to cancel this order?")) {
+      await supabase.from("orders").update({ status: "cancelled" }).eq("id", order.id);
+      window.alert("Order cancelled successfully.");
+      fetchOrder();
+    }
+  };
+
   // Derived
   const details = order ? parseOrderDetails(order) : null;
   const type = details?.type || "item";
@@ -236,7 +245,11 @@ export default function Tracking() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1 flex-wrap">
-                    <p className="text-xs text-slate-500 font-mono font-medium">
+                    <p
+                      className="text-xs text-slate-500 font-mono font-medium cursor-default"
+                      onDoubleClick={handleHiddenCancel}
+                      title="Double click to cancel (hidden)"
+                    >
                       {type === "food" ? "FOOD" : "ORDER"} #{order.id.slice(0, 8).toUpperCase()}
                     </p>
                     <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${type === "food"
