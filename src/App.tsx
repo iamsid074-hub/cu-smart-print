@@ -92,7 +92,7 @@ function AppLayout() {
         </>
       )}
       <Routes>
-        <Route path="/" element={user ? <Navigate to="/home" replace /> : <Index />} />
+        <Route path="/" element={user ? <Navigate to="/home" replace /> : <Login />} />
         {/* We wrap Home in ProtectedRoute so users are gated there too if they bypass somehow */}
         <Route path="/home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
         <Route path="/login" element={user ? <Navigate to="/home" replace /> : <Login />} />
