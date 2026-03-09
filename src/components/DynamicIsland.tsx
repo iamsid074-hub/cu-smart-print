@@ -5,36 +5,27 @@ import { useNavigate, Link, useLocation } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
+import { toast } from "sonner";
 
-/* ═══════════════════════════════════════════════════════════════════
-   DYNAMIC ISLAND v2 — Smart Priority System
-   ─────────────────────────────────────────────────
-   P1 🔴 Delivery tracking, Cart changes, Order placed
-   P2 🟡 (reserved for future: messages, price drops)
-   P3 🟢 Flash sale, logo (idle content)
-   
-   Higher priority ALWAYS interrupts lower priority.
-   Auto-dismiss timers return to next-highest priority.
-   ═══════════════════════════════════════════════════════════════════ */
 
 type IslandView = "default" | "search" | "cart" | "delivery" | "flash" | "context";
 type ActiveOrder = { id: string; status: string; delivery_location: string; delivery_room: string | null; total_price: number; title: string };
 
-// Notification that can appear in the compact pill
+
 interface IslandNotification {
     id: string;
     priority: 1 | 2 | 3;
     type: "cart-add" | "cart-remove" | "order-placed" | "delivery" | "flash" | "logo";
     label: string;
     icon: "cart" | "truck" | "zap" | "check" | "package" | "logo";
-    color: string;         // accent color for glow
-    expiresAt: number;     // timestamp when this auto-dismisses (0 = never)
+    color: string;
+    expiresAt: number;
 }
 
-// Simple, fast ease animation instead of complex spring physics
+
 const spring = { type: "tween" as const, duration: 0.25, ease: "easeOut" as const };
 
-// Flash sale config
+
 const FLASH_SALE = {
     active: false,
     title: "Buy 1 Pen (₹10) → Get 1 Free",
@@ -55,7 +46,7 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
     const { items: cartItems, totalItems: cartCount, totalPrice: cartTotal, removeItem, lastAction } = useCart();
     const { user } = useAuth();
 
-    // ─── PAGE CONTEXT ───
+
     const getPageContext = () => {
         const p = location.pathname;
         if (p === '/food') return { id: 'food', title: '🍔 CU Food Menu', subtitle: 'Order from campus restaurants', icon: Utensils, actions: [{ label: 'Browse Menu', link: '/food' }, { label: 'View Cart', link: '/cart' }] };
@@ -67,9 +58,21 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
     };
     const pageContext = getPageContext();
 
-    // ─── Active order tracking ───
+
     const [activeOrder, setActiveOrder] = useState<ActiveOrder | null>(null);
     const [justDelivered, setJustDelivered] = useState(false);
+    const prevOrderRef = useRef<ActiveOrder | null>(null);
+
+    // Helper to get status descriptions
+    const getStatusMessage = (status: string, title: string) => {
+        switch (status) {
+            case 'seller_accepted': return { title: 'Order Accepted! 👨‍🍳', desc: `Seller has accepted ${title}` };
+            case 'confirmed': return { title: 'Preparing Order 🍳', desc: `Your ${title} is being prepared` };
+            case 'picked': return { title: 'Order Picked Up 📦', desc: `Your order is ready` };
+            case 'delivering': return { title: 'Out For Delivery 🛵', desc: `Your ${title} is arriving right now!` };
+            default: return null;
+        }
+    };
 
     useEffect(() => {
         if (!user) return;
@@ -82,22 +85,35 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
                 .order("created_at", { ascending: false })
                 .limit(1)
                 .single();
+
             if (data) {
-                setActiveOrder({
+                const currentOrder = {
                     id: data.id, status: data.status,
                     delivery_location: data.delivery_location || "",
                     delivery_room: data.delivery_room,
                     total_price: data.total_price,
                     title: (data as any).products?.title || "Your order",
-                });
+                };
+
+                // Real-time toast notification logic
+                if (prevOrderRef.current && prevOrderRef.current.id === currentOrder.id && prevOrderRef.current.status !== currentOrder.status) {
+                    const msg = getStatusMessage(currentOrder.status, currentOrder.title);
+                    if (msg) toast.success(msg.title, { description: msg.desc, duration: 5000 });
+                }
+
+                setActiveOrder(currentOrder);
+                prevOrderRef.current = currentOrder;
                 setJustDelivered(false);
             } else {
-                // If we HAD an active order and now don't, it was delivered
                 if (activeOrder) {
+                    // Global Auto-Redirect on Delivery!
                     setJustDelivered(true);
+                    toast.success("Order Delivered! 🎉", { description: "Your order has safely arrived.", duration: 6000 });
+                    navigate(`/tracking?order=${activeOrder.id}`);
                     setTimeout(() => setJustDelivered(false), 10000);
                 }
                 setActiveOrder(null);
+                prevOrderRef.current = null;
             }
         };
         fetchActive();
@@ -105,10 +121,10 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
             event: "*", schema: "public", table: "orders",
         }, () => fetchActive()).subscribe();
         return () => { supabase.removeChannel(ch); };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [user]);
 
-    // ─── Flash sale timer ───
+    }, [user, activeOrder, navigate]);
+
+
     const [saleTimeLeft, setSaleTimeLeft] = useState("");
     useEffect(() => {
         if (!FLASH_SALE.active) return;
@@ -125,44 +141,40 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
         return () => clearInterval(id);
     }, []);
 
-    // ═══════════════════════════════════════════════════════════════
-    //  PRIORITY-BASED NOTIFICATION SYSTEM
-    // ═══════════════════════════════════════════════════════════════
 
     const [notifications, setNotifications] = useState<IslandNotification[]>([]);
     const [activeNotif, setActiveNotif] = useState<IslandNotification | null>(null);
     const dismissTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-    // Track rapid cart additions
+
     const rapidAddRef = useRef<{ count: number; totalPrice: number; timer: ReturnType<typeof setTimeout> | null }>({ count: 0, totalPrice: 0, timer: null });
     const lastProcessedActionRef = useRef<number>(0);
 
-    // Push a notification into the queue
     const pushNotification = useCallback((notif: Omit<IslandNotification, "id">) => {
         const newNotif: IslandNotification = { ...notif, id: `${notif.type}-${Date.now()}` };
 
         setNotifications(prev => {
-            // Remove existing notifications of same type
+
             const filtered = prev.filter(n => n.type !== notif.type);
-            // Add new and sort by priority (lower number = higher priority)
+
             return [...filtered, newNotif].sort((a, b) => a.priority - b.priority);
         });
     }, []);
 
-    // Determine what to show — highest priority notification
+
     useEffect(() => {
         if (notifications.length === 0) {
             setActiveNotif(null);
             return;
         }
-        const top = notifications[0]; // Already sorted by priority
+        const top = notifications[0];
         setActiveNotif(top);
 
-        // Set auto-dismiss timer if notification has an expiry
+
         if (dismissTimerRef.current) clearTimeout(dismissTimerRef.current);
         if (top.expiresAt > 0) {
             const remaining = top.expiresAt - Date.now();
             if (remaining <= 0) {
-                // Already expired, remove it
+
                 setNotifications(prev => prev.filter(n => n.id !== top.id));
             } else {
                 dismissTimerRef.current = setTimeout(() => {
@@ -174,20 +186,20 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
         return () => { if (dismissTimerRef.current) clearTimeout(dismissTimerRef.current); };
     }, [notifications]);
 
-    // ─── React to CART changes (P1) ───
+
     useEffect(() => {
         if (!lastAction || lastAction.timestamp <= lastProcessedActionRef.current) return;
         lastProcessedActionRef.current = lastAction.timestamp;
 
         if (lastAction.type === "add") {
-            // Rapid addition detection
+
             const rapid = rapidAddRef.current;
             rapid.count++;
             rapid.totalPrice += (lastAction.itemPrice || 0);
 
             if (rapid.timer) clearTimeout(rapid.timer);
 
-            // Wait 500ms to see if more items are added rapidly
+
             rapid.timer = setTimeout(() => {
                 const label = rapid.count > 1
                     ? `🛒 ${rapid.count} Items Added · ₹${rapid.totalPrice}`
@@ -199,10 +211,10 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
                     label,
                     icon: "cart",
                     color: "#FF6B6B",
-                    expiresAt: Date.now() + 3000, // Brief flash, then persistent cart-summary takes over
+                    expiresAt: Date.now() + 3000,
                 });
 
-                // Reset rapid counter
+
                 rapid.count = 0;
                 rapid.totalPrice = 0;
                 rapid.timer = null;
@@ -230,24 +242,24 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
         try { navigator.vibrate?.(15); } catch { /* ignore */ }
     }, [lastAction, pushNotification]);
 
-    // ─── Persistent cart summary (stays as long as cart has items) ───
+
     useEffect(() => {
         if (cartCount > 0) {
             pushNotification({
-                priority: 2, // P2: below brief P1 add/remove flashes, but above P3 flash sale
-                type: "cart-add" as any, // reuse type — won't conflict since persistent uses different id pattern
+                priority: 2,
+                type: "cart-add" as any,
                 label: `🛒 ${cartCount} item${cartCount !== 1 ? "s" : ""} in cart · ₹${cartTotal}`,
                 icon: "cart",
                 color: "#FF6B6B",
-                expiresAt: 0, // Never auto-dismiss — persistent while cart has items
+                expiresAt: 0,
             });
         } else {
-            // Cart is empty — remove persistent cart notification
+
             setNotifications(prev => prev.filter(n => !(n.priority === 2 && n.icon === "cart")));
         }
     }, [cartCount, cartTotal, pushNotification]);
 
-    // ─── React to DELIVERY status (P1, persistent) ───
+
     useEffect(() => {
         if (activeOrder) {
             const statusText: Record<string, string> = {
@@ -260,7 +272,7 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
                 label: statusText[activeOrder.status] || "📦 Processing…",
                 icon: "truck",
                 color: "#30D158",
-                expiresAt: 0, // Never auto-dismiss — persistent while delivery active
+                expiresAt: 0,
             });
         } else if (justDelivered) {
             pushNotification({
@@ -272,12 +284,12 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
                 expiresAt: Date.now() + 10000,
             });
         } else {
-            // Remove delivery notification if no active order
+
             setNotifications(prev => prev.filter(n => n.type !== "delivery"));
         }
     }, [activeOrder, justDelivered, pushNotification]);
 
-    // ─── Flash sale as P3 idle content ───
+
     const [idleMode, setIdleMode] = useState<"logo" | "flash">("logo");
     useEffect(() => {
         if (!FLASH_SALE.active) return;
@@ -287,7 +299,7 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
         return () => clearInterval(id);
     }, []);
 
-    // ─── Event handlers ───
+
     const close = useCallback(() => { setView("default"); setQuery(""); }, []);
     const open = useCallback((v: IslandView) => { setView(v); try { navigator.vibrate?.(10); } catch { /* ignore */ } }, []);
 
@@ -310,7 +322,7 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
     };
 
     const handleCollapsedClick = () => {
-        // Click behavior based on what's currently showing
+
         if (activeNotif) {
             if (activeNotif.type === "delivery" && activeOrder) { open("delivery"); return; }
             if (activeNotif.type === "cart-add" || activeNotif.type === "cart-remove") { open("cart"); return; }
@@ -330,25 +342,23 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
         pending: "📦", seller_accepted: "✅", confirmed: "👨‍🍳", picked: "📦", delivering: "🚚",
     };
 
-    // Determine pill appearance
+
     const isDropdownOpen = view === "cart" || view === "delivery" || view === "flash" || view === "context";
     const isSearchOpen = view === "search";
     const isExpanded = isDropdownOpen || isSearchOpen;
 
-    // What compact content to show
     const showingNotif = !isExpanded && activeNotif;
     const showingIdle = !isExpanded && !activeNotif;
 
-    // The pill is "wide" when it's NOT in compact default logo/flash mode
-    // This includes: search, dropdown, notification, and page context
+
     const isPillWide = isExpanded || !!showingNotif || (showingIdle && !!pageContext);
 
-    // Notify parent when wide state changes (for navbar icon swap)
+
     useEffect(() => {
         onExpandChange?.(isPillWide);
     }, [isPillWide, onExpandChange]);
 
-    // Glow animation based on content
+
     const getAnimation = () => {
         if (isExpanded) return "none";
         if (activeNotif?.color === "#FF6B6B") return "diCartPulse 1.5s ease-in-out 1";
@@ -357,7 +367,6 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
         return "diBreathe 4s ease-in-out infinite";
     };
 
-    // Pill width
     const getPillWidth = () => {
         if (isSearchOpen) return "min(420px, calc(100vw - 120px))";
         if (showingNotif) return "min(280px, calc(100vw - 120px))";
@@ -397,15 +406,15 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
         }
       `}</style>
 
-            {/* Wrapper reserves space in the navbar for the top pill. */}
-            <motion.div ref={islandRef} layout transition={spring} style={{ position: "relative", height: 40, width: getPillWidth(), flexShrink: 0, zIndex: 100 }}>
 
-                {/* ═══ THE MORPHING ISLAND ═══ */}
+            <motion.div ref={islandRef} layout transition={spring} style={{ position: "relative", height: 47, width: getPillWidth(), flexShrink: 0, zIndex: 100 }}>
+
+
                 <motion.div
                     layout
                     animate={{
                         width: isDropdownOpen ? "min(360px, calc(100vw - 32px))" : getPillWidth(),
-                        height: isDropdownOpen ? "auto" : 40,
+                        height: isDropdownOpen ? "auto" : 47,
                         x: "-50%",
                     }}
                     transition={spring}
@@ -432,16 +441,16 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
                         transformOrigin: "top center",
                     }}
                 >
-                    {/* TOP HEADER ROW: Always 40px tall, holds the normal pill content. Fades out when expanded (unless search). */}
+
                     <motion.div
                         animate={{ opacity: (isExpanded && !isSearchOpen) ? 0 : 1 }}
                         transition={{ duration: 0.15 }}
-                        style={{ height: 40, width: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}
+                        style={{ height: 47, width: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}
                     >
-                        {/* We add AnimatePresence here because it manages the pill content fading out */}
+
                         <AnimatePresence mode="wait">
                             {isSearchOpen ? (
-                                /* ─── SEARCH (inline in pill) ─── */
+
                                 <motion.div key="search" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                                     transition={{ duration: 0.2, delay: 0.08 }}
                                     style={{ display: "flex", alignItems: "center", gap: 6, padding: "0 6px 0 12px", height: "100%", width: "100%" }}>
@@ -469,7 +478,7 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
                                     </button>
                                 </motion.div>
                             ) : showingNotif ? (
-                                /* ─── PRIORITY NOTIFICATION (P1/P2 active) ─── */
+
                                 <motion.div
                                     key={`notif-${activeNotif!.id}`}
                                     initial={{ opacity: 0, scale: 0.85, y: -2 }}
@@ -495,7 +504,7 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
                                     <ChevronRight style={{ width: 12, height: 12, color: `${activeNotif!.color}66`, marginLeft: "auto", flexShrink: 0 }} />
                                 </motion.div>
                             ) : (
-                                /* ─── IDLE STATE (logo ↔ flash sale cycling OR PAGE CONTEXT) ─── */
+
                                 <motion.div
                                     key={`idle-${pageContext ? pageContext.id : idleMode}`}
                                     initial={{ opacity: 0, scale: 0.85 }}
@@ -542,7 +551,7 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
                         </AnimatePresence>
                     </motion.div>
 
-                    {/* ═══ DROPDOWN CONTENT ROW: Morphs open underneath ═══ */}
+
                     <AnimatePresence>
                         {isDropdownOpen && (
                             <motion.div
@@ -559,7 +568,7 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
                                 }}
                             >
                                 {view === "cart" && (
-                                    /* ═══ CART PREVIEW ═══ */
+
                                     <div style={{ padding: "14px 16px", display: "flex", flexDirection: "column", gap: 8 }}>
                                         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                                             <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
@@ -614,7 +623,7 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
                                 )}
 
                                 {view === "delivery" && activeOrder && (
-                                    /* ═══ DELIVERY TRACKING ═══ */
+
                                     <div style={{ padding: "14px 16px", display: "flex", flexDirection: "column", gap: 10 }}>
                                         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                                             <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
@@ -660,7 +669,7 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
                                 )}
 
                                 {view === "flash" && (
-                                    /* ═══ FLASH SALE ═══ */
+
                                     <div style={{ padding: "14px 16px", display: "flex", flexDirection: "column", gap: 10 }}>
                                         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                                             <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
@@ -694,7 +703,7 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
                                 )}
 
                                 {view === "context" && pageContext && (
-                                    /* ═══ PAGE CONTEXT DROPDOWN ═══ */
+
                                     <div style={{ padding: "0 16px", display: "flex", flexDirection: "column", gap: 8 }}>
                                         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                                             <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
