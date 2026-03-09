@@ -1,6 +1,6 @@
 {
-    "version": "1.0.2",
-    "versionCode": 3,
+    "version": "1.0.3",
+    "versionCode": 4,
     "downloadUrl": "https://cubazzar.shop/cubazzar.apk",
-    "releaseNotes": "Admin Portal integration, Real-time notifications, and 80% app size reduction!"
+    "releaseNotes": "Bug Fixes: Fixed an issue where the app package was invalid during installation."
 }
