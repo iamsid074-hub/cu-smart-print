@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronRight, ChevronLeft, Loader2, ShoppingBag, ShoppingCart, X, MapPin, Phone, Home as HomeIcon, Zap, UtensilsCrossed, Package, Rocket, ShieldCheck, BadgePercent, Users, Plus, Shield, Ban, Headset, ExternalLink, Search } from "lucide-react";
+import { ChevronRight, ChevronLeft, Loader2, ShoppingBag, ShoppingCart, X, MapPin, Phone, Home as HomeIcon, Zap, UtensilsCrossed, Package, Rocket, ShieldCheck, BadgePercent, Users, Plus, Shield, Ban, Headset, ExternalLink, Search, Download } from "lucide-react";
 import ProductCard from "@/components/ProductCard";
 import PromoBanner from "@/components/PromoBanner";
 import { supabase } from "@/lib/supabase";
@@ -396,10 +396,18 @@ export default function Home() {
             <p className="text-sm mb-1.5 font-medium text-white/90">
               Welcome back, Student 👋
             </p>
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white" style={fontH}>
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white mb-6" style={fontH}>
               Discover Campus{' '}
               <span className="text-emerald-300">Marketplace</span>
             </h1>
+
+            <a
+              href="/cubazzar.apk"
+              download="CUBazzar-v1.0.apk"
+              className="inline-flex items-center gap-2 bg-[#4DB8AC] text-white hover:bg-[#3CA397] transition-all duration-300 px-7 py-3.5 rounded-full font-bold shadow-[0_4px_20px_rgba(77,184,172,0.4)] hover:shadow-[0_8px_25px_rgba(77,184,172,0.5)] hover:-translate-y-1"
+            >
+              <Download className="w-5 h-5" /> Download Android App
+            </a>
           </motion.div>
 
           {/* Hero Image Carousel */}
