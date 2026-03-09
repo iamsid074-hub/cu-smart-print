@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ShoppingCart, Minus, Plus, Trash2, ArrowLeft, Loader2, MapPin, Phone, Clock, ShoppingBag, CheckCircle } from "lucide-react";
+import { ShoppingCart, Minus, Plus, Trash2, ArrowLeft, Loader2, MapPin, Phone, Clock, ShoppingBag, CheckCircle, Truck, Package, PackageCheck, Zap } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
@@ -25,6 +25,49 @@ export default function Cart() {
     const [showUpiModal, setShowUpiModal] = useState(false);
     const [promoCode, setPromoCode] = useState("");
     const [promoApplied, setPromoApplied] = useState(false);
+
+    // Active Order State
+    const [activeOrder, setActiveOrder] = useState<any>(null);
+    const [loadingOrder, setLoadingOrder] = useState(true);
+
+    // Fetch active order on mount and subscribe to changes
+    useEffect(() => {
+        if (!user) {
+            setLoadingOrder(false);
+            return;
+        }
+
+        const fetchActiveOrder = async () => {
+            const { data, error } = await supabase
+                .from("orders")
+                .select("id, status, products(title)")
+                .eq("buyer_id", user.id)
+                .in("status", ["pending", "seller_accepted", "confirmed", "picked", "delivering"])
+                .order("created_at", { ascending: false })
+                .limit(1)
+                .single();
+
+            if (!error && data) {
+                setActiveOrder(data);
+            } else {
+                setActiveOrder(null);
+            }
+            setLoadingOrder(false);
+        };
+
+        fetchActiveOrder();
+
+        const subscription = supabase
+            .channel("cart_active_orders")
+            .on("postgres_changes", { event: "*", schema: "public", table: "orders" }, () => {
+                fetchActiveOrder();
+            })
+            .subscribe();
+
+        return () => {
+            supabase.removeChannel(subscription);
+        };
+    }, [user]);
 
     const phoneClean = phone.replace(/\D/g, "");
     const isPhoneValid = phoneClean.length === 10;
@@ -116,6 +159,48 @@ export default function Cart() {
                         </button>
                     )}
                 </motion.div>
+
+                {/* Active Order Banner */}
+                {!loadingOrder && user && (
+                    <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="mb-8">
+                        {activeOrder ? (
+                            <div className="bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-100 rounded-[2rem] p-6 shadow-sm flex flex-col sm:flex-row items-center gap-6 justify-between relative overflow-hidden">
+                                {/* Decorative background elements */}
+                                <div className="absolute top-0 right-0 p-4 opacity-5">
+                                    <Truck className="w-32 h-32" />
+                                </div>
+                                <div className="flex items-center gap-5 z-10 w-full sm:w-auto">
+                                    <div className="w-14 h-14 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 flex-shrink-0 animate-bounce">
+                                        <PackageCheck className="w-7 h-7" />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-emerald-900 font-black text-lg sm:text-xl flex items-center gap-2">
+                                            Active Order
+                                            <span className="flex h-3 w-3 relative ml-1">
+                                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                                <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                                            </span>
+                                        </h3>
+                                        <p className="text-emerald-700 font-medium text-sm mt-0.5 capitalize">
+                                            Status: <span className="font-bold text-emerald-800">{activeOrder.status.replace("_", " ")}</span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <Link
+                                    to={`/tracking?order=${activeOrder.id}`}
+                                    className="w-full sm:w-auto bg-emerald-500 hover:bg-emerald-600 text-white px-8 py-3.5 rounded-full font-bold shadow-lg shadow-emerald-500/30 transition-all flex items-center justify-center gap-2 active:scale-95 z-10 text-sm"
+                                >
+                                    <Zap className="w-4 h-4" /> Track Live Order
+                                </Link>
+                            </div>
+                        ) : (
+                            <div className="bg-slate-100/50 rounded-3xl p-5 text-center flex flex-col items-center justify-center border border-slate-200 border-dashed">
+                                <MapPin className="w-6 h-6 text-slate-400 mb-2" />
+                                <p className="text-sm font-semibold text-slate-500">No active orders to track</p>
+                            </div>
+                        )}
+                    </motion.div>
+                )}
 
                 {items.length === 0 ? (
                     <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
