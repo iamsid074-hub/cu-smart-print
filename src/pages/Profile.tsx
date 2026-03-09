@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
-import { LogOut, User, MapPin, Phone, Package, Heart, Edit2, Check, Loader2, Camera, ShoppingCart, CheckCircle, XCircle, Clock, Bell, Plus, Trash2, Tag, X, Mail, Globe } from "lucide-react";
+import { LogOut, User, MapPin, Phone, Package, Heart, Edit2, Check, Loader2, Camera, ShoppingCart, CheckCircle, XCircle, Clock, Bell, Plus, Trash2, Tag, X, Mail, Globe, Shield } from "lucide-react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
@@ -10,7 +10,7 @@ import { toast } from "sonner";
 type TabId = 'listings' | 'orders' | 'saved';
 
 export default function Profile() {
-    const { user, signOut } = useAuth();
+    const { user, isAdmin, signOut } = useAuth();
     const navigate = useNavigate();
 
     const [profile, setProfile] = useState<any>(null);
@@ -275,6 +275,14 @@ export default function Profile() {
 
                         {/* Actions */}
                         <div className="flex gap-2 flex-shrink-0">
+                            {isAdmin && (
+                                <button
+                                    onClick={() => navigate("/admin")}
+                                    className="px-3 py-1.5 rounded-md text-xs font-bold transition-colors bg-brand/10 text-brand border border-brand/20 hover:bg-brand/20 hidden sm:flex items-center gap-1"
+                                >
+                                    <Shield className="w-3.5 h-3.5" /> Portal
+                                </button>
+                            )}
                             <button
                                 onClick={() => { if (isEditing) handleSaveProfile(); else setIsEditing(true); }}
                                 disabled={loading}
@@ -519,15 +527,23 @@ export default function Profile() {
                                 </div>
 
                                 {/* Actions */}
-                                <div className="flex gap-2 mt-4">
-                                    <button onClick={() => { setShowProfileCard(false); setIsEditing(true); }}
-                                        className="flex-1 py-2.5 rounded-lg text-xs font-bold transition-colors flex items-center justify-center gap-1.5 bg-white text-slate-700 border border-slate-200 hover:bg-slate-50">
-                                        <Edit2 className="w-3.5 h-3.5" /> Edit Profile
-                                    </button>
-                                    <button onClick={() => navigate('/browse')}
-                                        className="flex-1 py-2.5 rounded-lg text-xs font-bold transition-colors flex items-center justify-center gap-1.5 bg-brand-50 text-brand border border-brand-muted hover:bg-brand-50">
-                                        <Globe className="w-3.5 h-3.5" /> Browse
-                                    </button>
+                                <div className="flex flex-col gap-2 mt-4">
+                                    <div className="flex gap-2">
+                                        <button onClick={() => { setShowProfileCard(false); setIsEditing(true); }}
+                                            className="flex-1 py-2.5 rounded-lg text-xs font-bold transition-colors flex items-center justify-center gap-1.5 bg-white text-slate-700 border border-slate-200 hover:bg-slate-50">
+                                            <Edit2 className="w-3.5 h-3.5" /> Edit Profile
+                                        </button>
+                                        <button onClick={() => { setShowProfileCard(false); navigate('/browse'); }}
+                                            className="flex-1 py-2.5 rounded-lg text-xs font-bold transition-colors flex items-center justify-center gap-1.5 bg-brand-50 text-brand border border-brand-muted hover:bg-brand-50">
+                                            <Globe className="w-3.5 h-3.5" /> Browse
+                                        </button>
+                                    </div>
+                                    {isAdmin && (
+                                        <button onClick={() => { setShowProfileCard(false); navigate('/admin'); }}
+                                            className="w-full py-2.5 rounded-lg text-xs font-bold transition-colors flex items-center justify-center gap-1.5 bg-slate-900 text-white shadow-lg shadow-brand/20 hover:bg-slate-800">
+                                            <Shield className="w-3.5 h-3.5 text-brand" /> Admin Portal
+                                        </button>
+                                    )}
                                 </div>
                             </div>
                         </div>

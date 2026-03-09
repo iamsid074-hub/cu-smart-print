@@ -44,7 +44,8 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
     const navigate = useNavigate();
     const location = useLocation();
     const { items: cartItems, totalItems: cartCount, totalPrice: cartTotal, removeItem, lastAction } = useCart();
-    const { user } = useAuth();
+    const { user, isAdmin } = useAuth();
+
 
 
     const getPageContext = () => {
@@ -140,6 +141,54 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
         const id = setInterval(tick, 1000);
         return () => clearInterval(id);
     }, []);
+
+    // >>> ADMIN: Global New Order Listener <<<
+    useEffect(() => {
+        if (!isAdmin) return;
+
+        const adminOrderChannel = supabase.channel("global_admin_orders")
+            .on("postgres_changes", { event: "INSERT", schema: "public", table: "orders" }, (payload) => {
+                const newOrder = payload.new as any;
+
+                // Play notification sound
+                try {
+                    const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+                    const oscillator = audioCtx.createOscillator();
+                    const gainNode = audioCtx.createGain();
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioCtx.destination);
+                    oscillator.frequency.setValueAtTime(880, audioCtx.currentTime); // A5 note
+                    oscillator.type = "sine";
+                    gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
+                    oscillator.start(audioCtx.currentTime);
+                    oscillator.stop(audioCtx.currentTime + 0.5);
+                } catch (e) { /* ignore */ }
+
+                // Determine if it's a food order based on location tags
+                const isFood = (newOrder.delivery_location?.includes('[Custom Food:') || newOrder.delivery_room?.includes('[CUSTOM FOOD ORDER]')) && !newOrder.product_id;
+
+                toast.success(
+                    <div className="flex flex-col gap-1">
+                        <span className="font-bold text-sm text-slate-900">
+                            🛒 New {isFood ? 'Food' : 'Item'} Order Received!
+                        </span>
+                        <span className="text-xs text-slate-500">
+                            ID: #{newOrder.id.slice(0, 8).toUpperCase()} • ₹{newOrder.total_price}
+                        </span>
+                    </div>,
+                    {
+                        duration: 8000,
+                        action: {
+                            label: 'View Order',
+                            onClick: () => navigate("/admin")
+                        }
+                    }
+                );
+            }).subscribe();
+
+        return () => { supabase.removeChannel(adminOrderChannel); };
+    }, [isAdmin, navigate]);
 
 
     const [notifications, setNotifications] = useState<IslandNotification[]>([]);
