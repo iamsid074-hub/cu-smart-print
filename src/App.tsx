@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import Index from "./pages/Index";
+import { Capacitor } from "@capacitor/core";
 import Home from "./pages/Home";
 
 import ListProduct from "./pages/ListProduct";
@@ -92,7 +93,7 @@ function AppLayout() {
         </>
       )}
       <Routes>
-        <Route path="/" element={user ? <Navigate to="/home" replace /> : <Login />} />
+        <Route path="/" element={user ? <Navigate to="/home" replace /> : (Capacitor.isNativePlatform() ? <Login /> : <Index />)} />
         {/* We wrap Home in ProtectedRoute so users are gated there too if they bypass somehow */}
         <Route path="/home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
         <Route path="/login" element={user ? <Navigate to="/home" replace /> : <Login />} />
