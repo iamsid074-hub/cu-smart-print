@@ -21,6 +21,7 @@ import HelpCenter from "./pages/HelpCenter";
 import ResetPassword from "./pages/ResetPassword";
 import Navbar from "./components/Navbar";
 import BottomNav from "./components/BottomNav";
+import AppUpdater from "./components/AppUpdater";
 import UsernameSetup from "./components/UsernameSetup";
 import { useSiteGate, ClosedScreen, MaintenanceScreen } from "./components/SiteGate";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
@@ -83,6 +84,7 @@ function AppLayout() {
 
   return (
     <>
+      <AppUpdater />
       {!isLanding && !isLogin && !isAdmin && (
         <>
           <Navbar />
