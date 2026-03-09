@@ -245,11 +245,7 @@ export default function Tracking() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1 flex-wrap">
-                    <p
-                      className="text-xs text-slate-500 font-mono font-medium cursor-default"
-                      onDoubleClick={handleHiddenCancel}
-                      title="Double click to cancel (hidden)"
-                    >
+                    <p className="text-xs text-slate-500 font-mono font-medium">
                       {type === "food" ? "FOOD" : "ORDER"} #{order.id.slice(0, 8).toUpperCase()}
                     </p>
                     <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${type === "food"
@@ -370,6 +366,19 @@ export default function Tracking() {
                 </div>
               </div>
             </motion.div>
+
+            {/* ── Cancel Order Action ────────────────────────────────────────── */}
+            {order && !isCompleted && !isRejected && order.status === "pending" && (
+              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
+                className="mt-6 flex justify-center">
+                <button
+                  onClick={handleHiddenCancel}
+                  className="px-6 py-3 rounded-xl bg-red-50 text-red-600 font-bold text-sm border border-red-100 hover:bg-red-500 hover:text-white hover:border-red-500 transition-colors shadow-sm flex items-center gap-2"
+                >
+                  <AlertCircle className="w-4 h-4" /> Cancel Order
+                </button>
+              </motion.div>
+            )}
 
             {/* ── Thank You Overlay Panel ──────────────────────────────── */}
             <AnimatePresence>
