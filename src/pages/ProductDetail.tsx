@@ -149,7 +149,8 @@ export default function ProductDetail() {
                 return;
             }
 
-            await finalizeOrder("cod", null);
+            // Fallback (should be unreachable now, strictly enforcing online)
+            await finalizeOrder("online", null);
         } catch (err: any) {
             toast({ title: "Order failed", description: err.message || "Please try again.", variant: "destructive" });
             setIsSubmitting(false);

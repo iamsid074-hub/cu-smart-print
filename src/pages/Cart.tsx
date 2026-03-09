@@ -126,8 +126,9 @@ export default function Cart() {
                 setSubmitting(false);
                 return;
             } else {
+                // Fallback (should be unreachable now, strictly enforcing online)
                 await createOrder();
-                toast({ title: "Order placed", description: `${totalItems} items ordered. Pay ₹${orderTotal} on delivery.` });
+                toast({ title: "Order placed", description: `${totalItems} items ordered via Secure Checkout.` });
                 clearCart();
                 setShowCheckout(false);
                 navigate("/tracking");
