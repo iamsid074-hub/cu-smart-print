@@ -8,6 +8,7 @@ import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
 import { toast } from "sonner";
+import { Capacitor } from "@capacitor/core";
 import { campusEssentials, ADMIN_SELLER_ID, type CampusEssentialItem } from "@/config/campusEssentials";
 import type { Database } from "@/types/supabase";
 
@@ -314,6 +315,7 @@ export default function Home() {
   const { user } = useAuth();
   const { addItem } = useCart();
   const navigate = useNavigate();
+  const isNativeApp = Capacitor.isNativePlatform();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [timeLeft, setTimeLeft] = useState({ days: "00", hours: "00", minutes: "00", seconds: "00" });
@@ -401,13 +403,20 @@ export default function Home() {
               <span className="text-emerald-300">Marketplace</span>
             </h1>
 
-            <a
-              href="/cubazzar.apk"
-              download="CUBazzar-v1.0.apk"
-              className="inline-flex items-center gap-2 bg-[#4DB8AC] text-white hover:bg-[#3CA397] transition-all duration-300 px-7 py-3.5 rounded-full font-bold shadow-[0_4px_20px_rgba(77,184,172,0.4)] hover:shadow-[0_8px_25px_rgba(77,184,172,0.5)] hover:-translate-y-1"
-            >
-              <Download className="w-5 h-5" /> Download Android App
-            </a>
+            {/* Only show the App Download button on the Web, not inside the Native App */}
+            {!isNativeApp && (
+              <a
+                href="/cubazzar.apk"
+                download="CUBazzar-v1.0.apk"
+                className="relative overflow-hidden inline-flex items-center gap-3 bg-gradient-to-br from-[#4DB8AC] to-[#369B90] text-white transition-all duration-200 px-6 py-3 sm:px-8 sm:py-4 rounded-full font-bold text-base sm:text-lg shadow-[0_6px_25px_rgba(77,184,172,0.4)] hover:shadow-[0_12px_40px_rgba(77,184,172,0.5)] active:shadow-[0_2px_10px_rgba(77,184,172,0.4)] hover:-translate-y-1 active:translate-y-1 active:scale-[0.97] group border border-white/20"
+              >
+                <div className="absolute inset-x-0 top-0 h-1/2 bg-white/20 blur-xl rounded-t-full opacity-50 pointer-events-none" />
+                <div className="bg-white/20 p-1.5 rounded-full relative z-10 shadow-[inset_0_1px_3px_rgba(255,255,255,0.3)] backdrop-blur-sm">
+                  <img src="/logo.png" alt="CU Bazzar Logo" className="w-5 h-5 sm:w-6 sm:h-6 object-contain group-hover:-translate-y-0.5 transition-transform duration-300 drop-shadow-md" />
+                </div>
+                <span className="relative z-10 tracking-wide text-[1rem] sm:text-[1.05rem] drop-shadow-sm">Download Android App</span>
+              </a>
+            )}
           </motion.div>
 
           {/* Hero Image Carousel */}
