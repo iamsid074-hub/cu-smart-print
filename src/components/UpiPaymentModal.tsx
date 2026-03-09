@@ -100,7 +100,7 @@ export default function UpiPaymentModal({
                                     </p>
 
                                     <div className="bg-white p-3 rounded-2xl border-2 border-slate-100 shadow-sm mb-6 w-full max-w-[220px] mx-auto overflow-hidden">
-                                        <img src="/payment-qr.png" alt="Payment QR Code" className="w-full h-auto rounded-xl block" style={{ mixBlendMode: 'multiply' }} />
+                                        <img src="/payment-qr.jpg" alt="Payment QR Code" className="w-full h-auto rounded-xl block" style={{ mixBlendMode: 'multiply' }} />
                                     </div>
 
                                     <button
