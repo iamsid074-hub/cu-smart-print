@@ -402,7 +402,7 @@ export default function Home() {
               <span className="text-emerald-300">Marketplace</span>
             </h1>
 
-            {/* Only show the App Download button on the Web, not inside the Native App */}
+            {/* Only show the App Download button on the Web, not inside the Native App 
             {!isNativeApp && (
               <a
                 href="/cubazzar.apk"
@@ -416,6 +416,7 @@ export default function Home() {
                 <span className="relative z-10 tracking-wide text-[1rem] sm:text-[1.05rem] drop-shadow-sm">Download Android App</span>
               </a>
             )}
+            */}
           </motion.div>
 
           {/* Hero Image Carousel */}
@@ -624,7 +625,7 @@ export default function Home() {
             </div>
 
             <p className="text-[10px] sm:text-xs text-slate-400 mt-2 flex items-center gap-1">
-              <Package className="w-3 h-3" /> Delivered by Campus Store · ₹10 delivery fee at checkout
+              <Package className="w-3 h-3" /> Delivered by Campus Store
             </p>
           </motion.section>
 
