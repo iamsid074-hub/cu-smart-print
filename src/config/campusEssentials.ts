@@ -11,81 +11,118 @@ export interface CampusEssentialItem {
     title: string;
     price: number;
     image: string;
-    category: "practical" | "notebook" | "stationery";
+    category: string;
     badge?: string;
 }
 
 export const campusEssentials: CampusEssentialItem[] = [
-    // ─── Practical Items ───
+    // ─── Oral Care ───
     {
-        id: "ce-practical-file",
-        title: "Practical File (100 pages)",
-        price: 50,
-        // CU practical notebook (user-provided image)
-        image: "/practical-file.jpg",
-        category: "practical",
-        badge: "Popular",
+        id: "ce-toothbrush-electric",
+        title: "Oral-B Electric Toothbrush",
+        price: 899,
+        image: "https://images.unsplash.com/photo-1590150995963-dd821cb8cd83?q=80&w=400&auto=format&fit=crop",
+        category: "oral care",
+        badge: "Bestseller",
+    },
+    {
+        id: "ce-toothpaste",
+        title: "Colgate Total Toothpaste (150g)",
+        price: 95,
+        image: "https://images.unsplash.com/photo-1559132278-caee042b322e?q=80&w=400&auto=format&fit=crop",
+        category: "oral care",
+    },
+    {
+        id: "ce-mouthwash",
+        title: "Listerine Mouthwash (250ml)",
+        price: 150,
+        image: "https://images.unsplash.com/photo-1457131760772-7017c6180f05?q=80&w=400&auto=format&fit=crop",
+        category: "oral care",
     },
 
-    // ─── Notebooks ───
+    // ─── Bath & Skin Care ───
     {
-        id: "ce-notebook-50",
-        title: "Notebook (Register)",
-        price: 50,
-        // open notebook on desk
-        image: "https://images.unsplash.com/photo-1531346878377-a5be20888e57?q=80&w=400&auto=format&fit=crop",
-        category: "notebook",
-    },
-    {
-        id: "ce-notebook-70",
-        title: "Notebook (Long)",
-        price: 70,
-        // classmate notebook (user-provided image)
-        image: "/notebook-70.png",
-        category: "notebook",
-    },
-    {
-        id: "ce-notebook-100",
-        title: "Ruled Notebook A4",
-        price: 100,
-        // classmate flamingo notebook (user-provided image)
-        image: "/notebook-100.png",
-        category: "notebook",
-    },
-    {
-        id: "ce-spiral-120",
-        title: "Spiral Notebook A4",
-        price: 120,
-        // unigo spiral notebook (user-provided image)
-        image: "/spiral-notebook.png",
-        category: "notebook",
-        badge: "Best Seller",
-    },
-
-    // ─── Stationery ───
-    {
-        id: "ce-pen-10",
-        title: "Ball Pen (Blue)",
-        price: 10,
-        // ballpoint pens close-up
-        image: "https://images.unsplash.com/photo-1585336261022-680e295ce3fe?q=80&w=400&auto=format&fit=crop",
-        category: "stationery",
-    },
-    {
-        id: "ce-pen-20",
-        title: "Gel Pen (Black)",
-        price: 20,
-        // hauser XO gel pen (user-provided image)
-        image: "/gel-pen-black.png",
-        category: "stationery",
-    },
-    {
-        id: "ce-calculator",
-        title: "Scientific Calculator",
-        price: 350,
-        // scientific calculator (user-provided image)
-        image: "/calculator.png",
-        category: "stationery",
+        id: "ce-bodywash",
+        title: "Dove Deep Moisture Body Wash",
+        price: 299,
+        image: "https://images.unsplash.com/photo-1629198688000-71f23e745b6e?q=80&w=400&auto=format&fit=crop",
+        category: "bath & body",
         badge: "Essential",
     },
+    {
+        id: "ce-loofah",
+        title: "Exfoliating Bath Loofah",
+        price: 65,
+        image: "https://images.unsplash.com/photo-1588667794344-96fe7d42cfb2?q=80&w=400&auto=format&fit=crop",
+        category: "bath & body",
+    },
+    {
+        id: "ce-facewash",
+        title: "Himalaya Neem Face Wash",
+        price: 140,
+        image: "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?q=80&w=400&auto=format&fit=crop",
+        category: "skin care",
+    },
+    {
+        id: "ce-sunscreen",
+        title: "Minimalist SPF 50 Sunscreen",
+        price: 395,
+        image: "https://images.unsplash.com/photo-1556228578-8c89e6adf883?q=80&w=400&auto=format&fit=crop",
+        category: "skin care",
+    },
+
+    // ─── Hair Care & Grooming ───
+    {
+        id: "ce-shampoo",
+        title: "Head & Shoulders Shampoo (340ml)",
+        price: 245,
+        image: "https://images.unsplash.com/photo-1625772299848-391b6a87d7b3?q=80&w=400&auto=format&fit=crop",
+        category: "hair care",
+    },
+    {
+        id: "ce-razor",
+        title: "Gillette Mach3 Razor",
+        price: 299,
+        image: "https://images.unsplash.com/photo-1589363460779-e59fbba1dc92?q=80&w=400&auto=format&fit=crop",
+        category: "grooming",
+    },
+    {
+        id: "ce-trimmer",
+        title: "Philips Grooming Trimmer",
+        price: 1199,
+        image: "https://images.unsplash.com/photo-1583095066606-258055628ed4?q=80&w=400&auto=format&fit=crop",
+        category: "grooming",
+        badge: "Premium",
+    },
+
+    // ─── Hygiene & Freshness ───
+    {
+        id: "ce-deodorant",
+        title: "Nivea Fresh Active Deodorant",
+        price: 199,
+        image: "https://images.unsplash.com/photo-1599305090598-fe179d501227?q=80&w=400&auto=format&fit=crop",
+        category: "freshness",
+        badge: "Popular",
+    },
+    {
+        id: "ce-sanitizer",
+        title: "Dettol Hand Sanitizer (200ml)",
+        price: 99,
+        image: "https://images.unsplash.com/photo-1584467735815-f778f274e296?q=80&w=400&auto=format&fit=crop",
+        category: "hygiene",
+    },
+    {
+        id: "ce-wipes",
+        title: "Wet Wipes (Pack of 80)",
+        price: 120,
+        image: "https://images.unsplash.com/photo-1616422285623-1d4ac7d0d0ff?q=80&w=400&auto=format&fit=crop",
+        category: "hygiene",
+    },
+    {
+        id: "ce-detergent",
+        title: "Surf Excel Liquid Detergent (1L)",
+        price: 210,
+        image: "https://images.unsplash.com/photo-1610557889373-c8270c1dd3bd?q=80&w=400&auto=format&fit=crop",
+        category: "clothing care",
+    }
 ];

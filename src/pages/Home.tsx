@@ -578,15 +578,15 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="flex gap-3 sm:gap-4 overflow-x-auto scrollbar-hide pb-4 -mx-1 px-1">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 pb-4">
               {campusEssentials.map((item) => (
                 <motion.div
                   key={item.id}
                   whileHover={{ y: -4 }}
-                  className="flex-shrink-0 w-[150px] sm:w-[170px] rounded-2xl overflow-hidden bg-white shadow-sm border border-slate-100 transition-shadow hover:shadow-md flex flex-col"
+                  className="rounded-2xl overflow-hidden bg-white shadow-sm border border-slate-100 transition-shadow hover:shadow-md flex flex-col"
                 >
                   {/* Image */}
-                  <div className="relative h-28 sm:h-32 bg-slate-50 overflow-hidden">
+                  <div className="relative h-32 sm:h-40 bg-slate-50 overflow-hidden">
                     <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
                     {item.badge && (
                       <span className="absolute top-2 left-2 text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500 text-white shadow-sm">
@@ -596,10 +596,10 @@ export default function Home() {
                   </div>
 
                   {/* Info */}
-                  <div className="p-3 flex flex-col flex-1">
+                  <div className="p-3 sm:p-4 flex flex-col flex-1">
                     <p className="text-xs sm:text-sm font-semibold text-slate-800 leading-tight mb-1 line-clamp-2">{item.title}</p>
-                    <p className="text-xs text-slate-400 capitalize mb-2">{item.category}</p>
-                    <div className="mt-auto flex items-center justify-between">
+                    <p className="text-[10px] sm:text-xs text-slate-400 capitalize mb-3 border border-slate-100 bg-slate-50 w-fit px-1.5 py-0.5 rounded-md">{item.category}</p>
+                    <div className="mt-auto flex items-center justify-between pt-1">
                       <span className="text-sm sm:text-base font-bold text-[#231942]">₹{item.price}</span>
                       <button
                         onClick={() => {
@@ -613,9 +613,9 @@ export default function Home() {
                           });
                           toast.success(`${item.title} added to cart`);
                         }}
-                        className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#231942] text-white flex items-center justify-center hover:bg-[#231942]/90 transition-colors shadow-sm"
+                        className="w-8 h-8 rounded-full bg-[#231942] text-white flex items-center justify-center hover:bg-[#231942]/90 transition-all shadow-sm active:scale-95"
                       >
-                        <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                        <Plus className="w-4 h-4" />
                       </button>
                     </div>
                   </div>
