@@ -318,6 +318,8 @@ export default function Home() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [timeLeft, setTimeLeft] = useState({ days: "00", hours: "00", minutes: "00", seconds: "00" });
+  const [showAllItems, setShowAllItems] = useState(false);
+  const [itemsSearchQuery, setItemsSearchQuery] = useState("");
   const [isReminded, setIsReminded] = useState(() => localStorage.getItem('cubazzar_sale_reminder') === '1');
 
   const handleRemindMe = () => {
@@ -579,52 +581,89 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 pb-4">
-              {campusEssentials.map((item) => (
+            {/* Expandable Items Section */}
+            <AnimatePresence>
+              {showAllItems && (
                 <motion.div
-                  key={item.id}
-                  whileHover={{ y: -4 }}
-                  className="rounded-2xl overflow-hidden bg-white shadow-sm border border-slate-100 transition-shadow hover:shadow-md flex flex-col"
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  className="mb-4 overflow-hidden"
                 >
-                  {/* Image */}
-                  <div className="relative h-32 sm:h-40 bg-slate-50 overflow-hidden">
-                    <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
-                    {item.badge && (
-                      <span className="absolute top-2 left-2 text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500 text-white shadow-sm">
-                        {item.badge}
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Info */}
-                  <div className="p-3 sm:p-4 flex flex-col flex-1">
-                    <p className="text-xs sm:text-sm font-semibold text-slate-800 leading-tight mb-1 line-clamp-2">{item.title}</p>
-                    <p className="text-[10px] sm:text-xs text-slate-400 capitalize mb-3 border border-slate-100 bg-slate-50 w-fit px-1.5 py-0.5 rounded-md">{item.category}</p>
-                    <div className="mt-auto flex items-center justify-between pt-1">
-                      <span className="text-sm sm:text-base font-bold text-[#231942]">₹{item.price}</span>
-                      <button
-                        onClick={() => {
-                          if (!user) { toast.error('Please login first'); navigate('/login'); return; }
-                          addItem({
-                            id: item.id,
-                            title: item.title,
-                            price: item.price,
-                            image: item.image,
-                            category: item.category,
-                          });
-                          toast.success(`${item.title} added to cart`);
-                        }}
-                        className="w-8 h-8 rounded-full bg-[#231942] text-white flex items-center justify-center hover:bg-[#231942]/90 transition-all shadow-sm active:scale-95"
-                      >
-                        <Plus className="w-4 h-4" />
-                      </button>
-                    </div>
+                  <div className="relative mb-4">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                    <input
+                      type="text"
+                      placeholder="Search items..."
+                      value={itemsSearchQuery}
+                      onChange={(e) => setItemsSearchQuery(e.target.value)}
+                      className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent text-sm bg-white"
+                    />
                   </div>
                 </motion.div>
-              ))}
+              )}
+            </AnimatePresence>
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 pb-4">
+              {campusEssentials
+                .filter(item => item.title.toLowerCase().includes(itemsSearchQuery.toLowerCase()) || item.category.toLowerCase().includes(itemsSearchQuery.toLowerCase()))
+                .slice(0, showAllItems ? campusEssentials.length : 4)
+                .map((item) => (
+                  <motion.div
+                    key={item.id}
+                    whileHover={{ y: -4 }}
+                    className="rounded-2xl overflow-hidden bg-white shadow-sm border border-slate-100 transition-shadow hover:shadow-md flex flex-col"
+                  >
+                    {/* Image */}
+                    <div className="relative h-32 sm:h-40 bg-slate-50 overflow-hidden">
+                      <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
+                      {item.badge && (
+                        <span className="absolute top-2 left-2 text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500 text-white shadow-sm">
+                          {item.badge}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Info */}
+                    <div className="p-3 sm:p-4 flex flex-col flex-1">
+                      <p className="text-xs sm:text-sm font-semibold text-slate-800 leading-tight mb-1 line-clamp-2">{item.title}</p>
+                      <p className="text-[10px] sm:text-xs text-slate-400 capitalize mb-3 border border-slate-100 bg-slate-50 w-fit px-1.5 py-0.5 rounded-md">{item.category}</p>
+                      <div className="mt-auto flex items-center justify-between pt-1">
+                        <span className="text-sm sm:text-base font-bold text-[#231942]">₹{item.price}</span>
+                        <button
+                          onClick={() => {
+                            if (!user) { toast.error('Please login first'); navigate('/login'); return; }
+                            addItem({
+                              id: item.id,
+                              title: item.title,
+                              price: item.price,
+                              image: item.image,
+                              category: item.category,
+                            });
+                            toast.success(`${item.title} added to cart`);
+                          }}
+                          className="w-8 h-8 rounded-full bg-[#231942] text-white flex items-center justify-center hover:bg-[#231942]/90 transition-all shadow-sm active:scale-95"
+                        >
+                          <Plus className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
             </div>
 
-            <p className="text-[10px] sm:text-xs text-slate-400 mt-2 flex items-center gap-1">
+            {!showAllItems && campusEssentials.length > 4 && (
+              <div className="mt-2 mb-4 flex justify-center">
+                <button
+                  onClick={() => setShowAllItems(true)}
+                  className="text-sm font-bold text-brand hover:text-brand-dark transition-colors flex items-center gap-1 bg-brand-50 hover:bg-brand-100 px-4 py-2 rounded-xl"
+                >
+                  See more items <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+            )}
+
+            <p className="text-[10px] sm:text-xs text-slate-400 mt-2 flex items-center justify-center sm:justify-start gap-1">
               <Package className="w-3 h-3" /> Delivered by Campus Store
             </p>
           </motion.section>
