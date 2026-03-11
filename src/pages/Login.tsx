@@ -92,10 +92,6 @@ export default function Login() {
     };
 
     const handleOAuthLogin = async (provider: 'google' | 'facebook') => {
-        if (!isLogin && !acceptedTerms) {
-            toast.error(`Please accept the Terms and Conditions to sign up with ${provider === 'google' ? 'Google' : 'Facebook'}.`);
-            return;
-        }
         try {
             const { error } = await supabase.auth.signInWithOAuth({
                 provider: provider,
