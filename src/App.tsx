@@ -93,7 +93,7 @@ function AppLayout() {
         </>
       )}
       <Routes>
-        <Route path="/" element={user ? <Navigate to="/home" replace /> : (Capacitor.isNativePlatform() ? <Login /> : <Index />)} />
+        <Route path="/" element={Capacitor.isNativePlatform() ? (user ? <Navigate to="/home" replace /> : <Login />) : <Index />} />
         {/* We wrap Home in ProtectedRoute so users are gated there too if they bypass somehow */}
         <Route path="/home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
         <Route path="/login" element={user ? <Navigate to="/home" replace /> : <Login />} />

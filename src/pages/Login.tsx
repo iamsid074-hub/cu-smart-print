@@ -8,8 +8,10 @@ import { toast } from "sonner";
 const fontH: React.CSSProperties = { fontFamily: "'Space Grotesk', sans-serif" };
 const fontB: React.CSSProperties = { fontFamily: "'Inter', sans-serif" };
 
+import { Capacitor } from "@capacitor/core";
+
 export default function Login() {
-    const [showIntro, setShowIntro] = useState(true);
+    const [showIntro, setShowIntro] = useState(Capacitor.isNativePlatform());
     const [introPhase, setIntroPhase] = useState(1);
     const [isLogin, setIsLogin] = useState(false);
     const [email, setEmail] = useState("");
