@@ -110,50 +110,29 @@ export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
       break;
 
     case "explore":
-      // Wider pill to fit label + sell button
-      width = "min(340px, calc(100vw - 32px))";
+      // The main pill only hosts the Sell button now.
+      width = 160;
       height = 44;
       content = (
-        <div className="flex items-center justify-between w-full px-1 gap-3">
-          {/* Left: status label */}
-          <div className="flex items-center gap-2 min-w-0">
-            <div
-              className="w-1.5 h-1.5 rounded-full flex-shrink-0"
-              style={{
-                background: "#30D158",
-                boxShadow: "0 0 6px #30D158",
-                animation: "islandPulse 2s ease-in-out infinite",
-              }}
-            />
-            <span className="text-sm font-semibold tracking-wide text-white/90 whitespace-nowrap">
-              Browsing Items
-            </span>
-          </div>
-
-          {/* Right: sell button */}
-          <motion.button
-            onClick={e => { e.stopPropagation(); onSell?.(); }}
-            whileHover={{ scale: 1.07 }}
-            whileTap={{ scale: 0.93 }}
-            className="flex items-center gap-1.5 flex-shrink-0"
-            style={{
-              background: "linear-gradient(135deg, #FF6B6B, #ff3366)",
-              border: "none",
-              borderRadius: 20,
-              padding: "5px 12px",
-              color: "#fff",
-              fontSize: 12,
-              fontWeight: 800,
-              cursor: "pointer",
-              boxShadow: "0 2px 10px rgba(255,107,107,0.45)",
-              letterSpacing: "0.01em",
-              whiteSpace: "nowrap",
-            }}
-          >
-            <Tag style={{ width: 11, height: 11 }} />
-            Sell / List Item
-          </motion.button>
-        </div>
+        <motion.button
+          onClick={e => { e.stopPropagation(); onSell?.(); }}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className="flex items-center justify-center gap-1.5 w-full h-full"
+          style={{
+            background: "transparent",
+            border: "none",
+            color: "#FF6B6B",
+            fontSize: 13,
+            fontWeight: 800,
+            cursor: "pointer",
+            letterSpacing: "0.01em",
+            whiteSpace: "nowrap",
+          }}
+        >
+          <Tag style={{ width: 12, height: 12 }} />
+          Sell / List Item
+        </motion.button>
       );
       break;
 
@@ -213,6 +192,7 @@ export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
           0%, 100% { opacity: 1; }
           50% { opacity: 0.5; }
         }
+
         @keyframes diGlow {
           0%, 100% { box-shadow: 0 8px 32px rgba(0,0,0,0.55), 0 0 0 0.5px rgba(255,255,255,0.07) inset; }
           50%       { box-shadow: 0 8px 40px rgba(0,0,0,0.6),  0 0 0 0.5px rgba(255,255,255,0.12) inset; }
@@ -228,84 +208,124 @@ export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
           transform: "translateX(-50%)",
           display: "flex",
           alignItems: "flex-start",
+          justifyContent: "center",
           paddingTop: 10,
+          gap: 8,
         }}
       >
-        {/* ── Pill ── */}
-        <motion.div
-          layout
-          initial={false}
-          animate={{ width, height }}
-          transition={springTransition}
-          onClick={handleIslandClick}
-          className={`pointer-events-auto overflow-hidden flex-shrink-0 ${(islandState === "added" || islandState === "updated" || islandState === "cart") ? "cursor-pointer" : ""}`}
-          style={{
-            background: "#000",
-            borderRadius: 50,
-            animation: "diGlow 4s ease-in-out infinite",
-            position: "relative",
-          }}
-        >
-          {/* Green camera activity dot — shown when NOT in explore (explore has its own) */}
-          {islandState !== "explore" && (
+        <AnimatePresence mode="popLayout">
+          {/* Secondary Left Pill (Browsing Items) - slides out when entering Explore */}
+          {islandState === "explore" && (
             <motion.div
-              animate={{ opacity: [0.55, 1, 0.55] }}
-              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+              layout
+              initial={{ opacity: 0, x: 50, scale: 0.8 }}
+              animate={{ opacity: 1, x: 0, scale: 1 }}
+              exit={{ opacity: 0, x: 50, scale: 0.8 }}
+              transition={springTransition}
+              className="flex items-center gap-2 px-4 shadow-lg pointer-events-auto"
               style={{
-                position: "absolute", right: 12, top: "50%",
-                transform: "translateY(-50%)",
-                width: 7, height: 7, borderRadius: "50%",
-                background: "#30D158",
-                boxShadow: "0 0 8px rgba(48,209,88,0.9)",
-                zIndex: 10,
-              }}
-            />
-          )}
-
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={islandState}
-              initial={{ opacity: 0, y: 4, scale: 0.93 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -4, scale: 0.93 }}
-              transition={{ duration: 0.16, ease: "easeInOut" }}
-              style={{
-                display: "flex", alignItems: "center", justifyContent: "center",
-                width: "100%", height: "100%",
-                paddingLeft: 16,
-                paddingRight: islandState !== "explore" ? 28 : 10,
+                height: 44,
+                background: "#000",
+                borderRadius: 50,
+                boxShadow: "0 8px 32px rgba(0,0,0,0.55), 0 0 0 0.5px rgba(255,255,255,0.07) inset",
                 color: "#fff",
+                position: "relative",
+                zIndex: 90, // below main island so it looks like it slides from behind
               }}
             >
-              {content}
+              <div
+                className="w-1.5 h-1.5 rounded-full flex-shrink-0"
+                style={{
+                  background: "#30D158",
+                  boxShadow: "0 0 6px #30D158",
+                  animation: "islandPulse 2s ease-in-out infinite",
+                }}
+              />
+              <span className="text-[13px] font-semibold tracking-wide text-white/90 whitespace-nowrap">
+                Browsing Items
+              </span>
             </motion.div>
-          </AnimatePresence>
-        </motion.div>
+          )}
 
-        {/* ── Camera dot (separate circle, merges visually with pill) ── */}
-        <div
-          className="pointer-events-none flex-shrink-0"
-          style={{
-            width: DOT_SIZE,
-            height: DOT_SIZE,
-            borderRadius: "50%",
-            background: "#000",
-            marginLeft: DOT_GAP,
-            marginTop: (height - DOT_SIZE) / 2,
-            boxShadow: "0 4px 16px rgba(0,0,0,0.5)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          {/* Simulated front camera lens ring */}
-          <div style={{
-            width: 10, height: 10, borderRadius: "50%",
-            background: "radial-gradient(circle at 35% 35%, #1a1a2e 0%, #000 100%)",
-            border: "1.5px solid rgba(255,255,255,0.07)",
-            boxShadow: "0 0 4px rgba(0,0,0,0.8) inset",
-          }} />
-        </div>
+          {/* ── Main Pill ── */}
+          <motion.div
+            layout
+            initial={false}
+            animate={{ width, height }}
+            transition={springTransition}
+            onClick={handleIslandClick}
+            className={`pointer-events-auto overflow-hidden flex-shrink-0 flex items-center ${(islandState === "added" || islandState === "updated" || islandState === "cart") ? "cursor-pointer" : ""}`}
+            style={{
+              background: "#000",
+              borderRadius: 50,
+              animation: "diGlow 4s ease-in-out infinite",
+              position: "relative",
+              zIndex: 100, // main island stays on top
+            }}
+          >
+            {/* Green camera activity dot — shown when NOT in explore (explore has its own) */}
+            {islandState !== "explore" && (
+              <motion.div
+                animate={{ opacity: [0.55, 1, 0.55] }}
+                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                style={{
+                  position: "absolute", right: 12, top: "50%",
+                  transform: "translateY(-50%)",
+                  width: 7, height: 7, borderRadius: "50%",
+                  background: "#30D158",
+                  boxShadow: "0 0 8px rgba(48,209,88,0.9)",
+                  zIndex: 10,
+                }}
+              />
+            )}
+
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={islandState}
+                initial={{ opacity: 0, y: 4, scale: 0.93 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -4, scale: 0.93 }}
+                transition={{ duration: 0.16, ease: "easeInOut" }}
+                style={{
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  width: "100%", height: "100%",
+                  paddingLeft: 16,
+                  paddingRight: islandState !== "explore" ? 28 : 10,
+                  color: "#fff",
+                }}
+              >
+                {content}
+              </motion.div>
+            </AnimatePresence>
+          </motion.div>
+
+          {/* ── Camera dot (separate circle, merges visually with pill) ── */}
+          <motion.div
+            layout
+            className="pointer-events-none flex-shrink-0"
+            style={{
+              width: DOT_SIZE,
+              height: DOT_SIZE,
+              borderRadius: "50%",
+              background: "#000",
+              marginLeft: DOT_GAP - 8, // adjust gap due to flex parent gap: 8
+              marginTop: (height - DOT_SIZE) / 2,
+              boxShadow: "0 4px 16px rgba(0,0,0,0.5)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              zIndex: 100,
+            }}
+          >
+            {/* Simulated front camera lens ring */}
+            <div style={{
+              width: 10, height: 10, borderRadius: "50%",
+              background: "radial-gradient(circle at 35% 35%, #1a1a2e 0%, #000 100%)",
+              border: "1.5px solid rgba(255,255,255,0.07)",
+              boxShadow: "0 0 4px rgba(0,0,0,0.8) inset",
+            }} />
+          </motion.div>
+        </AnimatePresence>
       </div>
     </>
   );
