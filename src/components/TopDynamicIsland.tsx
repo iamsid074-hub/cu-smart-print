@@ -101,7 +101,7 @@ export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
       break;
 
     case "explore":
-      width = 60;
+      width = 40;
       content = null;
       break;
 

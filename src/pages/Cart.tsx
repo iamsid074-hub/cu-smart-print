@@ -77,7 +77,7 @@ export default function Cart() {
     const campusShopsItems = items.filter(item => item.category === "Campus Shops");
     const otherItems = items.filter(item => item.category !== "Campus Shops");
 
-    const originalDeliveryFee = 20;
+    const originalDeliveryFee = 16;
 
     // Apply promo code logic — ₹12 only with valid INDWIN12 during offer
     const deliveryFee = getDeliveryFee(promoApplied);

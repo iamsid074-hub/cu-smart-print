@@ -13,7 +13,7 @@ export function validatePromo(code: string): boolean {
     return code.trim().toUpperCase() === PROMO_CODE && isOfferActive();
 }
 
-/** Returns 12 if promo is applied, otherwise 20 */
+/** Returns 12 if promo is applied, otherwise 16 */
 export function getDeliveryFee(promoApplied: boolean): number {
-    return promoApplied ? 12 : 20;
+    return promoApplied ? 12 : 16;
 }
