@@ -176,7 +176,7 @@ export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
               animate={{ opacity: 1, x: 0, scale: 1 }}
               exit={{ opacity: 0, x: 50, scale: 0.8 }}
               transition={springTransition}
-              className="flex items-center gap-2 px-4 shadow-lg pointer-events-none flex-shrink-0"
+              className="flex items-center gap-2 px-4 shadow-lg pointer-events-auto flex-shrink-0"
               style={{
                 height: 40,
                 background: "#000",
@@ -202,23 +202,20 @@ export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
                 onClick={(e) => { e.stopPropagation(); onSell?.(); }}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="ml-1 flex items-center gap-1.5 flex-shrink-0"
+                className="ml-2 flex items-center gap-1 flex-shrink-0"
                 style={{
-                  background: "linear-gradient(135deg, #FF6B6B, #ff3366)",
+                  background: "transparent",
                   border: "none",
-                  borderRadius: 20,
-                  padding: "4px 10px",
-                  color: "#fff",
-                  fontSize: 11,
+                  padding: 0,
+                  color: "#FF6B6B",
+                  fontSize: 13,
                   fontWeight: 800,
                   cursor: "pointer",
-                  boxShadow: "0 2px 10px rgba(255,107,107,0.45)",
                   letterSpacing: "0.01em",
                   whiteSpace: "nowrap",
                 }}
               >
-                <Tag style={{ width: 10, height: 10 }} />
-                Sell
+                Sell <Tag style={{ width: 12, height: 12 }} />
               </motion.button>
             </motion.div>
           )}
