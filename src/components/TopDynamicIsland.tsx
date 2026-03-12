@@ -198,25 +198,6 @@ export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
               <span className="text-sm font-semibold tracking-wide text-white/90 whitespace-nowrap">
                 Browsing Items
               </span>
-              <motion.button
-                onClick={(e) => { e.stopPropagation(); onSell?.(); }}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="ml-2 flex items-center gap-1 flex-shrink-0"
-                style={{
-                  background: "transparent",
-                  border: "none",
-                  padding: 0,
-                  color: "#FF6B6B",
-                  fontSize: 13,
-                  fontWeight: 800,
-                  cursor: "pointer",
-                  letterSpacing: "0.01em",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                Sell <Tag style={{ width: 12, height: 12 }} />
-              </motion.button>
             </motion.div>
           )}
 
