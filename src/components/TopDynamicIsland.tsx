@@ -97,22 +97,8 @@ export default function TopDynamicIsland() {
       break;
 
     case "explore":
-      width = 170;
-      content = (
-        <div className="flex items-center gap-2">
-          <div
-            className="w-1.5 h-1.5 rounded-full flex-shrink-0"
-            style={{
-              background: "#30D158",
-              boxShadow: "0 0 6px #30D158",
-              animation: "islandPulse 2s ease-in-out infinite",
-            }}
-          />
-          <span className="text-sm font-semibold tracking-wide text-white/90 whitespace-nowrap">
-            Browsing Items
-          </span>
-        </div>
-      );
+      width = 60;
+      content = null;
       break;
 
     case "cart":
@@ -173,56 +159,96 @@ export default function TopDynamicIsland() {
         }
       `}</style>
 
-      <div className="w-full flex justify-center fixed top-4 sm:top-6 z-[100] pointer-events-none">
-        <motion.div
-          layout
-          initial={false}
-          animate={{ width, height }}
-          transition={springTransition}
-          onClick={handleIslandClick}
-          className={`pointer-events-auto flex items-center justify-center overflow-hidden flex-shrink-0 ${(islandState === "added" || islandState === "updated" || islandState === "cart") ? "cursor-pointer hover:bg-zinc-900 transition-colors" : ""}`}
-          style={{
-            background: "#000",
-            borderRadius: 50,
-            animation: "diGlow 4s ease-in-out infinite",
-            position: "relative",
-          }}
-        >
-          {/* Green camera indicator dot — shown when not exploring */}
-          {islandState !== "explore" && (
+      <div
+        className="w-full flex justify-center fixed top-4 sm:top-6 z-[100] pointer-events-none"
+        style={{ gap: 8 }}
+      >
+        <AnimatePresence mode="popLayout">
+          {/* Secondary Left Pill (Browsing Items) - slides out when entering Explore */}
+          {islandState === "explore" && (
             <motion.div
-              animate={{ opacity: [0.55, 1, 0.55] }}
-              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+              layout
+              initial={{ opacity: 0, x: 50, scale: 0.8 }}
+              animate={{ opacity: 1, x: 0, scale: 1 }}
+              exit={{ opacity: 0, x: 50, scale: 0.8 }}
+              transition={springTransition}
+              className="flex items-center gap-2 px-4 shadow-lg pointer-events-none flex-shrink-0"
               style={{
-                position: "absolute", right: 12, top: "50%",
-                transform: "translateY(-50%)",
-                width: 6, height: 6, borderRadius: "50%",
-                background: "#30D158",
-                boxShadow: "0 0 8px rgba(48,209,88,0.9)",
-                zIndex: 10,
-              }}
-            />
-          )}
-
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={islandState}
-              initial={{ opacity: 0, y: 4, scale: 0.93 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -4, scale: 0.93 }}
-              transition={{ duration: 0.16, ease: "easeInOut" }}
-              style={{
-                display: "flex", alignItems: "center", justifyContent: "center",
-                width: "100%", height: "100%",
-                paddingLeft: 16,
-                paddingRight: islandState !== "explore" ? 28 : 16,
+                height: 40,
+                background: "#000",
+                borderRadius: 50,
+                boxShadow: "0 4px 20px rgba(0,0,0,0.55), 0 0 0 0.5px rgba(255,255,255,0.07) inset",
                 color: "#fff",
+                position: "relative",
+                zIndex: 90, // below main island so it looks like it slides from behind
               }}
             >
-              {content}
+              <div
+                className="w-1.5 h-1.5 rounded-full flex-shrink-0"
+                style={{
+                  background: "#30D158",
+                  boxShadow: "0 0 6px #30D158",
+                  animation: "islandPulse 2s ease-in-out infinite",
+                }}
+              />
+              <span className="text-sm font-semibold tracking-wide text-white/90 whitespace-nowrap">
+                Browsing Items
+              </span>
             </motion.div>
-          </AnimatePresence>
-        </motion.div>
+          )}
+
+          {/* ── Main Pill ── */}
+          <motion.div
+            layout
+            initial={false}
+            animate={{ width, height }}
+            transition={springTransition}
+            onClick={handleIslandClick}
+            className={`pointer-events-auto flex items-center justify-center overflow-hidden flex-shrink-0 ${(islandState === "added" || islandState === "updated" || islandState === "cart") ? "cursor-pointer hover:bg-zinc-900 transition-colors" : ""}`}
+            style={{
+              background: "#000",
+              borderRadius: 50,
+              animation: "diGlow 4s ease-in-out infinite",
+              position: "relative",
+              zIndex: 100, // main island stays on top
+            }}
+          >
+            {/* Green camera indicator dot — shown when not exploring */}
+            {islandState !== "explore" && (
+              <motion.div
+                animate={{ opacity: [0.55, 1, 0.55] }}
+                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                style={{
+                  position: "absolute", right: 12, top: "50%",
+                  transform: "translateY(-50%)",
+                  width: 6, height: 6, borderRadius: "50%",
+                  background: "#30D158",
+                  boxShadow: "0 0 8px rgba(48,209,88,0.9)",
+                  zIndex: 10,
+                }}
+              />
+            )}
+
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={islandState}
+                initial={{ opacity: 0, y: 4, scale: 0.93 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -4, scale: 0.93 }}
+                transition={{ duration: 0.16, ease: "easeInOut" }}
+                style={{
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  width: "100%", height: "100%",
+                  paddingLeft: 16,
+                  paddingRight: islandState !== "explore" ? 28 : 16,
+                  color: "#fff",
+                }}
+              >
+                {content}
+              </motion.div>
+            </AnimatePresence>
+          </motion.div>
+        </AnimatePresence>
       </div>
     </>
   );
