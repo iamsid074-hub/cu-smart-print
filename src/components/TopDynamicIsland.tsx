@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
-import { CheckCircle2, ShoppingBag } from "lucide-react";
+import { CheckCircle2, ShoppingBag, Tag } from "lucide-react";
 
 // Fluid, bouncy spring animation mimicking Apple's Dynamic Island
 const springTransition = {
@@ -14,7 +14,11 @@ const springTransition = {
 
 type IslandState = "default" | "browsing" | "explore" | "cart" | "profile" | "added" | "updated";
 
-export default function TopDynamicIsland() {
+interface TopDynamicIslandProps {
+  onSell?: () => void;
+}
+
+export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
   const navigate = useNavigate();
   const location = useLocation();
   const { items } = useCart();
@@ -194,6 +198,28 @@ export default function TopDynamicIsland() {
               <span className="text-sm font-semibold tracking-wide text-white/90 whitespace-nowrap">
                 Browsing Items
               </span>
+              <motion.button
+                onClick={(e) => { e.stopPropagation(); onSell?.(); }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="ml-1 flex items-center gap-1.5 flex-shrink-0"
+                style={{
+                  background: "linear-gradient(135deg, #FF6B6B, #ff3366)",
+                  border: "none",
+                  borderRadius: 20,
+                  padding: "4px 10px",
+                  color: "#fff",
+                  fontSize: 11,
+                  fontWeight: 800,
+                  cursor: "pointer",
+                  boxShadow: "0 2px 10px rgba(255,107,107,0.45)",
+                  letterSpacing: "0.01em",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                <Tag style={{ width: 10, height: 10 }} />
+                Sell
+              </motion.button>
             </motion.div>
           )}
 
