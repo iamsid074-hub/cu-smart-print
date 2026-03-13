@@ -223,7 +223,7 @@ export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
                 animate={{ opacity: [0.55, 1, 0.55] }}
                 transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
                 style={{
-                  position: "absolute", right: 12, top: "50%",
+                  position: "absolute", left: 12, top: "50%",
                   transform: "translateY(-50%)",
                   width: 6, height: 6, borderRadius: "50%",
                   background: "#30D158",
@@ -243,8 +243,8 @@ export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
                 style={{
                   display: "flex", alignItems: "center", justifyContent: "center",
                   width: "100%", height: "100%",
-                  paddingLeft: 16,
-                  paddingRight: islandState !== "explore" ? 28 : 16,
+                  paddingLeft: islandState !== "explore" ? 28 : 16,
+                  paddingRight: 16,
                   color: "#fff",
                 }}
               >
