@@ -7,6 +7,8 @@ export interface CartItem {
     image: string;
     quantity: number;
     category?: string;
+    notes?: string;
+    isCustom?: boolean;
 }
 
 export interface CartAction {
@@ -18,7 +20,7 @@ export interface CartAction {
 
 interface CartContextType {
     items: CartItem[];
-    addItem: (item: Omit<CartItem, "quantity">) => void;
+    addItem: (item: Omit<CartItem, "quantity"> & { quantity?: number }) => void;
     removeItem: (id: string) => void;
     updateQuantity: (id: string, qty: number) => void;
     clearCart: () => void;
@@ -42,13 +44,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
         localStorage.setItem("food_cart", JSON.stringify(items));
     }, [items]);
 
-    const addItem = (item: Omit<CartItem, "quantity">) => {
+    const addItem = (item: Omit<CartItem, "quantity"> & { quantity?: number }) => {
         setItems(prev => {
             const existing = prev.find(i => i.id === item.id);
+            const qtyToAdd = item.quantity || 1;
             if (existing) {
-                return prev.map(i => i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i);
+                return prev.map(i => i.id === item.id ? { ...i, quantity: i.quantity + qtyToAdd } : i);
             }
-            return [...prev, { ...item, quantity: 1 }];
+            return [...prev, { ...item, quantity: qtyToAdd }];
         });
         setLastAction({ type: "add", itemTitle: item.title, itemPrice: item.price, timestamp: Date.now() });
     };

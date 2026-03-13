@@ -5,7 +5,7 @@ import { ArrowRight, ShieldCheck, Heart, MessageCircle, Star, Zap, Package } fro
 
 // ─── 3D / Gamified Palette ────────────────────────────────────────────────────
 const C = {
-  bg: "#F4F0F9", // Soft purple-tinted off-white to make colors pop
+  bg: "#F8FAFC", // Match Slate-50 used in main UI
   surface: "#FFFFFF",
   accent: "#FF4D4D", // Vibrant Red/Orange
   accentGlow: "rgba(255,77,77,0.4)",
@@ -99,8 +99,6 @@ export default function Index() {
 
       {/* ─── Abstract Background Shapes ─── */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-         {/* Checkerboard Pattern */}
-         <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'linear-gradient(45deg, #000 25%, transparent 25%, transparent 75%, #000 75%, #000), linear-gradient(45deg, #000 25%, transparent 25%, transparent 75%, #000 75%, #000)', backgroundSize: '60px 60px', backgroundPosition: '0 0, 30px 30px' }} />
          {/* Massive gradient blobs */}
          <div className="absolute top-[-10%] right-[-10%] w-[600px] h-[600px] rounded-full bg-gradient-to-br from-yellow-300 to-orange-400 opacity-20 blur-[100px]" />
          <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full bg-gradient-to-tr from-cyan-300 to-blue-400 opacity-20 blur-[100px]" />

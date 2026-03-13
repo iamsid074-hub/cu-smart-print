@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ShoppingCart, Minus, Plus, Trash2, ArrowLeft, Loader2, MapPin, Phone, Clock, ShoppingBag, CheckCircle, Truck, Package, PackageCheck, Zap } from "lucide-react";
+import { ShoppingCart, Minus, Plus, Trash2, ArrowLeft, Loader2, MapPin, Phone, Clock, ShoppingBag, CheckCircle, Truck, Package, PackageCheck, Zap, MessageSquare } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
@@ -94,7 +94,7 @@ export default function Cart() {
     };
 
     const createOrder = async (paymentId?: string) => {
-        const itemsSummary = items.map(i => `${i.quantity}x ${i.title} (₹${i.price})`).join("\n");
+        const itemsSummary = items.map(i => `${i.quantity}x ${i.title}${i.isCustom ? ' [Custom]' : ''} (₹${i.price})${i.notes ? `\n   Note: ${i.notes}` : ''}`).join("\n");
         const { error } = await supabase.from("orders").insert({
             product_id: null,
             buyer_id: user!.id,
@@ -225,8 +225,19 @@ export default function Cart() {
                                             <img src={item.image} alt={item.title} className="w-full h-full object-cover mix-blend-multiply" />
                                         </div>
                                         <div className="flex-1 min-w-0">
-                                            <p className="text-sm font-bold text-slate-900 truncate">{item.title}</p>
-                                            <p className="text-brand font-bold">₹{item.price}</p>
+                                            <div className="flex items-center gap-1.5 flex-wrap">
+                                                <p className="text-sm font-bold text-slate-900 truncate">{item.title}</p>
+                                                {item.isCustom && (
+                                                    <span className="px-1.5 py-0.5 rounded-md bg-brand/10 text-brand text-[8px] font-black uppercase tracking-tighter">Custom</span>
+                                                )}
+                                            </div>
+                                            <p className="text-brand font-bold text-sm">₹{item.price}</p>
+                                            {item.notes && (
+                                                <p className="text-[10px] text-slate-400 font-medium italic mt-0.5 flex items-center gap-1">
+                                                    <MessageSquare className="w-2.5 h-2.5" />
+                                                    {item.notes}
+                                                </p>
+                                            )}
                                         </div>
                                         <div className="flex items-center gap-2 flex-shrink-0">
                                             <button onClick={() => updateQuantity(item.id, item.quantity - 1)}
