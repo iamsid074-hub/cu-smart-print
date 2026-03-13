@@ -14,7 +14,7 @@ export const groceryItems: GroceryItem[] = [
         name: "Amul Taaza (Toned Milk)",
         quantity: "500ml",
         price: 27,
-        image: "https://images.unsplash.com/photo-1563636619-e910ef4a8b9b?q=80&w=400&auto=format&fit=crop",
+        image: "/grocery/amul-taaza.png",
         category: "Milk",
         isFresh: true
     },
