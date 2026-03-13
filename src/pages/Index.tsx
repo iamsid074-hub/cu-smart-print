@@ -178,12 +178,16 @@ export default function Index() {
             style={{ y: parallaxY }} 
             className="order-1 lg:order-2 relative h-[400px] lg:h-[600px] flex items-center justify-center w-full z-10"
           >
-            {/* The 3D generated Backpack (multiply blend to remove white bg) */}
+            {/* Refined v2 Backpack - Premium Tech Look */}
             <motion.img 
-              src="/3d_backpack.png" 
-              alt="3D Backpack"
+              src="/3d_backpack_v2.png" 
+              alt="Premium 3D Backpack"
               className="absolute w-[80%] max-w-[450px] z-20 drop-shadow-2xl"
-              style={{ mixBlendMode: 'multiply' }}
+              style={{ 
+                mixBlendMode: 'multiply',
+                WebkitMaskImage: 'radial-gradient(circle, black 70%, transparent 100%)',
+                maskImage: 'radial-gradient(circle, black 70%, transparent 100%)'
+              }}
               initial={{ opacity: 0, scale: 0.5, y: 100 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               transition={{ type: "spring", bounce: 0.5, duration: 1, delay: 0.4 }}
@@ -287,12 +291,16 @@ export default function Index() {
             viewport={{ once: true }}
             className="bg-gradient-to-br from-[#FFD166] to-[#FF4D4D] p-10 sm:p-16 rounded-[3rem] border-8 border-[#231942] shadow-[12px_16px_0_#231942] text-center relative overflow-hidden"
           >
-            {/* The 3D Rocket */}
+            {/* Refined v2 Rocket - Fix for visible borders */}
             <motion.img 
-              src="/3d_rocket.png" 
-              alt="3D Rocket"
-              className="absolute w-[200px] sm:w-[300px] -right-10 -top-10 sm:-right-20 sm:-top-20 opacity-80 drop-shadow-2xl"
-              style={{ mixBlendMode: 'multiply' }}
+              src="/3d_rocket_v2.png" 
+              alt="Premium 3D Rocket"
+              className="absolute w-[200px] sm:w-[350px] -right-5 -top-10 sm:-right-15 sm:-top-20 opacity-90 drop-shadow-2xl"
+              style={{ 
+                mixBlendMode: 'multiply',
+                WebkitMaskImage: 'radial-gradient(ellipse at center, black 60%, transparent 95%)',
+                maskImage: 'radial-gradient(ellipse at center, black 60%, transparent 95%)'
+              }}
               animate={{ y: [-15, 15, -15], rotate: [0, 5, 0] }}
               transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
             />
