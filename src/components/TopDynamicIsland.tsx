@@ -206,13 +206,13 @@ export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
           {/* Secondary Left Pill (Browsing Items) - emerges with gooey bridge */}
           {islandState === "explore" && (
             <motion.div
-              initial={{ opacity: 0, x: 30, scale: 0.6 }}
-              animate={{ opacity: 1, x: 0, scale: 1 }}
-              exit={{ opacity: 0, x: 30, scale: 0.6 }}
+              initial={{ opacity: 0, x: 30, scaleX: 0.3, scaleY: 1.25 }}
+              animate={{ opacity: 1, x: 0, scaleX: 1, scaleY: 1 }}
+              exit={{ opacity: 0, x: 30, scaleX: 0.3, scaleY: 1.25 }}
               transition={{
                 type: "spring",
                 stiffness: 500,
-                damping: 32,
+                damping: 24, // lower damping = more natural wobble/bounce
                 mass: 0.5,
               }}
               className="flex items-center gap-2 px-4 shadow-lg pointer-events-auto flex-shrink-0"
