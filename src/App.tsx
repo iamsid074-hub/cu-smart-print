@@ -24,6 +24,7 @@ import Navbar from "./components/Navbar";
 import BottomNav from "./components/BottomNav";
 import AppUpdater from "./components/AppUpdater";
 import UsernameSetup from "./components/UsernameSetup";
+import ScrollToTop from "./components/ScrollToTop";
 import { useSiteGate, ClosedScreen, MaintenanceScreen } from "./components/SiteGate";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { CartProvider } from "./contexts/CartContext";
@@ -129,6 +130,7 @@ const App = () => (
       <CartProvider>
         <TooltipProvider>
           <BrowserRouter>
+            <ScrollToTop />
             <AppLayout />
           </BrowserRouter>
         </TooltipProvider>
