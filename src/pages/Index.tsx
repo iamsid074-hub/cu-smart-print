@@ -3,17 +3,17 @@ import { motion, AnimatePresence, useScroll, useTransform, useInView } from "fra
 import { Link } from "react-router-dom";
 import { ArrowRight, ShieldCheck, Heart, MessageCircle, Star, CheckCircle } from "lucide-react";
 
-// ─── Dark Chocolate Palette ────────────────────────────────────────────────────
+// ─── Main App Light/Brand Palette ────────────────────────────────────────────────────
 const C = {
-  bg: "#332C27",
-  surface: "#3A332E",
-  card: "#3F3832",
-  border: "#544B43",
-  text: "#EDE6DE",
-  muted: "#AEA397",
-  doodle: "#665C52",
-  accent: "#FF6B6B",
-  accentGlow: "rgba(255,107,107,0.2)",
+  bg: "#F8FAFC", // slate-50
+  surface: "#FFFFFF", // white
+  card: "#FFFFFF", // white
+  border: "#E2E8F0", // slate-200
+  text: "#0F172A", // slate-900
+  muted: "#64748B", // slate-500
+  doodle: "#CBD5E1", // slate-300
+  accent: "#231942", // brand (dark purple)
+  accentGlow: "rgba(35,25,66,0.15)",
   teal: "#4DB8AC",
 };
 const fontH: React.CSSProperties = { fontFamily: "'Space Grotesk', sans-serif" };
@@ -138,7 +138,7 @@ export default function Index() {
                   transition={{ duration: 0.6, ease: [0.76, 0, 0.24, 1] }}
                   className="absolute inset-0 flex items-center justify-center flex-col z-10"
                 >
-                  <h2 className="text-4xl md:text-6xl font-black italic tracking-tight text-white mb-2" style={fontH}>
+                  <h2 className="text-4xl md:text-6xl font-black italic tracking-tight mb-2" style={{ ...fontH, color: C.text }}>
                     YOUR TRUST.
                   </h2>
                 </motion.div>
@@ -212,7 +212,7 @@ export default function Index() {
                         style={{
                           ...fontH,
                           color: char === "C" || char === "U" ? C.text : C.accent,
-                          textShadow: `0 10px 30px ${char === "C" || char === "U" ? 'rgba(255,255,255,0.1)' : C.accentGlow}`
+                          textShadow: `0 10px 30px ${char === "C" || char === "U" ? 'rgba(15,23,42,0.1)' : C.accentGlow}`
                         }}
                       >
                         {char}
