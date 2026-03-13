@@ -95,14 +95,14 @@ export default function ProductCard({
   const fallbackSrc = (category && CATEGORY_FALLBACKS[category]) ?? DEFAULT_FALLBACK;
   const displaySrc = imgError ? fallbackSrc : (image || fallbackSrc);
   return (
-    <Link to={`/product/${id}`} className="block flex-shrink-0 w-56 sm:w-64">
+    <Link to={`/product/${id}`} className="block w-full h-full">
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.5, delay, ease: [0.34, 1.56, 0.64, 1] }}
         whileHover={{ y: -8, scale: 1.02 }}
-        className="relative bg-[#faf5f8] rounded-2xl overflow-hidden group cursor-pointer h-full border-2 border-slate-200 shadow-[0_2px_8px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.12)] hover:border-[#e0b1cb] transition-all duration-300"
+        className="relative flex flex-col bg-[#faf5f8] rounded-2xl overflow-hidden group cursor-pointer h-full border-2 border-slate-200 shadow-[0_2px_8px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.12)] hover:border-[#e0b1cb] transition-all duration-300"
       >
         {/* Badge */}
         {badge && (
@@ -133,7 +133,7 @@ export default function ProductCard({
         </div>
 
         {/* Image */}
-        <div className="relative overflow-hidden h-44 bg-slate-100/80">
+        <div className="relative overflow-hidden shrink-0 h-40 sm:h-48 bg-slate-100/80">
           {/* Skeleton shimmer while loading */}
           {!imgLoaded && !imgError && (
             <div className="absolute inset-0 animate-pulse" style={{ background: 'linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%)', backgroundSize: '200% 100%' }} />
@@ -149,7 +149,7 @@ export default function ProductCard({
         </div>
 
         {/* Content */}
-        <div className="p-4 flex flex-col justify-between h-[calc(100%-11rem)]">
+        <div className="p-3 sm:p-4 flex flex-col flex-1">
           <div>
             <div className="flex items-start justify-between gap-2 mb-2">
               <h3 className="font-semibold text-sm text-slate-900 leading-tight line-clamp-2">{title}</h3>
@@ -189,7 +189,7 @@ export default function ProductCard({
                 toast({ title: `${title} added to cart` });
               }}
               whileTap={{ scale: 0.9 }}
-              className="px-4 py-2.5 bg-emerald-50 hover:bg-emerald-500 text-emerald-700 hover:text-white text-xs font-bold rounded-xl transition-all flex items-center gap-1.5 active:scale-95 border border-emerald-200 hover:border-emerald-500"
+              className="px-2 sm:px-4 py-2 sm:py-2.5 bg-emerald-50 hover:bg-emerald-500 text-emerald-700 hover:text-white text-[10px] sm:text-xs font-bold rounded-xl transition-all flex items-center gap-1.5 active:scale-95 border border-emerald-200 hover:border-emerald-500"
             >
               <ShoppingCart className="w-3.5 h-3.5" /> Cart
             </motion.button>
