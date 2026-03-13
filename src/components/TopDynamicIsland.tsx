@@ -152,6 +152,25 @@ export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
 
   return (
     <>
+      {/* Hidden SVG gooey filter — creates the liquid bridge between pills */}
+      <svg style={{ position: "absolute", width: 0, height: 0 }} aria-hidden="true">
+        <defs>
+          <filter id="goo">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="12" result="blur" />
+            <feColorMatrix
+              in="blur"
+              mode="matrix"
+              values="1 0 0 0 0
+                      0 1 0 0 0
+                      0 0 1 0 0
+                      0 0 0 22 -9"
+              result="goo"
+            />
+            <feComposite in="SourceGraphic" in2="goo" operator="atop" />
+          </filter>
+        </defs>
+      </svg>
+
       <style>{`
         @keyframes islandPulse {
           0%, 100% { opacity: 1; }
@@ -165,35 +184,38 @@ export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
 
       <div
         className="w-full flex justify-center fixed top-4 sm:top-6 z-[100] pointer-events-none"
-        style={{ gap: 8 }}
+        style={{
+          gap: 4,
+          filter: islandState === "explore" ? "url(#goo)" : "none",
+          willChange: "filter",
+        }}
       >
         <AnimatePresence mode="popLayout">
-          {/* Secondary Left Pill (Browsing Items) - slides out when entering Explore */}
+          {/* Secondary Left Pill (Browsing Items) - emerges with gooey bridge */}
           {islandState === "explore" && (
             <motion.div
               layout
               initial={{
                 opacity: 0,
-                x: 60,
-                scaleX: 0.4,
-                scaleY: 1.15,
+                x: 40,
+                scaleX: 0.3,
+                scaleY: 1.1,
               }}
               animate={{
-                opacity: [0, 0.6, 1, 1, 1],
-                x: [60, 20, -6, 3, 0],
-                scaleX: [0.4, 1.18, 0.95, 1.02, 1],
-                scaleY: [1.15, 0.85, 1.08, 0.97, 1],
+                opacity: [0, 0.7, 1, 1, 1],
+                x: [40, 14, -4, 2, 0],
+                scaleX: [0.3, 1.12, 0.96, 1.01, 1],
+                scaleY: [1.1, 0.88, 1.05, 0.98, 1],
               }}
               exit={{
-                opacity: [1, 1, 0.6, 0],
-                x: [0, -4, 30, 60],
-                scaleX: [1, 1.15, 0.5, 0.3],
-                scaleY: [1, 0.88, 1.12, 1.2],
+                opacity: [1, 1, 0.7, 0],
+                x: [0, -3, 20, 40],
+                scaleX: [1, 1.1, 0.4, 0.2],
+                scaleY: [1, 0.9, 1.08, 1.15],
               }}
               transition={{
-                duration: 0.55,
+                duration: 0.65,
                 ease: [0.22, 1, 0.36, 1],
-                times: undefined,
               }}
               className="flex items-center gap-2 px-4 shadow-lg pointer-events-auto flex-shrink-0"
               style={{
@@ -205,6 +227,7 @@ export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
                 position: "relative",
                 zIndex: 90,
                 transformOrigin: "right center",
+                willChange: "transform, opacity",
               }}
             >
               <div
@@ -234,7 +257,8 @@ export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
               borderRadius: 50,
               animation: "diGlow 4s ease-in-out infinite",
               position: "relative",
-              zIndex: 100, // main island stays on top
+              zIndex: 100,
+              willChange: "transform, width",
             }}
           >
             {/* Green camera indicator dot — shown when not exploring */}
