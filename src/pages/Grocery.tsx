@@ -160,24 +160,7 @@ export default function Grocery() {
                 </section>
             </div>
             
-            {/* Float Info */}
-            <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-40 w-[90vw] max-w-md">
-                <div className="bg-slate-900 text-white rounded-2xl p-4 flex items-center gap-3 shadow-2xl border border-white/10">
-                    <div className="w-10 h-10 rounded-full bg-brand/20 flex items-center justify-center text-brand">
-                        <ShoppingBag className="w-5 h-5" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                        <p className="text-xs font-bold text-slate-300">Fast Campus Delivery</p>
-                        <p className="text-[10px] text-slate-500 truncate">Essential items delivered in 15-30 mins</p>
-                    </div>
-                    <button 
-                        onClick={() => navigate('/cart')}
-                        className="px-4 py-2 bg-brand rounded-lg text-xs font-black shadow-lg shadow-brand/20"
-                    >
-                        View Cart
-                    </button>
-                </div>
-            </div>
+
         </div>
     );
 }
