@@ -6,15 +6,15 @@ import ProductCard from "@/components/ProductCard";
 import { supabase } from "@/lib/supabase";
 
 const categories = [
-    { id: "All", emoji: "✨", label: "All" },
-    { id: "Electronics", emoji: "⚡", label: "Electronics" },
-    { id: "Books", emoji: "📚", label: "Books" },
-    { id: "Fashion", emoji: "👕", label: "Fashion" },
-    { id: "Sports", emoji: "⚽", label: "Sports" },
-    { id: "Audio", emoji: "🎧", label: "Audio" },
-    { id: "Camera", emoji: "📷", label: "Camera" },
-    { id: "Furniture", emoji: "🪑", label: "Furniture" },
-    { id: "Kitchen", emoji: "🍳", label: "Kitchen" },
+    { id: "All", label: "All" },
+    { id: "Electronics", label: "Electronics" },
+    { id: "Books", label: "Books" },
+    { id: "Fashion", label: "Fashion" },
+    { id: "Sports", label: "Sports" },
+    { id: "Audio", label: "Audio" },
+    { id: "Camera", label: "Camera" },
+    { id: "Furniture", label: "Furniture" },
+    { id: "Kitchen", label: "Kitchen" },
 ];
 
 export default function Browse() {
@@ -107,7 +107,6 @@ export default function Browse() {
                                         : 'bg-white text-slate-600 border-slate-200 hover:border-brand-muted hover:bg-brand-50 shadow-sm'
                                         }`}
                                 >
-                                    <span>{cat.emoji}</span>
                                     {cat.label}
                                 </button>
                             );
