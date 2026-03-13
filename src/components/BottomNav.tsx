@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, Compass, ShoppingCart, Utensils, User, ShoppingBag } from "lucide-react";
+import { Home, Compass, ShoppingCart, Utensils, User, ShoppingBag, PlusCircle } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { motion } from "framer-motion";
@@ -86,6 +86,12 @@ export default function BottomNav() {
                         )}
                     </div>
                     <span className={`text-[9px] sm:text-[10px] font-semibold ${location.pathname.startsWith('/profile') ? 'text-slate-900' : 'text-slate-400'}`}>Profile</span>
+                </Link>
+
+                {/* Sell */}
+                <Link to="/list" className="flex flex-col items-center justify-center gap-1 text-decoration-none py-1 flex-1">
+                    <PlusCircle strokeWidth={2.5} className={`w-5 h-5 sm:w-[22px] sm:h-[22px] ${location.pathname.startsWith('/list') ? 'text-slate-900' : 'text-slate-500 hover:text-slate-700'}`} />
+                    <span className={`text-[9px] sm:text-[10px] font-semibold ${location.pathname.startsWith('/list') ? 'text-slate-900' : 'text-slate-400'}`}>Sell</span>
                 </Link>
             </div>
         </motion.div>
