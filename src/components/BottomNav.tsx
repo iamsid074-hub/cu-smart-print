@@ -76,6 +76,12 @@ export default function BottomNav() {
                     <span className={`text-[9px] sm:text-[10px] font-semibold ${location.pathname.startsWith('/food') ? 'text-slate-900' : 'text-slate-400'}`}>Food</span>
                 </Link>
 
+                {/* Sell */}
+                <Link to="/list" className="flex flex-col items-center justify-center gap-1 text-decoration-none py-1 flex-1">
+                    <PlusCircle strokeWidth={2.5} className={`w-5 h-5 sm:w-[22px] sm:h-[22px] ${location.pathname.startsWith('/list') ? 'text-slate-900' : 'text-slate-500 hover:text-slate-700'}`} />
+                    <span className={`text-[9px] sm:text-[10px] font-semibold ${location.pathname.startsWith('/list') ? 'text-slate-900' : 'text-slate-400'}`}>Sell</span>
+                </Link>
+
                 {/* Profile */}
                 <Link to="/profile" className="flex flex-col items-center justify-center gap-1 text-decoration-none py-1 flex-1">
                     <div className="w-[20px] h-[20px] sm:w-[22px] sm:h-[22px] rounded-full bg-slate-200 flex items-center justify-center overflow-hidden">
@@ -86,12 +92,6 @@ export default function BottomNav() {
                         )}
                     </div>
                     <span className={`text-[9px] sm:text-[10px] font-semibold ${location.pathname.startsWith('/profile') ? 'text-slate-900' : 'text-slate-400'}`}>Profile</span>
-                </Link>
-
-                {/* Sell */}
-                <Link to="/list" className="flex flex-col items-center justify-center gap-1 text-decoration-none py-1 flex-1">
-                    <PlusCircle strokeWidth={2.5} className={`w-5 h-5 sm:w-[22px] sm:h-[22px] ${location.pathname.startsWith('/list') ? 'text-slate-900' : 'text-slate-500 hover:text-slate-700'}`} />
-                    <span className={`text-[9px] sm:text-[10px] font-semibold ${location.pathname.startsWith('/list') ? 'text-slate-900' : 'text-slate-400'}`}>Sell</span>
                 </Link>
             </div>
         </motion.div>
