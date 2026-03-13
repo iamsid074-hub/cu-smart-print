@@ -68,5 +68,13 @@ export const groceryItems: GroceryItem[] = [
         price: 20,
         image: "/grocery/mountain-dew.png",
         category: "Cold Drinks"
+    },
+    {
+        id: "grocery-maggi-single",
+        name: "Maggi Instant Noodles",
+        quantity: "Single Pack",
+        price: 10,
+        image: "/grocery/maggi.png",
+        category: "Instant Food"
     }
 ];

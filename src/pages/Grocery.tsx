@@ -131,7 +131,46 @@ export default function Grocery() {
                     </section>
                 )}
 
-                {/* Full List */}
+                {/* Instant Food Section */}
+                {!searchQuery && (
+                    <section className="mb-10">
+                        <div className="flex items-center gap-2 mb-6">
+                            <div className="w-1.5 h-6 bg-red-500 rounded-full" />
+                            <h2 className="text-lg font-black text-slate-900 uppercase tracking-tight" style={fontH}>Instant Food</h2>
+                        </div>
+                        <div className="flex overflow-x-auto pb-6 -mx-4 px-4 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-4 gap-4 snap-x snap-mandatory hide-scroll">
+                            {groceryItems.filter(item => item.category === 'Instant Food').map((item, idx) => (
+                                <motion.div
+                                    key={item.id}
+                                    initial={{ opacity: 0, scale: 0.95 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    transition={{ delay: idx * 0.05 }}
+                                    className="min-w-[170px] sm:min-w-0 bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-md transition-all flex flex-col snap-start"
+                                >
+                                    <div className="relative h-28 sm:h-32 bg-slate-50 overflow-hidden p-4 flex items-center justify-center">
+                                        <div className="absolute inset-0 bg-red-500/5" />
+                                        <img src={item.image} alt={item.name} className="h-full w-auto object-contain mix-blend-multiply drop-shadow-md z-10 hover:scale-110 transition-transform duration-500" />
+                                    </div>
+                                    <div className="p-4 flex flex-col flex-1">
+                                        <h3 className="text-sm font-bold text-slate-800 leading-tight mb-1">{item.name}</h3>
+                                        <p className="text-[10px] font-bold text-slate-400 mb-3">{item.quantity}</p>
+                                        
+                                        <div className="mt-auto flex items-center justify-between pt-2 border-t border-slate-50">
+                                            <span className="text-lg font-black text-slate-900">₹{item.price}</span>
+                                            <button 
+                                                onClick={() => handleAddToCart(item)}
+                                                className="w-8 h-8 rounded-full bg-red-500 text-white flex items-center justify-center shadow-md shadow-red-500/20 hover:bg-red-600 active:scale-95 transition-all"
+                                            >
+                                                <Plus className="w-4 h-4" />
+                                            </button>
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            ))}
+                        </div>
+                    </section>
+                )}
+
                 <section>
                     <div className="flex items-center gap-2 mb-6">
                         <div className="w-1.5 h-6 bg-slate-300 rounded-full" />
