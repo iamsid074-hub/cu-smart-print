@@ -172,10 +172,29 @@ export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
           {islandState === "explore" && (
             <motion.div
               layout
-              initial={{ opacity: 0, x: 50, scale: 0.8 }}
-              animate={{ opacity: 1, x: 0, scale: 1 }}
-              exit={{ opacity: 0, x: 50, scale: 0.8 }}
-              transition={springTransition}
+              initial={{
+                opacity: 0,
+                x: 60,
+                scaleX: 0.4,
+                scaleY: 1.15,
+              }}
+              animate={{
+                opacity: [0, 0.6, 1, 1, 1],
+                x: [60, 20, -6, 3, 0],
+                scaleX: [0.4, 1.18, 0.95, 1.02, 1],
+                scaleY: [1.15, 0.85, 1.08, 0.97, 1],
+              }}
+              exit={{
+                opacity: [1, 1, 0.6, 0],
+                x: [0, -4, 30, 60],
+                scaleX: [1, 1.15, 0.5, 0.3],
+                scaleY: [1, 0.88, 1.12, 1.2],
+              }}
+              transition={{
+                duration: 0.55,
+                ease: [0.22, 1, 0.36, 1],
+                times: undefined,
+              }}
               className="flex items-center gap-2 px-4 shadow-lg pointer-events-auto flex-shrink-0"
               style={{
                 height: 40,
@@ -184,7 +203,8 @@ export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
                 boxShadow: "0 4px 20px rgba(0,0,0,0.55), 0 0 0 0.5px rgba(255,255,255,0.07) inset",
                 color: "#fff",
                 position: "relative",
-                zIndex: 90, // below main island so it looks like it slides from behind
+                zIndex: 90,
+                transformOrigin: "right center",
               }}
             >
               <div
