@@ -69,16 +69,7 @@ export default function Index() {
             className="fixed inset-0 z-[200] flex flex-col items-center justify-center overflow-hidden"
             style={{ backgroundColor: C.brand }}
           >
-            {/* 3D lightning burst in background */}
-            <motion.img 
-              src="/3d_lightning_bolt.png" 
-              className="absolute w-[80vw] md:w-[40vw] opacity-20 blur-[2px] pointer-events-none"
-              style={{ mixBlendMode: 'screen' }}
-              initial={{ scale: 0, rotate: -45 }}
-              animate={{ scale: 1.2, rotate: 10 }}
-              transition={{ type: "spring", stiffness: 50, damping: 20 }}
-            />
-            
+            {/* Intro Content */}
             <motion.div
               initial={{ scale: 0.5, y: 50, opacity: 0 }}
               animate={{ scale: 1, y: 0, opacity: 1 }}
@@ -193,21 +184,6 @@ export default function Index() {
               transition={{ type: "spring", bounce: 0.5, duration: 1, delay: 0.4 }}
             />
             
-            {/* Floating 3D Lightning Bolt */}
-            <motion.img 
-              src="/3d_lightning_bolt.png" 
-              alt="3D Lightning"
-              className="absolute w-[40%] max-w-[200px] z-30 right-[-5%] top-[10%] drop-shadow-xl"
-              style={{ mixBlendMode: 'multiply' }}
-              initial={{ opacity: 0, scale: 0, rotate: 45 }}
-              animate={{ opacity: 1, scale: 1, rotate: 15, y: [-10, 10, -10] }}
-              transition={{ 
-                 opacity: { delay: 0.6, duration: 0.5 },
-                 scale: { type: "spring", bounce: 0.6, delay: 0.6 },
-                 y: { duration: 4, repeat: Infinity, ease: "easeInOut" }
-              }}
-            />
-
             {/* Glowing Backdrop Plate */}
             <motion.div 
               initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1, delay: 0.3 }}
@@ -291,20 +267,6 @@ export default function Index() {
             viewport={{ once: true }}
             className="bg-gradient-to-br from-[#FFD166] to-[#FF4D4D] p-10 sm:p-16 rounded-[3rem] border-8 border-[#231942] shadow-[12px_16px_0_#231942] text-center relative overflow-hidden"
           >
-            {/* Refined v2 Rocket - Fix for visible borders */}
-            <motion.img 
-              src="/3d_rocket_v2.png" 
-              alt="Premium 3D Rocket"
-              className="absolute w-[200px] sm:w-[350px] -right-5 -top-10 sm:-right-15 sm:-top-20 opacity-90 drop-shadow-2xl"
-              style={{ 
-                mixBlendMode: 'multiply',
-                WebkitMaskImage: 'radial-gradient(ellipse at center, black 60%, transparent 95%)',
-                maskImage: 'radial-gradient(ellipse at center, black 60%, transparent 95%)'
-              }}
-              animate={{ y: [-15, 15, -15], rotate: [0, 5, 0] }}
-              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-            />
-
             <div className="relative z-10">
               <h2 className="text-5xl sm:text-6xl font-black tracking-tighter mb-6 text-[#231942] drop-shadow-[0_4px_0_rgba(255,255,255,0.5)]" style={fontH}>
                 Blast off into the <br/> Campus Market!
