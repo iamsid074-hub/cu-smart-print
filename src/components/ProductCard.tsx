@@ -189,9 +189,13 @@ export default function ProductCard({
                 toast({ title: `${title} added to cart` });
               }}
               whileTap={{ scale: 0.9 }}
-              className="px-2 sm:px-4 py-2 sm:py-2.5 bg-emerald-50 hover:bg-emerald-500 text-emerald-700 hover:text-white text-[10px] sm:text-xs font-bold rounded-xl transition-all flex items-center gap-1.5 active:scale-95 border border-emerald-200 hover:border-emerald-500"
+              className="w-8 h-8 sm:w-auto sm:h-auto sm:px-4 sm:py-2.5 bg-emerald-50 hover:bg-emerald-500 text-emerald-700 hover:text-white rounded-xl transition-all flex items-center justify-center gap-1.5 active:scale-95 border border-emerald-200 hover:border-emerald-500"
             >
-              <ShoppingCart className="w-3.5 h-3.5" /> Cart
+              <ShoppingCart className="w-4 h-4 sm:hidden" />
+              <div className="hidden sm:flex items-center gap-1.5">
+                <ShoppingCart className="w-3.5 h-3.5" />
+                <span className="text-xs font-bold">Cart</span>
+              </div>
             </motion.button>
           </div>
         </div>
