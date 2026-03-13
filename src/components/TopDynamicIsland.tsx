@@ -57,9 +57,9 @@ export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
       setIsAnimating(true);
       setIslandState("explore");
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
-      // Turn off goo filter after animation completes
+      // Turn off goo filter after animation completes (make it fast to separate instantly)
       if (gooTimerRef.current) clearTimeout(gooTimerRef.current);
-      gooTimerRef.current = setTimeout(() => setIsAnimating(false), 700);
+      gooTimerRef.current = setTimeout(() => setIsAnimating(false), 200);
     } else if (location.pathname === "/cart") {
       triggerState("cart");
     } else if (location.pathname === "/profile") {
@@ -69,7 +69,7 @@ export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
       setIslandState("default");
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
       if (gooTimerRef.current) clearTimeout(gooTimerRef.current);
-      gooTimerRef.current = setTimeout(() => setIsAnimating(false), 700);
+      gooTimerRef.current = setTimeout(() => setIsAnimating(false), 200);
     }
   }, [location.pathname]);
 
@@ -211,9 +211,9 @@ export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
               exit={{ opacity: 0, x: 30, scale: 0.6 }}
               transition={{
                 type: "spring",
-                stiffness: 300,
-                damping: 28,
-                mass: 0.8,
+                stiffness: 500,
+                damping: 32,
+                mass: 0.5,
               }}
               className="flex items-center gap-2 px-4 shadow-lg pointer-events-auto flex-shrink-0"
               style={{
