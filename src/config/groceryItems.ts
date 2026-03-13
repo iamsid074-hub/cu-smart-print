@@ -23,7 +23,7 @@ export const groceryItems: GroceryItem[] = [
         name: "Amul Gold (Full Cream Milk)",
         quantity: "500ml",
         price: 33,
-        image: "https://images.unsplash.com/photo-1550583724-b26cc28df5f1?q=80&w=400&auto=format&fit=crop",
+        image: "/grocery/amul-gold.png",
         category: "Milk",
         isFresh: true
     },
