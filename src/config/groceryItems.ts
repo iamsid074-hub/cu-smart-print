@@ -59,5 +59,37 @@ export const groceryItems: GroceryItem[] = [
         price: 56,
         image: "https://images.unsplash.com/photo-1589985270826-4b7bb135bc9d?q=80&w=400&auto=format&fit=crop",
         category: "Dairy & Eggs"
+    },
+    {
+        id: "grocery-coke",
+        name: "Coca-Cola",
+        quantity: "300ml",
+        price: 20,
+        image: "https://images.unsplash.com/photo-1554866585-cd94860890b7?q=80&w=400&auto=format&fit=crop",
+        category: "Cold Drinks"
+    },
+    {
+        id: "grocery-sprite",
+        name: "Sprite",
+        quantity: "300ml",
+        price: 20,
+        image: "https://images.unsplash.com/photo-1625772299848-391b6a87d7b3?q=80&w=400&auto=format&fit=crop",
+        category: "Cold Drinks"
+    },
+    {
+        id: "grocery-fanta",
+        name: "Fanta",
+        quantity: "300ml",
+        price: 20,
+        image: "https://images.unsplash.com/photo-1624517452488-04869289c4ca?q=80&w=400&auto=format&fit=crop",
+        category: "Cold Drinks"
+    },
+    {
+        id: "grocery-mountain-dew",
+        name: "Mountain Dew",
+        quantity: "300ml",
+        price: 20,
+        image: "https://images.unsplash.com/photo-1581006852262-e4307cf6283a?q=80&w=400&auto=format&fit=crop",
+        category: "Cold Drinks"
     }
 ];
