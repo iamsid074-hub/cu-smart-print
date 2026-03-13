@@ -1,21 +1,21 @@
 import { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence, useScroll, useTransform, useInView } from "framer-motion";
+import { motion, AnimatePresence, useInView, useScroll, useTransform } from "framer-motion";
 import { Link } from "react-router-dom";
-import { ArrowRight, ShieldCheck, Heart, MessageCircle, Star, CheckCircle } from "lucide-react";
+import { ArrowRight, ShieldCheck, Heart, MessageCircle, Star, Zap, Package } from "lucide-react";
 
-// ─── Main App Light/Brand Palette ────────────────────────────────────────────────────
+// ─── 3D / Gamified Palette ────────────────────────────────────────────────────
 const C = {
-  bg: "#F8FAFC", // slate-50
-  surface: "#FFFFFF", // white
-  card: "#FFFFFF", // white
-  border: "#E2E8F0", // slate-200
-  text: "#0F172A", // slate-900
-  muted: "#64748B", // slate-500
-  doodle: "#CBD5E1", // slate-300
-  accent: "#231942", // brand (dark purple)
-  accentGlow: "rgba(35,25,66,0.15)",
-  teal: "#4DB8AC",
+  bg: "#F4F0F9", // Soft purple-tinted off-white to make colors pop
+  surface: "#FFFFFF",
+  accent: "#FF4D4D", // Vibrant Red/Orange
+  accentGlow: "rgba(255,77,77,0.4)",
+  brand: "#231942", // Extremely dark purple/black for outlines and depth
+  yellow: "#FFD166",
+  cyan: "#06D6A0",
+  purple: "#8338EC",
+  text: "#231942",
 };
+
 const fontH: React.CSSProperties = { fontFamily: "'Space Grotesk', sans-serif" };
 const fontB: React.CSSProperties = { fontFamily: "'Inter', sans-serif" };
 
@@ -37,426 +37,303 @@ function Counter({ target, suffix = "" }: { target: number; suffix?: string }) {
   return <span ref={ref}>{count}{suffix}</span>;
 }
 
-// ─── SVG doodle underline ──────────────────────────────────────────────────────
-function DoodleUnderline() {
-  return (
-    <svg viewBox="0 0 286 18" fill="none" className="absolute -bottom-3 left-0 w-full" xmlns="http://www.w3.org/2000/svg">
-      <motion.path d="M2 11C42 4 106 2 142 6C178 10 242 14 284 8" stroke={C.accent} strokeWidth="4" strokeLinecap="round"
-        initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }} />
-    </svg>
-  );
-}
-
-// ─── Corner doodles ────────────────────────────────────────────────────────────
-function DoodleBook({ className }: { className?: string }) {
-  return (
-    <motion.svg initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 0.15, scale: 1 }} transition={{ delay: 1, duration: 0.5 }}
-      whileHover={{ opacity: 0.3, scale: 1.1 }} viewBox="0 0 60 60" fill="none" className={className} xmlns="http://www.w3.org/2000/svg">
-      <path d="M12 48V14C12 12 14 10 16 10H44C46 10 48 12 48 14V48" stroke={C.doodle} strokeWidth="2" strokeLinecap="round" />
-      <path d="M48 48H16C14 48 12 46 12 44C12 42 14 40 16 40H48" stroke={C.doodle} strokeWidth="2" />
-      <path d="M22 18H38M22 24H34" stroke={C.doodle} strokeWidth="1.5" strokeLinecap="round" />
-    </motion.svg>
-  );
-}
-function DoodlePencil({ className }: { className?: string }) {
-  return (
-    <motion.svg initial={{ opacity: 0, rotate: -20 }} animate={{ opacity: 0.12, rotate: 0 }} transition={{ delay: 1.2, duration: 0.5 }}
-      whileHover={{ opacity: 0.25, rotate: 5 }} viewBox="0 0 60 60" fill="none" className={className} xmlns="http://www.w3.org/2000/svg">
-      <path d="M38 8L50 20L22 48H10V36L38 8Z" stroke={C.doodle} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M32 14L44 26" stroke={C.doodle} strokeWidth="1.5" />
-    </motion.svg>
-  );
-}
-function DoodleCoffee({ className }: { className?: string }) {
-  return (
-    <motion.svg initial={{ opacity: 0, y: 10 }} animate={{ opacity: 0.12, y: 0 }} transition={{ delay: 1.4, duration: 0.5 }}
-      whileHover={{ opacity: 0.25, y: -3 }} viewBox="0 0 60 60" fill="none" className={className} xmlns="http://www.w3.org/2000/svg">
-      <path d="M14 24H40V44C40 48 36 52 32 52H22C18 52 14 48 14 44V24Z" stroke={C.doodle} strokeWidth="2" />
-      <path d="M40 28H46C48 28 50 30 50 32V34C50 36 48 38 46 38H40" stroke={C.doodle} strokeWidth="2" />
-      <path d="M22 14C22 14 24 10 22 8M28 16C28 16 30 12 28 10M34 14C34 14 36 10 34 8" stroke={C.doodle} strokeWidth="1.5" strokeLinecap="round" />
-    </motion.svg>
-  );
-}
-
 export default function Index() {
   const [showIntro, setShowIntro] = useState(true);
-  const [introPhase, setIntroPhase] = useState(1);
   const containerRef = useRef(null);
   const { scrollYProgress } = useScroll({ target: containerRef, offset: ["start start", "end end"] });
-  const doodleParallax = useTransform(scrollYProgress, [0, 1], [0, -80]);
+  const parallaxY = useTransform(scrollYProgress, [0, 1], [0, -150]);
 
+  // Quick intro fade
   useEffect(() => {
-    // Phase 1: 0 - 1.8s
-    const t1 = setTimeout(() => setIntroPhase(2), 1800);
-    // Phase 2: 1.8s - 3.6s
-    const t2 = setTimeout(() => setIntroPhase(3), 3600);
-    // End Intro: 6.5s
-    const t3 = setTimeout(() => setShowIntro(false), 6500);
-
-    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
+    const t = setTimeout(() => setShowIntro(false), 2800);
+    return () => clearTimeout(t);
   }, []);
 
-  const testimonials = [
-    { name: "Priya S.", year: "3rd Year, CSE", quote: "Sold my calculus notes in under 2 hours. Way faster than putting up hostel notices.", avatar: "P", gradient: "from-rose-400 to-orange-400", rotate: -4 },
-    { name: "Arjun K.", year: "2nd Year, ECE", quote: "Got a barely-used scientific calculator for ₹200. The senior was right in my block.", avatar: "A", gradient: "from-brand-light to-indigo-400", rotate: 3 },
-    { name: "Sneha R.", year: "4th Year, BCA", quote: "Cleared out all my textbooks before graduating. Made ₹3K in a weekend.", avatar: "S", gradient: "from-emerald-400 to-teal-400", rotate: -2 },
-    { name: "Rohit M.", year: "1st Year, MBA", quote: "Got my entire first-semester stationery kit from a senior for half the market price.", avatar: "R", gradient: "from-amber-400 to-yellow-500", rotate: 5 },
-  ];
-
   const stats = [
-    { value: 500, suffix: "+", label: "Students Joined", emoji: "" },
-    { value: 200, suffix: "+", label: "Items Listed", emoji: "" },
-    { value: 100, suffix: "%", label: "Campus Only", emoji: "" },
+    { value: 500, suffix: "+", label: "Students Joined", color: C.yellow },
+    { value: 200, suffix: "+", label: "Items Listed", color: C.cyan },
+    { value: 100, suffix: "%", label: "Campus Only", color: C.purple },
   ];
 
   return (
-    <div ref={containerRef} className="relative overflow-x-hidden" style={{ ...fontB, backgroundColor: C.bg }}>
-
-      {/* ─── Intro Splash ─── */}
+    <div ref={containerRef} className="relative overflow-x-hidden min-h-screen" style={{ ...fontB, backgroundColor: C.bg }}>
+      
+      {/* ─── Gamified Splash Screen ─── */}
       <AnimatePresence>
         {showIntro && (
           <motion.div
             key="intro"
             initial={{ opacity: 1 }}
             exit={{ opacity: 0, scale: 1.1, filter: "blur(10px)" }}
-            transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}
+            transition={{ duration: 0.6, ease: "easeInOut" }}
             className="fixed inset-0 z-[200] flex flex-col items-center justify-center overflow-hidden"
-            style={{ backgroundColor: C.bg }}
+            style={{ backgroundColor: C.brand }}
           >
-            {/* Animated Background Orbs */}
-            <motion.div initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 0.5 }} transition={{ duration: 2, ease: "easeOut" }}
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60vw] h-[60vw] md:w-[40vw] md:h-[40vw] rounded-full blur-[100px] pointer-events-none" style={{ background: C.accent }} />
-
-            <AnimatePresence mode="wait">
-              {/* PHASE 1 */}
-              {introPhase === 1 && (
-                <motion.div
-                  key="phase1"
-                  initial={{ opacity: 0, y: 30, filter: "blur(5px)" }}
-                  animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                  exit={{ opacity: 0, y: -30, filter: "blur(5px)" }}
-                  transition={{ duration: 0.6, ease: [0.76, 0, 0.24, 1] }}
-                  className="absolute inset-0 flex items-center justify-center flex-col z-10"
-                >
-                  <h2 className="text-4xl md:text-6xl font-black italic tracking-tight mb-2" style={{ ...fontH, color: C.text }}>
-                    YOUR TRUST.
-                  </h2>
-                </motion.div>
-              )}
-
-              {/* PHASE 2 */}
-              {introPhase === 2 && (
-                <motion.div
-                  key="phase2"
-                  initial={{ opacity: 0, y: 30, filter: "blur(5px)" }}
-                  animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                  exit={{ opacity: 0, y: -30, filter: "blur(5px)" }}
-                  transition={{ duration: 0.6, ease: [0.76, 0, 0.24, 1] }}
-                  className="absolute inset-0 flex items-center justify-center flex-col z-10"
-                >
-                  <h2 className="text-4xl md:text-6xl font-black italic tracking-tight" style={{ ...fontH, color: C.accent }}>
-                    OUR RESPONSIBILITY.
-                  </h2>
-                </motion.div>
-              )}
-
-              {/* PHASE 3 */}
-              {introPhase === 3 && (
-                <motion.div
-                  key="phase3"
-                  className="absolute inset-0 flex items-center justify-center flex-col z-10"
-                >
-                  {/* Logo scaling up */}
-                  <motion.div
-                    initial={{ scale: 0, rotate: -45, opacity: 0 }}
-                    animate={{ scale: 1, rotate: 0, opacity: 1 }}
-                    transition={{ type: "spring", damping: 14, stiffness: 100, delay: 0.2 }}
-                    className="relative z-10 w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden shadow-2xl flex items-center justify-center p-1.5 mb-8"
-                    style={{ backgroundColor: C.card, border: `2px solid ${C.border}` }}
-                  >
-                    <img src="/logo.png" alt="CU BAZZAR" className="w-full h-full object-cover rounded-full relative z-10" />
-                    {/* Outer pulsing ring */}
-                    <motion.div
-                      initial={{ scale: 1, opacity: 0.8 }}
-                      animate={{ scale: 1.5, opacity: 0 }}
-                      transition={{ duration: 1.5, repeat: Infinity, delay: 0.8 }}
-                      className="absolute inset-0 rounded-full border-2"
-                      style={{ borderColor: C.accent }}
-                    />
-                  </motion.div>
-
-                  {/* Welcome Text */}
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: 0.6 }}
-                    className="text-xs sm:text-sm font-bold uppercase tracking-[0.3em] mb-4 text-center"
-                    style={{ color: C.muted, ...fontB }}
-                  >
-                    We Welcome You To
-                  </motion.div>
-
-                  {/* Crazy Character Animation */}
-                  <div className="flex overflow-visible relative z-10 perspective-1000">
-                    {["C", "U", "\u00A0", "B", "A", "Z", "Z", "A", "R"].map((char, index) => (
-                      <motion.span
-                        key={index}
-                        initial={{ y: 80, opacity: 0, rotateX: -90, filter: "blur(10px)" }}
-                        animate={{ y: 0, opacity: 1, rotateX: 0, filter: "blur(0px)" }}
-                        transition={{
-                          duration: 0.8,
-                          ease: [0.34, 1.56, 0.64, 1], // bouncy spring-like ease
-                          delay: 0.8 + index * 0.05,
-                        }}
-                        className="text-5xl sm:text-7xl md:text-8xl font-black italic tracking-tighter origin-bottom inline-block"
-                        style={{
-                          ...fontH,
-                          color: char === "C" || char === "U" ? C.text : C.accent,
-                          textShadow: `0 10px 30px ${char === "C" || char === "U" ? 'rgba(15,23,42,0.1)' : C.accentGlow}`
-                        }}
-                      >
-                        {char}
-                      </motion.span>
-                    ))}
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            {/* Bottom Progress Bar */}
+            {/* 3D lightning burst in background */}
+            <motion.img 
+              src="/3d_lightning_bolt.png" 
+              className="absolute w-[80vw] md:w-[40vw] opacity-20 blur-[2px] pointer-events-none"
+              style={{ mixBlendMode: 'screen' }}
+              initial={{ scale: 0, rotate: -45 }}
+              animate={{ scale: 1.2, rotate: 10 }}
+              transition={{ type: "spring", stiffness: 50, damping: 20 }}
+            />
+            
             <motion.div
-              className="absolute bottom-12 left-1/2 -translate-x-1/2 w-48 h-[3px] rounded-full overflow-hidden"
-              style={{ backgroundColor: C.card }}
+              initial={{ scale: 0.5, y: 50, opacity: 0 }}
+              animate={{ scale: 1, y: 0, opacity: 1 }}
+              transition={{ type: "spring", bounce: 0.6, duration: 0.8, delay: 0.2 }}
+              className="relative z-10 flex flex-col items-center"
             >
-              <motion.div
-                initial={{ width: "0%" }}
-                animate={{ width: "100%" }}
-                transition={{ duration: 6, ease: "easeInOut" }}
-                className="h-full"
-                style={{ backgroundColor: C.accent }}
-              />
+              <div className="w-28 h-28 bg-white rounded-3xl p-2 mb-6 shadow-[0_15px_0_#000] border-4 border-black rotate-[-3deg]">
+                <img src="/logo.png" alt="Logo" className="w-full h-full rounded-2xl object-cover" />
+              </div>
+              <h1 className="text-5xl md:text-7xl font-black italic tracking-tighter text-white drop-shadow-[0_8px_0_#FF4D4D]" style={fontH}>
+                CU BAZZAR
+              </h1>
+              <div className="mt-8 flex gap-2">
+                {[...Array(3)].map((_, i) => (
+                  <motion.div 
+                    key={i} 
+                    className="w-4 h-4 rounded-full bg-white shadow-[0_4px_0_#000]"
+                    animate={{ y: [0, -15, 0] }}
+                    transition={{ duration: 0.6, repeat: Infinity, delay: i * 0.15 }}
+                  />
+                ))}
+              </div>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* ─── 1. HERO ─── */}
-      <section className="relative min-h-screen flex items-center justify-center px-5 sm:px-8 overflow-hidden">
-        {/* Dot texture */}
-        <div className="absolute inset-0" style={{ opacity: 0.03, backgroundImage: `radial-gradient(circle at 1px 1px, ${C.text} 0.5px, transparent 0)`, backgroundSize: "24px 24px" }} />
-        {/* Ambient orbs */}
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full blur-[120px] pointer-events-none" style={{ background: `${C.accent}0a` }} />
-        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full blur-[100px] pointer-events-none" style={{ background: "rgba(77,184,172,0.04)" }} />
+      {/* ─── Abstract Background Shapes ─── */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+         {/* Checkerboard Pattern */}
+         <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'linear-gradient(45deg, #000 25%, transparent 25%, transparent 75%, #000 75%, #000), linear-gradient(45deg, #000 25%, transparent 25%, transparent 75%, #000 75%, #000)', backgroundSize: '60px 60px', backgroundPosition: '0 0, 30px 30px' }} />
+         {/* Massive gradient blobs */}
+         <div className="absolute top-[-10%] right-[-10%] w-[600px] h-[600px] rounded-full bg-gradient-to-br from-yellow-300 to-orange-400 opacity-20 blur-[100px]" />
+         <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full bg-gradient-to-tr from-cyan-300 to-blue-400 opacity-20 blur-[100px]" />
+      </div>
 
-        {/* Doodles with parallax */}
-        <motion.div style={{ y: doodleParallax }} className="absolute inset-0 pointer-events-none hidden md:block">
-          <DoodleBook className="absolute top-[12%] right-[8%] w-16 h-16" />
-          <DoodlePencil className="absolute bottom-[18%] left-[6%] w-14 h-14" />
-          <DoodleCoffee className="absolute top-[60%] right-[5%] w-14 h-14" />
-        </motion.div>
+      {/* ─── 1. 3D HERO SECTION ─── */}
+      <section className="relative min-h-screen flex items-center justify-center px-5 sm:px-8 pt-20 pb-12 z-10">
+        <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          
+          {/* Left Text Content */}
+          <motion.div 
+            initial={{ opacity: 0, x: -50 }} 
+            animate={{ opacity: showIntro ? 0 : 1, x: showIntro ? -50 : 0 }} 
+            transition={{ type: "spring", bounce: 0.4, duration: 0.8, delay: 0.2 }}
+            className="order-2 lg:order-1 relative z-20"
+          >
+            {/* Floating Tag */}
+            <motion.div 
+              animate={{ y: [-5, 5, -5] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-2xl border-4 border-black shadow-[4px_4px_0_#000] mb-8 rotate-[-2deg]"
+            >
+              <Zap className="w-5 h-5 text-yellow-500 fill-yellow-500" />
+              <span className="font-bold text-sm uppercase tracking-wider" style={fontH}>The Campus Super-Store</span>
+            </motion.div>
 
-        {/* Content */}
-        <div className="relative z-10 max-w-5xl mx-auto w-full pt-16 pb-32">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+            <h1 className="text-6xl sm:text-7xl lg:text-[5.5rem] font-black leading-[1.05] tracking-tighter mb-6 text-[#231942]" style={fontH}>
+              Trade <span className="text-white drop-shadow-[0_6px_0_#8338EC] [-webkit-text-stroke:2px_#231942]">Epic</span> Gear.
+              <br />
+              <span className="relative inline-block mt-2">
+                On Campus.
+                {/* 3D Underline */}
+                <svg className="absolute -bottom-4 left-0 w-full h-6" viewBox="0 0 300 24" preserveAspectRatio="none">
+                  <motion.path d="M5 15Q150 -5 295 15" fill="none" stroke="#FF4D4D" strokeWidth="8" strokeLinecap="round" 
+                    initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 1, duration: 0.8 }} />
+                  <motion.path d="M5 15Q150 -5 295 15" fill="none" stroke="#231942" strokeWidth="12" strokeLinecap="round" className="-z-10 absolute translate-y-2 opacity-50 blur-[2px]" />
+                </svg>
+              </span>
+            </h1>
 
-            {/* Left — Text */}
-            <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: showIntro ? 0 : 1, y: showIntro ? 30 : 0 }} transition={{ duration: 0.6, delay: 0.2 }}>
-              <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: showIntro ? 0 : 1, x: 0 }} transition={{ delay: 0.3 }}
-                className="inline-flex items-center gap-3 px-4 py-2 rounded-2xl mb-8"
-                style={{ backgroundColor: "rgba(255,255,255,0.02)", border: `1px solid ${C.border}` }}>
-                <div className="w-9 h-9 rounded-xl flex items-center justify-center p-0.5" style={{ backgroundColor: C.card, border: `1px solid ${C.border}` }}>
-                  <img src="/logo.png" alt="CU Bazzar Logo" className="w-full h-full object-cover rounded-lg" />
-                </div>
-                <span className="text-xl font-bold tracking-tight" style={{ ...fontH, color: C.text }}>
-                  CU Bazzar
-                </span>
-              </motion.div>
+            <p className="text-lg sm:text-xl font-medium text-slate-700 mb-10 max-w-lg leading-relaxed">
+              Buy, sell, and discover amazing items from your classmates. Built with thick 3D vibes, zero platform fees, and 100% campus trust.
+            </p>
 
-              <h1 className="text-[2.5rem] sm:text-5xl lg:text-[3.5rem] font-bold leading-[1.1] tracking-tight mb-5" style={{ ...fontH, color: C.text }}>
-                Your Campus.
-                <br />
-                <span className="relative inline-block">
-                  Your Marketplace.
-                  <DoodleUnderline />
-                </span>
-              </h1>
+            <div className="flex flex-wrap items-center gap-6">
+              <Link to="/login">
+                {/* Super 3D Button */}
+                <motion.button 
+                  whileHover={{ scale: 1.05, rotate: -2 }} 
+                  whileTap={{ scale: 0.95, y: 8, boxShadow: "0px 0px 0px #231942" }}
+                  className="group relative flex items-center gap-3 px-8 py-4 bg-[#FFD166] text-[#231942] font-black text-lg rounded-2xl border-4 border-[#231942] shadow-[0_8px_0_#231942] transition-all"
+                  style={fontH}
+                >
+                  Enter Marketplace
+                  <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform stroke-[3]" />
+                </motion.button>
+              </Link>
+              
+              <Link to="/login" className="font-bold text-lg text-slate-600 hover:text-[#FF4D4D] transition-colors" style={fontH}>
+                I already have an account
+              </Link>
+            </div>
+          </motion.div>
 
-              <p className="text-base sm:text-lg leading-relaxed mb-8 max-w-md" style={{ color: C.muted }}>
-                Buy textbooks from seniors, sell your stuff, connect with classmates — all within campus.
-              </p>
+          {/* Right 3D Visual Composition */}
+          <motion.div 
+            style={{ y: parallaxY }} 
+            className="order-1 lg:order-2 relative h-[400px] lg:h-[600px] flex items-center justify-center w-full z-10"
+          >
+            {/* The 3D generated Backpack (multiply blend to remove white bg) */}
+            <motion.img 
+              src="/3d_backpack.png" 
+              alt="3D Backpack"
+              className="absolute w-[80%] max-w-[450px] z-20 drop-shadow-2xl"
+              style={{ mixBlendMode: 'multiply' }}
+              initial={{ opacity: 0, scale: 0.5, y: 100 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              transition={{ type: "spring", bounce: 0.5, duration: 1, delay: 0.4 }}
+            />
+            
+            {/* Floating 3D Lightning Bolt */}
+            <motion.img 
+              src="/3d_lightning_bolt.png" 
+              alt="3D Lightning"
+              className="absolute w-[40%] max-w-[200px] z-30 right-[-5%] top-[10%] drop-shadow-xl"
+              style={{ mixBlendMode: 'multiply' }}
+              initial={{ opacity: 0, scale: 0, rotate: 45 }}
+              animate={{ opacity: 1, scale: 1, rotate: 15, y: [-10, 10, -10] }}
+              transition={{ 
+                 opacity: { delay: 0.6, duration: 0.5 },
+                 scale: { type: "spring", bounce: 0.6, delay: 0.6 },
+                 y: { duration: 4, repeat: Infinity, ease: "easeInOut" }
+              }}
+            />
 
-              <div className="flex flex-wrap items-center gap-3">
-                <Link to="/login">
-                  <motion.button whileHover={{ y: -2, scale: 1.03 }} whileTap={{ scale: 0.97 }}
-                    className="group flex items-center gap-2 px-7 py-3.5 rounded-2xl font-bold text-white text-sm transition-shadow duration-300"
-                    style={{ ...fontH, backgroundColor: C.accent, boxShadow: `0 4px 20px ${C.accentGlow}` }}>
-                    Explore Now
-                    <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-                  </motion.button>
-                </Link>
-                <Link to="/login"
-                  className="px-5 py-3.5 rounded-2xl font-semibold text-sm transition-all duration-200"
-                  style={{ ...fontH, color: `${C.text}88`, border: `1px solid ${C.border}` }}>
-                  I have an account
-                </Link>
+            {/* Glowing Backdrop Plate */}
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1, delay: 0.3 }}
+              className="absolute w-[70%] h-[70%] bg-white rounded-full border-8 border-dashed border-[#8338EC] opacity-20 animate-spin-slow pointer-events-none -z-10"
+              style={{ animationDuration: '20s' }}
+            />
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ─── 2. EXTREME 3D STATS ─── */}
+      <section className="relative py-20 px-5 sm:px-8 z-20">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-8">
+          {stats.map((s, i) => (
+            <motion.div 
+              key={s.label} 
+              initial={{ opacity: 0, y: 50 }} 
+              whileInView={{ opacity: 1, y: 0 }} 
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ type: "spring", bounce: 0.4, delay: i * 0.15 }}
+              whileHover={{ y: -10, scale: 1.02 }}
+              className="bg-white p-8 rounded-[2rem] border-4 border-[#231942] relative group"
+              style={{ boxShadow: `8px 12px 0 ${s.color}, 8px 12px 0 4px #231942` }} // double shadow effect
+            >
+              <div className="absolute top-4 right-4 w-12 h-12 rounded-full border-4 border-[#231942] flex items-center justify-center bg-white shadow-[0_4px_0_#231942]">
+                 <Star className="w-6 h-6 fill-current" style={{ color: s.color }} />
               </div>
+              <p className="text-5xl lg:text-7xl font-black tracking-tighter text-[#231942] mb-2" style={fontH}>
+                <Counter target={s.value} suffix={s.suffix} />
+              </p>
+              <p className="text-lg font-bold text-slate-500 uppercase tracking-widest">{s.label}</p>
             </motion.div>
-
-            {/* Right — Testimonial Stack */}
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: showIntro ? 0 : 1 }} transition={{ delay: 0.4, duration: 0.5 }}
-              className="relative h-[340px] sm:h-[380px] hidden sm:block">
-              {testimonials.slice(0, 3).map((t, i) => (
-                <motion.div key={t.name} initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.5 + i * 0.15, duration: 0.5 }}
-                  whileHover={{ scale: 1.04, rotate: 0, zIndex: 10 }}
-                  className="absolute rounded-2xl p-5 w-[260px] sm:w-[280px] cursor-default transition-shadow"
-                  style={{
-                    backgroundColor: C.card, border: `1px solid ${C.border}`,
-                    boxShadow: "0 8px 28px rgba(0,0,0,0.25)",
-                    top: i === 0 ? "0%" : i === 1 ? "32%" : "60%",
-                    left: i === 0 ? "5%" : i === 1 ? "35%" : "10%",
-                    rotate: `${t.rotate}deg`, zIndex: 3 - i,
-                  }}>
-                  {/* Tape */}
-                  <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 w-12 h-5 rounded-sm rotate-1 shadow-sm" style={{ backgroundColor: "rgba(240,192,64,0.25)" }} />
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className={`w-9 h-9 rounded-full bg-gradient-to-br ${t.gradient} flex items-center justify-center flex-shrink-0`}>
-                      <span className="text-xs font-bold text-white">{t.avatar}</span>
-                    </div>
-                    <div>
-                      <p className="text-sm font-bold" style={{ color: C.text }}>{t.name}</p>
-                      <p className="text-[11px]" style={{ color: C.muted }}>{t.year}</p>
-                    </div>
-                  </div>
-                  <p className="text-sm leading-relaxed" style={{ color: `${C.text}77` }}>"{t.quote}"</p>
-                  <div className="mt-3 inline-flex items-center gap-1 px-2 py-0.5 rounded-full" style={{ backgroundColor: "rgba(77,184,172,0.1)", border: "1px solid rgba(77,184,172,0.15)" }}>
-                    <CheckCircle className="w-3 h-3" style={{ color: C.teal }} />
-                    <span className="text-[10px] font-semibold" style={{ color: C.teal }}>Verified CU Student</span>
-                  </div>
-                </motion.div>
-              ))}
-            </motion.div>
-          </div>
+          ))}
         </div>
-
-        {/* Scroll hint */}
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: showIntro ? 0 : 0.4 }} transition={{ delay: 1.2 }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2">
-          <div className="w-5 h-8 rounded-full flex justify-center pt-1.5" style={{ border: `2px solid ${C.border}` }}>
-            <motion.div animate={{ y: [0, 6, 0] }} transition={{ repeat: Infinity, duration: 1.5 }}
-              className="w-1 h-1.5 rounded-full" style={{ backgroundColor: C.muted }} />
-          </div>
-        </motion.div>
       </section>
 
-      {/* ─── 2. TESTIMONIALS ─── */}
-      <section className="relative py-20 sm:py-28 px-5 sm:px-8" style={{ backgroundColor: C.surface }}>
-        <div className="max-w-5xl mx-auto">
-          <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }} className="text-center mb-14">
-            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-3" style={{ ...fontH, color: C.text }}>What students say</h2>
-            <p className="text-base sm:text-lg" style={{ color: C.muted }}>From actual CU students who've used the platform.</p>
+      {/* ─── 3. WHY CU BAZZAR (Gamified Cards) ─── */}
+      <section className="relative py-24 sm:py-32 px-5 sm:px-8 z-10 overflow-hidden">
+        {/* Slanted background stripe */}
+        <div className="absolute inset-0 bg-[#231942] -skew-y-3 transform origin-top-left -z-10 shadow-[0_20px_0_#8338EC]" />
+
+        <div className="max-w-6xl mx-auto relative z-10">
+          <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-20 text-white">
+            <h2 className="text-5xl sm:text-6xl font-black tracking-tight mb-4 drop-shadow-[0_4px_0_#000]" style={fontH}>Superpowers Included</h2>
+            <p className="text-xl font-medium text-purple-200">Everything you need to trade like a pro.</p>
           </motion.div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {testimonials.map((t, i) => (
-              <motion.div key={t.name} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-                transition={{ delay: i * 0.1, duration: 0.5 }} whileHover={{ y: -4 }}
-                className="rounded-2xl p-5 transition-shadow"
-                style={{ backgroundColor: C.card, border: `1px solid ${C.border}`, boxShadow: "0 4px 16px rgba(0,0,0,0.2)" }}>
-                <div className="w-10 h-4 rounded-sm mx-auto mb-4 -mt-1" style={{ backgroundColor: "rgba(240,192,64,0.2)", rotate: `${(i % 2 === 0 ? 2 : -2)}deg` }} />
-                <div className="flex items-center gap-3 mb-3">
-                  <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${t.gradient} flex items-center justify-center flex-shrink-0 shadow-sm`}>
-                    <span className="text-sm font-bold text-white">{t.avatar}</span>
-                  </div>
-                  <div>
-                    <p className="text-sm font-bold" style={{ color: C.text }}>{t.name}</p>
-                    <p className="text-[11px] font-medium" style={{ color: C.muted }}>{t.year}</p>
-                  </div>
-                </div>
-                <div className="flex gap-0.5 mb-2">
-                  {[...Array(5)].map((_, j) => <Star key={j} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />)}
-                </div>
-                <p className="text-sm leading-relaxed" style={{ color: `${C.text}66` }}>"{t.quote}"</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
 
-      {/* ─── 3. STATS ─── */}
-      <section className="relative py-20 sm:py-24 px-5 sm:px-8" style={{ backgroundColor: C.bg }}>
-        <div className="max-w-4xl mx-auto">
-          <div className="grid grid-cols-3 gap-4 sm:gap-8">
-            {stats.map((s, i) => (
-              <motion.div key={s.label} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }} transition={{ delay: i * 0.12, duration: 0.5 }} className="text-center">
-                <div className="text-3xl mb-2" style={{ color: C.muted }}>{s.emoji || '—'}</div>
-                <p className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight" style={{ ...fontH, color: C.text }}>
-                  <Counter target={s.value} suffix={s.suffix} />
-                </p>
-                <p className="text-xs sm:text-sm font-semibold mt-1" style={{ color: C.muted }}>{s.label}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ─── 4. WHY CU BAZZAR ─── */}
-      <section className="relative py-20 sm:py-28 px-5 sm:px-8" style={{ backgroundColor: C.surface }}>
-        <div className="max-w-5xl mx-auto">
-          <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-14">
-            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-3" style={{ ...fontH, color: C.text }}>Why CU Bazzar?</h2>
-            <p className="text-base sm:text-lg" style={{ color: C.muted }}>Built by students, for students.</p>
-          </motion.div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
-              { title: "No Platform Fee", desc: "We don't take a cut. Whatever you sell for, you keep.", icon: ShieldCheck, color: C.teal },
-              { title: "Direct Chat", desc: "Message buyers and sellers directly. No middlemen.", icon: MessageCircle, color: C.accent },
-              { title: "Campus Handoff", desc: "Meet at your hostel lobby or the library. No shipping.", icon: Heart, color: "#9B59B6" },
+              { title: "Zero Fees", desc: "Keep 100% of your money. We do not take a cut.", icon: ShieldCheck, color: C.yellow },
+              { title: "Direct Chat", desc: "Haggle, discuss, and meet up using the built-in chat.", icon: MessageCircle, color: C.cyan },
+              { title: "Local Handoff", desc: "No shipping. Meet at the library or hostel lobby.", icon: Heart, color: C.accent },
             ].map((f, i) => (
-              <motion.div key={f.title} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }} transition={{ delay: i * 0.1, duration: 0.5 }} whileHover={{ y: -4 }}
-                className="rounded-2xl p-6 sm:p-7 transition-all group"
-                style={{ backgroundColor: C.card, border: `1px solid ${C.border}`, boxShadow: "0 4px 16px rgba(0,0,0,0.2)" }}>
-                <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4 transition-transform group-hover:scale-110 group-hover:rotate-3"
-                  style={{ backgroundColor: `${f.color}12` }}>
-                  <f.icon className="w-6 h-6" style={{ color: f.color }} />
+              <motion.div 
+                key={f.title} 
+                initial={{ opacity: 0, scale: 0.8, rotate: -5 }} 
+                whileInView={{ opacity: 1, scale: 1, rotate: (i % 2 === 0 ? 2 : -2) }} 
+                viewport={{ once: true }} 
+                whileHover={{ scale: 1.05, rotate: 0 }}
+                transition={{ type: "spring", bounce: 0.5, delay: i * 0.1 }} 
+                className="bg-white p-8 rounded-3xl border-4 border-[#231942] shadow-[8px_12px_0_#000]"
+              >
+                <div className="w-16 h-16 rounded-2xl border-4 border-[#231942] flex items-center justify-center mb-6 shadow-[0_6px_0_#000] rotate-[-5deg]"
+                  style={{ backgroundColor: f.color }}>
+                  <f.icon className="w-8 h-8 text-[#231942] stroke-[3]" />
                 </div>
-                <h3 className="font-bold text-lg mb-2" style={{ ...fontH, color: C.text }}>{f.title}</h3>
-                <p className="text-sm leading-relaxed" style={{ color: C.muted }}>{f.desc}</p>
+                <h3 className="text-2xl font-black mb-3 text-[#231942]" style={fontH}>{f.title}</h3>
+                <p className="text-slate-600 font-medium leading-relaxed">{f.desc}</p>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ─── 5. CTA ─── */}
-      <section className="relative py-20 sm:py-24 px-5 sm:px-8" style={{ backgroundColor: C.bg }}>
-        <div className="max-w-2xl mx-auto text-center">
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-4" style={{ ...fontH, color: C.text }}>Ready to start trading?</h2>
-            <p className="text-base sm:text-lg mb-8" style={{ color: C.muted }}>Join your classmates on the campus marketplace.</p>
-            <Link to="/login">
-              <motion.button whileHover={{ y: -2, scale: 1.03 }} whileTap={{ scale: 0.97 }}
-                className="group inline-flex items-center gap-2 px-10 py-4 rounded-2xl font-bold text-white text-base transition-shadow duration-300"
-                style={{ ...fontH, backgroundColor: C.accent, boxShadow: `0 4px 20px ${C.accentGlow}` }}>
-                Enter Marketplace
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-0.5 transition-transform" />
-              </motion.button>
-            </Link>
+      {/* ─── 4. CTA SECTION WITH 3D ROCKET ─── */}
+      <section className="relative py-32 px-5 sm:px-8 z-10">
+        <div className="max-w-4xl mx-auto">
+          <motion.div 
+            initial={{ opacity: 0, y: 50 }} 
+            whileInView={{ opacity: 1, y: 0 }} 
+            viewport={{ once: true }}
+            className="bg-gradient-to-br from-[#FFD166] to-[#FF4D4D] p-10 sm:p-16 rounded-[3rem] border-8 border-[#231942] shadow-[12px_16px_0_#231942] text-center relative overflow-hidden"
+          >
+            {/* The 3D Rocket */}
+            <motion.img 
+              src="/3d_rocket.png" 
+              alt="3D Rocket"
+              className="absolute w-[200px] sm:w-[300px] -right-10 -top-10 sm:-right-20 sm:-top-20 opacity-80 drop-shadow-2xl"
+              style={{ mixBlendMode: 'multiply' }}
+              animate={{ y: [-15, 15, -15], rotate: [0, 5, 0] }}
+              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+            />
+
+            <div className="relative z-10">
+              <h2 className="text-5xl sm:text-6xl font-black tracking-tighter mb-6 text-[#231942] drop-shadow-[0_4px_0_rgba(255,255,255,0.5)]" style={fontH}>
+                Blast off into the <br/> Campus Market!
+              </h2>
+              
+              <Link to="/login" className="inline-block mt-8">
+                <motion.button 
+                  whileHover={{ scale: 1.1, rotate: 2 }} 
+                  whileTap={{ scale: 0.9, y: 8, boxShadow: "0px 0px 0px #231942" }}
+                  className="flex items-center gap-3 px-10 py-5 bg-white text-[#231942] font-black text-xl rounded-2xl border-4 border-[#231942] shadow-[0_8px_0_#231942] transition-all"
+                  style={fontH}
+                >
+                  <Package className="w-7 h-7 stroke-[3]" />
+                  Start Trading
+                </motion.button>
+              </Link>
+            </div>
           </motion.div>
         </div>
       </section>
 
       {/* ─── Footer ─── */}
-      <footer className="py-8 px-5" style={{ backgroundColor: C.surface, borderTop: `1px solid ${C.border}` }}>
-        <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm" style={{ color: C.muted }}>
-          <p>© 2026 All copyright reserved , CU BAZZAR </p>
-          <div className="flex gap-6">
-            <Link to="/" className="hover:opacity-70 transition-opacity">Privacy</Link>
-            <Link to="/terms" className="hover:opacity-70 transition-opacity">Terms</Link>
+      <footer className="py-10 px-5 bg-white border-t-4 border-[#231942] relative z-20">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 font-bold text-slate-500">
+          <div className="flex items-center gap-3">
+             <div className="w-8 h-8 rounded-lg bg-[#231942] border-2 border-slate-300 p-1">
+                <img src="/logo.png" className="w-full h-full object-cover rounded" />
+             </div>
+             <span>© 2026 CU BAZZAR. All rigths reserved.</span>
+          </div>
+          <div className="flex gap-8">
+            <Link to="/" className="hover:text-[#FF4D4D] transition-colors">Privacy</Link>
+            <Link to="/terms" className="hover:text-[#FF4D4D] transition-colors">Terms of Service</Link>
           </div>
         </div>
       </footer>
+
     </div>
   );
 }
