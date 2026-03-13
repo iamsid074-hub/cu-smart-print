@@ -40,7 +40,7 @@ export const groceryItems: GroceryItem[] = [
     {
         id: "grocery-coke",
         name: "Coca-Cola",
-        quantity: "300ml",
+        quantity: "400ml",
         price: 20,
         image: "/grocery/coca-cola.png",
         category: "Cold Drinks"
@@ -48,7 +48,7 @@ export const groceryItems: GroceryItem[] = [
     {
         id: "grocery-sprite",
         name: "Sprite",
-        quantity: "300ml",
+        quantity: "400ml",
         price: 20,
         image: "/grocery/sprite.png",
         category: "Cold Drinks"
@@ -56,7 +56,7 @@ export const groceryItems: GroceryItem[] = [
     {
         id: "grocery-fanta",
         name: "Fanta",
-        quantity: "300ml",
+        quantity: "400ml",
         price: 20,
         image: "/grocery/fanta.png",
         category: "Cold Drinks"
@@ -64,7 +64,7 @@ export const groceryItems: GroceryItem[] = [
     {
         id: "grocery-mountain-dew",
         name: "Mountain Dew",
-        quantity: "300ml",
+        quantity: "400ml",
         price: 20,
         image: "/grocery/mountain-dew.png",
         category: "Cold Drinks"
