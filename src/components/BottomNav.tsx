@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, Compass, ShoppingCart, Utensils, User } from "lucide-react";
+import { Home, Compass, ShoppingCart, Utensils, User, ShoppingBag } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { motion } from "framer-motion";
@@ -44,6 +44,12 @@ export default function BottomNav() {
                 <Link to="/browse" className="flex flex-col items-center justify-center gap-1 text-decoration-none py-1 flex-1 relative z-10">
                     <Compass strokeWidth={2.5} className={`w-5 h-5 sm:w-[22px] sm:h-[22px] ${location.pathname.startsWith('/browse') ? 'text-slate-900' : 'text-slate-500 hover:text-slate-700'}`} />
                     <span className={`text-[9px] sm:text-[10px] font-semibold ${location.pathname.startsWith('/browse') ? 'text-slate-900' : 'text-slate-400'}`}>Explore</span>
+                </Link>
+
+                {/* Grocery */}
+                <Link to="/grocery" className="flex flex-col items-center justify-center gap-1 text-decoration-none py-1 flex-1 relative z-10">
+                    <ShoppingBag strokeWidth={2.5} className={`w-5 h-5 sm:w-[22px] sm:h-[22px] ${location.pathname.startsWith('/grocery') ? 'text-slate-900' : 'text-slate-500 hover:text-slate-700'}`} />
+                    <span className={`text-[9px] sm:text-[10px] font-semibold ${location.pathname.startsWith('/grocery') ? 'text-slate-900' : 'text-slate-400'}`}>Grocery</span>
                 </Link>
 
                 {/* Cart (Center elevated style wrapper) */}

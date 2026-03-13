@@ -1,0 +1,183 @@
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ShoppingCart, Plus, ShoppingBag, ArrowLeft, Search, Loader2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { groceryItems, type GroceryItem } from "@/config/groceryItems";
+import { useCart } from "@/contexts/CartContext";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
+
+const fontH: React.CSSProperties = { fontFamily: "'Space Grotesk', sans-serif" };
+
+export default function Grocery() {
+    const navigate = useNavigate();
+    const { addItem } = useCart();
+    const { user } = useAuth();
+    const [searchQuery, setSearchQuery] = useState("");
+    const [loading, setLoading] = useState(false);
+
+    const filteredItems = groceryItems.filter(item =>
+        item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.category.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    const handleAddToCart = (item: GroceryItem) => {
+        if (!user) {
+            toast.error("Please login to add items to cart");
+            navigate("/login");
+            return;
+        }
+        addItem({
+            id: item.id,
+            title: item.name,
+            price: item.price,
+            image: item.image,
+            category: item.category,
+        });
+        toast.success(`${item.name} added to cart!`);
+    };
+
+    return (
+        <div className="min-h-screen bg-slate-50 pb-32">
+            {/* Header */}
+            <div className="bg-white border-b border-slate-100 sticky top-0 z-30 px-4 py-4 sm:px-6">
+                <div className="max-w-5xl mx-auto flex items-center gap-4">
+                    <button 
+                        onClick={() => navigate(-1)}
+                        className="p-2 rounded-full hover:bg-slate-100 transition-colors"
+                    >
+                        <ArrowLeft className="w-6 h-6 text-slate-600" />
+                    </button>
+                    <h1 className="text-xl font-bold text-slate-900 flex-1" style={fontH}>Campus Grocery</h1>
+                    <div className="relative w-10 h-10 rounded-full bg-brand/10 flex items-center justify-center text-brand">
+                        <ShoppingBag className="w-5 h-5" />
+                    </div>
+                </div>
+            </div>
+
+            <div className="max-w-5xl mx-auto px-4 sm:px-6 mt-6">
+                {/* Search */}
+                <div className="relative mb-8">
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                    <input
+                        type="text"
+                        placeholder="Search for milk, bread, eggs..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="w-full pl-12 pr-4 h-14 rounded-2xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent bg-white shadow-sm text-sm transition-all"
+                    />
+                </div>
+
+                {/* Quick Items Area (Milks mostly) */}
+                {!searchQuery && (
+                    <section className="mb-10">
+                        <div className="flex items-center gap-2 mb-6">
+                            <div className="w-1.5 h-6 bg-brand rounded-full" />
+                            <h2 className="text-lg font-black text-slate-900 uppercase tracking-tight" style={fontH}>Quick Essentials</h2>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            {groceryItems.slice(0, 3).map((item) => (
+                                <motion.div
+                                    key={item.id}
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    className="p-4 rounded-3xl bg-white border border-slate-100 shadow-sm flex items-center gap-4 group hover:border-brand/30 transition-all"
+                                >
+                                    <div className="w-20 h-20 rounded-2xl overflow-hidden bg-slate-50 flex-shrink-0">
+                                        <img src={item.image} alt={item.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <p className="text-sm font-bold text-slate-800 line-clamp-1">{item.name}</p>
+                                        <p className="text-[10px] font-bold text-slate-400 mt-0.5">{item.quantity}</p>
+                                        <div className="flex items-center justify-between mt-2">
+                                            <span className="text-base font-black text-brand">₹{item.price}</span>
+                                            <button 
+                                                onClick={() => handleAddToCart(item)}
+                                                className="w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center hover:bg-black active:scale-95 transition-all"
+                                            >
+                                                <Plus className="w-4 h-4" />
+                                            </button>
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            ))}
+                        </div>
+                    </section>
+                )}
+
+                {/* Full List */}
+                <section>
+                    <div className="flex items-center gap-2 mb-6">
+                        <div className="w-1.5 h-6 bg-slate-300 rounded-full" />
+                        <h2 className="text-lg font-black text-slate-900 uppercase tracking-tight" style={fontH}>
+                            {searchQuery ? `Search Results (${filteredItems.length})` : "All Items"}
+                        </h2>
+                    </div>
+
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                        {filteredItems.map((item, idx) => (
+                            <motion.div
+                                key={item.id}
+                                initial={{ opacity: 0, scale: 0.95 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                transition={{ delay: idx * 0.05 }}
+                                className="bg-white rounded-[2rem] overflow-hidden border border-slate-100 shadow-sm hover:shadow-md transition-all flex flex-col"
+                            >
+                                <div className="relative h-32 sm:h-40 bg-slate-50 overflow-hidden">
+                                    <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                                    {item.category === 'Milk' && (
+                                        <span className="absolute top-3 left-3 px-2 py-0.5 rounded-full bg-blue-500 text-white text-[9px] font-black uppercase tracking-widest">Fresh</span>
+                                    )}
+                                </div>
+                                <div className="p-4 flex flex-col flex-1">
+                                    <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">{item.category}</p>
+                                    <h3 className="text-sm font-bold text-slate-800 leading-tight mb-1 line-clamp-2">{item.name}</h3>
+                                    <p className="text-[10px] font-bold text-slate-400 mb-3">{item.quantity}</p>
+                                    
+                                    <div className="mt-auto flex items-center justify-between pt-2 border-t border-slate-50">
+                                        <span className="text-lg font-black text-slate-900">₹{item.price}</span>
+                                        <button 
+                                            onClick={() => handleAddToCart(item)}
+                                            className="h-10 px-4 rounded-xl bg-brand text-white text-xs font-black shadow-lg shadow-brand/20 hover:bg-brand-dark active:scale-95 transition-all flex items-center gap-2"
+                                        >
+                                            <Plus className="w-4 h-4" /> Add
+                                        </button>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        ))}
+                    </div>
+
+                    {filteredItems.length === 0 && (
+                        <div className="py-20 text-center">
+                            <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <Search className="w-8 h-8 text-slate-300" />
+                            </div>
+                            <h3 className="text-lg font-bold text-slate-800">No items found</h3>
+                            <p className="text-sm text-slate-500 mt-1">Try searching for something else or browse categories.</p>
+                        </div>
+                    )}
+                </section>
+            </div>
+            
+            {/* Float Info */}
+            <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-40 w-[90vw] max-w-md">
+                <div className="bg-slate-900 text-white rounded-2xl p-4 flex items-center gap-3 shadow-2xl border border-white/10">
+                    <div className="w-10 h-10 rounded-full bg-brand/20 flex items-center justify-center text-brand">
+                        <ShoppingBag className="w-5 h-5" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                        <p className="text-xs font-bold text-slate-300">Fast Campus Delivery</p>
+                        <p className="text-[10px] text-slate-500 truncate">Essential items delivered in 15-30 mins</p>
+                    </div>
+                    <button 
+                        onClick={() => navigate('/cart')}
+                        className="px-4 py-2 bg-brand rounded-lg text-xs font-black shadow-lg shadow-brand/20"
+                    >
+                        View Cart
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+}

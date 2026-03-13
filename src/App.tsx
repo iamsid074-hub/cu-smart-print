@@ -13,6 +13,7 @@ import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import Profile from "./pages/Profile";
 import Browse from "./pages/Browse";
+import Grocery from "./pages/Grocery";
 import ProductDetail from "./pages/ProductDetail";
 import FoodMenu from "./pages/FoodMenu";
 import Cart from "./pages/Cart";
@@ -107,6 +108,7 @@ function AppLayout() {
         <Route path="/tracking" element={<ProtectedRoute><Tracking /></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
         <Route path="/browse" element={<ProtectedRoute><Browse /></ProtectedRoute>} />
+        <Route path="/grocery" element={<ProtectedRoute><Grocery /></ProtectedRoute>} />
         <Route path="/product/:id" element={<ProtectedRoute><ProductDetail /></ProtectedRoute>} />
         <Route path="/food" element={<ProtectedRoute><FoodMenu /></ProtectedRoute>} />
         <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
