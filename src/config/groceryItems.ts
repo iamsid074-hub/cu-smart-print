@@ -81,7 +81,7 @@ export const groceryItems: GroceryItem[] = [
         name: "Fanta",
         quantity: "300ml",
         price: 20,
-        image: "https://images.unsplash.com/photo-1624517452488-04869289c4ca?q=80&w=400&auto=format&fit=crop",
+        image: "/grocery/fanta.png",
         category: "Cold Drinks"
     },
     {
