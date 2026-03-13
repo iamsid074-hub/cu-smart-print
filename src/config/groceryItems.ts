@@ -32,7 +32,7 @@ export const groceryItems: GroceryItem[] = [
         name: "Amul Shakti (Standardized Milk)",
         quantity: "500ml",
         price: 30,
-        image: "https://images.unsplash.com/photo-1528750955925-50f6a1ba99d8?q=80&w=400&auto=format&fit=crop",
+        image: "/grocery/amul-shakti.png",
         category: "Milk",
         isFresh: true
     },
