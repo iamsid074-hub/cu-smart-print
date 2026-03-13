@@ -89,7 +89,7 @@ export const groceryItems: GroceryItem[] = [
         name: "Mountain Dew",
         quantity: "300ml",
         price: 20,
-        image: "https://images.unsplash.com/photo-1581006852262-e4307cf6283a?q=80&w=400&auto=format&fit=crop",
+        image: "/grocery/mountain-dew.png",
         category: "Cold Drinks"
     }
 ];
