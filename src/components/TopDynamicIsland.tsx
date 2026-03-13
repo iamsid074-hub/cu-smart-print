@@ -26,8 +26,10 @@ export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
   const [islandState, setIslandState] = useState<IslandState>("default");
   const [prevItemsCount, setPrevItemsCount] = useState(items.reduce((acc, item) => acc + item.quantity, 0));
   const [latestAddedItem, setLatestAddedItem] = useState<{ name: string, price: number } | null>(null);
+  const [isAnimating, setIsAnimating] = useState(false);
 
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const gooTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Helper to set state and auto-dismiss after 2 seconds
   const triggerState = (newState: IslandState, data?: { name: string, price: number }) => {
@@ -52,15 +54,22 @@ export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
     if (location.pathname.startsWith("/food")) {
       triggerState("browsing");
     } else if (location.pathname.startsWith("/browse")) {
+      setIsAnimating(true);
       setIslandState("explore");
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      // Turn off goo filter after animation completes
+      if (gooTimerRef.current) clearTimeout(gooTimerRef.current);
+      gooTimerRef.current = setTimeout(() => setIsAnimating(false), 700);
     } else if (location.pathname === "/cart") {
       triggerState("cart");
     } else if (location.pathname === "/profile") {
       triggerState("profile");
     } else {
+      setIsAnimating(true);
       setIslandState("default");
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      if (gooTimerRef.current) clearTimeout(gooTimerRef.current);
+      gooTimerRef.current = setTimeout(() => setIsAnimating(false), 700);
     }
   }, [location.pathname]);
 
@@ -81,7 +90,10 @@ export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
   }, [items, prevItemsCount]);
 
   useEffect(() => {
-    return () => { if (timeoutRef.current) clearTimeout(timeoutRef.current); };
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      if (gooTimerRef.current) clearTimeout(gooTimerRef.current);
+    };
   }, []);
 
   const handleIslandClick = () => {
@@ -185,8 +197,8 @@ export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
       <div
         className="w-full flex justify-center fixed top-4 sm:top-6 z-[100] pointer-events-none"
         style={{
-          gap: 4,
-          filter: islandState === "explore" ? "url(#goo)" : "none",
+          gap: 8,
+          filter: isAnimating ? "url(#goo)" : "none",
           willChange: "filter",
         }}
       >
