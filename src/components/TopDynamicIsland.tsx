@@ -26,10 +26,8 @@ export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
   const [islandState, setIslandState] = useState<IslandState>("default");
   const [prevItemsCount, setPrevItemsCount] = useState(items.reduce((acc, item) => acc + item.quantity, 0));
   const [latestAddedItem, setLatestAddedItem] = useState<{ name: string, price: number } | null>(null);
-  const [isAnimating, setIsAnimating] = useState(false);
 
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const gooTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Helper to set state and auto-dismiss after 2 seconds
   const triggerState = (newState: IslandState, data?: { name: string, price: number }) => {
@@ -54,22 +52,15 @@ export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
     if (location.pathname.startsWith("/food")) {
       triggerState("browsing");
     } else if (location.pathname.startsWith("/browse")) {
-      setIsAnimating(true);
       setIslandState("explore");
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
-      // Turn off goo filter after animation completes (make it fast to separate instantly)
-      if (gooTimerRef.current) clearTimeout(gooTimerRef.current);
-      gooTimerRef.current = setTimeout(() => setIsAnimating(false), 200);
     } else if (location.pathname === "/cart") {
       triggerState("cart");
     } else if (location.pathname === "/profile") {
       triggerState("profile");
     } else {
-      setIsAnimating(true);
       setIslandState("default");
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
-      if (gooTimerRef.current) clearTimeout(gooTimerRef.current);
-      gooTimerRef.current = setTimeout(() => setIsAnimating(false), 200);
     }
   }, [location.pathname]);
 
@@ -92,7 +83,6 @@ export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
   useEffect(() => {
     return () => {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
-      if (gooTimerRef.current) clearTimeout(gooTimerRef.current);
     };
   }, []);
 
@@ -113,8 +103,12 @@ export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
       break;
 
     case "explore":
-      width = 40;
-      content = null;
+      width = 160;
+      content = (
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-semibold tracking-wide text-white/90">Browsing Items</span>
+        </div>
+      );
       break;
 
     case "cart":
@@ -164,83 +158,10 @@ export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
 
   return (
     <>
-      {/* Hidden SVG gooey filter — creates the liquid bridge between pills */}
-      <svg style={{ position: "absolute", width: 0, height: 0 }} aria-hidden="true">
-        <defs>
-          <filter id="goo">
-            <feGaussianBlur in="SourceGraphic" stdDeviation="12" result="blur" />
-            <feColorMatrix
-              in="blur"
-              mode="matrix"
-              values="1 0 0 0 0
-                      0 1 0 0 0
-                      0 0 1 0 0
-                      0 0 0 22 -9"
-              result="goo"
-            />
-            <feComposite in="SourceGraphic" in2="goo" operator="atop" />
-          </filter>
-        </defs>
-      </svg>
-
-      <style>{`
-        @keyframes islandPulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.5; }
-        }
-        @keyframes diGlow {
-          0%, 100% { box-shadow: 0 4px 20px rgba(0,0,0,0.55), 0 0 0 0.5px rgba(255,255,255,0.07) inset; }
-          50%       { box-shadow: 0 4px 24px rgba(0,0,0,0.6),  0 0 0 0.5px rgba(255,255,255,0.12) inset; }
-        }
-      `}</style>
-
       <div
         className="w-full flex justify-center fixed top-4 sm:top-6 z-[100] pointer-events-none"
-        style={{
-          gap: 8,
-          filter: isAnimating ? "url(#goo)" : "none",
-          willChange: "filter",
-        }}
       >
         <AnimatePresence mode="popLayout">
-          {/* Secondary Left Pill (Browsing Items) - emerges with gooey bridge */}
-          {islandState === "explore" && (
-            <motion.div
-              initial={{ opacity: 0, x: 30, scaleX: 0.3, scaleY: 1.25 }}
-              animate={{ opacity: 1, x: 0, scaleX: 1, scaleY: 1 }}
-              exit={{ opacity: 0, x: 30, scaleX: 0.3, scaleY: 1.25 }}
-              transition={{
-                type: "spring",
-                stiffness: 500,
-                damping: 24, // lower damping = more natural wobble/bounce
-                mass: 0.5,
-              }}
-              className="flex items-center gap-2 px-4 shadow-lg pointer-events-auto flex-shrink-0"
-              style={{
-                height: 40,
-                background: "#000",
-                borderRadius: 50,
-                boxShadow: "0 4px 20px rgba(0,0,0,0.55), 0 0 0 0.5px rgba(255,255,255,0.07) inset",
-                color: "#fff",
-                position: "relative",
-                zIndex: 90,
-                transformOrigin: "right center",
-                willChange: "transform, opacity",
-              }}
-            >
-              <div
-                className="w-1.5 h-1.5 rounded-full flex-shrink-0"
-                style={{
-                  background: "#30D158",
-                  boxShadow: "0 0 6px #30D158",
-                  animation: "islandPulse 2s ease-in-out infinite",
-                }}
-              />
-              <span className="text-sm font-semibold tracking-wide text-white/90 whitespace-nowrap">
-                Browsing Items
-              </span>
-            </motion.div>
-          )}
 
           {/* ── Main Pill ── */}
           <motion.div
@@ -259,21 +180,19 @@ export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
               willChange: "transform, width",
             }}
           >
-            {/* Green camera indicator dot — shown when not exploring */}
-            {islandState !== "explore" && (
-              <motion.div
-                animate={{ opacity: [0.55, 1, 0.55] }}
-                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                style={{
-                  position: "absolute", left: 12, top: "50%",
-                  transform: "translateY(-50%)",
-                  width: 6, height: 6, borderRadius: "50%",
-                  background: "#30D158",
-                  boxShadow: "0 0 8px rgba(48,209,88,0.9)",
-                  zIndex: 10,
-                }}
-              />
-            )}
+            {/* Green camera indicator dot */}
+            <motion.div
+              animate={{ opacity: [0.55, 1, 0.55] }}
+              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+              style={{
+                position: "absolute", left: 12, top: "50%",
+                transform: "translateY(-50%)",
+                width: 6, height: 6, borderRadius: "50%",
+                background: "#30D158",
+                boxShadow: "0 0 8px rgba(48,209,88,0.9)",
+                zIndex: 10,
+              }}
+            />
 
             <AnimatePresence mode="wait">
               <motion.div
@@ -285,7 +204,7 @@ export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
                 style={{
                   display: "flex", alignItems: "center", justifyContent: "center",
                   width: "100%", height: "100%",
-                  paddingLeft: islandState !== "explore" ? 28 : 16,
+                  paddingLeft: 28,
                   paddingRight: 16,
                   color: "#fff",
                 }}
