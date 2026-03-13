@@ -8,7 +8,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
 import { toast } from "sonner";
 import { Capacitor } from "@capacitor/core";
-import { campusEssentials, ADMIN_SELLER_ID, type CampusEssentialItem } from "@/config/campusEssentials";
+import { ADMIN_SELLER_ID } from "@/config/campusEssentials";
 import type { Database } from "@/types/supabase";
 
 type Product = Database["public"]["Tables"]["products"]["Row"];
@@ -318,7 +318,6 @@ export default function Home() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [timeLeft, setTimeLeft] = useState({ days: "00", hours: "00", minutes: "00", seconds: "00" });
-  const [showAllItems, setShowAllItems] = useState(false);
   const [itemsSearchQuery, setItemsSearchQuery] = useState("");
   const [isReminded, setIsReminded] = useState(() => localStorage.getItem('cubazzar_sale_reminder') === '1');
 
@@ -566,151 +565,71 @@ export default function Home() {
 
 
 
-          {/* ─── CAMPUS ESSENTIALS ─── */}
-          <motion.section
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="mb-10 sm:mb-16"
-          >
-            <div className="flex items-center justify-between mb-4 sm:mb-6">
-              <div className="flex items-center gap-2">
-                <Package className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: '#231942' }} />
-                <h2 className="text-base sm:text-xl font-bold" style={fontH}>Items</h2>
-              </div>
-            </div>
-
-            {/* Expandable Items Section */}
-            <AnimatePresence>
-              {showAllItems && (
-                <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: "auto", opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  className="mb-4 overflow-hidden"
-                >
-                  <div className="relative mb-4">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                    <input
-                      type="text"
-                      placeholder="Search items..."
-                      value={itemsSearchQuery}
-                      onChange={(e) => setItemsSearchQuery(e.target.value)}
-                      className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent text-sm bg-white"
-                    />
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 pb-4">
-              {campusEssentials
-                .filter(item => item.title.toLowerCase().includes(itemsSearchQuery.toLowerCase()) || item.category.toLowerCase().includes(itemsSearchQuery.toLowerCase()))
-                .slice(0, showAllItems ? campusEssentials.length : 4)
-                .map((item) => (
-                  <motion.div
-                    key={item.id}
-                    whileHover={{ y: -4 }}
-                    className="rounded-2xl overflow-hidden bg-white shadow-sm border border-slate-100 transition-shadow hover:shadow-md flex flex-col"
-                  >
-                    {/* Image */}
-                    <div className="relative h-32 sm:h-40 bg-slate-50 overflow-hidden">
-                      <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
-                      {item.badge && (
-                        <span className="absolute top-2 left-2 text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500 text-white shadow-sm">
-                          {item.badge}
-                        </span>
-                      )}
-                    </div>
-
-                    {/* Info */}
-                    <div className="p-3 sm:p-4 flex flex-col flex-1">
-                      <p className="text-xs sm:text-sm font-semibold text-slate-800 leading-tight mb-1 line-clamp-2">{item.title}</p>
-                      <p className="text-[10px] sm:text-xs text-slate-400 capitalize mb-3 border border-slate-100 bg-slate-50 w-fit px-1.5 py-0.5 rounded-md">{item.category}</p>
-                      <div className="mt-auto flex items-center justify-between pt-1">
-                        <span className="text-sm sm:text-base font-bold text-[#231942]">₹{item.price}</span>
-                        <button
-                          onClick={() => {
-                            if (!user) { toast.error('Please login first'); navigate('/login'); return; }
-                            addItem({
-                              id: item.id,
-                              title: item.title,
-                              price: item.price,
-                              image: item.image,
-                              category: item.category,
-                            });
-                            toast.success(`${item.title} added to cart`);
-                          }}
-                          className="w-8 h-8 rounded-full bg-[#231942] text-white flex items-center justify-center hover:bg-[#231942]/90 transition-all shadow-sm active:scale-95"
-                        >
-                          <Plus className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
-            </div>
-
-            {!showAllItems && campusEssentials.length > 4 && (
-              <div className="mt-2 mb-4 flex justify-center">
-                <button
-                  onClick={() => setShowAllItems(true)}
-                  className="text-sm font-bold text-brand hover:text-brand-dark transition-colors flex items-center gap-1 bg-brand-50 hover:bg-brand-100 px-4 py-2 rounded-xl"
-                >
-                  See more items <ChevronRight className="w-4 h-4" />
-                </button>
-              </div>
-            )}
-
-            <p className="text-[10px] sm:text-xs text-slate-400 mt-2 flex items-center justify-center sm:justify-start gap-1">
-              <Package className="w-3 h-3" /> Delivered by Campus Store
-            </p>
-          </motion.section>
-
           {/* ─── FRESH LISTINGS ─── */}
           <section className="mb-10">
             <div className="flex items-center justify-between mb-4 sm:mb-6">
-              <h2 className="text-base sm:text-xl font-bold" style={fontH}>📦 Fresh Listings</h2>
+              <div className="flex items-center gap-2">
+                <Package className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: '#231942' }} />
+                <h2 className="text-base sm:text-xl font-bold" style={fontH}>📦 Fresh Listings</h2>
+              </div>
               <Link to="/browse" className="flex items-center gap-0.5 text-xs sm:text-sm" style={{ color: '#4DB8AC' }}>See all <ChevronRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" /></Link>
             </div>
+
+            {/* Search Bar for Listings */}
+            <div className="relative mb-6">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <input
+                type="text"
+                placeholder="Search fresh listings..."
+                value={itemsSearchQuery}
+                onChange={(e) => setItemsSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-4 h-[46px] rounded-2xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent text-sm bg-white shadow-sm transition-all"
+              />
+            </div>
+
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
               {loading ? (
                 <div className="col-span-full flex justify-center py-8">
                   <Loader2 className="w-6 h-6 animate-spin" style={{ color: '#4DB8AC' }} />
                 </div>
-              ) : freshMapped.length === 0 ? (
-                <div className="col-span-full text-center py-6">
-                  <p className="text-sm" style={{ color: '#AEA397' }}>No fresh listings yet.</p>
+              ) : freshMapped.filter(p => p.title.toLowerCase().includes(itemsSearchQuery.toLowerCase())).length === 0 ? (
+                <div className="col-span-full text-center py-10 bg-white rounded-3xl border border-slate-100 shadow-sm">
+                  <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <Search className="w-6 h-6 text-slate-300" />
+                  </div>
+                  <p className="text-sm font-bold text-slate-900">No items match your search</p>
+                  <p className="text-xs text-slate-500 mt-1">Try a different keyword or browse all categories.</p>
                 </div>
               ) : (
-                freshMapped.map((product) => (
-                  <Link to={`/product/${product.id}`} key={`fresh-${product.id}`}
-                    className="rounded-2xl sm:rounded-3xl overflow-hidden group block transition-all hover:-translate-y-1 bg-white border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.03)]"
-                  >
-                    <div className="relative h-28 sm:h-36 overflow-hidden bg-slate-50">
-                      <img src={product.image || `https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=400`} alt={product.title}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                        onError={(e) => {
-                          const cat = product.category as string | undefined;
-                          const FALLBACKS: Record<string, string> = {
-                            Electronics: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=400',
-                            Books: 'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400',
-                            Fashion: 'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=400',
-                            Sports: 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=400',
-                            Audio: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400',
-                            Furniture: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400',
-                            Kitchen: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400',
-                          };
-                          (e.target as HTMLImageElement).src = (cat && FALLBACKS[cat]) || 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=400';
-                        }} />
-                    </div>
-                    <div className="p-2.5 sm:p-3 border-t border-slate-50">
-                      <p className="text-[11px] sm:text-xs font-semibold line-clamp-1 mb-1 text-slate-900">{product.title}</p>
-                      <p className="text-sm font-bold text-brand">₹{product.price.toLocaleString()}</p>
-                    </div>
-                  </Link>
-                ))
+                freshMapped
+                  .filter(p => p.title.toLowerCase().includes(itemsSearchQuery.toLowerCase()))
+                  .map((product) => (
+                    <Link to={`/product/${product.id}`} key={`fresh-${product.id}`}
+                      className="rounded-2xl sm:rounded-3xl overflow-hidden group block transition-all hover:-translate-y-1 bg-white border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.03)]"
+                    >
+                      <div className="relative h-28 sm:h-36 overflow-hidden bg-slate-50">
+                        <img src={product.image || `https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=400`} alt={product.title}
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                          onError={(e) => {
+                            const cat = product.category as string | undefined;
+                            const FALLBACKS: Record<string, string> = {
+                              Electronics: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=400',
+                              Books: 'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400',
+                              Fashion: 'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=400',
+                              Sports: 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=400',
+                              Audio: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400',
+                              Furniture: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400',
+                              Kitchen: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400',
+                            };
+                            (e.target as HTMLImageElement).src = (cat && FALLBACKS[cat]) || 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=400';
+                          }} />
+                      </div>
+                      <div className="p-2.5 sm:p-3 border-t border-slate-50">
+                        <p className="text-[11px] sm:text-xs font-semibold line-clamp-1 mb-1 text-slate-900">{product.title}</p>
+                        <p className="text-sm font-bold text-brand">₹{product.price.toLocaleString()}</p>
+                      </div>
+                    </Link>
+                  ))
               )}
             </div>
           </section>
