@@ -50,6 +50,7 @@ export default function FoodMenu() {
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [isListening, setIsListening] = useState(false);
     const [previewOrder, setPreviewOrder] = useState<any>(null);
+    const [customItemList, setCustomItemList] = useState<any[]>([]);
 
     const suggestions = getFoodSuggestions(customItemInput);
 
@@ -83,36 +84,58 @@ export default function FoodMenu() {
         recognition.start();
     };
 
-    const handleAddToCartCustom = () => {
+    const addItemToList = () => {
         if (!customItemInput.trim()) {
             toast({ title: "What would you like?", description: "Please enter a food item.", variant: "destructive" });
             return;
         }
 
         const finalPrice = customPrice ? parseInt(customPrice) : estimatePrice(customItemInput);
-        
-        addItem({
-            id: `CUSTOM-${Date.now()}`,
-            title: customItemInput,
+        const newItem = {
+            id: `CUSTOM-LIST-${Date.now()}`,
+            name: customItemInput,
             price: finalPrice,
-            image: '',
-            category: 'custom',
             quantity: customQty,
-            notes: customNotes,
-            isCustom: true
-        });
+            notes: customNotes
+        };
 
-        toast({ 
-            title: "Added to Cart", 
-            description: `${customQty}x ${customItemInput} (₹${finalPrice})` 
-        });
+        setCustomItemList(prev => [...prev, newItem]);
+        toast({ title: "Added to List", description: `${customQty}x ${customItemInput}` });
 
-        // Reset
+        // Reset inputs
         setCustomItemInput("");
         setCustomQty(1);
         setCustomPrice("");
         setCustomNotes("");
+    };
+
+    const handleAddToCartCustom = () => {
+        if (customItemList.length === 0) return;
+
+        customItemList.forEach(item => {
+            addItem({
+                id: item.id,
+                title: item.name,
+                price: item.price,
+                image: '',
+                category: 'custom',
+                quantity: item.quantity,
+                notes: item.notes,
+                isCustom: true
+            });
+        });
+
+        toast({ 
+            title: "Success!", 
+            description: `${customItemList.length} custom items added to cart.` 
+        });
+
+        setCustomItemList([]);
         setPreviewOrder(null);
+    };
+
+    const removeFromList = (id: string) => {
+        setCustomItemList(prev => prev.filter(item => item.id !== id));
     };
 
     // ── Custom Order: validate → close modal → open UPI ──
@@ -532,23 +555,63 @@ export default function FoodMenu() {
                                     </div>
 
                                     <button
-                                        onClick={() => {
-                                            if (!customItemInput.trim()) {
-                                                toast({ title: "Details missing", description: "What would you like to eat?" });
-                                                return;
-                                            }
-                                            setPreviewOrder({
-                                                item: customItemInput,
-                                                qty: customQty,
-                                                price: customPrice || estimatePrice(customItemInput),
-                                                notes: customNotes
-                                            });
-                                        }}
+                                        onClick={addItemToList}
                                         className="w-full h-16 rounded-2xl bg-brand text-white font-black text-lg shadow-xl shadow-brand/20 hover:bg-brand-dark active:scale-[0.98] transition-all flex items-center justify-center gap-3 mt-2"
                                     >
-                                        Add to Cart
-                                        <ShoppingCart className="w-5 h-5" />
+                                        Add to List
+                                        <Plus className="w-5 h-5" />
                                     </button>
+
+                                    {/* List of custom items */}
+                                    <AnimatePresence>
+                                        {customItemList.length > 0 && (
+                                            <motion.div 
+                                                initial={{ opacity: 0, height: 0 }}
+                                                animate={{ opacity: 1, height: 'auto' }}
+                                                exit={{ opacity: 0, height: 0 }}
+                                                className="space-y-3 pt-2"
+                                            >
+                                                <div className="flex items-center justify-between px-1">
+                                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
+                                                        <History className="w-3 h-3" /> Your Order List
+                                                    </p>
+                                                    <p className="text-[10px] font-bold text-brand">{customItemList.length} {customItemList.length === 1 ? 'Item' : 'Items'}</p>
+                                                </div>
+                                                <div className="space-y-2">
+                                                    {customItemList.map((item) => (
+                                                        <motion.div 
+                                                            key={item.id}
+                                                            layout
+                                                            initial={{ opacity: 0, scale: 0.95 }}
+                                                            animate={{ opacity: 1, scale: 1 }}
+                                                            className="flex items-center justify-between p-4 rounded-2xl bg-slate-50 border border-slate-100 group/list-item"
+                                                        >
+                                                            <div className="flex-1 min-w-0">
+                                                                <p className="text-sm font-bold text-slate-800 truncate">{item.name}</p>
+                                                                <div className="flex items-center gap-2 mt-0.5">
+                                                                    <span className="text-[10px] font-black text-brand uppercase">₹{item.price}</span>
+                                                                    <span className="text-[10px] font-bold text-slate-400">Qty: {item.quantity}</span>
+                                                                </div>
+                                                            </div>
+                                                            <button 
+                                                                onClick={() => removeFromList(item.id)}
+                                                                className="w-8 h-8 rounded-lg text-slate-300 hover:text-red-500 hover:bg-red-50 transition-all flex items-center justify-center"
+                                                            >
+                                                                <X className="w-4 h-4" />
+                                                            </button>
+                                                        </motion.div>
+                                                    ))}
+                                                </div>
+                                                <button
+                                                    onClick={() => setPreviewOrder({ items: customItemList })}
+                                                    className="w-full h-14 rounded-2xl bg-slate-900 text-white font-black text-sm shadow-xl hover:bg-black transition-all flex items-center justify-center gap-3"
+                                                >
+                                                    Review & Add to Cart
+                                                    <div className="w-2.5 h-2.5 rounded-full bg-brand animate-ping" />
+                                                </button>
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
                                 </div>
                             </div>
 
@@ -579,37 +642,48 @@ export default function FoodMenu() {
                         </DialogHeader>
                         
                         <div className="space-y-4">
-                            <div className="p-6 rounded-[2rem] bg-slate-50 space-y-4 border border-slate-100">
-                                <div className="flex justify-between items-start">
-                                    <div>
-                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Item Name</p>
-                                        <p className="text-lg font-bold text-slate-800">{previewOrder?.item}</p>
+                            <div className="max-h-[350px] overflow-y-auto scrollbar-hide space-y-3 px-1">
+                                {previewOrder?.items.map((item: any) => (
+                                    <div key={item.id} className="p-5 rounded-[2rem] bg-slate-50 border border-slate-100">
+                                        <div className="flex justify-between items-start mb-3">
+                                            <div className="flex-1 min-w-0">
+                                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Item</p>
+                                                <p className="text-base font-bold text-slate-800 truncate">{item.name}</p>
+                                            </div>
+                                            <div className="text-right">
+                                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Qty</p>
+                                                <p className="text-base font-bold text-slate-800">x{item.quantity}</p>
+                                            </div>
+                                        </div>
+                                        <div className="flex justify-between items-center pt-3 border-t border-slate-200/50">
+                                            <div className="flex flex-col">
+                                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Price/Unit</p>
+                                                <p className="text-sm font-bold text-slate-600">₹{item.price}</p>
+                                            </div>
+                                            <div className="text-right">
+                                                <p className="text-[10px] font-black text-brand uppercase tracking-widest mb-0.5">Subtotal</p>
+                                                <p className="text-lg font-black text-brand">₹{item.price * item.quantity}</p>
+                                            </div>
+                                        </div>
+                                        {item.notes && (
+                                            <div className="mt-3 pt-3 border-t border-slate-200/50">
+                                                <p className="text-[10px] font-bold text-slate-400 italic flex items-center gap-1.5">
+                                                    <MessageSquare className="w-3 h-3" /> {item.notes}
+                                                </p>
+                                            </div>
+                                        )}
                                     </div>
-                                    <div className="text-right">
-                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Quantity</p>
-                                        <p className="text-lg font-bold text-slate-800">x{previewOrder?.qty}</p>
-                                    </div>
-                                </div>
-                                <div className="pt-4 border-t border-slate-200/50 flex justify-between items-end">
-                                    <div>
-                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Estimated Total</p>
-                                        <p className="text-3xl font-black text-brand">₹{previewOrder?.qty * (previewOrder?.price || 0)}</p>
-                                    </div>
-                                    <div className="text-right pb-1">
-                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Price/Unit</p>
-                                        <span className="px-3 py-1 bg-white rounded-full text-xs font-bold text-slate-500 border border-slate-200">₹{previewOrder?.price}</span>
-                                    </div>
-                                </div>
+                                ))}
                             </div>
 
-                            {previewOrder?.notes && (
-                                <div className="p-5 rounded-3xl bg-amber-50 border border-amber-100/50">
-                                    <p className="text-[10px] font-black text-amber-600/60 uppercase tracking-widest mb-1 items-center flex gap-1.5">
-                                        <MessageSquare className="w-3 h-3" /> Special Notes
+                            <div className="p-6 rounded-[2rem] bg-brand/5 border border-brand/10 mt-2">
+                                <div className="flex justify-between items-center">
+                                    <p className="text-xs font-black text-slate-500 uppercase tracking-widest">Total Amount</p>
+                                    <p className="text-3xl font-black text-brand">
+                                        ₹{previewOrder?.items.reduce((acc: number, item: any) => acc + (item.price * item.quantity), 0)}
                                     </p>
-                                    <p className="text-sm font-bold text-amber-900/80">{previewOrder?.notes}</p>
                                 </div>
-                            )}
+                            </div>
 
                             <div className="flex gap-3 pt-4">
                                 <button
