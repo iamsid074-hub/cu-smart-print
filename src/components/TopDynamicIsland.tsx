@@ -118,11 +118,11 @@ export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
       break;
 
     case "grocery":
-      width = 220;
+      width = 160;
       content = (
         <div className="flex items-center gap-2">
           <ShoppingBag className="w-4 h-4 text-emerald-400" />
-          <span className="text-sm font-semibold tracking-wide text-white/90">Fast Campus Delivery</span>
+          <span className="text-sm font-semibold tracking-wide text-white/90">Grocery</span>
         </div>
       );
       break;
