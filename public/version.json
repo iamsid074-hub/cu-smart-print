@@ -1,6 +1,7 @@
 {
     "version": "1.0.3",
     "versionCode": 4,
-    "downloadUrl": "https://cubazzar.shop/cubazzar.apk",
-    "releaseNotes": "Bug Fixes: Fixed an issue where the app package was invalid during installation."
+    "versionName": "1.0.3",
+    "downloadUrl": "https://cubazzar.shop/download",
+    "releaseNotes": "New profile redesign, 24/7 open hours, UI improvements and performance fixes."
 }

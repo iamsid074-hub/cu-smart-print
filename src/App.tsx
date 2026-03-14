@@ -24,8 +24,11 @@ import ResetPassword from "./pages/ResetPassword";
 import Navbar from "./components/Navbar";
 import BottomNav from "./components/BottomNav";
 import AppUpdater from "./components/AppUpdater";
+import LiveOrderBanner from "./components/LiveOrderBanner";
 import UsernameSetup from "./components/UsernameSetup";
 import ScrollToTop from "./components/ScrollToTop";
+import Download from "./pages/Download";
+import { usePushNotifications } from "./hooks/usePushNotifications";
 import { useSiteGate, ClosedScreen, MaintenanceScreen } from "./components/SiteGate";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { CartProvider } from "./contexts/CartContext";
@@ -85,12 +88,16 @@ function AppLayout() {
     if (gate === "closed") return <ClosedScreen />;
   }
 
+  // Register push notifications (silently, only if already granted)
+  usePushNotifications();
+
   return (
     <>
       <AppUpdater />
       {!isLanding && !isLogin && !isAdmin && (
         <>
           <Navbar />
+          <LiveOrderBanner />
           <BottomNav />
         </>
       )}
@@ -119,6 +126,7 @@ function AppLayout() {
         {/* Public Pages */}
         <Route path="/terms" element={<TermsAndConditions />} />
         <Route path="/help" element={<HelpCenter />} />
+        <Route path="/download" element={<Download />} />
 
         <Route path="*" element={<NotFound />} />
       </Routes>
