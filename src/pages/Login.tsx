@@ -101,7 +101,7 @@ export default function Login() {
                         initial={{ opacity: 1 }}
                         exit={{ opacity: 0, scale: 1.05, filter: "blur(15px)" }}
                         transition={{ duration: 0.6, ease: [0.76, 0, 0.24, 1] }}
-                        className="fixed inset-0 z-[200] flex flex-col items-center justify-center overflow-hidden"
+                        className="fixed inset-0 z-[60] flex flex-col items-center justify-center overflow-hidden"
                         style={{ backgroundColor: "#0F172A" }}
                     >
                         {/* Dynamic Background Ripples */}
