@@ -26,16 +26,13 @@ function getIST() {
 }
 
 function isItemsOpen(): boolean {
-    const { hours } = getIST();
-    // 6:00 AM (6) to 10:00 PM (22) — open when hours >= 6 && hours < 22
-    return hours >= 6 && hours < 22;
+    // Always open — no closing hours
+    return true;
 }
 
 function isFoodOpen(): boolean {
-    const { hours, minutes } = getIST();
-    // 6:00 PM (18:00) to 12:30 AM (24:30 equivalent)
-    const totalMins = hours * 60 + minutes;
-    return totalMins >= 18 * 60 || totalMins < 30;
+    // Always open — no closing hours
+    return true;
 }
 
 function getNextOpenTime(): string {
