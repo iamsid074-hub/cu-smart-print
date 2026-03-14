@@ -30,8 +30,6 @@ export default function Profile() {
     const [processingOrderId, setProcessingOrderId] = useState<string | null>(null);
 
     const [activeTab, setActiveTab] = useState<TabId>('listings');
-    const [showProfileCard, setShowProfileCard] = useState(false);
-    const [hasAutoShown, setHasAutoShown] = useState(false);
 
     useEffect(() => {
         async function fetchProfileAndListings() {
@@ -179,14 +177,6 @@ export default function Profile() {
         { id: 'saved', label: 'Saved' },
     ];
 
-    // Auto-show profile card on first load once profile is ready
-    useEffect(() => {
-        if (profile && !hasAutoShown) {
-            const t = setTimeout(() => { setShowProfileCard(true); setHasAutoShown(true); }, 400);
-            return () => clearTimeout(t);
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [profile]);
 
     if (!user) return null;
 
@@ -242,7 +232,7 @@ export default function Profile() {
                             <div className="w-32 h-32 sm:w-40 sm:h-40 rounded-[2.5rem] p-1.5 bg-white shadow-xl relative z-10">
                                 <div 
                                     className="w-full h-full rounded-[2.2rem] overflow-hidden bg-slate-50 border border-slate-100 cursor-pointer relative"
-                                    onClick={() => { if (isEditing) fileInputRef.current?.click(); else setShowProfileCard(true); }}
+                                    onClick={() => { if (isEditing) fileInputRef.current?.click(); }}
                                 >
                                     {profile?.avatar_url ? (
                                         <img src={profile.avatar_url} alt="" className="w-full h-full object-cover" />
@@ -581,86 +571,6 @@ export default function Profile() {
                 </div>
             </div>
 
-            {/* ── PROFILE CARD OVERLAY ── */}
-            <AnimatePresence>
-                {showProfileCard && (
-                    <div className="fixed inset-0 z-[9999] flex items-center justify-center px-4">
-                        <motion.div 
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            className="absolute inset-0 bg-slate-900/60 backdrop-blur-md" 
-                            onClick={() => setShowProfileCard(false)} 
-                        />
-                        
-                        <motion.div 
-                            initial={{ opacity: 0, scale: 0.9, y: 20 }}
-                            animate={{ opacity: 1, scale: 1, y: 0 }}
-                            exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                            className="w-full max-w-sm bg-white rounded-[2.5rem] overflow-hidden shadow-2xl relative z-10"
-                        >
-                            {/* Card Header Background */}
-                            <div className="h-40 bg-gradient-to-br from-brand via-brand-accent to-fuchsia-600 relative">
-                                <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,rgba(255,255,255,0.2),transparent_60%)]" />
-                                <button 
-                                    onClick={() => setShowProfileCard(false)} 
-                                    className="absolute top-6 right-6 w-10 h-10 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-white/20 transition-all"
-                                >
-                                    <X className="w-5 h-5" />
-                                </button>
-                            </div>
-
-                            {/* Card Body */}
-                            <div className="p-8 pt-0 flex flex-col items-center">
-                                <div className="w-28 h-28 rounded-full p-1 bg-white -mt-14 shadow-xl mb-4">
-                                    <div className="w-full h-full rounded-full overflow-hidden border-2 border-slate-50 bg-slate-50">
-                                        {profile?.avatar_url ? (
-                                            <img src={profile.avatar_url} alt="" className="w-full h-full object-cover" />
-                                        ) : (
-                                            <div className="w-full h-full flex items-center justify-center">
-                                                <User className="w-10 h-10 text-slate-300" />
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-
-                                <h3 className="text-2xl font-black text-slate-900" style={fontH}>{profile?.full_name || "Student"}</h3>
-                                <p className="text-brand font-bold text-sm">@{profile?.username || "user"}</p>
-                                
-                                <div className="w-full mt-8 space-y-3">
-                                    <div className="flex items-center gap-3 p-4 rounded-2xl bg-slate-50 border border-slate-100">
-                                        <Mail className="w-4 h-4 text-slate-400" />
-                                        <span className="text-xs font-bold text-slate-600">{user.email}</span>
-                                    </div>
-                                    <div className="flex items-center gap-3 p-4 rounded-2xl bg-slate-50 border border-slate-100">
-                                        <MapPin className="w-4 h-4 text-slate-400" />
-                                        <span className="text-xs font-bold text-slate-600">{profile?.hostel_block || "Location missing"}</span>
-                                    </div>
-                                    <div className="flex items-center gap-3 p-4 rounded-2xl bg-slate-50 border border-slate-100">
-                                        <Package className="w-4 h-4 text-slate-400" />
-                                        <span className="text-xs font-bold text-slate-600">{myProducts.length} Listings on BAZZAR</span>
-                                    </div>
-                                </div>
-
-                                <div className="w-full grid grid-cols-2 gap-3 mt-8">
-                                    <button 
-                                        onClick={() => { setShowProfileCard(false); setIsEditing(true); }}
-                                        className="py-4 rounded-2xl bg-slate-100 text-slate-900 text-xs font-black hover:bg-slate-200 transition-all active:scale-95"
-                                    >
-                                        Edit Details
-                                    </button>
-                                    <button 
-                                        onClick={() => { setShowProfileCard(false); navigate('/browse'); }}
-                                        className="py-4 rounded-2xl bg-brand text-white text-xs font-black shadow-lg shadow-brand/20 hover:bg-brand-dark transition-all active:scale-95"
-                                    >
-                                        Start Buying
-                                    </button>
-                                </div>
-                            </div>
-                        </motion.div>
-                    </div>
-                )}
-            </AnimatePresence>
 
             <style>{`
                 .hide-scroll::-webkit-scrollbar { display: none; }
