@@ -40,7 +40,7 @@ export default function Download() {
         setTimeout(() => setDownloading(false), 4000);
     };
 
-    const apkUrl = versionData?.downloadUrl?.replace("/download", "/cubazzar.apk") || "/cubazzar.apk";
+    const apkUrl = versionData?.downloadUrl || "https://github.com/iamsid074-hub/cu-smart-print/raw/main/public/cubazzar.apk";
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex flex-col">
