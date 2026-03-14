@@ -20,6 +20,40 @@ const fontH: React.CSSProperties = { fontFamily: "'Space Grotesk', sans-serif" }
 
 // campusEssentials imported above from @/config/campusEssentials
 
+const FloatingParticles = () => {
+    const particles = Array.from({ length: 15 });
+    return (
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            {particles.map((_, i) => (
+                <motion.div
+                    key={i}
+                    className="absolute rounded-full"
+                    style={{
+                        width: Math.random() * 8 + 4,
+                        height: Math.random() * 8 + 4,
+                        left: `${Math.random() * 100}%`,
+                        top: `${Math.random() * 100}%`,
+                        background: i % 3 === 0 ? 'rgba(77, 184, 172, 0.4)' : i % 3 === 1 ? 'rgba(236, 72, 153, 0.3)' : 'rgba(255, 255, 255, 0.2)',
+                        boxShadow: '0 0 15px rgba(255,255,255,0.1)',
+                    }}
+                    animate={{
+                        y: [0, -100, 0],
+                        x: [0, Math.random() * 50 - 25, 0],
+                        opacity: [0, 0.8, 0],
+                        scale: [0.5, 1.2, 0.5],
+                    }}
+                    transition={{
+                        duration: Math.random() * 10 + 10,
+                        repeat: Infinity,
+                        ease: "linear",
+                        delay: Math.random() * 5,
+                    }}
+                />
+            ))}
+        </div>
+    );
+};
+
 type FeatureCardType = {
   icon: any;
   title: string;
@@ -359,6 +393,7 @@ export default function Home() {
       <div className="bg-[#231942] px-4 pt-8 pb-14 sm:px-6 lg:px-10 rounded-3xl sm:rounded-[2.5rem] mb-8 relative overflow-hidden shadow-sm mx-2 sm:mx-0 mt-2 sm:mt-0">
         <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent pointer-events-none" />
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none" />
+        <FloatingParticles />
         <div className="max-w-[1600px] mx-auto relative z-10">
           {/* Title */}
           <motion.div
