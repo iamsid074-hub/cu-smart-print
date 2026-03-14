@@ -79,7 +79,7 @@ export const groceryItems: GroceryItem[] = [
     },
     {
         id: "grocery-lays-blue",
-        name: "Lay's American Style Cream & Onion",
+        name: "Lay's India's Magic Masala",
         quantity: "Standard Pack",
         price: 25,
         image: "/grocery/lays-blue.png",
