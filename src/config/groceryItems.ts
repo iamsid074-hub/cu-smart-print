@@ -100,5 +100,53 @@ export const groceryItems: GroceryItem[] = [
         price: 20,
         image: "/grocery/donut.png",
         category: "Bakery Snack"
+    },
+    {
+        id: "grocery-coke-750",
+        name: "Coca-Cola",
+        quantity: "750ml Bottle",
+        price: 40,
+        image: "/grocery/coke-750.png",
+        category: "Cold Drinks"
+    },
+    {
+        id: "grocery-sprite-750",
+        name: "Sprite",
+        quantity: "750ml Bottle",
+        price: 40,
+        image: "/grocery/sprite-750.png",
+        category: "Cold Drinks"
+    },
+    {
+        id: "grocery-frooti",
+        name: "Frooti",
+        quantity: "Standard Pack",
+        price: 18,
+        image: "/grocery/frooti.png",
+        category: "Juice / Beverage"
+    },
+    {
+        id: "grocery-campa-cola",
+        name: "Campa Cola",
+        quantity: "Standard Bottle",
+        price: 20,
+        image: "/grocery/campa-cola.png",
+        category: "Cold Drinks"
+    },
+    {
+        id: "grocery-thums-up",
+        name: "Thums Up",
+        quantity: "Standard Bottle",
+        price: 20,
+        image: "/grocery/thums-up.png",
+        category: "Cold Drinks"
+    },
+    {
+        id: "grocery-appy-fizz",
+        name: "Appy Fizz",
+        quantity: "Standard Bottle",
+        price: 20,
+        image: "/grocery/appy-fizz.png",
+        category: "Beverage"
     }
 ];
