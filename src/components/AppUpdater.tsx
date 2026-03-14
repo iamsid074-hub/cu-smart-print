@@ -59,7 +59,11 @@ export default function AppUpdater() {
             }
         };
 
-        checkForUpdates();
+        const timeoutId = setTimeout(() => {
+            checkForUpdates();
+        }, 1000);
+
+        return () => clearTimeout(timeoutId);
     }, []);
 
     const handleDismiss = () => {
