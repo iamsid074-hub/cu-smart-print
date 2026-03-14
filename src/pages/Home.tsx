@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronRight, ChevronLeft, Loader2, ShoppingBag, ShoppingCart, X, MapPin, Phone, Home as HomeIcon, Zap, UtensilsCrossed, Package, Rocket, ShieldCheck, BadgePercent, Users, Plus, Shield, Ban, Headset, ExternalLink, Search, Download } from "lucide-react";
+import { ChevronRight, ChevronLeft, Loader2, ShoppingBag, ShoppingCart, X, MapPin, Phone, Home as HomeIcon, Zap, UtensilsCrossed, Package, Rocket, ShieldCheck, BadgePercent, Users, Plus, Shield, Ban, Headset, ExternalLink, Search, Download, ArrowRight } from "lucide-react";
 import ProductCard from "@/components/ProductCard";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
@@ -392,13 +392,63 @@ export default function Home() {
             */}
           </motion.div>
 
-          {/* Hero Image Carousel */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
             <HeroCarousel />
+          </motion.div>
+
+          {/* ─── Get The App Banner ─── */}
+          <motion.div
+             initial={{ opacity: 0, scale: 0.95 }}
+             animate={{ opacity: 1, scale: 1 }}
+             transition={{ delay: 0.4 }}
+             className="mt-10 relative group"
+          >
+            <Link to="/download">
+              <div className="relative overflow-hidden rounded-[2rem] bg-white border border-slate-200 p-6 sm:p-8 flex flex-col sm:flex-row items-center gap-6 shadow-xl hover:shadow-2xl transition-all border-b-4 border-b-slate-300">
+                {/* Background Glow */}
+                <div className="absolute top-0 right-0 w-64 h-64 bg-brand/5 blur-[80px] -mr-32 -mt-32 rounded-full" />
+                
+                {/* App Icon / Graphic */}
+                <div className="relative flex-shrink-0">
+                  <div className="w-20 h-20 sm:w-24 sm:h-24 bg-[#231942] rounded-[2rem] p-1.5 shadow-xl rotate-[-3deg] group-hover:rotate-0 transition-transform duration-500">
+                    <div className="w-full h-full rounded-[1.7rem] overflow-hidden flex items-center justify-center bg-white p-2">
+                      <img src="/logo.png" alt="CU Bazzar" className="w-full h-full object-cover rounded-xl" 
+                        onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
+                    </div>
+                  </div>
+                  <motion.div 
+                    animate={{ scale: [1, 1.2, 1] }} 
+                    transition={{ duration: 2, repeat: Infinity }}
+                    className="absolute -top-1 -right-1 w-8 h-8 bg-brand rounded-full border-2 border-white flex items-center justify-center shadow-lg"
+                  >
+                    <Download className="w-4 h-4 text-white" />
+                  </motion.div>
+                </div>
+
+                {/* Text Info */}
+                <div className="flex-1 text-center sm:text-left">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 bg-brand/10 text-brand rounded-full text-[10px] font-black uppercase tracking-widest mb-2">
+                    <Zap className="w-3 h-3 fill-brand" /> Campus Exclusive
+                  </div>
+                  <h3 className="text-xl sm:text-2xl font-black text-slate-900 mb-1" style={fontH}>Just download our CU Bazzar App!</h3>
+                  <p className="text-slate-500 text-sm font-medium leading-relaxed max-w-md">
+                    Experience the fastest campus trade tool with real-time alerts and room delivery tracking.
+                  </p>
+                </div>
+
+                {/* CTA Button */}
+                <div className="flex-shrink-0">
+                  <button className="px-8 py-4 bg-[#231942] text-white font-black rounded-2xl flex items-center gap-2 hover:bg-brand transition-all transform active:scale-95 shadow-lg border-b-4 border-b-black">
+                    Download Free APK
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            </Link>
           </motion.div>
         </div>
       </div>
