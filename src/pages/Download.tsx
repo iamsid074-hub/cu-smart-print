@@ -123,19 +123,19 @@ export default function Download() {
                 {/* Download Button */}
                 <motion.a
                     href={apkUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    download="cubazzar.apk"
+                    rel="external"
                     onClick={handleDownload}
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.15 }}
                     className="block mb-4"
                 >
-                    <button
+                    <div
                         className={`w-full h-16 rounded-2xl font-black text-base flex items-center justify-center gap-3 transition-all ${
                             downloading
                                 ? "bg-emerald-500 text-white scale-95"
-                                : "bg-white text-slate-900 hover:scale-[1.02] active:scale-95 shadow-[0_8px_30px_rgba(255,255,255,0.15)]"
+                                : "bg-white text-slate-900 hover:scale-[1.02] active:scale-95 shadow-[0_8px_30px_rgba(255,255,255,0.15)] cursor-pointer"
                         }`}
                     >
                         {downloading ? (
@@ -143,7 +143,7 @@ export default function Download() {
                         ) : (
                             <><DownloadIcon className="w-5 h-5" /> Download APK ({versionData ? `v${versionData.versionName}` : "Latest"})</>
                         )}
-                    </button>
+                    </div>
                 </motion.a>
 
                 {/* Security Note */}

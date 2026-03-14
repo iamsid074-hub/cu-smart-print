@@ -33,6 +33,10 @@
             "destination": "/api/sb.js"
         },
         {
+            "source": "/cubazzar.apk",
+            "destination": "/cubazzar.apk"
+        },
+        {
             "source": "/(.*)",
             "destination": "/index.html"
         }
