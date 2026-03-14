@@ -156,20 +156,7 @@ export default function Index() {
                   <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform stroke-[3]" />
                 </motion.button>
               </Link>
-                            {/* Download App Button */}
-              {!Capacitor.isNativePlatform() && (
-                <Link to="/download">
-                  <motion.button
-                    whileHover={{ scale: 1.05, rotate: 2 }}
-                    whileTap={{ scale: 0.95, y: 6, boxShadow: "0px 0px 0px #231942" }}
-                    className="group flex items-center gap-2.5 px-6 py-4 bg-[#1a1a2e] text-white font-black text-base rounded-2xl border-4 border-[#231942] shadow-[0_8px_0_#231942] transition-all"
-                    style={fontH}
-                  >
-                    <Download className="w-5 h-5" />
-                    Download App
-                  </motion.button>
-                </Link>
-              )}
+
 
               <Link to="/login" className="font-bold text-lg text-slate-600 hover:text-[#FF4D4D] transition-colors" style={fontH}>
                 I already have an account
