@@ -32,7 +32,7 @@ export default function AppUpdater() {
                 const currentVersionCode = parseInt(appInfo.build || "0", 10);
 
                 // 2. Fetch latest version from server (cache-busted)
-                const response = await fetch(`https://cubazzar.shop/version.json?t=${Date.now()}`);
+                const response = await fetch(`https://www.cubazzar.shop/version.json?t=${Date.now()}`);
                 if (!response.ok) return;
 
                 const latestVersion: VersionData = await response.json();
