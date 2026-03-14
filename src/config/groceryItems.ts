@@ -95,7 +95,7 @@ export const groceryItems: GroceryItem[] = [
     },
     {
         id: "grocery-donut",
-        name: "Fresh Chocolate Donut",
+        name: "Ziggy Donut Cake",
         quantity: "1 Piece",
         price: 20,
         image: "/grocery/donut.png",
