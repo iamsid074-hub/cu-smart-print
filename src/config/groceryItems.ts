@@ -76,5 +76,29 @@ export const groceryItems: GroceryItem[] = [
         price: 10,
         image: "/grocery/maggi.png",
         category: "Instant Food"
+    },
+    {
+        id: "grocery-lays-blue",
+        name: "Lay's American Style Cream & Onion",
+        quantity: "Standard Pack",
+        price: 25,
+        image: "/grocery/lays-blue.png",
+        category: "Snacks"
+    },
+    {
+        id: "grocery-kurkure",
+        name: "Kurkure Masala Munch",
+        quantity: "Standard Pack",
+        price: 25,
+        image: "/grocery/kurkure.png",
+        category: "Snacks"
+    },
+    {
+        id: "grocery-donut",
+        name: "Fresh Chocolate Donut",
+        quantity: "1 Piece",
+        price: 20,
+        image: "/grocery/donut.png",
+        category: "Bakery Snack"
     }
 ];
