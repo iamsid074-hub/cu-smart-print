@@ -24,12 +24,13 @@ export default function Login() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        // Phase 1: 0 - 1.8s
-        const t1 = setTimeout(() => setIntroPhase(2), 1800);
-        // Phase 2: 1.8s - 3.6s
-        const t2 = setTimeout(() => setIntroPhase(3), 3600);
-        // End Intro: 6.5s
-        const t3 = setTimeout(() => setShowIntro(false), 6500);
+        // SNAPPY PHASE TIMINGS
+        // Phase 1: 0 - 0.8s (Trust)
+        const t1 = setTimeout(() => setIntroPhase(2), 800);
+        // Phase 2: 0.8s - 1.6s (Responsibility)
+        const t2 = setTimeout(() => setIntroPhase(3), 1600);
+        // End Intro: 3.2s
+        const t3 = setTimeout(() => setShowIntro(false), 3200);
 
         return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
     }, []);
@@ -105,49 +106,50 @@ export default function Login() {
                     <motion.div
                         key="intro"
                         initial={{ opacity: 1 }}
-                        exit={{ opacity: 0, scale: 1.1, filter: "blur(10px)" }}
-                        transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}
+                        exit={{ opacity: 0, scale: 1.1, filter: "blur(20px)" }}
+                        transition={{ duration: 0.5, ease: [0.76, 0, 0.24, 1] }}
                         className="fixed inset-0 z-[200] flex flex-col items-center justify-center overflow-hidden"
-                        style={{ backgroundColor: "#F8FAFC" }}
+                        style={{ backgroundColor: "#0F172A" }} // Darker bg for premium feel
                     >
                         {/* Animated Background Orbs */}
-                        <motion.div initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 0.5 }} transition={{ duration: 2, ease: "easeOut" }}
-                            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60vw] h-[60vw] md:w-[40vw] md:h-[40vw] rounded-full blur-[100px] pointer-events-none" style={{ background: "#231942" }} />
+                        <motion.div initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1.2, opacity: 0.3 }} transition={{ duration: 1.5, ease: "easeOut" }}
+                            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[80vw] md:w-[50vw] md:h-[50vw] rounded-full blur-[120px] pointer-events-none" 
+                            style={{ background: "radial-gradient(circle, #231942 0%, transparent 70%)" }} />
 
                         <AnimatePresence mode="wait">
-                            {/* PHASE 1 */}
+                            {/* PHASE 1: YOUR TRUST */}
                             {introPhase === 1 && (
                                 <motion.div
                                     key="phase1"
-                                    initial={{ opacity: 0, y: 30, filter: "blur(5px)" }}
-                                    animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                                    exit={{ opacity: 0, y: -30, filter: "blur(5px)" }}
-                                    transition={{ duration: 0.6, ease: [0.76, 0, 0.24, 1] }}
+                                    initial={{ opacity: 0, scale: 0.8, y: 20 }}
+                                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                                    exit={{ opacity: 0, scale: 1.1, y: -20 }}
+                                    transition={{ duration: 0.4, ease: [0.34, 1.56, 0.64, 1] }}
                                     className="absolute inset-0 flex items-center justify-center flex-col z-10"
                                 >
-                                    <h2 className="text-4xl md:text-6xl font-black italic tracking-tight mb-2" style={{ ...fontH, color: "#0F172A" }}>
-                                        YOUR TRUST.
+                                    <h2 className="text-4xl md:text-6xl font-black italic tracking-tighter text-white" style={fontH}>
+                                        YOUR TRUST
                                     </h2>
                                 </motion.div>
                             )}
 
-                            {/* PHASE 2 */}
+                            {/* PHASE 2: OUR RESPONSIBILITY */}
                             {introPhase === 2 && (
                                 <motion.div
                                     key="phase2"
-                                    initial={{ opacity: 0, y: 30, filter: "blur(5px)" }}
-                                    animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                                    exit={{ opacity: 0, y: -30, filter: "blur(5px)" }}
-                                    transition={{ duration: 0.6, ease: [0.76, 0, 0.24, 1] }}
+                                    initial={{ opacity: 0, scale: 0.8, y: 20 }}
+                                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                                    exit={{ opacity: 0, scale: 1.1, y: -20 }}
+                                    transition={{ duration: 0.4, ease: [0.34, 1.56, 0.64, 1] }}
                                     className="absolute inset-0 flex items-center justify-center flex-col z-10"
                                 >
-                                    <h2 className="text-4xl md:text-6xl font-black italic tracking-tight" style={{ ...fontH, color: "#231942" }}>
-                                        OUR RESPONSIBILITY.
+                                    <h2 className="text-4xl md:text-6xl font-black italic tracking-tighter text-brand-light" style={fontH}>
+                                        OUR RESPONSIBILITY
                                     </h2>
                                 </motion.div>
                             )}
 
-                            {/* PHASE 3 */}
+                            {/* PHASE 3: LOGO & WELCOME */}
                             {introPhase === 3 && (
                                 <motion.div
                                     key="phase3"
@@ -157,52 +159,35 @@ export default function Login() {
                                     <motion.div
                                         initial={{ scale: 0, rotate: -45, opacity: 0 }}
                                         animate={{ scale: 1, rotate: 0, opacity: 1 }}
-                                        transition={{ type: "spring", damping: 14, stiffness: 100, delay: 0.2 }}
+                                        transition={{ type: "spring", damping: 12, stiffness: 120, delay: 0.1 }}
                                         className="relative z-10 w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden shadow-2xl flex items-center justify-center p-1.5 mb-8"
-                                        style={{ backgroundColor: "#FFFFFF", border: `2px solid #E2E8F0` }}
+                                        style={{ backgroundColor: "#FFFFFF" }}
                                     >
                                         <img src="/logo.png" alt="CU BAZZAR" className="w-full h-full object-cover rounded-full relative z-10" />
-                                        {/* Outer pulsing ring */}
                                         <motion.div
                                             initial={{ scale: 1, opacity: 0.8 }}
-                                            animate={{ scale: 1.5, opacity: 0 }}
-                                            transition={{ duration: 1.5, repeat: Infinity, delay: 0.8 }}
-                                            className="absolute inset-0 rounded-full border-2"
-                                            style={{ borderColor: "#231942" }}
+                                            animate={{ scale: 2, opacity: 0 }}
+                                            transition={{ duration: 1, repeat: Infinity, delay: 0.4 }}
+                                            className="absolute inset-0 rounded-full border-2 border-white"
                                         />
                                     </motion.div>
 
-                                    {/* Welcome Text */}
-                                    <motion.div
-                                        initial={{ opacity: 0, y: 20 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        transition={{ duration: 0.6, delay: 0.6 }}
-                                        className="text-xs sm:text-sm font-bold uppercase tracking-[0.3em] mb-4 text-center"
-                                        style={{ color: "#64748B", ...fontB }}
-                                    >
-                                        We Welcome You To
-                                    </motion.div>
-
                                     {/* Crazy Character Animation */}
-                                    <div className="flex overflow-visible relative z-10 perspective-1000">
+                                    <div className="flex items-center justify-center relative z-10">
                                         {["C", "U", "\u00A0", "B", "A", "Z", "Z", "A", "R"].map((char, index) => (
                                             <motion.span
                                                 key={index}
-                                                initial={{ y: 80, opacity: 0, rotateX: -90, filter: "blur(10px)" }}
-                                                animate={{ y: 0, opacity: 1, rotateX: 0, filter: "blur(0px)" }}
+                                                initial={{ y: 50, opacity: 0, scale: 0.5 }}
+                                                animate={{ y: 0, opacity: 1, scale: 1 }}
                                                 transition={{
-                                                    duration: 0.8,
-                                                    ease: [0.34, 1.56, 0.64, 1], // bouncy spring-like ease
-                                                    delay: 0.8 + index * 0.05,
+                                                    duration: 0.5,
+                                                    ease: [0.34, 1.56, 0.64, 1],
+                                                    delay: 0.3 + index * 0.04,
                                                 }}
-                                                className="text-5xl sm:text-7xl md:text-8xl font-black italic tracking-tighter origin-bottom inline-block"
-                                                style={{
-                                                    ...fontH,
-                                                    color: char === "C" || char === "U" ? "#0F172A" : "#231942",
-                                                    textShadow: `0 10px 30px ${char === "C" || char === "U" ? 'rgba(15,23,42,0.1)' : 'rgba(35,25,66,0.15)'}`
-                                                }}
+                                                className="text-5xl sm:text-7xl md:text-8xl font-black italic tracking-tighter text-white inline-block drop-shadow-[0_10px_10px_rgba(0,0,0,0.3)]"
+                                                style={fontH}
                                             >
-                                                {char}
+                                                {char === "\u00A0" ? "\u00A0" : char}
                                             </motion.span>
                                         ))}
                                     </div>
@@ -212,15 +197,13 @@ export default function Login() {
 
                         {/* Bottom Progress Bar */}
                         <motion.div
-                            className="absolute bottom-12 left-1/2 -translate-x-1/2 w-48 h-[3px] rounded-full overflow-hidden"
-                            style={{ backgroundColor: "#FFFFFF" }}
+                            className="absolute bottom-12 left-1/2 -translate-x-1/2 w-48 h-[2px] rounded-full overflow-hidden bg-white/10"
                         >
                             <motion.div
                                 initial={{ width: "0%" }}
                                 animate={{ width: "100%" }}
-                                transition={{ duration: 6, ease: "easeInOut" }}
-                                className="h-full"
-                                style={{ backgroundColor: "#231942" }}
+                                transition={{ duration: 3.2, ease: "linear" }}
+                                className="h-full bg-brand-light shadow-[0_0_15px_#e0b1cb]"
                             />
                         </motion.div>
                     </motion.div>
