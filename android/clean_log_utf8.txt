@@ -1,0 +1,56 @@
+﻿
+> Configure project :app
+WARNING: Using flatDir should be avoided because it doesn't support any meta-data formats.
+
+> Configure project :capacitor-cordova-android-plugins
+WARNING: Using flatDir should be avoided because it doesn't support any meta-data formats.
+
+> Task :clean
+> Task :app:clean FAILED
+
+.\gradlew.bat : 
+At line:1 char:1
++ .\gradlew.bat clean > clean_log.txt 2>&1; .\gradlew.bat assembleDebug ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[Incubating] Problems report is available at: file:///C:/Users/A/OneDrive/Desktop/BAZZAR/android/build/reports/problems/problems-report.html
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':app:clean'.
+> java.io.IOException: Unable to delete directory 'C:\Users\A\OneDrive\Desktop\BAZZAR\android\app\build'
+    Failed to delete some children. This might happen because a process has files open or has its working directory set in the target directory.
+    - C:\Users\A\OneDrive\Desktop\BAZZAR\android\app\build\generated\ap_generated_sources\debug\out
+    - C:\Users\A\OneDrive\Desktop\BAZZAR\android\app\build\generated\ap_generated_sources\debug
+    - C:\Users\A\OneDrive\Desktop\BAZZAR\android\app\build\generated\ap_generated_sources\release\out
+    - C:\Users\A\OneDrive\Desktop\BAZZAR\android\app\build\generated\ap_generated_sources\release
+    - C:\Users\A\OneDrive\Desktop\BAZZAR\android\app\build\generated\ap_generated_sources
+    - C:\Users\A\OneDrive\Desktop\BAZZAR\android\app\build\generated\res\pngs\debug
+    - C:\Users\A\OneDrive\Desktop\BAZZAR\android\app\build\generated\res\pngs\release
+    - C:\Users\A\OneDrive\Desktop\BAZZAR\android\app\build\generated\res\pngs
+    - C:\Users\A\OneDrive\Desktop\BAZZAR\android\app\build\generated\res\resValues\debug
+    - C:\Users\A\OneDrive\Desktop\BAZZAR\android\app\build\generated\res\resValues\release
+    - C:\Users\A\OneDrive\Desktop\BAZZAR\android\app\build\generated\res\resValues
+    - C:\Users\A\OneDrive\Desktop\BAZZAR\android\app\build\generated\res
+    - C:\Users\A\OneDrive\Desktop\BAZZAR\android\app\build\generated\updated_navigation_xml\debug
+    - C:\Users\A\OneDrive\Desktop\BAZZAR\android\app\build\generated\updated_navigation_xml\release
+    - C:\Users\A\OneDrive\Desktop\BAZZAR\android\app\build\generated\updated_navigation_xml
+    - C:\Users\A\OneDrive\Desktop\BAZZAR\android\app\build\generated
+    - and more ...
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/8.14.3/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD FAILED in 5s
+2 actionable tasks: 2 executed

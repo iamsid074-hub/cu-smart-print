@@ -12,7 +12,6 @@ import { Capacitor } from "@capacitor/core";
 
 export default function Login() {
     const [showIntro, setShowIntro] = useState(Capacitor.isNativePlatform());
-    const [introPhase, setIntroPhase] = useState(1);
     const [isLogin, setIsLogin] = useState(false);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -24,15 +23,9 @@ export default function Login() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        // SNAPPY PHASE TIMINGS
-        // Phase 1: 0 - 0.8s (Trust)
-        const t1 = setTimeout(() => setIntroPhase(2), 800);
-        // Phase 2: 0.8s - 1.6s (Responsibility)
-        const t2 = setTimeout(() => setIntroPhase(3), 1600);
-        // End Intro: 3.2s
-        const t3 = setTimeout(() => setShowIntro(false), 3200);
-
-        return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
+        // SNAPPY 2.0s TOTAL DURATION
+        const timeout = setTimeout(() => setShowIntro(false), 2000);
+        return () => clearTimeout(timeout);
     }, []);
 
     const handleForgotPassword = async (e: React.FormEvent) => {
@@ -106,106 +99,74 @@ export default function Login() {
                     <motion.div
                         key="intro"
                         initial={{ opacity: 1 }}
-                        exit={{ opacity: 0, scale: 1.1, filter: "blur(20px)" }}
-                        transition={{ duration: 0.5, ease: [0.76, 0, 0.24, 1] }}
+                        exit={{ opacity: 0, scale: 1.05, filter: "blur(15px)" }}
+                        transition={{ duration: 0.6, ease: [0.76, 0, 0.24, 1] }}
                         className="fixed inset-0 z-[200] flex flex-col items-center justify-center overflow-hidden"
-                        style={{ backgroundColor: "#0F172A" }} // Darker bg for premium feel
+                        style={{ backgroundColor: "#0F172A" }}
                     >
-                        {/* Animated Background Orbs */}
-                        <motion.div initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1.2, opacity: 0.3 }} transition={{ duration: 1.5, ease: "easeOut" }}
-                            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[80vw] md:w-[50vw] md:h-[50vw] rounded-full blur-[120px] pointer-events-none" 
-                            style={{ background: "radial-gradient(circle, #231942 0%, transparent 70%)" }} />
-
-                        <AnimatePresence mode="wait">
-                            {/* PHASE 1: YOUR TRUST */}
-                            {introPhase === 1 && (
-                                <motion.div
-                                    key="phase1"
-                                    initial={{ opacity: 0, scale: 0.8, y: 20 }}
-                                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                                    exit={{ opacity: 0, scale: 1.1, y: -20 }}
-                                    transition={{ duration: 0.4, ease: [0.34, 1.56, 0.64, 1] }}
-                                    className="absolute inset-0 flex items-center justify-center flex-col z-10"
-                                >
-                                    <h2 className="text-4xl md:text-6xl font-black italic tracking-tighter text-white" style={fontH}>
-                                        YOUR TRUST
-                                    </h2>
-                                </motion.div>
-                            )}
-
-                            {/* PHASE 2: OUR RESPONSIBILITY */}
-                            {introPhase === 2 && (
-                                <motion.div
-                                    key="phase2"
-                                    initial={{ opacity: 0, scale: 0.8, y: 20 }}
-                                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                                    exit={{ opacity: 0, scale: 1.1, y: -20 }}
-                                    transition={{ duration: 0.4, ease: [0.34, 1.56, 0.64, 1] }}
-                                    className="absolute inset-0 flex items-center justify-center flex-col z-10"
-                                >
-                                    <h2 className="text-4xl md:text-6xl font-black italic tracking-tighter text-brand-light" style={fontH}>
-                                        OUR RESPONSIBILITY
-                                    </h2>
-                                </motion.div>
-                            )}
-
-                            {/* PHASE 3: LOGO & WELCOME */}
-                            {introPhase === 3 && (
-                                <motion.div
-                                    key="phase3"
-                                    className="absolute inset-0 flex items-center justify-center flex-col z-10"
-                                >
-                                    {/* Logo scaling up */}
-                                    <motion.div
-                                        initial={{ scale: 0, rotate: -45, opacity: 0 }}
-                                        animate={{ scale: 1, rotate: 0, opacity: 1 }}
-                                        transition={{ type: "spring", damping: 12, stiffness: 120, delay: 0.1 }}
-                                        className="relative z-10 w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden shadow-2xl flex items-center justify-center p-1.5 mb-8"
-                                        style={{ backgroundColor: "#FFFFFF" }}
-                                    >
-                                        <img src="/logo.png" alt="CU BAZZAR" className="w-full h-full object-cover rounded-full relative z-10" />
-                                        <motion.div
-                                            initial={{ scale: 1, opacity: 0.8 }}
-                                            animate={{ scale: 2, opacity: 0 }}
-                                            transition={{ duration: 1, repeat: Infinity, delay: 0.4 }}
-                                            className="absolute inset-0 rounded-full border-2 border-white"
-                                        />
-                                    </motion.div>
-
-                                    {/* Crazy Character Animation */}
-                                    <div className="flex items-center justify-center relative z-10">
-                                        {["C", "U", "\u00A0", "B", "A", "Z", "Z", "A", "R"].map((char, index) => (
-                                            <motion.span
-                                                key={index}
-                                                initial={{ y: 50, opacity: 0, scale: 0.5 }}
-                                                animate={{ y: 0, opacity: 1, scale: 1 }}
-                                                transition={{
-                                                    duration: 0.5,
-                                                    ease: [0.34, 1.56, 0.64, 1],
-                                                    delay: 0.3 + index * 0.04,
-                                                }}
-                                                className="text-5xl sm:text-7xl md:text-8xl font-black italic tracking-tighter text-white inline-block drop-shadow-[0_10px_10px_rgba(0,0,0,0.3)]"
-                                                style={fontH}
-                                            >
-                                                {char === "\u00A0" ? "\u00A0" : char}
-                                            </motion.span>
-                                        ))}
-                                    </div>
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
-
-                        {/* Bottom Progress Bar */}
-                        <motion.div
-                            className="absolute bottom-12 left-1/2 -translate-x-1/2 w-48 h-[2px] rounded-full overflow-hidden bg-white/10"
-                        >
+                        {/* Dynamic Background Ripples */}
+                        {[1, 2, 3].map((i) => (
                             <motion.div
-                                initial={{ width: "0%" }}
-                                animate={{ width: "100%" }}
-                                transition={{ duration: 3.2, ease: "linear" }}
-                                className="h-full bg-brand-light shadow-[0_0_15px_#e0b1cb]"
+                                key={i}
+                                initial={{ scale: 0.5, opacity: 0 }}
+                                animate={{ scale: 2, opacity: [0, 0.1, 0] }}
+                                transition={{
+                                    duration: 1.5,
+                                    repeat: Infinity,
+                                    delay: i * 0.4,
+                                    ease: "easeOut"
+                                }}
+                                className="absolute w-[80vw] h-[80vw] rounded-full border border-white/10"
                             />
-                        </motion.div>
+                        ))}
+
+                        {/* Logo Pulse Container */}
+                        <div className="relative z-10 flex flex-col items-center">
+                            <motion.div
+                                initial={{ scale: 0, rotate: -15, opacity: 0 }}
+                                animate={{ scale: 1, rotate: 0, opacity: 1 }}
+                                transition={{ 
+                                    type: "spring", 
+                                    damping: 20, 
+                                    stiffness: 250,
+                                    delay: 0.2 
+                                }}
+                                className="w-24 h-24 sm:w-28 sm:h-28 rounded-[2rem] overflow-hidden bg-white p-1.5 shadow-[0_0_50px_rgba(255,255,255,0.15)] mb-8"
+                            >
+                                <img src="/logo.png" alt="CU BAZZAR" className="w-full h-full object-cover rounded-[1.8rem]" />
+                                
+                                {/* Magnetic Ripple */}
+                                <motion.div
+                                    animate={{ 
+                                        boxShadow: ["0 0 0 0px rgba(255,255,255,0.4)", "0 0 0 30px rgba(255,255,255,0)"]
+                                    }}
+                                    transition={{ duration: 1.5, repeat: Infinity }}
+                                    className="absolute inset-0 rounded-[2rem]"
+                                />
+                            </motion.div>
+
+                            {/* Brand Name: Blur-to-Focus Reveal */}
+                            <motion.div
+                                initial={{ opacity: 0, filter: "blur(12px)", y: 20 }}
+                                animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
+                                transition={{ duration: 0.8, delay: 0.5, ease: "easeOut" }}
+                                className="flex items-center space-x-2"
+                            >
+                                <h2 className="text-4xl md:text-5xl font-black italic tracking-tighter text-white drop-shadow-2xl" style={fontH}>
+                                    CU BAZZAR
+                                </h2>
+                            </motion.div>
+                            
+                            {/* Fast Progress Indicator */}
+                            <div className="mt-12 w-24 h-1 rounded-full overflow-hidden bg-white/10">
+                                <motion.div
+                                    initial={{ x: "-100%" }}
+                                    animate={{ x: "100%" }}
+                                    transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                                    className="h-full w-full bg-gradient-to-r from-transparent via-white/40 to-transparent"
+                                />
+                            </div>
+                        </div>
                     </motion.div>
                 )}
             </AnimatePresence>

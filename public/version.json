@@ -1,7 +1,7 @@
 {
-    "version": "1.0.4",
-    "versionCode": 6,
-    "versionName": "1.0.4",
+    "version": "1.0.5",
+    "versionCode": 7,
+    "versionName": "1.0.5",
     "downloadUrl": "https://github.com/iamsid074-hub/cu-smart-print/raw/main/public/cubazzar.apk",
-    "releaseNotes": "Latest web features synchronized, UI refined (banners hidden in-app), and login animation made faster & classier."
+    "releaseNotes": "A completely new, fast, and classy 'Pulse Reveal' splash animation! Smoother transitions and snappier performance."
 }
