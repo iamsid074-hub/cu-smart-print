@@ -82,8 +82,10 @@ function AppLayout() {
   const { user } = useAuth();
   const { gate } = useSiteGate();
 
+  const isDownload = location.pathname === "/download";
+
   // Show gate screens for non-admin, non-login, non-landing pages
-  if (gate && !isAdmin && !isLogin && !isLanding && !isResetPassword) {
+  if (gate && !isAdmin && !isLogin && !isLanding && !isResetPassword && !isDownload) {
     if (gate === "maintenance") return <MaintenanceScreen />;
     if (gate === "closed") return <ClosedScreen />;
   }
@@ -94,7 +96,7 @@ function AppLayout() {
   return (
     <>
       <AppUpdater />
-      {!isLanding && !isLogin && !isAdmin && (
+      {!isLanding && !isLogin && !isAdmin && !isDownload && (
         <>
           <Navbar />
           <LiveOrderBanner />
