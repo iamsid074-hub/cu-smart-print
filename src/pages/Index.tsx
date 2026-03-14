@@ -301,61 +301,7 @@ export default function Index() {
         </div>
       </section>
 
-      {/* ─── Download App Section ─── */}
-      {!Capacitor.isNativePlatform() && (
-        <section className="relative py-20 px-5 sm:px-8 z-20">
-          <div className="max-w-4xl mx-auto">
-            <motion.div
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="flex flex-col sm:flex-row items-center gap-8 sm:gap-10 bg-[#1a1a2e] p-8 sm:p-12 rounded-[2.5rem] border-4 border-[#231942] shadow-[8px_12px_0_#231942] relative overflow-hidden"
-            >
-              {/* BG Glow */}
-              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_30%_50%,rgba(131,56,236,0.25),transparent_70%)] pointer-events-none" />
 
-              {/* Phone Visual */}
-              <motion.div
-                animate={{ y: [-6, 6, -6] }}
-                transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
-                className="relative flex-shrink-0"
-              >
-                <div className="w-20 h-20 sm:w-24 sm:h-24 bg-white rounded-[1.5rem] border-4 border-[#FFD166] shadow-[0_8px_0_#000] flex items-center justify-center">
-                  <img src="/logo.png" alt="CU Bazzar" className="w-full h-full object-cover rounded-xl"
-                    onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
-                </div>
-                <div className="absolute -top-2 -right-2 w-7 h-7 bg-[#FFD166] rounded-full border-2 border-black flex items-center justify-center shadow-[0_3px_0_#000]">
-                  <Download className="w-3 h-3 text-black" />
-                </div>
-              </motion.div>
-
-              {/* Text */}
-              <div className="flex-1 text-center sm:text-left">
-                <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#FFD166] rounded-full border-2 border-black text-xs font-black uppercase tracking-wider mb-3 shadow-[0_3px_0_#000]">
-                  <Smartphone className="w-3 h-3" /> Android App Available
-                </div>
-                <h3 className="text-2xl sm:text-3xl font-black text-white mb-2" style={fontH}>
-                  Take CU Bazzar Everywhere!
-                </h3>
-                <p className="text-purple-200 font-medium mb-6 text-sm sm:text-base">
-                  Get real-time order tracking, instant notifications, and the full campus marketplace — right in your pocket.
-                </p>
-                <Link to="/download">
-                  <motion.button
-                    whileHover={{ scale: 1.05, rotate: -1 }}
-                    whileTap={{ scale: 0.95, y: 6 }}
-                    className="inline-flex items-center gap-3 px-7 py-3.5 bg-[#FFD166] text-[#231942] font-black rounded-2xl border-4 border-[#231942] shadow-[0_6px_0_#231942] transition-all text-base"
-                    style={fontH}
-                  >
-                    <Download className="w-5 h-5 stroke-[3]" />
-                    Download Free APK
-                  </motion.button>
-                </Link>
-              </div>
-            </motion.div>
-          </div>
-        </section>
-      )}
 
       {/* ─── Footer ─── */}
       <footer className="py-10 px-5 bg-white border-t-4 border-[#231942] relative z-20">
