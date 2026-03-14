@@ -27,7 +27,7 @@ export default function AppUpdater() {
 
         const timeoutId = setTimeout(() => {
             checkForUpdates();
-        }, 2000); // 2s delay ensure stability
+        }, 4000); // 4s delay to ensure splash intro is fully cleared
 
         return () => clearTimeout(timeoutId);
     }, []);

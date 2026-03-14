@@ -1,7 +1,7 @@
 {
-    "version": "1.0.6",
-    "versionCode": 11,
-    "versionName": "1.0.6",
+    "version": "1.0.8",
+    "versionCode": 14,
+    "versionName": "1.0.8",
     "downloadUrl": "https://github.com/iamsid074-hub/cu-smart-print/raw/main/public/cubazzar.apk",
-    "releaseNotes": "A completely new, fast, and classy 'Pulse Reveal' splash animation! Smoother transitions and snappier performance."
+    "releaseNotes": "Critical fix for the white screen freeze! Plus the new 'Pulse Reveal' animation is now fully stable. Built for campus trust."
 }
