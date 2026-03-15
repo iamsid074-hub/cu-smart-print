@@ -529,9 +529,9 @@ export default function Home() {
                 <div className="relative z-10 p-6 sm:p-10 lg:p-12">
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-8">
 
-                    {/* Left â€” Main content */}
+                    {/* Left — Main content */}
                     <div className="flex-1">
-                      {/*  Badge */}
+                      {/* Badge */}
                       <motion.div
                         initial={{ opacity: 0, x: -10 }}
                         whileInView={{ opacity: 1, x: 0 }}
@@ -583,7 +583,7 @@ export default function Home() {
                       </div>
                     </div>
 
-                    {/* Right â€” Big discount + CTA */}
+                    {/* Right — Big discount + CTA */}
                     <div className="flex flex-row sm:flex-col items-center sm:items-end gap-6">
                       {/* Giant percentage */}
                       <div className="relative">
