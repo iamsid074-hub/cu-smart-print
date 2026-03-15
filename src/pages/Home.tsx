@@ -348,7 +348,7 @@ function HeroCarousel() {
           ))}
         </div>
       </div>
-    </div>
+    </LedScreen>
   );
 }
 
