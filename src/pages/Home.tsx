@@ -430,7 +430,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-slate-50 pt-[5.5rem] pb-32">
-      {/* â”€â”€â”€ Top Purple Header Section â”€â”€â”€ */}
+      {/* ─── Top Purple Header Section ─── */}
       <div className="bg-[#231942] px-4 pt-8 pb-14 sm:px-6 lg:px-10 rounded-3xl sm:rounded-[2.5rem] mb-8 relative overflow-hidden shadow-sm mx-2 sm:mx-0 mt-2 sm:mt-0">
         <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent pointer-events-none" />
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none" />
@@ -459,7 +459,7 @@ export default function Home() {
             className="text-center mb-6"
           >
             <p className="text-sm mb-1.5 font-medium text-white/90">
-              Welcome back, Student ðŸ‘‹
+              Welcome back, Student 👋
             </p>
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white mb-6" style={fontH}>
               Discover Campus{' '}
@@ -501,7 +501,7 @@ export default function Home() {
 
 
         <div className="w-full">
-          {/* â”€â”€â”€ ðŸ”¥ SUMMER SALE BANNER â”€â”€â”€ */}
+          {/* ─── 🔥 SUMMER SALE BANNER ─── */}
           <motion.section
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -543,7 +543,7 @@ export default function Home() {
                           <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ backgroundColor: '#e0b1cb' }}></span>
                           <span className="relative inline-flex rounded-full h-2.5 w-2.5" style={{ backgroundColor: '#d4a0be' }}></span>
                         </span>
-                        <span className="text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] text-[#e0b1cb]">Summer Sale Â· Special Offer</span>
+                        <span className="text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] text-[#e0b1cb]">Summer Sale · Special Offer</span>
                       </motion.div>
 
                       <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black leading-[1.1] mb-4 text-white tracking-tight" style={fontH}>
@@ -556,10 +556,10 @@ export default function Home() {
                       </h2>
 
                       <p className="text-base sm:text-lg mb-2 max-w-md text-slate-300 font-medium">
-                        March 20 Â· Up to <strong className="text-[#e0b1cb] font-black tracking-wide text-xl">70% OFF</strong> on everything
+                        March 20 · Up to <strong className="text-[#e0b1cb] font-black tracking-wide text-xl">70% OFF</strong> on everything
                       </p>
                       <p className="text-sm sm:text-base mb-8 text-slate-400 font-medium tracking-wide">
-                        Exclusive for CU Students Â· Limited stock ðŸš€
+                        Exclusive for CU Students · Limited stock 🚀
                       </p>
 
                       {/* Countdown */}
@@ -608,7 +608,7 @@ export default function Home() {
                       >
                         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
                         <span className="relative flex items-center gap-2 tracking-wide uppercase" style={fontH}>
-                          {isReminded ? "Reminder Set âœ“" : "Remind Me ðŸ””"}
+                          {isReminded ? "Reminder Set ✓" : "Remind Me 🔔"}
                         </span>
                       </motion.button>
                     </div>
@@ -629,7 +629,7 @@ export default function Home() {
 
 
 
-          {/* â”€â”€â”€ GROCERY QUICK SECTION â”€â”€â”€ */}
+          {/* ─── GROCERY QUICK SECTION ─── */}
           <motion.section
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -661,7 +661,7 @@ export default function Home() {
                     <p className="text-sm font-bold text-slate-800 line-clamp-1">{item.name}</p>
                     <p className="text-[10px] font-bold text-slate-400 mt-0.5">{item.quantity}</p>
                     <div className="flex items-center justify-between mt-2">
-                      <span className="text-base font-black text-brand">â‚¹{item.price}</span>
+                      <span className="text-base font-black text-brand">₹{item.price}</span>
                       <button 
                         onClick={() => {
                           if (!user) { toast.error('Please login first'); navigate('/login'); return; }
@@ -690,7 +690,7 @@ export default function Home() {
             </p>
           </motion.section>
 
-          {/* â”€â”€â”€ TRUST & SAFETY â”€â”€â”€ */}
+          {/* ─── TRUST & SAFETY ─── */}
           <section className="mb-6">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
