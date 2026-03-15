@@ -18,43 +18,53 @@ interface VendingItem {
 
 const ROWS: { title: string; items: VendingItem[] }[] = [
   {
-    title: "Chips Section",
+    title: "Chips",
     items: [
-      { id: "v-lays-blue", name: "Lay's Magic Masala", price: 25, image: "/grocery/lays-blue.png" },
-      { id: "v-kurkure", name: "Kurkure Masala", price: 25, image: "/grocery/kurkure.png" },
-      { id: "v-lays-blue-2", name: "Lay's Magic Masala", price: 25, image: "/grocery/lays-blue.png" },
-      { id: "v-kurkure-2", name: "Kurkure Masala", price: 25, image: "/grocery/kurkure.png" }
+      { id: "grocery-lays-blue", name: "Lay's Blue", price: 25, image: "/grocery/lays-blue.png" },
+      { id: "grocery-kurkure", name: "Kurkure", price: 25, image: "/grocery/kurkure.png" },
+      { id: "grocery-lays-blue-alt", name: "Lay's Blue", price: 25, image: "/grocery/lays-blue.png" },
+      { id: "grocery-kurkure-alt", name: "Kurkure", price: 25, image: "/grocery/kurkure.png" },
+      { id: "grocery-lays-blue-3", name: "Lay's Blue", price: 25, image: "/grocery/lays-blue.png" }
     ]
   },
   {
-    title: "Maggi Section",
+    title: "Maggi",
     items: [
-      { id: "v-maggi-1", name: "Maggi Noodles", price: 10, image: "/grocery/maggi.png", quantity: "Single Pack" },
-      { id: "v-maggi-2", name: "Maggi Noodles", price: 10, image: "/grocery/maggi.png" },
-      { id: "v-maggi-3", name: "Maggi Noodles", price: 10, image: "/grocery/maggi.png" }
+      { id: "grocery-maggi-1", name: "Maggi", price: 10, image: "/grocery/maggi.png" },
+      { id: "grocery-maggi-2", name: "Maggi", price: 10, image: "/grocery/maggi.png" },
+      { id: "grocery-maggi-3", name: "Maggi", price: 10, image: "/grocery/maggi.png" },
+      { id: "grocery-maggi-4", name: "Maggi", price: 10, image: "/grocery/maggi.png" },
+      { id: "grocery-maggi-5", name: "Maggi", price: 10, image: "/grocery/maggi.png" }
     ]
   },
   {
-    title: "Donut Section",
+    title: "Bakery",
     items: [
-      { id: "v-donut-1", name: "Ziggy Donut", price: 20, image: "/grocery/donut.png" },
-      { id: "v-donut-2", name: "Ziggy Donut", price: 20, image: "/grocery/donut.png" },
-      { id: "v-donut-3", name: "Ziggy Donut", price: 20, image: "/grocery/donut.png" }
+      { id: "grocery-donut-1", name: "Donut", price: 20, image: "/grocery/donut.png" },
+      { id: "grocery-donut-2", name: "Donut", price: 20, image: "/grocery/donut.png" },
+      { id: "grocery-donut-3", name: "Donut", price: 20, image: "/grocery/donut.png" },
+      { id: "grocery-donut-4", name: "Donut", price: 20, image: "/grocery/donut.png" },
+      { id: "grocery-donut-5", name: "Donut", price: 20, image: "/grocery/donut.png" }
     ]
   },
   {
-    title: "Soft Drink Cans",
+    title: "Drink Cans",
     items: [
-      { id: "v-coke-can", name: "Coke Can", price: 35, image: "/grocery/coca-cola.png" },
-      { id: "v-sprite-can", name: "Sprite Can", price: 35, image: "/grocery/sprite.png" },
-      { id: "v-thumsup-can", name: "Thums Up Can", price: 35, image: "/grocery/thums-up.png" }
+      { id: "grocery-coke-can-1", name: "Coke Can", price: 20, image: "/grocery/coca-cola.png" },
+      { id: "grocery-sprite-can-1", name: "Sprite Can", price: 20, image: "/grocery/sprite.png" },
+      { id: "grocery-fanta-can-1", name: "Fanta Can", price: 20, image: "/grocery/fanta.png" },
+      { id: "grocery-dew-can-1", name: "Dew Can", price: 20, image: "/grocery/mountain-dew.png" },
+      { id: "grocery-coke-can-2", name: "Coke Can", price: 20, image: "/grocery/coca-cola.png" }
     ]
   },
   {
-    title: "Bottle Drinks",
+    title: "Large Bottles",
     items: [
-      { id: "v-coke-750", name: "Coca-Cola", price: 40, image: "/grocery/coke-750.png", quantity: "750ml" },
-      { id: "v-sprite-750", name: "Sprite", price: 40, image: "/grocery/sprite-750.png", quantity: "750ml" }
+      { id: "grocery-coke-750-1", name: "Coke 750ml", price: 40, image: "/grocery/coke-750.png" },
+      { id: "grocery-sprite-750-1", name: "Sprite 750ml", price: 40, image: "/grocery/sprite-750.png" },
+      { id: "grocery-coke-750-2", name: "Coke 750ml", price: 40, image: "/grocery/coke-750.png" },
+      { id: "grocery-sprite-750-2", name: "Sprite 750ml", price: 40, image: "/grocery/sprite-750.png" },
+      { id: "grocery-coke-750-3", name: "Coke 750ml", price: 40, image: "/grocery/coke-750.png" }
     ]
   }
 ];
@@ -69,6 +79,9 @@ export default function VendingMachine() {
   const [isVending, setIsVending] = useState(false);
   const [showCheckout, setShowCheckout] = useState(false);
   const [vendedItem, setVendedItem] = useState<VendingItem | null>(null);
+  
+  // Animation state for "Added to Cart" feedback
+  const [addedPopup, setAddedPopup] = useState<{ x: number, y: number, name: string } | null>(null);
 
   // Form State
   const [hostel, setHostel] = useState<"NC" | "Zakir">("NC");
@@ -86,10 +99,24 @@ export default function VendingMachine() {
   };
 
   const deliveryCharge = calculateDeliveryCharge(floor);
-  const totalAmount = (selectedItem?.price || 0) + deliveryCharge;
+  const totalAmount = (vendedItem?.price || 0) + deliveryCharge;
 
-  const handleSelectItem = (item: VendingItem) => {
+  const handleSelectItem = (item: VendingItem, e: React.MouseEvent) => {
     if (isVending) return;
+    
+    // Instant Add to Cart logic
+    addItem({
+        id: item.id,
+        title: item.name,
+        price: item.price,
+        image: item.image,
+        category: "Vending Machine"
+    });
+
+    // Show visual confirmation at click location
+    setAddedPopup({ x: e.clientX, y: e.clientY, name: item.name });
+    setTimeout(() => setAddedPopup(null), 1000);
+
     setSelectedItem(item);
     setIsVending(true);
 
@@ -98,7 +125,7 @@ export default function VendingMachine() {
       setVendedItem(item);
       setIsVending(false);
       // Wait for drop animation to finish before showing checkout
-      setTimeout(() => setShowCheckout(true), 800);
+      setTimeout(() => setShowCheckout(true), 1200);
     }, 1500);
   };
 
@@ -161,57 +188,58 @@ export default function VendingMachine() {
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-emerald-500 to-purple-500 opacity-50 blur-sm" />
             
             {/* Glass Panel */}
-            <div className="relative rounded-3xl bg-slate-900/40 p-4 border border-white/5 backdrop-blur-sm min-h-[600px] flex flex-col justify-between">
+            <div className="relative rounded-3xl bg-slate-900/40 p-4 border border-white/5 backdrop-blur-sm min-h-[650px] flex flex-col justify-between overflow-hidden">
               {/* Shelves Container */}
-              <div className="space-y-4">
+              <div className="space-y-6">
                 {ROWS.map((row, ri) => (
                   <div key={ri} className="relative">
-                    {/* Shelf */}
-                    <div className="flex justify-around items-end gap-2 pb-2 px-2 relative z-10">
+                    {/* Shelf Content */}
+                    <div className="grid grid-cols-5 gap-2 pb-6 px-1 relative z-10">
                       {row.items.map((item, ii) => (
-                        <div key={ii} className="relative group flex flex-col items-center">
+                        <div key={ii} className="relative group flex flex-col items-center justify-end h-28 sm:h-36">
                           {/* Item Sprite */}
                           <motion.div
                             animate={isVending && selectedItem?.id === item.id ? { 
-                              y: [0, 20, 400], 
+                              y: [0, 20, 450], 
                               opacity: [1, 1, 0],
                               scale: [1, 1.1, 0.8],
-                              rotate: [0, 5, 20]
+                              rotate: [0, 5, 25]
                             } : {}}
+                            onClick={(e) => handleSelectItem(item, e)}
                             transition={{ duration: 1.5, ease: "easeIn" }}
-                            className="relative"
+                            className="relative cursor-pointer"
                           >
                             <img 
                               src={item.image} 
                               alt={item.name} 
-                              className={`w-12 h-16 sm:w-16 sm:h-20 object-contain drop-shadow-lg filter transition-all duration-300 ${isVending && selectedItem?.id === item.id ? 'brightness-110 contrast-125' : 'group-hover:brightness-110'}`} 
+                              className={`w-10 h-14 sm:w-16 sm:h-20 object-contain drop-shadow-[0_8px_15px_rgba(0,0,0,0.4)] filter transition-all duration-300 ${isVending && selectedItem?.id === item.id ? 'brightness-125 contrast-125' : 'group-hover:scale-110 active:scale-95 group-hover:brightness-110'}`} 
                             />
                             {/* Reflection on item */}
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none rounded-lg" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent pointer-events-none rounded-lg" />
                           </motion.div>
                           
-                          {/* Selection Tag */}
-                          <button
-                            onClick={() => handleSelectItem(item)}
-                            disabled={isVending}
-                            className="mt-2 px-2 py-1 rounded bg-slate-800 border border-white/10 text-[9px] font-black text-white hover:bg-emerald-500 transition-colors shadow-lg active:scale-95 disabled:opacity-50"
-                          >
-                            {ri + 1}
-                            {ii + 1}
-                          </button>
+                          {/* Selection / Label Container */}
+                          <div className="mt-2 flex flex-col items-center gap-0.5 pointer-events-none">
+                            <span className="text-[7px] sm:text-[9px] font-black text-white/90 bg-slate-950/60 px-1.5 py-0.5 rounded shadow-sm backdrop-blur-[2px] border border-white/5 truncate max-w-[50px] sm:max-w-none">
+                                {item.name}
+                            </span>
+                            <span className="text-[7px] sm:text-[8px] font-black text-emerald-400">
+                                ₹{item.price}
+                            </span>
+                          </div>
                         </div>
                       ))}
                     </div>
                     {/* Metal Rack Line */}
-                    <div className="absolute bottom-6 left-0 right-0 h-1.5 bg-gradient-to-b from-slate-400 to-slate-600 rounded-full z-0 opacity-40" />
+                    <div className="absolute bottom-6 left-0 right-0 h-1.5 bg-gradient-to-b from-slate-400 via-slate-500 to-slate-700 rounded-full z-0 opacity-40 shadow-[0_2px_4px_rgba(0,0,0,0.5)]" />
                   </div>
                 ))}
               </div>
 
               {/* Bottom Dispenser Bin */}
-              <div className="mt-8 border-t-4 border-slate-800 pt-8 pb-4 relative">
-                <div className="h-24 sm:h-32 bg-slate-950 rounded-2xl flex items-center justify-center relative overflow-hidden shadow-inner">
-                  <div className="absolute inset-0 bg-gradient-to-b from-black to-transparent opacity-60" />
+              <div className="mt-4 border-t-4 border-slate-800 pt-6 pb-4 relative">
+                <div className="h-24 sm:h-32 bg-slate-950 rounded-2xl flex items-center justify-center relative overflow-hidden shadow-[inset_0_2px_15px_rgba(0,0,0,0.8)]">
+                  <div className="absolute inset-0 bg-gradient-to-b from-black/80 to-transparent opacity-60" />
                   
                   {/* Dropped Product Visual */}
                   <AnimatePresence>
@@ -222,8 +250,8 @@ export default function VendingMachine() {
                         exit={{ opacity: 0 }}
                         className="relative z-10 flex flex-col items-center"
                       >
-                        <img src={vendedItem.image} className="w-16 h-16 object-contain drop-shadow-2xl" alt="Dropped" />
-                        <div className="absolute -bottom-2 px-4 py-1 rounded-full bg-emerald-500 text-white text-[10px] font-black uppercase tracking-tighter shadow-lg">Grab it!</div>
+                        <img src={vendedItem.image} className="w-16 h-16 object-contain drop-shadow-[0_10px_20px_rgba(0,0,0,0.6)]" alt="Dropped" />
+                        <div className="absolute -bottom-2 px-4 py-1 rounded-full bg-emerald-500 text-white text-[9px] font-black uppercase tracking-tighter shadow-xl border border-white/20">Grab it!</div>
                       </motion.div>
                     )}
                   </AnimatePresence>
@@ -231,31 +259,29 @@ export default function VendingMachine() {
               </div>
             </div>
 
-            {/* Right Control Bar (Keypad, Coins) */}
-            <div className="absolute top-1/2 right-4 -translate-y-1/2 flex flex-col gap-4 items-center">
-              {/* Display Screen */}
-              <div className="w-16 h-10 bg-slate-900 border border-emerald-500/30 rounded flex items-center justify-center p-1 overflow-hidden shadow-[inset_0_0_10px_rgba(16,209,110,0.2)]">
-                <span className="text-emerald-400 font-mono text-[10px] sm:text-xs tracking-tighter animate-pulse">
-                  {selectedItem ? 'VENDING...' : 'READY'}
-                </span>
-              </div>
-              
-              {/* Keypad Grid */}
-              <div className="grid grid-cols-2 gap-1 bg-slate-800 p-1 rounded-lg">
-                {[1, 2, 3, 4, 5, 6].map(n => (
-                  <div key={n} className="w-4 h-4 rounded-sm bg-slate-700 flex items-center justify-center text-[8px] text-white/50">{n}</div>
-                ))}
-              </div>
-
-              {/* Coin Slot */}
-              <div className="w-1 h-8 bg-slate-900 rounded-full border border-white/5 shadow-inner" />
-            </div>
+            {/* Added to Cart Popup (Portal-like) */}
+            <AnimatePresence>
+                {addedPopup && (
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.5, y: -20 }}
+                        animate={{ opacity: 1, scale: 1, y: -60 }}
+                        exit={{ opacity: 0, scale: 0.8 }}
+                        className="fixed z-[99999] pointer-events-none px-4 py-2 rounded-2xl bg-slate-900 border border-emerald-500/30 text-emerald-400 font-black text-xs shadow-2xl backdrop-blur-md"
+                        style={{ left: addedPopup.x - 40, top: addedPopup.y }}
+                    >
+                        <div className="flex items-center gap-2">
+                             <CheckCircle className="w-3 h-3" />
+                             Added!
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
           </div>
 
           {/* Vending Machine Footer/Legs */}
-          <div className="flex justify-between px-12 -mt-4">
-            <div className="w-12 h-6 bg-slate-900 rounded-b-xl" />
-            <div className="w-12 h-6 bg-slate-900 rounded-b-xl" />
+          <div className="flex justify-between px-12 -mt-4 relative z-0">
+            <div className="w-14 h-8 bg-slate-900 rounded-b-2xl shadow-xl" />
+            <div className="w-14 h-8 bg-slate-900 rounded-b-2xl shadow-xl" />
           </div>
         </div>
       </div>
