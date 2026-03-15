@@ -77,16 +77,16 @@ export default function Cart() {
     const campusShopsItems = items.filter(item => item.category === "Campus Shops");
     const otherItems = items.filter(item => item.category !== "Campus Shops");
 
-    const originalDeliveryFee = 16;
+    const originalDeliveryFee = 29;
 
-    // Apply promo code logic — ₹12 only with valid INDWIN12 during offer
+    // Apply promo code logic
     const deliveryFee = getDeliveryFee(promoApplied);
     const orderTotal = totalPrice + deliveryFee;
 
     const handleApplyPromo = () => {
         if (validatePromo(promoCode)) {
             setPromoApplied(true);
-            toast({ title: "Promo Applied! 🏆", description: `${PROMO_CODE} applied — Delivery reduced to ₹12!` });
+            toast({ title: "Promo Applied! 🏆", description: `${PROMO_CODE} applied — Delivery is ₹29!` });
         } else {
             setPromoApplied(false);
             toast({ title: "Invalid promo code", description: "Please enter a valid promo code.", variant: "destructive" });
@@ -312,7 +312,7 @@ export default function Cart() {
                             {promoApplied && (
                                 <div className="mb-4 bg-emerald-50 rounded-2xl p-4 flex items-center gap-2 text-emerald-700 text-xs sm:text-sm font-medium">
                                     <CheckCircle className="w-4 h-4 flex-shrink-0" />
-                                    <span>You saved ₹{(campusShopsItems.length > 0 ? (otherItems.length > 0 ? 20 : 15) : 10) - 5} on delivery!</span>
+                                    <span>Promo applied! You're supporting our campus delivery service.</span>
                                 </div>
                             )}
 

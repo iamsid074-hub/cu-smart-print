@@ -25,7 +25,7 @@ const faqSections = [
             },
             {
                 q: "What is the delivery charge?",
-                a: "Delivery is charged at a flat ₹20 per order. Promo codes occasionally reduce this fee.",
+                a: "Delivery is charged at a flat ₹29 per order inside campus.",
             },
         ],
     },

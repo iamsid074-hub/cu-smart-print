@@ -116,7 +116,7 @@ export default function ProductDetail() {
 
 
 
-    // Delivery fee — ₹20 default, ₹12 with promo
+    // Delivery fee — ₹29 flat
     const deliveryFee = getDeliveryFee(promoApplied);
     const totalAmount = product ? product.price + deliveryFee : 0;
 
@@ -379,7 +379,7 @@ export default function ProductDetail() {
                                                     </button>
                                                 </div>
                                                 {promoApplied && (
-                                                    <p className="text-xs text-emerald-600 font-medium -mt-4">🏆 {PROMO_CODE} applied — Delivery ₹12!</p>
+                                                    <p className="text-xs text-emerald-600 font-medium -mt-4">🏆 {PROMO_CODE} applied!</p>
                                                 )}
 
                                                 {/* Checkout Form */}

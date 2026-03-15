@@ -38,7 +38,7 @@ export default function PromoBanner() {
                     >
                         Celebration Offer<br />
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FF9933] via-white to-[#138808]">
-                            Only ₹12 Delivery
+                            Delivery at ₹29
                         </span>
                     </motion.h2>
 
@@ -58,7 +58,7 @@ export default function PromoBanner() {
                     >
                         <span className="text-xs text-white/70 font-medium">Use Code</span>
                         <span className="text-lg font-black text-[#FF9933] tracking-widest" style={fontH}>INDWIN12</span>
-                        <span className="text-xs text-white/70 font-medium">for ₹12 delivery</span>
+                        <span className="text-xs text-white/70 font-medium">for ₹29 delivery</span>
                     </motion.div>
 
                     {/* CTA */}
@@ -92,7 +92,7 @@ export default function PromoBanner() {
                         Celebration Offer
                     </h2>
                     <p className="text-transparent bg-clip-text bg-gradient-to-r from-[#FF9933] via-white to-[#138808] text-2xl font-black text-center mb-1" style={fontH}>
-                        Only ₹12 Delivery
+                        Delivery at ₹29
                     </p>
                     <p className="text-white/60 text-[11px] font-medium text-center mb-4">
                         Celebrate the victory with CU Bazzar!
