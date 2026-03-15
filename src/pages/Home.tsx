@@ -202,6 +202,47 @@ function FeatureCard({ card, index }: { card: FeatureCardType; index: number }) 
   );
 }
 
+const Ribbon = ({ text, color, className, rotation }: { text: string, color: string, className?: string, rotation: string }) => (
+  <motion.div
+    initial={{ x: -20, opacity: 0, rotate: rotation }}
+    animate={{ x: 0, opacity: 1 }}
+    whileHover={{ scale: 1.05, filter: "brightness(1.1)" }}
+    className={`absolute z-30 px-4 py-1.5 sm:px-6 sm:py-2 shadow-2xl border border-white/20 backdrop-blur-sm ${className}`}
+    style={{ 
+      backgroundColor: `${color}ee`,
+      clipPath: "polygon(100% 0%, 95% 50%, 100% 100%, 0% 100%, 5% 50%, 0% 0%)",
+      transformOrigin: "center left"
+    }}
+  >
+    <span className="text-[9px] sm:text-[11px] font-black uppercase tracking-[0.2em] text-white drop-shadow-md whitespace-nowrap">
+      {text}
+    </span>
+  </motion.div>
+);
+
+const LedScreen = ({ children }: { children: React.ReactNode }) => (
+  <div className="relative p-2 sm:p-4 bg-[#080808] rounded-[2.2rem] sm:rounded-[3.2rem] shadow-[0_30px_60px_rgba(0,0,0,0.6),0_0_30px_rgba(77,184,172,0.1)] border-[3px] border-[#1a1a1a] ring-1 ring-white/5">
+    {/* Inner Screen Bezel Glow */}
+    <div className="absolute inset-0 rounded-[2rem] sm:rounded-[3rem] shadow-[inset_0_0_15px_rgba(255,255,255,0.05)] pointer-events-none" />
+    
+    {/* Glass Reflection */}
+    <div className="absolute top-0 left-1/4 w-1/2 h-1/2 bg-gradient-to-br from-white/[0.08] to-transparent rounded-full blur-3xl pointer-events-none z-10" />
+    
+    {/* Scanline Texture Overlay */}
+    <div className="absolute inset-0 pointer-events-none z-20 opacity-[0.04]" 
+         style={{ backgroundImage: 'repeating-linear-gradient(rgba(0,0,0,0) 0px, rgba(0,0,0,0) 1px, rgba(0,0,0,0.5) 2px)' }} />
+
+    {/* Ambient Corner Glows - Branded Emerald & Pink */}
+    <div className="absolute -top-10 -left-10 w-40 h-40 bg-emerald-500/10 blur-[60px] rounded-full pointer-events-none" />
+    <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-pink-500/10 blur-[60px] rounded-full pointer-events-none" />
+
+    {/* The Carousel Container */}
+    <div className="relative rounded-[1.6rem] sm:rounded-[2.6rem] overflow-hidden border border-white/5">
+      {children}
+    </div>
+  </div>
+);
+
 const heroSlides = [
   { src: "/banners/community.png", alt: "We Love CU Bazzar" },
   { src: "/banners/sell.png", alt: "Sell your unwanted stuff on CU Bazzar" },
@@ -243,9 +284,9 @@ function HeroCarousel() {
   };
 
   return (
-    <div>
+    <LedScreen>
       <div
-        className="relative w-full rounded-2xl sm:rounded-3xl overflow-hidden border border-white/20 group aspect-video max-h-[280px] sm:max-h-[450px]"
+        className="relative w-full overflow-hidden group aspect-video max-h-[280px] sm:max-h-[450px]"
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
@@ -393,6 +434,20 @@ export default function Home() {
       <div className="bg-[#231942] px-4 pt-8 pb-14 sm:px-6 lg:px-10 rounded-3xl sm:rounded-[2.5rem] mb-8 relative overflow-hidden shadow-sm mx-2 sm:mx-0 mt-2 sm:mt-0">
         <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent pointer-events-none" />
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none" />
+        
+        {/* Decorative Ribbons V2 - Improved Positioning to Avoid Overlap */}
+        <Ribbon 
+          text="CU Exclusive" 
+          color="#ec4899" 
+          className="top-[5%] -left-3 sm:-left-6" 
+          rotation="-12deg" 
+        />
+        <Ribbon 
+          text="Room Delivery" 
+          color="#10b981" 
+          className="top-[18%] sm:top-[22%] -left-2 sm:-left-4" 
+          rotation="-7deg" 
+        />
         
         <FloatingParticles />
         <div className="max-w-[1600px] mx-auto relative z-10">
