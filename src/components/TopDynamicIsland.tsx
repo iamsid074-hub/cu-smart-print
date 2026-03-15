@@ -177,8 +177,21 @@ export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
       );
       break;
     default:
-      width = 160;
-      content = <span className="text-[15px] font-bold tracking-widest text-white uppercase">CU Bazzar</span>;
+      width = 110;
+      content = (
+        <motion.div
+          initial={{ rotate: -5 }}
+          animate={{ y: [0, -4, 0], rotate: [-5, 5, -5] }}
+          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+          className="relative"
+        >
+          <img 
+            src="/logo-new.png" 
+            alt="CU Bazzar" 
+            className="w-10 h-10 object-contain drop-shadow-[0_0_8px_rgba(255,209,102,0.4)]"
+          />
+        </motion.div>
+      );
       break;
   }
 
@@ -230,7 +243,7 @@ export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
                 style={{
                   display: "flex", alignItems: "center", justifyContent: "center",
                   width: "100%", height: "100%",
-                  paddingLeft: 28,
+                  paddingLeft: islandState === "default" ? 16 : 28,
                   paddingRight: 16,
                   color: "#fff",
                 }}
