@@ -138,7 +138,7 @@ export default function HelpCenter() {
                         <div>
                             <h2 className="text-base sm:text-lg font-bold mb-1.5 text-slate-900">Our Safety Commitment</h2>
                             <p className="text-xs sm:text-sm leading-relaxed text-slate-600">
-                                CU Bazzar is run by a <strong className="text-emerald-600">real person with real accountability</strong>. Every delivery is handled personally by the platform owner {"\u2014"} no anonymous drivers, no middlemen.
+                                CU Bazzar is run by a <strong className="text-emerald-600">real person with real accountability</strong>. Every delivery is handled personally by the platform owner \u2014 no anonymous drivers, no middlemen.
                                 We maintain a <strong className="text-rose-600">strict zero-tolerance policy</strong> against drugs, alcohol, weapons, and any prohibited items. Violations are reported to Chandigarh University authorities immediately.
                                 Your safety and trust are our foundation.
                             </p>
@@ -287,7 +287,7 @@ export default function HelpCenter() {
                 >
                     <div className="flex items-center gap-2 mb-4">
                         <AlertTriangle className="w-5 h-5 text-rose-500" />
-                        <h3 className="text-sm sm:text-base font-bold text-rose-700">Prohibited Items {"\u2014"} Zero Tolerance</h3>
+                        <h3 className="text-sm sm:text-base font-bold text-rose-700">Prohibited Items \u2014 Zero Tolerance</h3>
                     </div>
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                         {[
