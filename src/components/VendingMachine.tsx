@@ -197,30 +197,57 @@ export default function VendingMachine() {
                     <div className="grid grid-cols-5 gap-2 pb-6 px-1 relative z-10">
                       {row.items.map((item, ii) => (
                         <div key={ii} className="relative group flex flex-col items-center justify-end h-28 sm:h-36">
-                          {/* Item Sprite */}
-                          <motion.div
-                            animate={isVending && selectedItem?.id === item.id ? { 
-                              y: [0, 20, 450], 
-                              opacity: [1, 1, 0],
-                              scale: [1, 1.1, 0.8],
-                              rotate: [0, 5, 25]
-                            } : {}}
-                            onClick={(e) => handleSelectItem(item, e)}
-                            transition={{ duration: 1.5, ease: "easeIn" }}
-                            className="relative cursor-pointer"
-                          >
-                            <img 
-                              src={item.image} 
-                              alt={item.name} 
-                              className={`w-10 h-14 sm:w-16 sm:h-20 object-contain drop-shadow-[0_8px_15px_rgba(0,0,0,0.4)] filter transition-all duration-300 ${isVending && selectedItem?.id === item.id ? 'brightness-125 contrast-125' : 'group-hover:scale-110 active:scale-95 group-hover:brightness-110'}`} 
-                            />
-                            {/* Reflection on item */}
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent pointer-events-none rounded-lg" />
-                          </motion.div>
+                          
+                          {/* Item Slot with Depth (Stacking) */}
+                          <div className="relative w-full h-full flex items-center justify-center">
+                            {/* Static Background Stacks */}
+                            {[2, 1].map((depth) => (
+                              <div 
+                                key={depth}
+                                className="absolute pointer-events-none"
+                                style={{ 
+                                  transform: `translateZ(-${depth * 20}px) translateY(-${depth * 2}px) scale(${1 - depth * 0.08})`,
+                                  opacity: 0.4 - depth * 0.1,
+                                  filter: 'brightness(0.6) blur(0.5px)'
+                                }}
+                              >
+                                <img 
+                                  src={item.image} 
+                                  alt="" 
+                                  className="w-10 h-14 sm:w-16 sm:h-20 object-contain" 
+                                />
+                              </div>
+                            ))}
+
+                            {/* Front (Interactive) Item */}
+                            <motion.div
+                              animate={isVending && selectedItem?.id === item.id ? { 
+                                y: [0, 20, 500], 
+                                opacity: [1, 1, 0],
+                                scale: [1, 1.05, 0.9],
+                                rotate: [0, 2, 15]
+                              } : {}}
+                              onClick={(e) => handleSelectItem(item, e)}
+                              transition={isVending && selectedItem?.id === item.id ? { 
+                                y: { type: "spring", stiffness: 100, damping: 20, bounce: 0.1, duration: 1.5 },
+                                opacity: { duration: 1.5 },
+                                scale: { duration: 0.2 }
+                              } : { duration: 1.5, ease: "easeIn" }}
+                              className="relative cursor-pointer z-10"
+                            >
+                              <img 
+                                src={item.image} 
+                                alt={item.name} 
+                                className={`w-10 h-14 sm:w-16 sm:h-20 object-contain drop-shadow-[0_8px_15px_rgba(0,0,0,0.4)] filter transition-all duration-300 ${isVending && selectedItem?.id === item.id ? 'brightness-125 contrast-125' : 'group-hover:scale-105 active:scale-95 group-hover:brightness-110'}`} 
+                              />
+                              {/* Reflection on item */}
+                              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none rounded-lg" />
+                            </motion.div>
+                          </div>
                           
                           {/* Selection / Label Container */}
                           <div className="mt-2 flex flex-col items-center gap-0.5 pointer-events-none">
-                            <span className="text-[7px] sm:text-[9px] font-black text-white/90 bg-slate-950/60 px-1.5 py-0.5 rounded shadow-sm backdrop-blur-[2px] border border-white/5 truncate max-w-[50px] sm:max-w-none">
+                            <span className="text-[7px] sm:text-[9px] font-black text-white/90 bg-slate-950/60 px-1.5 py-0.5 rounded shadow-sm backdrop-blur-[2px] border border-white/10 truncate max-w-[55px] sm:max-w-none">
                                 {item.name}
                             </span>
                             <span className="text-[7px] sm:text-[8px] font-black text-emerald-400">
@@ -230,28 +257,39 @@ export default function VendingMachine() {
                         </div>
                       ))}
                     </div>
-                    {/* Metal Rack Line */}
-                    <div className="absolute bottom-6 left-0 right-0 h-1.5 bg-gradient-to-b from-slate-400 via-slate-500 to-slate-700 rounded-full z-0 opacity-40 shadow-[0_2px_4px_rgba(0,0,0,0.5)]" />
+                    {/* Metal Rack Line (Polished) */}
+                    <div className="absolute bottom-6 left-0 right-0 h-2 bg-gradient-to-b from-slate-500 via-slate-600 to-slate-800 rounded-full z-0 opacity-60 shadow-[0_4px_8px_rgba(0,0,0,0.6)]" />
                   </div>
                 ))}
               </div>
 
               {/* Bottom Dispenser Bin */}
-              <div className="mt-4 border-t-4 border-slate-800 pt-6 pb-4 relative">
-                <div className="h-24 sm:h-32 bg-slate-950 rounded-2xl flex items-center justify-center relative overflow-hidden shadow-[inset_0_2px_15px_rgba(0,0,0,0.8)]">
-                  <div className="absolute inset-0 bg-gradient-to-b from-black/80 to-transparent opacity-60" />
+              <div className="mt-4 border-t-[5px] border-slate-800 pt-6 pb-4 relative">
+                <div className="h-24 sm:h-32 bg-slate-950 rounded-2xl flex items-center justify-center relative overflow-hidden shadow-[inset_0_4px_20px_rgba(0,0,0,0.9)]">
+                  <div className="absolute inset-0 bg-gradient-to-b from-black/90 to-transparent opacity-80" />
                   
-                  {/* Dropped Product Visual */}
+                  {/* Dropped Product Visual (Real Physics feel) */}
                   <AnimatePresence>
                     {vendedItem && (
                       <motion.div
-                        initial={{ y: -100, opacity: 0, scale: 0.5 }}
-                        animate={{ y: 0, opacity: 1, scale: 1 }}
+                        initial={{ y: -150, opacity: 0, scale: 0.6, rotate: -10 }}
+                        animate={{ 
+                          y: 10, 
+                          opacity: 1, 
+                          scale: 1,
+                          rotate: 2
+                        }}
+                        transition={{ 
+                          type: "spring",
+                          stiffness: 150,
+                          damping: 12, // Lower damping for a slight thud
+                          bounce: 0.05
+                        }}
                         exit={{ opacity: 0 }}
                         className="relative z-10 flex flex-col items-center"
                       >
-                        <img src={vendedItem.image} className="w-16 h-16 object-contain drop-shadow-[0_10px_20px_rgba(0,0,0,0.6)]" alt="Dropped" />
-                        <div className="absolute -bottom-2 px-4 py-1 rounded-full bg-emerald-500 text-white text-[9px] font-black uppercase tracking-tighter shadow-xl border border-white/20">Grab it!</div>
+                        <img src={vendedItem.image} className="w-16 h-16 object-contain drop-shadow-[0_15px_30px_rgba(0,0,0,0.8)]" alt="Dropped" />
+                        <div className="absolute -bottom-2 px-4 py-1 rounded-full bg-emerald-500 text-white text-[9px] font-black uppercase tracking-tighter shadow-2xl border border-white/20 animate-bounce">Grab it!</div>
                       </motion.div>
                     )}
                   </AnimatePresence>
