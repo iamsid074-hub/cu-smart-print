@@ -413,12 +413,17 @@ export default function VendingMachine() {
                     {/* Room & Phone Input */}
                     <div className="grid grid-cols-2 gap-3">
                       <div className="space-y-2">
-                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">Room No.</label>
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1 flex justify-between">
+                          Room No.
+                          {room && !room.startsWith(floor.toString()) && (
+                            <span className="text-rose-500 lowercase tracking-normal">Must start with {floor}</span>
+                          )}
+                        </label>
                         <input 
                           value={room}
-                          onChange={e => setRoom(e.target.value)}
-                          placeholder="Ex: 504"
-                          className="w-full h-14 bg-slate-50 rounded-2xl px-4 border border-slate-100 focus:border-brand focus:bg-white transition-all text-sm font-bold placeholder:font-medium"
+                          onChange={e => setRoom(e.target.value.replace(/\D/g, ""))}
+                          placeholder={`Ex: ${floor}01`}
+                          className={`w-full h-14 bg-slate-50 rounded-2xl px-4 border transition-all text-sm font-bold placeholder:font-medium ${room && !room.startsWith(floor.toString()) ? 'border-rose-500 focus:border-rose-500 bg-rose-50' : 'border-slate-100 focus:border-brand focus:bg-white'}`}
                         />
                       </div>
                       <div className="space-y-2">
@@ -438,7 +443,7 @@ export default function VendingMachine() {
                   <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100 space-y-2">
                     <div className="flex justify-between items-center text-xs">
                       <span className="text-slate-500 font-bold">Product Price</span>
-                      <span className="text-slate-900 font-black">₹{selectedItem?.price}</span>
+                      <span className="text-slate-900 font-black">₹{vendedItem?.price || 0}</span>
                     </div>
                     <div className="flex justify-between items-center text-xs">
                       <span className="text-slate-500 font-bold flex items-center gap-1.5">Floor {floor} Delivery Charge <Info className="w-3 h-3 opacity-50" /></span>
@@ -446,17 +451,17 @@ export default function VendingMachine() {
                     </div>
                     <div className="pt-2 border-t border-slate-200 flex justify-between items-center">
                       <span className="text-sm font-black text-slate-600">Total Amount</span>
-                      <span className="text-2xl font-black text-brand">₹{totalAmount}</span>
+                      <span className="text-2xl font-black text-brand">₹{(vendedItem?.price || 0) + deliveryCharge}</span>
                     </div>
                   </div>
 
                   {/* Purchase Button */}
                   <button
-                    disabled={!room || phone.length !== 10 || isSubmitting}
+                    disabled={!room || !room.startsWith(floor.toString()) || phone.length !== 10 || isSubmitting}
                     onClick={() => { if (!user) navigate('/login'); else setShowUpiModal(true); }}
                     className="w-full h-16 rounded-3xl bg-slate-900 text-white font-black text-base shadow-2xl transition-all hover:bg-black active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-3 group"
                   >
-                    {!room || phone.length !== 10 ? 'Fill Details to Proceed' : `Pay ₹${totalAmount} via Scanner`}
+                    {!room ? 'Enter Room No.' : !room.startsWith(floor.toString()) ? `Room must start with ${floor}` : phone.length !== 10 ? 'Enter Phone Number' : `Pay ₹{(vendedItem?.price || 0) + deliveryCharge} via Scanner`}
                     <Zap className="w-5 h-5 text-emerald-400 group-hover:scale-110 transition-transform" />
                   </button>
                 </div>
