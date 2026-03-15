@@ -1,8 +1,9 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronRight, ChevronLeft, Loader2, ShoppingBag, ShoppingCart, X, MapPin, Phone, Home as HomeIcon, Zap, UtensilsCrossed, Package, Rocket, ShieldCheck, BadgePercent, Users, Plus, Shield, Ban, Headset, ExternalLink, Search, Download, ArrowRight } from "lucide-react";
+import { ChevronRight, ChevronLeft, Loader2, ShoppingBag, ShoppingCart, X, MapPin, Phone, Home as HomeIcon, Zap, UtensilsCrossed, Package, Rocket, ShieldCheck, BadgePercent, Users, Plus, Shield, Ban, Headset, ExternalLink, Search, Download, ArrowRight, Store } from "lucide-react";
 import ProductCard from "@/components/ProductCard";
+import VendingMachine from "@/components/VendingMachine";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
@@ -604,8 +605,12 @@ export default function Home() {
                     </div>
                   </div>
                 </div>
+                </div>
               </div>
-            </div>
+            </motion.section>
+
+            {/* ─── Digital Vending Machine Section ─── */}
+            <VendingMachine />
 
             {/* Keyframe for animated border */}
             <style>{`
@@ -615,7 +620,6 @@ export default function Home() {
               100% { background-position: 0% 50%; }
             }
           `}</style>
-          </motion.section>
 
 
 
