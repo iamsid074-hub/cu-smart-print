@@ -13,11 +13,11 @@ const faqSections = [
         faqs: [
             {
                 q: "Who delivers my order?",
-                a: "The platform owner personally handles every single delivery. There are no third-party delivery partners {"\u2014"} your order is in safe, accountable hands from start to finish.",
+                a: "The platform owner personally handles every single delivery. There are no third-party delivery partners \u2014 your order is in safe, accountable hands from start to finish.",
             },
             {
                 q: "How long does delivery take?",
-                a: "Most orders within the Chandigarh University campus are delivered within 10{"\u2013"}30 minutes, depending on location and current demand. Campus essentials and food orders are prioritized.",
+                a: "Most orders within the Chandigarh University campus are delivered within 10\u201330 minutes, depending on location and current demand. Campus essentials and food orders are prioritized.",
             },
             {
                 q: "What areas do you deliver to?",
@@ -25,7 +25,7 @@ const faqSections = [
             },
             {
                 q: "What is the delivery charge?",
-                a: "Delivery is charged at a flat {"\u20B9"}20 per order. Promo codes occasionally reduce this fee.",
+                a: "Delivery is charged at a flat \u20B920 per order. Promo codes occasionally reduce this fee.",
             },
         ],
     },
@@ -167,7 +167,7 @@ export default function HelpCenter() {
                         {
                             icon: Phone,
                             title: "Call Us",
-                            desc: "Available 8AM {"\u2013"} 12AM",
+                            desc: "Available 8AM \u2013 12AM",
                             action: "9466166750",
                             href: "tel:+919466166750",
                             color: "#3B82F6",
