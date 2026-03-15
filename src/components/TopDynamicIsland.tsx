@@ -185,60 +185,83 @@ export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
   return (
     <>
       <div
-        className="w-full flex justify-center fixed top-4 sm:top-6 z-[100] pointer-events-none"
+        className="w-full flex justify-center fixed top-4 sm:top-6 z-[100] pointer-events-none px-4"
       >
-        <AnimatePresence mode="popLayout">
-          {/* ── Main Pill ── */}
+        <div className="flex items-center gap-3 max-w-md w-full justify-center">
+          {/* CU Logo at extreme left (inside the container flex for alignment) */}
           <motion.div
-            layout
-            initial={false}
-            animate={{ width, height }}
-            transition={springTransition}
-            onClick={handleIslandClick}
-            className={`pointer-events-auto flex items-center justify-center overflow-hidden flex-shrink-0 ${(islandState === "added" || islandState === "updated" || islandState === "cart") ? "cursor-pointer hover:bg-zinc-900 transition-colors" : ""}`}
-            style={{
-              background: "#000",
-              borderRadius: 50,
-              animation: "diGlow 4s ease-in-out infinite",
-              position: "relative",
-              zIndex: 100,
-              willChange: "transform, width",
-            }}
+            initial={{ scale: 0, opacity: 0, x: -20 }}
+            animate={{ scale: 1, opacity: 1, x: 0 }}
+            transition={{ ...springTransition, delay: 0.2 }}
+            className="pointer-events-auto flex-shrink-0"
           >
-            {/* Green camera indicator dot */}
-            <motion.div
-              animate={{ opacity: [0.55, 1, 0.55] }}
-              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-              style={{
-                position: "absolute", left: 12, top: "50%",
-                transform: "translateY(-50%)",
-                width: 6, height: 6, borderRadius: "50%",
-                background: "#30D158",
-                boxShadow: "0 0 8px rgba(48,209,88,0.9)",
-                zIndex: 10,
-              }}
-            />
-
-            <AnimatePresence mode="wait">
+            <div className="w-10 h-10 rounded-full bg-white p-0.5 shadow-[0_4px_0_#000] border-2 border-black overflow-hidden relative group">
+              <img 
+                src="/cb_logo.png" 
+                alt="CU Logo" 
+                className="w-full h-full rounded-full object-cover group-hover:scale-110 transition-transform duration-300" 
+              />
               <motion.div
-                key={islandState}
-                initial={{ opacity: 0, y: 4, scale: 0.93 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: -4, scale: 0.93 }}
-                transition={{ duration: 0.16, ease: "easeInOut" }}
-                style={{
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  width: "100%", height: "100%",
-                  paddingLeft: 28,
-                  paddingRight: 16,
-                  color: "#fff",
-                }}
-              >
-                {content}
-              </motion.div>
-            </AnimatePresence>
+                animate={{ rotate: 360 }}
+                transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+                className="absolute inset-0 border border-white/20 rounded-full"
+              />
+            </div>
           </motion.div>
-        </AnimatePresence>
+
+          <AnimatePresence mode="popLayout">
+            {/* ── Main Pill ── */}
+            <motion.div
+              layout
+              initial={false}
+              animate={{ width, height }}
+              transition={springTransition}
+              onClick={handleIslandClick}
+              className={`pointer-events-auto flex items-center justify-center overflow-hidden flex-shrink-0 ${(islandState === "added" || islandState === "updated" || islandState === "cart") ? "cursor-pointer hover:bg-zinc-900 transition-colors" : ""}`}
+              style={{
+                background: "#000",
+                borderRadius: 50,
+                animation: "diGlow 4s ease-in-out infinite",
+                position: "relative",
+                zIndex: 100,
+                willChange: "transform, width",
+              }}
+            >
+              {/* Green camera indicator dot */}
+              <motion.div
+                animate={{ opacity: [0.55, 1, 0.55] }}
+                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                style={{
+                  position: "absolute", left: 12, top: "50%",
+                  transform: "translateY(-50%)",
+                  width: 6, height: 6, borderRadius: "50%",
+                  background: "#30D158",
+                  boxShadow: "0 0 8px rgba(48,209,88,0.9)",
+                  zIndex: 10,
+                }}
+              />
+
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={islandState}
+                  initial={{ opacity: 0, y: 4, scale: 0.93 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -4, scale: 0.93 }}
+                  transition={{ duration: 0.16, ease: "easeInOut" }}
+                  style={{
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    width: "100%", height: "100%",
+                    paddingLeft: 28,
+                    paddingRight: 16,
+                    color: "#fff",
+                  }}
+                >
+                  {content}
+                </motion.div>
+              </AnimatePresence>
+            </motion.div>
+          </AnimatePresence>
+        </div>
       </div>
     </>
   );
