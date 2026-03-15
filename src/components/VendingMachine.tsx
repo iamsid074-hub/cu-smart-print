@@ -45,15 +45,6 @@ const ROWS: { title: string; items: VendingItem[] }[] = [
     ]
   },
   {
-    title: "Drink Cans",
-    items: [
-      { id: "vending-coke-can-1", name: "Coke Can", price: 20, image: "/grocery/coca-cola.png" },
-      { id: "vending-sprite-can-1", name: "Sprite Can", price: 20, image: "/grocery/sprite.png" },
-      { id: "vending-fanta-can-1", name: "Fanta Can", price: 20, image: "/grocery/fanta.png" },
-      { id: "vending-dew-can-1", name: "Dew Can", price: 20, image: "/grocery/mountain-dew.png" }
-    ]
-  },
-  {
     title: "Large Bottles",
     items: [
       { id: "vending-coke-750-1", name: "Coke 750ml", price: 40, image: "/grocery/coke-750.png" },
@@ -183,16 +174,16 @@ export default function VendingMachine() {
         </div>
 
         {/* ─── Vending Machine UI ─── */}
-        <div className="relative mx-auto w-full max-w-[500px]">
+        <div className="relative mx-auto w-full max-w-[420px]">
           {/* Main Body */}
           <div className="relative rounded-[40px] bg-[#1a1c2c] p-6 shadow-[0_30px_100px_rgba(0,0,0,0.5),inset_0_2px_10px_rgba(255,255,255,0.1)] border-t-[6px] border-x-[6px] border-slate-800 overflow-hidden">
             {/* LED Glows */}
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-emerald-500 to-purple-500 opacity-50 blur-sm" />
             
             {/* Glass Panel */}
-            <div className="relative rounded-3xl bg-slate-900/40 p-4 border border-white/5 backdrop-blur-sm min-h-[600px] flex flex-col justify-between overflow-hidden">
+            <div className="relative rounded-3xl bg-slate-900/40 p-4 border border-white/5 backdrop-blur-sm min-h-[500px] flex flex-col justify-between overflow-hidden">
               {/* Shelves Container */}
-              <div className="space-y-6">
+              <div className="space-y-4">
                 {ROWS.map((row, ri) => (
                   <div key={ri} className="relative">
                     {/* Shelf Content */}
