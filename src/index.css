@@ -86,7 +86,8 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply text-foreground;
+    background-color: #231942; /* CU Bazzar Dark Purple Brand Color */
     font-family: 'Inter', 'Space Grotesk', sans-serif;
     overflow-x: hidden;
     min-height: 100vh;

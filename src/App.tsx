@@ -3,6 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { motion } from "framer-motion";
 import Index from "./pages/Index";
 import { Capacitor } from "@capacitor/core";
 import Home from "./pages/Home";
@@ -37,11 +38,45 @@ import { Navigate } from "react-router-dom";
 
 const queryClient = new QueryClient();
 
+function BrandedLoading() {
+  return (
+    <div className="min-h-screen flex flex-col items-center justify-center bg-[#231942] relative overflow-hidden">
+      {"/* Decorative background glow */"}
+      <div className="absolute top-[-10%] right-[-10%] w-[400px] h-[400px] rounded-full bg-purple-500/20 blur-[100px] pointer-events-none" />
+      <div className="absolute bottom-[-10%] left-[-10%] w-[300px] h-[300px] rounded-full bg-emerald-500/10 blur-[80px] pointer-events-none" />
+      
+      <motion.div
+        initial={{ scale: 0.8, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+        className="relative z-10 flex flex-col items-center"
+      >
+        <div className="w-24 h-24 bg-white rounded-3xl p-2 mb-6 shadow-[0_10px_0_#000] border-4 border-black rotate-[-3deg]">
+          <img src="/logo.png" alt="Logo" className="w-full h-full rounded-2xl object-cover" />
+        </div>
+        <h1 className="text-3xl font-black italic tracking-tighter text-white drop-shadow-[0_4px_0_#FF4D4D]" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+          CU BAZZAR
+        </h1>
+        <div className="mt-8 flex gap-2">
+          {[0, 1, 2].map((i) => (
+            <motion.div 
+              key={i} 
+              className="w-3 h-3 rounded-full bg-white shadow-[0_3px_0_#000]"
+              animate={{ y: [0, -10, 0] }}
+              transition={{ duration: 0.6, repeat: Infinity, delay: i * 0.15 }}
+            />
+          ))}
+        </div>
+      </motion.div>
+    </div>
+  );
+}
+
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, profile, loading } = useAuth();
   const location = useLocation();
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center font-bold text-2xl text-neon-cyan">Loading...</div>;
+  if (loading) return <BrandedLoading />;
   if (!user) return <Navigate to="/login" />;
 
   return (
@@ -57,13 +92,13 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 function AdminRoute({ children }: { children: React.ReactNode }) {
   const { user, isAdmin, loading, profile } = useAuth();
   // Show spinner while auth OR profile is still loading
-  if (loading) return <div className="min-h-screen flex items-center justify-center font-bold text-2xl text-neon-cyan">Loading...</div>;
+  if (loading) return <BrandedLoading />;
   if (!user) return <Navigate to="/login" replace />;
   // If user exists but profile hasn't arrived yet — wait briefly with a visual indicator
   if (!profile) return (
-    <div className="min-h-screen flex flex-col items-center justify-center gap-4">
-      <div className="font-bold text-2xl text-neon-cyan">Loading admin profile...</div>
-      <button onClick={() => window.location.reload()} className="px-4 py-2 rounded-lg bg-white/10 text-sm text-white hover:bg-white/20 transition-colors">
+    <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-[#231942]">
+      <div className="font-bold text-2xl text-white">Loading admin profile...</div>
+      <button onClick={() => window.location.reload()} className="px-6 py-3 rounded-2xl bg-white/10 text-sm text-white hover:bg-white/20 transition-colors border border-white/20">
         Retry
       </button>
     </div>
@@ -80,18 +115,20 @@ function AppLayout() {
   const isResetPassword = location.pathname === "/reset-password";
   const isAdmin = location.pathname.startsWith("/admin");
   const { user } = useAuth();
-  const { gate } = useSiteGate();
+  const { gate, loaded } = useSiteGate();
 
   const isDownload = location.pathname === "/download";
+
+  // If site gate logic is still loading, show branded loading to avoid layout shifts or white flashes
+  if (!loaded && !isLanding && !isLogin && !isAdmin && !isDownload && !isResetPassword) {
+    return <BrandedLoading />;
+  }
 
   // Show gate screens for non-admin, non-login, non-landing pages
   if (gate && !isAdmin && !isLogin && !isLanding && !isResetPassword && !isDownload) {
     if (gate === "maintenance") return <MaintenanceScreen />;
     if (gate === "closed") return <ClosedScreen />;
   }
-
-  // Register push notifications (silently, only if already granted)
-  usePushNotifications();
 
   return (
     <>
