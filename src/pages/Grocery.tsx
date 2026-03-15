@@ -76,7 +76,7 @@ export default function Grocery() {
                                         <p className="text-sm font-bold text-slate-800 line-clamp-1">{item.name}</p>
                                         <p className="text-[10px] font-bold text-slate-400 mt-0.5">{item.quantity}</p>
                                         <div className="flex items-center justify-between mt-2">
-                                            <span className="text-base font-black text-brand">₹{item.price}</span>
+                                            <span className="text-base font-black text-brand">{"\u20B9"}{item.price}</span>
                                             <button 
                                                 onClick={() => handleAddToCart(item)}
                                                 className="w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center hover:bg-black active:scale-95 transition-all"

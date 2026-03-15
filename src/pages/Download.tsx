@@ -13,7 +13,7 @@ interface VersionData {
 
 const INSTALL_STEPS = [
     { icon: "1", title: "Download the APK", desc: "Tap the Download button below to get the latest APK file." },
-    { icon: "2", title: "Allow Unknown Sources", desc: "Go to Settings → Security → Enable 'Install Unknown Apps' for your browser/files app." },
+    { icon: "2", title: "Allow Unknown Sources", desc: `Go to Settings {"\u2192"} Security {"\u2192"} Enable 'Install Unknown Apps' for your browser/files app.` },
     { icon: "3", title: "Open the APK", desc: "Find the downloaded file in your notification bar or Files app and tap to install." },
     { icon: "4", title: "Install & Launch", desc: "Follow the Android install prompt. Once done, open CU Bazzar and log in!" },
 ];
@@ -90,7 +90,7 @@ export default function Download() {
                                 <span className="px-3 py-1 rounded-full bg-white/20 text-xs font-black uppercase tracking-wider">
                                     v{versionData.versionName}
                                 </span>
-                                <span className="text-white/60 text-xs">•</span>
+                                <span className="text-white/60 text-xs">{"\u2022"}</span>
                                 <span className="text-white/60 text-xs font-bold">Build {versionData.versionCode}</span>
                             </div>
                         ) : null}
@@ -154,7 +154,7 @@ export default function Download() {
                     className="flex items-center justify-center gap-2 mb-8 text-white/40 text-xs font-medium"
                 >
                     <Shield className="w-3.5 h-3.5" />
-                    <span>Safe & secure · Free to download · No Play Store required</span>
+                    <span>Safe {"\u0026"} secure {"\u00B7"} Free to download {"\u00B7"} No Play Store required</span>
                 </motion.div>
 
                 {/* Install Guide */}
@@ -202,10 +202,10 @@ export default function Download() {
                 {/* Footer */}
                 <div className="mt-8 text-center">
                     <p className="text-white/30 text-xs font-medium">
-                        © 2025 CU Bazzar · Chandigarh University
+                        {"\u00A9"} 2025 CU Bazzar {"\u00B7"} Chandigarh University
                     </p>
                     <Link to="/" className="text-brand-light text-xs font-bold mt-1 block hover:text-white transition-colors">
-                        Back to Website →
+                        Back to Website {"\u2192"}
                     </Link>
                 </div>
             </div>

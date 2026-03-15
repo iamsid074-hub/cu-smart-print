@@ -350,7 +350,7 @@ export default function FoodMenu() {
                                                                             >
                                                                                 <div className="flex-1 min-w-0 pr-3">
                                                                                     <span className="text-sm font-semibold text-slate-700 block truncate">{item.name}</span>
-                                                                                    <span className="text-xs font-bold text-brand mt-0.5 block">₹{item.price}</span>
+                                                                                    <span className="text-xs font-bold text-brand mt-0.5 block">{"\u20B9"}{item.price}</span>
                                                                                 </div>
                                                                                 <button
                                                                                     onClick={() => {
@@ -477,7 +477,7 @@ export default function FoodMenu() {
                                                                         </div>
                                                                     </div>
                                                                     <div className="flex items-center gap-2">
-                                                                        <span className="text-xs font-black text-brand bg-brand/5 px-3 py-1.5 rounded-full">₹{item.price}</span>
+                                                                        <span className="text-xs font-black text-brand bg-brand/5 px-3 py-1.5 rounded-full">{"\u20B9"}{item.price}</span>
                                                                         <ChevronDown className="w-4 h-4 text-slate-200 -rotate-90" />
                                                                     </div>
                                                                 </button>
@@ -533,7 +533,7 @@ export default function FoodMenu() {
                                             </div>
 
                                             <div className="relative group">
-                                                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold group-focus-within:text-brand">₹</div>
+                                                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold group-focus-within:text-brand">{"\u20B9"}</div>
                                                 <input
                                                     type="number"
                                                     value={customPrice}
@@ -589,7 +589,7 @@ export default function FoodMenu() {
                                                             <div className="flex-1 min-w-0">
                                                                 <p className="text-sm font-bold text-slate-800 truncate">{item.name}</p>
                                                                 <div className="flex items-center gap-2 mt-0.5">
-                                                                    <span className="text-[10px] font-black text-brand uppercase">₹{item.price}</span>
+                                                                    <span className="text-[10px] font-black text-brand uppercase">{"\u20B9"}{item.price}</span>
                                                                     <span className="text-[10px] font-bold text-slate-400">Qty: {item.quantity}</span>
                                                                 </div>
                                                             </div>
@@ -658,11 +658,11 @@ export default function FoodMenu() {
                                         <div className="flex justify-between items-center pt-3 border-t border-slate-200/50">
                                             <div className="flex flex-col">
                                                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Price/Unit</p>
-                                                <p className="text-sm font-bold text-slate-600">₹{item.price}</p>
+                                                <p className="text-sm font-bold text-slate-600">{"\u20B9"}{item.price}</p>
                                             </div>
                                             <div className="text-right">
                                                 <p className="text-[10px] font-black text-brand uppercase tracking-widest mb-0.5">Subtotal</p>
-                                                <p className="text-lg font-black text-brand">₹{item.price * item.quantity}</p>
+                                                <p className="text-lg font-black text-brand">{"\u20B9"}{item.price * item.quantity}</p>
                                             </div>
                                         </div>
                                         {item.notes && (
@@ -680,7 +680,7 @@ export default function FoodMenu() {
                                 <div className="flex justify-between items-center">
                                     <p className="text-xs font-black text-slate-500 uppercase tracking-widest">Total Amount</p>
                                     <p className="text-3xl font-black text-brand">
-                                        ₹{previewOrder?.items.reduce((acc: number, item: any) => acc + (item.price * item.quantity), 0)}
+                                        {"\u20B9"}{previewOrder?.items.reduce((acc: number, item: any) => acc + (item.price * item.quantity), 0)}
                                     </p>
                                 </div>
                             </div>

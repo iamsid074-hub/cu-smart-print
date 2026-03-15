@@ -13,11 +13,11 @@ const faqSections = [
         faqs: [
             {
                 q: "Who delivers my order?",
-                a: "The platform owner personally handles every single delivery. There are no third-party delivery partners — your order is in safe, accountable hands from start to finish.",
+                a: "The platform owner personally handles every single delivery. There are no third-party delivery partners {"\u2014"} your order is in safe, accountable hands from start to finish.",
             },
             {
                 q: "How long does delivery take?",
-                a: "Most orders within the Chandigarh University campus are delivered within 10–30 minutes, depending on location and current demand. Campus essentials and food orders are prioritized.",
+                a: "Most orders within the Chandigarh University campus are delivered within 10{"\u2013"}30 minutes, depending on location and current demand. Campus essentials and food orders are prioritized.",
             },
             {
                 q: "What areas do you deliver to?",
@@ -25,7 +25,7 @@ const faqSections = [
             },
             {
                 q: "What is the delivery charge?",
-                a: "Delivery is charged at a flat ₹20 per order. Promo codes occasionally reduce this fee.",
+                a: "Delivery is charged at a flat {"\u20B9"}20 per order. Promo codes occasionally reduce this fee.",
             },
         ],
     },
@@ -138,7 +138,7 @@ export default function HelpCenter() {
                         <div>
                             <h2 className="text-base sm:text-lg font-bold mb-1.5 text-slate-900">Our Safety Commitment</h2>
                             <p className="text-xs sm:text-sm leading-relaxed text-slate-600">
-                                CU Bazzar is run by a <strong className="text-emerald-600">real person with real accountability</strong>. Every delivery is handled personally by the platform owner — no anonymous drivers, no middlemen.
+                                CU Bazzar is run by a <strong className="text-emerald-600">real person with real accountability</strong>. Every delivery is handled personally by the platform owner {"\u2014"} no anonymous drivers, no middlemen.
                                 We maintain a <strong className="text-rose-600">strict zero-tolerance policy</strong> against drugs, alcohol, weapons, and any prohibited items. Violations are reported to Chandigarh University authorities immediately.
                                 Your safety and trust are our foundation.
                             </p>
@@ -167,7 +167,7 @@ export default function HelpCenter() {
                         {
                             icon: Phone,
                             title: "Call Us",
-                            desc: "Available 8AM – 12AM",
+                            desc: "Available 8AM {"\u2013"} 12AM",
                             action: "9466166750",
                             href: "tel:+919466166750",
                             color: "#3B82F6",
@@ -287,7 +287,7 @@ export default function HelpCenter() {
                 >
                     <div className="flex items-center gap-2 mb-4">
                         <AlertTriangle className="w-5 h-5 text-rose-500" />
-                        <h3 className="text-sm sm:text-base font-bold text-rose-700">Prohibited Items — Zero Tolerance</h3>
+                        <h3 className="text-sm sm:text-base font-bold text-rose-700">Prohibited Items {"\u2014"} Zero Tolerance</h3>
                     </div>
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                         {[

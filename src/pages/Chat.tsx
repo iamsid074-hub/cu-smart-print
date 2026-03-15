@@ -314,7 +314,7 @@ export default function Chat() {
                         {messages.length === 0 && (
                             <div className="text-center mt-10">
                                 <span className="text-xs text-slate-500 bg-slate-100 px-3 py-1 rounded-full">
-                                    Say hello to {activeContact.full_name}! 👋
+                                    Say hello to {activeContact.full_name}! {"\uD83D\uDC4B"}
                                 </span>
                             </div>
                         )}
@@ -384,7 +384,7 @@ export default function Chat() {
             ) : (
                 <div className="hidden md:flex flex-1 items-center justify-center">
                     <div className="text-center">
-                        <div className="text-5xl mb-4">💬</div>
+                        <div className="text-5xl mb-4">{"\uD83D\uDCAC"}</div>
                         <h3 className="font-semibold text-lg text-slate-900 mb-2">
                             Select a conversation
                         </h3>
