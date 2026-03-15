@@ -197,7 +197,7 @@ export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
           >
             <div className="w-10 h-10 rounded-full bg-white p-0.5 shadow-[0_4px_0_#000] border-2 border-black overflow-hidden relative group">
               <img 
-                src="/cb_logo.png" 
+                src="/cb_logo_final.png" 
                 alt="CU Logo" 
                 className="w-full h-full rounded-full object-cover group-hover:scale-110 transition-transform duration-300" 
               />

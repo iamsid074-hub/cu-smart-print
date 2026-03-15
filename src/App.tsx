@@ -43,7 +43,7 @@ const BrandedLoading = () => {
   useEffect(() => {
     // Pre-fetch critical images while loading
     const imagesToPreload = [
-      '/cb_logo.png',
+      '/cb_logo_final.png',
       '/banners/community.png',
       '/banners/sell.png',
       '/banners/delivery.png',
