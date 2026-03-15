@@ -59,7 +59,7 @@ export default function UpiPaymentModal({
     return createPortal(
         <AnimatePresence>
             {isOpen && (
-                <div className="fixed inset-0 z-[9999] flex items-center justify-center" style={{ isolation: 'isolate' }}>
+                <div className="fixed inset-0 z-[11000] flex items-center justify-center" style={{ isolation: 'isolate' }}>
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
