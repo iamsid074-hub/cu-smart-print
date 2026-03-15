@@ -77,8 +77,8 @@ export default function Index() {
               transition={{ type: "spring", bounce: 0.6, duration: 0.8, delay: 0.2 }}
               className="relative z-10 flex flex-col items-center"
             >
-              <div className="w-28 h-28 bg-white/10 backdrop-blur-md rounded-3xl p-2 mb-6 shadow-[0_15px_30px_rgba(0,0,0,0.3)] border border-white/20 rotate-[-3deg]">
-                <img src="/logo-new.png" alt="Logo" className="w-full h-full object-contain drop-shadow-2xl" />
+              <div className="w-28 h-28 bg-white rounded-3xl p-2 mb-6 shadow-[0_15px_0_#000] border-4 border-black rotate-[-3deg]">
+                <img src="/logo.png" alt="Logo" className="w-full h-full rounded-2xl object-cover" />
               </div>
               <h1 className="text-5xl md:text-7xl font-black italic tracking-tighter text-white drop-shadow-[0_8px_0_#FF4D4D]" style={fontH}>
                 CU BAZZAR
@@ -294,10 +294,10 @@ export default function Index() {
       <footer className="py-10 px-5 bg-white border-t-4 border-[#231942] relative z-20">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 font-bold text-slate-500">
           <div className="flex items-center gap-3">
-             <div className="w-10 h-10 rounded-xl bg-slate-900 border border-slate-700 p-1.5 shadow-lg">
-                <img src="/logo-new.png" className="w-full h-full object-contain" />
+             <div className="w-8 h-8 rounded-lg bg-[#231942] border-2 border-slate-300 p-1">
+                <img src="/logo.png" className="w-full h-full object-cover rounded" />
              </div>
-             <span className="text-[#231942]">© 2026 CU BAZZAR. All rights reserved.</span>
+             <span>© 2026 CU BAZZAR. All rigths reserved.</span>
           </div>
           <div className="flex gap-8">
             <Link to="/" className="hover:text-[#FF4D4D] transition-colors">Privacy</Link>
