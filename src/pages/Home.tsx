@@ -431,18 +431,6 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-slate-50 pt-[5.5rem] pb-32 relative">
       <div className="max-w-[1600px] mx-auto relative px-4">
-        <Ribbon 
-          text="CU Exclusive" 
-          color="#ec4899" 
-          className="top-2 -left-1 sm:-left-3" 
-          rotation="-8deg" 
-        />
-        <Ribbon 
-          text="Room Delivery" 
-          color="#10b981" 
-          className="top-12 -left-0 sm:-left-2" 
-          rotation="-4deg" 
-        />
       </div>
 
       {"\u2500\u2500\u2500"} Top Purple Header Section {"\u2500\u2500\u2500"}
