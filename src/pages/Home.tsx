@@ -202,6 +202,41 @@ function FeatureCard({ card, index }: { card: FeatureCardType; index: number }) 
   );
 }
 
+const Ribbon = ({ text, color, className, rotation }: { text: string, color: string, className?: string, rotation: string }) => (
+  <motion.div
+    initial={{ x: -20, opacity: 0, rotate: rotation }}
+    animate={{ x: 0, opacity: 1 }}
+    className={`absolute z-30 px-6 py-1.5 shadow-xl border-2 border-black/20 ${className}`}
+    style={{ 
+      backgroundColor: color,
+      clipPath: "polygon(100% 0%, 95% 50%, 100% 100%, 0% 100%, 5% 50%, 0% 0%)"
+    }}
+  >
+    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white drop-shadow-md">
+      {text}
+    </span>
+  </motion.div>
+);
+
+const LedScreen = ({ children }: { children: React.ReactNode }) => (
+  <div className="relative p-1.5 sm:p-3 bg-[#0a0a0a] rounded-[2rem] sm:rounded-[3rem] shadow-[0_20px_50px_rgba(0,0,0,0.5),0_0_20px_rgba(0,255,255,0.1)] border-4 border-[#1a1a1a]">
+    {/* Screen Shine/Glass */}
+    <div className="absolute inset-2 sm:inset-4 bg-gradient-to-br from-white/5 to-transparent rounded-[1.5rem] sm:rounded-[2.5rem] pointer-events-none z-10" />
+    
+    {/* Scanlines Effect */}
+    <div className="absolute inset-0 pointer-events-none z-20 opacity-[0.03]" 
+         style={{ backgroundImage: 'linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06))', backgroundSize: '100% 2px, 3px 100%' }} />
+
+    {/* Ambient Glow */}
+    <div className="absolute -inset-4 bg-cyan-500/10 blur-3xl rounded-full opacity-50 animate-pulse pointer-events-none" />
+    <div className="absolute -inset-4 bg-purple-500/10 blur-3xl rounded-full opacity-50 animate-pulse pointer-events-none delay-1000" />
+
+    <div className="relative rounded-[1.5rem] sm:rounded-[2.5rem] overflow-hidden border border-white/5 ring-1 ring-white/10">
+      {children}
+    </div>
+  </div>
+);
+
 const heroSlides = [
   { src: "/banners/community.png", alt: "We Love CU Bazzar" },
   { src: "/banners/sell.png", alt: "Sell your unwanted stuff on CU Bazzar" },
@@ -243,9 +278,9 @@ function HeroCarousel() {
   };
 
   return (
-    <div>
+    <LedScreen>
       <div
-        className="relative w-full rounded-2xl sm:rounded-3xl overflow-hidden border border-white/20 group aspect-video max-h-[280px] sm:max-h-[450px]"
+        className="relative w-full overflow-hidden group aspect-video max-h-[280px] sm:max-h-[450px]"
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
@@ -393,6 +428,11 @@ export default function Home() {
       <div className="bg-[#231942] px-4 pt-8 pb-14 sm:px-6 lg:px-10 rounded-3xl sm:rounded-[2.5rem] mb-8 relative overflow-hidden shadow-sm mx-2 sm:mx-0 mt-2 sm:mt-0">
         <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent pointer-events-none" />
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none" />
+        
+        {/* Decorative Ribbons */}
+        <Ribbon text="CU Special" color="#ec4899" className="top-4 -left-4 sm:top-6 sm:-left-6" rotation="-15deg" />
+        <Ribbon text="Fast Delivery" color="#10b981" className="top-12 -left-2 sm:top-16 sm:-left-4" rotation="-10deg" />
+        
         <FloatingParticles />
         <div className="max-w-[1600px] mx-auto relative z-10">
           {/* Title */}
