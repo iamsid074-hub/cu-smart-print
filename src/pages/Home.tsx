@@ -305,6 +305,7 @@ function HeroCarousel() {
               alt={slide.alt}
               className="w-full h-full object-cover block"
               loading={i === 0 ? "eager" : "lazy"}
+              {...({ fetchpriority: i === 0 ? "high" : "low" } as any)}
             />
           </motion.div>
         ))}
