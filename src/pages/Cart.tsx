@@ -21,6 +21,7 @@ export default function Cart() {
     const [room, setRoom] = useState("");
     const [phone, setPhone] = useState("");
     const [paymentMethod, setPaymentMethod] = useState<"online" | "cod">("online");
+    const [floor, setFloor] = useState<number>(1);
     const [submitting, setSubmitting] = useState(false);
     const [showUpiModal, setShowUpiModal] = useState(false);
     const [promoCode, setPromoCode] = useState("");
@@ -69,21 +70,38 @@ export default function Cart() {
         };
     }, [user]);
 
-    const phoneClean = phone.replace(/\D/g, "");
-    const isPhoneValid = phoneClean.length === 10;
-    const isFormValid = hostel.trim() !== "" && room.trim() !== "" && isPhoneValid;
+    // Filter items by category to determine delivery charge
+    const vendingCartItems = items.filter(item => item.category === "Vending Machine");
+    const hasVending = vendingCartItems.length > 0;
 
-    // Filter items by category to determine original delivery charge
-    const campusShopsItems = items.filter(item => item.category === "Campus Shops");
-    const otherItems = items.filter(item => item.category !== "Campus Shops");
+    const calculateVendingDelivery = (f: number) => {
+        if (f <= 3) return 8;
+        if (f <= 6) return 11;
+        if (f <= 9) return 14;
+        return 16;
+    };
 
     const originalDeliveryFee = 29;
-
-    // Apply promo code logic
-    const deliveryFee = getDeliveryFee(promoApplied);
+    
+    // Delivery logic: Use vending scale if any vending item present, else standard 29
+    const baseDelivery = hasVending ? calculateVendingDelivery(floor) : originalDeliveryFee;
+    
+    // Apply promo code logic (only for standard delivery usually, but we'll follow getDeliveryFee)
+    const deliveryFee = hasVending ? baseDelivery : getDeliveryFee(promoApplied);
     const orderTotal = totalPrice + deliveryFee;
 
+    const phoneClean = phone.replace(/\D/g, "");
+    const isPhoneValid = phoneClean.length === 10;
+    
+    // Floor validation: room must start with floor digit
+    const isRoomCorrect = room.startsWith(floor.toString());
+    const isFormValid = hostel.trim() !== "" && room.trim() !== "" && isPhoneValid && (hasVending ? isRoomCorrect : true);
+
     const handleApplyPromo = () => {
+        if (hasVending) {
+            toast({ title: "Vending Order", description: "Vending machine items already use a reduced floor-based delivery fee!" });
+            return;
+        }
         if (validatePromo(promoCode)) {
             setPromoApplied(true);
             toast({ title: "Promo Applied! 🏆", description: `${PROMO_CODE} applied — Delivery is ₹29!` });
@@ -94,7 +112,7 @@ export default function Cart() {
     };
 
     const createOrder = async (paymentId?: string) => {
-        const itemsSummary = items.map(i => `${i.quantity}x ${i.title}${i.isCustom ? ' [Custom]' : ''} (₹${i.price})${i.notes ? `\n   Note: ${i.notes}` : ''}`).join("\n");
+        const itemsSummary = items.map(i => `${i.quantity}x ${i.title} (${i.category}) (₹${i.price})`).join("\n");
         const { error } = await supabase.from("orders").insert({
             product_id: null,
             buyer_id: user!.id,
@@ -103,12 +121,12 @@ export default function Cart() {
             commission: 0,
             delivery_charge: deliveryFee,
             total_price: orderTotal,
-            delivery_location: `${hostel} [Custom Food: ${items[0]?.title}${items.length > 1 ? ` +${items.length - 1} more` : ""}...]`,
-            delivery_room: `[CUSTOM FOOD ORDER]\n${itemsSummary}`,
+            delivery_location: `${hostel} - Floor ${floor}`,
+            delivery_room: `[${hasVending ? 'VENDING MIX' : 'FOOD ORDER'}: Room ${room}]\n${itemsSummary}`,
             buyer_phone: phoneClean,
             status: "pending",
-            payment_method: paymentMethod === "online" ? "upi" : "cod",
-            payment_status: paymentMethod === "online" ? "verifying" : "pending",
+            payment_method: "upi",
+            payment_status: "verifying",
             razorpay_payment_id: paymentId || null,
             seller_notified_at: new Date().toISOString(),
         });
@@ -120,19 +138,9 @@ export default function Cart() {
         if (!isFormValid) return;
         setSubmitting(true);
         try {
-            if (paymentMethod === "online") {
-                setShowCheckout(false); // Close checkout panel first
-                setTimeout(() => setShowUpiModal(true), 150); // Smooth transition
-                setSubmitting(false);
-                return;
-            } else {
-                // Fallback (should be unreachable now, strictly enforcing online)
-                await createOrder();
-                toast({ title: "Order placed", description: `${totalItems} items ordered via Secure Checkout.` });
-                clearCart();
-                setShowCheckout(false);
-                navigate("/tracking");
-            }
+            setShowCheckout(false); 
+            setTimeout(() => setShowUpiModal(true), 150); 
+            setSubmitting(false);
         } catch (err: any) {
             toast({ title: "Order failed", description: err.message || "Please try again.", variant: "destructive" });
         } finally {
@@ -227,6 +235,9 @@ export default function Cart() {
                                         <div className="flex-1 min-w-0">
                                             <div className="flex items-center gap-1.5 flex-wrap">
                                                 <p className="text-sm font-bold text-slate-900 truncate">{item.title}</p>
+                                                {item.category === "Vending Machine" && (
+                                                    <span className="px-1.5 py-0.5 rounded-md bg-emerald-100 text-emerald-600 text-[8px] font-black uppercase tracking-tighter">Vending</span>
+                                                )}
                                                 {item.isCustom && (
                                                     <span className="px-1.5 py-0.5 rounded-md bg-brand/10 text-brand text-[8px] font-black uppercase tracking-tighter">Custom</span>
                                                 )}
@@ -301,13 +312,20 @@ export default function Cart() {
                             </div>
                             <div className="flex justify-between items-center text-sm text-slate-600 mb-4">
                                 <span className="flex items-center gap-1.5">
-                                    <Clock className="w-4 h-4 text-emerald-500" /> Delivery Fee
+                                    <Clock className="w-4 h-4 text-emerald-500" /> {hasVending ? `Floor ${floor} Delivery` : 'Delivery Fee'}
                                 </span>
                                 <div className="flex items-center gap-2">
-                                    {promoApplied && <span className="text-slate-400 line-through text-xs">₹{originalDeliveryFee}</span>}
-                                    <span className={promoApplied ? "text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded" : "font-medium text-slate-900"}>+ ₹{deliveryFee}</span>
+                                    {(promoApplied || hasVending) && <span className="text-slate-400 line-through text-xs">₹{originalDeliveryFee}</span>}
+                                    <span className={(promoApplied || hasVending) ? "text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded" : "font-medium text-slate-900"}>+ ₹{deliveryFee}</span>
                                 </div>
                             </div>
+
+                            {hasVending && (
+                                <div className="mb-4 bg-emerald-50 rounded-2xl p-4 flex items-center gap-2 text-emerald-700 text-xs sm:text-sm font-medium">
+                                    <Zap className="w-4 h-4 flex-shrink-0 text-amber-500" />
+                                    <span>Vending Mode: Reduced delivery charge based on your floor!</span>
+                                </div>
+                            )}
 
                             {promoApplied && (
                                 <div className="mb-4 bg-emerald-50 rounded-2xl p-4 flex items-center gap-2 text-emerald-700 text-xs sm:text-sm font-medium">
@@ -336,15 +354,39 @@ export default function Cart() {
                                 <div className="space-y-3 pt-1">
                                     <div className="relative">
                                         <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                                        <input value={hostel} onChange={e => setHostel(e.target.value)} placeholder="Hostel Block (e.g. BH-1) *"
+                                        <input value={hostel} onChange={e => setHostel(e.target.value)} placeholder="Hostel Block (e.g. NC) *"
                                             className="w-full bg-slate-50 rounded-2xl pl-12 pr-4 h-[52px] text-sm text-slate-900 focus:outline-none focus:bg-white focus:ring-4 focus:ring-brand-50 transition-all placeholder:text-slate-400" />
                                     </div>
+
+                                    {/* Floor Selector (Visible if vending items present) */}
+                                    <div className="flex bg-slate-50 p-1.5 rounded-2xl border border-slate-100 items-center justify-between">
+                                        <button 
+                                            onClick={() => setFloor(Math.max(1, floor - 1))}
+                                            className="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-500 hover:text-brand transition-all shadow-sm active:scale-95"
+                                        >
+                                            <ArrowLeft className="w-4 h-4" />
+                                        </button>
+                                        <div className="text-center flex flex-col">
+                                            <span className="text-[10px] font-black text-slate-400 uppercase tracking-tighter leading-none">Floor</span>
+                                            <span className="text-xl font-black text-slate-900">{floor}</span>
+                                        </div>
+                                        <button 
+                                            onClick={() => setFloor(Math.min(11, floor + 1))}
+                                            className="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-500 hover:text-brand transition-all shadow-sm active:scale-95"
+                                        >
+                                            <Plus className="w-4 h-4" />
+                                        </button>
+                                    </div>
+
                                     <div className="relative flex items-center bg-slate-50 rounded-2xl h-[52px] overflow-hidden focus-within:bg-white focus-within:ring-4 focus-within:ring-brand-50 transition-all">
                                         <div className="flex items-center justify-center w-14 bg-slate-100/50">
                                             <div className="w-6 h-6 flex items-center justify-center font-bold text-slate-400 text-xs text-center rounded bg-white shadow-sm">R</div>
                                         </div>
-                                        <input value={room} onChange={e => setRoom(e.target.value)} placeholder="Room Number *"
-                                            className="w-full h-full bg-transparent px-3 text-sm text-slate-900 focus:outline-none placeholder:text-slate-400" />
+                                        <input value={room} onChange={e => setRoom(e.target.value.replace(/\D/g, ""))} placeholder="Room Number *"
+                                            className={`w-full h-full bg-transparent px-3 text-sm text-slate-900 focus:outline-none placeholder:text-slate-400 font-bold ${hasVending && room && !room.startsWith(floor.toString()) ? 'text-rose-500' : ''}`} />
+                                        {hasVending && room && !room.startsWith(floor.toString()) && (
+                                            <span className="absolute right-4 text-[10px] text-rose-500 font-black">Needs {floor}xx</span>
+                                        )}
                                     </div>
                                     <div>
                                         <div className="relative">

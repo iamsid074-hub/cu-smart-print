@@ -20,65 +20,60 @@ const ROWS: { title: string; items: VendingItem[] }[] = [
   {
     title: "Chips",
     items: [
-      { id: "grocery-lays-blue", name: "Lay's Blue", price: 25, image: "/grocery/lays-blue.png" },
-      { id: "grocery-kurkure", name: "Kurkure", price: 25, image: "/grocery/kurkure.png" },
-      { id: "grocery-lays-blue-alt", name: "Lay's Blue", price: 25, image: "/grocery/lays-blue.png" },
-      { id: "grocery-kurkure-alt", name: "Kurkure", price: 25, image: "/grocery/kurkure.png" },
-      { id: "grocery-lays-blue-3", name: "Lay's Blue", price: 25, image: "/grocery/lays-blue.png" }
+      { id: "vending-lays-blue", name: "Lay's Blue", price: 25, image: "/grocery/lays-blue.png" },
+      { id: "vending-kurkure", name: "Kurkure", price: 25, image: "/grocery/kurkure.png" },
+      { id: "vending-lays-orange", name: "Lay's Orange", price: 25, image: "/grocery/lays-blue.png" }, // Replaced with orange if diff image exists, using blue for now
+      { id: "vending-kurkure-alt", name: "Kurkure", price: 25, image: "/grocery/kurkure.png" }
     ]
   },
   {
     title: "Maggi",
     items: [
-      { id: "grocery-maggi-1", name: "Maggi", price: 10, image: "/grocery/maggi.png" },
-      { id: "grocery-maggi-2", name: "Maggi", price: 10, image: "/grocery/maggi.png" },
-      { id: "grocery-maggi-3", name: "Maggi", price: 10, image: "/grocery/maggi.png" },
-      { id: "grocery-maggi-4", name: "Maggi", price: 10, image: "/grocery/maggi.png" },
-      { id: "grocery-maggi-5", name: "Maggi", price: 10, image: "/grocery/maggi.png" }
+      { id: "vending-maggi-1", name: "Maggi", price: 10, image: "/grocery/maggi.png" },
+      { id: "vending-maggi-2", name: "Maggi", price: 10, image: "/grocery/maggi.png" },
+      { id: "vending-maggi-3", name: "Maggi", price: 10, image: "/grocery/maggi.png" },
+      { id: "vending-maggi-4", name: "Maggi", price: 10, image: "/grocery/maggi.png" }
     ]
   },
   {
     title: "Bakery",
     items: [
-      { id: "grocery-donut-1", name: "Donut", price: 20, image: "/grocery/donut.png" },
-      { id: "grocery-donut-2", name: "Donut", price: 20, image: "/grocery/donut.png" },
-      { id: "grocery-donut-3", name: "Donut", price: 20, image: "/grocery/donut.png" },
-      { id: "grocery-donut-4", name: "Donut", price: 20, image: "/grocery/donut.png" },
-      { id: "grocery-donut-5", name: "Donut", price: 20, image: "/grocery/donut.png" }
+      { id: "vending-donut-1", name: "Donut", price: 20, image: "/grocery/donut.png" },
+      { id: "vending-donut-2", name: "Donut", price: 20, image: "/grocery/donut.png" },
+      { id: "vending-donut-3", name: "Donut", price: 20, image: "/grocery/donut.png" },
+      { id: "vending-donut-4", name: "Donut", price: 20, image: "/grocery/donut.png" }
     ]
   },
   {
     title: "Drink Cans",
     items: [
-      { id: "grocery-coke-can-1", name: "Coke Can", price: 20, image: "/grocery/coca-cola.png" },
-      { id: "grocery-sprite-can-1", name: "Sprite Can", price: 20, image: "/grocery/sprite.png" },
-      { id: "grocery-fanta-can-1", name: "Fanta Can", price: 20, image: "/grocery/fanta.png" },
-      { id: "grocery-dew-can-1", name: "Dew Can", price: 20, image: "/grocery/mountain-dew.png" },
-      { id: "grocery-coke-can-2", name: "Coke Can", price: 20, image: "/grocery/coca-cola.png" }
+      { id: "vending-coke-can-1", name: "Coke Can", price: 20, image: "/grocery/coca-cola.png" },
+      { id: "vending-sprite-can-1", name: "Sprite Can", price: 20, image: "/grocery/sprite.png" },
+      { id: "vending-fanta-can-1", name: "Fanta Can", price: 20, image: "/grocery/fanta.png" },
+      { id: "vending-dew-can-1", name: "Dew Can", price: 20, image: "/grocery/mountain-dew.png" }
     ]
   },
   {
     title: "Large Bottles",
     items: [
-      { id: "grocery-coke-750-1", name: "Coke 750ml", price: 40, image: "/grocery/coke-750.png" },
-      { id: "grocery-sprite-750-1", name: "Sprite 750ml", price: 40, image: "/grocery/sprite-750.png" },
-      { id: "grocery-coke-750-2", name: "Coke 750ml", price: 40, image: "/grocery/coke-750.png" },
-      { id: "grocery-sprite-750-2", name: "Sprite 750ml", price: 40, image: "/grocery/sprite-750.png" },
-      { id: "grocery-coke-750-3", name: "Coke 750ml", price: 40, image: "/grocery/coke-750.png" }
+      { id: "vending-coke-750-1", name: "Coke 750ml", price: 40, image: "/grocery/coke-750.png" },
+      { id: "vending-sprite-750-1", name: "Sprite 750ml", price: 40, image: "/grocery/sprite-750.png" },
+      { id: "vending-coke-750-2", name: "Coke 750ml", price: 40, image: "/grocery/coke-750.png" },
+      { id: "vending-sprite-750-2", name: "Sprite 750ml", price: 40, image: "/grocery/sprite-750.png" }
     ]
   }
 ];
 
 export default function VendingMachine() {
-  const { addItem } = useCart();
+  const { items, addItem, removeItem } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const [selectedItem, setSelectedItem] = useState<VendingItem | null>(null);
+  const [animatingItem, setAnimatingItem] = useState<VendingItem | null>(null);
   const [isVending, setIsVending] = useState(false);
   const [showCheckout, setShowCheckout] = useState(false);
-  const [vendedItem, setVendedItem] = useState<VendingItem | null>(null);
+  const [vendedItemEffect, setVendedItemEffect] = useState<VendingItem | null>(null);
   
   // Animation state for "Added to Cart" feedback
   const [addedPopup, setAddedPopup] = useState<{ x: number, y: number, name: string } | null>(null);
@@ -91,6 +86,9 @@ export default function VendingMachine() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showUpiModal, setShowUpiModal] = useState(false);
 
+  // Filter cart for vending specific items
+  const vendingCartItems = items.filter(i => i.category === "Vending Machine");
+
   const calculateDeliveryCharge = (f: number) => {
     if (f <= 3) return 8;
     if (f <= 6) return 11;
@@ -99,12 +97,13 @@ export default function VendingMachine() {
   };
 
   const deliveryCharge = calculateDeliveryCharge(floor);
-  const totalAmount = (vendedItem?.price || 0) + deliveryCharge;
+  const vendingSubtotal = vendingCartItems.reduce((sum, i) => sum + i.price * i.quantity, 0);
+  const totalAmount = vendingSubtotal > 0 ? vendingSubtotal + deliveryCharge : 0;
 
   const handleSelectItem = (item: VendingItem, e: React.MouseEvent) => {
     if (isVending) return;
     
-    // Instant Add to Cart logic
+    // Add to Global Cart
     addItem({
         id: item.id,
         title: item.name,
@@ -117,32 +116,36 @@ export default function VendingMachine() {
     setAddedPopup({ x: e.clientX, y: e.clientY, name: item.name });
     setTimeout(() => setAddedPopup(null), 1000);
 
-    setSelectedItem(item);
+    setAnimatingItem(item);
     setIsVending(true);
 
-    // Vending Animation logic handled by Framer Motion and state
+    // Vending Animation
     setTimeout(() => {
-      setVendedItem(item);
+      setVendedItemEffect(item);
       setIsVending(false);
-      // Wait for drop animation to finish before showing checkout
-      setTimeout(() => setShowCheckout(true), 1200);
+      // Wait for drop animation to settle
+      setTimeout(() => {
+        setVendedItemEffect(null);
+        setAnimatingItem(null);
+      }, 2000);
     }, 1500);
   };
 
   const finalizeVendingOrder = async (utrNumber: string) => {
-    if (!user || !selectedItem) return;
+    if (!user || vendingCartItems.length === 0) return;
     setIsSubmitting(true);
     try {
+      const itemsSummary = vendingCartItems.map(i => `${i.quantity}x ${i.title} (₹${i.price})`).join("\n");
       const { error } = await supabase.from("orders").insert({
         product_id: null,
         buyer_id: user.id,
         seller_id: "7450c873-f51d-469e-a33d-c44ca80beb0c", // Admin Seller
-        base_price: selectedItem.price,
+        base_price: vendingSubtotal,
         commission: 0,
         delivery_charge: deliveryCharge,
         total_price: totalAmount,
         delivery_location: `${hostel} Hostel - Floor ${floor}`,
-        delivery_room: `[VENDING MACHINE: Room ${room}]\n${selectedItem.name}`,
+        delivery_room: `[VENDING MACHINE: Room ${room}]\n${itemsSummary}`,
         buyer_phone: phone,
         status: 'pending',
         razorpay_payment_id: utrNumber,
@@ -151,11 +154,10 @@ export default function VendingMachine() {
 
       if (error) throw error;
 
-      toast({ title: "Order Successful! 🎉", description: "Your snack is on the way to your floor." });
+      toast({ title: "Order Successful! 🎉", description: "Your items are on the way to your floor." });
+      vendingCartItems.forEach(item => removeItem(item.id)); // Clear vending items from cart
       setShowUpiModal(false);
       setShowCheckout(false);
-      setSelectedItem(null);
-      setVendedItem(null);
       navigate('/tracking');
     } catch (err: any) {
       toast({ title: "Order failed", description: err.message || "Please try again.", variant: "destructive" });
@@ -177,7 +179,7 @@ export default function VendingMachine() {
             Live Inventory
           </motion.div>
           <h2 className="text-3xl sm:text-4xl font-black text-slate-900 mb-2">Hostel Smart Vending Machine</h2>
-          <p className="text-slate-500 font-medium max-w-md">Real snacks, real fast. Delivery charges calculated automatically based on your floor.</p>
+          <p className="text-slate-500 font-medium max-w-md">Real snacks, 4-row layout. Fast delivery calculated by floor.</p>
         </div>
 
         {/* ─── Vending Machine UI ─── */}
@@ -188,13 +190,13 @@ export default function VendingMachine() {
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-emerald-500 to-purple-500 opacity-50 blur-sm" />
             
             {/* Glass Panel */}
-            <div className="relative rounded-3xl bg-slate-900/40 p-4 border border-white/5 backdrop-blur-sm min-h-[650px] flex flex-col justify-between overflow-hidden">
+            <div className="relative rounded-3xl bg-slate-900/40 p-4 border border-white/5 backdrop-blur-sm min-h-[600px] flex flex-col justify-between overflow-hidden">
               {/* Shelves Container */}
               <div className="space-y-6">
                 {ROWS.map((row, ri) => (
                   <div key={ri} className="relative">
                     {/* Shelf Content */}
-                    <div className="grid grid-cols-5 gap-2 pb-6 px-1 relative z-10">
+                    <div className="grid grid-cols-4 gap-2 pb-6 px-1 relative z-10">
                       {row.items.map((item, ii) => (
                         <div key={ii} className="relative group flex flex-col items-center justify-end h-28 sm:h-36">
                           
@@ -221,14 +223,14 @@ export default function VendingMachine() {
 
                             {/* Front (Interactive) Item */}
                             <motion.div
-                              animate={isVending && selectedItem?.id === item.id ? { 
+                              animate={isVending && animatingItem?.id === item.id ? { 
                                 y: [0, 20, 500], 
                                 opacity: [1, 1, 0],
                                 scale: [1, 1.05, 0.9],
                                 rotate: [0, 2, 15]
                               } : {}}
                               onClick={(e) => handleSelectItem(item, e)}
-                              transition={isVending && selectedItem?.id === item.id ? { 
+                              transition={isVending && animatingItem?.id === item.id ? { 
                                 y: { type: "spring", stiffness: 100, damping: 20, bounce: 0.1, duration: 1.5 },
                                 opacity: { duration: 1.5 },
                                 scale: { duration: 0.2 }
@@ -238,7 +240,7 @@ export default function VendingMachine() {
                               <img 
                                 src={item.image} 
                                 alt={item.name} 
-                                className={`w-10 h-14 sm:w-16 sm:h-20 object-contain drop-shadow-[0_8px_15px_rgba(0,0,0,0.4)] filter transition-all duration-300 ${isVending && selectedItem?.id === item.id ? 'brightness-125 contrast-125' : 'group-hover:scale-105 active:scale-95 group-hover:brightness-110'}`} 
+                                className={`w-10 h-14 sm:w-16 sm:h-20 object-contain drop-shadow-[0_8px_15px_rgba(0,0,0,0.4)] filter transition-all duration-300 ${isVending && animatingItem?.id === item.id ? 'brightness-125 contrast-125' : 'group-hover:scale-105 active:scale-95 group-hover:brightness-110'}`} 
                               />
                               {/* Reflection on item */}
                               <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none rounded-lg" />
@@ -265,39 +267,42 @@ export default function VendingMachine() {
 
               {/* Bottom Dispenser Bin */}
               <div className="mt-4 border-t-[5px] border-slate-800 pt-6 pb-4 relative">
-                <div className="h-24 sm:h-32 bg-slate-950 rounded-2xl flex items-center justify-center relative overflow-hidden shadow-[inset_0_4px_20px_rgba(0,0,0,0.9)]">
+                <div className="h-24 sm:h-32 bg-slate-950 rounded-2xl flex items-center justify-center relative overflow-hidden shadow-[inset_0_4px_20px_rgba(0,0,0,0.9)] cursor-pointer group/bin" onClick={() => vendingCartItems.length > 0 && setShowCheckout(true)}>
                   <div className="absolute inset-0 bg-gradient-to-b from-black/90 to-transparent opacity-80" />
                   
-                  {/* Dropped Product Visual (Real Physics feel) */}
+                  {/* Dropped Product Visual */}
                   <AnimatePresence>
-                    {vendedItem && (
+                    {vendedItemEffect && (
                       <motion.div
                         initial={{ y: -150, opacity: 0, scale: 0.6, rotate: -10 }}
-                        animate={{ 
-                          y: 10, 
-                          opacity: 1, 
-                          scale: 1,
-                          rotate: 2
-                        }}
-                        transition={{ 
-                          type: "spring",
-                          stiffness: 150,
-                          damping: 12, // Lower damping for a slight thud
-                          bounce: 0.05
-                        }}
+                        animate={{ y: 10, opacity: 1, scale: 1, rotate: 2 }}
+                        transition={{ type: "spring", stiffness: 150, damping: 12, bounce: 0.05 }}
                         exit={{ opacity: 0 }}
                         className="relative z-10 flex flex-col items-center"
                       >
-                        <img src={vendedItem.image} className="w-16 h-16 object-contain drop-shadow-[0_15px_30px_rgba(0,0,0,0.8)]" alt="Dropped" />
-                        <div className="absolute -bottom-2 px-4 py-1 rounded-full bg-emerald-500 text-white text-[9px] font-black uppercase tracking-tighter shadow-2xl border border-white/20 animate-bounce">Grab it!</div>
+                        <img src={vendedItemEffect.image} className="w-16 h-16 object-contain drop-shadow-[0_15px_30px_rgba(0,0,0,0.8)]" alt="Dropped" />
                       </motion.div>
                     )}
                   </AnimatePresence>
+
+                  {/* Checkout Prompt */}
+                  {vendingCartItems.length > 0 && !isVending && !vendedItemEffect && (
+                    <motion.div 
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="relative z-20 flex flex-col items-center gap-2"
+                    >
+                        <ShoppingBag className="w-8 h-8 text-emerald-400 animate-bounce" />
+                        <div className="px-4 py-1.5 rounded-full bg-emerald-500 text-white text-[10px] font-black uppercase tracking-widest shadow-2xl border border-white/20">
+                            Check Out {vendingCartItems.length} Item{vendingCartItems.length > 1 ? 's' : ''}
+                        </div>
+                    </motion.div>
+                  )}
                 </div>
               </div>
             </div>
 
-            {/* Added to Cart Popup (Portal-like) */}
+            {/* Added to Cart Popup */}
             <AnimatePresence>
                 {addedPopup && (
                     <motion.div
@@ -308,15 +313,13 @@ export default function VendingMachine() {
                         style={{ left: addedPopup.x - 40, top: addedPopup.y }}
                     >
                         <div className="flex items-center gap-2">
-                             <CheckCircle className="w-3 h-3" />
-                             Added!
+                             <CheckCircle className="w-3 h-3" /> Added {addedPopup.name}
                         </div>
                     </motion.div>
                 )}
             </AnimatePresence>
           </div>
 
-          {/* Vending Machine Footer/Legs */}
           <div className="flex justify-between px-12 -mt-4 relative z-0">
             <div className="w-14 h-8 bg-slate-900 rounded-b-2xl shadow-xl" />
             <div className="w-14 h-8 bg-slate-900 rounded-b-2xl shadow-xl" />
@@ -340,129 +343,120 @@ export default function VendingMachine() {
                 initial={{ scale: 0.9, opacity: 0, y: 20 }}
                 animate={{ scale: 1, opacity: 1, y: 0 }}
                 exit={{ scale: 0.9, opacity: 0, y: 20 }}
-                className="relative bg-white w-full max-w-[480px] rounded-[3rem] overflow-hidden shadow-2xl border border-slate-100"
+                className="relative bg-white w-full max-w-[420px] rounded-[2.5rem] overflow-hidden shadow-2xl border border-slate-100"
               >
-                {/* Header Section */}
-                <div className="bg-[#1a1c2c] p-8 pb-12 relative overflow-hidden">
-                  <div className="absolute top-0 right-0 p-8 opacity-10 rotate-12">
-                    <ShoppingBag className="w-32 h-32 text-white" />
+                {/* Header Section (Shrunk) */}
+                <div className="bg-[#1a1c2c] p-6 pb-8 relative overflow-hidden">
+                  <div className="absolute top-0 right-0 p-4 opacity-10 rotate-12">
+                    <ShoppingBag className="w-20 h-20 text-white" />
                   </div>
                   <button 
                     onClick={() => setShowCheckout(false)}
-                    className="absolute top-6 right-6 w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-all"
+                    className="absolute top-5 right-5 w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-all z-50"
                   >
-                    <X className="w-5 h-5" />
+                    <X className="w-4 h-4" />
                   </button>
 
-                  <div className="relative z-10 flex items-center gap-6">
-                    <div className="w-24 h-24 rounded-3xl bg-white/10 p-4 border border-white/20 flex items-center justify-center shadow-2xl">
-                      <img src={selectedItem?.image} alt="Product" className="w-full h-full object-contain filter brightness-110 drop-shadow-xl" />
-                    </div>
-                    <div>
-                      <p className="text-emerald-400 text-[10px] font-black uppercase tracking-widest mb-1 items-center flex gap-1.5">
-                        <CheckCircle className="w-3 h-3" /> Vended Successfully
-                      </p>
-                      <h3 className="text-2xl font-black text-white leading-tight">{selectedItem?.name}</h3>
-                      <p className="text-white/60 font-medium text-sm">₹{selectedItem?.price}</p>
-                    </div>
+                  <div className="relative z-10">
+                    <p className="text-emerald-400 text-[9px] font-black uppercase tracking-widest mb-1 flex items-center gap-1.5">
+                      <CheckCircle className="w-3 h-3" /> Vending Cart
+                    </p>
+                    <h3 className="text-xl font-black text-white leading-tight">Checkout Items</h3>
+                    <p className="text-white/40 font-bold text-[10px] mt-1 italic">Vending Machine Order</p>
                   </div>
                 </div>
 
-                {/* Body / Selection Section */}
-                <div className="p-8 -mt-8 bg-white rounded-t-[3rem] relative z-20 space-y-6">
-                  <div className="space-y-4">
-                    {/* Hostel Selection */}
-                    <div className="grid grid-cols-2 gap-3">
-                      {(['NC', 'Zakir'] as const).map(h => (
-                        <button
-                          key={h}
-                          onClick={() => setHostel(h)}
-                          className={`h-16 rounded-2xl border-2 flex flex-col items-center justify-center transition-all ${hostel === h ? 'border-brand bg-brand/5' : 'border-slate-100 bg-slate-50 opacity-60 hover:opacity-100'}`}
+                {/* Body Section */}
+                <div className="p-6 -mt-6 bg-white rounded-t-[2.5rem] relative z-20 space-y-5">
+                  
+                  {/* Scrollable Item List */}
+                  <div className="max-h-[180px] overflow-y-auto space-y-2 pr-2 custom-scrollbar">
+                    {vendingCartItems.map((item) => (
+                      <div key={item.id} className="flex items-center justify-between p-3 bg-slate-50 rounded-2xl border border-slate-100 group">
+                        <div className="flex items-center gap-3">
+                           <div className="w-10 h-10 rounded-xl bg-white p-1 flex items-center justify-center shadow-sm">
+                              <img src={item.image} className="w-full h-full object-contain" alt="" />
+                           </div>
+                           <div>
+                              <p className="text-[11px] font-black text-slate-900 leading-none">{item.title}</p>
+                              <p className="text-[10px] text-brand font-bold mt-1">₹{item.price} × {item.quantity}</p>
+                           </div>
+                        </div>
+                        <button 
+                            onClick={() => removeItem(item.id)}
+                            className="w-7 h-7 rounded-lg bg-slate-200/50 flex items-center justify-center text-slate-400 hover:bg-rose-100 hover:text-rose-500 transition-all opacity-0 group-hover:opacity-100"
                         >
-                          <span className={`text-[10px] font-black uppercase tracking-tighter ${hostel === h ? 'text-brand' : 'text-slate-400'}`}>Hostel</span>
-                          <span className={`text-lg font-black ${hostel === h ? 'text-slate-900' : 'text-slate-500'}`}>{h}</span>
+                            <X className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    ))}
+                    {vendingCartItems.length === 0 && (
+                        <div className="text-center py-4 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+                             <p className="text-xs text-slate-400 font-bold italic">Cart is empty</p>
+                        </div>
+                    )}
+                  </div>
+
+                  <div className="space-y-3">
+                    {/* Hostel Selection */}
+                    <div className="grid grid-cols-2 gap-2">
+                      {(['NC', 'Zakir'] as const).map(h => (
+                        <button key={h} onClick={() => setHostel(h)} className={`h-12 rounded-xl border-2 flex flex-col items-center justify-center transition-all ${hostel === h ? 'border-brand bg-brand/5' : 'border-slate-100 bg-slate-50 opacity-60 hover:opacity-100'}`}>
+                          <span className={`text-[8px] font-black uppercase tracking-tighter ${hostel === h ? 'text-brand' : 'text-slate-400'}`}>Hostel</span>
+                          <span className={`text-sm font-black ${hostel === h ? 'text-slate-900' : 'text-slate-500'}`}>{h}</span>
                         </button>
                       ))}
                     </div>
 
                     {/* Floor Selector */}
-                    <div className="space-y-3">
-                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                        <MapPin className="w-3 h-3" /> Select Floor (NC: 9 | Zakir: 11)
-                      </p>
-                      <div className="flex bg-slate-50 p-1.5 rounded-2xl border border-slate-100 items-center justify-between">
-                        <button 
-                          onClick={() => setFloor(Math.max(1, floor - 1))}
-                          className="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-500 hover:text-brand transition-all shadow-sm active:scale-95"
-                        >
-                          <ArrowRight className="w-4 h-4 rotate-180" />
-                        </button>
-                        <div className="text-center flex flex-col">
-                          <span className="text-sm font-black text-slate-400 uppercase tracking-tighter leading-none">Floor</span>
-                          <span className="text-2xl font-black text-slate-900">{floor}</span>
+                    <div className="flex bg-slate-50 p-1 rounded-xl border border-slate-100 items-center justify-between">
+                        <button onClick={() => setFloor(Math.max(1, floor - 1))} className="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-500 hover:text-brand transition-all shadow-sm"><ArrowRight className="w-3.5 h-3.5 rotate-180" /></button>
+                        <div className="text-center flex flex-col scale-90">
+                            <span className="text-[8px] font-black text-slate-400 uppercase tracking-tighter">Floor</span>
+                            <span className="text-xl font-black text-slate-900">{floor}</span>
                         </div>
-                        <button 
-                          onClick={() => setFloor(Math.min(hostel === 'NC' ? 9 : 11, floor + 1))}
-                          className="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-500 hover:text-brand transition-all shadow-sm active:scale-95"
-                        >
-                          <ArrowRight className="w-4 h-4" />
-                        </button>
-                      </div>
+                        <button onClick={() => setFloor(Math.min(hostel === 'NC' ? 9 : 11, floor + 1))} className="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-500 hover:text-brand transition-all shadow-sm"><ArrowRight className="w-3.5 h-3.5" /></button>
                     </div>
 
                     {/* Room & Phone Input */}
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="space-y-2">
-                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1 flex justify-between">
-                          Room No.
-                          {room && !room.startsWith(floor.toString()) && (
-                            <span className="text-rose-500 lowercase tracking-normal">Must start with {floor}</span>
-                          )}
-                        </label>
-                        <input 
-                          value={room}
-                          onChange={e => setRoom(e.target.value.replace(/\D/g, ""))}
-                          placeholder={`Ex: ${floor}01`}
-                          className={`w-full h-14 bg-slate-50 rounded-2xl px-4 border transition-all text-sm font-bold placeholder:font-medium ${room && !room.startsWith(floor.toString()) ? 'border-rose-500 focus:border-rose-500 bg-rose-50' : 'border-slate-100 focus:border-brand focus:bg-white'}`}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">Phone</label>
-                        <input 
-                          type="tel"
-                          value={phone}
-                          onChange={e => setPhone(e.target.value.replace(/\D/g, "").slice(0, 10))}
-                          placeholder="Your Number"
-                          className="w-full h-14 bg-slate-50 rounded-2xl px-4 border border-slate-100 focus:border-brand focus:bg-white transition-all text-sm font-bold placeholder:font-medium"
-                        />
-                      </div>
+                    <div className="grid grid-cols-2 gap-2">
+                        <div className="space-y-1">
+                            <label className="text-[8px] font-black text-slate-400 uppercase tracking-widest pl-1 flex justify-between">
+                                Room No.
+                                {room && !room.startsWith(floor.toString()) && <span className="text-rose-500 lowercase font-bold">Starts with {floor}</span>}
+                            </label>
+                            <input value={room} onChange={e => setRoom(e.target.value.replace(/\D/g, ""))} placeholder={`Ex: ${floor}01`} className={`w-full h-11 bg-slate-50 rounded-xl px-3 border transition-all text-xs font-bold ${room && !room.startsWith(floor.toString()) ? 'border-rose-500 bg-rose-50' : 'border-slate-100 focus:border-brand'}`} />
+                        </div>
+                        <div className="space-y-1">
+                            <label className="text-[8px] font-black text-slate-400 uppercase tracking-widest pl-1 text-center block">Phone</label>
+                            <input type="tel" value={phone} onChange={e => setPhone(e.target.value.replace(/\D/g, "").slice(0, 10))} placeholder="Your Number" className="w-full h-11 bg-slate-50 rounded-xl px-3 border border-slate-100 focus:border-brand transition-all text-xs font-bold" />
+                        </div>
                     </div>
                   </div>
 
-                  {/* Summary & Price */}
-                  <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100 space-y-2">
-                    <div className="flex justify-between items-center text-xs">
-                      <span className="text-slate-500 font-bold">Product Price</span>
-                      <span className="text-slate-900 font-black">₹{vendedItem?.price || 0}</span>
+                  {/* Price Summary (More Compact) */}
+                  <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 space-y-1.5">
+                    <div className="flex justify-between items-center text-[10px]">
+                      <span className="text-slate-500 font-bold">Subtotal ({vendingCartItems.length})</span>
+                      <span className="text-slate-900 font-black">₹{vendingSubtotal}</span>
                     </div>
-                    <div className="flex justify-between items-center text-xs">
-                      <span className="text-slate-500 font-bold flex items-center gap-1.5">Floor {floor} Delivery Charge <Info className="w-3 h-3 opacity-50" /></span>
-                      <span className="text-emerald-600 font-black">₹{deliveryCharge}</span>
+                    <div className="flex justify-between items-center text-[10px]">
+                      <span className="text-slate-500 font-bold">Floor Delivery</span>
+                      <span className="text-emerald-600 font-black">+ ₹{deliveryCharge}</span>
                     </div>
-                    <div className="pt-2 border-t border-slate-200 flex justify-between items-center">
-                      <span className="text-sm font-black text-slate-600">Total Amount</span>
-                      <span className="text-2xl font-black text-brand">₹{(vendedItem?.price || 0) + deliveryCharge}</span>
+                    <div className="pt-1.5 mt-1 border-t border-slate-200 flex justify-between items-center">
+                      <span className="text-xs font-black text-slate-600">Total</span>
+                      <span className="text-lg font-black text-brand">₹{totalAmount}</span>
                     </div>
                   </div>
 
-                  {/* Purchase Button */}
                   <button
-                    disabled={!room || !room.startsWith(floor.toString()) || phone.length !== 10 || isSubmitting}
+                    disabled={vendingCartItems.length === 0 || !room || !room.startsWith(floor.toString()) || phone.length !== 10 || isSubmitting}
                     onClick={() => { if (!user) navigate('/login'); else setShowUpiModal(true); }}
-                    className="w-full h-16 rounded-3xl bg-slate-900 text-white font-black text-base shadow-2xl transition-all hover:bg-black active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-3 group"
+                    className="w-full h-14 rounded-2xl bg-slate-900 text-white font-black text-[15px] shadow-xl transition-all hover:bg-black active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2 group"
                   >
-                    {!room ? 'Enter Room No.' : !room.startsWith(floor.toString()) ? `Room must start with ${floor}` : phone.length !== 10 ? 'Enter Phone Number' : `Pay ₹{(vendedItem?.price || 0) + deliveryCharge} via Scanner`}
-                    <Zap className="w-5 h-5 text-emerald-400 group-hover:scale-110 transition-transform" />
+                    {vendingCartItems.length === 0 ? 'Add items first' : !room ? 'Enter Room No.' : !room.startsWith(floor.toString()) ? `Need Room ${floor}xx` : phone.length !== 10 ? 'Enter Phone' : `Pay ₹${totalAmount}`}
+                    <Zap className="w-4 h-4 text-emerald-400" />
                   </button>
                 </div>
               </motion.div>
@@ -485,7 +479,7 @@ export default function VendingMachine() {
   );
 }
 
-// Simple Shadow UI Dialog shim for compatibility if not using shadcn Registry
+// Simple Shadow UI Dialog shim
 function Dialog({ children, open, onOpenChange }: { children: React.ReactNode, open: boolean, onOpenChange: (val: boolean) => void }) {
   if (!open) return null;
   return <>{children}</>;
