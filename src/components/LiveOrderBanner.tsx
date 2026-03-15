@@ -104,7 +104,7 @@ export default function LiveOrderBanner() {
                 animate={{ y: 0, opacity: 1 }}
                 exit={{ y: -80, opacity: 0 }}
                 transition={{ type: "spring", stiffness: 300, damping: 28 }}
-                className={`fixed top-14 left-0 right-0 z-40 px-3 pt-1`}
+                className={`fixed top-14 left-0 right-0 z-[9998] px-3 pt-1`}
             >
                 <Link to={`/tracking?order=${order.id}`}>
                     <div className={`rounded-2xl border p-3 flex items-center gap-3 shadow-md ${config.bg} ${justChanged ? "ring-2 ring-offset-1 ring-brand" : ""} transition-all`}>

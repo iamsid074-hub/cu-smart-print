@@ -185,7 +185,8 @@ export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
   return (
     <>
       <div
-        className="w-full flex justify-center fixed top-4 sm:top-6 z-[100] pointer-events-none px-4"
+        className="w-full flex justify-center fixed top-0 left-0 right-0 z-[9999] pointer-events-none px-4 pt-4 sm:pt-6"
+        style={{ willChange: "transform" }}
       >
         <div className="flex items-center gap-3 max-w-md w-full justify-center">
           {/* CU Logo at extreme left (inside the container flex for alignment) */}
