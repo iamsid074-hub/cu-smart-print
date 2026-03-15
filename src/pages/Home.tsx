@@ -433,7 +433,8 @@ export default function Home() {
       <div className="max-w-[1600px] mx-auto relative px-4">
       </div>
 
-      {"\u2500\u2500\u2500"} Top Purple Header Section {"\u2500\u2500\u2500"}
+
+      {/* ─── Top Purple Header Section ─── */}
       <div className="bg-[#231942] px-4 pt-8 pb-14 sm:px-6 lg:px-10 rounded-3xl sm:rounded-[2.5rem] mb-8 relative overflow-hidden shadow-sm mx-2 sm:mx-0 mt-2 sm:mt-0">
         <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent pointer-events-none" />
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none" />
