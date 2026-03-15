@@ -1,4 +1,4 @@
-﻿import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronRight, ChevronLeft, Loader2, ShoppingBag, ShoppingCart, X, MapPin, Phone, Home as HomeIcon, Zap, UtensilsCrossed, Package, Rocket, ShieldCheck, BadgePercent, Users, Plus, Shield, Ban, Headset, ExternalLink, Search, Download, ArrowRight } from "lucide-react";
@@ -429,9 +429,9 @@ export default function Home() {
         <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent pointer-events-none" />
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none" />
         
-        {/* Decorative Ribbons */}
-        <Ribbon text="CU Special" color="#ec4899" className="top-4 -left-4 sm:top-6 sm:-left-6" rotation="-15deg" />
-        <Ribbon text="Fast Delivery" color="#10b981" className="top-12 -left-2 sm:top-16 sm:-left-4" rotation="-10deg" />
+        {/* Decorative Ribbons - Adjusted spacing for mobile to prevent overlap */}
+        <Ribbon text="CU Special" color="#ec4899" className="top-3 -left-3 sm:top-6 sm:-left-6" rotation="-15deg" />
+        <Ribbon text="Fast Delivery" color="#10b981" className="top-16 -left-1 sm:top-20 sm:-left-4" rotation="-8deg" />
         
         <FloatingParticles />
         <div className="max-w-[1600px] mx-auto relative z-10">
