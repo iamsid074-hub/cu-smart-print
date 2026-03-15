@@ -435,6 +435,7 @@ export default function Home() {
         <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent pointer-events-none" />
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none" />
         
+        
         {/* Decorative Ribbons V2 - Improved Positioning to Avoid Overlap */}
         <Ribbon 
           text="CU Exclusive" 
@@ -448,8 +449,6 @@ export default function Home() {
           className="top-[18%] sm:top-[22%] -left-2 sm:-left-4" 
           rotation="-7deg" 
         />
-        
-        <FloatingParticles />
         <div className="max-w-[1600px] mx-auto relative z-10">
           {/* Title */}
           <motion.div
@@ -462,8 +461,8 @@ export default function Home() {
               Welcome back, Student 👋
             </p>
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white mb-6" style={fontH}>
-              Discover Campus{' '}
-              <span className="text-emerald-300">Marketplace</span>
+              Everything Delivered{' '}
+              <span className="text-emerald-300">To Your Room</span>
             </h1>
 
             {/* Only show the App Download button on the Web, not inside the Native App 
