@@ -82,12 +82,17 @@ export default function Cart() {
     };
 
     const originalDeliveryFee = 29;
+    const specialDeliveryFee = 21;
     
-    // Delivery logic: Use vending scale if any vending item present, else standard 29
-    const baseDelivery = hasVending ? calculateVendingDelivery(floor) : originalDeliveryFee;
+    // Delivery logic: 
+    // 1. Vending machine items use a floor-based scale.
+    // 2. Otherwise, if Floor is 2 or 3, delivery is ₹21.
+    // 3. Else standard ₹29.
+    const baseDelivery = hasVending 
+        ? calculateVendingDelivery(floor) 
+        : ([2, 3].includes(floor) ? specialDeliveryFee : originalDeliveryFee);
     
-    // Apply promo code logic (only for standard delivery usually, but we'll follow getDeliveryFee)
-    const deliveryFee = hasVending ? baseDelivery : getDeliveryFee(promoApplied);
+    const deliveryFee = hasVending ? baseDelivery : getDeliveryFee(promoApplied || [2, 3].includes(floor));
     const orderTotal = totalPrice + deliveryFee;
 
     const phoneClean = phone.replace(/\D/g, "");
@@ -314,11 +319,18 @@ export default function Cart() {
                                 <span className="flex items-center gap-1.5">
                                     <Clock className="w-4 h-4 text-emerald-500" /> {hasVending ? `Floor ${floor} Delivery` : 'Delivery Fee'}
                                 </span>
-                                <div className="flex items-center gap-2">
-                                    {(promoApplied || hasVending) && <span className="text-slate-400 line-through text-xs">₹{originalDeliveryFee}</span>}
-                                    <span className={(promoApplied || hasVending) ? "text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded" : "font-medium text-slate-900"}>+ ₹{deliveryFee}</span>
+                                    {((promoApplied && !hasVending) || (!hasVending && [2, 3].includes(floor))) && (
+                                        <span className="text-slate-400 line-through text-xs">₹{originalDeliveryFee}</span>
+                                    )}
+                                    <span className={(promoApplied || hasVending || (!hasVending && [2, 3].includes(floor))) ? "text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded" : "font-medium text-slate-900"}>+ ₹{deliveryFee}</span>
                                 </div>
-                            </div>
+
+                            {!hasVending && [2, 3].includes(floor) && !promoApplied && (
+                                <div className="mb-4 bg-emerald-50 rounded-2xl p-4 flex items-center gap-2 text-emerald-700 text-xs sm:text-sm font-medium">
+                                    <Zap className="w-4 h-4 flex-shrink-0 text-amber-500" />
+                                    <span>Floor {floor} Special: Delivery charge reduced to ₹{specialDeliveryFee}!</span>
+                                </div>
+                            )}
 
                             {hasVending && (
                                 <div className="mb-4 bg-emerald-50 rounded-2xl p-4 flex items-center gap-2 text-emerald-700 text-xs sm:text-sm font-medium">
@@ -382,8 +394,21 @@ export default function Cart() {
                                         <div className="flex items-center justify-center w-14 bg-slate-100/50">
                                             <div className="w-6 h-6 flex items-center justify-center font-bold text-slate-400 text-xs text-center rounded bg-white shadow-sm">R</div>
                                         </div>
-                                        <input value={room} onChange={e => setRoom(e.target.value.replace(/\D/g, ""))} placeholder="Room Number *"
-                                            className={`w-full h-full bg-transparent px-3 text-sm text-slate-900 focus:outline-none placeholder:text-slate-400 font-bold ${hasVending && room && !room.startsWith(floor.toString()) ? 'text-rose-500' : ''}`} />
+                                        <input 
+                                            value={room} 
+                                            onChange={e => {
+                                                const val = e.target.value.replace(/\D/g, "");
+                                                setRoom(val);
+                                                if (val.length > 0) {
+                                                    const firstDigit = parseInt(val[0]);
+                                                    if (!isNaN(firstDigit) && firstDigit > 0) {
+                                                        setFloor(firstDigit);
+                                                    }
+                                                }
+                                            }} 
+                                            placeholder="Room Number *"
+                                            className={`w-full h-full bg-transparent px-3 text-sm text-slate-900 focus:outline-none placeholder:text-slate-400 font-bold ${hasVending && room && !room.startsWith(floor.toString()) ? 'text-rose-500' : ''}`} 
+                                        />
                                         {hasVending && room && !room.startsWith(floor.toString()) && (
                                             <span className="absolute right-4 text-[10px] text-rose-500 font-black">Needs {floor}xx</span>
                                         )}
