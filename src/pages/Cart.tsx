@@ -92,7 +92,7 @@ export default function Cart() {
         ? calculateVendingDelivery(floor) 
         : ([2, 3].includes(floor) ? specialDeliveryFee : originalDeliveryFee);
     
-    const deliveryFee = hasVending ? baseDelivery : getDeliveryFee(promoApplied || [2, 3].includes(floor));
+    const deliveryFee = hasVending ? baseDelivery : (promoApplied ? getDeliveryFee(true) : baseDelivery);
     const orderTotal = totalPrice + deliveryFee;
 
     const phoneClean = phone.replace(/\D/g, "");
