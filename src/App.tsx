@@ -4,37 +4,39 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
-import Index from "./pages/Index";
 import { Capacitor } from "@capacitor/core";
-import Home from "./pages/Home";
+import { lazy, Suspense, useEffect } from "react";
+import { Navigate } from "react-router-dom";
 
-import ListProduct from "./pages/ListProduct";
-import Tracking from "./pages/Tracking";
-import NotFound from "./pages/NotFound";
-import Login from "./pages/Login";
-import Profile from "./pages/Profile";
-import Browse from "./pages/Browse";
-import Grocery from "./pages/Grocery";
-import ProductDetail from "./pages/ProductDetail";
-import FoodMenu from "./pages/FoodMenu";
-import Cart from "./pages/Cart";
-import Admin from "./pages/Admin";
-import TermsAndConditions from "./pages/TermsAndConditions";
-import HelpCenter from "./pages/HelpCenter";
-import ResetPassword from "./pages/ResetPassword";
+// Lazy-loaded pages for performance
+const Index = lazy(() => import("./pages/Index"));
+const Home = lazy(() => import("./pages/Home"));
+const ListProduct = lazy(() => import("./pages/ListProduct"));
+const Tracking = lazy(() => import("./pages/Tracking"));
+const NotFound = lazy(() => import("./pages/NotFound"));
+const Login = lazy(() => import("./pages/Login"));
+const Profile = lazy(() => import("./pages/Profile"));
+const Browse = lazy(() => import("./pages/Browse"));
+const Grocery = lazy(() => import("./pages/Grocery"));
+const ProductDetail = lazy(() => import("./pages/ProductDetail"));
+const FoodMenu = lazy(() => import("./pages/FoodMenu"));
+const Cart = lazy(() => import("./pages/Cart"));
+const Admin = lazy(() => import("./pages/Admin"));
+const TermsAndConditions = lazy(() => import("./pages/TermsAndConditions"));
+const HelpCenter = lazy(() => import("./pages/HelpCenter"));
+const ResetPassword = lazy(() => import("./pages/ResetPassword"));
+const Download = lazy(() => import("./pages/Download"));
+
 import Navbar from "./components/Navbar";
 import BottomNav from "./components/BottomNav";
 import AppUpdater from "./components/AppUpdater";
 import LiveOrderBanner from "./components/LiveOrderBanner";
 import UsernameSetup from "./components/UsernameSetup";
 import ScrollToTop from "./components/ScrollToTop";
-import Download from "./pages/Download";
 import { usePushNotifications } from "./hooks/usePushNotifications";
 import { useSiteGate, ClosedScreen, MaintenanceScreen } from "./components/SiteGate";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { CartProvider } from "./contexts/CartContext";
-import { Navigate } from "react-router-dom";
-import { useEffect } from "react";
 
 
 const queryClient = new QueryClient();
@@ -156,35 +158,32 @@ function AppLayout() {
           <BottomNav />
         </>
       )}
-      <Routes>
-        <Route path="/" element={Capacitor.isNativePlatform() ? (user ? <Navigate to="/home" replace /> : <Login />) : <Index />} />
-        {/* We wrap Home in ProtectedRoute so users are gated there too if they bypass somehow */}
-        <Route path="/home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
-        <Route path="/login" element={user ? <Navigate to="/home" replace /> : <Login />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
+      <Suspense fallback={<BrandedLoading />}>
+        <Routes>
+          <Route path="/" element={Capacitor.isNativePlatform() ? (user ? <Navigate to="/home" replace /> : <Login />) : <Index />} />
+          <Route path="/home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+          <Route path="/login" element={user ? <Navigate to="/home" replace /> : <Login />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
 
-        {/* Protected Routes */}
+          <Route path="/list" element={<ProtectedRoute><ListProduct /></ProtectedRoute>} />
+          <Route path="/sell" element={<Navigate to="/list" replace />} />
+          <Route path="/tracking" element={<ProtectedRoute><Tracking /></ProtectedRoute>} />
+          <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+          <Route path="/browse" element={<ProtectedRoute><Browse /></ProtectedRoute>} />
+          <Route path="/grocery" element={<ProtectedRoute><Grocery /></ProtectedRoute>} />
+          <Route path="/product/:id" element={<ProtectedRoute><ProductDetail /></ProtectedRoute>} />
+          <Route path="/food" element={<ProtectedRoute><FoodMenu /></ProtectedRoute>} />
+          <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
 
-        <Route path="/list" element={<ProtectedRoute><ListProduct /></ProtectedRoute>} />
-        <Route path="/sell" element={<Navigate to="/list" replace />} />
-        <Route path="/tracking" element={<ProtectedRoute><Tracking /></ProtectedRoute>} />
-        <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-        <Route path="/browse" element={<ProtectedRoute><Browse /></ProtectedRoute>} />
-        <Route path="/grocery" element={<ProtectedRoute><Grocery /></ProtectedRoute>} />
-        <Route path="/product/:id" element={<ProtectedRoute><ProductDetail /></ProtectedRoute>} />
-        <Route path="/food" element={<ProtectedRoute><FoodMenu /></ProtectedRoute>} />
-        <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
+          <Route path="/admin" element={<AdminRoute><Admin /></AdminRoute>} />
 
-        {/* Admin Route */}
-        <Route path="/admin" element={<AdminRoute><Admin /></AdminRoute>} />
+          <Route path="/terms" element={<TermsAndConditions />} />
+          <Route path="/help" element={<HelpCenter />} />
+          <Route path="/download" element={<Download />} />
 
-        {/* Public Pages */}
-        <Route path="/terms" element={<TermsAndConditions />} />
-        <Route path="/help" element={<HelpCenter />} />
-        <Route path="/download" element={<Download />} />
-
-        <Route path="*" element={<NotFound />} />
-      </Routes>
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </Suspense>
     </>
   );
 }
