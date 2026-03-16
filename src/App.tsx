@@ -59,7 +59,6 @@ const BrandedLoading = () => {
 
   return (
     <div className="fixed inset-0 z-[999] flex flex-col items-center justify-center bg-[#231942] relative overflow-hidden">
-      {"/* Decorative background glow */"}
       <div className="absolute top-[-10%] right-[-10%] w-[400px] h-[400px] rounded-full bg-purple-500/20 blur-[100px] pointer-events-none" />
       <div className="absolute bottom-[-10%] left-[-10%] w-[300px] h-[300px] rounded-full bg-emerald-500/10 blur-[80px] pointer-events-none" />
       
