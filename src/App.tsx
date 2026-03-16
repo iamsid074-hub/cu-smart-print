@@ -42,47 +42,44 @@ import { CartProvider } from "./contexts/CartContext";
 const queryClient = new QueryClient();
 
 const BrandedLoading = () => {
-  useEffect(() => {
-    // Pre-fetch critical images while loading
-    const imagesToPreload = [
-      '/cb_gold_logo_v1.png',
-      '/banners/community.png',
-      '/banners/sell.png',
-      '/banners/delivery.png',
-      '/cricket_bg_desktop.png'
-    ];
-    imagesToPreload.forEach(src => {
-      const img = new Image();
-      img.src = src;
-    });
-  }, []);
-
   return (
-    <div className="fixed inset-0 z-[999] flex flex-col items-center justify-center bg-[#231942] relative overflow-hidden">
-      <div className="absolute top-[-10%] right-[-10%] w-[400px] h-[400px] rounded-full bg-purple-500/20 blur-[100px] pointer-events-none" />
-      <div className="absolute bottom-[-10%] left-[-10%] w-[300px] h-[300px] rounded-full bg-emerald-500/10 blur-[80px] pointer-events-none" />
-      
+    <div className="fixed inset-0 z-[999] flex flex-col items-center justify-center bg-black overflow-hidden">
       <motion.div
-        initial={{ scale: 0.8, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ duration: 0.5, ease: "easeOut" }}
-        className="relative z-10 flex flex-col items-center"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+        className="flex flex-col items-center gap-6"
       >
-        <div className="w-24 h-24 bg-white rounded-3xl p-2 mb-6 shadow-[0_10px_0_#000] border-4 border-black rotate-[-3deg]">
-          <img src="/logo.png" alt="Logo" className="w-full h-full rounded-2xl object-cover" />
+        <div className="relative">
+          <motion.div
+            animate={{ 
+              scale: [1, 1.2, 1],
+              opacity: [0.3, 0.6, 0.3]
+            }}
+            transition={{ 
+              duration: 2,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+            className="absolute inset-0 bg-white blur-xl rounded-full"
+          />
+          <div className="w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center relative z-10">
+            <img src="/logo.png" alt="Logo" className="w-10 h-10 object-contain opacity-80" />
+          </div>
         </div>
-        <h1 className="text-3xl font-black italic tracking-tighter text-white drop-shadow-[0_4px_0_#FF4D4D]" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-          CU BAZZAR
-        </h1>
-        <div className="mt-8 flex gap-2">
-          {[0, 1, 2].map((i) => (
-            <motion.div 
-              key={i} 
-              className="w-3 h-3 rounded-full bg-white shadow-[0_3px_0_#000]"
-              animate={{ y: [0, -10, 0] }}
-              transition={{ duration: 0.6, repeat: Infinity, delay: i * 0.15 }}
-            />
-          ))}
+        
+        <div className="flex flex-col items-center gap-2">
+          <h1 className="text-white/40 text-xs font-black tracking-[0.3em] uppercase">Loading</h1>
+          <div className="flex gap-1.5">
+            {[0, 1, 2].map((i) => (
+              <motion.div 
+                key={i} 
+                className="w-1 h-1 rounded-full bg-white/20"
+                animate={{ opacity: [0.2, 1, 0.2] }}
+                transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.2 }}
+              />
+            ))}
+          </div>
         </div>
       </motion.div>
     </div>
