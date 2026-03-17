@@ -14,7 +14,7 @@ export const groceryItems: GroceryItem[] = [
         name: "Amul Taaza (Toned Milk)",
         quantity: "500ml",
         price: 27,
-        image: "/grocery/amul-taaza.png",
+        image: "/grocery/amul-taaza.webp",
         category: "Milk",
         isFresh: true
     },
@@ -23,7 +23,7 @@ export const groceryItems: GroceryItem[] = [
         name: "Amul Gold (Full Cream Milk)",
         quantity: "500ml",
         price: 33,
-        image: "/grocery/amul-gold.png",
+        image: "/grocery/amul-gold.webp",
         category: "Milk",
         isFresh: true
     },
@@ -32,17 +32,16 @@ export const groceryItems: GroceryItem[] = [
         name: "Amul Shakti (Standardized Milk)",
         quantity: "500ml",
         price: 30,
-        image: "/grocery/amul-shakti.png",
+        image: "/grocery/amul-shakti.webp",
         category: "Milk",
         isFresh: true
     },
-
     {
         id: "grocery-coke",
         name: "Coca-Cola",
         quantity: "400ml",
         price: 20,
-        image: "/grocery/coca-cola.png",
+        image: "/grocery/coca-cola.webp",
         category: "Cold Drinks"
     },
     {
@@ -50,7 +49,7 @@ export const groceryItems: GroceryItem[] = [
         name: "Sprite",
         quantity: "400ml",
         price: 20,
-        image: "/grocery/sprite.png",
+        image: "/grocery/sprite.webp",
         category: "Cold Drinks"
     },
     {
@@ -58,7 +57,7 @@ export const groceryItems: GroceryItem[] = [
         name: "Fanta",
         quantity: "400ml",
         price: 20,
-        image: "/grocery/fanta.png",
+        image: "/grocery/fanta.webp",
         category: "Cold Drinks"
     },
     {
@@ -66,7 +65,7 @@ export const groceryItems: GroceryItem[] = [
         name: "Mountain Dew",
         quantity: "400ml",
         price: 20,
-        image: "/grocery/mountain-dew.png",
+        image: "/grocery/mountain-dew.webp",
         category: "Cold Drinks"
     },
     {
@@ -74,7 +73,7 @@ export const groceryItems: GroceryItem[] = [
         name: "Maggi Instant Noodles",
         quantity: "Single Pack",
         price: 10,
-        image: "/grocery/maggi.png",
+        image: "/grocery/maggi.webp",
         category: "Instant Food"
     },
     {
@@ -82,7 +81,7 @@ export const groceryItems: GroceryItem[] = [
         name: "Lay's India's Magic Masala",
         quantity: "Standard Pack",
         price: 25,
-        image: "/grocery/lays-blue.png",
+        image: "/grocery/lays-blue.webp",
         category: "Snacks"
     },
     {
@@ -90,7 +89,7 @@ export const groceryItems: GroceryItem[] = [
         name: "Kurkure Masala Munch",
         quantity: "Standard Pack",
         price: 25,
-        image: "/grocery/kurkure.png",
+        image: "/grocery/kurkure.webp",
         category: "Snacks"
     },
     {
@@ -98,7 +97,7 @@ export const groceryItems: GroceryItem[] = [
         name: "Ziggy Donut Cake",
         quantity: "1 Piece",
         price: 20,
-        image: "/grocery/donut.png",
+        image: "/grocery/donut.webp",
         category: "Bakery Snack"
     },
     {
@@ -106,7 +105,7 @@ export const groceryItems: GroceryItem[] = [
         name: "Coca-Cola",
         quantity: "750ml Bottle",
         price: 40,
-        image: "/grocery/coke-750.png",
+        image: "/grocery/coke-750.webp",
         category: "Cold Drinks"
     },
     {
@@ -114,7 +113,7 @@ export const groceryItems: GroceryItem[] = [
         name: "Sprite",
         quantity: "750ml Bottle",
         price: 40,
-        image: "/grocery/sprite-750.png",
+        image: "/grocery/sprite-750.webp",
         category: "Cold Drinks"
     },
     {
@@ -122,7 +121,7 @@ export const groceryItems: GroceryItem[] = [
         name: "Frooti",
         quantity: "Standard Pack",
         price: 18,
-        image: "/grocery/frooti.png",
+        image: "/grocery/frooti.webp",
         category: "Juice / Beverage"
     },
     {
@@ -130,7 +129,7 @@ export const groceryItems: GroceryItem[] = [
         name: "Campa Cola",
         quantity: "Standard Bottle",
         price: 20,
-        image: "/grocery/campa-cola.png",
+        image: "/grocery/campa-cola.webp",
         category: "Cold Drinks"
     },
     {
@@ -138,7 +137,7 @@ export const groceryItems: GroceryItem[] = [
         name: "Thums Up",
         quantity: "Standard Bottle",
         price: 20,
-        image: "/grocery/thums-up.png",
+        image: "/grocery/thums-up.webp",
         category: "Cold Drinks"
     },
     {
@@ -146,7 +145,7 @@ export const groceryItems: GroceryItem[] = [
         name: "Appy Fizz",
         quantity: "Standard Bottle",
         price: 20,
-        image: "/grocery/appy-fizz.png",
+        image: "/grocery/appy-fizz.webp",
         category: "Beverage"
     }
 ];

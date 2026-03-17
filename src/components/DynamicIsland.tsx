@@ -575,7 +575,7 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
                                             {idleMode === "logo" && (
                                                 <>
                                                     <div style={{ width: 22, height: 22, borderRadius: "50%", overflow: "hidden", border: "1.5px solid rgba(255,255,255,0.1)", flexShrink: 0 }}>
-                                                        <img src="/logo.png" alt="CU" style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                                                        <img src="/logo.webp" alt="CU" style={{ width: "100%", height: "100%", objectFit: "cover" }}
                                                             onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
                                                     </div>
                                                     <span style={{ fontWeight: 700, fontSize: 13, whiteSpace: "nowrap", display: "flex", gap: 4 }}>

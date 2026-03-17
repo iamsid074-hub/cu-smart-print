@@ -162,7 +162,7 @@ export default function Login() {
                                 }}
                                 className="w-24 h-24 sm:w-28 sm:h-28 rounded-[2rem] overflow-hidden bg-white p-1.5 shadow-[0_0_50px_rgba(255,255,255,0.15)] mb-8"
                             >
-                                <img src="/logo.png" alt="CU BAZZAR" className="w-full h-full object-cover rounded-[1.8rem]" />
+                                <img src="/logo.webp" alt="CU BAZZAR" className="w-full h-full object-cover rounded-[1.8rem]" />
                                 
                                 {/* Magnetic Ripple */}
                                 <motion.div
@@ -222,7 +222,7 @@ export default function Login() {
                     {/* Logo */}
                     <div className="mb-10">
                         <div className="flex items-center gap-3 mb-7">
-                            <img src="/logo.png" alt="CU Bazzar Logo" className="w-12 h-12 rounded-xl object-cover shadow-lg" style={{ boxShadow: "0 4px 20px rgba(0,0,0,0.2)" }} />
+                            <img src="/logo.webp" alt="CU Bazzar Logo" className="w-12 h-12 rounded-xl object-cover shadow-lg" style={{ boxShadow: "0 4px 20px rgba(0,0,0,0.2)" }} />
                             <span className="text-2xl font-bold tracking-tight" style={{ ...fontH, color: "#E8DED4" }}>CU Bazzar</span>
                         </div>
 
@@ -294,7 +294,7 @@ export default function Login() {
                 >
                     {/* Mobile brand */}
                     <div className="lg:hidden flex items-center gap-2.5 mb-8">
-                        <img src="/logo.png" alt="CU Bazzar Logo" className="w-10 h-10 rounded-xl object-cover shadow-md" />
+                        <img src="/logo.webp" alt="CU Bazzar Logo" className="w-10 h-10 rounded-xl object-cover shadow-md" />
                         <span className="text-lg font-bold" style={{ ...fontH, color: "#0F172A" }}>CU Bazzar</span>
                     </div>
 

@@ -74,7 +74,7 @@ export default function Download() {
                             transition={{ type: "spring", stiffness: 200, damping: 15, delay: 0.1 }}
                             className="w-24 h-24 mx-auto mb-5 rounded-[2rem] bg-white shadow-2xl flex items-center justify-center overflow-hidden"
                         >
-                            <img src="/logo.png" alt="CU Bazzar" className="w-full h-full object-cover"
+                            <img src="/logo.webp" alt="CU Bazzar" className="w-full h-full object-cover"
                                 onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
                             <Zap className="w-10 h-10 text-purple-600 hidden" />
                         </motion.div>

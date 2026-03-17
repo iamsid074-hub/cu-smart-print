@@ -1157,7 +1157,7 @@ export default function Admin() {
                     className="bg-white  rounded-3xl p-12 text-center border border-red-500/20 max-w-md w-full"
                 >
                     <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center mx-auto mb-4 overflow-hidden border border-slate-200">
-                        <img src="/logo.png" alt="CU Bazzar" className="w-10 h-10 object-contain" />
+                        <img src="/logo.webp" alt="CU Bazzar" className="w-10 h-10 object-contain" />
                     </div>
                     <h1 className="text-2xl font-black text-slate-900 mb-2">Access Denied</h1>
                     <p className="text-slate-500 mb-6">You don't have admin privileges to access this area.</p>
@@ -1260,7 +1260,7 @@ export default function Admin() {
 
                     <div className="flex items-center gap-2">
                         <div className="w-8 h-8 rounded-full bg-white border border-slate-200 overflow-hidden flex items-center justify-center p-1.5">
-                            <img src="/logo.png" alt="Admin" className="w-full h-full object-contain" />
+                            <img src="/logo.webp" alt="Admin" className="w-full h-full object-contain" />
                         </div>
                         <span className="text-sm font-bold text-slate-900 hidden sm:block">{profile?.full_name?.split(" ")[0] || "Admin"}</span>
                     </div>
@@ -1353,7 +1353,7 @@ function SidebarContent({
             <div className="p-6 border-b border-slate-200">
                 <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-xl bg-white border border-slate-200 overflow-hidden flex items-center justify-center p-2 shadow-lg">
-                        <img src="/logo.png" alt="CU Bazzar" className="w-full h-full object-contain" />
+                        <img src="/logo.webp" alt="CU Bazzar" className="w-full h-full object-contain" />
                     </div>
                     <div>
                         <p className="font-black text-slate-900 text-sm leading-tight">Admin Portal</p>

@@ -78,7 +78,7 @@ export default function Index() {
               className="relative z-10 flex flex-col items-center"
             >
               <div className="w-28 h-28 bg-white rounded-3xl p-2 mb-6 shadow-[0_15px_0_#000] border-4 border-black rotate-[-3deg]">
-                <img src="/logo.png" alt="Logo" className="w-full h-full rounded-2xl object-cover" />
+                <img src="/logo.webp" alt="Logo" className="w-full h-full rounded-2xl object-cover" />
               </div>
               <h1 className="text-5xl md:text-7xl font-black italic tracking-tighter text-white drop-shadow-[0_8px_0_#FF4D4D]" style={fontH}>
                 CU BAZZAR
@@ -171,7 +171,7 @@ export default function Index() {
           >
             {/* Refined v2 Backpack - Premium Tech Look */}
             <motion.img 
-              src="/3d_backpack_v2.png" 
+              src="/3d_backpack_v2.webp" 
               alt="Premium 3D Backpack"
               className="absolute w-[80%] max-w-[450px] z-20 drop-shadow-2xl"
               style={{ 
@@ -295,7 +295,7 @@ export default function Index() {
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 font-bold text-slate-500">
           <div className="flex items-center gap-3">
              <div className="w-8 h-8 rounded-lg bg-[#231942] border-2 border-slate-300 p-1">
-                <img src="/logo.png" className="w-full h-full object-cover rounded" />
+                <img src="/logo.webp" className="w-full h-full object-cover rounded" />
              </div>
              <span>© 2026 CU BAZZAR. All rigths reserved.</span>
           </div>

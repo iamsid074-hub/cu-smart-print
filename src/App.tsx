@@ -71,7 +71,7 @@ const BrandedLoading = () => {
             className="absolute inset-0 bg-white blur-xl rounded-full"
           />
           <div className="w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center relative z-10 transition-transform duration-700 animate-pulse">
-            <img src="/logo.png" alt="Logo" className="w-10 h-10 object-contain opacity-80" />
+            <img src="/logo.webp" alt="Logo" className="w-10 h-10 object-contain opacity-80" />
           </div>
         </div>
         

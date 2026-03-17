@@ -78,7 +78,7 @@ function ClosedScreen() {
 
                 {/* Logo */}
                 <div className="flex items-center justify-center gap-2 mb-3">
-                    <img src="/logo.png" alt="CU Bazaar" className="w-10 h-10 rounded-full" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
+                    <img src="/logo.webp" alt="CU Bazaar" className="w-10 h-10 rounded-full" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
                     <span className="text-2xl font-black">
                         <span className="text-brand">CU</span>{" "}
                         <span className="text-slate-900">BAZZAR</span>
@@ -154,7 +154,7 @@ function MaintenanceScreen() {
                 </motion.div>
 
                 <div className="flex items-center justify-center gap-2 mb-3">
-                    <img src="/logo.png" alt="CU Bazaar" className="w-10 h-10 rounded-full" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
+                    <img src="/logo.webp" alt="CU Bazaar" className="w-10 h-10 rounded-full" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
                     <span className="text-2xl font-black">
                         <span className="text-brand">CU</span>{" "}
                         <span className="text-slate-900">BAZZAR</span>

@@ -11,7 +11,7 @@ export default function PromoBanner() {
             <Link to="/food" className="hidden sm:block relative w-full h-[300px] md:h-[400px] lg:h-[480px] overflow-hidden rounded-2xl sm:rounded-3xl shadow-2xl">
                 <div
                     className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
-                    style={{ backgroundImage: "url(/banners/india_victory_desktop.png)" }}
+                    style={{ backgroundImage: "url(/banners/india_victory_desktop.webp)" }}
                 />
                 <div className="absolute inset-0 bg-[#0D0907]/70 sm:bg-gradient-to-r sm:from-[#0D0907]/90 sm:via-[#0D0907]/70 sm:to-[#0D0907]/90" />
 
@@ -75,7 +75,7 @@ export default function PromoBanner() {
             <Link to="/food" className="sm:hidden block relative w-full aspect-[3/4] overflow-hidden rounded-[1.5rem] shadow-xl">
                 <div
                     className="absolute inset-0 bg-cover bg-top"
-                    style={{ backgroundImage: "url(/banners/india_victory_desktop.png)" }}
+                    style={{ backgroundImage: "url(/banners/india_victory_desktop.webp)" }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/40 to-black/95" />
 

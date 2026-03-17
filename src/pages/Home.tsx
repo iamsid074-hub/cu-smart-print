@@ -245,9 +245,9 @@ const LedScreen = ({ children }: { children: React.ReactNode }) => (
 );
 
 const heroSlides = [
-  { src: "/banners/community.png", alt: "We Love CU Bazzar" },
-  { src: "/banners/sell.png", alt: "Sell your unwanted stuff on CU Bazzar" },
-  { src: "/banners/delivery.png", alt: "Room Delivery at CU Bazzar" },
+  { src: "/banners/community.webp", alt: "We Love CU Bazzar" },
+  { src: "/banners/sell.webp", alt: "Sell your unwanted stuff on CU Bazzar" },
+  { src: "/banners/delivery.webp", alt: "Room Delivery at CU Bazzar" },
 ];
 
 function HeroCarousel() {
@@ -466,7 +466,7 @@ export default function Home() {
               >
                 <div className="absolute inset-x-0 top-0 h-1/2 bg-white/20 blur-xl rounded-t-full opacity-50 pointer-events-none" />
                 <div className="bg-white/20 p-1.5 rounded-full relative z-10 shadow-[inset_0_1px_3px_rgba(255,255,255,0.3)] backdrop-blur-sm">
-                  <img src="/logo.png" alt="CU Bazzar Logo" className="w-5 h-5 sm:w-6 sm:h-6 object-contain group-hover:-translate-y-0.5 transition-transform duration-300 drop-shadow-md" />
+                  <img src="/logo.webp" alt="CU Bazzar Logo" className="w-5 h-5 sm:w-6 sm:h-6 object-contain group-hover:-translate-y-0.5 transition-transform duration-300 drop-shadow-md" />
                 </div>
                 <span className="relative z-10 tracking-wide text-[1rem] sm:text-[1.05rem] drop-shadow-sm">Download Android App</span>
               </a>

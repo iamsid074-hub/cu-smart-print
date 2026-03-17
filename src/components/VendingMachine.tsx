@@ -20,37 +20,37 @@ const ROWS: { title: string; items: VendingItem[] }[] = [
   {
     title: "Chips",
     items: [
-      { id: "vending-lays-blue", name: "Lay's Blue", price: 25, image: "/grocery/lays-blue.png" },
-      { id: "vending-kurkure", name: "Kurkure", price: 25, image: "/grocery/kurkure.png" },
-      { id: "vending-lays-orange", name: "Lay's Orange", price: 25, image: "/grocery/lays-blue.png" }, // Replaced with orange if diff image exists, using blue for now
-      { id: "vending-kurkure-alt", name: "Kurkure", price: 25, image: "/grocery/kurkure.png" }
+      { id: "vending-lays-blue", name: "Lay's Blue", price: 25, image: "/grocery/lays-blue.webp" },
+      { id: "vending-kurkure", name: "Kurkure", price: 25, image: "/grocery/kurkure.webp" },
+      { id: "vending-lays-orange", name: "Lay's Orange", price: 25, image: "/grocery/lays-blue.webp" }, // Replaced with orange if diff image exists, using blue for now
+      { id: "vending-kurkure-alt", name: "Kurkure", price: 25, image: "/grocery/kurkure.webp" }
     ]
   },
   {
     title: "Maggi",
     items: [
-      { id: "vending-maggi-1", name: "Maggi", price: 10, image: "/grocery/maggi.png" },
-      { id: "vending-maggi-2", name: "Maggi", price: 10, image: "/grocery/maggi.png" },
-      { id: "vending-maggi-3", name: "Maggi", price: 10, image: "/grocery/maggi.png" },
-      { id: "vending-maggi-4", name: "Maggi", price: 10, image: "/grocery/maggi.png" }
+      { id: "vending-maggi-1", name: "Maggi", price: 10, image: "/grocery/maggi.webp" },
+      { id: "vending-maggi-2", name: "Maggi", price: 10, image: "/grocery/maggi.webp" },
+      { id: "vending-maggi-3", name: "Maggi", price: 10, image: "/grocery/maggi.webp" },
+      { id: "vending-maggi-4", name: "Maggi", price: 10, image: "/grocery/maggi.webp" }
     ]
   },
   {
     title: "Bakery",
     items: [
-      { id: "vending-donut-1", name: "Donut", price: 20, image: "/grocery/donut.png" },
-      { id: "vending-donut-2", name: "Donut", price: 20, image: "/grocery/donut.png" },
-      { id: "vending-donut-3", name: "Donut", price: 20, image: "/grocery/donut.png" },
-      { id: "vending-donut-4", name: "Donut", price: 20, image: "/grocery/donut.png" }
+      { id: "vending-donut-1", name: "Donut", price: 20, image: "/grocery/donut.webp" },
+      { id: "vending-donut-2", name: "Donut", price: 20, image: "/grocery/donut.webp" },
+      { id: "vending-donut-3", name: "Donut", price: 20, image: "/grocery/donut.webp" },
+      { id: "vending-donut-4", name: "Donut", price: 20, image: "/grocery/donut.webp" }
     ]
   },
   {
     title: "Large Bottles",
     items: [
-      { id: "vending-coke-750-1", name: "Coke 750ml", price: 40, image: "/grocery/coke-750.png" },
-      { id: "vending-sprite-750-1", name: "Sprite 750ml", price: 40, image: "/grocery/sprite-750.png" },
-      { id: "vending-coke-750-2", name: "Coke 750ml", price: 40, image: "/grocery/coke-750.png" },
-      { id: "vending-sprite-750-2", name: "Sprite 750ml", price: 40, image: "/grocery/sprite-750.png" }
+      { id: "vending-coke-750-1", name: "Coke 750ml", price: 40, image: "/grocery/coke-750.webp" },
+      { id: "vending-sprite-750-1", name: "Sprite 750ml", price: 40, image: "/grocery/sprite-750.webp" },
+      { id: "vending-coke-750-2", name: "Coke 750ml", price: 40, image: "/grocery/coke-750.webp" },
+      { id: "vending-sprite-750-2", name: "Sprite 750ml", price: 40, image: "/grocery/sprite-750.webp" }
     ]
   }
 ];
