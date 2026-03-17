@@ -199,6 +199,13 @@ export function useSiteGate() {
 
     // Check maintenance flag from Supabase
     useEffect(() => {
+        const cacheKey = "cubazzar_maintenance_mode";
+        const cached = localStorage.getItem(cacheKey);
+        if (cached !== null) {
+            setMaintenance(cached === "true");
+            setLoaded(true);
+        }
+
         const check = async () => {
             try {
                 const { data } = await supabase
@@ -206,7 +213,9 @@ export function useSiteGate() {
                     .select("value")
                     .eq("key", "maintenance_mode")
                     .single();
-                setMaintenance(data?.value === true || data?.value === "true");
+                const isMaint = data?.value === true || data?.value === "true";
+                setMaintenance(isMaint);
+                localStorage.setItem(cacheKey, String(isMaint));
             } catch {
                 // Table might not exist yet — assume not in maintenance
                 setMaintenance(false);
@@ -215,8 +224,8 @@ export function useSiteGate() {
         };
         check();
 
-        // Poll every 30s
-        const id = setInterval(check, 30000);
+        // Poll every 60s instead of 30s
+        const id = setInterval(check, 60000);
         return () => clearInterval(id);
     }, []);
 

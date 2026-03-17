@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, Loader2, ShoppingBag, SlidersHorizontal, Package, Sparkles } from "lucide-react";
@@ -54,13 +54,14 @@ export default function Browse() {
 
     const activeCategory = categoryParam || "All";
 
-    // Client-side search filter
-    const filtered = searchQuery.trim()
-        ? products.filter(p =>
-            p.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            p.category?.toLowerCase().includes(searchQuery.toLowerCase())
-        )
-        : products;
+    const filtered = useMemo(() => {
+        return searchQuery.trim()
+            ? products.filter(p =>
+                p.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                p.category?.toLowerCase().includes(searchQuery.toLowerCase())
+            )
+            : products;
+    }, [products, searchQuery]);
 
     return (
         <div className="min-h-screen pt-24 pb-32 px-4 sm:px-6 bg-slate-50">
@@ -68,8 +69,9 @@ export default function Browse() {
 
                 {/* ── Hero Header ─────────────────────────────────────── */}
                 <motion.div
-                    initial={{ opacity: 0, y: -20 }}
+                    initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
                     className="mb-6 sm:mb-8"
                 >
                     <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-6">
@@ -102,8 +104,8 @@ export default function Browse() {
                                 <button
                                     key={cat.id}
                                     onClick={() => handleCategoryClick(cat.id)}
-                                    className={`flex items-center gap-1.5 px-5 py-2.5 rounded-3xl font-bold transition-all duration-300 flex-shrink-0 text-xs sm:text-sm whitespace-nowrap border ${isActive
-                                        ? 'bg-brand text-white border-brand shadow-[0_4px_15px_rgba(35,25,66,0.3)]'
+                                    className={`flex items-center gap-1.5 px-5 py-2.5 rounded-3xl font-bold transition-all duration-200 flex-shrink-0 text-xs sm:text-sm whitespace-nowrap border ${isActive
+                                        ? 'bg-brand text-white border-brand shadow-lg'
                                         : 'bg-white text-slate-600 border-slate-200 hover:border-brand-muted hover:bg-brand-50 shadow-sm'
                                         }`}
                                 >
@@ -123,7 +125,7 @@ export default function Browse() {
                         </div>
                     ) : filtered.length === 0 ? (
                         <motion.div
-                            initial={{ opacity: 0, scale: 0.95 }}
+                            initial={{ opacity: 0, scale: 0.98 }}
                             animate={{ opacity: 1, scale: 1 }}
                             className="rounded-3xl sm:rounded-[2.5rem] p-10 sm:p-16 text-center bg-white border border-slate-200 shadow-sm flex flex-col items-center"
                         >
@@ -142,7 +144,7 @@ export default function Browse() {
                                 {searchQuery && (
                                     <button
                                         onClick={() => setSearchQuery("")}
-                                        className="px-6 py-3 rounded-2xl text-sm font-bold text-white transition-all bg-brand shadow-[0_4px_12px_rgba(35,25,66,0.2)] hover:shadow-[0_6px_15px_rgba(35,25,66,0.3)] hover:scale-105"
+                                        className="px-6 py-3 rounded-2xl text-sm font-bold text-white transition-all bg-brand shadow-lg hover:scale-105"
                                     >
                                         Clear Search
                                     </button>
@@ -164,32 +166,28 @@ export default function Browse() {
                             </div>
                         </motion.div>
                     ) : (
-                        <AnimatePresence mode="wait">
-                            <motion.div
-                                key={activeCategory + searchQuery}
-                                initial={{ opacity: 0, y: 12 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, y: -12 }}
-                                transition={{ duration: 0.25 }}
-                                className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 lg:gap-5"
-                            >
-                                {filtered.map((p, i) => (
-                                    <ProductCard
-                                        key={p.id}
-                                        id={p.id}
-                                        image={p.image_url || ''}
-                                        title={p.title}
-                                        price={p.price}
-                                        originalPrice={p.original_price || undefined}
-                                        condition={p.condition as any}
-                                        category={p.category}
-                                        rating={4.5}
-                                        seller={p.profiles?.full_name || "Student"}
-                                        delay={i * 0.04}
-                                    />
-                                ))}
-                            </motion.div>
-                        </AnimatePresence>
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ duration: 0.2 }}
+                            className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 lg:gap-5"
+                        >
+                            {filtered.map((p, i) => (
+                                <ProductCard
+                                    key={p.id}
+                                    id={p.id}
+                                    image={p.image_url || ''}
+                                    title={p.title}
+                                    price={p.price}
+                                    originalPrice={p.original_price || undefined}
+                                    condition={p.condition as any}
+                                    category={p.category}
+                                    rating={4.5}
+                                    seller={p.profiles?.full_name || "Student"}
+                                    delay={i * 0.03}
+                                />
+                            ))}
+                        </motion.div>
                     )
                 }
             </div >

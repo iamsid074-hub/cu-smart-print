@@ -101,12 +101,12 @@ const ProductCard = memo(({
   return (
     <Link to={`/product/${id}`} className="block w-full h-full">
       <motion.div
-        initial={{ opacity: 0, y: 30 }}
+        initial={{ opacity: 0, y: 15 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        transition={{ duration: 0.5, delay, ease: [0.34, 1.56, 0.64, 1] }}
-        whileHover={{ y: -8, scale: 1.02 }}
-        className="relative flex flex-col bg-[#faf5f8] rounded-2xl overflow-hidden group cursor-pointer h-full border-2 border-slate-200 shadow-[0_2px_8px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.12)] hover:border-[#e0b1cb] transition-all duration-300"
+        transition={{ duration: 0.3, delay: Math.min(delay, 0.15), ease: "easeOut" }}
+        whileHover={{ y: -4, scale: 1.01 }}
+        className="relative flex flex-col bg-[#faf5f8] rounded-2xl overflow-hidden group cursor-pointer h-full border-2 border-slate-200 shadow-[0_2px_8px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.12)] hover:border-[#e0b1cb] transition-all duration-200"
       >
         {badge && (
           <div className="absolute top-3 left-3 z-10 px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#231942] text-white shadow-sm uppercase tracking-wider">
@@ -141,11 +141,12 @@ const ProductCard = memo(({
           <img
             src={displaySrc}
             alt={title}
-            className={`w-full h-full object-cover transition-all duration-500 group-hover:scale-110 ${imgLoaded ? 'opacity-100' : 'opacity-0'
+            className={`w-full h-full object-cover transition-all duration-300 group-hover:scale-105 ${imgLoaded ? 'opacity-100' : 'opacity-0'
               }`}
             onLoad={() => setImgLoaded(true)}
             onError={() => { setImgError(true); setImgLoaded(true); }}
             loading="lazy"
+            decoding="async"
           />
         </div>
 

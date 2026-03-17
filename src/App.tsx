@@ -11,12 +11,19 @@ import { Navigate } from "react-router-dom";
 // Lazy-loaded pages for performance
 const Index = lazy(() => import("./pages/Index"));
 const Home = lazy(() => import("./pages/Home"));
+const Browse = lazy(() => import("./pages/Browse"));
+
+// Prefetch critical routes
+const prefetchRoutes = () => {
+    import("./pages/Home");
+    import("./pages/Browse");
+};
+
 const ListProduct = lazy(() => import("./pages/ListProduct"));
 const Tracking = lazy(() => import("./pages/Tracking"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const Login = lazy(() => import("./pages/Login"));
 const Profile = lazy(() => import("./pages/Profile"));
-const Browse = lazy(() => import("./pages/Browse"));
 const Grocery = lazy(() => import("./pages/Grocery"));
 const ProductDetail = lazy(() => import("./pages/ProductDetail"));
 const FoodMenu = lazy(() => import("./pages/FoodMenu"));
@@ -63,7 +70,7 @@ const BrandedLoading = () => {
             }}
             className="absolute inset-0 bg-white blur-xl rounded-full"
           />
-          <div className="w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center relative z-10">
+          <div className="w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center relative z-10 transition-transform duration-700 animate-pulse">
             <img src="/logo.png" alt="Logo" className="w-10 h-10 object-contain opacity-80" />
           </div>
         </div>
