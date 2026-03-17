@@ -33,6 +33,9 @@ export default function UpiPaymentModal({
         } else {
             document.body.style.overflow = "auto";
         }
+        return () => {
+            document.body.style.overflow = "auto";
+        };
     }, [isOpen]);
 
     const handleDone = async () => {

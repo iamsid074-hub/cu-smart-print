@@ -7,10 +7,15 @@ import { useAuth } from "@/contexts/AuthContext";
 
 
 // ─── Detect order type ──────────────────────────────────────────────────────────
-function getOrderType(order: any): "food" | "item" {
+function getOrderType(order: any): "food" | "item" | "vending" | "cart" {
+  const loc = order.delivery_location || "";
+  const room = order.delivery_room || "";
+  
+  if (loc.includes("[VENDING MACHINE:") || room.includes("[VENDING MACHINE:")) return "vending";
+  if (room.includes("[ITEMS:")) return "cart";
   if (
-    order.delivery_location?.includes("[Custom Food:") ||
-    order.delivery_room?.includes("[CUSTOM FOOD ORDER]")
+    loc.includes("[Custom Food:") ||
+    room.includes("[CUSTOM FOOD ORDER]")
   ) return "food";
   return "item";
 }
@@ -39,6 +44,7 @@ const FOOD_ORDER: Record<string, number> = { pending: 0, seller_accepted: 0, con
 function parseOrderDetails(order: any) {
   const type = getOrderType(order);
   const loc = order.delivery_location || "";
+  const room = order.delivery_room || "";
 
   if (type === "food") {
     // Extract hostel from "BH-1 [Custom Food: ...]"
@@ -46,7 +52,6 @@ function parseOrderDetails(order: any) {
     const hostel = match ? match[1].trim() : loc;
     let items = "";
     let notes = "";
-    const room = order.delivery_room || "";
     if (room.includes("[CUSTOM FOOD ORDER]")) {
       const parts = room.replace("[CUSTOM FOOD ORDER]\n", "").split("\n---\n");
       items = parts[0] || "";
@@ -57,7 +62,36 @@ function parseOrderDetails(order: any) {
     return { type, hostel, items, notes, title: items.split("\n")[0] || "Custom Food Order", image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=200&h=200&fit=crop" };
   }
 
+  if (type === "vending" || type === "cart") {
+    const isVending = type === "vending";
+    const roomPart = room.match(/\[ROOM:(.+?)\]/)?.[1] || room;
+    const itemsPart = room.match(/\[ITEMS:(.+?)\]/)?.[1] || "";
+    
+    // Extract first item title. e.g. "1x Amul Taaza (Toned Milk) (Milk) (₹27)"
+    const firstItemMatch = itemsPart.split("\n")[0]?.match(/\d+x\s+(.+?)\s+\(/);
+    const firstItemTitle = firstItemMatch ? firstItemMatch[1] : (itemsPart.split("\n")[0] || "Campus Order");
+    
+    // Fallback images for common categories
+    let image = "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=200"; // Default book
+    if (firstItemTitle.toLowerCase().includes("milk")) image = "/grocery/amul-taaza.webp";
+    if (firstItemTitle.toLowerCase().includes("coke") || firstItemTitle.toLowerCase().includes("cola")) image = "/grocery/coca-cola.webp";
+    if (firstItemTitle.toLowerCase().includes("lays")) image = "/grocery/lays-blue.webp";
+    if (firstItemTitle.toLowerCase().includes("maggi")) image = "/grocery/maggi.webp";
+    if (firstItemTitle.toLowerCase().includes("kurkure")) image = "/grocery/kurkure.webp";
+    if (firstItemTitle.toLowerCase().includes("donut")) image = "/grocery/donut.webp";
+    if (firstItemTitle.toLowerCase().includes("sprite")) image = "/grocery/sprite.webp";
+    if (firstItemTitle.toLowerCase().includes("fanta")) image = "/grocery/fanta.webp";
 
+    return { 
+      type, 
+      hostel: loc.split(" - ")[0], 
+      items: itemsPart, 
+      notes: "", 
+      title: firstItemTitle, 
+      image,
+      roomInfo: roomPart
+    };
+  }
 
   // Regular product order
   return { type, hostel: loc, items: "", notes: "", title: order.products?.title || "Product", image: order.products?.image_url || "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=200" };
@@ -115,7 +149,11 @@ export default function Tracking() {
   };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => { fetchOrder(); }, [user, orderId]);
+  useEffect(() => { 
+    fetchOrder(); 
+    // Failsafe: Ensure scrolling is unlocked when viewing order tracking
+    document.body.style.overflow = "auto";
+  }, [user, orderId]);
 
   // Real-time subscription
   useEffect(() => {
@@ -149,14 +187,15 @@ export default function Tracking() {
   // Derived
   const details = order ? parseOrderDetails(order) : null;
   const type = details?.type || "item";
-  const steps = type === "food" ? FOOD_STEPS : ITEM_STEPS;
-  const statusMap = type === "food" ? FOOD_ORDER : ITEM_ORDER;
+  const displayType = (type === "vending" || type === "cart") ? "item" : type;
+  const steps = displayType === "food" ? FOOD_STEPS : ITEM_STEPS;
+  const statusMap = displayType === "food" ? FOOD_ORDER : ITEM_ORDER;
   const currentStepIndex = order ? (statusMap[order.status] ?? 0) : 0;
   const isRejected = order?.status === "seller_rejected" || order?.status === "cancelled";
   const isCompleted = order?.status === "completed";
   const totalSteps = steps.length - 1;
   const progressPercent = !order ? 0 : isCompleted ? 100 : Math.round((currentStepIndex / totalSteps) * 100);
-  const deliveryInfo = order ? getDeliveryInfo(order, type) : { text: "", subtext: "" };
+  const deliveryInfo = order ? getDeliveryInfo(order, displayType) : { text: "", subtext: "" };
 
   // Thank You panel state
   const [showThankYou, setShowThankYou] = useState(false);
@@ -210,12 +249,12 @@ export default function Tracking() {
             {/* ── Delivery Status Banner ─────────────────────────────── */}
             {!isCompleted && (
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-                className={`w-full border rounded-2xl p-4 mb-6 flex justify-between items-center ${type === "food"
+                className={`w-full border rounded-2xl p-4 mb-6 flex justify-between items-center ${displayType === "food"
                   ? "bg-orange-50 border-orange-200"
                   : "bg-brand-50 border-brand-muted"
                   }`}>
                 <div className="flex items-center gap-4">
-                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${type === "food" ? "bg-white text-orange-500 shadow-sm border border-orange-100" : "bg-white text-brand shadow-sm border border-brand-50"}`}>
+                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${displayType === "food" ? "bg-white text-orange-500 shadow-sm border border-orange-100" : "bg-white text-brand shadow-sm border border-brand-50"}`}>
                     {order.status === "delivering" ? (
                       <Truck className={`w-6 h-6 animate-pulse`} />
                     ) : (
@@ -223,7 +262,7 @@ export default function Tracking() {
                     )}
                   </div>
                   <div>
-                    <p className={`text-xs font-bold uppercase tracking-wider ${type === "food" ? "text-orange-600" : "text-brand"}`}>
+                    <p className={`text-xs font-bold uppercase tracking-wider ${displayType === "food" ? "text-orange-600" : "text-brand"}`}>
                       {order.status === "delivering" ? "Estimated Delivery" : "Status"}
                     </p>
                     <p className="text-slate-900 font-black text-xl">{deliveryInfo.text}</p>
@@ -246,13 +285,13 @@ export default function Tracking() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1 flex-wrap">
                     <p className="text-xs text-slate-500 font-mono font-medium">
-                      {type === "food" ? "FOOD" : "ORDER"} #{order.id.slice(0, 8).toUpperCase()}
+                      {(type === "food" || type === "vending" || type === "cart") ? type.toUpperCase() : "ORDER"} #{order.id.slice(0, 8).toUpperCase()}
                     </p>
-                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${type === "food"
+                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${displayType === "food"
                       ? "bg-orange-50 text-orange-600"
                       : "bg-brand-50 text-brand"
                       }`}>
-                      {type === "food" ? "🍕 Food" : "📦 Item"}
+                      {type === "food" ? "🍕 Food" : type === "vending" ? "🤖 Vending" : "📦 Item"}
                     </span>
                   </div>
                   <p className="font-bold text-slate-900 line-clamp-2 text-sm sm:text-base">{details?.title}</p>
@@ -285,17 +324,17 @@ export default function Tracking() {
                 </div>
               </div>
 
-              {/* Food items list (only for food orders) */}
-              {type === "food" && details?.items && (
-                <div className="mt-3 rounded-xl p-4 bg-orange-50 border border-orange-100">
-                  <p className="text-[10px] text-orange-600/70 font-bold tracking-wider uppercase mb-2">Items Ordered</p>
+              {/* Food items list (for food, vending, and cart orders) */}
+              {(type === "food" || type === "vending" || type === "cart") && details?.items && (
+                <div className={`mt-3 rounded-xl p-4 border ${displayType === "food" ? "bg-orange-50 border-orange-100" : "bg-emerald-50 border-emerald-100"}`}>
+                  <p className={`text-[10px] font-bold tracking-wider uppercase mb-2 ${displayType === "food" ? "text-orange-600/70" : "text-emerald-700/70"}`}>Items Ordered</p>
                   {details.items.split("\n").filter(Boolean).map((line: string, i: number) => (
                     <p key={i} className="text-sm text-slate-800 font-medium flex items-start gap-2 mb-1">
-                      <span className="text-orange-400 mt-0.5">•</span> {line.trim()}
+                      <span className={`${displayType === "food" ? "text-orange-400" : "text-emerald-500"} mt-0.5`}>•</span> {line.trim()}
                     </p>
                   ))}
                   {details.notes && (
-                    <p className="text-xs text-slate-500 font-medium mt-3 pt-3 border-t border-orange-200/50">
+                    <p className={`text-xs text-slate-500 font-medium mt-3 pt-3 border-t ${displayType === "food" ? "border-orange-200/50" : "border-emerald-200/50"}`}>
                       <span className="font-bold text-slate-600">Notes:</span> {details.notes}
                     </p>
                   )}
@@ -311,7 +350,7 @@ export default function Tracking() {
                 <div className="flex items-center gap-3">
                   <div className="text-xs font-bold text-brand">{progressPercent}%</div>
                   <div className="w-24 h-2 bg-slate-100 rounded-full overflow-hidden">
-                    <motion.div className={`h-full rounded-full ${type === "food" ? "bg-orange-500" : "bg-brand"}`}
+                    <motion.div className={`h-full rounded-full ${displayType === "food" ? "bg-orange-500" : "bg-brand"}`}
                       initial={{ width: 0 }} animate={{ width: `${progressPercent}%` }} transition={{ duration: 1.2, ease: "easeOut" }} />
                   </div>
                 </div>
@@ -322,7 +361,7 @@ export default function Tracking() {
                 <div className="absolute left-[21px] top-5 bottom-5 w-0.5 bg-slate-200" />
                 {/* Active line progress */}
                 <motion.div
-                  className={`absolute left-[21px] top-5 w-0.5 ${type === "food" ? "bg-orange-500" : "bg-brand"}`}
+                  className={`absolute left-[21px] top-5 w-0.5 ${displayType === "food" ? "bg-orange-500" : "bg-brand"}`}
                   initial={{ height: 0 }}
                   animate={{ height: `${progressPercent}%` }}
                   transition={{ duration: 1.5, ease: "easeInOut" }}
@@ -335,8 +374,8 @@ export default function Tracking() {
                     return (
                       <motion.div key={step.key} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: 0.3 + i * 0.08 }} className="flex items-start gap-5 relative">
-                        <div className={`relative z-10 w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300 ring-4 ring-white ${isDone ? (type === "food" ? "bg-orange-500 text-white" : "bg-brand text-white") :
-                          isActive ? (type === "food" ? "bg-orange-100 text-orange-600 border-2 border-orange-500" : "bg-brand-50 text-brand border-2 border-brand") :
+                        <div className={`relative z-10 w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300 ring-4 ring-white ${isDone ? (displayType === "food" ? "bg-orange-500 text-white" : "bg-brand text-white") :
+                          isActive ? (displayType === "food" ? "bg-orange-100 text-orange-600 border-2 border-orange-500" : "bg-brand-50 text-brand border-2 border-brand") :
                             "bg-slate-100 text-slate-400"
                           }`}>
                           {isDone ? <CheckCircle className="w-5 h-5 flex-shrink-0" /> :
@@ -344,13 +383,13 @@ export default function Tracking() {
                         </div>
                         <div className="flex-1 pt-1.5 pb-2">
                           <div className="flex items-center flex-wrap gap-2">
-                            <p className={`font-bold text-sm transition-colors duration-300 ${isActive ? (type === "food" ? "text-orange-600" : "text-brand") :
+                            <p className={`font-bold text-sm transition-colors duration-300 ${isActive ? (displayType === "food" ? "text-orange-600" : "text-brand") :
                               isDone ? "text-slate-900" : "text-slate-500"
                               }`}>
                               {step.label}
                             </p>
                             {isActive && (
-                              <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold tracking-widest uppercase ${type === "food"
+                              <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold tracking-widest uppercase ${displayType === "food"
                                 ? "bg-orange-100 text-orange-600"
                                 : "bg-brand-50 text-brand"
                                 }`}>Now</span>
