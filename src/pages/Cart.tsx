@@ -127,7 +127,7 @@ export default function Cart() {
             delivery_charge: deliveryFee,
             total_price: orderTotal,
             delivery_location: `${hostel} - Floor ${floor}`,
-            delivery_room: `[${hasVending ? 'VENDING MIX' : 'FOOD ORDER'}: Room ${room}]\n${itemsSummary}`,
+            delivery_room: `[ROOM:${room}] | [ITEMS:${itemsSummary}]`,
             buyer_phone: phoneClean,
             status: "pending",
             payment_method: "upi",

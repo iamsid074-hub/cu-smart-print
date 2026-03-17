@@ -282,11 +282,7 @@ function DashboardSection({ stats, recentProducts, recentOrders, loading, allOrd
                         const priority = getPriorityColor(order.status);
                         const action = nextAction[order.status];
                         const isFood = isFoodOrder(order);
-                        const loc = parseOrderLocation(order);
-                        let foodItems = "";
-                        if (loc.items) {
-                            foodItems = loc.items;
-                        }
+                        const details = parseOrderDetails(order);
 
                         return (
                             <motion.div
@@ -322,11 +318,11 @@ function DashboardSection({ stats, recentProducts, recentOrders, loading, allOrd
                                             </div>
                                         )}
                                         <div className="flex-1 min-w-0">
-                                            <p className="font-bold text-sm text-slate-900 truncate">{isFood ? "Food Order" : (loc.itemTitle || order.products?.title || "Custom Order")}</p>
-                                            {isFood && foodItems && (
+                                            <p className="font-bold text-sm text-slate-900 truncate">{isFood ? "Food/Cart Order" : (order.products?.title || "Custom Order")}</p>
+                                            {details.items && (
                                                 <div className="mt-1 space-y-0.5">
-                                                    {foodItems.split("\n").filter(Boolean).slice(0, 3).map((line, idx) => (
-                                                        <p key={idx} className="text-xs text-slate-900/60 truncate">• {line.trim()}</p>
+                                                    {details.items.split("\n").filter(Boolean).map((line, idx) => (
+                                                        <p key={idx} className="text-xs text-slate-900/60">• {line.trim()}</p>
                                                     ))}
                                                 </div>
                                             )}
@@ -349,11 +345,11 @@ function DashboardSection({ stats, recentProducts, recentOrders, loading, allOrd
                                         )}
                                         <div className="flex items-start gap-2">
                                             <MapPin className="w-3 h-3 text-slate-900/40 flex-shrink-0 mt-0.5" />
-                                            <span className="text-xs text-slate-900/60 break-words">{loc.hostel}</span>
+                                            <span className="text-xs text-slate-900/60 break-words">{details.hostel}</span>
                                         </div>
                                         <div className="flex items-start gap-2">
                                             <span className="w-3 h-3 flex items-center justify-center flex-shrink-0 mt-0.5 text-slate-900/40 text-[10px]">🚪</span>
-                                            <span className="text-xs text-slate-900/60 break-words font-medium">Room: {loc.room || "Not provided"}</span>
+                                            <span className="text-xs text-brand font-black break-words uppercase">Room: {details.room || "N/A"}</span>
                                         </div>
                                     </div>
 
@@ -489,39 +485,49 @@ function ProductsSection({ products, loading, onDelete }: {
 // ─── Helper: detect food order ─────────────────────────────────────────────────
 const NON_FOOD_KEYWORDS = ['practical file', 'notebook', 'register', 'pen', 'pencil', 'eraser', 'stapler', 'folder', 'chart', 'paper', 'assignment', 'lab manual', 'journal', 'project', 'file'];
 function isFoodOrder(order: Order): boolean {
-    // Campus Essentials ([CE:]) go to Item Orders, not food
-    if (order.delivery_location?.includes('[CE:')) return false;
-    // If any non-food keyword appears in the item details, it's not food
-    const loc = (order.delivery_location || '').toLowerCase();
-    const room = (order.delivery_room || '').toLowerCase();
-    const combined = loc + ' ' + room;
-    if (NON_FOOD_KEYWORDS.some(kw => combined.includes(kw))) return false;
-    return (order.delivery_location?.includes('[Custom Food:') || order.delivery_room?.includes('[CUSTOM FOOD ORDER]')) && !order.products;
+    // If product_id exists, it's a marketplace/listed item order
+    if (order.product_id) return false;
+    
+    // If no product_id, it's a food/vending/grocery order from the cart/food menu
+    return true;
 }
 
 // ─── Helper: parse order location/room cleanly ─────────────────────────────────
-function parseOrderLocation(order: Order): { hostel: string; room: string; items: string; notes: string; itemTitle: string } {
-    let hostel = order.delivery_location || '';
-    let itemTitle = '';
-    // Extract hostel and item title from metadata tags
-    const ceMatch = hostel.match(/^(.+?)\s*\[CE:\s*(.+?)\]$/);
-    const customMatch = hostel.match(/^(.+?)\s*\[Custom Food:\s*(.+?)\]$/);
-    if (ceMatch) { hostel = ceMatch[1].trim(); itemTitle = ceMatch[2]; }
-    else if (customMatch) { hostel = customMatch[1].trim(); itemTitle = customMatch[2]; }
-
+function parseOrderDetails(order: Order): { hostel: string; room: string; items: string; notes: string } {
+    let hostel = (order.delivery_location || '').split(' - Floor')[0]; // Clean hostel block
+    let room = '';
     let items = '';
     let notes = '';
-    let room = order.delivery_room || '';
-    if (room.includes('[CUSTOM FOOD ORDER]')) {
-        const cleaned = room.replace('[CUSTOM FOOD ORDER]\n', '').replace('[CUSTOM FOOD ORDER]', '');
+
+    const rawRoom = order.delivery_room || '';
+
+    // 1. Check for New Structured Format [ROOM:...] | [ITEMS:...]
+    const newFormatMatch = rawRoom.match(/\[ROOM:(.*?)\] \| \[ITEMS:(.*?)\]/);
+    if (newFormatMatch) {
+        room = newFormatMatch[1].trim();
+        items = newFormatMatch[2].trim();
+    } 
+    // 2. Legacy Parsing
+    else if (rawRoom.includes('[CUSTOM FOOD ORDER]')) {
+        const cleaned = rawRoom.replace('[CUSTOM FOOD ORDER]\n', '').replace('[CUSTOM FOOD ORDER]', '');
         const parts = cleaned.split('\n---\n');
         items = parts[0] || '';
         notes = parts[1]?.replace('Notes: ', '') || '';
-        room = ''; // room field is used for metadata, no actual room
+    } else if (rawRoom.includes('Room ')) {
+        // Fallback for earlier "Room XXX" format
+        const roomMatch = rawRoom.match(/Room\s+([^\s\]]+)/i);
+        room = roomMatch ? roomMatch[1] : '';
+        items = rawRoom.split('\n').slice(1).join('\n') || rawRoom;
+    } else {
+        items = rawRoom || 'N/A';
     }
-    if (!items && itemTitle) items = itemTitle;
 
-    return { hostel, room, items, notes, itemTitle };
+    // Cleaning items for display if it's a single product marketplace order but showing in food section (unlikely but safe)
+    if (!items && order.products?.title) {
+        items = `1x ${order.products.title}`;
+    }
+
+    return { hostel, room, items, notes };
 }
 
 // ─── Filter Bar Component ──────────────────────────────────────────────────────
@@ -600,6 +606,7 @@ function ItemOrdersSection({ orders, loading, onUpdateStatus, onVerifyUpi }: {
                 <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
                     {filtered.map((order, i) => {
                         const action = nextStatus[order.status];
+                        const details = parseOrderDetails(order);
                         return (
                             <motion.div key={order.id} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}
                                 className="bg-white  rounded-2xl border border-slate-200 overflow-hidden hover:border-slate-300 transition-all">
@@ -646,11 +653,11 @@ function ItemOrdersSection({ orders, loading, onUpdateStatus, onVerifyUpi }: {
                                         )}
                                         <div className="flex items-start gap-2 mt-1">
                                             <MapPin className="w-3 h-3 text-slate-900/40 flex-shrink-0 mt-0.5" />
-                                            <span className="text-xs text-slate-900/70 break-words flex-1 min-w-0">{order.delivery_location}</span>
+                                            <span className="text-xs text-slate-900/70 break-words flex-1 min-w-0">{details.hostel}</span>
                                         </div>
                                         <div className="flex items-start gap-2 mt-1">
                                             <span className="w-3 h-3 flex items-center justify-center flex-shrink-0 mt-0.5 text-slate-900/40 text-[10px]">🚪</span>
-                                            <span className="text-xs text-slate-900/70 break-words font-medium flex-1 min-w-0">Room: {order.delivery_room || "Not provided"}</span>
+                                            <span className="text-xs text-brand font-black break-words uppercase flex-1 min-w-0">Room: {details.room || "N/A"}</span>
                                         </div>
                                     </div>
                                     <div className="bg-slate-50  rounded-xl p-3 border border-neon-orange/20">
@@ -709,29 +716,7 @@ function FoodOrdersSection({ orders, loading, onUpdateStatus, onVerifyUpi }: {
 
     const copyPhone = (phone: string) => { navigator.clipboard.writeText(phone); };
 
-    // Parse food order details from delivery_location and delivery_room
-    const parseFoodDetails = (order: Order) => {
-        let hostel = order.delivery_location || '';
-        let itemTitle = '';
-        // Extract hostel and item from "BH-1 [Custom Food: 2x Maggi...]" or "BH-1 [CE: Practical File]"
-        const ceMatch = hostel.match(/^(.+?)\s*\[CE:\s*(.+?)\]$/);
-        const customMatch = hostel.match(/^(.+?)\s*\[Custom Food:\s*(.+?)\]$/);
-        if (ceMatch) { hostel = ceMatch[1].trim(); itemTitle = ceMatch[2]; }
-        else if (customMatch) { hostel = customMatch[1].trim(); itemTitle = customMatch[2]; }
-
-        let items = '';
-        let notes = '';
-        const room = order.delivery_room || '';
-        if (room.includes('[CUSTOM FOOD ORDER]')) {
-            const parts = room.replace('[CUSTOM FOOD ORDER]\n', '').split('\n---\n');
-            items = parts[0] || '';
-            notes = parts[1]?.replace('Notes: ', '') || '';
-        } else {
-            items = itemTitle || room || 'N/A';
-        }
-
-        return { hostel, items, notes };
-    };
+    // Data parsing handled by parseOrderDetails globally now
 
     return (
         <div className="space-y-6">
@@ -754,7 +739,7 @@ function FoodOrdersSection({ orders, loading, onUpdateStatus, onVerifyUpi }: {
                 <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
                     {filtered.map((order, i) => {
                         const action = nextStatus[order.status];
-                        const { hostel, items, notes } = parseFoodDetails(order);
+                        const details = parseOrderDetails(order);
                         return (
                             <motion.div key={order.id} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}
                                 className="bg-white  rounded-2xl border border-orange-500/15 overflow-hidden hover:border-orange-500/30 transition-all">
@@ -780,17 +765,17 @@ function FoodOrdersSection({ orders, loading, onUpdateStatus, onVerifyUpi }: {
                                             <ShoppingBag className="w-3 h-3" /> Ordered Items
                                         </p>
                                         <div className="space-y-1">
-                                            {items.split('\n').filter(Boolean).map((line, idx) => (
+                                            {details.items.split('\n').filter(Boolean).map((line, idx) => (
                                                 <p key={idx} className="text-sm text-slate-900 flex items-start gap-2">
-                                                    <span className="text-orange-400 mt-0.5">•</span>
+                                                    <span className="text-orange-400 mt-0.5 font-bold">•</span>
                                                     <span>{line.trim()}</span>
                                                 </p>
                                             ))}
                                         </div>
-                                        {notes && (
+                                        {details.notes && (
                                             <div className="mt-2 pt-2 border-t border-orange-500/10">
                                                 <p className="text-[10px] text-orange-300/60 uppercase font-bold mb-0.5">Notes</p>
-                                                <p className="text-xs text-slate-500 italic">{notes}</p>
+                                                <p className="text-xs text-slate-500 italic">{details.notes}</p>
                                             </div>
                                         )}
                                         {order.total_price > 0 && (
@@ -824,11 +809,11 @@ function FoodOrdersSection({ orders, loading, onUpdateStatus, onVerifyUpi }: {
                                         )}
                                         <div className="flex items-start gap-2 mt-1">
                                             <MapPin className="w-3 h-3 text-slate-900/40 flex-shrink-0 mt-0.5" />
-                                            <span className="text-xs text-slate-500 break-words flex-1 min-w-0">{hostel}</span>
+                                            <span className="text-xs text-slate-500 break-words flex-1 min-w-0">{details.hostel}</span>
                                         </div>
                                         <div className="flex items-start gap-2 mt-1">
                                             <span className="w-3 h-3 flex items-center justify-center flex-shrink-0 mt-0.5 text-slate-500 text-[10px]">🚪</span>
-                                            <span className="text-xs text-slate-500 break-words font-medium flex-1 min-w-0">Room: {order.delivery_room ? order.delivery_room.replace('[CUSTOM FOOD ORDER]\n', '').replace('[CUSTOM FOOD ORDER]', '') : "Not provided"}</span>
+                                            <span className="text-xs text-brand font-black break-words uppercase flex-1 min-w-0">Room: {details.room || "N/A"}</span>
                                         </div>
                                     </div>
 
