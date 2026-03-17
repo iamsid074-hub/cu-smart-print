@@ -364,35 +364,35 @@ export default function Cart() {
                                 <h3 className="font-bold text-slate-900 text-base border-slate-50 pb-2">Delivery Details</h3>
 
                                 <div className="space-y-3 pt-1">
-                                    <div className="relative">
-                                        <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                    <div className="relative group/hostel">
+                                        <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within/hostel:text-brand transition-colors" />
                                         <input value={hostel} onChange={e => setHostel(e.target.value)} placeholder="Hostel Block (e.g. NC) *"
-                                            className="w-full bg-slate-50 rounded-2xl pl-12 pr-4 h-[52px] text-sm text-slate-900 focus:outline-none focus:bg-white focus:ring-4 focus:ring-brand-50 transition-all placeholder:text-slate-400" />
+                                            className="w-full bg-white border border-slate-200 rounded-2xl pl-12 pr-4 h-[56px] text-sm text-slate-900 focus:outline-none focus:border-brand focus:ring-4 focus:ring-brand-50 transition-all placeholder:text-slate-400 font-medium" />
                                     </div>
 
-                                    {/* Floor Selector (Visible if vending items present) */}
-                                    <div className="flex bg-slate-50 p-1.5 rounded-2xl border border-slate-100 items-center justify-between">
+                                    {/* Floor Selector */}
+                                    <div className="flex bg-white p-1.5 rounded-2xl border border-slate-200 items-center justify-between h-[64px] shadow-sm shadow-slate-200/50">
                                         <button 
                                             onClick={() => setFloor(Math.max(1, floor - 1))}
-                                            className="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-500 hover:text-brand transition-all shadow-sm active:scale-95"
+                                            className="w-11 h-11 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center text-slate-500 hover:text-brand hover:border-brand transition-all active:scale-95"
                                         >
                                             <ArrowLeft className="w-4 h-4" />
                                         </button>
                                         <div className="text-center flex flex-col">
-                                            <span className="text-[10px] font-black text-slate-400 uppercase tracking-tighter leading-none">Floor</span>
-                                            <span className="text-xl font-black text-slate-900">{floor}</span>
+                                            <span className="text-[10px] font-black text-slate-400 uppercase tracking-tighter leading-none mb-0.5">Floor</span>
+                                            <span className="text-2xl font-black text-slate-900 leading-none">{floor}</span>
                                         </div>
                                         <button 
                                             onClick={() => setFloor(Math.min(11, floor + 1))}
-                                            className="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-500 hover:text-brand transition-all shadow-sm active:scale-95"
+                                            className="w-11 h-11 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center text-slate-500 hover:text-brand hover:border-brand transition-all active:scale-95"
                                         >
                                             <Plus className="w-4 h-4" />
                                         </button>
                                     </div>
 
-                                    <div className="relative flex items-center bg-slate-50 rounded-2xl h-[52px] overflow-hidden focus-within:bg-white focus-within:ring-4 focus-within:ring-brand-50 transition-all">
-                                        <div className="flex items-center justify-center w-14 bg-slate-100/50">
-                                            <div className="w-6 h-6 flex items-center justify-center font-bold text-slate-400 text-xs text-center rounded bg-white shadow-sm">R</div>
+                                    <div className="relative flex items-center bg-white border border-slate-200 rounded-2xl h-[56px] overflow-hidden focus-within:border-brand focus-within:ring-4 focus-within:ring-brand-50 transition-all group/room">
+                                        <div className="flex items-center justify-center w-14 border-r border-slate-100 bg-slate-50">
+                                            <div className="w-6 h-6 flex items-center justify-center font-bold text-slate-400 group-focus-within/room:text-brand text-xs text-center rounded bg-white shadow-sm border border-slate-100">R</div>
                                         </div>
                                         <input 
                                             value={room} 
@@ -407,21 +407,23 @@ export default function Cart() {
                                                 }
                                             }} 
                                             placeholder="Room Number *"
-                                            className={`w-full h-full bg-transparent px-3 text-sm text-slate-900 focus:outline-none placeholder:text-slate-400 font-bold ${hasVending && room && !room.startsWith(floor.toString()) ? 'text-rose-500' : ''}`} 
+                                            className={`w-full h-full bg-transparent px-4 text-sm text-slate-900 focus:outline-none placeholder:text-slate-400 font-bold ${hasVending && room && !room.startsWith(floor.toString()) ? 'text-rose-500' : ''}`} 
                                         />
                                         {hasVending && room && !room.startsWith(floor.toString()) && (
                                             <span className="absolute right-4 text-[10px] text-rose-500 font-black">Needs {floor}xx</span>
                                         )}
                                     </div>
                                     <div>
-                                        <div className="relative">
-                                            <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                        <div className="relative group/phone">
+                                            <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within/phone:text-brand transition-colors" />
                                             <input value={phone} onChange={e => setPhone(e.target.value.replace(/\D/g, "").slice(0, 10))} type="tel" placeholder="10-digit Phone Number *" maxLength={10}
-                                                className={`w-full bg-slate-50 rounded-2xl pl-12 pr-4 h-[52px] text-sm text-slate-900 focus:outline-none focus:bg-white focus:ring-4 transition-all placeholder:text-slate-400 ${phone.length > 0 && !isPhoneValid ? "border border-red-300 focus:border-red-400 focus:ring-red-50" : "border border-transparent focus:ring-brand-50 focus:border-brand-50"
+                                                className={`w-full bg-white rounded-2xl pl-12 pr-4 h-[56px] text-sm text-slate-900 focus:outline-none focus:ring-4 transition-all placeholder:text-slate-400 font-medium ${phone.length > 0 && !isPhoneValid ? "border border-red-300 focus:border-red-400 focus:ring-red-50 shadow-[0_0_0_1px_rgba(239,68,68,0.2)]" : "border border-slate-200 focus:border-brand focus:ring-brand-50"
                                                     }`} />
                                         </div>
                                         {phone.length > 0 && !isPhoneValid && (
-                                            <p className="text-[11px] text-red-500 mt-1 px-1 font-medium">Phone must be exactly 10 digits</p>
+                                            <p className="text-[11px] text-red-500 mt-1.5 px-2 font-bold flex items-center gap-1">
+                                                <span className="w-1 h-1 rounded-full bg-red-500" /> Phone must be exactly 10 digits
+                                            </p>
                                         )}
                                     </div>
                                 </div>
