@@ -20,6 +20,7 @@ export default function Login() {
     const [acceptedTerms, setAcceptedTerms] = useState(false);
     const [forgotPassword, setForgotPassword] = useState(false);
     const [resetSent, setResetSent] = useState(false);
+    const [formError, setFormError] = useState<string | null>(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -27,6 +28,11 @@ export default function Login() {
         const timeout = setTimeout(() => setShowIntro(false), 2000);
         return () => clearTimeout(timeout);
     }, []);
+
+    // Clear error when user interacts
+    useEffect(() => {
+        setFormError(null);
+    }, [email, password, acceptedTerms, isLogin]);
 
     const handleForgotPassword = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -48,19 +54,36 @@ export default function Login() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!isLogin && !acceptedTerms) {
-            toast.error("Please accept the Terms and Conditions to create an account.");
+        setFormError(null);
+
+        // Local Validation
+        if (!email.trim() || !password.trim()) {
+            setFormError("Please fill in all required fields.");
             return;
         }
+
+        if (password.length < 6) {
+            setFormError("Password must be at least 6 characters.");
+            return;
+        }
+
+        if (!isLogin && !acceptedTerms) {
+            setFormError("Please accept the Terms and Conditions to create an account.");
+            return;
+        }
+
         setLoading(true);
         try {
             if (isLogin) {
                 const { error } = await supabase.auth.signInWithPassword({ email, password });
                 if (error) {
-                    toast.error(error.message.includes("Invalid login")
-                        ? "Hmm, that doesn't look right. Check your email or password?"
-                        : error.message);
-                    setLoading(false); return;
+                    if (error.message.toLowerCase().includes("invalid login")) {
+                        setFormError("Invalid email or password. Please try again.");
+                    } else {
+                        setFormError(error.message);
+                    }
+                    setLoading(false);
+                    return;
                 }
                 toast.success("Welcome back! 🎉");
                 navigate("/home");
@@ -70,10 +93,13 @@ export default function Login() {
                     options: { data: { full_name: email.split('@')[0] } }
                 });
                 if (error) {
-                    toast.error(error.message.includes("already registered")
-                        ? "Looks like you already have an account! Try signing in."
-                        : error.message);
-                    setLoading(false); return;
+                    if (error.message.toLowerCase().includes("already registered")) {
+                        setFormError("This email is already registered. Please log in instead.");
+                    } else {
+                        setFormError(error.message);
+                    }
+                    setLoading(false);
+                    return;
                 }
                 if (data.user) {
                     await supabase.from("profiles").upsert({ id: data.user.id, full_name: email.split('@')[0] });
@@ -81,8 +107,11 @@ export default function Login() {
                 toast.success("You're in! Welcome to the crew 🚀");
                 navigate("/home");
             }
-        } catch { toast.error("Something went sideways. Give it another shot?"); }
-        finally { setLoading(false); }
+        } catch {
+            setFormError("Something went sideways. Give it another shot?");
+        } finally {
+            setLoading(false);
+        }
     };
 
     const features = [
@@ -425,11 +454,29 @@ export default function Login() {
                                         </div>
                                     )}
 
+                                    {/* Error Message */}
+                                    <AnimatePresence mode="wait">
+                                        {formError && (
+                                            <motion.div
+                                                initial={{ opacity: 0, height: 0, scale: 0.95 }}
+                                                animate={{ opacity: 1, height: 'auto', scale: 1 }}
+                                                exit={{ opacity: 0, height: 0, scale: 0.95 }}
+                                                transition={{ duration: 0.2 }}
+                                                className="bg-red-50 border border-red-100 rounded-xl p-3 flex items-start gap-2.5 overflow-hidden shadow-sm shadow-red-500/5 mt-2"
+                                            >
+                                                <div className="w-1.5 h-1.5 rounded-full bg-red-500 mt-1.5 shrink-0 animate-pulse" />
+                                                <p className="text-[13px] font-medium text-red-600 leading-tight">
+                                                    {formError}
+                                                </p>
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
+
                                     {/* Submit */}
                                     <motion.button
-                                        type="submit" disabled={loading || (!isLogin && !acceptedTerms)}
+                                        type="submit" disabled={loading}
                                         whileHover={{ y: -1 }} whileTap={{ scale: 0.985 }}
-                                        className="w-full relative group py-3.5 rounded-xl text-white font-semibold text-sm overflow-hidden transition-shadow duration-300 disabled:opacity-50 disabled:cursor-not-allowed h-[52px]"
+                                        className="w-full relative group py-3.5 rounded-xl text-white font-semibold text-sm overflow-hidden transition-shadow duration-300 disabled:opacity-50 disabled:cursor-not-allowed h-[52px] mt-2"
                                         style={{ ...fontH, background: "#231942", boxShadow: "0 4px 20px rgba(35,25,66,0.25)" }}
                                     >
                                         {/* Shine */}
