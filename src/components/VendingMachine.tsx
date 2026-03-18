@@ -126,7 +126,7 @@ export default function VendingMachine() {
     if (!user || vendingCartItems.length === 0) return;
     setIsSubmitting(true);
     try {
-      const itemsSummary = vendingCartItems.map(i => `${i.quantity}x ${i.title} (₹${i.price})`).join("\n");
+      const itemsSummary = vendingCartItems.map(i => `${i.quantity}x ${i.title} [IMG:${i.image}] (₹${i.price})`).join("\n");
       const { error } = await supabase.from("orders").insert({
         product_id: null,
         buyer_id: user.id,

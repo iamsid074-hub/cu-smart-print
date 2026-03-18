@@ -67,25 +67,20 @@ function parseOrderDetails(order: any) {
     const roomPart = room.match(/\[ROOM:(.+?)\]/)?.[1] || room;
     const itemsPart = room.match(/\[ITEMS:(.+?)\]/)?.[1] || "";
     
-    // Extract first item title. e.g. "1x Amul Taaza (Toned Milk) (Milk) (₹27)"
-    const firstItemMatch = itemsPart.split("\n")[0]?.match(/\d+x\s+(.+?)\s+\(/);
-    const firstItemTitle = firstItemMatch ? firstItemMatch[1] : (itemsPart.split("\n")[0] || "Campus Order");
+    // Extract first item title. e.g. "1x Amul Taaza [IMG:...] (Toned Milk) (Milk) (₹27)"
+    const firstLine = itemsPart.split("\n")[0] || "";
+    const firstItemTitle = firstLine.match(/\d+x\s+(.+?)\s+\[IMG:/)?.[1] || 
+                          firstLine.match(/\d+x\s+(.+?)\s+\(/)?.[1] || 
+                          (firstLine || "Campus Order");
     
-    // Fallback images for common categories
-    let image = "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=200"; // Default book
-    if (firstItemTitle.toLowerCase().includes("milk")) image = "/grocery/amul-taaza.webp";
-    if (firstItemTitle.toLowerCase().includes("coke") || firstItemTitle.toLowerCase().includes("cola")) image = "/grocery/coca-cola.webp";
-    if (firstItemTitle.toLowerCase().includes("lays")) image = "/grocery/lays-blue.webp";
-    if (firstItemTitle.toLowerCase().includes("maggi")) image = "/grocery/maggi.webp";
-    if (firstItemTitle.toLowerCase().includes("kurkure")) image = "/grocery/kurkure.webp";
-    if (firstItemTitle.toLowerCase().includes("donut")) image = "/grocery/donut.webp";
-    if (firstItemTitle.toLowerCase().includes("sprite")) image = "/grocery/sprite.webp";
-    if (firstItemTitle.toLowerCase().includes("fanta")) image = "/grocery/fanta.webp";
+    // Extract image URL from [IMG:url] tag
+    const imageTagMatch = itemsPart.match(/\[IMG:(.+?)\]/);
+    const image = imageTagMatch ? imageTagMatch[1] : "/logo.webp"; // Default to site logo if no tag found
 
     return { 
       type, 
       hostel: loc.split(" - ")[0], 
-      items: itemsPart, 
+      items: itemsPart.replace(/\[IMG:.+?\]\s*/g, ""), // Clean up the tags for display
       notes: "", 
       title: firstItemTitle, 
       image,
@@ -94,7 +89,7 @@ function parseOrderDetails(order: any) {
   }
 
   // Regular product order
-  return { type, hostel: loc, items: "", notes: "", title: order.products?.title || "Product", image: order.products?.image_url || "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=200" };
+  return { type, hostel: loc, items: "", notes: "", title: order.products?.title || "Product", image: order.products?.image_url || "/logo.webp" };
 }
 
 // ─── Delivery Time Logic ────────────────────────────────────────────────────────

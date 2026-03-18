@@ -117,7 +117,7 @@ export default function Cart() {
     };
 
     const createOrder = async (paymentId?: string) => {
-        const itemsSummary = items.map(i => `${i.quantity}x ${i.title} (${i.category}) (₹${i.price})`).join("\n");
+        const itemsSummary = items.map(i => `${i.quantity}x ${i.title} [IMG:${i.image}] (${i.category}) (₹${i.price})`).join("\n");
         const { error } = await supabase.from("orders").insert({
             product_id: null,
             buyer_id: user!.id,
