@@ -182,6 +182,12 @@ export default function VendingMachine() {
             
             {/* Glass Panel */}
             <div className="relative rounded-3xl bg-slate-900/40 p-4 border border-white/5 backdrop-blur-sm min-h-[500px] flex flex-col justify-between overflow-hidden">
+              {/* Glass Reflection Overlay */}
+              <div className="absolute inset-0 pointer-events-none rounded-3xl z-40 overflow-hidden">
+                <div className="absolute top-[-50%] left-[-20%] w-[150%] h-[200%] bg-gradient-to-tr from-transparent via-white/10 to-transparent rotate-[25deg] shadow-[inset_0_0_20px_rgba(255,255,255,0.05)]" />
+                <div className="absolute top-[-20%] left-[30%] w-[50%] h-[150%] bg-gradient-to-tr from-transparent via-white/5 to-transparent rotate-[25deg]" />
+              </div>
+
               {/* Shelves Container */}
               <div className="space-y-4">
                 {ROWS.map((row, ri) => (
@@ -193,15 +199,22 @@ export default function VendingMachine() {
                           
                           {/* Item Slot with Depth (Stacking) */}
                           <div className="relative w-full h-full flex items-center justify-center">
+                            {/* Back Section of Coil (Behind Items) */}
+                            <div className="absolute bottom-[-5px] w-[110%] h-10 pointer-events-none z-0 translate-y-2 opacity-40">
+                              <svg viewBox="0 0 100 40" preserveAspectRatio="none" className="w-full h-full">
+                                <path d="M 10,25 C 10,5 30,5 30,25 M 25,25 C 25,5 45,5 45,25 M 40,25 C 40,5 60,5 60,25 M 55,25 C 55,5 75,5 75,25 M 70,25 C 70,5 90,5 90,25 M 85,25 C 85,5 105,5 105,25" fill="none" stroke="#0f172a" strokeWidth="4" />
+                              </svg>
+                            </div>
+
                             {/* Static Background Stacks */}
-                            {[2, 1].map((depth) => (
+                            {[4, 3, 2, 1].map((depth) => (
                               <div 
                                 key={depth}
                                 className="absolute pointer-events-none"
                                 style={{ 
-                                  transform: `translateZ(-${depth * 20}px) translateY(-${depth * 2}px) scale(${1 - depth * 0.08})`,
-                                  opacity: 0.4 - depth * 0.1,
-                                  filter: 'brightness(0.6) blur(0.5px)'
+                                  transform: `translateZ(-${depth * 25}px) translateY(-${depth * 3}px) scale(${1 - depth * 0.06})`,
+                                  opacity: 1 - depth * 0.15,
+                                  filter: `brightness(${1 - depth * 0.15}) drop-shadow(0 4px 6px rgba(0,0,0,0.6))`
                                 }}
                               >
                                 <img 
@@ -236,6 +249,21 @@ export default function VendingMachine() {
                               {/* Reflection on item */}
                               <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none rounded-lg" />
                             </motion.div>
+
+                            {/* Front Section of Spring/Coil (In Front of Items) */}
+                            <div className="absolute bottom-[-5px] w-[110%] h-10 pointer-events-none z-20 translate-y-2">
+                               <svg viewBox="0 0 100 40" preserveAspectRatio="none" className="w-full h-full drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)]">
+                                  <defs>
+                                    <linearGradient id="metal-coil" x1="0%" y1="0%" x2="0%" y2="100%">
+                                      <stop offset="0%" stopColor="#f8fafc" />
+                                      <stop offset="40%" stopColor="#94a3b8" />
+                                      <stop offset="70%" stopColor="#475569" />
+                                      <stop offset="100%" stopColor="#0f172a" />
+                                    </linearGradient>
+                                  </defs>
+                                  <path d="M 0,25 C 10,45 30,45 30,25 M 25,25 C 25,45 45,45 45,25 M 40,25 C 40,45 60,45 60,25 M 55,25 C 55,45 75,45 75,25 M 70,25 C 70,45 90,45 90,25 M 85,25 C 85,45 105,45 105,25" fill="none" stroke="url(#metal-coil)" strokeWidth="3" strokeLinecap="round" />
+                               </svg>
+                            </div>
                           </div>
                           
                           {/* Selection / Label Container */}
