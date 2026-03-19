@@ -211,10 +211,10 @@ export default function FoodMenu() {
                                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-80" />
                                         <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500" />
                                       </span>
-                                      🔥 Live Sale
+                                      Live Sale
                                     </span>
-                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-black text-amber-900 uppercase tracking-wide" style={{ background: 'rgba(255,255,255,0.8)' }}>⭐ Top Pick</span>
-                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold text-orange-900 uppercase tracking-wide" style={{ background: 'rgba(255,255,255,0.65)' }}>🔥 Trending</span>
+                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-black text-amber-900 uppercase tracking-wide" style={{ background: 'rgba(255,255,255,0.8)' }}>Top Pick</span>
+                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold text-orange-900 uppercase tracking-wide" style={{ background: 'rgba(255,255,255,0.65)' }}>Trending</span>
                                   </div>
                                   <h3 className="text-base font-black text-white leading-tight drop-shadow-[0_1px_3px_rgba(0,0,0,0.25)] truncate">Chatori Chai & Kulcha Corner</h3>
                                   <div className="flex flex-wrap gap-3 mt-1.5">

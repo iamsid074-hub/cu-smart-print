@@ -509,19 +509,19 @@ export default function Home() {
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-90" />
                             <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500" />
                           </span>
-                          🔥 LIVE SALE
+                          LIVE SALE
                         </div>
                         <div
                           className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-amber-900 font-black text-[11px] uppercase tracking-wider"
                           style={{ background: 'rgba(255,255,255,0.8)', backdropFilter: 'blur(8px)' }}
                         >
-                          ⭐ Top Pick
+                          Top Pick
                         </div>
                         <div
                           className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-orange-900 font-bold text-[11px] uppercase tracking-wider"
                           style={{ background: 'rgba(255,255,255,0.65)', backdropFilter: 'blur(8px)' }}
                         >
-                          🔥 Trending
+                          Trending
                         </div>
                       </div>
 
