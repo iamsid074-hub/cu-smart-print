@@ -394,41 +394,6 @@ export default function Home() {
   const navigate = useNavigate();
   const isNativeApp = Capacitor.isNativePlatform();
   const [loading, setLoading] = useState(true);
-  const [timeLeft, setTimeLeft] = useState({ days: "00", hours: "00", minutes: "00", seconds: "00" });
-  const [isReminded, setIsReminded] = useState(() => localStorage.getItem('cubazzar_sale_reminder') === '1');
-
-  const handleRemindMe = () => {
-    if (isReminded) {
-      localStorage.removeItem('cubazzar_sale_reminder');
-      setIsReminded(false);
-      toast.success("Reminder cancelled");
-    } else {
-      localStorage.setItem('cubazzar_sale_reminder', '1');
-      setIsReminded(true);
-      toast.success("Reminder set! We'll notify you when the sale starts");
-    }
-  };
-  useEffect(() => {
-    const calculateTimeLeft = () => {
-      const targetDate = new Date();
-      targetDate.setMonth(2);
-      targetDate.setDate(20);
-      targetDate.setHours(0, 0, 0, 0);
-      const now = new Date();
-      if (now > targetDate) targetDate.setFullYear(now.getFullYear() + 1);
-      const diff = targetDate.getTime() - now.getTime();
-      if (diff <= 0) return { days: "00", hours: "00", minutes: "00", seconds: "00" };
-      return {
-        days: Math.floor(diff / (1000 * 60 * 60 * 24)).toString().padStart(2, "0"),
-        hours: Math.floor((diff / (1000 * 60 * 60)) % 24).toString().padStart(2, "0"),
-        minutes: Math.floor((diff / 1000 / 60) % 60).toString().padStart(2, "0"),
-        seconds: Math.floor((diff / 1000) % 60).toString().padStart(2, "0"),
-      };
-    };
-    setTimeLeft(calculateTimeLeft());
-    const timer = setInterval(() => setTimeLeft(calculateTimeLeft()), 1000);
-    return () => clearInterval(timer);
-  }, []);
 
   return (
     <div className="min-h-screen bg-slate-50 pt-[5.5rem] pb-32 relative">
@@ -492,7 +457,7 @@ export default function Home() {
 
 
         <div className="w-full">
-          {/* {"\u2500\u2500\u2500"} {"\uD83D\uDD25"} SUMMER SALE BANNER {"\u2500\u2500\u2500"} */}
+          {/* ─── 🔥 LIVE SALE BANNER ─── */}
           <motion.section
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -500,130 +465,140 @@ export default function Home() {
             transition={{ duration: 0.6, ease: "easeOut" }}
             className="mb-8 sm:mb-12"
           >
-            {/* Animated border wrapper */}
-            <div className="relative rounded-[2rem] p-[3px] overflow-hidden" style={{
-              background: 'linear-gradient(135deg, #e0b1cb, #d4a0be, #EC4899, #231942)',
-              backgroundSize: '300% 300%',
-              animation: 'sale-border-shift 4s ease infinite',
-              boxShadow: '0 10px 40px -10px rgba(35,25,66,0.5)'
-            }}>
-              <div className="relative rounded-3xl sm:rounded-[2rem] overflow-hidden bg-slate-900" style={{ backgroundImage: 'radial-gradient(circle at top right, #312e81, #0f172a)' }}>
+            <Link to="/food">
+              <div
+                className="relative rounded-[2rem] overflow-hidden cursor-pointer group"
+                style={{ boxShadow: '0 20px 60px -10px rgba(234,88,12,0.4), 0 0 0 1px rgba(251,146,60,0.3)' }}
+              >
+                {/* Warm gradient background */}
+                <div
+                  className="absolute inset-0"
+                  style={{ background: 'linear-gradient(135deg, #f97316 0%, #fb923c 25%, #fbbf24 55%, #f59e0b 75%, #d97706 100%)' }}
+                />
 
-                {/* Glowing orbs */}
-                <div className="absolute top-0 right-0 w-64 h-64 sm:w-96 sm:h-96 rounded-full blur-[100px] pointer-events-none" style={{ background: 'rgba(35,25,66,0.25)' }} />
-                <div className="absolute bottom-0 left-0 w-48 h-48 sm:w-72 sm:h-72 rounded-full blur-[80px] pointer-events-none" style={{ background: 'rgba(236,72,153,0.15)' }} />
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 rounded-full blur-[60px] pointer-events-none" style={{ background: 'rgba(245,158,11,0.1)' }} />
+                {/* Food texture overlay - subtle dots */}
+                <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle, rgba(0,0,0,0.3) 1px, transparent 1px)', backgroundSize: '18px 18px' }} />
 
-                {/* Grid pattern overlay */}
-                <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
+                {/* Animated glowing orbs */}
+                <div className="absolute -top-16 -right-16 w-72 h-72 rounded-full blur-[80px] pointer-events-none" style={{ background: 'rgba(255,255,255,0.18)' }} />
+                <div className="absolute -bottom-12 -left-12 w-56 h-56 rounded-full blur-[60px] pointer-events-none" style={{ background: 'rgba(180,60,0,0.25)' }} />
 
-                <div className="relative z-10 p-6 sm:p-10 lg:p-12">
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-8">
+                {/* Steam decorations */}
+                <div className="absolute top-4 right-[28%] opacity-20 pointer-events-none select-none text-5xl" style={{ filter: 'blur(1px)', animation: 'steam-float 3s ease-in-out infinite' }}>
+                  ☕
+                </div>
+                <div className="absolute bottom-8 right-[14%] opacity-15 pointer-events-none select-none text-4xl" style={{ filter: 'blur(1px)', animation: 'steam-float 3.5s ease-in-out infinite 0.8s' }}>
+                  🫓
+                </div>
+                <div className="absolute top-6 right-[10%] opacity-20 pointer-events-none select-none text-3xl" style={{ animation: 'steam-float 4s ease-in-out infinite 0.3s' }}>
+                  🌶️
+                </div>
 
-                    {/* Left — Main content */}
+                <div className="relative z-10 p-6 sm:p-8 lg:p-10">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
+
+                    {/* Left — Main Content */}
                     <div className="flex-1">
-                      {/* Badge */}
-                      <motion.div
-                        initial={{ opacity: 0, x: -10 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true }}
-                        className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-6"
-                        style={{ background: 'linear-gradient(90deg, rgba(255,215,0,0.15), rgba(245,158,11,0.05))', border: '1px solid rgba(255,215,0,0.3)' }}
-                      >
-                        <span className="relative flex h-2.5 w-2.5">
-                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ backgroundColor: '#e0b1cb' }}></span>
-                          <span className="relative inline-flex rounded-full h-2.5 w-2.5" style={{ backgroundColor: '#d4a0be' }}></span>
-                        </span>
-                        <span className="text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] text-[#e0b1cb]">Summer Sale {"\u00B7"} Special Offer</span>
-                      </motion.div>
+                      {/* LIVE Badge */}
+                      <div className="flex items-center gap-3 mb-4">
+                        <div
+                          className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-white font-black text-[11px] uppercase tracking-widest"
+                          style={{ background: 'rgba(0,0,0,0.3)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.3)' }}
+                        >
+                          <span className="relative flex h-2.5 w-2.5">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-90" />
+                            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500" />
+                          </span>
+                          🔥 LIVE SALE
+                        </div>
+                        <div
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-amber-900 font-black text-[11px] uppercase tracking-wider"
+                          style={{ background: 'rgba(255,255,255,0.8)', backdropFilter: 'blur(8px)' }}
+                        >
+                          ⭐ Top Pick
+                        </div>
+                        <div
+                          className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-orange-900 font-bold text-[11px] uppercase tracking-wider"
+                          style={{ background: 'rgba(255,255,255,0.65)', backdropFilter: 'blur(8px)' }}
+                        >
+                          🔥 Trending
+                        </div>
+                      </div>
 
-                      <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black leading-[1.1] mb-4 text-white tracking-tight" style={fontH}>
-                        <span>Something </span>
-                        <span className="relative text-transparent bg-clip-text bg-gradient-to-r from-[#e0b1cb] to-[#d4a0be] drop-shadow-sm">
-                          massive
-                          <svg className="absolute -bottom-2 left-0 w-full" viewBox="0 0 120 8" fill="none"><path d="M2 5C30 2 90 2 118 5" stroke="#e0b1cb" strokeWidth="3" strokeLinecap="round" opacity="0.6" /></svg>
-                        </span>
-                        <span> is coming</span>
+                      {/* Main Heading */}
+                      <h2 className="text-2xl sm:text-4xl lg:text-5xl font-black text-white leading-tight mb-3 tracking-tight drop-shadow-[0_2px_8px_rgba(0,0,0,0.3)]" style={fontH}>
+                        Chatori Chai &<br className="hidden sm:block" /> Kulcha Corner
                       </h2>
 
-                      <p className="text-base sm:text-lg mb-2 max-w-md text-slate-300 font-medium">
-                        March 20 {"\u00B7"} Up to <strong className="text-[#e0b1cb] font-black tracking-wide text-xl">70% OFF</strong> on everything
-                      </p>
-                      <p className="text-sm sm:text-base mb-8 text-slate-400 font-medium tracking-wide">
-                        Exclusive for CU Students {"\u00B7"} Limited stock {"\uD83D\uDE80"}
-                      </p>
-
-                      {/* Countdown */}
-                      <div className="flex flex-wrap items-center gap-3 sm:gap-4">
-                        <div className="flex items-center gap-1 sm:gap-1.5">
-                          {[
-                            { value: timeLeft.days, label: "Days" },
-                            { value: timeLeft.hours, label: "Hrs" },
-                            { value: timeLeft.minutes, label: "Min" },
-                            { value: timeLeft.seconds, label: "Sec" }
-                          ].map((t, i) => (
-                            <div key={i} className="flex items-center gap-1 sm:gap-1.5">
-                              <div className="rounded-xl px-3 py-2.5 sm:px-4 sm:py-3 text-center min-w-[50px] sm:min-w-[64px] border border-white/10 bg-white/5 backdrop-blur-md shadow-inner">
-                                <div className="text-xl sm:text-3xl font-black font-mono text-white tracking-wider">{t.value}</div>
-                                <div className="text-[8px] sm:text-[10px] font-bold uppercase tracking-widest text-[#e0b1cb]">{t.label}</div>
-                              </div>
-                              {i < 3 && <span className="text-xl sm:text-2xl font-black text-white/30">:</span>}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Right — Big discount + CTA */}
-                    <div className="flex flex-row sm:flex-col items-center sm:items-end gap-6">
-                      {/* Giant percentage */}
-                      <div className="relative">
-                        <motion.div
-                          animate={{ scale: [1, 1.05, 1], rotate: [0, 2, -2, 0] }}
-                          transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-                          className="text-6xl sm:text-8xl lg:text-[140px] font-black select-none text-transparent bg-clip-text bg-gradient-to-br from-white to-white/20"
-                          style={{ ...fontH, lineHeight: 1, filter: 'drop-shadow(0 10px 20px rgba(0,0,0,0.5))' }}
+                      {/* Offer Details */}
+                      <div className="flex flex-col gap-2 mb-5">
+                        <div
+                          className="inline-flex w-fit items-center gap-2 px-4 py-2 rounded-2xl text-sm font-bold text-white"
+                          style={{ background: 'rgba(0,0,0,0.25)', backdropFilter: 'blur(6px)', border: '1px solid rgba(255,255,255,0.2)' }}
                         >
-                          70<span className="text-4xl sm:text-6xl lg:text-8xl">%</span>
-                        </motion.div>
-                        <div className="absolute top-0 right-[-20px] sm:right-[-40px]">
-                          <span className="px-3 py-1 rounded-full bg-[#e0b1cb] text-slate-900 text-xs sm:text-sm font-black transform rotate-12 inline-block">UP TO</span>
+                          <span className="text-lg">🚚</span>
+                          <span>Only <strong className="text-yellow-200 text-base">₹20</strong> Delivery</span>
+                        </div>
+                        <div
+                          className="inline-flex w-fit items-center gap-2 px-4 py-2 rounded-2xl text-sm font-bold text-white"
+                          style={{ background: 'rgba(0,0,0,0.25)', backdropFilter: 'blur(6px)', border: '1px solid rgba(255,255,255,0.2)' }}
+                        >
+                          <span className="text-lg">🥤</span>
+                          <span>Free <strong className="text-yellow-200">Coca-Cola</strong> on orders above <strong className="text-yellow-200">₹179</strong></span>
                         </div>
                       </div>
 
-                      <motion.button
-                        onClick={handleRemindMe}
-                        whileHover={{ y: -2, scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        className={`group relative px-8 py-4 sm:px-10 sm:py-5 rounded-2xl font-black text-white text-sm sm:text-base overflow-hidden transition-all duration-300 ${isReminded ? 'bg-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.4)]' : 'bg-gradient-to-r from-brand to-fuchsia-600 shadow-[0_10px_30px_rgba(35,25,66,0.5)] hover:shadow-[0_15px_40px_rgba(35,25,66,0.7)] hover:from-brand-accent hover:to-fuchsia-500'}`}
+                      {/* CTA Button */}
+                      <motion.div
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.97 }}
+                        className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl font-black text-sm sm:text-base text-amber-900 shadow-2xl relative overflow-hidden"
+                        style={{
+                          background: 'linear-gradient(135deg, #ffffff, #fff7ed)',
+                          boxShadow: '0 0 20px rgba(255,255,255,0.5), 0 8px 30px rgba(0,0,0,0.2)',
+                          border: '2px solid rgba(255,255,255,0.8)'
+                        }}
                       >
-                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
-                        <span className="relative flex items-center gap-2 tracking-wide uppercase" style={fontH}>
-                          {isReminded ? `Reminder Set {"\u2713"}` : `Remind Me {"\uD83D\uDD14"}`}
-                        </span>
-                      </motion.button>
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 pointer-events-none" />
+                        <span className="relative" style={fontH}>Order Now →</span>
+                      </motion.div>
                     </div>
+
+                    {/* Right — Visual Accent */}
+                    <div className="hidden sm:flex flex-col items-center shrink-0 gap-3">
+                      <motion.div
+                        animate={{ y: [0, -8, 0], rotate: [-2, 2, -2] }}
+                        transition={{ repeat: Infinity, duration: 3.5, ease: "easeInOut" }}
+                        className="text-[90px] drop-shadow-2xl select-none leading-none"
+                      >
+                        ☕
+                      </motion.div>
+                      <motion.div
+                        animate={{ y: [0, -5, 0], rotate: [2, -2, 2] }}
+                        transition={{ repeat: Infinity, duration: 4, ease: "easeInOut", delay: 0.5 }}
+                        className="text-[60px] drop-shadow-2xl select-none leading-none -mt-2"
+                      >
+                        🫓
+                      </motion.div>
+                    </div>
+
                   </div>
                 </div>
-                </div>
               </div>
-            </motion.section>
+            </Link>
+          </motion.section>
 
-            {/* ─── Digital Vending Machine Section ─── */}
-            <VendingMachine />
-
-            {/* Keyframe for animated border */}
-            <style>{`
-            @keyframes sale-border-shift {
-              0% { background-position: 0% 50%; }
-              50% { background-position: 100% 50%; }
-              100% { background-position: 0% 50%; }
+          <style>{`
+            @keyframes steam-float {
+              0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.15; }
+              50% { transform: translateY(-12px) rotate(5deg); opacity: 0.25; }
             }
           `}</style>
 
+          {/* ─── Digital Vending Machine Section ─── */}
+          <VendingMachine />
 
-
-          {/* {"\u2500\u2500\u2500"} GROCERY QUICK SECTION {"\u2500\u2500\u2500"} */}
+          {/* ─── GROCERY QUICK SECTION ─── */}
           <motion.section
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}

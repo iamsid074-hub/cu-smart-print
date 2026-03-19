@@ -178,17 +178,71 @@ export default function FoodMenu() {
                                 </p>
                             </div>
 
+                            {/* ─── Featured Shop Banner ─── */}
+                            <motion.div
+                              initial={{ opacity: 0, y: -10 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ duration: 0.5 }}
+                              className="relative rounded-[1.75rem] overflow-hidden mb-4 cursor-pointer group"
+                              style={{ boxShadow: '0 10px 40px -8px rgba(234,88,12,0.45), 0 0 0 1px rgba(251,146,60,0.3)' }}
+                              onClick={() => {
+                                const featuredShop = shops.find(s => s.id === 'chatori-chai-kulcha');
+                                if (featuredShop) handleUpdateActiveShop(featuredShop.id);
+                                document.getElementById('chatori-chai-kulcha-card')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                              }}
+                            >
+                              {/* Gradient BG */}
+                              <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, #f97316, #fb923c 40%, #fbbf24 70%, #d97706)' }} />
+                              <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle, rgba(0,0,0,0.25) 1px, transparent 1px)', backgroundSize: '16px 16px' }} />
+                              {/* Glow orb */}
+                              <div className="absolute -top-10 -right-10 w-48 h-48 rounded-full blur-[60px]" style={{ background: 'rgba(255,255,255,0.2)' }} />
+
+                              <div className="relative z-10 p-5 flex items-center gap-4">
+                                {/* Icon */}
+                                <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl shrink-0 shadow-lg" style={{ background: 'rgba(255,255,255,0.25)', backdropFilter: 'blur(8px)' }}>
+                                  ☕
+                                </div>
+
+                                {/* Text */}
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex flex-wrap gap-2 mb-1.5">
+                                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest text-white" style={{ background: 'rgba(0,0,0,0.3)', backdropFilter: 'blur(6px)' }}>
+                                      <span className="relative flex h-2 w-2">
+                                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-80" />
+                                        <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500" />
+                                      </span>
+                                      🔥 Live Sale
+                                    </span>
+                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-black text-amber-900 uppercase tracking-wide" style={{ background: 'rgba(255,255,255,0.8)' }}>⭐ Top Pick</span>
+                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold text-orange-900 uppercase tracking-wide" style={{ background: 'rgba(255,255,255,0.65)' }}>🔥 Trending</span>
+                                  </div>
+                                  <h3 className="text-base font-black text-white leading-tight drop-shadow-[0_1px_3px_rgba(0,0,0,0.25)] truncate">Chatori Chai & Kulcha Corner</h3>
+                                  <div className="flex flex-wrap gap-3 mt-1.5">
+                                    <span className="text-[11px] font-bold text-white/90">🚚 Only <strong className="text-yellow-200">₹20</strong> Delivery</span>
+                                    <span className="text-[11px] font-bold text-white/90">🥤 Free Coke on orders above <strong className="text-yellow-200">₹179</strong></span>
+                                  </div>
+                                </div>
+
+                                {/* CTA Arrow */}
+                                <div className="shrink-0 w-9 h-9 rounded-xl flex items-center justify-center text-amber-900 font-black shadow-md group-hover:scale-110 transition-transform" style={{ background: 'rgba(255,255,255,0.9)' }}>
+                                  →
+                                </div>
+                              </div>
+                            </motion.div>
+
                             {shops.map((shop) => (
-                                <ShopCard
-                                    key={shop.id}
-                                    shop={shop}
-                                    isExpanded={expandedShop === shop.id}
-                                    onToggle={handleUpdateActiveShop}
-                                    expandedMenuCat={expandedMenuCat}
-                                    onToggleCategory={handleUpdateMenuCat}
-                                    onAddItem={handleAddToCartItem}
-                                />
+                                <div key={shop.id} id={`${shop.id}-card`}>
+                                    <ShopCard
+                                        shop={shop}
+                                        isExpanded={expandedShop === shop.id}
+                                        onToggle={handleUpdateActiveShop}
+                                        expandedMenuCat={expandedMenuCat}
+                                        onToggleCategory={handleUpdateMenuCat}
+                                        onAddItem={handleAddToCartItem}
+                                    />
+                                </div>
                             ))}
+
                         </motion.div>
                     ) : (
                         <CustomOrderForm

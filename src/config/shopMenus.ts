@@ -21,6 +21,69 @@ export interface Shop {
 
 export const shops: Shop[] = [
     // ═══════════════════════════════════════════════════════════════════════════════
+    // 0. CHATORI CHAI & KULCHA CORNER  ⭐ FEATURED LIVE SALE SHOP
+    // ═══════════════════════════════════════════════════════════════════════════════
+    {
+        id: "chatori-chai-kulcha",
+        name: "Chatori Chai & Kulcha Corner",
+        tag: "Chai \u2022 Kulcha \u2022 Snacks \u2022 Only \u20B920 Delivery",
+        veg: true,
+        categories: [
+            {
+                category: "Signature Chai",
+                items: [
+                    { name: "Masala Chai", price: 20 },
+                    { name: "Adrak Chai", price: 20 },
+                    { name: "Tandoori Chai", price: 35 },
+                    { name: "Kashmiri Kahwa", price: 40 },
+                    { name: "Rose Chai", price: 30 },
+                    { name: "Elaichi Chai", price: 25 },
+                    { name: "Lemongrass Chai", price: 30 },
+                    { name: "Sulaimani Chai", price: 30 },
+                ],
+            },
+            {
+                category: "Kulcha & Chole",
+                items: [
+                    { name: "Amritsari Kulcha (1 Pc)", price: 50 },
+                    { name: "Amritsari Kulcha (2 Pcs)", price: 90 },
+                    { name: "Chana Kulcha", price: 70 },
+                    { name: "Paneer Kulcha", price: 80 },
+                    { name: "Aloo Kulcha", price: 60 },
+                    { name: "Mix Kulcha Platter (2 Pcs)", price: 110 },
+                    { name: "Chole Bhature", price: 80 },
+                    { name: "Chole with Puri (3 Pcs)", price: 70 },
+                ],
+            },
+            {
+                category: "Snacks & Chaat",
+                items: [
+                    { name: "Samosa (1 Pc)", price: 20 },
+                    { name: "Samosa (2 Pcs)", price: 35 },
+                    { name: "Aloo Tikki Chaat", price: 50 },
+                    { name: "Dahi Bhalla", price: 60 },
+                    { name: "Papdi Chaat", price: 50 },
+                    { name: "Pav Bhaji", price: 80 },
+                    { name: "Bread Pakora (2 Pcs)", price: 40 },
+                    { name: "Veg Pakora (6 Pcs)", price: 50 },
+                    { name: "Paneer Pakora (4 Pcs)", price: 60 },
+                ],
+            },
+            {
+                category: "Cold Drinks & Combos",
+                items: [
+                    { name: "Coca-Cola (250ml)", price: 20 },
+                    { name: "Thumbs Up (250ml)", price: 20 },
+                    { name: "Sprite (250ml)", price: 20 },
+                    { name: "Chai + Kulcha Combo", price: 75 },
+                    { name: "Chai + Samosa (2 Pcs) Combo", price: 50 },
+                    { name: "Chai + Pakora Combo", price: 60 },
+                ],
+            },
+        ],
+    },
+
+    // ═══════════════════════════════════════════════════════════════════════════════
     // 1. INSTA FOOD
     // ═══════════════════════════════════════════════════════════════════════════════
     {

@@ -170,7 +170,7 @@ export default function VendingMachine() {
             Live Inventory
           </motion.div>
           <h2 className="text-3xl sm:text-4xl font-black text-slate-900 mb-2">Hostel Smart Vending Machine</h2>
-          <p className="text-slate-500 font-medium max-w-md">Real snacks, 4-row layout. Fast delivery calculated by floor.</p>
+
         </div>
 
         {/* ─── Vending Machine UI ─── */}
