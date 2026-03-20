@@ -2,6 +2,7 @@ import { useEffect, useState, useRef, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronRight, ChevronLeft, Loader2, ShoppingBag, ShoppingCart, X, MapPin, Phone, Home as HomeIcon, Zap, UtensilsCrossed, Package, Rocket, ShieldCheck, BadgePercent, Users, Plus, Shield, Ban, Headset, ExternalLink, Search, Download, ArrowRight, Store } from "lucide-react";
+import TargetedPromoModal from "@/components/TargetedPromoModal";
 import ProductCard from "@/components/ProductCard";
 import VendingMachine from "@/components/VendingMachine";
 import { supabase } from "@/lib/supabase";
@@ -395,8 +396,11 @@ export default function Home() {
   const isNativeApp = Capacitor.isNativePlatform();
   const [loading, setLoading] = useState(true);
 
+  const isTargetedUser = ["vedhantofficial@gmail.com", "iamsid074@gmail.com"].includes(user?.email || "");
+
   return (
     <div className="min-h-screen bg-slate-50 pt-[5.5rem] pb-32 relative">
+      <TargetedPromoModal />
       <div className="max-w-[1600px] mx-auto relative px-4">
       </div>
 
@@ -509,7 +513,7 @@ export default function Home() {
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-90" />
                             <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500" />
                           </span>
-                          LIVE SALE
+                          {isTargetedUser ? "EXCLUSIVE OFFER" : "LIVE SALE"}
                         </div>
                         <div
                           className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-amber-900 font-black text-[11px] uppercase tracking-wider"
@@ -544,7 +548,7 @@ export default function Home() {
                           style={{ background: 'rgba(0,0,0,0.25)', backdropFilter: 'blur(6px)', border: '1px solid rgba(255,255,255,0.2)' }}
                         >
                           <span className="text-lg">🥤</span>
-                          <span>Free <strong className="text-yellow-200">Coca-Cola</strong> on orders above <strong className="text-yellow-200">₹179</strong></span>
+                          <span>Free <strong className="text-yellow-200">Coca-Cola</strong> on orders above <strong className="text-yellow-200">₹{isTargetedUser ? "150" : "179"}</strong></span>
                         </div>
                       </div>
 

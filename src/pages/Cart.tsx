@@ -78,7 +78,9 @@ export default function Cart() {
     const chatoriItems = items.filter(item => item.id.startsWith("chatori-chai-kulcha"));
     const hasChatori = chatoriItems.length > 0;
     const chatoriSubtotal = chatoriItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
-    const isEligibleForFreeCoke = chatoriSubtotal > 179;
+    const isTargetedUser = ["vedhantofficial@gmail.com", "iamsid074@gmail.com"].includes(user?.email || "");
+    const isTargetedFreeCoke = isTargetedUser && promoApplied && promoCode.trim().toUpperCase() === "CHATORI150" && chatoriSubtotal >= 150;
+    const isEligibleForFreeCoke = chatoriSubtotal > 179 || isTargetedFreeCoke;
 
     const calculateVendingDelivery = (f: number) => {
         if (f <= 3) return 8;
@@ -116,9 +118,13 @@ export default function Cart() {
             toast({ title: "Vending Order", description: "Vending machine items already use a reduced floor-based delivery fee!" });
             return;
         }
-        if (validatePromo(promoCode)) {
+        const code = promoCode.trim().toUpperCase();
+        if (validatePromo(code)) {
             setPromoApplied(true);
             toast({ title: "Promo Applied! 🏆", description: `${PROMO_CODE} applied — Delivery is ₹29!` });
+        } else if (isTargetedUser && code === "CHATORI150") {
+            setPromoApplied(true);
+            toast({ title: "Exclusive Promo Applied! 🎉", description: "CHATORI150 applied — Free Coke unlocked on orders above ₹150!" });
         } else {
             setPromoApplied(false);
             toast({ title: "Invalid promo code", description: "Please enter a valid promo code.", variant: "destructive" });
