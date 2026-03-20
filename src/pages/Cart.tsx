@@ -74,6 +74,12 @@ export default function Cart() {
     const vendingCartItems = items.filter(item => item.category === "Vending Machine");
     const hasVending = vendingCartItems.length > 0;
 
+    // Chatori Chai logic
+    const chatoriItems = items.filter(item => item.id.startsWith("chatori-chai-kulcha"));
+    const hasChatori = chatoriItems.length > 0;
+    const chatoriSubtotal = chatoriItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+    const isEligibleForFreeCoke = chatoriSubtotal > 179;
+
     const calculateVendingDelivery = (f: number) => {
         if (f <= 3) return 8;
         if (f <= 6) return 11;
@@ -83,16 +89,19 @@ export default function Cart() {
 
     const originalDeliveryFee = 29;
     const specialDeliveryFee = 21;
-    
+    const chatoriDeliveryFee = 20;
+
     // Delivery logic: 
     // 1. Vending machine items use a floor-based scale.
-    // 2. Otherwise, if Floor is 2 or 3, delivery is ₹21.
-    // 3. Else standard ₹29.
+    // 2. Chatori Chai items use a flat ₹20 fee.
+    // 3. Otherwise, if Floor is 2 or 3, delivery is ₹21.
+    // 4. Else standard ₹29.
     const baseDelivery = hasVending 
         ? calculateVendingDelivery(floor) 
-        : ([2, 3].includes(floor) ? specialDeliveryFee : originalDeliveryFee);
+        : (hasChatori ? chatoriDeliveryFee : ([2, 3].includes(floor) ? specialDeliveryFee : originalDeliveryFee));
     
-    const deliveryFee = hasVending ? baseDelivery : (promoApplied ? getDeliveryFee(true) : baseDelivery);
+    // Promo override still applies to non-vending, but if it's already 20 (chatori), we keep 20.
+    const deliveryFee = hasVending ? baseDelivery : (promoApplied && !hasChatori ? getDeliveryFee(true) : baseDelivery);
     const orderTotal = totalPrice + deliveryFee;
 
     const phoneClean = phone.replace(/\D/g, "");
@@ -117,7 +126,8 @@ export default function Cart() {
     };
 
     const createOrder = async (paymentId?: string) => {
-        const itemsSummary = items.map(i => `${i.quantity}x ${i.title} [IMG:${i.image}] (${i.category}) (₹${i.price})`).join("\n");
+        const freeCokeSummary = isEligibleForFreeCoke ? "\n1x Free Coca-Cola [PROMO] (₹0)" : "";
+        const itemsSummary = items.map(i => `${i.quantity}x ${i.title} [IMG:${i.image}] (${i.category}) (₹${i.price})`).join("\n") + freeCokeSummary;
         const { error } = await supabase.from("orders").insert({
             product_id: null,
             buyer_id: user!.id,
@@ -274,6 +284,28 @@ export default function Cart() {
                                         </div>
                                     </motion.div>
                                 ))}
+                                {isEligibleForFreeCoke && (
+                                    <motion.div layout initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }}
+                                        className="rounded-3xl p-4 bg-orange-50 border border-orange-100 shadow-[0_4px_20px_rgba(0,0,0,0.03)] flex gap-3 sm:gap-4 items-center">
+                                        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white border border-orange-100 flex items-center justify-center flex-shrink-0 text-3xl shadow-sm">
+                                            🥤
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <div className="flex items-center gap-1.5 flex-wrap">
+                                                <p className="text-sm font-bold text-orange-900 truncate">Coca-Cola (250ml)</p>
+                                                <span className="px-1.5 py-0.5 rounded-md bg-orange-200 text-orange-800 text-[8px] font-black uppercase tracking-tighter">Free Bonus</span>
+                                            </div>
+                                            <div className="flex items-center gap-2 mt-0.5">
+                                                <p className="text-slate-400 font-bold text-xs line-through">₹20</p>
+                                                <p className="text-orange-600 font-bold text-sm">₹0</p>
+                                            </div>
+                                            <p className="text-[10px] text-orange-600/80 font-medium italic mt-0.5">Added automatically with your Chatori Chai offer!</p>
+                                        </div>
+                                        <div className="flex items-center flex-shrink-0 pr-2">
+                                            <span className="w-[24px] sm:w-[30px] text-center text-sm sm:text-base font-bold text-orange-900">1</span>
+                                        </div>
+                                    </motion.div>
+                                )}
                             </AnimatePresence>
                         </div>
 
@@ -319,16 +351,23 @@ export default function Cart() {
                                 <span className="flex items-center gap-1.5">
                                     <Clock className="w-4 h-4 text-emerald-500" /> {hasVending ? `Floor ${floor} Delivery` : 'Delivery Fee'}
                                 </span>
-                                    {((promoApplied && !hasVending) || (!hasVending && [2, 3].includes(floor))) && (
+                                    {(((promoApplied || hasChatori) && !hasVending) || (!hasVending && [2, 3].includes(floor))) && (
                                         <span className="text-slate-400 line-through text-xs">₹{originalDeliveryFee}</span>
                                     )}
-                                    <span className={(promoApplied || hasVending || (!hasVending && [2, 3].includes(floor))) ? "text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded" : "font-medium text-slate-900"}>+ ₹{deliveryFee}</span>
+                                    <span className={(promoApplied || hasChatori || hasVending || (!hasVending && [2, 3].includes(floor))) ? "text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded" : "font-medium text-slate-900"}>+ ₹{deliveryFee}</span>
                                 </div>
 
-                            {!hasVending && [2, 3].includes(floor) && !promoApplied && (
+                            {!hasVending && [2, 3].includes(floor) && !promoApplied && !hasChatori && (
                                 <div className="mb-4 bg-emerald-50 rounded-2xl p-4 flex items-center gap-2 text-emerald-700 text-xs sm:text-sm font-medium">
                                     <Zap className="w-4 h-4 flex-shrink-0 text-amber-500" />
                                     <span>Floor {floor} Special: Delivery charge reduced to ₹{specialDeliveryFee}!</span>
+                                </div>
+                            )}
+
+                            {hasChatori && !hasVending && (
+                                <div className="mb-4 bg-orange-50 border border-orange-100 rounded-2xl p-4 flex items-center gap-2 text-orange-800 text-xs sm:text-sm font-medium">
+                                    <Zap className="w-4 h-4 flex-shrink-0 text-orange-500" />
+                                    <span>Live Sale Offer: Special ₹{chatoriDeliveryFee} delivery fee applied!</span>
                                 </div>
                             )}
 
