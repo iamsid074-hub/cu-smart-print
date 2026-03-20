@@ -34,6 +34,7 @@ export default function GroceryProductCard({ item, idx, bgFrom, bgTo, btnColor, 
                         loading="lazy"
                         decoding="async"
                         className="h-[96px] w-auto object-contain drop-shadow-[0_8px_16px_rgba(0,0,0,0.12)]"
+                        style={{ mixBlendMode: 'multiply' }}
                     />
                     {/* subtle inner highlight */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/[0.03] to-white/30 pointer-events-none" />
