@@ -461,129 +461,70 @@ export default function Home() {
 
 
         <div className="w-full">
-          {/* ─── 🔥 LIVE SALE BANNER ─── */}
+          {/* ─── CHATORI CHAI FEATURED SHOP BANNER ─── */}
           <motion.section
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
             className="mb-8 sm:mb-12"
           >
             <Link to="/food">
-              <div
-                className="relative rounded-[2rem] overflow-hidden cursor-pointer group"
-                style={{ boxShadow: '0 20px 60px -10px rgba(234,88,12,0.4), 0 0 0 1px rgba(251,146,60,0.3)' }}
-              >
-                {/* Warm gradient background */}
-                <div
-                  className="absolute inset-0"
-                  style={{ background: 'linear-gradient(135deg, #f97316 0%, #fb923c 25%, #fbbf24 55%, #f59e0b 75%, #d97706 100%)' }}
-                />
+              <div className="relative rounded-3xl overflow-hidden cursor-pointer group" style={{ background: 'linear-gradient(120deg, #ea580c 0%, #f97316 50%, #fb923c 100%)', boxShadow: '0 8px 32px rgba(234,88,12,0.25)' }}>
+                
+                {/* Subtle noise/grain texture feel */}
+                <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'n\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23n)\'/%3E%3C/svg%3E")', backgroundSize: 'cover' }} />
 
-                {/* Food texture overlay - subtle dots */}
-                <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle, rgba(0,0,0,0.3) 1px, transparent 1px)', backgroundSize: '18px 18px' }} />
+                {/* Single soft highlight orb — top right */}
+                <div className="absolute -top-20 -right-20 w-64 h-64 rounded-full blur-[80px] pointer-events-none" style={{ background: 'rgba(255,200,100,0.25)' }} />
 
-                {/* Animated glowing orbs */}
-                <div className="absolute -top-16 -right-16 w-72 h-72 rounded-full blur-[80px] pointer-events-none" style={{ background: 'rgba(255,255,255,0.18)' }} />
-                <div className="absolute -bottom-12 -left-12 w-56 h-56 rounded-full blur-[60px] pointer-events-none" style={{ background: 'rgba(180,60,0,0.25)' }} />
+                <div className="relative z-10 p-5 sm:p-7">
+                  <div className="flex items-center justify-between gap-4">
 
-                {/* Steam decorations */}
-                <div className="absolute top-4 right-[28%] opacity-20 pointer-events-none select-none text-5xl" style={{ filter: 'blur(1px)', animation: 'steam-float 3s ease-in-out infinite' }}>
-                  ☕
-                </div>
-                <div className="absolute bottom-8 right-[14%] opacity-15 pointer-events-none select-none text-4xl" style={{ filter: 'blur(1px)', animation: 'steam-float 3.5s ease-in-out infinite 0.8s' }}>
-                  🫓
-                </div>
-                <div className="absolute top-6 right-[10%] opacity-20 pointer-events-none select-none text-3xl" style={{ animation: 'steam-float 4s ease-in-out infinite 0.3s' }}>
-                  🌶️
-                </div>
+                    {/* LEFT: Shop info */}
+                    <div className="flex-1 min-w-0">
 
-                <div className="relative z-10 p-6 sm:p-8 lg:p-10">
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
-
-                    {/* Left — Main Content */}
-                    <div className="flex-1">
-                      {/* LIVE Badge */}
-                      <div className="flex items-center gap-3 mb-4">
-                        <div
-                          className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-white font-black text-[11px] uppercase tracking-widest"
-                          style={{ background: 'rgba(0,0,0,0.3)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.3)' }}
-                        >
-                          <span className="relative flex h-2.5 w-2.5">
-                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-90" />
-                            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500" />
-                          </span>
-                          {isTargetedUser ? "EXCLUSIVE OFFER" : "LIVE SALE"}
-                        </div>
-                        <div
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-amber-900 font-black text-[11px] uppercase tracking-wider"
-                          style={{ background: 'rgba(255,255,255,0.8)', backdropFilter: 'blur(8px)' }}
-                        >
-                          Top Pick
-                        </div>
-                        <div
-                          className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-orange-900 font-bold text-[11px] uppercase tracking-wider"
-                          style={{ background: 'rgba(255,255,255,0.65)', backdropFilter: 'blur(8px)' }}
-                        >
-                          Trending
-                        </div>
+                      {/* Single subtle live badge */}
+                      <div className="flex items-center gap-2 mb-3">
+                        <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-black text-white uppercase tracking-widest" style={{ background: 'rgba(0,0,0,0.22)' }}>
+                          <span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse inline-block" />
+                          {isTargetedUser ? "Exclusive Offer" : "Live Sale"}
+                        </span>
                       </div>
 
-                      {/* Main Heading */}
-                      <h2 className="text-2xl sm:text-4xl lg:text-5xl font-black text-white leading-tight mb-3 tracking-tight drop-shadow-[0_2px_8px_rgba(0,0,0,0.3)]" style={fontH}>
+                      {/* Shop name */}
+                      <h2 className="text-xl sm:text-3xl font-black text-white leading-tight mb-4 tracking-tight" style={fontH}>
                         Chatori Chai &<br className="hidden sm:block" /> Kulcha Corner
                       </h2>
 
-                      {/* Offer Details */}
-                      <div className="flex flex-col gap-2 mb-5">
-                        <div
-                          className="inline-flex w-fit items-center gap-2 px-4 py-2 rounded-2xl text-sm font-bold text-white"
-                          style={{ background: 'rgba(0,0,0,0.25)', backdropFilter: 'blur(6px)', border: '1px solid rgba(255,255,255,0.2)' }}
-                        >
-                          <span className="text-lg">🚚</span>
-                          <span>Only <strong className="text-yellow-200 text-base">₹22</strong> Delivery</span>
-                        </div>
-                        <div
-                          className="inline-flex w-fit items-center gap-2 px-4 py-2 rounded-2xl text-sm font-bold text-white"
-                          style={{ background: 'rgba(0,0,0,0.25)', backdropFilter: 'blur(6px)', border: '1px solid rgba(255,255,255,0.2)' }}
-                        >
-                          <span className="text-lg">🥤</span>
-                          <span>Free <strong className="text-yellow-200">Coca-Cola</strong> on orders above <strong className="text-yellow-200">₹{isTargetedUser ? "150" : "179"}</strong></span>
-                        </div>
+                      {/* Two clean info lines */}
+                      <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 mb-5">
+                        <span className="flex items-center gap-1.5 text-[13px] font-semibold text-white/90">
+                          <span className="text-white font-black">₹22</span> delivery
+                        </span>
+                        <span className="hidden sm:block text-white/40 text-xs self-center">•</span>
+                        <span className="flex items-center gap-1.5 text-[13px] font-semibold text-white/90">
+                          Free Coke above <span className="text-white font-black">₹{isTargetedUser ? "150" : "179"}</span>
+                        </span>
                       </div>
 
-                      {/* CTA Button */}
-                      <motion.div
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.97 }}
-                        className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl font-black text-sm sm:text-base text-amber-900 shadow-2xl relative overflow-hidden"
-                        style={{
-                          background: 'linear-gradient(135deg, #ffffff, #fff7ed)',
-                          boxShadow: '0 0 20px rgba(255,255,255,0.5), 0 8px 30px rgba(0,0,0,0.2)',
-                          border: '2px solid rgba(255,255,255,0.8)'
-                        }}
-                      >
-                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 pointer-events-none" />
-                        <span className="relative" style={fontH}>Order Now →</span>
-                      </motion.div>
+                      {/* CTA */}
+                      <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-black text-[13px] text-orange-700 bg-white group-hover:bg-orange-50 transition-colors shadow-lg shadow-black/10">
+                        Order Now
+                        <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+                      </div>
                     </div>
 
-                    {/* Right — Visual Accent */}
-                    <div className="hidden sm:flex flex-col items-center shrink-0 gap-3">
-                      <motion.div
-                        animate={{ y: [0, -8, 0], rotate: [-2, 2, -2] }}
-                        transition={{ repeat: Infinity, duration: 3.5, ease: "easeInOut" }}
-                        className="text-[90px] drop-shadow-2xl select-none leading-none"
-                      >
-                        ☕
-                      </motion.div>
-                      <motion.div
-                        animate={{ y: [0, -5, 0], rotate: [2, -2, 2] }}
-                        transition={{ repeat: Infinity, duration: 4, ease: "easeInOut", delay: 0.5 }}
-                        className="text-[60px] drop-shadow-2xl select-none leading-none -mt-2"
-                      >
-                        🫓
-                      </motion.div>
+                    {/* RIGHT: Rating / info card */}
+                    <div className="hidden sm:flex flex-col items-end gap-2 shrink-0">
+                      <div className="flex flex-col items-center p-4 rounded-2xl gap-1" style={{ background: 'rgba(0,0,0,0.15)', backdropFilter: 'blur(12px)' }}>
+                        <span className="text-2xl font-black text-white">4.8</span>
+                        <div className="flex gap-0.5 text-yellow-300 text-xs">★★★★★</div>
+                        <span className="text-white/60 text-[10px] font-semibold mt-0.5">Top Rated</span>
+                      </div>
+                      <div className="px-3 py-1.5 rounded-xl text-[10px] font-black text-white/80 uppercase tracking-widest" style={{ background: 'rgba(0,0,0,0.15)' }}>
+                        25–35 min
+                      </div>
                     </div>
 
                   </div>
@@ -592,12 +533,6 @@ export default function Home() {
             </Link>
           </motion.section>
 
-          <style>{`
-            @keyframes steam-float {
-              0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.15; }
-              50% { transform: translateY(-12px) rotate(5deg); opacity: 0.25; }
-            }
-          `}</style>
 
           {/* ─── Digital Vending Machine Section ─── */}
           <VendingMachine />
