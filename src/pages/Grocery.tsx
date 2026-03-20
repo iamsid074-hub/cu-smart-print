@@ -68,8 +68,9 @@ export default function Grocery() {
                                     key={item.id}
                                     item={item}
                                     idx={idx}
-                                    accentColor="bg-indigo-500"
-                                    glowColor="rgba(99,102,241,0.35)"
+                                    bgFrom="#F0F9FF"
+                                    bgTo="#E0F2FE"
+                                    btnColor="#6366F1"
                                     onAdd={handleAddToCart}
                                 />
                             ))}
@@ -90,8 +91,9 @@ export default function Grocery() {
                                     key={item.id}
                                     item={item}
                                     idx={idx}
-                                    accentColor="bg-blue-500"
-                                    glowColor="rgba(59,130,246,0.35)"
+                                    bgFrom="#EFF6FF"
+                                    bgTo="#DBEAFE"
+                                    btnColor="#3B82F6"
                                     onAdd={handleAddToCart}
                                 />
                             ))}
@@ -112,8 +114,9 @@ export default function Grocery() {
                                     key={item.id}
                                     item={item}
                                     idx={idx}
-                                    accentColor="bg-orange-500"
-                                    glowColor="rgba(249,115,22,0.35)"
+                                    bgFrom="#FFF7ED"
+                                    bgTo="#FFEDD5"
+                                    btnColor="#F97316"
                                     onAdd={handleAddToCart}
                                 />
                             ))}
