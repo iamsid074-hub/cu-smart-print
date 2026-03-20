@@ -470,13 +470,13 @@ export default function Home() {
             className="mb-8 sm:mb-12"
           >
             <Link to="/food">
-              <div className="relative rounded-3xl overflow-hidden cursor-pointer group" style={{ background: 'linear-gradient(120deg, #ea580c 0%, #f97316 50%, #fb923c 100%)', boxShadow: '0 8px 32px rgba(234,88,12,0.25)' }}>
+              <div className="relative rounded-3xl overflow-hidden cursor-pointer group" style={{ background: 'linear-gradient(120deg, #1a1230 0%, #231942 45%, #5E548E 100%)', boxShadow: '0 8px 32px rgba(35,25,66,0.35)' }}>
                 
                 {/* Subtle noise/grain texture feel */}
                 <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'n\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23n)\'/%3E%3C/svg%3E")', backgroundSize: 'cover' }} />
 
                 {/* Single soft highlight orb — top right */}
-                <div className="absolute -top-20 -right-20 w-64 h-64 rounded-full blur-[80px] pointer-events-none" style={{ background: 'rgba(255,200,100,0.25)' }} />
+                <div className="absolute -top-20 -right-20 w-64 h-64 rounded-full blur-[80px] pointer-events-none" style={{ background: 'rgba(140,121,165,0.3)' }} />
 
                 <div className="relative z-10 p-5 sm:p-7">
                   <div className="flex items-center justify-between gap-4">
@@ -486,8 +486,8 @@ export default function Home() {
 
                       {/* Single subtle live badge */}
                       <div className="flex items-center gap-2 mb-3">
-                        <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-black text-white uppercase tracking-widest" style={{ background: 'rgba(0,0,0,0.22)' }}>
-                          <span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse inline-block" />
+                        <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-black text-white/90 uppercase tracking-widest" style={{ background: 'rgba(255,255,255,0.12)' }}>
+                          <span className="w-1.5 h-1.5 rounded-full bg-purple-300 animate-pulse inline-block" />
                           {isTargetedUser ? "Exclusive Offer" : "Live Sale"}
                         </span>
                       </div>
@@ -499,17 +499,17 @@ export default function Home() {
 
                       {/* Two clean info lines */}
                       <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 mb-5">
-                        <span className="flex items-center gap-1.5 text-[13px] font-semibold text-white/90">
+                        <span className="flex items-center gap-1.5 text-[13px] font-semibold text-white/80">
                           <span className="text-white font-black">₹22</span> delivery
                         </span>
-                        <span className="hidden sm:block text-white/40 text-xs self-center">•</span>
-                        <span className="flex items-center gap-1.5 text-[13px] font-semibold text-white/90">
+                        <span className="hidden sm:block text-white/30 text-xs self-center">•</span>
+                        <span className="flex items-center gap-1.5 text-[13px] font-semibold text-white/80">
                           Free Coke above <span className="text-white font-black">₹{isTargetedUser ? "150" : "179"}</span>
                         </span>
                       </div>
 
                       {/* CTA */}
-                      <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-black text-[13px] text-orange-700 bg-white group-hover:bg-orange-50 transition-colors shadow-lg shadow-black/10">
+                      <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-black text-[13px] text-brand bg-white group-hover:bg-brand-50 transition-colors shadow-lg shadow-black/20">
                         Order Now
                         <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
                       </div>
