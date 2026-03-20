@@ -537,7 +537,7 @@ export default function Home() {
                           style={{ background: 'rgba(0,0,0,0.25)', backdropFilter: 'blur(6px)', border: '1px solid rgba(255,255,255,0.2)' }}
                         >
                           <span className="text-lg">🚚</span>
-                          <span>Only <strong className="text-yellow-200 text-base">₹20</strong> Delivery</span>
+                          <span>Only <strong className="text-yellow-200 text-base">₹16</strong> Delivery</span>
                         </div>
                         <div
                           className="inline-flex w-fit items-center gap-2 px-4 py-2 rounded-2xl text-sm font-bold text-white"

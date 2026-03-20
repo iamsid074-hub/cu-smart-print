@@ -89,11 +89,11 @@ export default function Cart() {
 
     const originalDeliveryFee = 29;
     const specialDeliveryFee = 21;
-    const chatoriDeliveryFee = 20;
+    const chatoriDeliveryFee = 16;
 
     // Delivery logic: 
     // 1. Vending machine items use a floor-based scale.
-    // 2. Chatori Chai items use a flat ₹20 fee.
+    // 2. Chatori Chai items use a flat ₹16 fee.
     // 3. Otherwise, if Floor is 2 or 3, delivery is ₹21.
     // 4. Else standard ₹29.
     const baseDelivery = hasVending 
