@@ -6,6 +6,7 @@ import { groceryItems, type GroceryItem } from "@/config/groceryItems";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
+import GroceryProductCard from "@/components/GroceryProductCard";
 
 const fontH: React.CSSProperties = { fontFamily: "'Space Grotesk', sans-serif" };
 
@@ -54,117 +55,67 @@ export default function Grocery() {
                     />
                 </div>
 
-                {/* Quick Items Area (Milks mostly) */}
+                {/* Milk / Quick Essentials */}
                 {!searchQuery && (
-                    <section className="mb-10">
-                        <div className="flex items-center gap-2 mb-6">
+                    <section className="mb-4">
+                        <div className="flex items-center gap-2 mb-8">
                             <div className="w-1.5 h-6 bg-brand rounded-full" />
-                            <h2 className="text-lg font-black text-slate-900 uppercase tracking-tight" style={fontH}>Quick Essentials</h2>
+                            <h2 className="text-lg font-black text-slate-900 uppercase tracking-tight" style={fontH}>Fresh Milk</h2>
                         </div>
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                            {groceryItems.slice(0, 3).map((item) => (
-                                <motion.div
+                        <div className="flex overflow-x-auto gap-3 -mx-4 px-4 pb-10 hide-scroll" style={{ overflowY: 'visible' }}>
+                            {groceryItems.slice(0, 3).map((item, idx) => (
+                                <GroceryProductCard
                                     key={item.id}
-                                    initial={{ opacity: 0, y: 10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    className="p-4 rounded-3xl bg-white border border-slate-100 shadow-sm flex items-center gap-4 group hover:border-brand/30 transition-all"
-                                >
-                                    <div className="w-20 h-20 rounded-2xl overflow-hidden bg-slate-50 flex-shrink-0">
-                                        <img src={item.image} alt={item.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                                    </div>
-                                    <div className="flex-1 min-w-0">
-                                        <p className="text-sm font-bold text-slate-800 line-clamp-1">{item.name}</p>
-                                        <p className="text-[10px] font-bold text-slate-400 mt-0.5">{item.quantity}</p>
-                                        <div className="flex items-center justify-between mt-2">
-                                            <span className="text-base font-black text-brand">{"\u20B9"}{item.price}</span>
-                                            <button 
-                                                onClick={() => handleAddToCart(item)}
-                                                className="w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center hover:bg-black active:scale-95 transition-all"
-                                            >
-                                                <Plus className="w-4 h-4" />
-                                            </button>
-                                        </div>
-                                    </div>
-                                </motion.div>
+                                    item={item}
+                                    idx={idx}
+                                    accentColor="bg-indigo-500"
+                                    glowColor="rgba(99,102,241,0.35)"
+                                    onAdd={handleAddToCart}
+                                />
                             ))}
                         </div>
                     </section>
                 )}
 
-                {/* Cold Drinks Section */}
+                {/* Cold Drinks */}
                 {!searchQuery && (
-                    <section className="mb-10">
-                        <div className="flex items-center gap-2 mb-6">
+                    <section className="mb-4">
+                        <div className="flex items-center gap-2 mb-8">
                             <div className="w-1.5 h-6 bg-blue-500 rounded-full" />
                             <h2 className="text-lg font-black text-slate-900 uppercase tracking-tight" style={fontH}>Cold Drinks</h2>
                         </div>
-                        <div className="flex overflow-x-auto pb-6 -mx-4 px-4 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-4 gap-4 snap-x snap-mandatory hide-scroll">
+                        <div className="flex overflow-x-auto gap-3 -mx-4 px-4 pb-10 hide-scroll" style={{ overflowY: 'visible' }}>
                             {groceryItems.filter(item => item.category === 'Cold Drinks').map((item, idx) => (
-                                <motion.div
+                                <GroceryProductCard
                                     key={item.id}
-                                    initial={{ opacity: 0, scale: 0.95 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    transition={{ delay: idx * 0.05 }}
-                                    className="min-w-[170px] sm:min-w-0 bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-md transition-all flex flex-col snap-start"
-                                >
-                                    <div className="relative h-28 sm:h-32 bg-slate-50 overflow-hidden p-4 flex items-center justify-center">
-                                        <div className="absolute inset-0 bg-blue-500/5" />
-                                        <img src={item.image} alt={item.name} className="h-full w-auto object-contain mix-blend-multiply drop-shadow-md z-10 hover:scale-110 transition-transform duration-500" />
-                                    </div>
-                                    <div className="p-4 flex flex-col flex-1">
-                                        <h3 className="text-sm font-bold text-slate-800 leading-tight mb-1">{item.name}</h3>
-                                        <p className="text-[10px] font-bold text-slate-400 mb-3">{item.quantity}</p>
-                                        <div className="mt-auto flex items-center justify-between pt-2 border-t border-slate-50">
-                                            <span className="text-lg font-black text-slate-900">₹{item.price}</span>
-                                            <button
-                                                onClick={() => handleAddToCart(item)}
-                                                className="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center shadow-md shadow-blue-500/20 hover:bg-blue-600 active:scale-95 transition-all"
-                                            >
-                                                <Plus className="w-4 h-4" />
-                                            </button>
-                                        </div>
-                                    </div>
-                                </motion.div>
+                                    item={item}
+                                    idx={idx}
+                                    accentColor="bg-blue-500"
+                                    glowColor="rgba(59,130,246,0.35)"
+                                    onAdd={handleAddToCart}
+                                />
                             ))}
                         </div>
                     </section>
                 )}
 
-                {/* Instant Food Section */}
+                {/* Instant Food / Snacks */}
                 {!searchQuery && (
-                    <section className="mb-10">
-                        <div className="flex items-center gap-2 mb-6">
-                            <div className="w-1.5 h-6 bg-red-500 rounded-full" />
-                            <h2 className="text-lg font-black text-slate-900 uppercase tracking-tight" style={fontH}>Instant Food</h2>
+                    <section className="mb-4">
+                        <div className="flex items-center gap-2 mb-8">
+                            <div className="w-1.5 h-6 bg-orange-500 rounded-full" />
+                            <h2 className="text-lg font-black text-slate-900 uppercase tracking-tight" style={fontH}>Snacks & Instant</h2>
                         </div>
-                        <div className="flex overflow-x-auto pb-6 -mx-4 px-4 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-4 gap-4 snap-x snap-mandatory hide-scroll">
-                            {groceryItems.filter(item => item.category === 'Instant Food').map((item, idx) => (
-                                <motion.div
+                        <div className="flex overflow-x-auto gap-3 -mx-4 px-4 pb-10 hide-scroll" style={{ overflowY: 'visible' }}>
+                            {groceryItems.filter(item => item.category === 'Instant Food' || item.category === 'Snacks' || item.category === 'Bakery Snack').map((item, idx) => (
+                                <GroceryProductCard
                                     key={item.id}
-                                    initial={{ opacity: 0, scale: 0.95 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    transition={{ delay: idx * 0.05 }}
-                                    className="min-w-[170px] sm:min-w-0 bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-md transition-all flex flex-col snap-start"
-                                >
-                                    <div className="relative h-28 sm:h-32 bg-slate-50 overflow-hidden p-4 flex items-center justify-center">
-                                        <div className="absolute inset-0 bg-red-500/5" />
-                                        <img src={item.image} alt={item.name} className="h-full w-auto object-contain mix-blend-multiply drop-shadow-md z-10 hover:scale-110 transition-transform duration-500" />
-                                    </div>
-                                    <div className="p-4 flex flex-col flex-1">
-                                        <h3 className="text-sm font-bold text-slate-800 leading-tight mb-1">{item.name}</h3>
-                                        <p className="text-[10px] font-bold text-slate-400 mb-3">{item.quantity}</p>
-                                        
-                                        <div className="mt-auto flex items-center justify-between pt-2 border-t border-slate-50">
-                                            <span className="text-lg font-black text-slate-900">₹{item.price}</span>
-                                            <button 
-                                                onClick={() => handleAddToCart(item)}
-                                                className="w-8 h-8 rounded-full bg-red-500 text-white flex items-center justify-center shadow-md shadow-red-500/20 hover:bg-red-600 active:scale-95 transition-all"
-                                            >
-                                                <Plus className="w-4 h-4" />
-                                            </button>
-                                        </div>
-                                    </div>
-                                </motion.div>
+                                    item={item}
+                                    idx={idx}
+                                    accentColor="bg-orange-500"
+                                    glowColor="rgba(249,115,22,0.35)"
+                                    onAdd={handleAddToCart}
+                                />
                             ))}
                         </div>
                     </section>
