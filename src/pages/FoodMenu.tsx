@@ -223,7 +223,7 @@ export default function FoodMenu() {
                                   </div>
                                   <h3 className="text-base font-black text-white leading-tight drop-shadow-[0_1px_3px_rgba(0,0,0,0.25)] truncate">Chatori Chai & Kulcha Corner</h3>
                                   <div className="flex flex-wrap gap-3 mt-1.5">
-                                    <span className="text-[11px] font-bold text-white/90">🚚 Only <strong className="text-yellow-200">₹16</strong> Delivery</span>
+                                    <span className="text-[11px] font-bold text-white/90">🚚 Only <strong className="text-yellow-200">₹22</strong> Delivery</span>
                                     <span className="text-[11px] font-bold text-white/90">🥤 Free Coke on orders above <strong className="text-yellow-200">₹{isTargetedUser ? "150" : "179"}</strong></span>
                                   </div>
                                 </div>
