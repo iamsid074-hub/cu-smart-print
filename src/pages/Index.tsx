@@ -1,26 +1,14 @@
 import { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence, useInView, useScroll, useTransform } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useTransform, useInView, type Variants } from "framer-motion";
 import { Link } from "react-router-dom";
-import { ArrowRight, ShieldCheck, Heart, MessageCircle, Star, Zap, Package, Download, Smartphone } from "lucide-react";
-import { Capacitor } from "@capacitor/core";
+import { ArrowRight, ShieldCheck, MessageCircle, Heart } from "lucide-react";
 
-// ─── 3D / Gamified Palette ────────────────────────────────────────────────────
-const C = {
-  bg: "#F8FAFC", // Match Slate-50 used in main UI
-  surface: "#FFFFFF",
-  accent: "#FF4D4D", // Vibrant Red/Orange
-  accentGlow: "rgba(255,77,77,0.4)",
-  brand: "#231942", // Extremely dark purple/black for outlines and depth
-  yellow: "#FFD166",
-  cyan: "#06D6A0",
-  purple: "#8338EC",
-  text: "#231942",
-};
+// ─── Brand Tokens ───────────────────────────────────────────────────────────────
+const BRAND = "#231942";
+const BRAND_MID = "#5E548E";
+const BRAND_LIGHT = "#9F86C0";
 
-const fontH: React.CSSProperties = { fontFamily: "'Space Grotesk', sans-serif" };
-const fontB: React.CSSProperties = { fontFamily: "'Inter', sans-serif" };
-
-// ─── Animated counter ──────────────────────────────────────────────────────────
+// ─── Animated counter ────────────────────────────────────────────────────────────
 function Counter({ target, suffix = "" }: { target: number; suffix?: string }) {
   const [count, setCount] = useState(0);
   const ref = useRef<HTMLSpanElement>(null);
@@ -28,280 +16,404 @@ function Counter({ target, suffix = "" }: { target: number; suffix?: string }) {
   useEffect(() => {
     if (!inView) return;
     let start = 0;
-    const step = Math.ceil(target / 40);
+    const step = Math.ceil(target / 50);
     const timer = setInterval(() => {
       start += step;
       if (start >= target) { setCount(target); clearInterval(timer); } else setCount(start);
-    }, 30);
+    }, 25);
     return () => clearInterval(timer);
   }, [inView, target]);
   return <span ref={ref}>{count}{suffix}</span>;
 }
 
 export default function Index() {
-  const [showIntro, setShowIntro] = useState(true);
-  const containerRef = useRef(null);
-  const { scrollYProgress } = useScroll({ target: containerRef, offset: ["start start", "end end"] });
-  const parallaxY = useTransform(scrollYProgress, [0, 1], [0, -150]);
+  const [curtainOpen, setCurtainOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const heroRef = useRef<HTMLDivElement>(null);
 
-  // Quick intro fade
+  const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
+  const heroTextY = useTransform(scrollYProgress, [0, 1], [0, 80]);
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
+
   useEffect(() => {
-    const t = setTimeout(() => setShowIntro(false), 2800);
+    // Short pause then open the curtains
+    const t = setTimeout(() => setCurtainOpen(true), 400);
     return () => clearTimeout(t);
   }, []);
 
+  const curtainEase = [0.76, 0, 0.24, 1] as [number, number, number, number];
+  const curtainVariants: Variants = {
+    closed: { scaleY: 1 },
+    open: { scaleY: 0, transition: { duration: 1.1, ease: curtainEase } },
+  };
+
+  const features = [
+    { icon: ShieldCheck, title: "Zero Platform Fees", desc: "Keep every rupee from your sales. No commission, no middlemen." },
+    { icon: MessageCircle, title: "Direct Chat", desc: "Talk directly with buyers and sellers. Negotiate, ask questions, close the deal." },
+    { icon: Heart, title: "Campus Only", desc: "Exclusively for CU students. Trusted faces, familiar places." },
+  ];
+
   const stats = [
-    { value: 500, suffix: "+", label: "Students Joined", color: C.yellow },
-    { value: 200, suffix: "+", label: "Items Listed", color: C.cyan },
-    { value: 100, suffix: "%", label: "Campus Only", color: C.purple },
+    { value: 500, suffix: "+", label: "Students" },
+    { value: 200, suffix: "+", label: "Items Listed" },
+    { value: 100, suffix: "%", label: "Campus Only" },
   ];
 
   return (
-    <div ref={containerRef} className="relative overflow-x-hidden min-h-screen" style={{ ...fontB, backgroundColor: C.bg }}>
-      
-      {/* ─── Gamified Splash Screen ─── */}
+    <div ref={containerRef} className="relative overflow-x-hidden bg-[#0D0A14] min-h-screen" style={{ fontFamily: "'Inter', sans-serif" }}>
+
+      {/* ─── CURTAIN ANIMATION ─── */}
       <AnimatePresence>
-        {showIntro && (
-          <motion.div
-            key="intro"
-            initial={{ opacity: 1 }}
-            exit={{ opacity: 0, scale: 1.1, filter: "blur(10px)" }}
-            transition={{ duration: 0.6, ease: "easeInOut" }}
-            className="fixed inset-0 z-[200] flex flex-col items-center justify-center overflow-hidden"
-            style={{ backgroundColor: C.brand }}
-          >
-            {/* Intro Content */}
+        {!curtainOpen && (
+          <div className="fixed inset-0 z-[500] pointer-events-none flex flex-col">
+            {/* Top curtain panel */}
             <motion.div
-              initial={{ scale: 0.5, y: 50, opacity: 0 }}
-              animate={{ scale: 1, y: 0, opacity: 1 }}
-              transition={{ type: "spring", bounce: 0.6, duration: 0.8, delay: 0.2 }}
-              className="relative z-10 flex flex-col items-center"
+              key="curtain-top"
+              className="flex-1 origin-top"
+              style={{ backgroundColor: BRAND }}
+              variants={curtainVariants}
+              initial="closed"
+              animate="open"
+            />
+            {/* Bottom curtain panel */}
+            <motion.div
+              key="curtain-bottom"
+              className="flex-1 origin-bottom"
+              style={{ backgroundColor: BRAND }}
+              variants={curtainVariants}
+              initial="closed"
+              animate="open"
+            />
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Curtain logo center-flash before it opens */}
+      <AnimatePresence>
+        {!curtainOpen && (
+          <motion.div
+            key="curtain-logo"
+            className="fixed inset-0 z-[501] flex flex-col items-center justify-center pointer-events-none"
+            exit={{ opacity: 0, transition: { duration: 0.3 } }}
+          >
+            <motion.img
+              src="/logo.webp"
+              alt="CU Bazzar"
+              className="w-16 h-16 rounded-2xl shadow-2xl"
+              initial={{ scale: 0.7, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.4, ease: "easeOut" }}
+            />
+            <motion.p
+              className="text-white/40 text-xs font-light tracking-[0.3em] uppercase mt-4"
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2, duration: 0.4 }}
             >
-              <div className="w-28 h-28 bg-white rounded-3xl p-2 mb-6 shadow-[0_15px_0_#000] border-4 border-black rotate-[-3deg]">
-                <img src="/logo.webp" alt="Logo" className="w-full h-full rounded-2xl object-cover" />
-              </div>
-              <h1 className="text-5xl md:text-7xl font-black italic tracking-tighter text-white drop-shadow-[0_8px_0_#FF4D4D]" style={fontH}>
-                CU BAZZAR
-              </h1>
-              <div className="mt-8 flex gap-2">
-                {[...Array(3)].map((_, i) => (
-                  <motion.div 
-                    key={i} 
-                    className="w-4 h-4 rounded-full bg-white shadow-[0_4px_0_#000]"
-                    animate={{ y: [0, -15, 0] }}
-                    transition={{ duration: 0.6, repeat: Infinity, delay: i * 0.15 }}
-                  />
-                ))}
-              </div>
-            </motion.div>
+              CU BAZZAR
+            </motion.p>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* ─── Abstract Background Shapes ─── */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-         {/* Massive gradient blobs */}
-         <div className="absolute top-[-10%] right-[-10%] w-[600px] h-[600px] rounded-full bg-gradient-to-br from-yellow-300 to-orange-400 opacity-20 blur-[100px]" />
-         <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full bg-gradient-to-tr from-cyan-300 to-blue-400 opacity-20 blur-[100px]" />
-      </div>
-
-      {/* ─── 1. 3D HERO SECTION ─── */}
-      <section className="relative min-h-screen flex items-center justify-center px-5 sm:px-8 pt-20 pb-12 z-10">
-        <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          
-          {/* Left Text Content */}
-          <motion.div 
-            initial={{ opacity: 0, x: -50 }} 
-            animate={{ opacity: showIntro ? 0 : 1, x: showIntro ? -50 : 0 }} 
-            transition={{ type: "spring", bounce: 0.4, duration: 0.8, delay: 0.2 }}
-            className="order-2 lg:order-1 relative z-20"
-          >
-            {/* Floating Tag */}
-            <motion.div 
-              animate={{ y: [-5, 5, -5] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-2xl border-4 border-black shadow-[4px_4px_0_#000] mb-8 rotate-[-2deg]"
-            >
-              <Zap className="w-5 h-5 text-yellow-500 fill-yellow-500" />
-              <span className="font-bold text-sm uppercase tracking-wider" style={fontH}>The Campus Super-Store</span>
-            </motion.div>
-
-            <h1 className="text-6xl sm:text-7xl lg:text-[5.5rem] font-black leading-[1.05] tracking-tighter mb-6 text-[#231942]" style={fontH}>
-              Trade <span className="text-white drop-shadow-[0_6px_0_#8338EC] [-webkit-text-stroke:2px_#231942]">Epic</span> Gear.
-              <br />
-              <span className="relative inline-block mt-2">
-                On Campus.
-                {/* 3D Underline */}
-                <svg className="absolute -bottom-4 left-0 w-full h-6" viewBox="0 0 300 24" preserveAspectRatio="none">
-                  <motion.path d="M5 15Q150 -5 295 15" fill="none" stroke="#FF4D4D" strokeWidth="8" strokeLinecap="round" 
-                    initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 1, duration: 0.8 }} />
-                  <motion.path d="M5 15Q150 -5 295 15" fill="none" stroke="#231942" strokeWidth="12" strokeLinecap="round" className="-z-10 absolute translate-y-2 opacity-50 blur-[2px]" />
-                </svg>
-              </span>
-            </h1>
-
-            <p className="text-lg sm:text-xl font-medium text-slate-700 mb-10 max-w-lg leading-relaxed">
-              Buy, sell, and discover amazing items from your classmates. Built with thick 3D vibes, zero platform fees, and 100% campus trust.
-            </p>
-
-            <div className="flex flex-wrap items-center gap-4">
-              <Link to="/login">
-                {/* Super 3D Button */}
-                <motion.button 
-                  whileHover={{ scale: 1.05, rotate: -2 }} 
-                  whileTap={{ scale: 0.95, y: 8, boxShadow: "0px 0px 0px #231942" }}
-                  className="group relative flex items-center gap-3 px-8 py-4 bg-[#FFD166] text-[#231942] font-black text-lg rounded-2xl border-4 border-[#231942] shadow-[0_8px_0_#231942] transition-all"
-                  style={fontH}
-                >
-                  Enter Marketplace
-                  <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform stroke-[3]" />
-                </motion.button>
-              </Link>
-
-
-              <Link to="/login" className="font-bold text-lg text-slate-600 hover:text-[#FF4D4D] transition-colors" style={fontH}>
-                I already have an account
-              </Link>
-            </div>
-          </motion.div>
-
-          {/* Right 3D Visual Composition */}
-          <motion.div 
-            style={{ y: parallaxY }} 
-            className="order-1 lg:order-2 relative h-[400px] lg:h-[600px] flex items-center justify-center w-full z-10"
-          >
-            {/* Refined v2 Backpack - Premium Tech Look */}
-            <motion.img 
-              src="/3d_backpack_v2.webp" 
-              alt="Premium 3D Backpack"
-              className="absolute w-[80%] max-w-[450px] z-20 drop-shadow-2xl"
-              style={{ 
-                mixBlendMode: 'multiply',
-                WebkitMaskImage: 'radial-gradient(circle, black 70%, transparent 100%)',
-                maskImage: 'radial-gradient(circle, black 70%, transparent 100%)'
-              }}
-              initial={{ opacity: 0, scale: 0.5, y: 100 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              transition={{ type: "spring", bounce: 0.5, duration: 1, delay: 0.4 }}
-            />
-            
-            {/* Glowing Backdrop Plate */}
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1, delay: 0.3 }}
-              className="absolute w-[70%] h-[70%] bg-white rounded-full border-8 border-dashed border-[#8338EC] opacity-20 animate-spin-slow pointer-events-none -z-10"
-              style={{ animationDuration: '20s' }}
-            />
-          </motion.div>
+      {/* ─── HERO SECTION ─── */}
+      <section
+        ref={heroRef}
+        className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden"
+      >
+        {/* Studio Dim Lights — subtle angled cones staying near the heading */}
+        <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+          {/* Left cone light */}
+          <div
+            className="absolute top-0 left-[15%] w-[1px] h-full origin-top"
+            style={{
+              background: "linear-gradient(to bottom, rgba(159,134,192,0.18) 0%, transparent 55%)",
+              transform: "rotate(-12deg)",
+              width: "200px",
+              filter: "blur(40px)",
+            }}
+          />
+          {/* Right cone light */}
+          <div
+            className="absolute top-0 right-[15%] w-[1px] h-full origin-top"
+            style={{
+              background: "linear-gradient(to bottom, rgba(159,134,192,0.14) 0%, transparent 55%)",
+              transform: "rotate(12deg)",
+              width: "180px",
+              filter: "blur(40px)",
+            }}
+          />
+          {/* Center ambient radial — keeps the heading zone lit */}
+          <div
+            className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px]"
+            style={{
+              background: "radial-gradient(ellipse 55% 45% at 50% 0%, rgba(94,84,142,0.22) 0%, transparent 75%)",
+            }}
+          />
         </div>
+
+        {/* Hero Content */}
+        <motion.div
+          style={{ y: heroTextY, opacity: heroOpacity }}
+          className="relative z-10 flex flex-col items-center text-center px-6 max-w-5xl mx-auto"
+        >
+          {/* Eyebrow */}
+          <motion.p
+            className="text-[11px] uppercase tracking-[0.4em] font-medium mb-10"
+            style={{ color: BRAND_LIGHT }}
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: curtainOpen ? 1 : 0, y: curtainOpen ? 0 : 16 }}
+            transition={{ duration: 0.7, delay: 0.6 }}
+          >
+            Chandigarh University · Campus Marketplace
+          </motion.p>
+
+          {/* Main Title — "CU BAZZAR" */}
+          <motion.h1
+            className="font-black leading-none tracking-tighter mb-8 select-none"
+            style={{
+              fontFamily: "'Montserrat', sans-serif",
+              fontSize: "clamp(4.5rem, 14vw, 12rem)",
+              color: "#FFFFFF",
+              letterSpacing: "-0.04em",
+            }}
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: curtainOpen ? 1 : 0, y: curtainOpen ? 0 : 40 }}
+            transition={{ duration: 0.9, delay: 0.8, ease: [0.22, 1, 0.36, 1] }}
+          >
+            CU BAZZAR
+          </motion.h1>
+
+          {/* Thin rule */}
+          <motion.div
+            className="w-12 h-px mb-8"
+            style={{ backgroundColor: BRAND_MID }}
+            initial={{ scaleX: 0 }}
+            animate={{ scaleX: curtainOpen ? 1 : 0 }}
+            transition={{ duration: 0.5, delay: 1.2 }}
+          />
+
+          {/* Subtext */}
+          <motion.p
+            className="text-base sm:text-lg max-w-md leading-relaxed mb-12"
+            style={{ color: "rgba(255,255,255,0.45)", fontWeight: 300, letterSpacing: "0.01em" }}
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: curtainOpen ? 1 : 0, y: curtainOpen ? 0 : 16 }}
+            transition={{ duration: 0.7, delay: 1.1 }}
+          >
+            Buy, sell, and discover amazing items from your classmates — all within campus.
+          </motion.p>
+
+          {/* CTA Buttons */}
+          <motion.div
+            className="flex items-center gap-5 flex-wrap justify-center"
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: curtainOpen ? 1 : 0, y: curtainOpen ? 0 : 16 }}
+            transition={{ duration: 0.7, delay: 1.25 }}
+          >
+            <Link to="/login">
+              <motion.button
+                whileHover={{ scale: 1.04 }}
+                whileTap={{ scale: 0.97 }}
+                className="flex items-center gap-2.5 px-8 py-3.5 rounded-full font-semibold text-sm text-white group"
+                style={{
+                  background: `linear-gradient(135deg, ${BRAND_MID}, ${BRAND})`,
+                  boxShadow: "0 0 32px rgba(94,84,142,0.35)",
+                  fontFamily: "'Montserrat', sans-serif",
+                  letterSpacing: "0.03em",
+                }}
+              >
+                Enter Marketplace
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+              </motion.button>
+            </Link>
+
+            <Link to="/login">
+              <motion.button
+                whileHover={{ opacity: 1 }}
+                className="text-sm font-medium transition-opacity"
+                style={{ color: "rgba(255,255,255,0.4)", letterSpacing: "0.02em" }}
+              >
+                Already have an account
+              </motion.button>
+            </Link>
+          </motion.div>
+        </motion.div>
+
+        {/* Scroll indicator */}
+        <motion.div
+          className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: curtainOpen ? 1 : 0 }}
+          transition={{ delay: 1.6, duration: 0.6 }}
+        >
+          <motion.div
+            className="w-px h-12"
+            style={{ background: `linear-gradient(to bottom, ${BRAND_LIGHT}, transparent)` }}
+            animate={{ scaleY: [0, 1, 0], originY: 0 }}
+            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          />
+          <p className="text-[10px] uppercase tracking-[0.3em]" style={{ color: BRAND_LIGHT }}>
+            Scroll
+          </p>
+        </motion.div>
       </section>
 
-      {/* ─── 2. EXTREME 3D STATS ─── */}
-      <section className="relative py-20 px-5 sm:px-8 z-20">
-        <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-8">
+      {/* ─── STATS SECTION ─── */}
+      <section className="py-28 px-6 relative">
+        {/* Divider */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-px h-20" style={{ background: `linear-gradient(to bottom, transparent, ${BRAND_MID})` }} />
+
+        <div className="max-w-4xl mx-auto grid grid-cols-3 gap-8 sm:gap-16 text-center">
           {stats.map((s, i) => (
-            <motion.div 
-              key={s.label} 
-              initial={{ opacity: 0, y: 50 }} 
-              whileInView={{ opacity: 1, y: 0 }} 
+            <motion.div
+              key={s.label}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-100px" }}
-              transition={{ type: "spring", bounce: 0.4, delay: i * 0.15 }}
-              whileHover={{ y: -10, scale: 1.02 }}
-              className="bg-white p-8 rounded-[2rem] border-4 border-[#231942] relative group"
-              style={{ boxShadow: `8px 12px 0 ${s.color}, 8px 12px 0 4px #231942` }} // double shadow effect
+              transition={{ duration: 0.6, delay: i * 0.12, ease: [0.22, 1, 0.36, 1] }}
             >
-              <div className="absolute top-4 right-4 w-12 h-12 rounded-full border-4 border-[#231942] flex items-center justify-center bg-white shadow-[0_4px_0_#231942]">
-                 <Star className="w-6 h-6 fill-current" style={{ color: s.color }} />
-              </div>
-              <p className="text-5xl lg:text-7xl font-black tracking-tighter text-[#231942] mb-2" style={fontH}>
+              <p
+                className="font-black text-4xl sm:text-6xl text-white mb-2"
+                style={{ fontFamily: "'Montserrat', sans-serif", letterSpacing: "-0.04em" }}
+              >
                 <Counter target={s.value} suffix={s.suffix} />
               </p>
-              <p className="text-lg font-bold text-slate-500 uppercase tracking-widest">{s.label}</p>
+              <p className="text-[10px] sm:text-xs uppercase tracking-[0.3em] font-medium" style={{ color: BRAND_LIGHT }}>
+                {s.label}
+              </p>
             </motion.div>
           ))}
         </div>
       </section>
 
-      {/* ─── 3. WHY CU BAZZAR (Gamified Cards) ─── */}
-      <section className="relative py-24 sm:py-32 px-5 sm:px-8 z-10 overflow-hidden">
-        {/* Slanted background stripe */}
-        <div className="absolute inset-0 bg-[#231942] -skew-y-3 transform origin-top-left -z-10 shadow-[0_20px_0_#8338EC]" />
+      {/* Horizontal divider */}
+      <div className="w-full max-w-5xl mx-auto h-px" style={{ background: `linear-gradient(to right, transparent, ${BRAND_MID}30, transparent)` }} />
 
-        <div className="max-w-6xl mx-auto relative z-10">
-          <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-20 text-white">
-            <h2 className="text-5xl sm:text-6xl font-black tracking-tight mb-4 drop-shadow-[0_4px_0_#000]" style={fontH}>Superpowers Included</h2>
-            <p className="text-xl font-medium text-purple-200">Everything you need to trade like a pro.</p>
-          </motion.div>
+      {/* ─── FEATURES SECTION ─── */}
+      <section className="py-32 px-6">
+        <div className="max-w-5xl mx-auto">
+          {/* Section label */}
+          <motion.p
+            className="text-[10px] uppercase tracking-[0.4em] text-center mb-16"
+            style={{ color: BRAND_LIGHT }}
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            Why CU Bazzar
+          </motion.p>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              { title: "Zero Fees", desc: "Keep 100% of your money. We do not take a cut.", icon: ShieldCheck, color: C.yellow },
-              { title: "Direct Chat", desc: "Haggle, discuss, and meet up using the built-in chat.", icon: MessageCircle, color: C.cyan },
-              { title: "Local Handoff", desc: "No shipping. Meet at the library or hostel lobby.", icon: Heart, color: C.accent },
-            ].map((f, i) => (
-              <motion.div 
-                key={f.title} 
-                initial={{ opacity: 0, scale: 0.8, rotate: -5 }} 
-                whileInView={{ opacity: 1, scale: 1, rotate: (i % 2 === 0 ? 2 : -2) }} 
-                viewport={{ once: true }} 
-                whileHover={{ scale: 1.05, rotate: 0 }}
-                transition={{ type: "spring", bounce: 0.5, delay: i * 0.1 }} 
-                className="bg-white p-8 rounded-3xl border-4 border-[#231942] shadow-[8px_12px_0_#000]"
+            {features.map((f, i) => (
+              <motion.div
+                key={f.title}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-80px" }}
+                transition={{ duration: 0.7, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] }}
+                className="group rounded-2xl p-8 relative overflow-hidden"
+                style={{
+                  background: "rgba(255,255,255,0.03)",
+                  border: "1px solid rgba(255,255,255,0.07)",
+                }}
               >
-                <div className="w-16 h-16 rounded-2xl border-4 border-[#231942] flex items-center justify-center mb-6 shadow-[0_6px_0_#000] rotate-[-5deg]"
-                  style={{ backgroundColor: f.color }}>
-                  <f.icon className="w-8 h-8 text-[#231942] stroke-[3]" />
+                {/* Subtle corner accent */}
+                <div
+                  className="absolute -top-10 -right-10 w-28 h-28 rounded-full opacity-10 blur-2xl"
+                  style={{ background: BRAND_LIGHT }}
+                />
+
+                <div
+                  className="w-10 h-10 rounded-xl flex items-center justify-center mb-6"
+                  style={{ background: "rgba(94,84,142,0.25)", border: "1px solid rgba(159,134,192,0.2)" }}
+                >
+                  <f.icon className="w-5 h-5" style={{ color: BRAND_LIGHT }} />
                 </div>
-                <h3 className="text-2xl font-black mb-3 text-[#231942]" style={fontH}>{f.title}</h3>
-                <p className="text-slate-600 font-medium leading-relaxed">{f.desc}</p>
+
+                <h3
+                  className="text-base font-semibold text-white mb-3 tracking-tight"
+                  style={{ fontFamily: "'Montserrat', sans-serif" }}
+                >
+                  {f.title}
+                </h3>
+                <p className="text-sm leading-relaxed" style={{ color: "rgba(255,255,255,0.38)", fontWeight: 300 }}>
+                  {f.desc}
+                </p>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ─── 4. CTA SECTION WITH 3D ROCKET ─── */}
-      <section className="relative py-32 px-5 sm:px-8 z-10">
-        <div className="max-w-4xl mx-auto">
-          <motion.div 
-            initial={{ opacity: 0, y: 50 }} 
-            whileInView={{ opacity: 1, y: 0 }} 
-            viewport={{ once: true }}
-            className="bg-gradient-to-br from-[#FFD166] to-[#FF4D4D] p-10 sm:p-16 rounded-[3rem] border-8 border-[#231942] shadow-[12px_16px_0_#231942] text-center relative overflow-hidden"
+      {/* ─── FINAL CTA SECTION ─── */}
+      <section className="py-32 px-6 relative overflow-hidden">
+        {/* Ambient spotlight for CTA */}
+        <div
+          className="absolute top-0 left-1/2 -translate-x-1/2 w-[480px] h-[300px] pointer-events-none"
+          style={{
+            background: "radial-gradient(ellipse 60% 60% at 50% 0%, rgba(94,84,142,0.18) 0%, transparent 80%)",
+          }}
+        />
+
+        <motion.div
+          className="max-w-2xl mx-auto text-center relative z-10"
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <p className="text-[10px] uppercase tracking-[0.4em] mb-8" style={{ color: BRAND_LIGHT }}>
+            Ready to start?
+          </p>
+
+          <h2
+            className="font-black text-white text-4xl sm:text-6xl mb-6 tracking-tight"
+            style={{ fontFamily: "'Montserrat', sans-serif", letterSpacing: "-0.04em" }}
           >
-            <div className="relative z-10">
-              <h2 className="text-5xl sm:text-6xl font-black tracking-tighter mb-6 text-[#231942] drop-shadow-[0_4px_0_rgba(255,255,255,0.5)]" style={fontH}>
-                Blast off into the <br/> Campus Market!
-              </h2>
-              
-              <Link to="/login" className="inline-block mt-8">
-                <motion.button 
-                  whileHover={{ scale: 1.1, rotate: 2 }} 
-                  whileTap={{ scale: 0.9, y: 8, boxShadow: "0px 0px 0px #231942" }}
-                  className="flex items-center gap-3 px-10 py-5 bg-white text-[#231942] font-black text-xl rounded-2xl border-4 border-[#231942] shadow-[0_8px_0_#231942] transition-all"
-                  style={fontH}
-                >
-                  <Package className="w-7 h-7 stroke-[3]" />
-                  Start Trading
-                </motion.button>
-              </Link>
-            </div>
-          </motion.div>
-        </div>
+            Your campus.<br />Your market.
+          </h2>
+
+          <p className="text-sm leading-relaxed mb-12 max-w-sm mx-auto" style={{ color: "rgba(255,255,255,0.38)", fontWeight: 300 }}>
+            Join hundreds of students already trading, buying, and selling on CU Bazzar.
+          </p>
+
+          <Link to="/login">
+            <motion.button
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.97 }}
+              className="inline-flex items-center gap-2.5 px-10 py-4 rounded-full font-semibold text-sm text-white group"
+              style={{
+                background: `linear-gradient(135deg, ${BRAND_MID}, ${BRAND})`,
+                boxShadow: "0 0 40px rgba(94,84,142,0.35)",
+                fontFamily: "'Montserrat', sans-serif",
+                letterSpacing: "0.03em",
+              }}
+            >
+              Explore the Marketplace
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+            </motion.button>
+          </Link>
+        </motion.div>
       </section>
 
-
-
-      {/* ─── Footer ─── */}
-      <footer className="py-10 px-5 bg-white border-t-4 border-[#231942] relative z-20">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 font-bold text-slate-500">
+      {/* ─── FOOTER ─── */}
+      <footer className="py-10 px-6 relative z-10" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+        <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-3">
-             <div className="w-8 h-8 rounded-lg bg-[#231942] border-2 border-slate-300 p-1">
-                <img src="/logo.webp" className="w-full h-full object-cover rounded" />
-             </div>
-             <span>© 2026 CU BAZZAR. All rigths reserved.</span>
+            <img src="/logo.webp" alt="CU Bazzar" className="w-7 h-7 rounded-lg object-cover" />
+            <span className="text-xs" style={{ color: "rgba(255,255,255,0.25)", letterSpacing: "0.02em" }}>
+              © 2026 CU BAZZAR. All rights reserved.
+            </span>
           </div>
           <div className="flex gap-8">
-            <Link to="/" className="hover:text-[#FF4D4D] transition-colors">Privacy</Link>
-            <Link to="/terms" className="hover:text-[#FF4D4D] transition-colors">Terms of Service</Link>
+            <Link to="/terms" className="text-xs transition-opacity hover:opacity-100" style={{ color: "rgba(255,255,255,0.25)", letterSpacing: "0.03em" }}>
+              Terms
+            </Link>
+            <Link to="/" className="text-xs transition-opacity hover:opacity-100" style={{ color: "rgba(255,255,255,0.25)", letterSpacing: "0.03em" }}>
+              Privacy
+            </Link>
           </div>
         </div>
       </footer>
