@@ -76,31 +76,26 @@ const MemoizedVendingCard = memo(
       >
         <div className="relative w-full h-full flex items-center justify-center">
           
-          <div className="absolute bottom-[-5px] w-[110%] h-10 pointer-events-none z-0 translate-y-2 opacity-40 will-change-transform" style={{ transform: 'translateZ(0)' }}>
-            <svg viewBox="0 0 100 40" preserveAspectRatio="none" className="w-full h-full">
-              <path d="M 10,25 C 10,5 30,5 30,25 M 25,25 C 25,5 45,5 45,25 M 40,25 C 40,5 60,5 60,25 M 55,25 C 55,5 75,5 75,25 M 70,25 C 70,5 90,5 90,25 M 85,25 C 85,5 105,5 105,25" fill="none" stroke="#0f172a" strokeWidth="4" />
-            </svg>
-          </div>
+          {/* Simple top coil line — replaces heavy SVG per card */}
+          <div className="absolute bottom-[-2px] w-[90%] h-[3px] rounded-full pointer-events-none z-0 opacity-30" style={{ background: 'linear-gradient(to right, #334155, #94a3b8, #334155)' }} />
 
-          {[4, 3, 2, 1].map((depth) => (
-            <div 
-              key={depth}
-              className="absolute pointer-events-none will-change-transform"
-              style={{ 
-                transform: `translate3d(0, -${depth * 3}px, -${depth * 25}px) scale(${1 - depth * 0.06})`,
-                opacity: 1 - depth * 0.15,
-                filter: `brightness(${1 - depth * 0.15}) drop-shadow(0 4px 6px rgba(0,0,0,0.6))`
-              }}
-            >
-              <img 
-                src={item.image} 
-                alt=""
-                loading="lazy"
-                decoding="async"
-                className="w-10 h-14 sm:w-16 sm:h-20 object-contain" 
-              />
-            </div>
-          ))}
+          {/* Single depth shadow behind the product — replaces 4 stacked images */}
+          <div 
+            className="absolute pointer-events-none"
+            style={{ 
+              transform: 'translate3d(0, -6px, 0) scale(0.88)',
+              opacity: 0.3,
+            }}
+          >
+            <img 
+              src={item.image} 
+              alt=""
+              loading="lazy"
+              decoding="async"
+              className="w-10 h-14 sm:w-16 sm:h-20 object-contain" 
+              style={{ filter: 'brightness(0.5)' }}
+            />
+          </div>
 
           <motion.div
             animate={isAnimating ? { 
@@ -128,19 +123,8 @@ const MemoizedVendingCard = memo(
             <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none rounded-lg" />
           </motion.div>
 
-          <div className="absolute bottom-[-5px] w-[110%] h-10 pointer-events-none z-20 translate-y-2 will-change-transform" style={{ transform: 'translateZ(0)' }}>
-             <svg viewBox="0 0 100 40" preserveAspectRatio="none" className="w-full h-full drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)]">
-                <defs>
-                  <linearGradient id="metal-coil" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" stopColor="#f8fafc" />
-                    <stop offset="40%" stopColor="#94a3b8" />
-                    <stop offset="70%" stopColor="#475569" />
-                    <stop offset="100%" stopColor="#0f172a" />
-                  </linearGradient>
-                </defs>
-                <path d="M 0,25 C 10,45 30,45 30,25 M 25,25 C 25,45 45,45 45,25 M 40,25 C 40,45 60,45 60,25 M 55,25 C 55,45 75,45 75,25 M 70,25 C 70,45 90,45 90,25 M 85,25 C 85,45 105,45 105,25" fill="none" stroke="url(#metal-coil)" strokeWidth="3" strokeLinecap="round" />
-             </svg>
-          </div>
+          {/* Simple bottom coil line */}
+          <div className="absolute bottom-[-2px] w-[90%] h-[3px] rounded-full pointer-events-none z-20 opacity-50" style={{ background: 'linear-gradient(to right, #64748b, #e2e8f0, #94a3b8, #e2e8f0, #64748b)' }} />
         </div>
         
         <div className="mt-2 flex flex-col items-center gap-0.5 pointer-events-none">
@@ -181,15 +165,7 @@ export default function VendingMachine() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showUpiModal, setShowUpiModal] = useState(false);
   
-  // Simulated Polled Inventory State (Debounced view update max every 5s)
-  const [inventoryPing, setInventoryPing] = useState(0);
-
-  useEffect(() => {
-    const poller = setInterval(() => {
-        setInventoryPing(prev => prev + 1);
-    }, 5000);
-    return () => clearInterval(poller);
-  }, []);
+  // Removed inventory polling — was causing full re-renders every 5 seconds
 
   const vendingCartItems = items.filter(i => i.category === "Vending Machine");
 
@@ -271,16 +247,12 @@ export default function VendingMachine() {
     <section className="py-12 px-4 relative overflow-hidden" style={{ contentVisibility: 'auto', containIntrinsicSize: '600px' }}>
       <div className="max-w-4xl mx-auto">
         <div className="flex flex-col items-center mb-10 text-center">
-          <motion.div 
-            key={inventoryPing}
-            initial={{ opacity: 0.8 }}
-            animate={{ opacity: 1 }}
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-900 border border-slate-800 text-emerald-400 text-[10px] font-black uppercase tracking-widest mb-4 shadow-xl will-change-opacity"
-            style={{ transform: 'translateZ(0)' }}
+          <div 
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-900 border border-slate-800 text-emerald-400 text-[10px] font-black uppercase tracking-widest mb-4 shadow-xl"
           >
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
             Live Inventory
-          </motion.div>
+          </div>
           <h2 className="text-3xl sm:text-4xl font-black text-slate-900 mb-2">Hostel Smart Vending Machine</h2>
         </div>
 
@@ -288,10 +260,10 @@ export default function VendingMachine() {
           <div className="relative rounded-[40px] bg-[#1a1c2c] p-6 shadow-[0_30px_100px_rgba(0,0,0,0.5),inset_0_2px_10px_rgba(255,255,255,0.1)] border-t-[6px] border-x-[6px] border-slate-800 overflow-hidden" style={{ transform: 'translateZ(0)' }}>
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-emerald-500 to-purple-500 opacity-50 blur-sm" />
             
-            <div className="relative rounded-3xl bg-slate-900/40 p-4 border border-white/5 backdrop-blur-sm min-h-[500px] flex flex-col justify-between overflow-hidden">
+            <div className="relative rounded-3xl bg-slate-900/40 p-4 border border-white/5 min-h-[500px] flex flex-col justify-between overflow-hidden">
+              {/* Simple glass highlight — no blur */}
               <div className="absolute inset-0 pointer-events-none rounded-3xl z-40 overflow-hidden">
-                <div className="absolute top-[-50%] left-[-20%] w-[150%] h-[200%] bg-gradient-to-tr from-transparent via-white/10 to-transparent rotate-[25deg] shadow-[inset_0_0_20px_rgba(255,255,255,0.05)]" />
-                <div className="absolute top-[30%] left-[50%] w-[50%] h-[150%] bg-gradient-to-tr from-transparent via-white/5 to-transparent rotate-[25deg]" />
+                <div className="absolute top-[-50%] left-[-20%] w-[150%] h-[200%] bg-gradient-to-tr from-transparent via-white/[0.07] to-transparent rotate-[25deg]" />
               </div>
 
               <div className="space-y-4">
