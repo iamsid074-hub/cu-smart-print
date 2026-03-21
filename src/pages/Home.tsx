@@ -281,8 +281,9 @@ const FlavourFactorySlide2 = () => (
         <span className="text-[10px] sm:text-xs font-black text-white uppercase tracking-widest pt-0.5">Special Combo Offer</span>
       </div>
       
-      <h3 className="text-[22px] sm:text-3xl md:text-4xl font-black text-white leading-tight mb-4 sm:mb-6 drop-shadow-lg tracking-tight">
-        Garlic Bread <span className="text-red-400 font-bold px-1">+</span> <br className="sm:hidden" /> Cold Coffee
+      <h3 className="text-[20px] sm:text-3xl md:text-3xl font-black text-white leading-tight mb-4 sm:mb-6 drop-shadow-lg tracking-tight">
+        Garlic Bread <span className="text-base sm:text-xl font-bold text-white/80">(Round Cheese)</span> <br className="sm:hidden" /> 
+        <span className="text-red-400 font-bold px-1">+</span> Cold Coffee
       </h3>
       
       <div className="flex items-center gap-3 sm:gap-4 mb-6 sm:mb-8 bg-black/20 p-2 sm:p-3 rounded-3xl backdrop-blur-md border border-white/5 shadow-2xl">

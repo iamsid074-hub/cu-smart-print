@@ -216,7 +216,9 @@ export default function FoodMenu() {
                                                 Top Pick
                                             </span>
                                         </div>
-                                        <h3 className="text-[15px] sm:text-base font-black text-white leading-tight drop-shadow-[0_1px_3px_rgba(0,0,0,0.25)] truncate">Flavour Factory: Garlic Bread + Coffee</h3>
+                                        <h3 className="text-[14px] sm:text-[15px] font-black text-white leading-tight drop-shadow-[0_1px_3px_rgba(0,0,0,0.25)] truncate">
+                                            Garlic Bread <span className="font-semibold text-white/80">(Round Cheese)</span> + Coffee
+                                        </h3>
                                         <div className="flex flex-wrap gap-2 mt-1.5 items-center">
                                             <span className="text-[11px] font-bold text-white/60 line-through">₹220</span>
                                             <span className="text-white/30 text-[10px] self-center">•</span>
