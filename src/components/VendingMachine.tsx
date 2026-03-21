@@ -71,8 +71,7 @@ const MemoizedVendingCard = memo(
   }) => {
     return (
       <div 
-        className="relative group flex flex-col items-center justify-end h-28 sm:h-36"
-        style={{ contentVisibility: 'auto', containIntrinsicSize: '150px' }} // Virtual Scrolling Isolation
+        className="relative group flex flex-col items-center justify-end h-24 sm:h-36"
       >
         <div className="relative w-full h-full flex items-center justify-center">
           
@@ -118,7 +117,8 @@ const MemoizedVendingCard = memo(
               alt={item.name} 
               loading="lazy"
               decoding="async"
-              className={`w-10 h-14 sm:w-16 sm:h-20 object-contain drop-shadow-[0_8px_15px_rgba(0,0,0,0.4)] filter transition-all duration-300 ${isAnimating ? 'brightness-125 contrast-125' : 'group-hover:brightness-110'}`} 
+              className={`w-10 h-14 sm:w-16 sm:h-20 object-contain transition-all duration-300 ${isAnimating ? 'brightness-125 contrast-125' : 'group-hover:brightness-110'}`} 
+              style={{ filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))' }}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none rounded-lg" />
           </motion.div>
@@ -128,7 +128,7 @@ const MemoizedVendingCard = memo(
         </div>
         
         <div className="mt-2 flex flex-col items-center gap-0.5 pointer-events-none">
-          <span className="text-[7px] sm:text-[9px] font-black text-white/90 bg-slate-950/60 px-1.5 py-0.5 rounded shadow-sm backdrop-blur-[2px] border border-white/10 truncate max-w-[55px] sm:max-w-none">
+          <span className="text-[7px] sm:text-[9px] font-black text-white/90 bg-slate-950/60 px-1.5 py-0.5 rounded shadow-sm border border-white/10 truncate max-w-[55px] sm:max-w-none">
               {item.name}
           </span>
           <span className="text-[7px] sm:text-[8px] font-black text-emerald-400">
@@ -244,7 +244,7 @@ export default function VendingMachine() {
   };
 
   return (
-    <section className="py-12 px-4 relative overflow-hidden" style={{ contentVisibility: 'auto', containIntrinsicSize: '600px' }}>
+    <section className="py-12 px-4 relative overflow-hidden">
       <div className="max-w-4xl mx-auto">
         <div className="flex flex-col items-center mb-10 text-center">
           <div 
@@ -257,10 +257,10 @@ export default function VendingMachine() {
         </div>
 
         <div className="relative mx-auto w-full max-w-[420px]">
-          <div className="relative rounded-[40px] bg-[#1a1c2c] p-6 shadow-[0_30px_100px_rgba(0,0,0,0.5),inset_0_2px_10px_rgba(255,255,255,0.1)] border-t-[6px] border-x-[6px] border-slate-800 overflow-hidden" style={{ transform: 'translateZ(0)' }}>
+          <div className="relative rounded-[28px] sm:rounded-[40px] bg-[#1a1c2c] p-4 sm:p-6 shadow-[0_20px_60px_rgba(0,0,0,0.4),inset_0_2px_10px_rgba(255,255,255,0.1)] border-t-4 sm:border-t-[6px] border-x-4 sm:border-x-[6px] border-slate-800 overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-emerald-500 to-purple-500 opacity-50 blur-sm" />
             
-            <div className="relative rounded-3xl bg-slate-900/40 p-4 border border-white/5 min-h-[500px] flex flex-col justify-between overflow-hidden">
+            <div className="relative rounded-2xl sm:rounded-3xl bg-slate-900/40 p-3 sm:p-4 border border-white/5 flex flex-col justify-between overflow-hidden">
               {/* Simple glass highlight — no blur */}
               <div className="absolute inset-0 pointer-events-none rounded-3xl z-40 overflow-hidden">
                 <div className="absolute top-[-50%] left-[-20%] w-[150%] h-[200%] bg-gradient-to-tr from-transparent via-white/[0.07] to-transparent rotate-[25deg]" />
@@ -269,7 +269,7 @@ export default function VendingMachine() {
               <div className="space-y-4">
                 {ROWS.map((row, ri) => (
                   <div key={ri} className="relative">
-                    <div className="grid grid-cols-4 gap-2 pb-6 px-1 relative z-10">
+                    <div className="grid grid-cols-4 gap-1 sm:gap-2 pb-4 sm:pb-6 px-1 relative z-10">
                       {row.items.map((item, ii) => (
                         <MemoizedVendingCard
                           key={`${ri}-${ii}-${item.id}`}
@@ -281,14 +281,14 @@ export default function VendingMachine() {
                       ))}
                     </div>
                     {/* Metal Rack Line */}
-                    <div className="absolute bottom-6 left-0 right-0 h-2 bg-gradient-to-b from-slate-500 via-slate-600 to-slate-800 rounded-full z-0 opacity-60 shadow-[0_4px_8px_rgba(0,0,0,0.6)]" />
+                    <div className="absolute bottom-4 sm:bottom-6 left-0 right-0 h-1.5 sm:h-2 bg-gradient-to-b from-slate-500 via-slate-600 to-slate-800 rounded-full z-0 opacity-60" />
                   </div>
                 ))}
               </div>
 
               {/* Bottom Dispenser Bin */}
               <div className="mt-4 border-t-[5px] border-slate-800 pt-6 pb-4 relative">
-                <div className="h-24 sm:h-32 bg-slate-950 rounded-2xl flex items-center justify-center relative overflow-hidden shadow-[inset_0_4px_20px_rgba(0,0,0,0.9)] cursor-pointer group/bin will-change-transform" style={{ transform: 'translateZ(0)' }} onClick={() => vendingCartItems.length > 0 && setShowCheckout(true)}>
+                <div className="h-20 sm:h-32 bg-slate-950 rounded-xl sm:rounded-2xl flex items-center justify-center relative overflow-hidden shadow-[inset_0_4px_12px_rgba(0,0,0,0.8)] cursor-pointer group/bin" onClick={() => vendingCartItems.length > 0 && setShowCheckout(true)}>
                   <div className="absolute inset-0 bg-gradient-to-b from-black/90 to-transparent opacity-80" />
                   
                   <AnimatePresence>
