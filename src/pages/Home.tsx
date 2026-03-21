@@ -396,11 +396,8 @@ export default function Home() {
   const isNativeApp = Capacitor.isNativePlatform();
   const [loading, setLoading] = useState(true);
 
-  const isTargetedUser = ["vedhantofficial@gmail.com", "iamsid074@gmail.com"].includes(user?.email || "");
-
   return (
     <div className="min-h-screen bg-slate-50 pt-[5.5rem] pb-32 relative">
-      <TargetedPromoModal />
       <div className="max-w-[1600px] mx-auto relative px-4">
       </div>
 
@@ -461,77 +458,7 @@ export default function Home() {
 
 
         <div className="w-full">
-          {/* ─── CHATORI CHAI FEATURED SHOP BANNER ─── */}
-          <motion.section
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, ease: "easeOut" }}
-            className="mb-8 sm:mb-12"
-          >
-            <Link to="/food">
-              <div className="relative rounded-3xl overflow-hidden cursor-pointer group" style={{ background: 'linear-gradient(120deg, #1a1230 0%, #231942 45%, #5E548E 100%)', boxShadow: '0 8px 32px rgba(35,25,66,0.35)' }}>
-                
-                {/* Subtle noise/grain texture feel */}
-                <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'n\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23n)\'/%3E%3C/svg%3E")', backgroundSize: 'cover' }} />
 
-                {/* Single soft highlight orb — top right */}
-                <div className="absolute -top-20 -right-20 w-64 h-64 rounded-full blur-[80px] pointer-events-none" style={{ background: 'rgba(140,121,165,0.3)' }} />
-
-                <div className="relative z-10 p-5 sm:p-7">
-                  <div className="flex items-center justify-between gap-4">
-
-                    {/* LEFT: Shop info */}
-                    <div className="flex-1 min-w-0">
-
-                      {/* Single subtle live badge */}
-                      <div className="flex items-center gap-2 mb-3">
-                        <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-black text-white/90 uppercase tracking-widest" style={{ background: 'rgba(255,255,255,0.12)' }}>
-                          <span className="w-1.5 h-1.5 rounded-full bg-purple-300 animate-pulse inline-block" />
-                          {isTargetedUser ? "Exclusive Offer" : "Live Sale"}
-                        </span>
-                      </div>
-
-                      {/* Shop name */}
-                      <h2 className="text-xl sm:text-3xl font-black text-white leading-tight mb-4 tracking-tight" style={fontH}>
-                        Chatori Chai &<br className="hidden sm:block" /> Kulcha Corner
-                      </h2>
-
-                      {/* Two clean info lines */}
-                      <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 mb-5">
-                        <span className="flex items-center gap-1.5 text-[13px] font-semibold text-white/80">
-                          <span className="text-white font-black">₹22</span> delivery
-                        </span>
-                        <span className="hidden sm:block text-white/30 text-xs self-center">•</span>
-                        <span className="flex items-center gap-1.5 text-[13px] font-semibold text-white/80">
-                          Free Coke above <span className="text-white font-black">₹{isTargetedUser ? "150" : "179"}</span>
-                        </span>
-                      </div>
-
-                      {/* CTA */}
-                      <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-black text-[13px] text-brand bg-white group-hover:bg-brand-50 transition-colors shadow-lg shadow-black/20">
-                        Order Now
-                        <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
-                      </div>
-                    </div>
-
-                    {/* RIGHT: Rating / info card */}
-                    <div className="hidden sm:flex flex-col items-end gap-2 shrink-0">
-                      <div className="flex flex-col items-center p-4 rounded-2xl gap-1" style={{ background: 'rgba(0,0,0,0.15)', backdropFilter: 'blur(12px)' }}>
-                        <span className="text-2xl font-black text-white">4.8</span>
-                        <div className="flex gap-0.5 text-yellow-300 text-xs">★★★★★</div>
-                        <span className="text-white/60 text-[10px] font-semibold mt-0.5">Top Rated</span>
-                      </div>
-                      <div className="px-3 py-1.5 rounded-xl text-[10px] font-black text-white/80 uppercase tracking-widest" style={{ background: 'rgba(0,0,0,0.15)' }}>
-                        25–35 min
-                      </div>
-                    </div>
-
-                  </div>
-                </div>
-              </div>
-            </Link>
-          </motion.section>
 
 
           {/* ─── Digital Vending Machine Section ─── */}
