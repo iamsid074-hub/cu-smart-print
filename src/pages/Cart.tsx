@@ -159,21 +159,21 @@ export default function Cart() {
                     <motion.div
                         initial={{ opacity: 0, scale: 0.93, y: 20 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
-                        className="bg-white w-full max-w-md rounded-[2rem] shadow-2xl overflow-hidden"
+                        className="bg-white w-full max-w-md rounded-[1.5rem] shadow-2xl overflow-hidden mx-2"
                     >
                         {/* Header */}
-                        <div className="bg-gradient-to-r from-amber-500 to-orange-500 px-6 pt-6 pb-5 flex items-start gap-4">
-                            <div className="w-11 h-11 rounded-2xl bg-white/20 flex items-center justify-center shrink-0">
-                                <AlertTriangle className="w-6 h-6 text-white" />
+                        <div className="bg-gradient-to-r from-amber-500 to-orange-500 px-4 pt-4 pb-3.5 flex items-center gap-3">
+                            <div className="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center shrink-0">
+                                <AlertTriangle className="w-5 h-5 text-white" />
                             </div>
                             <div>
-                                <h2 className="text-white font-black text-lg leading-tight">Food Safety &amp; Responsibility Notice</h2>
-                                <p className="text-white/80 text-xs mt-1 font-medium">Please read before placing your order</p>
+                                <h2 className="text-white font-black text-[15px] leading-tight">Food Safety &amp; Responsibility Notice</h2>
+                                <p className="text-white/80 text-[11px] mt-0.5 font-medium">Please read before placing your order</p>
                             </div>
                         </div>
 
                         {/* Scrollable Body */}
-                        <div className="px-6 py-5 max-h-[50vh] overflow-y-auto space-y-4 text-sm text-slate-600 leading-relaxed">
+                        <div className="px-4 py-3 max-h-[30vh] overflow-y-auto space-y-2.5 text-[12px] text-slate-600 leading-relaxed">
                             <p>
                                 By placing this order, you acknowledge that food items may contain{" "}
                                 <strong className="text-slate-800">allergens or ingredients</strong> that could cause health reactions depending on individual conditions.
@@ -182,17 +182,14 @@ export default function Cart() {
                                 While we strive to maintain quality and hygiene standards,{" "}
                                 <strong className="text-slate-800">CU Bazzar and its partner restaurants</strong> are not liable for individual allergic reactions, food sensitivities, or unforeseen health issues arising from consumption.
                             </p>
-                            <p className="bg-amber-50 border border-amber-200 rounded-xl p-3 text-amber-800 font-medium text-[13px]">
-                                ⚠️ Customers are advised to <strong>check ingredients</strong> carefully and consume food at their own discretion. If you have known allergies or medical conditions, please consult the shop before ordering.
-                            </p>
-                            <p className="text-xs text-slate-400">
-                                This notice is displayed to ensure transparency and informed decision-making. CU Bazzar is a platform connecting buyers and sellers on campus.
+                            <p className="bg-amber-50 border border-amber-200 rounded-xl p-2.5 text-amber-800 font-medium text-[11px]">
+                                ⚠️ Customers are advised to <strong>check ingredients</strong> carefully and consume food at their own discretion.
                             </p>
                         </div>
 
                         {/* Checkbox + CTA */}
-                        <div className="px-6 pb-6 pt-2 border-t border-slate-100">
-                            <label className="flex items-start gap-3 cursor-pointer mb-5 mt-4 group">
+                        <div className="px-4 pb-4 pt-2 border-t border-slate-100">
+                            <label className="flex items-start gap-3 cursor-pointer mb-3 mt-3 group">
                                 <div
                                     onClick={() => setDisclaimerAccepted(p => !p)}
                                     className={`w-5 h-5 mt-0.5 rounded-md border-2 flex items-center justify-center shrink-0 transition-all ${
@@ -201,7 +198,7 @@ export default function Cart() {
                                 >
                                     {disclaimerAccepted && <CheckCircle className="w-3.5 h-3.5 text-white" />}
                                 </div>
-                                <span className="text-[13px] text-slate-700 font-medium leading-snug">
+                                <span className="text-[12px] text-slate-700 font-medium leading-snug">
                                     I have read and agree to the above Food Safety &amp; Responsibility terms.
                                 </span>
                             </label>
@@ -216,7 +213,7 @@ export default function Cart() {
                                         setSubmitting(false);
                                     }, 100);
                                 }}
-                                className={`w-full py-3.5 rounded-2xl font-black text-sm uppercase tracking-widest transition-all ${
+                                className={`w-full py-3 rounded-2xl font-black text-[13px] uppercase tracking-widest transition-all ${
                                     disclaimerAccepted
                                         ? 'bg-emerald-500 text-white shadow-lg hover:bg-emerald-600 active:scale-95'
                                         : 'bg-slate-100 text-slate-400 cursor-not-allowed'
@@ -226,7 +223,7 @@ export default function Cart() {
                             </button>
                             <button
                                 onClick={() => setShowDisclaimer(false)}
-                                className="w-full mt-2 py-2.5 text-xs text-slate-400 hover:text-slate-600 transition-colors"
+                                className="w-full mt-1.5 py-2 text-xs text-slate-400 hover:text-slate-600 transition-colors"
                             >
                                 Cancel
                             </button>
