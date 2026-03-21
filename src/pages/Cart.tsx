@@ -30,7 +30,6 @@ export default function Cart() {
     // Food Safety Disclaimer state
     const [showDisclaimer, setShowDisclaimer] = useState(false);
     const [disclaimerAccepted, setDisclaimerAccepted] = useState(false);
-    const disclaimerAlreadySeen = typeof window !== 'undefined' && localStorage.getItem('foodSafetyAccepted') === 'true';
 
     // Active Order State
     const [activeOrder, setActiveOrder] = useState<any>(null);
@@ -147,21 +146,9 @@ export default function Cart() {
     const handleCheckout = async () => {
         if (!user) { navigate("/login"); return; }
         if (!isFormValid) return;
-        // Require disclaimer acceptance
-        if (!disclaimerAlreadySeen) {
-            setShowDisclaimer(true);
-            return;
-        }
-        setSubmitting(true);
-        try {
-            setShowCheckout(false); 
-            setTimeout(() => setShowUpiModal(true), 150); 
-            setSubmitting(false);
-        } catch (err: any) {
-            toast({ title: "Order failed", description: err.message || "Please try again.", variant: "destructive" });
-        } finally {
-            setSubmitting(false);
-        }
+        // Always require disclaimer acceptance before each order
+        setDisclaimerAccepted(false);
+        setShowDisclaimer(true);
     };
 
     return (
@@ -221,7 +208,6 @@ export default function Cart() {
                             <button
                                 disabled={!disclaimerAccepted}
                                 onClick={() => {
-                                    localStorage.setItem('foodSafetyAccepted', 'true');
                                     setShowDisclaimer(false);
                                     setSubmitting(true);
                                     setTimeout(() => {
