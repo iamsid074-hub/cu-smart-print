@@ -190,12 +190,8 @@ export default function FoodMenu() {
                                 initial={{ opacity: 0, y: -10 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.5 }}
-                                className="relative rounded-[1.75rem] overflow-hidden mb-4 cursor-pointer group shadow-[0_8px_30px_rgba(220,38,38,0.2)]"
+                                className="relative rounded-[1.75rem] overflow-hidden mb-4 shadow-[0_8px_30px_rgba(220,38,38,0.2)]"
                                 style={{ background: 'linear-gradient(135deg, #1f0b0b 0%, #4a1313 100%)' }}
-                                onClick={() => {
-                                    handleUpdateActiveShop('flavour-factory');
-                                    document.getElementById('flavour-factory-card')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                                }}
                             >
                                 {/* Decorative background elements */}
                                 <div className="absolute top-0 right-0 w-64 h-64 bg-red-600/30 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
@@ -228,10 +224,24 @@ export default function FoodMenu() {
                                         </div>
                                     </div>
 
-                                    {/* CTA Arrow */}
-                                    <div className="shrink-0 w-9 h-9 rounded-xl flex items-center justify-center text-red-700 font-black shadow-md group-hover:scale-110 transition-transform bg-white">
-                                        →
-                                    </div>
+                                    {/* CTA Button */}
+                                    <button 
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        addItem({
+                                          id: "flavour-factory-combo",
+                                          title: "Combo: Garlic Bread (Round Cheese) + Cold Coffee",
+                                          price: 149,
+                                          image: "/banners/flavour_factory.png",
+                                          category: "Flavour Factory",
+                                          quantity: 1,
+                                        });
+                                        navigate('/cart');
+                                      }}
+                                      className="shrink-0 w-full sm:w-auto px-5 py-2.5 bg-white text-red-700 rounded-xl font-black text-sm sm:text-xs md:text-sm uppercase tracking-widest shadow-lg hover:scale-105 active:scale-95 transition-all hover:bg-stone-50 border border-white/20"
+                                    >
+                                        Order Now
+                                    </button>
                                 </div>
                             </motion.div>
 

@@ -84,15 +84,15 @@ export default function Cart() {
     const originalDeliveryFee = 29;
     const specialDeliveryFee = 21;
 
-    // Delivery logic: 
-    // 1. Vending machine items use a floor-based scale.
-    // 2. Otherwise, if Floor is 2 or 3, delivery is ₹21.
-    // 3. Else standard ₹29.
-    const baseDelivery = hasVending 
-        ? calculateVendingDelivery(floor) 
-        : ([2, 3].includes(floor) ? specialDeliveryFee : originalDeliveryFee);
+    const hasFlavourCombo = items.some(item => item.id === "flavour-factory-combo");
+
+    const baseDelivery = hasFlavourCombo 
+        ? specialDeliveryFee 
+        : (hasVending 
+            ? calculateVendingDelivery(floor) 
+            : ([2, 3].includes(floor) ? specialDeliveryFee : originalDeliveryFee));
     
-    const deliveryFee = hasVending ? baseDelivery : (promoApplied ? getDeliveryFee(true) : baseDelivery);
+    const deliveryFee = hasFlavourCombo ? specialDeliveryFee : (hasVending ? baseDelivery : (promoApplied ? getDeliveryFee(true) : baseDelivery));
     const orderTotal = totalPrice + deliveryFee;
 
     const phoneClean = phone.replace(/\D/g, "");
@@ -320,11 +320,18 @@ export default function Cart() {
                                 <span className="flex items-center gap-1.5">
                                     <Clock className="w-4 h-4 text-emerald-500" /> {hasVending ? `Floor ${floor} Delivery` : 'Delivery Fee'}
                                 </span>
-                                    {((promoApplied && !hasVending) || (!hasVending && [2, 3].includes(floor))) && (
+                                    {((promoApplied && !hasVending) || (!hasVending && [2, 3].includes(floor)) || hasFlavourCombo) && (
                                         <span className="text-slate-400 line-through text-xs">₹{originalDeliveryFee}</span>
                                     )}
-                                    <span className={(promoApplied || hasVending || (!hasVending && [2, 3].includes(floor))) ? "text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded" : "font-medium text-slate-900"}>+ ₹{deliveryFee}</span>
+                                    <span className={(promoApplied || hasVending || (!hasVending && [2, 3].includes(floor)) || hasFlavourCombo) ? "text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded" : "font-medium text-slate-900"}>+ ₹{deliveryFee}</span>
                                 </div>
+
+                            {hasFlavourCombo && (
+                                <div className="mb-4 bg-orange-50 border border-orange-100 rounded-2xl p-4 flex items-center gap-2 text-orange-800 text-xs sm:text-sm font-medium">
+                                    <Zap className="w-4 h-4 flex-shrink-0 text-orange-500" />
+                                    <span>Flavour Factory Offer: Special ₹21 delivery fee applied!</span>
+                                </div>
+                            )}
 
                             {!hasVending && [2, 3].includes(floor) && !promoApplied && (
                                 <div className="mb-4 bg-emerald-50 rounded-2xl p-4 flex items-center gap-2 text-emerald-700 text-xs sm:text-sm font-medium">
