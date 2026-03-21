@@ -42,7 +42,7 @@ export default function Grocery() {
         <div className="min-h-screen bg-slate-50 pb-32">
 
 
-            <div className="max-w-5xl mx-auto px-4 sm:px-6 mt-20">
+            <div className="max-w-5xl mx-auto px-4 sm:px-6 pt-20">
                 {/* Search */}
                 <div className="relative mb-8">
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
