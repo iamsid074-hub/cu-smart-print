@@ -454,43 +454,44 @@ export default function Home() {
       </div>
 
 
-      {/* ─── Top Purple Header Section ─── */}
-      <div className="bg-[#231942] px-4 pt-8 pb-14 sm:px-6 lg:px-10 rounded-3xl sm:rounded-[2.5rem] mb-8 relative overflow-hidden shadow-sm mx-2 sm:mx-0 mt-2 sm:mt-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent pointer-events-none" />
-        <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none" />
-        
-        <div className="max-w-[1600px] mx-auto relative z-10">
-          {/* Title */}
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="text-center mb-6"
-          >
-            <p className="text-sm mb-1.5 font-medium text-white/90">
-              Welcome back, Student {"\uD83D\uDC4B"}
-            </p>
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white mb-6" style={fontH}>
-              Everything Delivered{' '}
-              <span className="text-emerald-300">To Your Room</span>
-            </h1>
+      {/* ─── Hero Section ─── */}
+      <div
+        className="relative px-4 pt-7 pb-12 sm:px-8 sm:pt-10 sm:pb-16 mb-8 mx-2 sm:mx-0 rounded-[2.2rem] sm:rounded-[2.8rem] overflow-hidden"
+        style={{ background: 'linear-gradient(160deg, #0f0c29 0%, #1a1048 45%, #24243e 100%)' }}
+      >
+        {/* Layered ambient glows */}
+        <div className="absolute -top-20 -right-20 w-80 h-80 rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(139,92,246,0.25) 0%, transparent 70%)' }} />
+        <div className="absolute -bottom-16 -left-16 w-72 h-72 rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(52,211,153,0.12) 0%, transparent 70%)' }} />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] pointer-events-none opacity-20" style={{ background: 'radial-gradient(ellipse, rgba(109,40,217,0.4) 0%, transparent 70%)' }} />
 
-            {/* Only show the App Download button on the Web, not inside the Native App 
-            {!isNativeApp && (
-              <a
-                href="/cubazzar.apk"
-                download="CUBazzar-v1.0.apk"
-                className="relative overflow-hidden inline-flex items-center gap-3 bg-gradient-to-br from-[#4DB8AC] to-[#369B90] text-white transition-all duration-200 px-6 py-3 sm:px-8 sm:py-4 rounded-full font-bold text-base sm:text-lg shadow-[0_6px_25px_rgba(77,184,172,0.4)] hover:shadow-[0_12px_40px_rgba(77,184,172,0.5)] active:shadow-[0_2px_10px_rgba(77,184,172,0.4)] hover:-translate-y-1 active:translate-y-1 active:scale-[0.97] group border border-white/20"
-              >
-                <div className="absolute inset-x-0 top-0 h-1/2 bg-white/20 blur-xl rounded-t-full opacity-50 pointer-events-none" />
-                <div className="bg-white/20 p-1.5 rounded-full relative z-10 shadow-[inset_0_1px_3px_rgba(255,255,255,0.3)] backdrop-blur-sm">
-                  <img src="/logo.webp" alt="CU Bazzar Logo" className="w-5 h-5 sm:w-6 sm:h-6 object-contain group-hover:-translate-y-0.5 transition-transform duration-300 drop-shadow-md" />
-                </div>
-                <span className="relative z-10 tracking-wide text-[1rem] sm:text-[1.05rem] drop-shadow-sm">Download Android App</span>
-              </a>
-            )}
-            */}
+        {/* Subtle noise texture */}
+        <div className="absolute inset-0 pointer-events-none opacity-[0.03]" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'n\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.75\' numOctaves=\'4\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23n)\'/%3E%3C/svg%3E")' }} />
+
+        <div className="max-w-[1600px] mx-auto relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: -18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.55 }}
+            className="text-center mb-6 sm:mb-8"
+          >
+            {/* Pill tagline */}
+            <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 backdrop-blur px-3.5 py-1 mb-4 sm:mb-5">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_2px_rgba(52,211,153,0.6)]" />
+              <span className="text-[10px] sm:text-[11px] font-bold text-white/70 uppercase tracking-[0.18em]">CU Bazzar &nbsp;·&nbsp; Your Campus Store</span>
+            </div>
+
+            <h1 className="font-extrabold tracking-tight text-white leading-[1.12] mb-0" style={{ ...fontH, fontSize: 'clamp(1.65rem, 5vw, 3.5rem)' }}>
+              Everything{' '}
+              <span style={{ background: 'linear-gradient(90deg, #6ee7b7, #34d399)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                Delivered
+              </span>
+              <br className="sm:hidden" />
+              {' '}To Your Room
+            </h1>
           </motion.div>
+
+          {/* Thin glowing divider before the carousel */}
+          <div className="w-20 h-px mx-auto mb-6 sm:mb-7 rounded-full" style={{ background: 'linear-gradient(90deg, transparent, rgba(110,231,183,0.6), transparent)' }} />
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -499,10 +500,9 @@ export default function Home() {
           >
             <HeroCarousel />
           </motion.div>
-
-
         </div>
       </div>
+
 
       <div className="max-w-[1600px] mx-auto px-3 sm:px-6 lg:px-10">
 
