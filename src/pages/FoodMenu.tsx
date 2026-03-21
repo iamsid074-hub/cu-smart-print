@@ -185,51 +185,53 @@ export default function FoodMenu() {
                               animate={{ opacity: 1, y: 0 }}
                               transition={{ duration: 0.5 }}
                               className="relative rounded-[1.75rem] overflow-hidden mb-4 cursor-pointer group"
-                              style={{ boxShadow: '0 10px 40px -8px rgba(234,88,12,0.45), 0 0 0 1px rgba(251,146,60,0.3)' }}
+                              style={{ background: 'linear-gradient(120deg, #1a1230 0%, #231942 45%, #5E548E 100%)', boxShadow: '0 8px 32px rgba(35,25,66,0.35)' }}
                               onClick={() => {
                                 const featuredShop = shops.find(s => s.id === 'chatori-chai-kulcha');
                                 if (featuredShop) handleUpdateActiveShop(featuredShop.id);
                                 document.getElementById('chatori-chai-kulcha-card')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
                               }}
                             >
-                              {/* Gradient BG */}
-                              <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, #f97316, #fb923c 40%, #fbbf24 70%, #d97706)' }} />
-                              <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle, rgba(0,0,0,0.25) 1px, transparent 1px)', backgroundSize: '16px 16px' }} />
-                              {/* Glow orb */}
-                              <div className="absolute -top-10 -right-10 w-48 h-48 rounded-full blur-[60px]" style={{ background: 'rgba(255,255,255,0.2)' }} />
+                              {/* Subtle noise/grain texture feel */}
+                              <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'n\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23n)\'/%3E%3C/svg%3E")', backgroundSize: 'cover' }} />
+
+                              {/* Single soft highlight orb — top right */}
+                              <div className="absolute -top-10 -right-10 w-48 h-48 rounded-full blur-[60px] pointer-events-none" style={{ background: 'rgba(140,121,165,0.3)' }} />
 
                               <div className="relative z-10 p-5 flex items-center gap-4">
                                 {/* Icon */}
-                                <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl shrink-0 shadow-lg" style={{ background: 'rgba(255,255,255,0.25)', backdropFilter: 'blur(8px)' }}>
+                                <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl shrink-0 shadow-lg text-white" style={{ background: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.15)' }}>
                                   ☕
                                 </div>
 
                                 {/* Text */}
                                 <div className="flex-1 min-w-0">
-                                  <div className="flex flex-wrap gap-2 mb-1.5">
-                                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest text-white" style={{ background: 'rgba(0,0,0,0.3)', backdropFilter: 'blur(6px)' }}>
-                                      <span className="relative flex h-2 w-2">
-                                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-80" />
-                                        <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500" />
+                                  <div className="flex flex-wrap items-center gap-2 mb-2">
+                                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest text-white/90" style={{ background: 'rgba(255,255,255,0.12)' }}>
+                                      <span className="relative flex h-1.5 w-1.5">
+                                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-300 opacity-80" />
+                                        <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-purple-400" />
                                       </span>
-                                      {isTargetedUser ? "🔥 Recommended for You" : "Live Sale"}
+                                      {isTargetedUser ? "Recommended" : "Live Sale"}
                                     </span>
-                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-black text-amber-900 uppercase tracking-wide" style={{ background: 'rgba(255,255,255,0.8)' }}>
-                                      {isTargetedUser ? "⭐ Top Pick" : "Top Pick"}
+                                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-black text-white/90 uppercase tracking-widest" style={{ background: 'rgba(0,0,0,0.2)' }}>
+                                      Top Pick
                                     </span>
-                                    {!isTargetedUser && (
-                                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold text-orange-900 uppercase tracking-wide" style={{ background: 'rgba(255,255,255,0.65)' }}>Trending</span>
-                                    )}
                                   </div>
                                   <h3 className="text-base font-black text-white leading-tight drop-shadow-[0_1px_3px_rgba(0,0,0,0.25)] truncate">Chatori Chai & Kulcha Corner</h3>
-                                  <div className="flex flex-wrap gap-3 mt-1.5">
-                                    <span className="text-[11px] font-bold text-white/90">🚚 Only <strong className="text-yellow-200">₹22</strong> Delivery</span>
-                                    <span className="text-[11px] font-bold text-white/90">🥤 Free Coke on orders above <strong className="text-yellow-200">₹{isTargetedUser ? "150" : "179"}</strong></span>
+                                  <div className="flex flex-wrap gap-2 mt-1.5">
+                                    <span className="text-[11px] font-semibold text-white/80">
+                                        <span className="font-bold text-white">₹22</span> delivery
+                                    </span>
+                                    <span className="hidden sm:block text-white/30 text-[10px] self-center">•</span>
+                                    <span className="text-[11px] font-semibold text-white/80">
+                                        Free Coke above <span className="font-bold text-white">₹{isTargetedUser ? "150" : "179"}</span>
+                                    </span>
                                   </div>
                                 </div>
 
                                 {/* CTA Arrow */}
-                                <div className="shrink-0 w-9 h-9 rounded-xl flex items-center justify-center text-amber-900 font-black shadow-md group-hover:scale-110 transition-transform" style={{ background: 'rgba(255,255,255,0.9)' }}>
+                                <div className="shrink-0 w-9 h-9 rounded-xl flex items-center justify-center text-brand font-black shadow-md group-hover:scale-110 transition-transform bg-white">
                                   →
                                 </div>
                               </div>
