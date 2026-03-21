@@ -202,11 +202,6 @@ export default function FoodMenu() {
                                 <div className="absolute bottom-0 left-0 w-48 h-48 bg-orange-500/20 rounded-full blur-[60px] translate-y-1/2 -translate-x-1/2 pointer-events-none" />
                                 
                                 <div className="relative z-10 p-5 flex items-center gap-4">
-                                    {/* Icon */}
-                                    <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl shrink-0 shadow-lg text-white" style={{ background: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.15)' }}>
-                                        🎉
-                                    </div>
-
                                     {/* Text */}
                                     <div className="flex-1 min-w-0">
                                         <div className="flex flex-wrap items-center gap-2 mb-2">
