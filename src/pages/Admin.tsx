@@ -502,7 +502,7 @@ function parseOrderDetails(order: Order): { hostel: string; room: string; items:
     const rawRoom = order.delivery_room || '';
 
     // 1. Check for New Structured Format [ROOM:...] | [ITEMS:...]
-    const newFormatMatch = rawRoom.match(/\[ROOM:(.*?)\] \| \[ITEMS:([\s\S]*?)\]/);
+    const newFormatMatch = rawRoom.match(/\[ROOM:(.*?)\]\s*\|\s*\[ITEMS:([\s\S]*)\]\s*$/);
     if (newFormatMatch) {
         room = newFormatMatch[1].trim();
         items = newFormatMatch[2].trim();
@@ -765,12 +765,15 @@ function FoodOrdersSection({ orders, loading, onUpdateStatus, onVerifyUpi }: {
                                             <ShoppingBag className="w-3 h-3" /> Ordered Items
                                         </p>
                                         <div className="space-y-1">
-                                            {details.items.split('\n').filter(Boolean).map((line, idx) => (
-                                                <p key={idx} className="text-sm text-slate-900 flex items-start gap-2">
-                                                    <span className="text-orange-400 mt-0.5 font-bold">•</span>
-                                                    <span>{line.trim()}</span>
-                                                </p>
-                                            ))}
+                                            {details.items.split('\n').filter(Boolean).map((line, idx) => {
+                                                const cleanLine = line.replace(/\s*\[IMG:[^\]]*\]/g, "");
+                                                return (
+                                                    <p key={idx} className="text-sm text-slate-900 flex items-start gap-2">
+                                                        <span className="text-orange-400 mt-0.5 font-bold">•</span>
+                                                        <span>{cleanLine.trim()}</span>
+                                                    </p>
+                                                );
+                                            })}
                                         </div>
                                         {details.notes && (
                                             <div className="mt-2 pt-2 border-t border-orange-500/10">
