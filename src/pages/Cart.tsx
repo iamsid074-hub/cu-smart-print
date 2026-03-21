@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ShoppingCart, Minus, Plus, Trash2, ArrowLeft, Loader2, MapPin, Phone, Clock, ShoppingBag, CheckCircle, Truck, Package, PackageCheck, Zap, MessageSquare } from "lucide-react";
+import { ShoppingCart, Minus, Plus, Trash2, ArrowLeft, Loader2, MapPin, Phone, Clock, ShoppingBag, CheckCircle, Truck, Package, PackageCheck, Zap, MessageSquare, AlertTriangle } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
@@ -26,6 +26,11 @@ export default function Cart() {
     const [showUpiModal, setShowUpiModal] = useState(false);
     const [promoCode, setPromoCode] = useState("");
     const [promoApplied, setPromoApplied] = useState(false);
+
+    // Food Safety Disclaimer state
+    const [showDisclaimer, setShowDisclaimer] = useState(false);
+    const [disclaimerAccepted, setDisclaimerAccepted] = useState(false);
+    const disclaimerAlreadySeen = typeof window !== 'undefined' && localStorage.getItem('foodSafetyAccepted') === 'true';
 
     // Active Order State
     const [activeOrder, setActiveOrder] = useState<any>(null);
@@ -128,7 +133,7 @@ export default function Cart() {
             delivery_charge: deliveryFee,
             total_price: orderTotal,
             delivery_location: `${hostel} - Floor ${floor}`,
-            delivery_room: `[ROOM:${room}] | [ITEMS:${itemsSummary}]`,
+            delivery_room: `[ROOM:${room}] | [ITEMS:${itemsSummary}] | [SAFETY:Disclaimer Accepted @ ${new Date().toISOString()}]`,
             buyer_phone: phoneClean,
             status: "pending",
             payment_method: "upi",
@@ -142,6 +147,11 @@ export default function Cart() {
     const handleCheckout = async () => {
         if (!user) { navigate("/login"); return; }
         if (!isFormValid) return;
+        // Require disclaimer acceptance
+        if (!disclaimerAlreadySeen) {
+            setShowDisclaimer(true);
+            return;
+        }
         setSubmitting(true);
         try {
             setShowCheckout(false); 
@@ -156,6 +166,88 @@ export default function Cart() {
 
     return (
         <div className="min-h-screen bg-slate-50 pt-[5.5rem] pb-24 px-4 sm:px-6">
+            {/* Food Safety Disclaimer Modal */}
+            {showDisclaimer && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center px-4" style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }}>
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.93, y: 20 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        className="bg-white w-full max-w-md rounded-[2rem] shadow-2xl overflow-hidden"
+                    >
+                        {/* Header */}
+                        <div className="bg-gradient-to-r from-amber-500 to-orange-500 px-6 pt-6 pb-5 flex items-start gap-4">
+                            <div className="w-11 h-11 rounded-2xl bg-white/20 flex items-center justify-center shrink-0">
+                                <AlertTriangle className="w-6 h-6 text-white" />
+                            </div>
+                            <div>
+                                <h2 className="text-white font-black text-lg leading-tight">Food Safety &amp; Responsibility Notice</h2>
+                                <p className="text-white/80 text-xs mt-1 font-medium">Please read before placing your order</p>
+                            </div>
+                        </div>
+
+                        {/* Scrollable Body */}
+                        <div className="px-6 py-5 max-h-[50vh] overflow-y-auto space-y-4 text-sm text-slate-600 leading-relaxed">
+                            <p>
+                                By placing this order, you acknowledge that food items may contain{" "}
+                                <strong className="text-slate-800">allergens or ingredients</strong> that could cause health reactions depending on individual conditions.
+                            </p>
+                            <p>
+                                While we strive to maintain quality and hygiene standards,{" "}
+                                <strong className="text-slate-800">CU Bazzar and its partner restaurants</strong> are not liable for individual allergic reactions, food sensitivities, or unforeseen health issues arising from consumption.
+                            </p>
+                            <p className="bg-amber-50 border border-amber-200 rounded-xl p-3 text-amber-800 font-medium text-[13px]">
+                                ⚠️ Customers are advised to <strong>check ingredients</strong> carefully and consume food at their own discretion. If you have known allergies or medical conditions, please consult the shop before ordering.
+                            </p>
+                            <p className="text-xs text-slate-400">
+                                This notice is displayed to ensure transparency and informed decision-making. CU Bazzar is a platform connecting buyers and sellers on campus.
+                            </p>
+                        </div>
+
+                        {/* Checkbox + CTA */}
+                        <div className="px-6 pb-6 pt-2 border-t border-slate-100">
+                            <label className="flex items-start gap-3 cursor-pointer mb-5 mt-4 group">
+                                <div
+                                    onClick={() => setDisclaimerAccepted(p => !p)}
+                                    className={`w-5 h-5 mt-0.5 rounded-md border-2 flex items-center justify-center shrink-0 transition-all ${
+                                        disclaimerAccepted ? 'bg-emerald-500 border-emerald-500' : 'border-slate-300 group-hover:border-emerald-400'
+                                    }`}
+                                >
+                                    {disclaimerAccepted && <CheckCircle className="w-3.5 h-3.5 text-white" />}
+                                </div>
+                                <span className="text-[13px] text-slate-700 font-medium leading-snug">
+                                    I have read and agree to the above Food Safety &amp; Responsibility terms.
+                                </span>
+                            </label>
+                            <button
+                                disabled={!disclaimerAccepted}
+                                onClick={() => {
+                                    localStorage.setItem('foodSafetyAccepted', 'true');
+                                    setShowDisclaimer(false);
+                                    setSubmitting(true);
+                                    setTimeout(() => {
+                                        setShowCheckout(false);
+                                        setTimeout(() => setShowUpiModal(true), 150);
+                                        setSubmitting(false);
+                                    }, 100);
+                                }}
+                                className={`w-full py-3.5 rounded-2xl font-black text-sm uppercase tracking-widest transition-all ${
+                                    disclaimerAccepted
+                                        ? 'bg-emerald-500 text-white shadow-lg hover:bg-emerald-600 active:scale-95'
+                                        : 'bg-slate-100 text-slate-400 cursor-not-allowed'
+                                }`}
+                            >
+                                I Accept — Continue to Payment
+                            </button>
+                            <button
+                                onClick={() => setShowDisclaimer(false)}
+                                className="w-full mt-2 py-2.5 text-xs text-slate-400 hover:text-slate-600 transition-colors"
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </motion.div>
+                </div>
+            )}
             <div className="max-w-2xl mx-auto">
                 {/* Header */}
                 <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="mb-6 flex items-center justify-between">
