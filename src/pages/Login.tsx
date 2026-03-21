@@ -21,6 +21,8 @@ export default function Login() {
     const [forgotPassword, setForgotPassword] = useState(false);
     const [resetSent, setResetSent] = useState(false);
     const [formError, setFormError] = useState<string | null>(null);
+    const [showOtp, setShowOtp] = useState(false);
+    const [otp, setOtp] = useState("");
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -32,7 +34,7 @@ export default function Login() {
     // Clear error when user interacts
     useEffect(() => {
         setFormError(null);
-    }, [email, password, acceptedTerms, isLogin]);
+    }, [email, password, acceptedTerms, isLogin, otp]);
 
     const handleForgotPassword = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -59,6 +61,19 @@ export default function Login() {
         // Local Validation
         if (!email.trim() || !password.trim()) {
             setFormError("Please fill in all required fields.");
+            return;
+        }
+
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (!emailRegex.test(email)) {
+            setFormError("Please enter a valid email address structure.");
+            return;
+        }
+
+        const domain = email.split('@')[1]?.toLowerCase();
+        const invalidDomains = ['gmail.coom', 'gmail.con', 'gmal.com', 'yhaoo.com', 'yahoo.cmo', 'outlok.com'];
+        if (domain && invalidDomains.includes(domain)) {
+            setFormError("That email domain looks incorrect. Please double check.");
             return;
         }
 
@@ -101,14 +116,42 @@ export default function Login() {
                     setLoading(false);
                     return;
                 }
-                if (data.user) {
-                    await supabase.from("profiles").upsert({ id: data.user.id, full_name: email.split('@')[0] });
-                }
-                toast.success("You're in! Welcome to the crew 🚀");
-                navigate("/home");
+                
+                // Show OTP UI
+                setShowOtp(true);
+                toast.success("Verification code sent to your email! 📧");
             }
         } catch {
             setFormError("Something went sideways. Give it another shot?");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleVerifyOtp = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (otp.length !== 6) {
+            setFormError("OTP must be exactly 6 digits.");
+            return;
+        }
+        setLoading(true);
+        setFormError(null);
+
+        try {
+            const { data, error } = await supabase.auth.verifyOtp({
+                email,
+                token: otp,
+                type: 'signup'
+            });
+            if (error) throw error;
+
+            if (data.user) {
+                await supabase.from("profiles").upsert({ id: data.user.id, full_name: email.split('@')[0] });
+            }
+            toast.success("Email verified! Welcome to the crew 🚀");
+            navigate("/home");
+        } catch (err: any) {
+            setFormError(err.message || "Invalid or expired verification code. Please try again.");
         } finally {
             setLoading(false);
         }
@@ -301,29 +344,96 @@ export default function Login() {
                     {/* Greeting */}
                     <div className="mb-6">
                         <AnimatePresence mode="wait">
-                            <motion.div
-                                key={isLogin ? "login" : "signup"}
-                                initial={{ opacity: 0, y: 6 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, y: -6 }}
-                                transition={{ duration: 0.2 }}
-                            >
-                                <p className="text-sm mb-1.5 font-medium" style={{ color: "#64748B" }}>
-                                    {isLogin ? "Good to see you again 👋" : "Let's get you started ✨"}
-                                </p>
-                                <h2 className="text-2xl sm:text-[1.75rem] font-bold tracking-tight" style={{ ...fontH, color: "#0F172A" }}>
-                                    {isLogin ? "Welcome back" : "Create your account"}
-                                </h2 >
-                                <p className="text-sm mt-1.5 leading-relaxed" style={{ color: "#64748B" }}>
-                                    {isLogin ? "Sign in to continue your campus journey." : "Join hundreds of students on CU Bazzar."}
-                                </p>
-                            </motion.div>
+                            {showOtp ? (
+                                <motion.div
+                                    key="verify-otp"
+                                    initial={{ opacity: 0, y: 6 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -6 }}
+                                    transition={{ duration: 0.2 }}
+                                >
+                                    <p className="text-sm mb-1.5 font-medium flex items-center gap-2" style={{ color: "#64748B" }}>
+                                        <Lock className="w-3.5 h-3.5" /> Secure Authentication
+                                    </p>
+                                    <h2 className="text-2xl sm:text-[1.75rem] font-bold tracking-tight" style={{ ...fontH, color: "#0F172A" }}>
+                                        Check your email
+                                    </h2>
+                                    <p className="text-sm mt-1.5 leading-relaxed" style={{ color: "#64748B" }}>
+                                        We sent a 6-digit verification code to <br/> <strong className="text-slate-800">{email}</strong>
+                                    </p>
+                                </motion.div>
+                            ) : (
+                                <motion.div
+                                    key={isLogin ? "login" : "signup"}
+                                    initial={{ opacity: 0, y: 6 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -6 }}
+                                    transition={{ duration: 0.2 }}
+                                >
+                                    <p className="text-sm mb-1.5 font-medium" style={{ color: "#64748B" }}>
+                                        {isLogin ? "Good to see you again 👋" : "Let's get you started ✨"}
+                                    </p>
+                                    <h2 className="text-2xl sm:text-[1.75rem] font-bold tracking-tight" style={{ ...fontH, color: "#0F172A" }}>
+                                        {isLogin ? "Welcome back" : "Create your account"}
+                                    </h2 >
+                                    <p className="text-sm mt-1.5 leading-relaxed" style={{ color: "#64748B" }}>
+                                        {isLogin ? "Sign in to continue your campus journey." : "Join hundreds of students on CU Bazzar."}
+                                    </p>
+                                </motion.div>
+                            )}
                         </AnimatePresence>
                     </div>
 
-                    {/* ── FORGOT PASSWORD FLOW ── */}
+                    {/* ── FLOW CONTROL ── */}
                     <AnimatePresence mode="wait">
-                        {forgotPassword ? (
+                        {showOtp ? (
+                            <motion.div key="otp-form" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.2 }}>
+                                <form onSubmit={handleVerifyOtp} className="space-y-4">
+                                    <div>
+                                        <label className="block text-sm mb-1.5 font-medium" style={{ color: '#64748B' }}>Verification Code</label>
+                                        <div className="relative rounded-xl transition-all duration-300" style={{ boxShadow: focusedField === 'otp' ? '0 0 0 2px rgba(35,25,66,0.35)' : '0 0 0 1px rgba(15,23,42,0.1)' }}>
+                                            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                                                <Lock className="h-4 w-4" style={{ color: focusedField === 'otp' ? '#231942' : 'rgba(15,23,42,0.3)' }} />
+                                            </div>
+                                            <input type="text" required value={otp} onChange={e => {
+                                                    const val = e.target.value.replace(/\D/g, '').slice(0, 6);
+                                                    setOtp(val);
+                                                }}
+                                                onFocus={() => setFocusedField('otp')} onBlur={() => setFocusedField(null)}
+                                                className="w-full rounded-xl pl-10 pr-4 h-[52px] text-lg tracking-[0.2em] font-bold focus:outline-none transition-colors"
+                                                style={{ backgroundColor: 'rgba(15,23,42,0.03)', color: '#0F172A' }}
+                                                placeholder="123456" />
+                                        </div>
+                                    </div>
+
+                                    {/* Error Message */}
+                                    <AnimatePresence mode="wait">
+                                        {formError && (
+                                            <motion.div
+                                                initial={{ opacity: 0, height: 0, scale: 0.95 }}
+                                                animate={{ opacity: 1, height: 'auto', scale: 1 }}
+                                                exit={{ opacity: 0, height: 0, scale: 0.95 }}
+                                                transition={{ duration: 0.2 }}
+                                                className="bg-red-50 border border-red-100 rounded-xl p-3 flex items-start gap-2.5 overflow-hidden shadow-sm shadow-red-500/5 mt-2"
+                                            >
+                                                <div className="w-1.5 h-1.5 rounded-full bg-red-500 mt-1.5 shrink-0 animate-pulse" />
+                                                <p className="text-[13px] font-medium text-red-600 leading-tight">
+                                                    {formError}
+                                                </p>
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
+
+                                    <motion.button type="submit" disabled={loading || otp.length !== 6} whileHover={{ y: -1 }} whileTap={{ scale: 0.985 }}
+                                        className="w-full py-3.5 mt-4 rounded-xl text-white font-semibold text-sm flex items-center justify-center gap-2 h-[52px] disabled:opacity-50"
+                                        style={{ ...fontH, background: '#10B981', boxShadow: '0 4px 20px rgba(16,185,129,0.3)' }}>
+                                        {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <>Verify & Create Account <ArrowRight className="w-4 h-4" /></>}
+                                    </motion.button>
+                                    
+                                    <button type="button" onClick={() => { setShowOtp(false); setOtp(""); setFormError(null); }} className="w-full text-sm mt-2" style={{ color: '#64748B' }}>← Use a different email</button>
+                                </form>
+                            </motion.div>
+                        ) : forgotPassword ? (
                             <motion.div key="forgot" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.2 }}>
                                 {resetSent ? (
                                     <div className="py-6 text-center space-y-3">
@@ -493,16 +603,18 @@ export default function Login() {
                     </AnimatePresence>
 
                     {/* Toggle */}
-                    <p className="text-sm" style={{ color: "#64748B" }}>
-                        {isLogin ? "New around here?" : "Already one of us?"}{" "}
-                        <button type="button" onClick={() => setIsLogin(!isLogin)}
-                            className="font-semibold transition-colors duration-200 hover:opacity-80" style={{ color: "#231942" }}
-                        >
-                            {isLogin ? "Join the crew" : "Sign in instead"}
-                        </button>
-                    </p>
+                    {!showOtp && (
+                        <p className="text-sm mt-6" style={{ color: "#64748B" }}>
+                            {isLogin ? "New around here?" : "Already one of us?"}{" "}
+                            <button type="button" onClick={() => { setIsLogin(!isLogin); setFormError(null); }}
+                                className="font-semibold transition-colors duration-200 hover:opacity-80" style={{ color: "#231942" }}
+                            >
+                                {isLogin ? "Join the crew" : "Sign in instead"}
+                            </button>
+                        </p>
+                    )}
 
-                    <p className="text-[11px] mt-6 leading-relaxed" style={{ color: "#94A3B8" }}>
+                    <p className={`text-[11px] leading-relaxed ${showOtp ? 'mt-8' : 'mt-6'}`} style={{ color: "#94A3B8" }}>
                         By continuing, you agree to our{" "}
                         <Link to="/terms" className="underline underline-offset-2 hover:opacity-60 transition-opacity" style={{ color: "#231942" }}>Terms &amp; Conditions</Link>
                         {" "}and to be a good campus citizen. 🤝
