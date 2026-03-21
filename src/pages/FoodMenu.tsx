@@ -58,6 +58,12 @@ export default function FoodMenu() {
         setCustomItemList(prev => prev.filter(item => item.id !== id));
     }, []);
 
+    const sortedShops = [...shops].sort((a, b) => {
+        if (a.id === 'flavour-factory') return -1;
+        if (b.id === 'flavour-factory') return 1;
+        return 0;
+    });
+
     const handleUpdateActiveShop = useCallback((id: string | null) => {
         setExpandedShop(id);
         setExpandedMenuCat(null);
@@ -179,9 +185,60 @@ export default function FoodMenu() {
                                 </p>
                             </div>
 
+                            {/* ─── Flavour Factory Offer Banner ─── */}
+                            <motion.div
+                                initial={{ opacity: 0, y: -10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.5 }}
+                                className="relative rounded-[1.75rem] overflow-hidden mb-4 cursor-pointer group shadow-[0_8px_30px_rgba(220,38,38,0.2)]"
+                                style={{ background: 'linear-gradient(135deg, #1f0b0b 0%, #4a1313 100%)' }}
+                                onClick={() => {
+                                    handleUpdateActiveShop('flavour-factory');
+                                    document.getElementById('flavour-factory-card')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                }}
+                            >
+                                {/* Decorative background elements */}
+                                <div className="absolute top-0 right-0 w-64 h-64 bg-red-600/30 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+                                <div className="absolute bottom-0 left-0 w-48 h-48 bg-orange-500/20 rounded-full blur-[60px] translate-y-1/2 -translate-x-1/2 pointer-events-none" />
+                                
+                                <div className="relative z-10 p-5 flex items-center gap-4">
+                                    {/* Icon */}
+                                    <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl shrink-0 shadow-lg text-white" style={{ background: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.15)' }}>
+                                        🎉
+                                    </div>
 
+                                    {/* Text */}
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex flex-wrap items-center gap-2 mb-2">
+                                            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest text-white/90" style={{ background: 'rgba(255,255,255,0.12)' }}>
+                                                <span className="relative flex h-1.5 w-1.5">
+                                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-80" />
+                                                    <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-red-500" />
+                                                </span>
+                                                Combo Offer
+                                            </span>
+                                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-black text-white/90 uppercase tracking-widest" style={{ background: 'rgba(0,0,0,0.2)' }}>
+                                                Top Pick
+                                            </span>
+                                        </div>
+                                        <h3 className="text-[15px] sm:text-base font-black text-white leading-tight drop-shadow-[0_1px_3px_rgba(0,0,0,0.25)] truncate">Flavour Factory: Garlic Bread + Coffee</h3>
+                                        <div className="flex flex-wrap gap-2 mt-1.5 items-center">
+                                            <span className="text-[11px] font-bold text-white/60 line-through">₹220</span>
+                                            <span className="text-white/30 text-[10px] self-center">•</span>
+                                            <span className="text-[12px] font-black text-white px-2 py-0.5 rounded bg-gradient-to-r from-red-600 to-red-500 border border-red-400/30 shadow-sm">
+                                                Only ₹149
+                                            </span>
+                                        </div>
+                                    </div>
 
-                            {shops.map((shop) => (
+                                    {/* CTA Arrow */}
+                                    <div className="shrink-0 w-9 h-9 rounded-xl flex items-center justify-center text-red-700 font-black shadow-md group-hover:scale-110 transition-transform bg-white">
+                                        →
+                                    </div>
+                                </div>
+                            </motion.div>
+
+                            {sortedShops.map((shop) => (
                                 <div key={shop.id} id={`${shop.id}-card`}>
                                     <ShopCard
                                         shop={shop}
