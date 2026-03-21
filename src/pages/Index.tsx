@@ -70,10 +70,10 @@ export default function Index() {
   }, []);
 
   const features = [
+    { icon: Truck, title: "Room Delivery", desc: "Food and products delivered straight to your hostel room. No need to step out." },
     { icon: ShieldCheck, title: "Zero Fees", desc: "No commission, no hidden charges. Keep 100% of every rupee you earn." },
-    { icon: MessageCircle, title: "Direct Chat", desc: "Built-in messaging. Negotiate prices, ask questions, coordinate meetups." },
+    { icon: MessageCircle, title: "Food Delivery", desc: "Order from campus shops like Chatori Chai and get hot food at your door." },
     { icon: Heart, title: "Campus Trust", desc: "Every user is a verified CU student. Trade with people you actually know." },
-    { icon: Truck, title: "Instant Handoff", desc: "No shipping. Meet at the library, canteen, or hostel lobby." },
   ];
 
   const stats = [
@@ -156,9 +156,9 @@ export default function Index() {
               transition={{ duration: 0.4, delay: 0.5 }}
             >
               <motion.img
-                src="/logo.webp"
+                src="/cb_gold_logo_v1.webp"
                 alt="CU Bazzar"
-                className="w-14 h-14 rounded-xl shadow-2xl"
+                className="w-16 h-16 rounded-full shadow-2xl"
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ duration: 0.3, ease: "easeOut" }}
@@ -248,13 +248,13 @@ export default function Index() {
           {/* Subtext */}
           {showContent && (
             <motion.p
-              className="text-sm sm:text-base max-w-sm leading-relaxed mb-14"
+              className="text-sm sm:text-base max-w-md leading-relaxed mb-14"
               style={{ color: "rgba(255,255,255,0.35)", fontWeight: 300, letterSpacing: "0.01em" }}
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 1.1 }}
             >
-              The campus marketplace where students buy, sell, and discover — built on trust, zero fees, instant handoff.
+              We deliver to your room — food, products, and everything campus. Buy, sell, and discover with zero fees.
             </motion.p>
           )}
 
