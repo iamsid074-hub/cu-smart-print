@@ -276,31 +276,29 @@ const FlavourFactorySlide2 = () => (
     <div className="absolute bottom-0 left-0 w-48 h-48 bg-orange-500/20 rounded-full blur-[60px] translate-y-1/2 -translate-x-1/2 pointer-events-none" />
     
     <div className="relative z-10 w-full flex flex-col items-center text-center px-4 sm:px-6">
-      <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full bg-white/10 border border-white/20 backdrop-blur-md mb-3 sm:mb-5 shadow-lg">
-        <span className="text-[12px] sm:text-xl">🎉</span>
-        <span className="text-[9px] sm:text-xs font-black text-white uppercase tracking-widest pt-0.5">Combo Offer</span>
+      {/* Badge — hidden on mobile */}
+      <div className="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/20 backdrop-blur-md mb-5 shadow-lg">
+        <span className="text-xl">🎉</span>
+        <span className="text-xs font-black text-white uppercase tracking-widest pt-0.5">Combo Offer</span>
       </div>
       
-      <h3 className="text-[15px] sm:text-3xl md:text-3xl font-black text-white leading-tight mb-3 sm:mb-6 drop-shadow-lg tracking-tight">
-        Garlic Bread <span className="text-[10px] sm:text-xl font-bold text-white/80">(Round Cheese)</span> <br className="sm:hidden" /> 
-        <span className="text-red-400 font-bold pr-1">+</span> Cold Coffee
+      <h3 className="text-[18px] sm:text-3xl font-black text-white leading-tight mb-3 sm:mb-6 drop-shadow-lg tracking-tight">
+        Garlic Bread <span className="text-[13px] sm:text-xl font-bold text-white/70">(Round Cheese)</span>
+        <br className="sm:hidden" />
+        <span className="text-red-400 font-bold px-1">+</span> Cold Coffee
       </h3>
       
-      <div className="flex items-center gap-2 sm:gap-4 mb-4 sm:mb-8 bg-black/20 p-1.5 sm:p-3 rounded-2xl sm:rounded-3xl backdrop-blur-md border border-white/5 shadow-2xl">
-        <div className="flex flex-col items-end pr-2 sm:pr-3 border-r border-white/10">
-          <span className="text-[8px] sm:text-[10px] text-white/50 uppercase font-black tracking-widest mb-0.5">Regular</span>
-          <span className="text-[10px] sm:text-lg text-white/40 line-through font-bold decoration-2">₹220</span>
-        </div>
-        <div className="pl-1 sm:pl-2 flex items-center">
-          <span className="text-[9px] sm:text-sm text-red-300 font-bold mr-1 sm:mr-2">NOW</span>
-          <span className="px-3 sm:px-7 py-1 sm:py-2 bg-gradient-to-r from-red-600 to-red-500 text-white rounded-xl sm:rounded-2xl font-black text-base sm:text-4xl shadow-[0_0_20px_rgba(220,38,38,0.4)] border border-red-400/30">
-            ₹149
-          </span>
-        </div>
+      {/* Price — compact on mobile */}
+      <div className="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-8">
+        <span className="text-[11px] sm:text-base text-white/40 line-through font-bold">₹220</span>
+        <span className="px-4 sm:px-7 py-1.5 sm:py-2 bg-gradient-to-r from-red-600 to-red-500 text-white rounded-xl sm:rounded-2xl font-black text-xl sm:text-4xl shadow-[0_0_20px_rgba(220,38,38,0.4)] border border-red-400/30">
+          ₹149
+        </span>
       </div>
       
-      <p className="text-[8px] sm:text-xs md:text-sm text-red-100/70 font-bold tracking-[0.1em] uppercase items-center flex gap-1.5">
-        <Clock className="w-3 h-3 sm:w-4 sm:h-4 text-red-300" /> Valid for 7 days
+      {/* Validity — hidden on mobile */}
+      <p className="hidden sm:flex text-xs md:text-sm text-red-100/70 font-bold tracking-[0.1em] uppercase items-center gap-1.5">
+        <Clock className="w-4 h-4 text-red-300" /> Valid for 7 days
       </p>
     </div>
   </div>
