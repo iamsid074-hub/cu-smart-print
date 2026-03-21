@@ -197,9 +197,9 @@ export default function FoodMenu() {
                                 <div className="absolute top-0 right-0 w-64 h-64 bg-red-600/30 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
                                 <div className="absolute bottom-0 left-0 w-48 h-48 bg-orange-500/20 rounded-full blur-[60px] translate-y-1/2 -translate-x-1/2 pointer-events-none" />
                                 
-                                <div className="relative z-10 p-5 flex items-center gap-4">
+                                <div className="relative z-10 p-5 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-6">
                                     {/* Text */}
-                                    <div className="flex-1 min-w-0">
+                                    <div className="flex-1 min-w-0 w-full">
                                         <div className="flex flex-wrap items-center gap-2 mb-2">
                                             <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest text-white/90" style={{ background: 'rgba(255,255,255,0.12)' }}>
                                                 <span className="relative flex h-1.5 w-1.5">
@@ -238,7 +238,7 @@ export default function FoodMenu() {
                                         });
                                         navigate('/cart');
                                       }}
-                                      className="shrink-0 w-full sm:w-auto px-5 py-2.5 bg-white text-red-700 rounded-xl font-black text-sm sm:text-xs md:text-sm uppercase tracking-widest shadow-lg hover:scale-105 active:scale-95 transition-all hover:bg-stone-50 border border-white/20"
+                                      className="shrink-0 w-full sm:w-auto mt-2 sm:mt-0 px-5 py-3 sm:py-2.5 bg-white text-red-700 rounded-xl font-black text-sm uppercase tracking-widest shadow-lg hover:scale-105 active:scale-95 transition-all hover:bg-stone-50 border border-white/20"
                                     >
                                         Order Now
                                     </button>
