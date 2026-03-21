@@ -65,7 +65,7 @@ function parseOrderDetails(order: any) {
   if (type === "vending" || type === "cart") {
     const isVending = type === "vending";
     const roomPart = room.match(/\[ROOM:(.+?)\]/)?.[1] || room;
-    const itemsPart = room.match(/\[ITEMS:(.+?)\]/)?.[1] || "";
+    const itemsPart = room.match(/\[ITEMS:([\s\S]+?)\]/)?.[1] || "";
     
     // Extract first item title. e.g. "1x Amul Taaza [IMG:...] (Toned Milk) (Milk) (₹27)"
     const firstLine = itemsPart.split("\n")[0] || "";

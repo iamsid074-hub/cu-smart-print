@@ -502,7 +502,7 @@ function parseOrderDetails(order: Order): { hostel: string; room: string; items:
     const rawRoom = order.delivery_room || '';
 
     // 1. Check for New Structured Format [ROOM:...] | [ITEMS:...]
-    const newFormatMatch = rawRoom.match(/\[ROOM:(.*?)\] \| \[ITEMS:(.*?)\]/);
+    const newFormatMatch = rawRoom.match(/\[ROOM:(.*?)\] \| \[ITEMS:([\s\S]*?)\]/);
     if (newFormatMatch) {
         room = newFormatMatch[1].trim();
         items = newFormatMatch[2].trim();
