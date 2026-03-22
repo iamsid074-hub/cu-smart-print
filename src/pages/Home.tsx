@@ -269,13 +269,30 @@ const FlavourFactorySlide1 = () => (
   </div>
 );
 
-const FlavourFactorySlide2 = () => (
-  <div className="w-full h-full relative overflow-hidden flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #1f0b0b 0%, #4a1313 100%)' }}>
-    {/* Decorative background elements */}
-    <div className="absolute top-0 right-0 w-64 h-64 bg-red-600/30 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
-    <div className="absolute bottom-0 left-0 w-48 h-48 bg-orange-500/20 rounded-full blur-[60px] translate-y-1/2 -translate-x-1/2 pointer-events-none" />
-    
-    <div className="relative z-10 w-full flex flex-col items-center text-center px-4 sm:px-6">
+const FlavourFactorySlide2 = () => {
+  const { addItem } = useCart();
+  const navigate = useNavigate();
+
+  const handleOrderCombo = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    addItem({
+      id: "flavour-factory-combo",
+      title: "Combo: Garlic Bread (Round Cheese) + Cold Coffee",
+      price: 149,
+      image: "/banners/flavour_factory.png",
+      category: "Flavour Factory",
+      quantity: 1,
+    });
+    navigate('/cart');
+  };
+
+  return (
+    <div className="w-full h-full relative overflow-hidden flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #1f0b0b 0%, #4a1313 100%)' }}>
+      {/* Decorative background elements */}
+      <div className="absolute top-0 right-0 w-64 h-64 bg-red-600/30 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-48 h-48 bg-orange-500/20 rounded-full blur-[60px] translate-y-1/2 -translate-x-1/2 pointer-events-none" />
+      
+      <div className="relative z-10 w-full flex flex-col items-center text-center px-4 sm:px-6 pointer-events-none">
       {/* Badge — hidden on mobile */}
       <div className="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/20 backdrop-blur-md mb-5 shadow-lg">
         <span className="text-xl">🎉</span>
@@ -288,21 +305,27 @@ const FlavourFactorySlide2 = () => (
         <span className="text-red-400 font-bold px-1">+</span> Cold Coffee
       </h3>
       
-      {/* Price — compact on mobile */}
-      <div className="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-8">
+      {/* Price Order Button — compact on mobile */}
+      <div className="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-8 pointer-events-auto">
         <span className="text-[11px] sm:text-base text-white/40 line-through font-bold">₹220</span>
-        <span className="px-4 sm:px-7 py-1.5 sm:py-2 bg-gradient-to-r from-red-600 to-red-500 text-white rounded-xl sm:rounded-2xl font-black text-xl sm:text-4xl shadow-[0_0_20px_rgba(220,38,38,0.4)] border border-red-400/30">
+        <button 
+          onClick={handleOrderCombo}
+          className="group relative px-6 sm:px-9 py-2.5 sm:py-3 bg-gradient-to-r from-red-600 to-red-500 text-white rounded-full font-black text-[22px] sm:text-4xl shadow-[0_0_20px_rgba(220,38,38,0.4)] border border-red-400/30 hover:scale-105 active:scale-95 transition-all overflow-hidden flex items-center justify-center gap-2 cursor-pointer"
+        >
+          <div className="absolute inset-0 bg-white/20 translate-y-[-100%] group-hover:translate-y-[100%] transition-transform duration-500" />
+          <span className="text-[11px] sm:text-sm border-r border-white/20 pr-2 sm:pr-3 mr-1">ORDER NOW</span>
           ₹149
-        </span>
+        </button>
       </div>
       
       {/* Validity — hidden on mobile */}
-      <p className="hidden sm:flex text-xs md:text-sm text-red-100/70 font-bold tracking-[0.1em] uppercase items-center gap-1.5">
+      <p className="hidden sm:flex text-xs md:text-sm text-red-100/70 font-bold tracking-[0.1em] uppercase items-center gap-1.5 pointer-events-auto">
         <Clock className="w-4 h-4 text-red-300" /> Valid for 7 days
       </p>
     </div>
   </div>
-);
+  );
+};
 
 const heroSlides = [
   <FlavourFactorySlide1 key="1" />,
