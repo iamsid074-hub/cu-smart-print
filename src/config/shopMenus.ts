@@ -26,7 +26,7 @@ export const shops: Shop[] = [
     {
         id: "chatori-chai-kulcha",
         name: "Chatori Chaat & Kulcha Corner",
-        tag: "Chaat \u2022 Kulcha \u2022 Snacks \u2022 Only \u20B922 Delivery",
+        tag: "Chaat \u2022 Kulcha \u2022 Snacks",
         veg: false,
         categories: [
             {
