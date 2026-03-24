@@ -160,7 +160,6 @@ function AppLayout() {
       {!isLanding && !isLogin && !isAdmin && !isDownload && (
         <>
           <Navbar />
-          <StickyStripBanner />
           <LiveOrderBanner />
           <BottomNav />
           <FloatingMiniBanner />
