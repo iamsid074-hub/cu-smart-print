@@ -199,65 +199,13 @@ export default function FoodMenu() {
                                 </p>
                             </div>
 
-                            {/* ─── Flavour Factory Offer Banner ─── */}
-                            <motion.div
-                                initial={{ opacity: 0, y: -10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.5 }}
-                                className="relative rounded-[1.75rem] overflow-hidden mb-4 shadow-[0_8px_30px_rgba(220,38,38,0.2)]"
-                                style={{ background: 'linear-gradient(135deg, #1f0b0b 0%, #4a1313 100%)' }}
-                            >
-                                {/* Decorative background elements */}
-                                <div className="absolute top-0 right-0 w-64 h-64 bg-red-600/30 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
-                                <div className="absolute bottom-0 left-0 w-48 h-48 bg-orange-500/20 rounded-full blur-[60px] translate-y-1/2 -translate-x-1/2 pointer-events-none" />
-                                
-                                <div className="relative z-10 p-5 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-6">
-                                    {/* Text */}
-                                    <div className="flex-1 min-w-0 w-full">
-                                        <div className="flex flex-wrap items-center gap-2 mb-2">
-                                            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest text-white/90" style={{ background: 'rgba(255,255,255,0.12)' }}>
-                                                <span className="relative flex h-1.5 w-1.5">
-                                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-80" />
-                                                    <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-red-500" />
-                                                </span>
-                                                Combo Offer
-                                            </span>
-                                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-black text-white/90 uppercase tracking-widest" style={{ background: 'rgba(0,0,0,0.2)' }}>
-                                                Top Pick
-                                            </span>
-                                        </div>
-                                        <h3 className="text-[14px] sm:text-[15px] font-black text-white leading-tight drop-shadow-[0_1px_3px_rgba(0,0,0,0.25)] truncate">
-                                            Garlic Bread <span className="font-semibold text-white/80">(Round Cheese)</span> + Coffee
-                                        </h3>
-                                        <div className="flex flex-wrap gap-2 mt-1.5 items-center">
-                                            <span className="text-[11px] font-bold text-white/60 line-through">₹220</span>
-                                            <span className="text-white/30 text-[10px] self-center">•</span>
-                                            <span className="text-[12px] font-black text-white px-2 py-0.5 rounded bg-gradient-to-r from-red-600 to-red-500 border border-red-400/30 shadow-sm">
-                                                Only ₹149
-                                            </span>
-                                        </div>
-                                    </div>
-
-                                    {/* CTA Button */}
-                                    <button 
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        addItem({
-                                          id: "flavour-factory-combo",
-                                          title: "Combo: Garlic Bread (Round Cheese) + Cold Coffee",
-                                          price: 149,
-                                          image: "/banners/flavour_factory.png",
-                                          category: "Flavour Factory",
-                                          quantity: 1,
-                                        });
-                                        navigate('/cart');
-                                      }}
-                                      className="shrink-0 w-full sm:w-auto mt-2 sm:mt-0 px-5 py-3 sm:py-2.5 bg-white text-red-700 rounded-xl font-black text-sm uppercase tracking-widest shadow-lg hover:scale-105 active:scale-95 transition-all hover:bg-stone-50 border border-white/20"
-                                    >
-                                        Order Now
-                                    </button>
-                                </div>
-                            </motion.div>
+                            {/* ─── Flavour Factory Header ─── */}
+                            <div className="mb-6 mt-4 px-2">
+                                <h2 className="text-2xl font-black text-slate-800 tracking-tight">
+                                    Order from <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-orange-500">Flavour Factory</span>
+                                </h2>
+                                <p className="text-sm text-slate-500 font-medium mt-1">Explore our exclusive campus menu below</p>
+                            </div>
 
                             {sortedShops.map((shop) => (
                                 <div key={shop.id} id={`${shop.id}-card`}>
