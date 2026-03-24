@@ -12,7 +12,7 @@ const springTransition = {
   mass: 1.2,
 };
 
-type IslandState = "default" | "browsing" | "explore" | "cart" | "profile" | "added" | "updated" | "grocery" | "sell" | "offer";
+type IslandState = "default" | "browsing" | "explore" | "cart" | "profile" | "added" | "updated" | "grocery" | "sell";
 
 interface TopDynamicIslandProps {
   onSell?: () => void;
@@ -56,9 +56,6 @@ export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
     } else if (location.pathname.startsWith("/grocery")) {
       setIslandState("grocery");
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    } else if (location.pathname === "/pasta-offer") {
-      setIslandState("offer");
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
     } else if (location.pathname.startsWith("/list")) {
       setIslandState("sell");
@@ -136,15 +133,6 @@ export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
         <div className="flex items-center gap-2">
           <Tag className="w-4 h-4 text-emerald-400" />
           <span className="text-sm font-semibold tracking-wide text-white/90">Sell Item</span>
-        </div>
-      );
-      break;
-
-    case "offer":
-      width = 160;
-      content = (
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-semibold tracking-wide text-white/90">Offer</span>
         </div>
       );
       break;
