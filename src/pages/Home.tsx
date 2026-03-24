@@ -246,18 +246,18 @@ const LedScreen = ({ children }: { children: React.ReactNode }) => (
 );
 
 const FlavourFactorySlide1 = () => (
-  <div className="w-full h-full relative flex flex-col items-center justify-center overflow-hidden bg-[#111]">
-    {/* Darkened background image */}
+  <div className="w-full h-full relative flex flex-col items-center justify-center overflow-hidden bg-[#0A0A0A]">
+    {/* Full visible background image without scaling / heavy cropping */}
     <img 
       src="/banners/flavour_factory.png" 
       alt="Flavour Factory"
-      className="absolute inset-0 w-full h-full object-cover opacity-60 mix-blend-screen scale-105"
+      className="absolute inset-0 w-full h-full object-contain opacity-90"
     />
-    {/* Subtle gradient overlay for better text readability */}
-    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+    {/* Subtle gradient overlay strictly at the bottom for text readability */}
+    <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A]/90 via-[#0A0A0A]/30 to-transparent" />
     
     {/* Premium text overlay */}
-    <div className="relative z-10 text-center px-4 flex flex-col items-center justify-end h-full pb-8 sm:pb-12">
+    <div className="relative z-10 text-center px-4 flex flex-col items-center justify-end h-full pb-8 sm:pb-12 pointer-events-none">
       <span className="hidden sm:inline-block py-1 px-3 rounded-full bg-yellow-500/20 text-yellow-500 text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] mb-3 border border-yellow-500/20 backdrop-blur-md shadow-xl">Now Open On Campus</span>
       <h2 className="text-xl sm:text-5xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-100 mb-0 sm:mb-2 tracking-tight drop-shadow-[0_4px_10px_rgba(0,0,0,0.8)]">
         FLAVOUR FACTORY
@@ -269,67 +269,8 @@ const FlavourFactorySlide1 = () => (
   </div>
 );
 
-const FlavourFactorySlide2 = () => {
-  const { addItem } = useCart();
-  const navigate = useNavigate();
-
-  const handleOrderCombo = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    addItem({
-      id: "flavour-factory-combo",
-      title: "Combo: Garlic Bread (Round Cheese) + Cold Coffee",
-      price: 149,
-      image: "/banners/flavour_factory.png",
-      category: "Flavour Factory",
-      quantity: 1,
-    });
-    navigate('/cart');
-  };
-
-  return (
-    <div className="w-full h-full relative overflow-hidden flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #1f0b0b 0%, #4a1313 100%)' }}>
-      {/* Decorative background elements */}
-      <div className="absolute top-0 right-0 w-64 h-64 bg-red-600/30 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-48 h-48 bg-orange-500/20 rounded-full blur-[60px] translate-y-1/2 -translate-x-1/2 pointer-events-none" />
-      
-      <div className="relative z-10 w-full flex flex-col items-center text-center px-4 sm:px-6 pointer-events-none">
-      {/* Badge — hidden on mobile */}
-      <div className="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/20 backdrop-blur-md mb-5 shadow-lg">
-        <span className="text-xl">🎉</span>
-        <span className="text-xs font-black text-white uppercase tracking-widest pt-0.5">Combo Offer</span>
-      </div>
-      
-      <h3 className="text-[18px] sm:text-3xl font-black text-white leading-tight mb-3 sm:mb-6 drop-shadow-lg tracking-tight">
-        Garlic Bread <span className="text-[13px] sm:text-xl font-bold text-white/70">(Round Cheese)</span>
-        <br className="sm:hidden" />
-        <span className="text-red-400 font-bold px-1">+</span> Cold Coffee
-      </h3>
-      
-      {/* Price Order Button — compact on mobile */}
-      <div className="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-8 pointer-events-auto">
-        <span className="text-[11px] sm:text-base text-white/40 line-through font-bold">₹220</span>
-        <button 
-          onClick={handleOrderCombo}
-          className="group relative px-6 sm:px-9 py-2.5 sm:py-3 bg-gradient-to-r from-red-600 to-red-500 text-white rounded-full font-black text-[22px] sm:text-4xl shadow-[0_0_20px_rgba(220,38,38,0.4)] border border-red-400/30 hover:scale-105 active:scale-95 transition-all overflow-hidden flex items-center justify-center gap-2 cursor-pointer"
-        >
-          <div className="absolute inset-0 bg-white/20 translate-y-[-100%] group-hover:translate-y-[100%] transition-transform duration-500" />
-          <span className="text-[11px] sm:text-sm border-r border-white/20 pr-2 sm:pr-3 mr-1">ORDER NOW</span>
-          ₹149
-        </button>
-      </div>
-      
-      {/* Validity — hidden on mobile */}
-      <p className="hidden sm:flex text-xs md:text-sm text-red-100/70 font-bold tracking-[0.1em] uppercase items-center gap-1.5 pointer-events-auto">
-        <Clock className="w-4 h-4 text-red-300" /> Valid for 7 days
-      </p>
-    </div>
-  </div>
-  );
-};
-
 const heroSlides = [
   <FlavourFactorySlide1 key="1" />,
-  <FlavourFactorySlide2 key="2" />,
 ];
 
 function HeroCarousel() {
@@ -340,6 +281,7 @@ function HeroCarousel() {
 
   // Autoplay with progress bar
   useEffect(() => {
+    if (count <= 1) return;
     const step = 50; // ms
     let elapsed = 0;
     const timer = setInterval(() => {
@@ -362,6 +304,7 @@ function HeroCarousel() {
   const touchRef = useRef<number>(0);
   const handleTouchStart = (e: React.TouchEvent) => { touchRef.current = e.touches[0].clientX; };
   const handleTouchEnd = (e: React.TouchEvent) => {
+    if (count <= 1) return;
     const diff = touchRef.current - e.changedTouches[0].clientX;
     if (Math.abs(diff) > 50) diff > 0 ? next() : prev();
   };
@@ -387,44 +330,48 @@ function HeroCarousel() {
           </motion.div>
         ))}
 
-        {/* Gradient overlay at bottom for dots */}
-        <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-black/50 to-transparent z-10 pointer-events-none" />
+        {count > 1 && (
+          <>
+            {/* Gradient overlay at bottom for dots */}
+            <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-black/50 to-transparent z-10 pointer-events-none" />
 
-        {/* Navigation arrows */}
-        <button
-          onClick={prev}
-          className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white/40 hover:scale-110"
-        >
-          <ChevronLeft className="w-5 h-5" />
-        </button>
-        <button
-          onClick={next}
-          className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white/40 hover:scale-110"
-        >
-          <ChevronRight className="w-5 h-5" />
-        </button>
-
-        {/* Dots + progress */}
-        <div className="absolute bottom-3 sm:bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2">
-          {heroSlides.map((_, i) => (
+            {/* Navigation arrows */}
             <button
-              key={i}
-              onClick={() => goTo(i)}
-              className="relative h-1.5 rounded-full overflow-hidden transition-all duration-300"
-              style={{
-                width: i === current ? 32 : 8,
-                backgroundColor: i === current ? 'rgba(255,255,255,0.3)' : 'rgba(255,255,255,0.5)',
-              }}
+              onClick={prev}
+              className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white/40 hover:scale-110"
             >
-              {i === current && (
-                <motion.div
-                  className="absolute inset-y-0 left-0 bg-white rounded-full"
-                  style={{ width: `${progress}%` }}
-                />
-              )}
+              <ChevronLeft className="w-5 h-5" />
             </button>
-          ))}
-        </div>
+            <button
+              onClick={next}
+              className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white/40 hover:scale-110"
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
+
+            {/* Dots + progress */}
+            <div className="absolute bottom-3 sm:bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2">
+              {heroSlides.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => goTo(i)}
+                  className="relative h-1.5 rounded-full overflow-hidden transition-all duration-300"
+                  style={{
+                    width: i === current ? 32 : 8,
+                    backgroundColor: i === current ? 'rgba(255,255,255,0.3)' : 'rgba(255,255,255,0.5)',
+                  }}
+                >
+                  {i === current && (
+                    <motion.div
+                      className="absolute inset-y-0 left-0 bg-white rounded-full"
+                      style={{ width: `${progress}%` }}
+                    />
+                  )}
+                </button>
+              ))}
+            </div>
+          </>
+        )}
       </div>
     </LedScreen>
   );
