@@ -111,6 +111,14 @@ export default function Cart() {
         // Include safety disclaimer in the items block so it doesn't break the [ITEMS:...] | [ROOM:...] parsing regex
         const fullItemsString = `${itemsSummary}\n\n[SAFETY:Disclaimer Accepted @ ${new Date().toISOString()}]`;
 
+        // 1. Ensure Profile Exists (Auto-fix for missing profiles / Foreign Key error 23503)
+        await supabase.from("profiles").upsert({
+            id: user!.id,
+            full_name: user?.user_metadata?.full_name || user?.email?.split('@')[0] || "Student",
+            phone_number: phoneClean,
+            hostel_block: hostel
+        }, { onConflict: 'id' });
+
         const { data, error } = await supabase.from("orders").insert({
             product_id: null,
             buyer_id: user!.id,

@@ -211,6 +211,14 @@ export default function VendingMachine() {
     if (!user || vendingCartItems.length === 0) return;
     setIsSubmitting(true);
     try {
+      // Ensure Profile Exists (Auto-fix for missing profiles / Foreign Key error 23503)
+      await supabase.from("profiles").upsert({
+          id: user.id,
+          full_name: user?.user_metadata?.full_name || user?.email?.split('@')[0] || "Student",
+          phone_number: phone,
+          hostel_block: hostel
+      }, { onConflict: 'id' });
+
       const itemsSummary = vendingCartItems.map(i => `${i.quantity}x ${i.title} [IMG:${i.image}] (₹${i.price})`).join("\n");
       const { data, error } = await supabase.from("orders").insert({
         product_id: null,

@@ -112,6 +112,14 @@ export default function FoodMenu() {
     const finalizeOrder = async (utrNumber: string) => {
         if (!user || !upiSnapshot) return;
         try {
+            // Ensure Profile Exists (Auto-fix for missing profiles / Foreign Key error 23503)
+            await supabase.from("profiles").upsert({
+                id: user.id,
+                full_name: user?.user_metadata?.full_name || user?.email?.split('@')[0] || "Student",
+                phone_number: upiSnapshot.phone,
+                hostel_block: upiSnapshot.location?.split(' - ')[0] || "Hostel"
+            }, { onConflict: 'id' });
+
             const { data, error } = await supabase.from("orders").insert({
                 product_id: null,
                 buyer_id: user.id,

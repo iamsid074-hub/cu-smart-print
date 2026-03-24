@@ -149,6 +149,14 @@ export default function ProductDetail() {
     const finalizeOrder = async (method: "online" | "cod", utrNumber: string | null) => {
         setIsSubmitting(true);
         try {
+            // Ensure Profile Exists (Auto-fix for missing profiles / Foreign Key error 23503)
+            await supabase.from("profiles").upsert({
+                id: user!.id,
+                full_name: user?.user_metadata?.full_name || user?.email?.split('@')[0] || "Student",
+                phone_number: phone.replace(/\D/g, ""),
+                hostel_block: deliveryLocation.split(' - ')[0] || "Hostel"
+            }, { onConflict: 'id' });
+
             const commission = Math.round(product.price * 0.05);
             const { data, error } = await supabase.from("orders").insert({
                 product_id: product.id,
