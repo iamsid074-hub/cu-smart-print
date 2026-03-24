@@ -27,6 +27,7 @@ const Profile = lazy(() => import("./pages/Profile"));
 const Grocery = lazy(() => import("./pages/Grocery"));
 const ProductDetail = lazy(() => import("./pages/ProductDetail"));
 const FoodMenu = lazy(() => import("./pages/FoodMenu"));
+const PastaOfferPage = lazy(() => import("./pages/PastaOfferPage"));
 const Cart = lazy(() => import("./pages/Cart"));
 const Admin = lazy(() => import("./pages/Admin"));
 const TermsAndConditions = lazy(() => import("./pages/TermsAndConditions"));
@@ -40,6 +41,8 @@ import AppUpdater from "./components/AppUpdater";
 import LiveOrderBanner from "./components/LiveOrderBanner";
 import UsernameSetup from "./components/UsernameSetup";
 import ScrollToTop from "./components/ScrollToTop";
+import StickyStripBanner from "./components/StickyStripBanner";
+import FloatingMiniBanner from "./components/FloatingMiniBanner";
 import { usePushNotifications } from "./hooks/usePushNotifications";
 import { useSiteGate, ClosedScreen, MaintenanceScreen } from "./components/SiteGate";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
@@ -157,8 +160,10 @@ function AppLayout() {
       {!isLanding && !isLogin && !isAdmin && !isDownload && (
         <>
           <Navbar />
+          <StickyStripBanner />
           <LiveOrderBanner />
           <BottomNav />
+          <FloatingMiniBanner />
         </>
       )}
       <Suspense fallback={<BrandedLoading />}>
@@ -176,6 +181,7 @@ function AppLayout() {
           <Route path="/grocery" element={<ProtectedRoute><Grocery /></ProtectedRoute>} />
           <Route path="/product/:id" element={<ProtectedRoute><ProductDetail /></ProtectedRoute>} />
           <Route path="/food" element={<ProtectedRoute><FoodMenu /></ProtectedRoute>} />
+          <Route path="/pasta-offer" element={<ProtectedRoute><PastaOfferPage /></ProtectedRoute>} />
           <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
 
           <Route path="/admin" element={<AdminRoute><Admin /></AdminRoute>} />

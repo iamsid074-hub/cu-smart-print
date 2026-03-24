@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import UpiPaymentModal from "@/components/UpiPaymentModal";
 import { shops } from "@/config/shopMenus";
 import { getFoodSuggestions, estimatePrice } from "@/utils/foodUtils";
+import PastaHighlightSection from "@/components/PastaHighlightSection";
 import {
     Dialog,
     DialogContent,
@@ -198,6 +199,9 @@ export default function FoodMenu() {
                                     <span className="text-slate-900 font-bold">{shops.length}</span> verified campus shops
                                 </p>
                             </div>
+
+                            {/* ─── Pasta Offer Highlight ─── */}
+                            <PastaHighlightSection />
 
                             {/* ─── Flavour Factory Header ─── */}
                             <div className="mb-6 mt-4 px-2">

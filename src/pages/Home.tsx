@@ -2,7 +2,6 @@ import { useEffect, useState, useRef, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronRight, ChevronLeft, Loader2, ShoppingBag, ShoppingCart, X, MapPin, Phone, Home as HomeIcon, Zap, UtensilsCrossed, Package, Rocket, ShieldCheck, BadgePercent, Users, Plus, Shield, Ban, Headset, ExternalLink, Search, Download, ArrowRight, Store, Clock } from "lucide-react";
-import TargetedPromoModal from "@/components/TargetedPromoModal";
 import ProductCard from "@/components/ProductCard";
 import VendingMachine from "@/components/VendingMachine";
 import { supabase } from "@/lib/supabase";
@@ -245,32 +244,10 @@ const LedScreen = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
-const FlavourFactorySlide1 = () => (
-  <div className="w-full h-full relative flex flex-col items-center justify-center overflow-hidden bg-[#0A0A0A]">
-    {/* Full visible background image without scaling / heavy cropping */}
-    <img 
-      src="/banners/flavour_factory.png" 
-      alt="Flavour Factory"
-      className="absolute inset-0 w-full h-full object-contain opacity-90"
-    />
-    {/* Subtle gradient overlay strictly at the bottom for text readability */}
-    <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A]/90 via-[#0A0A0A]/30 to-transparent" />
-    
-    {/* Premium text overlay */}
-    <div className="relative z-10 text-center px-4 flex flex-col items-center justify-end h-full pb-8 sm:pb-12 pointer-events-none">
-      <span className="hidden sm:inline-block py-1 px-3 rounded-full bg-yellow-500/20 text-yellow-500 text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] mb-3 border border-yellow-500/20 backdrop-blur-md shadow-xl">Now Open On Campus</span>
-      <h2 className="text-xl sm:text-5xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-100 mb-0 sm:mb-2 tracking-tight drop-shadow-[0_4px_10px_rgba(0,0,0,0.8)]">
-        FLAVOUR FACTORY
-      </h2>
-      <p className="hidden sm:block text-white/90 text-[11px] sm:text-sm md:text-lg font-bold tracking-[0.15em] max-w-md mx-auto drop-shadow-lg uppercase text-shadow-md">
-        Your Daily Dose of Flavours
-      </p>
-    </div>
-  </div>
-);
+import FlavourFactoryBanner from "@/components/FlavourFactoryBanner";
 
 const heroSlides = [
-  <FlavourFactorySlide1 key="1" />,
+  <FlavourFactoryBanner key="1" />,
 ];
 
 function HeroCarousel() {

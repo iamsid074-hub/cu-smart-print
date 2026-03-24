@@ -1235,9 +1235,9 @@ export const shops: Shop[] = [
                 items: [
                     { name: "Spicy Pasta", price: 120 },
                     { name: "Paneer Pasta", price: 120 },
-                    { name: "Red Sauce Pasta", price: 110 },
-                    { name: "White Sauce Pasta", price: 110 },
-                    { name: "Mixed Sauce Pasta", price: 110 },
+                    { name: "Red Sauce Pasta", price: 99 },
+                    { name: "White Sauce Pasta", price: 99 },
+                    { name: "Mixed Sauce Pasta", price: 99 },
                     { name: "Cheesy Pasta", price: 120 },
                     { name: "Nachos Cheesy Pasta", price: 140 },
                 ],
