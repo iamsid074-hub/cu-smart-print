@@ -87,7 +87,7 @@ export default function BottomNav() {
                     {/* Actual Button */}
                     <Link to="/cart" className="relative flex items-center justify-center w-full h-full text-decoration-none focus:outline-none outline-none">
                         <motion.div 
-                            className={`rounded-full w-full h-full flex items-center justify-center border-4 relative overflow-hidden transition-all duration-300 transform ${isCartActive ? 'bg-slate-900 border-white text-white -translate-y-1 z-10 shadow-[0_10px_25px_rgba(0,0,0,0.4)]' : 'bg-slate-900 border-slate-50 text-slate-100 translate-y-0 shadow-[0_5px_15px_rgba(0,0,0,0.2)]'}`}
+                            className={`rounded-full w-full h-full flex items-center justify-center border-4 relative transition-all duration-300 transform ${isCartActive ? 'bg-slate-900 border-white text-white -translate-y-1 z-10 shadow-[0_10px_25px_rgba(0,0,0,0.4)]' : 'bg-slate-900 border-slate-50 text-slate-100 translate-y-0 shadow-[0_5px_15px_rgba(0,0,0,0.2)]'}`}
                             whileTap={{ scale: 0.85 }}
                             transition={{ type: "spring", stiffness: 500, damping: 25 }}
                         >
