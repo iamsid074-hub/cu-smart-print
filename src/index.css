@@ -440,3 +440,150 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ─── CB Loader ─── */
+
+.cb-letter-c {
+  font-family: 'Playfair Display', serif;
+  font-size: 160px;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1;
+  display: inline-block;
+  opacity: 0;
+  margin-right: -28px;
+  position: relative;
+  z-index: 2;
+  letter-spacing: -4px;
+  animation: cSlide 1.1s cubic-bezier(0.22, 1, 0.36, 1) 0.1s forwards;
+}
+
+.cb-letter-b {
+  font-family: 'Playfair Display', serif;
+  font-size: 160px;
+  font-weight: 700;
+  color: #7F77DD;
+  line-height: 1;
+  display: inline-block;
+  opacity: 0;
+  margin-left: -28px;
+  position: relative;
+  z-index: 1;
+  letter-spacing: -4px;
+  animation: bSlide 1.1s cubic-bezier(0.22, 1, 0.36, 1) 0.1s forwards;
+}
+
+.cb-progress-fill {
+  animation: progressFill 5s cubic-bezier(0.4, 0, 0.2, 1) 1.2s forwards;
+}
+
+.cb-dot {
+  font-size: 14px;
+  color: #6C65B0;
+}
+
+.cb-dot-1 {
+  animation: dot1 1.2s ease infinite;
+}
+
+.cb-dot-2 {
+  animation: dot2 1.2s ease infinite;
+}
+
+.cb-dot-3 {
+  animation: dot3 1.2s ease infinite;
+}
+
+@keyframes cSlide {
+  0% {
+    opacity: 0;
+    transform: translateX(-200px) scale(1.3);
+    filter: blur(14px);
+  }
+
+  65% {
+    transform: translateX(8px) scale(0.98);
+    filter: blur(0);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes bSlide {
+  0% {
+    opacity: 0;
+    transform: translateX(200px) scale(1.3);
+    filter: blur(14px);
+  }
+
+  65% {
+    transform: translateX(-8px) scale(0.98);
+    filter: blur(0);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes progressFill {
+  0% {
+    width: 0%;
+  }
+
+  20% {
+    width: 15%;
+  }
+
+  50% {
+    width: 50%;
+  }
+
+  80% {
+    width: 78%;
+  }
+
+  100% {
+    width: 95%;
+  }
+}
+
+@keyframes dot1 {
+
+  0%,
+  100% {
+    opacity: 0.15
+  }
+
+  15% {
+    opacity: 1
+  }
+}
+
+@keyframes dot2 {
+
+  0%,
+  100% {
+    opacity: 0.15
+  }
+
+  40% {
+    opacity: 1
+  }
+}
+
+@keyframes dot3 {
+
+  0%,
+  100% {
+    opacity: 0.15
+  }
+
+  65% {
+    opacity: 1
+  }
+}

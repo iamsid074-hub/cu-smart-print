@@ -54,48 +54,28 @@ const queryClient = new QueryClient();
 
 const BrandedLoading = () => {
   return (
-    <div className="fixed inset-0 z-[999] flex flex-col items-center justify-center bg-black overflow-hidden">
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}
-        className="flex flex-col items-center gap-6"
-      >
-        <div className="relative">
-          <motion.div
-            animate={{ 
-              scale: [1, 1.2, 1],
-              opacity: [0.3, 0.6, 0.3]
-            }}
-            transition={{ 
-              duration: 2,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-            className="absolute inset-0 bg-white blur-xl rounded-full"
-          />
-          <div className="w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center relative z-10 transition-transform duration-700 animate-pulse">
-            <img src="/logo.webp" alt="Logo" className="w-10 h-10 object-contain opacity-80" />
+    <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[#08051a] overflow-hidden">
+      <div className="flex flex-col items-center justify-center gap-[36px] p-[48px_32px]">
+        <div className="flex items-center justify-center leading-none">
+          <span className="cb-letter-c">C</span>
+          <span className="cb-letter-b">B</span>
+        </div>
+
+        <div className="flex flex-col items-center gap-[12px] w-[140px]">
+          <div className="w-full h-[2px] bg-white/5 rounded-full overflow-hidden">
+            <div className="h-full bg-[#7F77DD] rounded-full w-0 cb-progress-fill"></div>
+          </div>
+          <div className="flex items-center gap-[5px]">
+            <span className="font-['Cormorant_Garamond'] text-[13px] text-[#4e4880] tracking-[3px] uppercase">loading</span>
+            <span className="cb-dot cb-dot-1">.</span>
+            <span className="cb-dot cb-dot-2">.</span>
+            <span className="cb-dot cb-dot-3">.</span>
           </div>
         </div>
-        
-        <div className="flex flex-col items-center gap-2">
-          <h1 className="text-white/40 text-xs font-black tracking-[0.3em] uppercase">Loading</h1>
-          <div className="flex gap-1.5">
-            {[0, 1, 2].map((i) => (
-              <motion.div 
-                key={i} 
-                className="w-1 h-1 rounded-full bg-white/20"
-                animate={{ opacity: [0.2, 1, 0.2] }}
-                transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.2 }}
-              />
-            ))}
-          </div>
-        </div>
-      </motion.div>
+      </div>
     </div>
   );
-}
+};
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, profile, loading } = useAuth();
