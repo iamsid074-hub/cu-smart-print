@@ -139,7 +139,6 @@ export default function Cart() {
 
         if (error) {
             console.error("Supabase Insert Error:", error);
-            alert(`DEBUG ERROR:\nURL: ${import.meta.env.VITE_SUPABASE_URL}\nError: ${JSON.stringify(error)}`);
             throw error;
         }
 
