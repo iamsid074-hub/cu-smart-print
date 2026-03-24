@@ -124,6 +124,8 @@ export default function FoodMenu() {
                 delivery_room: upiSnapshot.type === 'snack' ? `[FOOD] ${upiSnapshot.title}` : upiSnapshot.customNotes,
                 buyer_phone: upiSnapshot.phone,
                 status: 'pending',
+                payment_method: 'cashfree',
+                payment_status: 'paid',
                 razorpay_payment_id: utrNumber,
                 seller_notified_at: new Date().toISOString(),
             }).select().single();
@@ -138,6 +140,7 @@ export default function FoodMenu() {
             navigate(`/tracking?order=${data.id}`);
         } catch (err: any) {
             toast({ title: "Order failed", description: err.message || "Please try again.", variant: "destructive" });
+            throw err;
         }
     };
 

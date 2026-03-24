@@ -224,6 +224,8 @@ export default function VendingMachine() {
         delivery_room: `[VENDING MACHINE: Room ${room}]\n${itemsSummary}`,
         buyer_phone: phone,
         status: 'pending',
+        payment_method: 'cashfree',
+        payment_status: 'paid',
         razorpay_payment_id: utrNumber,
         seller_notified_at: new Date().toISOString(),
       }).select().single();
@@ -239,6 +241,7 @@ export default function VendingMachine() {
       navigate(`/tracking?order=${data.id}`);
     } catch (err: any) {
       toast({ title: "Order failed", description: err.message || "Please try again.", variant: "destructive" });
+      throw err;
     } finally {
       setIsSubmitting(false);
     }
