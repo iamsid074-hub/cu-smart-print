@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ArrowRight } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 export default function FloatingMiniBanner() {
   const [dismissed, setDismissed] = useState(false);
+  const { pathname } = useLocation();
 
-  if (dismissed) return null;
+  if (dismissed || pathname === "/pasta-offer") return null;
 
   return (
     <AnimatePresence>
