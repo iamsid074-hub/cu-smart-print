@@ -6,56 +6,38 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const NavItem = ({ to, icon: Icon, label, isActive, asAvatar = false, user = null }: any) => {
     return (
-        <Link to={to} className="flex-1 relative z-10 flex flex-col items-center justify-center py-2 outline-none user-select-none">
-            {/* Advanced Liquid Background Pill */}
-            {isActive && (
-                <motion.div 
-                    layoutId="active-nav-pill"
-                    className="absolute inset-x-1 sm:inset-x-2 inset-y-1 bg-slate-900/5 rounded-2xl -z-10"
-                    transition={{ type: "spring", stiffness: 450, damping: 35 }}
-                />
-            )}
-            
+        <Link to={to} className="flex-1 relative z-10 flex flex-col items-center justify-center py-2 outline-none select-none">
             <motion.div
-                className="flex flex-col items-center justify-center gap-[3px] w-full relative"
+                className="flex flex-col items-center justify-center gap-1 w-full relative"
                 whileTap={{ scale: 0.85 }}
-                transition={{ type: "spring", stiffness: 450, damping: 25 }}
+                transition={{ type: "spring", stiffness: 500, damping: 25 }}
             >
-                {/* Advanced icon jump container */}
-                <motion.div 
-                   animate={isActive ? { y: -3, scale: 1.15 } : { y: 0, scale: 1 }} 
-                   transition={{ type: "spring", stiffness: 400, damping: 20 }}
+                <div 
+                   className={`transition-all duration-300 transform ${isActive ? '-translate-y-1 scale-110' : 'translate-y-0 scale-100'}`}
                 >
                     {asAvatar ? (
-                        <div className={`w-[20px] h-[20px] sm:w-[22px] sm:h-[22px] rounded-full flex items-center justify-center overflow-hidden border-2 transition-colors duration-200 ${isActive ? 'border-slate-800 bg-slate-100' : 'border-slate-200/50 bg-slate-100'}`}>
+                        <div className={`w-[20px] h-[20px] sm:w-[22px] sm:h-[22px] rounded-full flex items-center justify-center overflow-hidden border-2 transition-colors duration-300 ${isActive ? 'border-slate-800 bg-slate-100' : 'border-slate-200/50 bg-slate-100'}`}>
                             {user ? (
-                                <User strokeWidth={2.5} className={`w-4 h-4 ${isActive ? 'text-slate-800' : 'text-slate-500'}`} />
+                                <User strokeWidth={2.5} className={`w-4 h-4 transition-colors ${isActive ? 'text-slate-800' : 'text-slate-500'}`} />
                             ) : (
                                 <User strokeWidth={2.5} className="w-4 h-4 text-slate-400" />
                             )}
                         </div>
                     ) : (
-                        <Icon strokeWidth={isActive ? 2.5 : 2} className={`w-5 h-5 sm:w-[22px] sm:h-[22px] transition-colors duration-200 ${isActive ? 'text-slate-900' : 'text-slate-500'}`} />
+                        <Icon strokeWidth={isActive ? 2.5 : 2} className={`w-5 h-5 sm:w-[22px] sm:h-[22px] transition-colors duration-300 ${isActive ? 'text-slate-900' : 'text-slate-400'}`} />
                     )}
-                </motion.div>
+                </div>
                 
-                <motion.span 
-                    animate={isActive ? { opacity: 1, y: -2 } : { opacity: 0.6, y: 0 }}
-                    transition={{ duration: 0.2 }}
-                    className={`text-[9px] sm:text-[10px] font-bold tracking-tight transition-colors duration-200 pointer-events-none select-none ${isActive ? 'text-slate-900' : 'text-slate-500'}`}
+                <span 
+                    className={`text-[10px] sm:text-[11px] font-bold tracking-tight transition-all duration-300 pointer-events-none select-none transform ${isActive ? 'text-slate-900 opacity-100 -translate-y-0.5' : 'text-slate-400 opacity-70 translate-y-0'}`}
                 >
                     {label}
-                </motion.span>
+                </span>
                 
-                {/* Micro Active Dot */}
-                {isActive && (
-                    <motion.div 
-                        initial={{ opacity: 0, scale: 0 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0 }}
-                        className="absolute -bottom-2 w-1 h-1 rounded-full bg-slate-900"
-                    />
-                )}
+                {/* Micro Active Dot - CSS Animated */}
+                <div 
+                    className={`absolute -bottom-2 w-1 h-1 rounded-full bg-slate-900 transition-all duration-300 transform ${isActive ? 'opacity-100 scale-100' : 'opacity-0 scale-0'}`}
+                />
             </motion.div>
         </Link>
     );
@@ -88,7 +70,7 @@ export default function BottomNav() {
                     backdropFilter: "blur(20px) saturate(150%)",
                     WebkitBackdropFilter: "blur(20px) saturate(150%)",
                     borderRadius: 50,
-                    boxShadow: "0 10px 40px -10px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.03)", // Static hardware-accelerated shadow
+                    boxShadow: "0 10px 40px -10px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.03)", 
                 }}
             >
                 <NavItem to="/home" icon={Home} label="Home" isActive={location.pathname === '/home'} />
@@ -97,32 +79,20 @@ export default function BottomNav() {
 
                 {/* Cart (Center elevated style wrapper) */}
                 <div className="flex-shrink-0 relative -top-5 w-[56px] sm:w-[64px] h-[56px] sm:h-[64px] mx-1 flex justify-center items-center z-20">
-                    {/* Shadow Layer - Hardware accelerated via opacity instead of blur */}
-                    <motion.div 
-                        className="absolute inset-[-8px] bg-slate-900/10 rounded-full mix-blend-multiply pointer-events-none" 
-                        animate={{ opacity: isCartActive ? 0.3 : 0.1, scale: isCartActive ? 1.1 : 0.9 }}
+                    <div 
+                        className={`absolute inset-[-8px] bg-slate-900/10 rounded-full mix-blend-multiply pointer-events-none transition-all duration-300 transform ${isCartActive ? 'opacity-30 scale-110' : 'opacity-10 scale-90'}`}
                         style={{ filter: 'blur(8px)' }}
                     />
 
                     {/* Actual Button */}
                     <Link to="/cart" className="relative flex items-center justify-center w-full h-full text-decoration-none focus:outline-none outline-none">
                         <motion.div 
-                            className={`rounded-full w-full h-full flex items-center justify-center border-4 relative overflow-hidden transition-colors duration-300 ${isCartActive ? 'bg-slate-900 border-white text-white' : 'bg-slate-900 border-[#f8fafc] text-slate-100'}`}
+                            className={`rounded-full w-full h-full flex items-center justify-center border-4 relative overflow-hidden transition-all duration-300 transform ${isCartActive ? 'bg-slate-900 border-white text-white -translate-y-1 z-10 shadow-[0_10px_25px_rgba(0,0,0,0.4)]' : 'bg-slate-900 border-slate-50 text-slate-100 translate-y-0 shadow-[0_5px_15px_rgba(0,0,0,0.2)]'}`}
                             whileTap={{ scale: 0.85 }}
-                            animate={{ y: isCartActive ? -4 : 0 }}
-                            transition={{ type: "spring", stiffness: 450, damping: 25 }}
+                            transition={{ type: "spring", stiffness: 500, damping: 25 }}
                         >
                             <ShoppingCart strokeWidth={2.5} className="w-5 h-5 sm:w-[22px] sm:h-[22px] relative z-10" />
                             
-                            {/* Inner glow effect when active */}
-                            {isCartActive && (
-                                <motion.div 
-                                    className="absolute inset-0 bg-white/10 rounded-full pointer-events-none"
-                                    animate={{ opacity: [0, 0.5, 0] }}
-                                    transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
-                                />
-                            )}
-
                             <AnimatePresence>
                                 {cartCount > 0 && (
                                     <motion.div 
