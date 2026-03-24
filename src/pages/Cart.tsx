@@ -127,7 +127,7 @@ export default function Cart() {
             payment_status: "paid", // Switched to paid to avoid verifying constraint errors
             razorpay_payment_id: paymentId || null,
             seller_notified_at: new Date().toISOString(),
-        }).select().single();
+        });
 
         if (error) {
             console.error("Supabase Insert Error:", error);
@@ -139,8 +139,8 @@ export default function Cart() {
         setShowCheckout(false);
         setShowUpiModal(false);
         
-        // Critical: Redirect to the specific order page
-        navigate(`/tracking?order=${data.id}`);
+        // Redirect to tracking (it automatically fetches the latest order if no ID provided)
+        navigate(`/tracking`);
     };
 
     const handleCheckout = async () => {

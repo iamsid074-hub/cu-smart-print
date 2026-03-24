@@ -228,7 +228,7 @@ export default function VendingMachine() {
         payment_status: 'paid',
         razorpay_payment_id: utrNumber,
         seller_notified_at: new Date().toISOString(),
-      }).select().single();
+      });
 
       if (error) throw error;
 
@@ -237,8 +237,8 @@ export default function VendingMachine() {
       setShowUpiModal(false);
       setShowCheckout(false);
       
-      // Redirect to the specific order page
-      navigate(`/tracking?order=${data.id}`);
+      // Redirect to the tracking page (automatically fetches latest order)
+      navigate(`/tracking`);
     } catch (err: any) {
       toast({ title: "Order failed", description: err.message || "Please try again.", variant: "destructive" });
       throw err;

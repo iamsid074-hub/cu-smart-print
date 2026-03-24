@@ -166,16 +166,17 @@ export default function ProductDetail() {
                 payment_status: method === "online" ? "paid" : "pending",
                 razorpay_payment_id: utrNumber,
                 seller_notified_at: new Date().toISOString(),
-            }).select().single();
+            });
 
             if (error) throw error;
 
             toast({ title: method === "online" ? "Order submitted" : "Order placed", description: method === "online" ? `Admin will verify payment.` : "Pay on delivery." });
             setIsBuyModalOpen(false);
             setShowUpiModal(false);
-            navigate(`/tracking?order=${data.id}`);
+            navigate(`/tracking`);
         } catch (err: any) {
             toast({ title: "Order failed", description: err.message || "Please try again.", variant: "destructive" });
+            throw err;
         } finally {
             setIsSubmitting(false);
         }
