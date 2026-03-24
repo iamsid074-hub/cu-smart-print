@@ -189,26 +189,7 @@ export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
         style={{ willChange: "transform" }}
       >
         <div className="flex items-center gap-3 max-w-md w-full justify-center">
-          {/* CU Logo at extreme left (inside the container flex for alignment) */}
-          <motion.div
-            initial={{ scale: 0, opacity: 0, x: -20 }}
-            animate={{ scale: 1, opacity: 1, x: 0 }}
-            transition={{ ...springTransition, delay: 0.2 }}
-            className="pointer-events-auto flex-shrink-0"
-          >
-            <div className="w-10 h-10 rounded-full bg-white p-0.5 shadow-[0_4px_0_#000] border-2 border-black overflow-hidden relative group">
-              <img 
-                src="/cb_gold_logo_v1.webp" 
-                alt="CU Logo" 
-                className="w-full h-full rounded-full object-cover group-hover:scale-110 transition-transform duration-300" 
-              />
-              <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-                className="absolute inset-0 border border-white/20 rounded-full"
-              />
-            </div>
-          </motion.div>
+
 
           <AnimatePresence mode="popLayout">
             {/* ── Main Pill ── */}
