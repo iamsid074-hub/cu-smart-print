@@ -8,14 +8,14 @@ import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
 
 
-type IslandView = "default" | "search" | "cart" | "delivery" | "flash" | "context";
+type IslandView = "default" | "search" | "cart" | "delivery" | "context";
 type ActiveOrder = { id: string; status: string; delivery_location: string; delivery_room: string | null; total_price: number; title: string };
 
 
 interface IslandNotification {
     id: string;
     priority: 1 | 2 | 3;
-    type: "cart-add" | "cart-remove" | "order-placed" | "delivery" | "flash" | "logo";
+    type: "cart-add" | "cart-remove" | "order-placed" | "delivery" | "logo";
     label: string;
     icon: "cart" | "truck" | "zap" | "check" | "package" | "logo";
     color: string;
@@ -24,17 +24,6 @@ interface IslandNotification {
 
 
 const spring = { type: "tween" as const, duration: 0.25, ease: "easeOut" as const };
-
-
-const FLASH_SALE = {
-    active: false,
-    title: "Buy 1 Pen (₹10) → Get 1 Free",
-    originalPrice: 20,
-    salePrice: 15,
-    discount: "₹10 Pen + ₹5 Pen FREE!",
-    endsAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
-    link: "/product/ce-pen-10",
-};
 
 export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (expanded: boolean) => void }) {
     const [view, setView] = useState<IslandView>("default");
@@ -125,22 +114,6 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
 
     }, [user, activeOrder, navigate]);
 
-
-    const [saleTimeLeft, setSaleTimeLeft] = useState("");
-    useEffect(() => {
-        if (!FLASH_SALE.active) return;
-        const tick = () => {
-            const diff = FLASH_SALE.endsAt.getTime() - Date.now();
-            if (diff <= 0) { setSaleTimeLeft("Ended"); return; }
-            const h = Math.floor(diff / 3600000);
-            const m = Math.floor((diff % 3600000) / 60000);
-            const s = Math.floor((diff % 60000) / 1000);
-            setSaleTimeLeft(`${h}:${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`);
-        };
-        tick();
-        const id = setInterval(tick, 1000);
-        return () => clearInterval(id);
-    }, []);
 
     // >>> ADMIN: Global New Order Listener <<<
     useEffect(() => {
@@ -339,16 +312,6 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
     }, [activeOrder, justDelivered, pushNotification]);
 
 
-    const [idleMode, setIdleMode] = useState<"logo" | "flash">("logo");
-    useEffect(() => {
-        if (!FLASH_SALE.active) return;
-        const id = setInterval(() => {
-            setIdleMode(prev => prev === "logo" ? "flash" : "logo");
-        }, 8000);
-        return () => clearInterval(id);
-    }, []);
-
-
     const close = useCallback(() => { setView("default"); setQuery(""); }, []);
     const open = useCallback((v: IslandView) => { setView(v); try { navigator.vibrate?.(10); } catch { /* ignore */ } }, []);
 
@@ -378,7 +341,6 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
         }
         if (activeNotif?.type === "delivery") { open("delivery"); return; }
         if (pageContext && !activeNotif) { open("context"); return; }
-        if (idleMode === "flash" && !activeNotif && FLASH_SALE.active && !pageContext) { open("flash"); return; }
         if (cartCount > 0 && !activeNotif) { open("cart"); return; }
         open("search");
     };
@@ -392,7 +354,7 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
     };
 
 
-    const isDropdownOpen = view === "cart" || view === "delivery" || view === "flash" || view === "context";
+    const isDropdownOpen = view === "cart" || view === "delivery" || view === "context";
     const isSearchOpen = view === "search";
     const isExpanded = isDropdownOpen || isSearchOpen;
 
@@ -412,7 +374,6 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
         if (isExpanded) return "none";
         if (activeNotif?.color === "#FF6B6B") return "diCartPulse 1.5s ease-in-out 1";
         if (activeNotif?.color === "#30D158") return "diDeliveryBreathe 3s ease-in-out infinite";
-        if (showingIdle && idleMode === "flash") return "diFlash 2s ease-in-out infinite";
         return "diBreathe 4s ease-in-out infinite";
     };
 
@@ -420,7 +381,6 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
         if (isSearchOpen) return "min(420px, calc(100vw - 120px))";
         if (showingNotif) return "min(280px, calc(100vw - 120px))";
         if (showingIdle && pageContext) return "min(220px, calc(100vw - 160px))";
-        if (showingIdle && idleMode === "flash" && !pageContext) return "min(250px, calc(100vw - 160px))";
         return 150;
     };
 
@@ -430,10 +390,6 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
         @keyframes diBreathe {
           0%,100% { box-shadow: 0 0 0 0.5px rgba(255,255,255,0.06), 0 2px 10px rgba(0,0,0,0.5); }
           50% { box-shadow: 0 0 0 0.5px rgba(255,255,255,0.1), 0 2px 14px rgba(0,0,0,0.4), 0 0 18px rgba(255,107,107,0.05); }
-        }
-        @keyframes diFlash {
-          0%,100% { box-shadow: 0 0 0 0.5px rgba(255,200,0,0.2), 0 2px 10px rgba(0,0,0,0.5), 0 0 20px rgba(255,200,0,0.1); }
-          50% { box-shadow: 0 0 0 1px rgba(255,200,0,0.35), 0 2px 14px rgba(0,0,0,0.4), 0 0 30px rgba(255,200,0,0.18); }
         }
         @keyframes diCartPulse {
           0% { box-shadow: 0 0 0 0.5px rgba(255,107,107,0.1), 0 2px 10px rgba(0,0,0,0.5); }
@@ -553,9 +509,8 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
                                     <ChevronRight style={{ width: 12, height: 12, color: `${activeNotif!.color}66`, marginLeft: "auto", flexShrink: 0 }} />
                                 </motion.div>
                             ) : (
-
                                 <motion.div
-                                    key={`idle-${pageContext ? pageContext.id : idleMode}`}
+                                    key={`idle-${pageContext ? pageContext.id : 'logo'}`}
                                     initial={{ opacity: 0, scale: 0.85 }}
                                     animate={{ opacity: 1, scale: 1 }}
                                     exit={{ opacity: 0, scale: 0.85 }}
@@ -572,27 +527,14 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
                                         <>
                                             <div style={{ width: 7, height: 7, borderRadius: "50%", background: "#30D158", flexShrink: 0, animation: "greenPulse 2s ease-in-out infinite" }} />
 
-                                            {idleMode === "logo" && (
-                                                <>
-                                                    <div style={{ width: 22, height: 22, borderRadius: "50%", overflow: "hidden", border: "1.5px solid rgba(255,255,255,0.1)", flexShrink: 0 }}>
-                                                        <img src="/logo.webp" alt="CU" style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                                                            onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
-                                                    </div>
-                                                    <span style={{ fontWeight: 700, fontSize: 13, whiteSpace: "nowrap", display: "flex", gap: 4 }}>
-                                                        <span style={{ color: "#FF6B6B" }}>CU</span>
-                                                        <span style={{ color: "#fff" }}>BAZZAR</span>
-                                                    </span>
-                                                </>
-                                            )}
-                                            {idleMode === "flash" && (
-                                                <div style={{ display: "flex", alignItems: "center", gap: 5, flex: 1, minWidth: 0 }}>
-                                                    <Zap style={{ width: 13, height: 13, color: "#FFD60A", fill: "#FFD60A", flexShrink: 0 }} />
-                                                    <span style={{ fontSize: 12, fontWeight: 700, color: "#FFD60A", whiteSpace: "nowrap" }}>
-                                                        Flash Sale · {FLASH_SALE.discount}
-                                                    </span>
-                                                    <ChevronRight style={{ width: 12, height: 12, color: "rgba(255,200,0,0.4)", marginLeft: "auto", flexShrink: 0 }} />
-                                                </div>
-                                            )}
+                                            <div style={{ width: 22, height: 22, borderRadius: "50%", overflow: "hidden", border: "1.5px solid rgba(255,255,255,0.1)", flexShrink: 0 }}>
+                                                <img src="/logo.webp" alt="CU" style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                                                    onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
+                                            </div>
+                                            <span style={{ fontWeight: 700, fontSize: 13, whiteSpace: "nowrap", display: "flex", gap: 4 }}>
+                                                <span style={{ color: "#FF6B6B" }}>CU</span>
+                                                <span style={{ color: "#fff" }}>BAZZAR</span>
+                                            </span>
                                         </>
                                     )}
                                 </motion.div>
@@ -713,40 +655,6 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
                                         <Link to={`/tracking?order=${activeOrder.id}`} onClick={() => close()}
                                             style={{ padding: "9px 12px", borderRadius: 12, background: "rgba(48,209,88,0.15)", border: "1px solid rgba(48,209,88,0.3)", color: "#30D158", fontSize: 13, fontWeight: 600, textAlign: "center", textDecoration: "none" }}>
                                             Track Delivery
-                                        </Link>
-                                    </div>
-                                )}
-
-                                {view === "flash" && (
-
-                                    <div style={{ padding: "14px 16px", display: "flex", flexDirection: "column", gap: 10 }}>
-                                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                                            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                                                <Zap style={{ width: 14, height: 14, color: "#FFD60A", fill: "#FFD60A" }} />
-                                                <span style={{ fontSize: 14, fontWeight: 700, color: "#FFD60A" }}>⚡ Flash Sale</span>
-                                            </div>
-                                            <button onClick={(e) => { e.stopPropagation(); close(); }}
-                                                style={{ background: "rgba(255,255,255,0.06)", border: "none", borderRadius: "50%", width: 26, height: 26, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
-                                                <X style={{ width: 12, height: 12, color: "rgba(255,255,255,0.5)" }} />
-                                            </button>
-                                        </div>
-                                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                                            <div>
-                                                <div style={{ fontSize: 14, fontWeight: 600, color: "#fff" }}>{FLASH_SALE.title}</div>
-                                                <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 4 }}>
-                                                    <span style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", textDecoration: "line-through" }}>₹{FLASH_SALE.originalPrice}</span>
-                                                    <span style={{ fontSize: 18, fontWeight: 700, color: "#FF6B6B" }}>₹{FLASH_SALE.salePrice}</span>
-                                                    <span style={{ fontSize: 11, fontWeight: 700, background: "rgba(255,214,10,0.15)", color: "#FFD60A", padding: "2px 8px", borderRadius: 6 }}>{FLASH_SALE.discount}</span>
-                                                </div>
-                                            </div>
-                                            <div style={{ textAlign: "right" }}>
-                                                <div style={{ fontSize: 10, color: "rgba(255,255,255,0.4)" }}>Ends in</div>
-                                                <div style={{ fontSize: 16, fontWeight: 700, color: "#FFD60A", fontVariantNumeric: "tabular-nums" }}>{saleTimeLeft}</div>
-                                            </div>
-                                        </div>
-                                        <Link to={FLASH_SALE.link} onClick={() => close()}
-                                            style={{ padding: "10px 14px", borderRadius: 12, background: "linear-gradient(135deg, #FF6B6B, #FF3366)", color: "#fff", fontSize: 13, fontWeight: 700, textAlign: "center", textDecoration: "none", boxShadow: "0 2px 12px rgba(255,107,107,0.3)" }}>
-                                            Grab Deal Now 🔥
                                         </Link>
                                     </div>
                                 )}

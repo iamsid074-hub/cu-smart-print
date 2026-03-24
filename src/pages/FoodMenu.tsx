@@ -112,7 +112,7 @@ export default function FoodMenu() {
     const finalizeOrder = async (utrNumber: string) => {
         if (!user || !upiSnapshot) return;
         try {
-            const { error } = await supabase.from("orders").insert({
+            const { data, error } = await supabase.from("orders").insert({
                 product_id: null,
                 buyer_id: user.id,
                 seller_id: "7450c873-f51d-469e-a33d-c44ca80beb0c",
@@ -126,13 +126,16 @@ export default function FoodMenu() {
                 status: 'pending',
                 razorpay_payment_id: utrNumber,
                 seller_notified_at: new Date().toISOString(),
-            });
+            }).select().single();
+
             if (error) throw error;
 
-            toast({ title: "Order placed", description: "Payment verified. Admin will process your order shortly." });
+            toast({ title: "Order placed! 🎉", description: "Payment verified. Admin will process your order shortly." });
             setShowUpiModal(false);
             setUpiSnapshot(null);
-            navigate('/tracking');
+            
+            // Redirect to the specific order page
+            navigate(`/tracking?order=${data.id}`);
         } catch (err: any) {
             toast({ title: "Order failed", description: err.message || "Please try again.", variant: "destructive" });
         }

@@ -489,6 +489,16 @@ function isFoodOrder(order: Order): boolean {
     if (order.product_id) return false;
     
     // If no product_id, it's a food/vending/grocery order from the cart/food menu
+    // We check if the items list contains any non-food keywords
+    const details = parseOrderDetails(order);
+    const itemsText = details.items.toLowerCase();
+    
+    const hasNonFood = NON_FOOD_KEYWORDS.some(key => itemsText.includes(key));
+    if (hasNonFood) return false;
+
+    // Special case check for known categories
+    if (itemsText.includes('(college essentials)') || itemsText.includes('(stationery)')) return false;
+
     return true;
 }
 
@@ -502,12 +512,19 @@ function parseOrderDetails(order: Order): { hostel: string; room: string; items:
     const rawRoom = order.delivery_room || '';
 
     // 1. Check for New Structured Format [ROOM:...] | [ITEMS:...]
-    const newFormatMatch = rawRoom.match(/\[ROOM:(.*?)\]\s*\|\s*\[ITEMS:([\s\S]*)\]\s*$/);
+    // Note: removed strict $ anchor to allow for trailing content like safety disclaimers
+    const newFormatMatch = rawRoom.match(/\[ROOM:(.*?)\]\s*\|\s*\[ITEMS:([\s\S]*?)\]/);
     if (newFormatMatch) {
         room = newFormatMatch[1].trim();
         items = newFormatMatch[2].trim();
     } 
-    // 2. Legacy Parsing
+    // 2. Vending Machine Parsing [VENDING MACHINE: Room XXX]
+    else if (rawRoom.includes('[VENDING MACHINE:')) {
+        const roomMatch = rawRoom.match(/\[VENDING MACHINE:\s*Room\s+(.+?)\]/);
+        room = roomMatch ? roomMatch[1] : '';
+        items = rawRoom.split(']\n')[1] || rawRoom;
+    }
+    // 3. Legacy Parsing
     else if (rawRoom.includes('[CUSTOM FOOD ORDER]')) {
         const cleaned = rawRoom.replace('[CUSTOM FOOD ORDER]\n', '').replace('[CUSTOM FOOD ORDER]', '');
         const parts = cleaned.split('\n---\n');

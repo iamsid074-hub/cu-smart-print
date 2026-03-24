@@ -8,7 +8,7 @@ import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
 import PaymentSelector from "@/components/PaymentSelector";
 import UpiPaymentModal from "@/components/UpiPaymentModal";
-import { validatePromo, getDeliveryFee, PROMO_CODE } from "@/utils/offerTimer";
+
 
 export default function Cart() {
     const { items, removeItem, updateQuantity, clearCart, totalItems, totalPrice } = useCart();
@@ -24,18 +24,17 @@ export default function Cart() {
     const [floor, setFloor] = useState<number>(1);
     const [submitting, setSubmitting] = useState(false);
     const [showUpiModal, setShowUpiModal] = useState(false);
-    const [promoCode, setPromoCode] = useState("");
-    const [promoApplied, setPromoApplied] = useState(false);
 
-    // Food Safety Disclaimer state
+
+
     const [showDisclaimer, setShowDisclaimer] = useState(false);
     const [disclaimerAccepted, setDisclaimerAccepted] = useState(false);
 
-    // Active Order State
+
     const [activeOrder, setActiveOrder] = useState<any>(null);
     const [loadingOrder, setLoadingOrder] = useState(true);
 
-    // Fetch active order on mount and subscribe to changes
+    5
     useEffect(() => {
         if (!user) {
             setLoadingOrder(false);
@@ -74,7 +73,6 @@ export default function Cart() {
         };
     }, [user]);
 
-    // Filter items by category to determine delivery charge
     const vendingCartItems = items.filter(item => item.category === "Vending Machine");
     const hasVending = vendingCartItems.length > 0;
 
@@ -90,40 +88,30 @@ export default function Cart() {
 
     const hasFlavourCombo = items.some(item => item.id === "flavour-factory-combo");
 
-    const baseDelivery = hasFlavourCombo 
-        ? specialDeliveryFee 
-        : (hasVending 
-            ? calculateVendingDelivery(floor) 
+    const baseDelivery = hasFlavourCombo
+        ? specialDeliveryFee
+        : (hasVending
+            ? calculateVendingDelivery(floor)
             : ([2, 3].includes(floor) ? specialDeliveryFee : originalDeliveryFee));
-    
-    const deliveryFee = hasFlavourCombo ? specialDeliveryFee : (hasVending ? baseDelivery : (promoApplied ? getDeliveryFee(true) : baseDelivery));
+
+    const deliveryFee = hasFlavourCombo ? specialDeliveryFee : baseDelivery;
     const orderTotal = totalPrice + deliveryFee;
 
     const phoneClean = phone.replace(/\D/g, "");
     const isPhoneValid = phoneClean.length === 10;
-    
-    // Floor validation: room must start with floor digit
+
+
     const isRoomCorrect = room.startsWith(floor.toString());
     const isFormValid = hostel.trim() !== "" && room.trim() !== "" && isPhoneValid && (hasVending ? isRoomCorrect : true);
 
-    const handleApplyPromo = () => {
-        if (hasVending) {
-            toast({ title: "Vending Order", description: "Vending machine items already use a reduced floor-based delivery fee!" });
-            return;
-        }
-        const code = promoCode.trim().toUpperCase();
-        if (validatePromo(code)) {
-            setPromoApplied(true);
-            toast({ title: "Promo Applied! 🏆", description: `${PROMO_CODE} applied — Delivery is ₹29!` });
-        } else {
-            setPromoApplied(false);
-            toast({ title: "Invalid promo code", description: "Please enter a valid promo code.", variant: "destructive" });
-        }
-    };
 
     const createOrder = async (paymentId?: string) => {
         const itemsSummary = items.map(i => `${i.quantity}x ${i.title} [IMG:${i.image}] (${i.category}) (₹${i.price})`).join("\n");
-        const { error } = await supabase.from("orders").insert({
+        
+        // Include safety disclaimer in the items block so it doesn't break the [ITEMS:...] | [ROOM:...] parsing regex
+        const fullItemsString = `${itemsSummary}\n\n[SAFETY:Disclaimer Accepted @ ${new Date().toISOString()}]`;
+
+        const { data, error } = await supabase.from("orders").insert({
             product_id: null,
             buyer_id: user!.id,
             seller_id: "7450c873-f51d-469e-a33d-c44ca80beb0c",
@@ -132,15 +120,24 @@ export default function Cart() {
             delivery_charge: deliveryFee,
             total_price: orderTotal,
             delivery_location: `${hostel} - Floor ${floor}`,
-            delivery_room: `[ROOM:${room}] | [ITEMS:${itemsSummary}] | [SAFETY:Disclaimer Accepted @ ${new Date().toISOString()}]`,
+            delivery_room: `[ROOM:${room}] | [ITEMS:${fullItemsString}]`,
             buyer_phone: phoneClean,
             status: "pending",
             payment_method: "upi",
             payment_status: "verifying",
             razorpay_payment_id: paymentId || null,
             seller_notified_at: new Date().toISOString(),
-        });
+        }).select().single();
+
         if (error) throw error;
+
+        // Clean up UI and state
+        clearCart();
+        setShowCheckout(false);
+        setShowUpiModal(false);
+        
+        // Critical: Redirect to the specific order page
+        navigate(`/tracking?order=${data.id}`);
     };
 
     const handleCheckout = async () => {
@@ -192,9 +189,8 @@ export default function Cart() {
                             <label className="flex items-start gap-3 cursor-pointer mb-3 mt-3 group">
                                 <div
                                     onClick={() => setDisclaimerAccepted(p => !p)}
-                                    className={`w-5 h-5 mt-0.5 rounded-md border-2 flex items-center justify-center shrink-0 transition-all ${
-                                        disclaimerAccepted ? 'bg-emerald-500 border-emerald-500' : 'border-slate-300 group-hover:border-emerald-400'
-                                    }`}
+                                    className={`w-5 h-5 mt-0.5 rounded-md border-2 flex items-center justify-center shrink-0 transition-all ${disclaimerAccepted ? 'bg-emerald-500 border-emerald-500' : 'border-slate-300 group-hover:border-emerald-400'
+                                        }`}
                                 >
                                     {disclaimerAccepted && <CheckCircle className="w-3.5 h-3.5 text-white" />}
                                 </div>
@@ -213,11 +209,10 @@ export default function Cart() {
                                         setSubmitting(false);
                                     }, 100);
                                 }}
-                                className={`w-full py-3 rounded-2xl font-black text-[13px] uppercase tracking-widest transition-all ${
-                                    disclaimerAccepted
-                                        ? 'bg-emerald-500 text-white shadow-lg hover:bg-emerald-600 active:scale-95'
-                                        : 'bg-slate-100 text-slate-400 cursor-not-allowed'
-                                }`}
+                                className={`w-full py-3 rounded-2xl font-black text-[13px] uppercase tracking-widest transition-all ${disclaimerAccepted
+                                    ? 'bg-emerald-500 text-white shadow-lg hover:bg-emerald-600 active:scale-95'
+                                    : 'bg-slate-100 text-slate-400 cursor-not-allowed'
+                                    }`}
                             >
                                 I Accept — Continue to Payment
                             </button>
@@ -353,37 +348,6 @@ export default function Cart() {
                             </AnimatePresence>
                         </div>
 
-                        {/* Promo Code Section */}
-                        <div className="rounded-3xl p-5 bg-white shadow-[0_4px_20px_rgba(0,0,0,0.03)] mb-4 flex gap-3 items-end">
-                            <div className="flex-1">
-                                <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5 flex items-center gap-1">
-                                    <CheckCircle className="w-3 h-3 text-emerald-500" /> Apply Promo Code
-                                </label>
-                                <input
-                                    type="text"
-                                    value={promoCode}
-                                    onChange={(e) => {
-                                        setPromoCode(e.target.value.toUpperCase());
-                                        if (promoApplied && e.target.value.toUpperCase() !== PROMO_CODE) {
-                                            setPromoApplied(false); // Reset if they start typing something else
-                                        }
-                                    }}
-                                    placeholder="Enter Promo Code"
-                                    className="w-full bg-slate-50 rounded-2xl px-5 py-3 text-sm text-slate-900 focus:outline-none focus:ring-4 focus:ring-brand-50 transition-all placeholder:text-slate-400 font-bold uppercase"
-                                    disabled={promoApplied}
-                                />
-                            </div>
-                            <button
-                                onClick={handleApplyPromo}
-                                disabled={!promoCode.trim() || promoApplied}
-                                className={`px-6 py-3 rounded-full text-sm font-bold transition-all ${promoApplied
-                                    ? "bg-emerald-50 text-emerald-600"
-                                    : "bg-slate-100 text-slate-600 hover:bg-slate-200 disabled:opacity-50"
-                                    }`}
-                            >
-                                {promoApplied ? "Applied!" : "Apply"}
-                            </button>
-                        </div>
 
                         {/* Price Summary */}
                         <div className="rounded-3xl p-5 sm:p-6 bg-white shadow-[0_4px_20px_rgba(0,0,0,0.03)] mb-4">
@@ -395,11 +359,11 @@ export default function Cart() {
                                 <span className="flex items-center gap-1.5">
                                     <Clock className="w-4 h-4 text-emerald-500" /> {hasVending ? `Floor ${floor} Delivery` : 'Delivery Fee'}
                                 </span>
-                                    {((promoApplied && !hasVending) || (!hasVending && [2, 3].includes(floor)) || hasFlavourCombo) && (
-                                        <span className="text-slate-400 line-through text-xs">₹{originalDeliveryFee}</span>
-                                    )}
-                                    <span className={(promoApplied || hasVending || (!hasVending && [2, 3].includes(floor)) || hasFlavourCombo) ? "text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded" : "font-medium text-slate-900"}>+ ₹{deliveryFee}</span>
-                                </div>
+                                {((!hasVending && [2, 3].includes(floor)) || hasFlavourCombo) && (
+                                    <span className="text-slate-400 line-through text-xs">₹{originalDeliveryFee}</span>
+                                )}
+                                <span className={(hasVending || (!hasVending && [2, 3].includes(floor)) || hasFlavourCombo) ? "text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded" : "font-medium text-slate-900"}>+ ₹{deliveryFee}</span>
+                            </div>
 
                             {hasFlavourCombo && (
                                 <div className="mb-4 bg-orange-50 border border-orange-100 rounded-2xl p-4 flex items-center gap-2 text-orange-800 text-xs sm:text-sm font-medium">
@@ -408,7 +372,7 @@ export default function Cart() {
                                 </div>
                             )}
 
-                            {!hasVending && [2, 3].includes(floor) && !promoApplied && (
+                            {!hasVending && [2, 3].includes(floor) && (
                                 <div className="mb-4 bg-emerald-50 rounded-2xl p-4 flex items-center gap-2 text-emerald-700 text-xs sm:text-sm font-medium">
                                     <Zap className="w-4 h-4 flex-shrink-0 text-amber-500" />
                                     <span>Floor {floor} Special: Delivery charge reduced to ₹{specialDeliveryFee}!</span>
@@ -422,12 +386,7 @@ export default function Cart() {
                                 </div>
                             )}
 
-                            {promoApplied && (
-                                <div className="mb-4 bg-emerald-50 rounded-2xl p-4 flex items-center gap-2 text-emerald-700 text-xs sm:text-sm font-medium">
-                                    <CheckCircle className="w-4 h-4 flex-shrink-0" />
-                                    <span>Promo applied! You're supporting our campus delivery service.</span>
-                                </div>
-                            )}
+
 
                             <div className="border-t border-slate-100 pt-4 flex justify-between items-center">
                                 <span className="font-bold text-slate-900">Total details</span>
@@ -455,7 +414,7 @@ export default function Cart() {
 
                                     {/* Floor Selector */}
                                     <div className="flex bg-white p-1.5 rounded-2xl border border-slate-200 items-center justify-between h-[64px] shadow-sm shadow-slate-200/50">
-                                        <button 
+                                        <button
                                             onClick={() => setFloor(Math.max(1, floor - 1))}
                                             className="w-11 h-11 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center text-slate-500 hover:text-brand hover:border-brand transition-all active:scale-95"
                                         >
@@ -465,7 +424,7 @@ export default function Cart() {
                                             <span className="text-[10px] font-black text-slate-400 uppercase tracking-tighter leading-none mb-0.5">Floor</span>
                                             <span className="text-2xl font-black text-slate-900 leading-none">{floor}</span>
                                         </div>
-                                        <button 
+                                        <button
                                             onClick={() => setFloor(Math.min(11, floor + 1))}
                                             className="w-11 h-11 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center text-slate-500 hover:text-brand hover:border-brand transition-all active:scale-95"
                                         >
@@ -477,8 +436,8 @@ export default function Cart() {
                                         <div className="flex items-center justify-center w-14 border-r border-slate-100 bg-slate-50">
                                             <div className="w-6 h-6 flex items-center justify-center font-bold text-slate-400 group-focus-within/room:text-brand text-xs text-center rounded bg-white shadow-sm border border-slate-100">R</div>
                                         </div>
-                                        <input 
-                                            value={room} 
+                                        <input
+                                            value={room}
                                             onChange={e => {
                                                 const val = e.target.value.replace(/\D/g, "");
                                                 setRoom(val);
@@ -488,9 +447,9 @@ export default function Cart() {
                                                         setFloor(firstDigit);
                                                     }
                                                 }
-                                            }} 
+                                            }}
                                             placeholder="Room Number *"
-                                            className={`w-full h-full bg-transparent px-4 text-sm text-slate-900 focus:outline-none placeholder:text-slate-400 font-bold ${hasVending && room && !room.startsWith(floor.toString()) ? 'text-rose-500' : ''}`} 
+                                            className={`w-full h-full bg-transparent px-4 text-sm text-slate-900 focus:outline-none placeholder:text-slate-400 font-bold ${hasVending && room && !room.startsWith(floor.toString()) ? 'text-rose-500' : ''}`}
                                         />
                                         {hasVending && room && !room.startsWith(floor.toString()) && (
                                             <span className="absolute right-4 text-[10px] text-rose-500 font-black">Needs {floor}xx</span>
@@ -544,12 +503,9 @@ export default function Cart() {
                 onPaymentVerify={async (utr) => {
                     setSubmitting(true);
                     try {
+                        // Consolidate all logic inside createOrder to avoid dual navigation/shadowing
                         await createOrder(utr);
-                        toast({ title: "Order submitted", description: `Admin will verify your payment of ₹${orderTotal}.` });
-                        clearCart();
-                        setShowCheckout(false);
-                        setShowUpiModal(false);
-                        navigate("/tracking");
+                        toast({ title: "Order submitted! 🎉", description: `Your order has been placed and is being tracked.` });
                     } catch (err: any) {
                         toast({ title: "Order failed", description: err.message || "Please try again.", variant: "destructive" });
                     } finally {
