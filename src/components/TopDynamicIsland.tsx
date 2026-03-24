@@ -184,8 +184,20 @@ export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
 
   return (
     <>
+      {/* Apple-style gradient glass blur background for the top header */}
+      <div 
+        className="fixed top-0 left-0 right-0 h-24 sm:h-28 z-[9998] pointer-events-none"
+        style={{ 
+          background: 'linear-gradient(to bottom, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 100%)',
+          backdropFilter: "blur(20px)",
+          WebkitBackdropFilter: "blur(20px)",
+          maskImage: 'linear-gradient(to bottom, black 40%, transparent 100%)',
+          WebkitMaskImage: 'linear-gradient(to bottom, black 40%, transparent 100%)'
+        }} 
+      />
+
       <div
-        className="w-full flex justify-center fixed top-0 left-0 right-0 z-[9999] pointer-events-none px-4 pt-4 sm:pt-6"
+        className="w-full flex justify-center fixed top-0 left-0 right-0 z-[9999] pointer-events-none px-4 pt-4 sm:pt-5"
         style={{ willChange: "transform" }}
       >
         <div className="flex items-center gap-3 max-w-md w-full justify-center">
