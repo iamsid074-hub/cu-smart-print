@@ -43,6 +43,7 @@ import UsernameSetup from "./components/UsernameSetup";
 import ScrollToTop from "./components/ScrollToTop";
 import StickyStripBanner from "./components/StickyStripBanner";
 import FloatingMiniBanner from "./components/FloatingMiniBanner";
+import ErrorBoundary from "./components/ErrorBoundary";
 import { usePushNotifications } from "./hooks/usePushNotifications";
 import { useSiteGate, ClosedScreen, MaintenanceScreen } from "./components/SiteGate";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
@@ -165,8 +166,9 @@ function AppLayout() {
           <FloatingMiniBanner />
         </>
       )}
-      <Suspense fallback={<BrandedLoading />}>
-        <Routes>
+      <ErrorBoundary>
+        <Suspense fallback={<BrandedLoading />}>
+          <Routes>
           <Route path="/" element={Capacitor.isNativePlatform() ? (user ? <Navigate to="/home" replace /> : <Login />) : <Index />} />
           <Route path="/home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
           <Route path="/login" element={user ? <Navigate to="/home" replace /> : <Login />} />
@@ -189,9 +191,10 @@ function AppLayout() {
           <Route path="/help" element={<HelpCenter />} />
           <Route path="/download" element={<Download />} />
 
-          <Route path="*" element={<NotFound />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Suspense>
+      </ErrorBoundary>
     </>
   );
 }
