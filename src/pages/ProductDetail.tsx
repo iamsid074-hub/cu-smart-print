@@ -114,7 +114,7 @@ export default function ProductDetail() {
 
 
     // Delivery fee - dynamic for COD
-    const deliveryFee = paymentMethod === "cod" ? 51 : 29;
+    const deliveryFee = paymentMethod === "cod" ? 41 : 29;
     const totalAmount = product ? product.price + deliveryFee : 0;
 
     const handleBuyNow = async (e: React.FormEvent) => {

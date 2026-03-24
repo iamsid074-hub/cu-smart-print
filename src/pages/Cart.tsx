@@ -94,7 +94,7 @@ export default function Cart() {
             ? calculateVendingDelivery(floor)
             : ([2, 3].includes(floor) ? specialDeliveryFee : originalDeliveryFee));
 
-    const deliveryFee = paymentMethod === 'cod' ? 51 : (hasFlavourCombo ? specialDeliveryFee : baseDelivery);
+    const deliveryFee = paymentMethod === 'cod' ? 41 : (hasFlavourCombo ? specialDeliveryFee : baseDelivery);
     const orderTotal = totalPrice + deliveryFee;
 
     const phoneClean = phone.replace(/\D/g, "");
