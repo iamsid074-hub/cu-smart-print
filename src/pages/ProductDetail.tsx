@@ -113,8 +113,8 @@ export default function ProductDetail() {
 
 
 
-    // Delivery fee — ₹29 flat
-    const deliveryFee = 29;
+    // Delivery fee - dynamic for COD
+    const deliveryFee = paymentMethod === "cod" ? 51 : 29;
     const totalAmount = product ? product.price + deliveryFee : 0;
 
     const handleBuyNow = async (e: React.FormEvent) => {
@@ -138,8 +138,8 @@ export default function ProductDetail() {
                 return;
             }
 
-            // Fallback (should be unreachable now, strictly enforcing online)
-            await finalizeOrder("online", null);
+            // Cash on Gate Flow
+            await finalizeOrder("cod", null);
         } catch (err: any) {
             toast({ title: "Order failed", description: err.message || "Please try again.", variant: "destructive" });
             setIsSubmitting(false);
@@ -178,7 +178,7 @@ export default function ProductDetail() {
 
             if (error) throw error;
 
-            toast({ title: method === "online" ? "Order submitted" : "Order placed", description: method === "online" ? `Admin will verify payment.` : "Pay on delivery." });
+            toast({ title: method === "online" ? "Order submitted" : "Order placed", description: method === "online" ? `Admin will verify payment.` : "First money, then order. Collect at gate." });
             setIsBuyModalOpen(false);
             setShowUpiModal(false);
             navigate(`/tracking`);

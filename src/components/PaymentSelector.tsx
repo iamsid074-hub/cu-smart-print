@@ -41,20 +41,30 @@ export default function PaymentSelector({ selected, onChange, totalAmount, disab
                 </div>
             </button>
 
-            {/* Cash on Delivery - Disabled */}
-            <div className={`w-full rounded-2xl p-4 flex items-center gap-3 transition-all border bg-slate-50 border-slate-200 opacity-60 cursor-not-allowed`} title="Cash on delivery is currently disabled.">
-                <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 bg-slate-200`}>
-                    <Banknote className={`w-4 h-4 text-slate-400`} />
+            {/* Cash on Gate */}
+            <button
+                type="button"
+                disabled={disabled}
+                onClick={() => onChange("cod")}
+                className={`w-full rounded-2xl p-4 flex items-center gap-3 transition-all border ${selected === "cod" ? 'bg-orange-50 border-orange-200 shadow-sm' : 'bg-white border-slate-200 hover:border-orange-100 hover:bg-slate-50'}`}
+                style={{
+                    cursor: disabled ? 'not-allowed' : 'pointer',
+                    opacity: disabled ? 0.5 : 1,
+                }}
+            >
+                <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 ${selected === "cod" ? 'bg-orange-100' : 'bg-slate-100'}`}>
+                    <Banknote className={`w-4 h-4 ${selected === "cod" ? 'text-orange-500' : 'text-slate-500'}`} />
                 </div>
                 <div className="flex-1 min-w-0 text-left">
-                    <p className={`text-sm font-bold text-slate-500 line-through`}>Cash on Delivery</p>
-                    <p className={`text-[11px] font-medium mt-0.5 text-slate-500`}>Temporarily disabled — Online Pay Only</p>
+                    <p className={`text-sm font-bold ${selected === "cod" ? 'text-orange-600' : 'text-slate-900'}`}>Cash on Gate</p>
+                    <p className={`text-[11px] font-bold mt-0.5 ${selected === "cod" ? 'text-orange-500' : 'text-slate-500'}`}>First money, then order</p>
                 </div>
                 <div className="flex items-center gap-1.5 flex-shrink-0">
-                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center border-slate-300`}>
+                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${selected === "cod" ? 'border-orange-500 bg-white' : 'border-slate-300'}`}>
+                        {selected === "cod" && <div className="w-2.5 h-2.5 rounded-full bg-orange-500" />}
                     </div>
                 </div>
-            </div>
+            </button>
         </div>
     );
 }

@@ -94,7 +94,7 @@ export default function Cart() {
             ? calculateVendingDelivery(floor)
             : ([2, 3].includes(floor) ? specialDeliveryFee : originalDeliveryFee));
 
-    const deliveryFee = hasFlavourCombo ? specialDeliveryFee : baseDelivery;
+    const deliveryFee = paymentMethod === 'cod' ? 51 : (hasFlavourCombo ? specialDeliveryFee : baseDelivery);
     const orderTotal = totalPrice + deliveryFee;
 
     const phoneClean = phone.replace(/\D/g, "");
@@ -131,8 +131,8 @@ export default function Cart() {
             delivery_room: `[ROOM:${room}] | [ITEMS:${fullItemsString}]`,
             buyer_phone: phoneClean,
             status: "pending",
-            payment_method: "cashfree", // Switched to cashfree to avoid any DB enum/check constraint issues
-            payment_status: "paid", // Switched to paid to avoid verifying constraint errors
+            payment_method: paymentMethod === "online" ? "cashfree" : "cod",
+            payment_status: paymentMethod === "online" ? "paid" : "pending",
             razorpay_payment_id: paymentId || null,
             seller_notified_at: new Date().toISOString(),
         });
@@ -152,11 +152,32 @@ export default function Cart() {
     };
 
     const handleCheckout = async () => {
-        if (!user) { navigate("/login"); return; }
+        if (!user) {
+            navigate("/login");
+            return;
+        }
         if (!isFormValid) return;
         // Always require disclaimer acceptance before each order
         setDisclaimerAccepted(false);
         setShowDisclaimer(true);
+    };
+
+    const handleDisclaimerAccepted = async () => {
+        setShowDisclaimer(false);
+        if (paymentMethod === "online") {
+            setShowCheckout(false);
+            setTimeout(() => setShowUpiModal(true), 150);
+        } else { // Cash on Gate Flow
+            try {
+                setSubmitting(true);
+                await createOrder();
+                toast({ title: "Order placed! 🎉", description: "First money, then order. Collect at gate." });
+            } catch (err: any) {
+                toast({ title: "Order failed", description: err.message || "Please try again.", variant: "destructive" });
+            } finally {
+                setSubmitting(false);
+            }
+        }
     };
 
     return (

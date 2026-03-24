@@ -356,7 +356,7 @@ function DashboardSection({ stats, recentProducts, recentOrders, loading, allOrd
                                     {/* Payment */}
                                     <div className="flex items-center gap-2 flex-wrap">
                                         <span className={`inline-flex items-center px-2 py-1 rounded-lg text-[11px] font-bold ${order.payment_status === "verifying" ? "bg-orange-500/15 text-orange-400" : order.payment_status === "paid" ? "bg-green-500/15 text-green-400" : "bg-yellow-500/15 text-yellow-400"}`}>
-                                            {order.payment_status === "verifying" ? "🟡 Verify UTR" : order.payment_status === "paid" ? "💳 Paid" : "💵 COD"}
+                                            {order.payment_status === "verifying" ? "🟡 Verify UTR" : order.payment_status === "paid" ? "💳 Paid" : "💵 Cash on Gate"}
                                         </span>
                                         {order.payment_status === "verifying" && (
                                             <button onClick={() => onVerifyUpi(order.id)} className="px-2.5 py-1 bg-green-500/20 border border-green-500/30 text-green-400 hover:bg-green-500/30 rounded-lg text-[11px] font-bold flex items-center gap-1 transition-all">
@@ -648,7 +648,7 @@ function ItemOrdersSection({ orders, loading, onUpdateStatus, onVerifyUpi }: {
                                             <div className="flex flex-wrap items-center gap-2 mt-1">
                                                 {order.products?.category && <span className="inline-block px-2 py-0.5 rounded-lg bg-white/10 text-xs text-slate-900/70 font-mono truncate max-w-full">{order.products.category}</span>}
                                                 <span className={`inline-block px-2 py-0.5 rounded-lg text-xs font-bold truncate max-w-full ${order.payment_status === 'verifying' ? 'bg-orange-500/15 text-orange-400' : order.payment_status === 'paid' ? 'bg-green-500/15 text-green-400' : 'bg-yellow-500/15 text-yellow-400'}`}>
-                                                    {order.payment_status === 'verifying' ? `🟡 Verify UTR: ${order.razorpay_payment_id || 'N/A'}` : order.payment_status === 'paid' ? '💳 Paid Online' : '💵 COD'}
+                                                    {order.payment_status === 'verifying' ? `🟡 Verify UTR: ${order.razorpay_payment_id || 'N/A'}` : order.payment_status === 'paid' ? '💳 Paid Online' : '💵 Cash on Gate'}
                                                 </span>
                                             </div>
                                             {order.payment_status === 'verifying' && (
@@ -806,7 +806,7 @@ function FoodOrdersSection({ orders, loading, onUpdateStatus, onVerifyUpi }: {
                                         )}
                                         <div className="mt-2 flex flex-col items-start gap-2">
                                             <span className={`inline-block w-full sm:w-auto truncate px-2 py-1 rounded-lg text-xs font-bold ${order.payment_status === 'verifying' ? 'bg-orange-500/15 text-orange-400' : order.payment_status === 'paid' ? 'bg-green-500/15 text-green-400' : 'bg-yellow-500/15 text-yellow-400'}`}>
-                                                {order.payment_status === 'verifying' ? `🟡 Verify UTR: ${order.razorpay_payment_id || 'N/A'}` : order.payment_status === 'paid' ? '💳 Paid Online' : '💵 Cash on Delivery'}
+                                                {order.payment_status === 'verifying' ? `🟡 Verify UTR: ${order.razorpay_payment_id || 'N/A'}` : order.payment_status === 'paid' ? '💳 Paid Online' : '💵 Cash on Gate'}
                                             </span>
                                             {order.payment_status === 'verifying' && (
                                                 <button onClick={() => onVerifyUpi(order.id)} className="px-3 py-1.5 bg-green-500/20 border border-green-500/30 text-green-400 hover:bg-green-500/30 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 transition-all">
