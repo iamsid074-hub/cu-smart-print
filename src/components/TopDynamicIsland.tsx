@@ -424,7 +424,9 @@ export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
         className="w-full flex justify-center fixed top-0 left-0 right-0 z-[9999] pointer-events-none px-4 pt-4 sm:pt-5"
         style={{ willChange: "transform" }}
       >
-        <div className="flex items-center gap-3 max-w-md w-full justify-center" ref={trackingRef}>
+        <div className="flex items-center gap-3 max-w-md w-full justify-center">
+          {/* Relative wrapper for pill + dropdown alignment */}
+          <div className="relative" ref={trackingRef}>
           <AnimatePresence mode="popLayout">
             {/* ── Main Pill ── */}
             <motion.div
