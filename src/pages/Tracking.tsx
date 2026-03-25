@@ -371,6 +371,7 @@ export default function Tracking() {
 
             {/* ── Progress Timeline ─────────────────────────────────────── */}
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
+              data-section="timeline"
               className="bg-white rounded-3xl p-5 sm:p-6 mb-6 border border-slate-200 shadow-sm">
               <div className="flex items-center justify-between mb-8">
                 <h2 className="font-bold text-lg text-slate-900">Delivery Progress</h2>

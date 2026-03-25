@@ -1,8 +1,10 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
-import { CheckCircle2, ShoppingBag, Tag } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/lib/supabase";
+import { CheckCircle2, ShoppingBag, Tag, Package, Truck, CheckCircle, Clock, Home as HomeIcon, XCircle, ChevronDown, MapPin } from "lucide-react";
 
 // Fluid, bouncy spring animation mimicking Apple's Dynamic Island
 const springTransition = {
@@ -12,7 +14,21 @@ const springTransition = {
   mass: 1.2,
 };
 
-type IslandState = "default" | "browsing" | "explore" | "cart" | "profile" | "added" | "updated" | "grocery" | "sell";
+type IslandState = "default" | "browsing" | "explore" | "cart" | "profile" | "added" | "updated" | "grocery" | "sell" | "tracking";
+
+// ── Tracking status configuration ───────────────────────────────────────────
+const TRACKING_STATUSES: Record<string, { label: string; icon: typeof Package; color: string; stepIndex: number }> = {
+  pending:          { label: "Order Placed",       icon: Package,     color: "#F59E0B", stepIndex: 0 },
+  seller_accepted:  { label: "Confirmed",          icon: CheckCircle, color: "#10B981", stepIndex: 1 },
+  confirmed:        { label: "Preparing",          icon: Clock,       color: "#3B82F6", stepIndex: 2 },
+  picked:           { label: "Picked Up",          icon: Package,     color: "#8B5CF6", stepIndex: 3 },
+  delivering:       { label: "Out for Delivery",   icon: Truck,       color: "#10B981", stepIndex: 4 },
+  completed:        { label: "Delivered!",          icon: HomeIcon,    color: "#10B981", stepIndex: 5 },
+  cancelled:        { label: "Cancelled",           icon: XCircle,     color: "#EF4444", stepIndex: -1 },
+  seller_rejected:  { label: "Rejected",            icon: XCircle,     color: "#EF4444", stepIndex: -1 },
+};
+
+const STEP_KEYS = ["pending", "confirmed", "picked", "delivering", "completed"];
 
 interface TopDynamicIslandProps {
   onSell?: () => void;
@@ -22,12 +38,20 @@ export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
   const navigate = useNavigate();
   const location = useLocation();
   const { items } = useCart();
+  const { user } = useAuth();
 
   const [islandState, setIslandState] = useState<IslandState>("default");
   const [prevItemsCount, setPrevItemsCount] = useState(items.reduce((acc, item) => acc + item.quantity, 0));
   const [latestAddedItem, setLatestAddedItem] = useState<{ name: string, price: number } | null>(null);
 
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // ── Tracking state ──────────────────────────────────────────────────────
+  const [trackingOrder, setTrackingOrder] = useState<any>(null);
+  const [trackingExpanded, setTrackingExpanded] = useState(false);
+  const [prevTrackingStatus, setPrevTrackingStatus] = useState<string | null>(null);
+  const [statusAnimating, setStatusAnimating] = useState(false);
+  const trackingRef = useRef<HTMLDivElement>(null);
 
   // Helper to set state and auto-dismiss after 2 seconds
   const triggerState = (newState: IslandState, data?: { name: string, price: number }) => {
@@ -36,11 +60,13 @@ export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
 
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
 
-    // "explore" state persists as long as you're on /browse — no auto-dismiss
-    if (newState !== "explore") {
+    // "explore" and "tracking" states persist — no auto-dismiss
+    if (newState !== "explore" && newState !== "tracking") {
       timeoutRef.current = setTimeout(() => {
         if (location.pathname.startsWith("/browse")) {
           setIslandState("explore");
+        } else if (location.pathname.startsWith("/tracking")) {
+          setIslandState("tracking");
         } else {
           setIslandState("default");
         }
@@ -48,8 +74,12 @@ export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
     }
   };
 
+  // ── Route-based state switching ─────────────────────────────────────────
   useEffect(() => {
-    if (location.pathname.startsWith("/food")) {
+    if (location.pathname.startsWith("/tracking")) {
+      setIslandState("tracking");
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    } else if (location.pathname.startsWith("/food")) {
       triggerState("browsing");
     } else if (location.pathname.startsWith("/browse")) {
       setIslandState("explore");
@@ -68,8 +98,84 @@ export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
       setIslandState("default");
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
     }
+    // Collapse tracking detail when leaving the page
+    if (!location.pathname.startsWith("/tracking")) {
+      setTrackingExpanded(false);
+    }
   }, [location.pathname]);
 
+  // ── Fetch tracking order & subscribe to real-time updates ───────────────
+  const fetchTrackingOrder = useCallback(async () => {
+    if (!user) return;
+    const params = new URLSearchParams(location.search);
+    const orderId = params.get("order");
+
+    let query = supabase
+      .from("orders")
+      .select("id, status, delivery_location, delivery_room, total_price, created_at, products(title, image_url)")
+
+    if (orderId) {
+      query = query.eq("id", orderId);
+    } else {
+      query = query.eq("buyer_id", user.id).order("created_at", { ascending: false }).limit(1);
+    }
+
+    const { data } = await query.single();
+    if (data) {
+      setTrackingOrder(data);
+    }
+  }, [user, location.search]);
+
+  useEffect(() => {
+    if (!location.pathname.startsWith("/tracking")) return;
+    fetchTrackingOrder();
+  }, [location.pathname, fetchTrackingOrder]);
+
+  // Real-time subscription for tracking order
+  useEffect(() => {
+    if (!trackingOrder?.id || !location.pathname.startsWith("/tracking")) return;
+
+    const channel = supabase.channel(`top_di_tracking_${trackingOrder.id}`)
+      .on("postgres_changes", {
+        event: "UPDATE", schema: "public", table: "orders",
+        filter: `id=eq.${trackingOrder.id}`
+      }, (payload) => {
+        setTrackingOrder((prev: any) => ({ ...prev, ...payload.new }));
+      })
+      .subscribe();
+
+    // Polling fallback every 15s
+    const pollInterval = setInterval(fetchTrackingOrder, 15000);
+
+    return () => {
+      supabase.removeChannel(channel);
+      clearInterval(pollInterval);
+    };
+  }, [trackingOrder?.id, location.pathname, fetchTrackingOrder]);
+
+  // Detect status changes for animation
+  useEffect(() => {
+    if (!trackingOrder) return;
+    if (prevTrackingStatus && prevTrackingStatus !== trackingOrder.status) {
+      setStatusAnimating(true);
+      setTimeout(() => setStatusAnimating(false), 1500);
+    }
+    setPrevTrackingStatus(trackingOrder.status);
+  }, [trackingOrder?.status]);
+
+  // Close expanded view on click outside
+  useEffect(() => {
+    if (!trackingExpanded) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      if (trackingRef.current && !trackingRef.current.contains(e.target as Node)) {
+        setTrackingExpanded(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [trackingExpanded]);
+
+  // ── Cart item tracking ──────────────────────────────────────────────────
   useEffect(() => {
     const currentCount = items.reduce((acc, item) => acc + item.quantity, 0);
 
@@ -95,8 +201,15 @@ export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
   const handleIslandClick = () => {
     if (islandState === "added" || islandState === "updated" || islandState === "cart") {
       navigate("/cart");
+    } else if (islandState === "tracking") {
+      setTrackingExpanded(!trackingExpanded);
     }
   };
+
+  // ── Tracking status helpers ─────────────────────────────────────────────
+  const trackingStatus = trackingOrder ? (TRACKING_STATUSES[trackingOrder.status] || TRACKING_STATUSES.pending) : null;
+  const isTrackingFailed = trackingOrder && (trackingOrder.status === "cancelled" || trackingOrder.status === "seller_rejected");
+  const isTrackingDone = trackingOrder?.status === "completed";
 
   let width: number | string = 160;
   let height = 40;
@@ -176,14 +289,125 @@ export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
         </div>
       );
       break;
+
+    case "tracking":
+      width = trackingExpanded ? 340 : (trackingOrder ? 280 : 160);
+      height = trackingExpanded ? 52 : (trackingOrder ? 48 : 40);
+      if (trackingOrder && trackingStatus) {
+        const StatusIcon = trackingStatus.icon;
+        content = (
+          <div className="flex items-center gap-2.5 w-full px-1">
+            {/* Animated status icon */}
+            <motion.div
+              key={trackingOrder.status}
+              initial={{ scale: 0.5, rotate: -90, opacity: 0 }}
+              animate={{ scale: 1, rotate: 0, opacity: 1 }}
+              transition={{ type: "spring", stiffness: 500, damping: 25 }}
+              className="flex-shrink-0"
+            >
+              <div 
+                className="w-7 h-7 rounded-full flex items-center justify-center"
+                style={{ background: `${trackingStatus.color}25` }}
+              >
+                <StatusIcon className="w-4 h-4" style={{ color: trackingStatus.color }} />
+              </div>
+            </motion.div>
+
+            {/* Status text */}
+            <div className="flex-1 min-w-0 flex flex-col">
+              <AnimatePresence mode="wait">
+                <motion.span
+                  key={trackingOrder.status}
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -6 }}
+                  transition={{ duration: 0.2 }}
+                  className="text-[13px] font-bold text-white truncate leading-tight"
+                >
+                  {trackingStatus.label}
+                </motion.span>
+              </AnimatePresence>
+              {trackingOrder.total_price > 0 && (
+                <span className="text-[10px] font-medium text-white/40 leading-tight">
+                  ₹{trackingOrder.total_price}
+                </span>
+              )}
+            </div>
+
+            {/* Mini step dots */}
+            <div className="flex items-center gap-1 flex-shrink-0 mr-1">
+              {STEP_KEYS.map((key, i) => {
+                const currentIdx = trackingStatus.stepIndex;
+                const isDone = currentIdx > i;
+                const isActive = currentIdx === i;
+                return (
+                  <motion.div
+                    key={key}
+                    animate={{
+                      scale: isActive ? 1.3 : 1,
+                      backgroundColor: isDone ? trackingStatus.color : isActive ? trackingStatus.color : "rgba(255,255,255,0.15)",
+                    }}
+                    transition={{ duration: 0.3 }}
+                    style={{
+                      width: isActive ? 8 : 5,
+                      height: 5,
+                      borderRadius: 10,
+                    }}
+                  />
+                );
+              })}
+            </div>
+
+            {/* Expand chevron */}
+            <motion.div
+              animate={{ rotate: trackingExpanded ? 180 : 0 }}
+              transition={{ duration: 0.2 }}
+              className="flex-shrink-0"
+            >
+              <ChevronDown className="w-3.5 h-3.5 text-white/30" />
+            </motion.div>
+          </div>
+        );
+      } else {
+        content = <span className="text-[15px] font-bold tracking-widest text-white uppercase">CU Bazzar</span>;
+      }
+      break;
+
     default:
       width = 160;
       content = <span className="text-[15px] font-bold tracking-widest text-white uppercase">CU Bazzar</span>;
       break;
   }
 
+  // ── Determine glow animation ────────────────────────────────────────────
+  const getAnimation = () => {
+    if (islandState === "tracking" && trackingOrder) {
+      if (statusAnimating) return "diTrackingPulse 0.8s ease-out 1";
+      if (trackingOrder.status === "delivering") return "diTrackingDelivery 2s ease-in-out infinite";
+      return "diTrackingGlow 3s ease-in-out infinite";
+    }
+    return "diGlow 4s ease-in-out infinite";
+  };
+
   return (
     <>
+      {/* Tracking glow keyframes */}
+      <style>{`
+        @keyframes diTrackingGlow {
+          0%, 100% { box-shadow: 0 0 0 0.5px rgba(16,185,129,0.15), 0 2px 12px rgba(0,0,0,0.5), 0 0 20px rgba(16,185,129,0.08); }
+          50% { box-shadow: 0 0 0 1px rgba(16,185,129,0.3), 0 2px 16px rgba(0,0,0,0.4), 0 0 30px rgba(16,185,129,0.15); }
+        }
+        @keyframes diTrackingDelivery {
+          0%, 100% { box-shadow: 0 0 0 1px rgba(16,185,129,0.2), 0 2px 12px rgba(0,0,0,0.5), 0 0 25px rgba(16,185,129,0.12); }
+          50% { box-shadow: 0 0 0 2px rgba(16,185,129,0.4), 0 2px 20px rgba(0,0,0,0.35), 0 0 40px rgba(16,185,129,0.22); }
+        }
+        @keyframes diTrackingPulse {
+          0% { box-shadow: 0 0 0 0.5px rgba(16,185,129,0.2), 0 2px 12px rgba(0,0,0,0.5); transform: scale(1); }
+          30% { box-shadow: 0 0 0 3px rgba(16,185,129,0.5), 0 2px 20px rgba(0,0,0,0.35), 0 0 40px rgba(16,185,129,0.3); transform: scale(1.03); }
+          100% { box-shadow: 0 0 0 0.5px rgba(16,185,129,0.15), 0 2px 12px rgba(0,0,0,0.5); transform: scale(1); }
+        }
+      `}</style>
+
       {/* Apple-style gradient glass blur background for the top header */}
       <div 
         className="fixed top-0 left-0 right-0 h-24 sm:h-28 z-[9998] pointer-events-none"
@@ -200,9 +424,7 @@ export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
         className="w-full flex justify-center fixed top-0 left-0 right-0 z-[9999] pointer-events-none px-4 pt-4 sm:pt-5"
         style={{ willChange: "transform" }}
       >
-        <div className="flex items-center gap-3 max-w-md w-full justify-center">
-
-
+        <div className="flex items-center gap-3 max-w-md w-full justify-center" ref={trackingRef}>
           <AnimatePresence mode="popLayout">
             {/* ── Main Pill ── */}
             <motion.div
@@ -211,11 +433,15 @@ export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
               animate={{ width, height }}
               transition={springTransition}
               onClick={handleIslandClick}
-              className={`pointer-events-auto flex items-center justify-center overflow-hidden flex-shrink-0 ${(islandState === "added" || islandState === "updated" || islandState === "cart") ? "cursor-pointer hover:bg-zinc-900 transition-colors" : ""}`}
+              className={`pointer-events-auto flex items-center justify-center overflow-hidden flex-shrink-0 ${
+                (islandState === "added" || islandState === "updated" || islandState === "cart" || islandState === "tracking") 
+                  ? "cursor-pointer hover:bg-zinc-900 transition-colors" 
+                  : ""
+              }`}
               style={{
                 background: "#000",
                 borderRadius: 50,
-                animation: "diGlow 4s ease-in-out infinite",
+                animation: getAnimation(),
                 position: "relative",
                 zIndex: 100,
                 willChange: "transform, width",
@@ -223,21 +449,27 @@ export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
             >
               {/* Green camera indicator dot */}
               <motion.div
-                animate={{ opacity: [0.55, 1, 0.55] }}
+                animate={{ 
+                  opacity: [0.55, 1, 0.55],
+                  background: islandState === "tracking" && trackingOrder 
+                    ? (trackingStatus?.color || "#30D158") 
+                    : "#30D158",
+                  boxShadow: islandState === "tracking" && trackingOrder 
+                    ? `0 0 8px ${trackingStatus?.color || "#30D158"}` 
+                    : "0 0 8px rgba(48,209,88,0.9)",
+                }}
                 transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
                 style={{
                   position: "absolute", left: 12, top: "50%",
                   transform: "translateY(-50%)",
                   width: 6, height: 6, borderRadius: "50%",
-                  background: "#30D158",
-                  boxShadow: "0 0 8px rgba(48,209,88,0.9)",
                   zIndex: 10,
                 }}
               />
 
               <AnimatePresence mode="wait">
                 <motion.div
-                  key={islandState}
+                  key={islandState + (trackingOrder?.status || "")}
                   initial={{ opacity: 0, y: 4, scale: 0.93 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: -4, scale: 0.93 }}
@@ -254,6 +486,167 @@ export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
                 </motion.div>
               </AnimatePresence>
             </motion.div>
+          </AnimatePresence>
+
+          {/* ── Expanded Tracking Detail Card ── */}
+          <AnimatePresence>
+            {trackingExpanded && islandState === "tracking" && trackingOrder && trackingStatus && (
+              <motion.div
+                initial={{ opacity: 0, y: -8, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -8, scale: 0.95 }}
+                transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                className="pointer-events-auto absolute top-full mt-2 left-1/2 -translate-x-1/2"
+                style={{
+                  width: "min(360px, calc(100vw - 32px))",
+                  background: "rgba(0,0,0,0.92)",
+                  backdropFilter: "blur(40px) saturate(180%)",
+                  WebkitBackdropFilter: "blur(40px) saturate(180%)",
+                  borderRadius: 24,
+                  border: "0.5px solid rgba(255,255,255,0.1)",
+                  boxShadow: "0 8px 40px rgba(0,0,0,0.6), 0 0 0 0.5px rgba(255,255,255,0.08)",
+                  overflow: "hidden",
+                  zIndex: 101,
+                }}
+              >
+                <div style={{ padding: "16px 18px", display: "flex", flexDirection: "column", gap: 14 }}>
+                  {/* Header */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2.5">
+                      <div 
+                        className="w-9 h-9 rounded-xl flex items-center justify-center"
+                        style={{ background: `${trackingStatus.color}20` }}
+                      >
+                        <trackingStatus.icon className="w-5 h-5" style={{ color: trackingStatus.color }} />
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="text-sm font-bold text-white">{trackingStatus.label}</span>
+                        <span className="text-[10px] text-white/40 font-medium">
+                          #{trackingOrder.id.slice(0, 8).toUpperCase()} • ₹{trackingOrder.total_price}
+                        </span>
+                      </div>
+                    </div>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); setTrackingExpanded(false); }}
+                      className="w-7 h-7 rounded-full flex items-center justify-center"
+                      style={{ background: "rgba(255,255,255,0.06)" }}
+                    >
+                      <ChevronDown className="w-3.5 h-3.5 text-white/50 rotate-180" />
+                    </button>
+                  </div>
+
+                  {/* Progress Steps */}
+                  {!isTrackingFailed && (
+                    <div className="flex items-center gap-1.5">
+                      {STEP_KEYS.map((key, i) => {
+                        const currentIdx = trackingStatus.stepIndex;
+                        const isDone = currentIdx > i;
+                        const isActive = currentIdx === i;
+                        return (
+                          <div key={key} className="flex items-center flex-1 gap-1.5">
+                            <motion.div
+                              animate={{
+                                background: isDone ? trackingStatus.color : isActive ? trackingStatus.color : "rgba(255,255,255,0.08)",
+                                scale: isActive ? 1.1 : 1,
+                              }}
+                              transition={{ duration: 0.4, ease: "easeOut" }}
+                              className="flex items-center justify-center flex-shrink-0"
+                              style={{
+                                width: 22, height: 22, borderRadius: "50%",
+                                border: isActive ? `2px solid ${trackingStatus.color}` : "none",
+                              }}
+                            >
+                              {isDone ? (
+                                <CheckCircle className="w-3 h-3 text-white" />
+                              ) : (
+                                <span className="text-[8px] font-bold text-white/60">{i + 1}</span>
+                              )}
+                            </motion.div>
+                            {i < STEP_KEYS.length - 1 && (
+                              <motion.div
+                                animate={{
+                                  background: isDone ? trackingStatus.color : "rgba(255,255,255,0.08)",
+                                }}
+                                className="flex-1 rounded-full"
+                                style={{ height: 2 }}
+                              />
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+
+                  {/* Step Labels */}
+                  {!isTrackingFailed && (
+                    <div className="flex items-center">
+                      {STEP_KEYS.map((key, i) => {
+                        const labels = ["Placed", "Prep", "Picked", "OFD", "Done"];
+                        const currentIdx = trackingStatus.stepIndex;
+                        const isDone = currentIdx > i;
+                        const isActive = currentIdx === i;
+                        return (
+                          <span
+                            key={key}
+                            className="flex-1 text-center"
+                            style={{
+                              fontSize: 9, fontWeight: 700,
+                              color: isDone || isActive ? trackingStatus.color : "rgba(255,255,255,0.25)",
+                              letterSpacing: "0.03em",
+                            }}
+                          >
+                            {labels[i]}
+                          </span>
+                        );
+                      })}
+                    </div>
+                  )}
+
+                  {/* Delivery Location */}
+                  {trackingOrder.delivery_location && (
+                    <div className="flex items-center gap-2 pt-1" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+                      <MapPin className="w-3.5 h-3.5 text-white/30 flex-shrink-0" />
+                      <span className="text-[11px] text-white/50 font-medium truncate">
+                        {trackingOrder.delivery_location.replace(/\[.*?\]/g, "").trim()}
+                      </span>
+                    </div>
+                  )}
+
+                  {/* Cancelled/Rejected message */}
+                  {isTrackingFailed && (
+                    <div className="flex items-center gap-2 py-2 px-3 rounded-xl" style={{ background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.2)" }}>
+                      <XCircle className="w-4 h-4 text-red-400 flex-shrink-0" />
+                      <span className="text-xs text-red-400 font-medium">
+                        {trackingOrder.status === "seller_rejected" 
+                          ? "The seller couldn't fulfill this order." 
+                          : "This order has been cancelled."}
+                      </span>
+                    </div>
+                  )}
+
+                  {/* Action */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setTrackingExpanded(false);
+                      // Scroll to the progress timeline section
+                      const timeline = document.querySelector('[data-section="timeline"]');
+                      if (timeline) {
+                        timeline.scrollIntoView({ behavior: "smooth", block: "start" });
+                      }
+                    }}
+                    className="w-full py-2.5 rounded-xl text-center text-xs font-bold transition-all"
+                    style={{
+                      background: `${trackingStatus.color}15`,
+                      border: `1px solid ${trackingStatus.color}30`,
+                      color: trackingStatus.color,
+                    }}
+                  >
+                    View Full Progress
+                  </button>
+                </div>
+              </motion.div>
+            )}
           </AnimatePresence>
         </div>
       </div>
