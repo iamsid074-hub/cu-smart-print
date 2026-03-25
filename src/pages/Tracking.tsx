@@ -329,11 +329,37 @@ export default function Tracking() {
               {(type === "food" || type === "vending" || type === "cart") && details?.items && (
                 <div className={`mt-3 rounded-xl p-4 border ${displayType === "food" ? "bg-orange-50 border-orange-100" : "bg-emerald-50 border-emerald-100"}`}>
                   <p className={`text-[10px] font-bold tracking-wider uppercase mb-2 ${displayType === "food" ? "text-orange-600/70" : "text-emerald-700/70"}`}>Items Ordered</p>
-                  {details.items.split("\n").filter(Boolean).map((line: string, i: number) => (
-                    <p key={i} className="text-sm text-slate-800 font-medium flex items-start gap-2 mb-1">
-                      <span className={`${displayType === "food" ? "text-orange-400" : "text-emerald-500"} mt-0.5`}>•</span> {line.trim()}
-                    </p>
-                  ))}
+                  {details.items.split("\n")
+                    .map((line: string) => line.trim())
+                    .filter((line: string) => !!line && !line.includes("[SAFETY:Disclaimer"))
+                    .map((line: string, i: number) => {
+                      let price = '';
+                      const priceMatch = line.match(/\(₹([\d,]+)\)/);
+                      if (priceMatch) {
+                        price = `₹${priceMatch[1]}`;
+                      }
+                      
+                      let name = line;
+                      if (line.includes('[IMG:')) {
+                        name = line.split('[IMG:')[0];
+                      } else if (priceMatch) {
+                        name = line.replace(priceMatch[0], '');
+                      }
+                      
+                      name = name.trim().replace(/\(\s*\)$/, '').trim();
+                      
+                      return (
+                        <div key={i} className="flex justify-between items-start gap-3 mb-2 last:mb-0">
+                          <p className="text-sm text-slate-800 font-medium flex items-start gap-2 flex-1 min-w-0">
+                            <span className={`${displayType === "food" ? "text-orange-400" : "text-emerald-500"} mt-0.5`}>•</span> 
+                            <span className="truncate whitespace-normal leading-snug">{name}</span>
+                          </p>
+                          {price && (
+                            <p className="text-sm font-black text-slate-900 flex-shrink-0">{price}</p>
+                          )}
+                        </div>
+                      );
+                    })}
                   {details.notes && (
                     <p className={`text-xs text-slate-500 font-medium mt-3 pt-3 border-t ${displayType === "food" ? "border-orange-200/50" : "border-emerald-200/50"}`}>
                       <span className="font-bold text-slate-600">Notes:</span> {details.notes}

@@ -544,6 +544,31 @@ function parseOrderDetails(order: Order): { hostel: string; room: string; items:
         items = `1x ${order.products.title}`;
     }
 
+    // Clean formatting and remove tags like [IMG:...], [SAFETY:...] and trailing categories globally
+    items = items.split('\n')
+        .map(line => line.trim())
+        .filter(line => !!line && !line.includes('[SAFETY:Disclaimer'))
+        .map(line => {
+            let price = '';
+            const priceMatch = line.match(/\(₹([\d,]+)\)/);
+            if (priceMatch) {
+                price = `₹${priceMatch[1]}`;
+            }
+            
+            let name = line;
+            if (line.includes('[IMG:')) {
+                name = line.split('[IMG:')[0];
+            } else if (priceMatch) {
+                name = line.replace(priceMatch[0], '');
+            }
+            
+            // Remove trailing empty parentheses or standalone (category) markers
+            name = name.trim().replace(/\(\s*\)$/, '').trim();
+            
+            return price ? `${name} - ${price}` : name;
+        })
+        .join('\n');
+
     return { hostel, room, items, notes };
 }
 
