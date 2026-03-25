@@ -185,6 +185,8 @@ export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
   const handleIslandClick = () => {
     if (islandState === "added" || islandState === "updated" || islandState === "cart") {
       navigate("/cart");
+    } else if (islandState === "tracking") {
+      navigate("/tracking");
     }
   };
 
@@ -409,7 +411,7 @@ export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
               transition={springTransition}
               onClick={handleIslandClick}
               className={`pointer-events-auto flex items-center justify-center overflow-hidden flex-shrink-0 ${
-                (islandState === "added" || islandState === "updated" || islandState === "cart") 
+                (islandState === "added" || islandState === "updated" || islandState === "cart" || islandState === "tracking") 
                   ? "cursor-pointer hover:bg-zinc-900 transition-colors" 
                   : ""
               }`}

@@ -141,7 +141,6 @@ function AppLayout() {
       {!isLanding && !isLogin && !isAdmin && !isDownload && (
         <>
           {location.pathname !== "/pasta-offer" && <Navbar />}
-          <LiveOrderBanner />
           {location.pathname !== "/pasta-offer" && <BottomNav />}
           <FloatingMiniBanner />
         </>
