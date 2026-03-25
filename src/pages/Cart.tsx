@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ShoppingCart, Minus, Plus, Trash2, ArrowLeft, Loader2, MapPin, Phone, Clock, ShoppingBag, CheckCircle, Truck, Package, PackageCheck, Zap, MessageSquare, AlertTriangle } from "lucide-react";
+import { ShoppingCart, Minus, Plus, Trash2, ArrowLeft, Loader2, MapPin, Phone, Clock, ShoppingBag, CheckCircle, Truck, Package, PackageCheck, Zap, MessageSquare, AlertTriangle, Wallet } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
@@ -30,11 +30,13 @@ export default function Cart() {
     const [showDisclaimer, setShowDisclaimer] = useState(false);
     const [disclaimerAccepted, setDisclaimerAccepted] = useState(false);
 
-
     const [activeOrder, setActiveOrder] = useState<any>(null);
     const [loadingOrder, setLoadingOrder] = useState(true);
 
-    5
+    const [walletBalance, setWalletBalance] = useState(0);
+    const [useWalletBalance, setUseWalletBalance] = useState(false);
+    const [totalOrdersTracker, setTotalOrdersTracker] = useState(0);
+
     useEffect(() => {
         if (!user) {
             setLoadingOrder(false);
@@ -59,7 +61,16 @@ export default function Cart() {
             setLoadingOrder(false);
         };
 
+        const fetchWallet = async () => {
+             const { data } = await supabase.from("profiles").select("wallet_balance, total_orders").eq("id", user.id).single();
+             if (data) {
+                 setWalletBalance(data.wallet_balance || 0);
+                 setTotalOrdersTracker(data.total_orders || 0);
+             }
+        };
+
         fetchActiveOrder();
+        fetchWallet();
 
         const subscription = supabase
             .channel("cart_active_orders")
@@ -95,7 +106,21 @@ export default function Cart() {
             : ([2, 3].includes(floor) ? specialDeliveryFee : originalDeliveryFee));
 
     const deliveryFee = paymentMethod === 'cod' ? 41 : (hasFlavourCombo ? specialDeliveryFee : baseDelivery);
-    const orderTotal = totalPrice + deliveryFee;
+    
+    // Wallet Logic
+    let rawTotal = totalPrice + deliveryFee;
+    let walletDiscount = 0;
+    let orderTotal = rawTotal;
+
+    if (useWalletBalance && walletBalance > 0) {
+        if (walletBalance >= rawTotal) {
+            walletDiscount = rawTotal;
+            orderTotal = 0;
+        } else {
+            walletDiscount = walletBalance;
+            orderTotal = rawTotal - walletBalance;
+        }
+    }
 
     const phoneClean = phone.replace(/\D/g, "");
     const isPhoneValid = phoneClean.length === 10;
@@ -142,6 +167,18 @@ export default function Cart() {
             throw error;
         }
 
+        // Wallet Deduction
+        if (useWalletBalance && walletDiscount > 0) {
+            const newBalance = walletBalance - walletDiscount;
+            await supabase.from("profiles").update({ wallet_balance: newBalance }).eq("id", user!.id);
+            await supabase.from("wallet_transactions").insert({
+                user_id: user!.id,
+                amount: -walletDiscount,
+                type: 'usage',
+                description: 'Used balance for order'
+            });
+        }
+        
         // Clean up UI and state
         clearCart();
         setShowCheckout(false);
@@ -164,7 +201,7 @@ export default function Cart() {
 
     const handleDisclaimerAccepted = async () => {
         setShowDisclaimer(false);
-        if (paymentMethod === "online") {
+        if (paymentMethod === "online" && orderTotal > 0) {
             setShowCheckout(false);
             setTimeout(() => setShowUpiModal(true), 150);
         } else { // Cash on Gate Flow
@@ -418,9 +455,39 @@ export default function Cart() {
                                 </div>
                             )}
 
+                            {walletBalance > 0 && (
+                                <div className="border-t border-slate-100 pt-4 pb-1 mb-2">
+                                    <label className="flex items-center justify-between cursor-pointer group">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-8 h-8 rounded-full bg-slate-900 flex items-center justify-center text-white">
+                                                <Wallet className="w-4 h-4" />
+                                            </div>
+                                            <div>
+                                                <p className="font-bold text-slate-800 text-sm">Use Wallet Balance</p>
+                                                <p className="text-[11px] text-slate-500 font-medium tracking-tight">Available: ₹{walletBalance}</p>
+                                            </div>
+                                        </div>
+                                        <div className={`w-12 h-6 rounded-full p-1 transition-colors duration-300 ease-in-out ${useWalletBalance ? 'bg-emerald-500' : 'bg-slate-200'}`}>
+                                            <div className={`bg-white w-4 h-4 rounded-full shadow-sm transform transition-transform duration-300 ease-in-out ${useWalletBalance ? 'translate-x-6' : 'translate-x-0'}`} />
+                                            {/* Hide invisible checkbox covering the div */}
+                                            <input type="checkbox" className="hidden" checked={useWalletBalance} onChange={() => setUseWalletBalance(!useWalletBalance)} />
+                                        </div>
+                                    </label>
+                                    
+                                    <AnimatePresence>
+                                        {useWalletBalance && walletDiscount > 0 && (
+                                            <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
+                                                <div className="flex justify-between items-center text-sm text-emerald-600 font-bold mt-4 bg-emerald-50 px-3 py-2 rounded-xl">
+                                                    <span>Wallet Applied</span>
+                                                    <span>- ₹{walletDiscount}</span>
+                                                </div>
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
+                                </div>
+                            )}
 
-
-                            <div className="border-t border-slate-100 pt-4 flex justify-between items-center">
+                            <div className="border-t border-slate-100 pt-4 flex justify-between items-center mt-2">
                                 <span className="font-bold text-slate-900">Total details</span>
                                 <span className="text-xl sm:text-2xl font-black text-brand">₹{orderTotal}</span>
                             </div>

@@ -24,6 +24,7 @@ const Tracking = lazy(() => import("./pages/Tracking"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const Login = lazy(() => import("./pages/Login"));
 const Profile = lazy(() => import("./pages/Profile"));
+const Wallet = lazy(() => import("./pages/Wallet"));
 const Grocery = lazy(() => import("./pages/Grocery"));
 const ProductDetail = lazy(() => import("./pages/ProductDetail"));
 const FoodMenu = lazy(() => import("./pages/FoodMenu"));
@@ -157,6 +158,7 @@ function AppLayout() {
           <Route path="/sell" element={<Navigate to="/list" replace />} />
           <Route path="/tracking" element={<ProtectedRoute><Tracking /></ProtectedRoute>} />
           <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+          <Route path="/wallet" element={<ProtectedRoute><Wallet /></ProtectedRoute>} />
           <Route path="/browse" element={<ProtectedRoute><Browse /></ProtectedRoute>} />
           <Route path="/grocery" element={<ProtectedRoute><Grocery /></ProtectedRoute>} />
           <Route path="/product/:id" element={<ProtectedRoute><ProductDetail /></ProtectedRoute>} />

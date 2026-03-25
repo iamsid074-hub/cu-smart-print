@@ -1161,6 +1161,37 @@ export default function Admin() {
     const handleUpdateOrderStatus = async (id: string, status: string, timestamps?: Record<string, string>) => {
         const updates: any = { status, ...timestamps };
         await supabase.from("orders").update(updates).eq("id", id);
+
+        // --- NEW REWARD LOGIC ---
+        if (status === "completed") {
+            const { data: orderData } = await supabase.from("orders").select("buyer_id").eq("id", id).single();
+            if (orderData?.buyer_id) {
+                const buyerId = orderData.buyer_id;
+                const { data: profileData } = await supabase.from("profiles").select("total_orders, wallet_balance").eq("id", buyerId).single();
+                
+                if (profileData) {
+                    const newTotalOrders = (profileData.total_orders || 0) + 1;
+                    let newBalance = profileData.wallet_balance || 0;
+                    
+                    if (newTotalOrders > 0 && newTotalOrders % 3 === 0) {
+                        newBalance += 20;
+                        await supabase.from("wallet_transactions").insert({
+                            user_id: buyerId,
+                            amount: 20,
+                            type: 'reward',
+                            description: 'Reward: 3 orders delivered!'
+                        });
+                    }
+                    
+                    await supabase.from("profiles").update({
+                        total_orders: newTotalOrders,
+                        wallet_balance: newBalance
+                    }).eq("id", buyerId);
+                }
+            }
+        }
+        // ------------------------
+
         setOrders(prev => prev.map(o => o.id === id ? { ...o, status } : o));
         setRecentOrders(prev => prev.map(o => o.id === id ? { ...o, status } : o));
         await fetchStats();

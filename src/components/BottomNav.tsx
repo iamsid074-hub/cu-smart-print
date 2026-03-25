@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, Compass, ShoppingCart, Utensils, User, ShoppingBag, PlusCircle } from "lucide-react";
+import { Home, Compass, ShoppingCart, Utensils, User, ShoppingBag, PlusCircle, Wallet } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
@@ -132,7 +132,7 @@ export default function BottomNav() {
                     <NavItem to="/list" icon={PlusCircle} label="Sell" isActive={location.pathname.startsWith('/list')} groupedVariant={true} />
                 </div>
 
-                <NavItem to="/profile" icon={User} label="Profile" isActive={location.pathname.startsWith('/profile')} asAvatar={true} user={user} />
+                <NavItem to="/wallet" icon={Wallet} label="Wallet" isActive={location.pathname.startsWith('/wallet')} />
             </div>
         </motion.div>
     );
