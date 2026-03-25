@@ -498,9 +498,9 @@ export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: -8, scale: 0.95 }}
                 transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                className="pointer-events-auto absolute left-1/2 -translate-x-1/2"
+                className="pointer-events-auto fixed left-1/2 -translate-x-1/2"
                 style={{
-                  top: height + 8,
+                  top: 68,
                   width: "min(360px, calc(100vw - 32px))",
                   background: "rgba(0,0,0,0.92)",
                   backdropFilter: "blur(40px) saturate(180%)",
@@ -509,7 +509,7 @@ export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
                   border: "0.5px solid rgba(255,255,255,0.1)",
                   boxShadow: "0 8px 40px rgba(0,0,0,0.6), 0 0 0 0.5px rgba(255,255,255,0.08)",
                   overflow: "hidden",
-                  zIndex: 101,
+                  zIndex: 10001,
                 }}
               >
                 <div style={{ padding: "16px 18px", display: "flex", flexDirection: "column", gap: 14 }}>
