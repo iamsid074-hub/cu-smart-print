@@ -4,27 +4,31 @@ import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
 
-const NavItem = ({ to, icon: Icon, label, isActive, asAvatar = false, user = null }: any) => {
+const NavItem = ({ to, icon: Icon, label, isActive, asAvatar = false, user = null, groupedVariant = false, layoutGroupId = null }: any) => {
     return (
-        <Link to={to} className="flex-1 relative z-10 flex flex-col items-center justify-center py-2 outline-none select-none">
+        <Link to={to} className={`flex-1 relative z-10 flex flex-col items-center justify-center py-2 outline-none select-none ${groupedVariant ? 'mx-0.5' : ''}`}>
+            {/* Inner Content Container */}
             <motion.div
-                className="flex flex-col items-center justify-center gap-1 w-full relative"
-                whileTap={{ scale: 0.85 }}
-                transition={{ type: "spring", stiffness: 500, damping: 25 }}
+                className="flex flex-col items-center justify-center gap-1 w-full relative z-10"
+                whileTap={{ scale: groupedVariant ? 0.92 : 0.85 }}
+                transition={{ type: "spring", stiffness: 400, damping: 25 }}
             >
                 <div 
-                   className={`transition-all duration-300 transform ${isActive ? '-translate-y-1 scale-110' : 'translate-y-0 scale-100'}`}
+                   className={`transition-all duration-300 transform flex items-center justify-center ${isActive ? '-translate-y-1 scale-110' : 'translate-y-0 scale-100'}`}
                 >
                     {asAvatar ? (
                         <div className={`w-[20px] h-[20px] sm:w-[22px] sm:h-[22px] rounded-full flex items-center justify-center overflow-hidden border-2 transition-colors duration-300 ${isActive ? 'border-slate-800 bg-slate-100' : 'border-slate-200/50 bg-slate-100'}`}>
                             {user ? (
-                                <User strokeWidth={2.5} className={`w-4 h-4 transition-colors ${isActive ? 'text-slate-800' : 'text-slate-500'}`} />
+                                <User strokeWidth={isActive ? 2.5 : 2} className={`w-4 h-4 transition-all duration-300 ${isActive ? 'text-slate-800 scale-110' : 'text-slate-500 scale-100'}`} />
                             ) : (
                                 <User strokeWidth={2.5} className="w-4 h-4 text-slate-400" />
                             )}
                         </div>
                     ) : (
-                        <Icon strokeWidth={isActive ? 2.5 : 2} className={`w-5 h-5 sm:w-[22px] sm:h-[22px] transition-colors duration-300 ${isActive ? 'text-slate-900' : 'text-slate-400'}`} />
+                        <Icon 
+                            strokeWidth={isActive ? 2.7 : 2} 
+                            className={`w-5 h-5 sm:w-[22px] sm:h-[22px] transition-all duration-300 ${isActive ? 'text-slate-900 drop-shadow-sm scale-110' : 'text-slate-400 scale-100'}`} 
+                        />
                     )}
                 </div>
                 
@@ -74,8 +78,12 @@ export default function BottomNav() {
                 }}
             >
                 <NavItem to="/home" icon={Home} label="Home" isActive={location.pathname === '/home'} />
-                <NavItem to="/browse" icon={Compass} label="Explore" isActive={location.pathname.startsWith('/browse')} />
-                <NavItem to="/grocery" icon={ShoppingBag} label="Grocery" isActive={location.pathname.startsWith('/grocery')} />
+                
+                {/* Group Explore and Grocery in a static light gray pill */}
+                <div className="flex-[2] flex relative items-stretch justify-around rounded-[24px] bg-[#f0f2f5] mx-1 px-1 py-1">
+                    <NavItem to="/browse" icon={Compass} label="Explore" isActive={location.pathname.startsWith('/browse')} groupedVariant={true} />
+                    <NavItem to="/grocery" icon={ShoppingBag} label="Grocery" isActive={location.pathname.startsWith('/grocery')} groupedVariant={true} />
+                </div>
 
                 {/* Cart (Center elevated style wrapper) */}
                 <div className="flex-shrink-0 relative -top-5 w-[56px] sm:w-[64px] h-[56px] sm:h-[64px] mx-1 flex justify-center items-center z-20">
@@ -91,7 +99,10 @@ export default function BottomNav() {
                             whileTap={{ scale: 0.85 }}
                             transition={{ type: "spring", stiffness: 500, damping: 25 }}
                         >
-                            <ShoppingCart strokeWidth={2.5} className="w-5 h-5 sm:w-[22px] sm:h-[22px] relative z-10" />
+                            <ShoppingCart 
+                                strokeWidth={isCartActive ? 2.7 : 2} 
+                                className={`w-5 h-5 sm:w-[22px] sm:h-[22px] relative z-10 transition-all duration-300 ${isCartActive ? 'scale-110 drop-shadow-sm' : 'scale-100'}`} 
+                            />
                             
                             <AnimatePresence>
                                 {cartCount > 0 && (
@@ -115,8 +126,12 @@ export default function BottomNav() {
                     </Link>
                 </div>
 
-                <NavItem to="/food" icon={Utensils} label="Food" isActive={location.pathname.startsWith('/food')} />
-                <NavItem to="/list" icon={PlusCircle} label="Sell" isActive={location.pathname.startsWith('/list')} />
+                {/* Group Food and Sell in a static light gray pill */}
+                <div className="flex-[2] flex relative items-stretch justify-around rounded-[24px] bg-[#f0f2f5] mx-1 px-1 py-1">
+                    <NavItem to="/food" icon={Utensils} label="Food" isActive={location.pathname.startsWith('/food')} groupedVariant={true} />
+                    <NavItem to="/list" icon={PlusCircle} label="Sell" isActive={location.pathname.startsWith('/list')} groupedVariant={true} />
+                </div>
+
                 <NavItem to="/profile" icon={User} label="Profile" isActive={location.pathname.startsWith('/profile')} asAvatar={true} user={user} />
             </div>
         </motion.div>
