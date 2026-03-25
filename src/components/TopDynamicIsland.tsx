@@ -4,7 +4,7 @@ import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
-import { CheckCircle2, ShoppingBag, Tag, Package, Truck, CheckCircle, Clock, Home as HomeIcon, XCircle, ChevronDown, MapPin } from "lucide-react";
+import { CheckCircle2, ShoppingBag, Tag, Package, Truck, CheckCircle, Clock, Home as HomeIcon, XCircle } from "lucide-react";
 
 // Fluid, bouncy spring animation mimicking Apple's Dynamic Island
 const springTransition = {
@@ -48,10 +48,8 @@ export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
 
   // ── Tracking state ──────────────────────────────────────────────────────
   const [trackingOrder, setTrackingOrder] = useState<any>(null);
-  const [trackingExpanded, setTrackingExpanded] = useState(false);
   const [prevTrackingStatus, setPrevTrackingStatus] = useState<string | null>(null);
   const [statusAnimating, setStatusAnimating] = useState(false);
-  const trackingRef = useRef<HTMLDivElement>(null);
 
   // Helper to set state and auto-dismiss after 2 seconds
   const triggerState = (newState: IslandState, data?: { name: string, price: number }) => {
@@ -97,10 +95,6 @@ export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
     } else {
       setIslandState("default");
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    }
-    // Collapse tracking detail when leaving the page
-    if (!location.pathname.startsWith("/tracking")) {
-      setTrackingExpanded(false);
     }
   }, [location.pathname]);
 
@@ -163,17 +157,7 @@ export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
     setPrevTrackingStatus(trackingOrder.status);
   }, [trackingOrder?.status]);
 
-  // Close expanded view on click outside
-  useEffect(() => {
-    if (!trackingExpanded) return;
-    const handleClickOutside = (e: MouseEvent) => {
-      if (trackingRef.current && !trackingRef.current.contains(e.target as Node)) {
-        setTrackingExpanded(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [trackingExpanded]);
+
 
   // ── Cart item tracking ──────────────────────────────────────────────────
   useEffect(() => {
@@ -201,8 +185,6 @@ export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
   const handleIslandClick = () => {
     if (islandState === "added" || islandState === "updated" || islandState === "cart") {
       navigate("/cart");
-    } else if (islandState === "tracking") {
-      setTrackingExpanded(!trackingExpanded);
     }
   };
 
@@ -291,8 +273,8 @@ export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
       break;
 
     case "tracking":
-      width = trackingExpanded ? 340 : (trackingOrder ? 280 : 160);
-      height = trackingExpanded ? 52 : (trackingOrder ? 48 : 40);
+      width = trackingOrder ? 280 : 160;
+      height = trackingOrder ? 48 : 40;
       if (trackingOrder && trackingStatus) {
         const StatusIcon = trackingStatus.icon;
         content = (
@@ -335,7 +317,7 @@ export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
             </div>
 
             {/* Mini step dots */}
-            <div className="flex items-center gap-1 flex-shrink-0 mr-1">
+            <div className="flex items-center gap-1 flex-shrink-0">
               {STEP_KEYS.map((key, i) => {
                 const currentIdx = trackingStatus.stepIndex;
                 const isDone = currentIdx > i;
@@ -357,15 +339,6 @@ export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
                 );
               })}
             </div>
-
-            {/* Expand chevron */}
-            <motion.div
-              animate={{ rotate: trackingExpanded ? 180 : 0 }}
-              transition={{ duration: 0.2 }}
-              className="flex-shrink-0"
-            >
-              <ChevronDown className="w-3.5 h-3.5 text-white/30" />
-            </motion.div>
           </div>
         );
       } else {
@@ -426,7 +399,7 @@ export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
       >
         <div className="flex items-center gap-3 max-w-md w-full justify-center">
           {/* Relative wrapper for pill + dropdown alignment */}
-          <div className="relative" ref={trackingRef}>
+          <div className="relative">
           <AnimatePresence mode="popLayout">
             {/* ── Main Pill ── */}
             <motion.div
@@ -436,7 +409,7 @@ export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
               transition={springTransition}
               onClick={handleIslandClick}
               className={`pointer-events-auto flex items-center justify-center overflow-hidden flex-shrink-0 ${
-                (islandState === "added" || islandState === "updated" || islandState === "cart" || islandState === "tracking") 
+                (islandState === "added" || islandState === "updated" || islandState === "cart") 
                   ? "cursor-pointer hover:bg-zinc-900 transition-colors" 
                   : ""
               }`}
@@ -492,187 +465,6 @@ export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
           </div>{/* close relative wrapper */}
         </div>
       </div>
-
-      {/* ── Expanded Tracking Detail Card (outside transform hierarchy) ── */}
-      <AnimatePresence>
-        {trackingExpanded && islandState === "tracking" && trackingOrder && trackingStatus && (
-          <>
-            {/* Backdrop overlay */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.15 }}
-              onClick={() => setTrackingExpanded(false)}
-              style={{
-                position: "fixed",
-                inset: 0,
-                zIndex: 10000,
-                background: "rgba(0,0,0,0.3)",
-              }}
-            />
-            {/* Card */}
-            <motion.div
-              ref={trackingRef}
-              initial={{ opacity: 0, y: -8, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -8, scale: 0.95 }}
-              transition={{ type: "spring", stiffness: 400, damping: 30 }}
-              style={{
-                position: "fixed",
-                top: 68,
-                left: "50%",
-                transform: "translateX(-50%)",
-                width: "min(340px, calc(100vw - 40px))",
-                background: "rgba(0,0,0,0.94)",
-                backdropFilter: "blur(40px) saturate(180%)",
-                WebkitBackdropFilter: "blur(40px) saturate(180%)",
-                borderRadius: 24,
-                border: "0.5px solid rgba(255,255,255,0.1)",
-                boxShadow: "0 8px 40px rgba(0,0,0,0.6), 0 0 0 0.5px rgba(255,255,255,0.08)",
-                overflow: "hidden",
-                zIndex: 10001,
-              }}
-            >
-              <div style={{ padding: "16px 18px", display: "flex", flexDirection: "column", gap: 14 }}>
-                {/* Header */}
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2.5">
-                    <div 
-                      className="w-9 h-9 rounded-xl flex items-center justify-center"
-                      style={{ background: `${trackingStatus.color}20` }}
-                    >
-                      <trackingStatus.icon className="w-5 h-5" style={{ color: trackingStatus.color }} />
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="text-sm font-bold text-white">{trackingStatus.label}</span>
-                      <span className="text-[10px] text-white/40 font-medium">
-                        #{trackingOrder.id.slice(0, 8).toUpperCase()} • ₹{trackingOrder.total_price}
-                      </span>
-                    </div>
-                  </div>
-                  <button
-                    onClick={(e) => { e.stopPropagation(); setTrackingExpanded(false); }}
-                    className="w-7 h-7 rounded-full flex items-center justify-center"
-                    style={{ background: "rgba(255,255,255,0.06)" }}
-                  >
-                    <ChevronDown className="w-3.5 h-3.5 text-white/50 rotate-180" />
-                  </button>
-                </div>
-
-                {/* Progress Steps */}
-                {!isTrackingFailed && (
-                  <div className="flex items-center gap-1.5">
-                    {STEP_KEYS.map((key, i) => {
-                      const currentIdx = trackingStatus.stepIndex;
-                      const isDone = currentIdx > i;
-                      const isActive = currentIdx === i;
-                      return (
-                        <div key={key} className="flex items-center flex-1 gap-1.5">
-                          <motion.div
-                            animate={{
-                              background: isDone ? trackingStatus.color : isActive ? trackingStatus.color : "rgba(255,255,255,0.08)",
-                              scale: isActive ? 1.1 : 1,
-                            }}
-                            transition={{ duration: 0.4, ease: "easeOut" }}
-                            className="flex items-center justify-center flex-shrink-0"
-                            style={{
-                              width: 22, height: 22, borderRadius: "50%",
-                              border: isActive ? `2px solid ${trackingStatus.color}` : "none",
-                            }}
-                          >
-                            {isDone ? (
-                              <CheckCircle className="w-3 h-3 text-white" />
-                            ) : (
-                              <span className="text-[8px] font-bold text-white/60">{i + 1}</span>
-                            )}
-                          </motion.div>
-                          {i < STEP_KEYS.length - 1 && (
-                            <motion.div
-                              animate={{
-                                background: isDone ? trackingStatus.color : "rgba(255,255,255,0.08)",
-                              }}
-                              className="flex-1 rounded-full"
-                              style={{ height: 2 }}
-                            />
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-
-                {/* Step Labels */}
-                {!isTrackingFailed && (
-                  <div className="flex items-center">
-                    {STEP_KEYS.map((key, i) => {
-                      const labels = ["Placed", "Prep", "Picked", "OFD", "Done"];
-                      const currentIdx = trackingStatus.stepIndex;
-                      const isDone = currentIdx > i;
-                      const isActive = currentIdx === i;
-                      return (
-                        <span
-                          key={key}
-                          className="flex-1 text-center"
-                          style={{
-                            fontSize: 9, fontWeight: 700,
-                            color: isDone || isActive ? trackingStatus.color : "rgba(255,255,255,0.25)",
-                            letterSpacing: "0.03em",
-                          }}
-                        >
-                          {labels[i]}
-                        </span>
-                      );
-                    })}
-                  </div>
-                )}
-
-                {/* Delivery Location */}
-                {trackingOrder.delivery_location && (
-                  <div className="flex items-center gap-2 pt-1" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
-                    <MapPin className="w-3.5 h-3.5 text-white/30 flex-shrink-0" />
-                    <span className="text-[11px] text-white/50 font-medium truncate">
-                      {trackingOrder.delivery_location.replace(/\[.*?\]/g, "").trim()}
-                    </span>
-                  </div>
-                )}
-
-                {/* Cancelled/Rejected message */}
-                {isTrackingFailed && (
-                  <div className="flex items-center gap-2 py-2 px-3 rounded-xl" style={{ background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.2)" }}>
-                    <XCircle className="w-4 h-4 text-red-400 flex-shrink-0" />
-                    <span className="text-xs text-red-400 font-medium">
-                      {trackingOrder.status === "seller_rejected" 
-                        ? "The seller couldn't fulfill this order." 
-                        : "This order has been cancelled."}
-                    </span>
-                  </div>
-                )}
-
-                {/* Action */}
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setTrackingExpanded(false);
-                    const timeline = document.querySelector('[data-section="timeline"]');
-                    if (timeline) {
-                      timeline.scrollIntoView({ behavior: "smooth", block: "start" });
-                    }
-                  }}
-                  className="w-full py-2.5 rounded-xl text-center text-xs font-bold transition-all"
-                  style={{
-                    background: `${trackingStatus.color}15`,
-                    border: `1px solid ${trackingStatus.color}30`,
-                    color: trackingStatus.color,
-                  }}
-                >
-                  View Full Progress
-                </button>
-              </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
     </>
   );
 }
