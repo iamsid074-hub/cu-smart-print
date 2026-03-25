@@ -190,7 +190,7 @@ export default function Profile() {
                 <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 mix-blend-overlay" />
                 
                 {/* Back Button */}
-                <div className="absolute top-6 left-4 z-20">
+                <div className="absolute top-20 left-4 z-20">
                     <button 
                         onClick={() => navigate(-1)}
                         className="p-2.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-white/20 transition-all active:scale-90"
@@ -200,7 +200,7 @@ export default function Profile() {
                 </div>
 
                 {/* Cover Actions */}
-                <div className="absolute top-6 right-4 z-20 flex gap-2">
+                <div className="absolute top-20 right-4 z-20 flex gap-2">
                     {isAdmin && (
                         <button
                             onClick={() => navigate("/admin")}
