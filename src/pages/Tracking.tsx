@@ -309,13 +309,19 @@ export default function Tracking() {
                 <div className="bg-slate-50 rounded-xl p-3 border border-slate-100">
                   <p className="text-[10px] text-slate-400 font-bold uppercase mb-1 tracking-wider flex items-center gap-1"><MapPin className="w-3 h-3" /> Delivery To</p>
                   <p className="text-sm font-bold text-slate-900">{details?.hostel}</p>
-                  {order.delivery_room && !order.delivery_room.includes("[CUSTOM FOOD ORDER]") && (
-                    <p className="text-xs font-medium text-slate-500">Room {order.delivery_room}</p>
+                  {((details as any)?.roomInfo || (!order.delivery_room?.includes("[ITEMS:") && !order.delivery_room?.includes("[CUSTOM FOOD ORDER]") && order.delivery_room)) && (
+                    <p className="text-xs font-medium text-slate-500">
+                      Room {(details as any)?.roomInfo || order.delivery_room}
+                    </p>
                   )}
                 </div>
-                <div className="bg-slate-50 rounded-xl p-3 border border-slate-100">
-                  <p className="text-[10px] text-slate-400 font-bold uppercase mb-1 tracking-wider flex items-center gap-1"><Phone className="w-3 h-3" /> Contact</p>
-                  <p className="text-sm font-bold text-slate-900">{order.buyer_phone || "—"}</p>
+                <div className="bg-slate-50 rounded-xl p-3 border border-slate-100 flex flex-col justify-center">
+                  <p className="text-[10px] text-brand font-bold uppercase mb-1 tracking-wider flex items-center gap-1"><User className="w-3 h-3" /> Delivery Partner</p>
+                  <p className="text-sm font-bold text-slate-900">Virat (Owner)</p>
+                  <a href="tel:9466166750" className="text-xs font-bold text-slate-600 mt-1 flex items-center gap-1.5 hover:text-brand transition-colors w-max">
+                    <div className="bg-slate-200/50 p-1 rounded-full"><Phone className="w-3 h-3" /></div>
+                    9466166750
+                  </a>
                 </div>
               </div>
 
