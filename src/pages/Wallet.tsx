@@ -149,21 +149,36 @@ export default function Wallet() {
                     {/* Progress Bar Container */}
                     <div className="relative">
                         <div className="flex justify-between text-[11px] font-bold text-slate-400 mb-2 px-1">
-                            <span>0</span>
-                            <span className={totalOrders % 3 >= 1 ? "text-slate-800" : ""}>1</span>
-                            <span className={totalOrders % 3 >= 2 ? "text-slate-800" : ""}>2</span>
-                            <span className="text-[#ef4444] bg-[#ef4444]/10 px-2 rounded-full py-0.5 relative -top-0.5">₹20!</span>
+                            {(() => {
+                                const cycleOrders = (totalOrders > 0 && totalOrders % 3 === 0) ? 3 : (totalOrders % 3);
+                                return (
+                                    <>
+                                        <span>0</span>
+                                        <span className={cycleOrders >= 1 ? "text-slate-800" : ""}>1</span>
+                                        <span className={cycleOrders >= 2 ? "text-slate-800" : ""}>2</span>
+                                        <span className={`px-2 rounded-full py-0.5 relative -top-0.5 transition-all ${cycleOrders === 3 ? "text-white bg-[#ef4444] shadow-md shadow-red-500/30 font-black scale-110" : "text-[#ef4444] bg-[#ef4444]/10"}`}>₹20!</span>
+                                    </>
+                                );
+                            })()}
                         </div>
                         <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden relative">
-                            <motion.div 
-                                initial={{ width: 0 }}
-                                animate={{ width: `${((totalOrders % 3) / 3) * 100}%` }}
-                                transition={{ duration: 1, type: "spring" }}
-                                className="absolute top-0 left-0 h-full bg-slate-900 rounded-full"
-                            />
+                            {(() => {
+                                const cycleOrders = (totalOrders > 0 && totalOrders % 3 === 0) ? 3 : (totalOrders % 3);
+                                return (
+                                    <motion.div 
+                                        initial={{ width: 0 }}
+                                        animate={{ width: `${(cycleOrders / 3) * 100}%` }}
+                                        transition={{ duration: 1, type: "spring" }}
+                                        className={`absolute top-0 left-0 h-full rounded-full transition-colors duration-500 ${cycleOrders === 3 ? 'bg-emerald-500' : 'bg-slate-900'}`}
+                                    />
+                                );
+                            })()}
                         </div>
                         <p className="mt-3 text-center text-[12px] font-medium text-slate-500">
                             You have completed <strong className="text-slate-800">{totalOrders}</strong> total order{totalOrders !== 1 && 's'}.
+                            {(totalOrders > 0 && totalOrders % 3 === 0) && (
+                                <span className="block text-emerald-600 font-bold mt-1 animate-pulse">Reward Unlocked! Order again to restart streak.</span>
+                            )}
                         </p>
                     </div>
                 </motion.div>
