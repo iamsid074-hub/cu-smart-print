@@ -47,7 +47,7 @@ export default function Wallet() {
                 .select('*', { count: 'exact', head: true })
                 .eq('buyer_id', user.id)
                 .eq('status', 'completed')
-                .gte('updated_at', startOfDayIST);
+                .gte('created_at', startOfDayIST);
             
             if (countError) throw countError;
             setDailyOrders(dailyCount || 0);

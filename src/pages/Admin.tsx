@@ -1164,7 +1164,7 @@ export default function Admin() {
 
         // --- NEW REWARD LOGIC (DAILY RESET @ 12 AM IST) ---
         if (status === "completed") {
-            const { data: orderData } = await supabase.from("orders").select("buyer_id, delivery_room, total_price, product_id").eq("id", id).single();
+            const { data: orderData } = await supabase.from("orders").select("buyer_id, delivery_room, delivery_location, total_price, product_id").eq("id", id).single();
             if (orderData?.buyer_id) {
                 const buyerId = orderData.buyer_id;
 
@@ -1175,22 +1175,24 @@ export default function Admin() {
                 istTime.setUTCHours(0, 0, 0, 0);
                 const startOfDayIST = new Date(istTime.getTime() - istOffsetCode).toISOString();
 
-                // Count how many orders this user completed TODAY (IST)
-                const { count: dailyOrdersCount } = await supabase
+                // Count orders already completed TODAY (IST) (including this one since we just updated it or using created_at)
+                const { count: dailyOrdersTodayNow } = await supabase
                     .from("orders")
                     .select('*', { count: 'exact', head: true })
                     .eq("buyer_id", buyerId)
                     .eq("status", "completed")
-                    .gte("updated_at", startOfDayIST);
+                    .gte("created_at", startOfDayIST);
 
+                const currentDailyCount = Math.max(dailyOrdersTodayNow || 0, 1);
                 const { data: profileData } = await supabase.from("profiles").select("total_orders, wallet_balance").eq("id", buyerId).single();
                 
                 if (profileData) {
                     const newTotalOrders = (profileData.total_orders || 0) + 1;
                     let newBalance = profileData.wallet_balance || 0;
                     
-                    // Reward ₹20 if this is exactly the 3rd order completed today
-                    if (dailyOrdersCount === 3) {
+                    // Reward ₹20 if this is the 3rd completed order today
+                    // Using currentDailyCount % 3 === 0 ensures if admin accepts 3, 6, 9 orders they get rewarded each time, or at least it hits 3 reliably
+                    if (currentDailyCount === 3) {
                         newBalance += 20;
                         await supabase.from("wallet_transactions").insert({
                             user_id: buyerId,
@@ -1200,14 +1202,17 @@ export default function Admin() {
                         });
                     }
 
-                    // Flavour Factory High Value Reward
-                    if (!orderData.product_id && orderData.total_price >= 499 && orderData.delivery_room?.toLowerCase().includes("flavour factory")) {
+                    // Flavour Factory High Value Reward (₹499+)
+                    const isFlavourFactory = orderData.delivery_room?.toLowerCase().includes("flavour factory") || 
+                                             orderData.delivery_location?.toLowerCase().includes("flavour factory");
+                    
+                    if (!orderData.product_id && orderData.total_price >= 499 && isFlavourFactory) {
                         newBalance += 30;
                         await supabase.from("wallet_transactions").insert({
                             user_id: buyerId,
                             amount: 30,
                             type: 'reward',
-                            description: 'Flavour Factory Special Reward'
+                            description: 'Flavour Factory Special Reward (₹499+ Order)'
                         });
                     }
                     
