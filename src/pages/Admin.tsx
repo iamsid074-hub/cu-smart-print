@@ -1164,7 +1164,7 @@ export default function Admin() {
 
         // --- NEW REWARD LOGIC (DAILY RESET @ 12 AM IST) ---
         if (status === "completed") {
-            const { data: orderData } = await supabase.from("orders").select("buyer_id, delivery_room, delivery_location, total_price, product_id").eq("id", id).single();
+            const { data: orderData } = await supabase.from("orders").select("buyer_id, delivery_room, delivery_location, total_price, base_price, product_id").eq("id", id).single();
             if (orderData?.buyer_id) {
                 const buyerId = orderData.buyer_id;
 
@@ -1190,23 +1190,25 @@ export default function Admin() {
                     const newTotalOrders = (profileData.total_orders || 0) + 1;
                     let newBalance = profileData.wallet_balance || 0;
                     
-                    // Reward ₹20 if this is the 3rd completed order today
-                    // Using currentDailyCount % 3 === 0 ensures if admin accepts 3, 6, 9 orders they get rewarded each time, or at least it hits 3 reliably
-                    if (currentDailyCount === 3) {
+                    // Reward ₹20 for every 3rd completed order today (3, 6, 9...)
+                    if (currentDailyCount > 0 && currentDailyCount % 3 === 0) {
                         newBalance += 20;
                         await supabase.from("wallet_transactions").insert({
                             user_id: buyerId,
                             amount: 20,
                             type: 'reward',
-                            description: 'Daily Reward: 3 orders completed today!'
+                            description: `Daily Reward: ${currentDailyCount} orders completed today!`
                         });
                     }
 
                     // Flavour Factory High Value Reward (₹499+)
+                    // Using base_price instead of total_price so discounts don't void the reward
                     const isFlavourFactory = orderData.delivery_room?.toLowerCase().includes("flavour factory") || 
                                              orderData.delivery_location?.toLowerCase().includes("flavour factory");
                     
-                    if (!orderData.product_id && orderData.total_price >= 499 && isFlavourFactory) {
+                    const orderValue = orderData.base_price || orderData.total_price || 0;
+                    
+                    if (!orderData.product_id && orderValue >= 499 && isFlavourFactory) {
                         newBalance += 30;
                         await supabase.from("wallet_transactions").insert({
                             user_id: buyerId,
