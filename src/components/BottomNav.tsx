@@ -79,9 +79,8 @@ export default function BottomNav() {
             >
                 <NavItem to="/home" icon={Home} label="Home" isActive={location.pathname === '/home'} />
                 
-                {/* Group Explore and Grocery in a static light gray pill */}
-                <div className="flex-[2] flex relative items-stretch justify-around rounded-[24px] bg-[#f0f2f5] mx-1 px-1 py-1">
-                    <NavItem to="/browse" icon={Compass} label="Explore" isActive={location.pathname.startsWith('/browse')} groupedVariant={true} />
+                {/* Grocery Pill */}
+                <div className="flex-[1.2] flex relative items-stretch justify-around rounded-[24px] bg-[#f0f2f5] mx-1 px-1 py-1">
                     <NavItem to="/grocery" icon={ShoppingBag} label="Grocery" isActive={location.pathname.startsWith('/grocery')} groupedVariant={true} />
                 </div>
 
@@ -126,10 +125,9 @@ export default function BottomNav() {
                     </Link>
                 </div>
 
-                {/* Group Food and Sell in a static light gray pill */}
-                <div className="flex-[2] flex relative items-stretch justify-around rounded-[24px] bg-[#f0f2f5] mx-1 px-1 py-1">
+                {/* Food Pill */}
+                <div className="flex-[1.2] flex relative items-stretch justify-around rounded-[24px] bg-[#f0f2f5] mx-1 px-1 py-1">
                     <NavItem to="/food" icon={Utensils} label="Food" isActive={location.pathname.startsWith('/food')} groupedVariant={true} />
-                    <NavItem to="/list" icon={PlusCircle} label="Sell" isActive={location.pathname.startsWith('/list')} groupedVariant={true} />
                 </div>
 
                 <NavItem to="/wallet" icon={Wallet} label="Wallet" isActive={location.pathname.startsWith('/wallet')} />

@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronRight, ChevronLeft, Loader2, ShoppingBag, ShoppingCart, X, MapPin, Phone, Home as HomeIcon, Zap, UtensilsCrossed, Package, Rocket, ShieldCheck, BadgePercent, Users, Plus, Shield, Ban, Headset, ExternalLink, Search, Download, ArrowRight, Store, Clock } from "lucide-react";
+import { ChevronRight, ChevronLeft, Loader2, ShoppingBag, ShoppingCart, X, MapPin, Phone, Home as HomeIcon, Zap, UtensilsCrossed, Package, Rocket, ShieldCheck, BadgePercent, Users, Plus, Shield, Ban, Headset, ExternalLink, Search, Download, ArrowRight, Store, Clock, Compass, Sparkles } from "lucide-react";
 import ProductCard from "@/components/ProductCard";
 import VendingMachine from "@/components/VendingMachine";
 import { supabase } from "@/lib/supabase";
@@ -12,6 +12,18 @@ import { Capacitor } from "@capacitor/core";
 import { groceryItems } from "@/config/groceryItems";
 import { ADMIN_SELLER_ID } from "@/config/campusEssentials";
 import type { Database } from "@/types/supabase";
+
+const categories = [
+    { id: "All", label: "All" },
+    { id: "Electronics", label: "Electronics" },
+    { id: "Books", label: "Books" },
+    { id: "Fashion", label: "Fashion" },
+    { id: "Sports", label: "Sports" },
+    { id: "Audio", label: "Audio" },
+    { id: "Camera", label: "Camera" },
+    { id: "Furniture", label: "Furniture" },
+    { id: "Kitchen", label: "Kitchen" },
+];
 
 type Product = Database["public"]["Tables"]["products"]["Row"];
 
@@ -389,11 +401,36 @@ function AnimatedProductSlider() {
 }
 
 export default function Home() {
-  const { user } = useAuth();
-  const { addItem } = useCart();
-  const navigate = useNavigate();
   const isNativeApp = Capacitor.isNativePlatform();
-  const [loading, setLoading] = useState(true);
+  const [products, setProducts] = useState<any[]>([]);
+  const [productsLoading, setProductsLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [activeCategory, setActiveCategory] = useState("All");
+
+  useEffect(() => {
+    async function fetchProducts() {
+        setProductsLoading(true);
+        let query = supabase
+            .from("products")
+            .select(`*, profiles(full_name)`)
+            .eq("status", "available")
+            .order("created_at", { ascending: false });
+
+        if (activeCategory !== "All") {
+            query = query.eq("category", activeCategory);
+        }
+
+        const { data } = await query;
+        setProducts(data || []);
+        setProductsLoading(false);
+    }
+    fetchProducts();
+  }, [activeCategory]);
+
+  const filteredProducts = products.filter(p =>
+    p.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    p.category?.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <div className="min-h-screen bg-slate-50 pt-[5.5rem] pb-32 relative">
@@ -463,66 +500,80 @@ export default function Home() {
           {/* ─── Digital Vending Machine Section ─── */}
           <VendingMachine />
 
-          {/* ─── GROCERY QUICK SECTION ─── */}
-          <motion.section
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="mb-10 sm:mb-16"
-          >
-            <div className="flex items-center justify-between mb-4 sm:mb-6">
+          {/* ─── EXPLORE / BROWSE SECTION ─── */}
+          <section className="mb-10 sm:mb-16 mt-8">
+            {/* Header & Search */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
               <div className="flex items-center gap-2">
-                <ShoppingBag className="w-5 h-5 text-brand" />
-                <h2 className="text-base sm:text-xl font-bold" style={fontH}>Campus Grocery</h2>
+                <Compass className="w-5 h-5 text-brand" />
+                <h2 className="text-base sm:text-lg font-black uppercase tracking-tight text-slate-900" style={fontH}>
+                  Explore Products
+                </h2>
               </div>
-              <Link to="/grocery" className="flex items-center gap-0.5 text-xs sm:text-sm text-brand font-bold">
+
+              <Link to="/browse" className="flex items-center gap-0.5 text-xs sm:text-sm text-brand font-bold mr-auto sm:mr-0 sm:ml-auto pr-4">
                 See all <ChevronRight className="w-4 h-4" />
               </Link>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              {groceryItems.slice(0, 3).map((item) => (
-                <motion.div
-                  key={item.id}
-                  whileHover={{ y: -4 }}
-                  className="p-4 rounded-3xl bg-white border border-slate-100 shadow-sm flex items-center gap-4 group hover:border-brand/30 transition-all"
-                >
-                  <div className="w-20 h-20 rounded-2xl overflow-hidden bg-slate-50 flex-shrink-0">
-                    <img src={item.image} alt={item.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-bold text-slate-800 line-clamp-1">{item.name}</p>
-                    <p className="text-[10px] font-bold text-slate-400 mt-0.5">{item.quantity}</p>
-                    <div className="flex items-center justify-between mt-2">
-                      <span className="text-base font-black text-brand">{"\u20B9"}{item.price}</span>
-                      <button 
-                        onClick={() => {
-                          if (!user) { toast.error('Please login first'); navigate('/login'); return; }
-                          addItem({
-                            id: item.id,
-                            title: item.name,
-                            price: item.price,
-                            image: item.image,
-                            category: item.category,
-                          });
-                          toast.success(`${item.name} added to cart`);
-                        }}
-                        className="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center hover:bg-black active:scale-95 transition-all shadow-lg shadow-black/10"
-                      >
-                        <Plus className="w-5 h-5" />
-                      </button>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
+            {/* Category Pills */}
+            <div className="flex gap-2 overflow-x-auto pb-6 scrollbar-hide -mx-1 px-1">
+              {categories.map((cat) => {
+                const isActive = activeCategory === cat.id;
+                return (
+                  <button
+                    key={cat.id}
+                    onClick={() => setActiveCategory(cat.id)}
+                    className={`flex items-center gap-1.5 px-4 py-2 rounded-xl font-bold transition-all duration-200 flex-shrink-0 text-[10px] sm:text-xs whitespace-nowrap border ${
+                      isActive
+                        ? 'bg-brand text-white border-brand shadow-md scale-105'
+                        : 'bg-white text-slate-500 border-slate-100 hover:border-brand/30 hover:bg-slate-50'
+                    }`}
+                  >
+                    {cat.label}
+                  </button>
+                );
+              })}
             </div>
 
-            <p className="text-[10px] sm:text-xs text-slate-400 mt-4 flex items-center justify-center sm:justify-start gap-2 bg-slate-50 w-fit px-4 py-2 rounded-full border border-slate-100 mx-auto sm:mx-0">
-              <Zap className="w-3 h-3 text-amber-500 fill-amber-500" /> 
-              Instant Delivery to your room within 15-30 mins
-            </p>
-          </motion.section>
+            {/* Product Grid */}
+            {productsLoading ? (
+              <div className="flex flex-col items-center justify-center py-12 gap-3">
+                <Loader2 className="w-8 h-8 animate-spin text-brand/40" />
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Finding Items...</p>
+              </div>
+            ) : filteredProducts.length === 0 ? (
+              <div className="text-center py-16 bg-white rounded-[2rem] border border-slate-100">
+                <Package className="w-10 h-10 text-slate-200 mx-auto mb-3" />
+                <p className="text-sm font-bold text-slate-400">No products found</p>
+                <button 
+                  onClick={() => { setSearchQuery(""); setActiveCategory("All"); }}
+                  className="mt-4 text-[10px] font-black uppercase tracking-widest text-brand"
+                >
+                  Reset Filters
+                </button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 lg:gap-5">
+                {filteredProducts.slice(0, 3).map((p, i) => (
+                  <ProductCard
+                    key={p.id}
+                    id={p.id}
+                    image={p.image_url || ''}
+                    title={p.title}
+                    price={p.price}
+                    originalPrice={p.original_price || undefined}
+                    condition={p.condition as any}
+                    category={p.category}
+                    rating={4.5}
+                    seller={p.profiles?.full_name || "Student"}
+                    delay={i * 0.03}
+                  />
+                ))}
+              </div>
+            )}
+          </section>
+
 
           {/* {"\u2500\u2500\u2500"} TRUST & SAFETY {"\u2500\u2500\u2500"} */}
           <section className="mb-6">

@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, Loader2, ShoppingBag, SlidersHorizontal, Package, Sparkles } from "lucide-react";
+import { Loader2, ShoppingBag, SlidersHorizontal, Package, Sparkles, PlusCircle } from "lucide-react";
 import ProductCard from "@/components/ProductCard";
 import { supabase } from "@/lib/supabase";
 
@@ -22,7 +22,6 @@ export default function Browse() {
     const categoryParam = searchParams.get("category");
     const [products, setProducts] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
-    const [searchQuery, setSearchQuery] = useState("");
 
     useEffect(() => {
         async function fetchProducts() {
@@ -54,14 +53,7 @@ export default function Browse() {
 
     const activeCategory = categoryParam || "All";
 
-    const filtered = useMemo(() => {
-        return searchQuery.trim()
-            ? products.filter(p =>
-                p.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                p.category?.toLowerCase().includes(searchQuery.toLowerCase())
-            )
-            : products;
-    }, [products, searchQuery]);
+
 
     return (
         <div className="min-h-screen pt-24 pb-32 px-4 sm:px-6 bg-slate-50">
@@ -78,21 +70,17 @@ export default function Browse() {
                         <div>
                             <div style={{ height: "1.5rem" }} />
                             <p className="text-sm mt-1 text-slate-500 font-medium">
-                                {filtered.length} {filtered.length === 1 ? 'item' : 'items'} available from CU students
+                                {products.length} {products.length === 1 ? 'item' : 'items'} available from CU students
                             </p>
                         </div>
 
-                        {/* Search Bar */}
-                        <div className="w-full sm:w-80">
-                            <div className="relative">
-                                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                                <input
-                                    value={searchQuery}
-                                    onChange={e => setSearchQuery(e.target.value)}
-                                    placeholder="Search products..."
-                                    className="w-full rounded-2xl pl-10 pr-4 h-[44px] text-sm focus:outline-none transition-all bg-white text-slate-900 border border-slate-200 focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20 shadow-sm"
-                                />
-                            </div>
+                        {/* Sell Button */}
+                        <div className="w-full sm:w-auto">
+                            <Link to="/list" className="flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-2xl font-bold text-sm text-white transition-all bg-brand shadow-[0_10px_25px_rgba(35,25,66,0.2)] hover:scale-105 active:scale-95 group overflow-hidden relative">
+                                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
+                                <PlusCircle className="w-4 h-4" />
+                                <span>Sell Something</span>
+                            </Link>
                         </div>
                     </div>
 
@@ -123,48 +111,6 @@ export default function Browse() {
                             <Loader2 className="w-10 h-10 animate-spin text-brand" />
                             <p className="text-sm font-medium text-slate-500">Loading products...</p>
                         </div>
-                    ) : filtered.length === 0 ? (
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.98 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            className="rounded-3xl sm:rounded-[2.5rem] p-10 sm:p-16 text-center bg-white border border-slate-200 shadow-sm flex flex-col items-center"
-                        >
-                            <div className="w-20 h-20 rounded-3xl flex items-center justify-center mb-6 bg-brand-50 border border-brand-50">
-                                <Package className="w-10 h-10 text-brand-accent" />
-                            </div>
-                            <h3 className="text-xl sm:text-2xl font-black text-slate-900 mb-2">
-                                {searchQuery ? "No matches found" : "No items yet"}
-                            </h3>
-                            <p className="text-sm max-w-sm mb-6 text-slate-500">
-                                {searchQuery
-                                    ? `No products match "${searchQuery}". Try a different search or category.`
-                                    : `No products listed in ${activeCategory === "All" ? "any category" : activeCategory} right now. Check back soon!`}
-                            </p>
-                            <div className="flex gap-3 flex-wrap justify-center">
-                                {searchQuery && (
-                                    <button
-                                        onClick={() => setSearchQuery("")}
-                                        className="px-6 py-3 rounded-2xl text-sm font-bold text-white transition-all bg-brand shadow-lg hover:scale-105"
-                                    >
-                                        Clear Search
-                                    </button>
-                                )}
-                                {activeCategory !== "All" && (
-                                    <button
-                                        onClick={() => handleCategoryClick("All")}
-                                        className="px-6 py-3 rounded-2xl text-sm font-bold transition-all bg-white text-slate-700 border border-slate-200 hover:border-slate-300 shadow-sm hover:scale-105"
-                                    >
-                                        View All Items
-                                    </button>
-                                )}
-                                <Link
-                                    to="/list"
-                                    className="px-6 py-3 rounded-2xl text-sm font-bold transition-all flex items-center gap-2 bg-white text-slate-700 border border-slate-200 hover:border-slate-300 shadow-sm hover:scale-105"
-                                >
-                                    <Sparkles className="w-4 h-4 text-amber-500" /> Sell Something
-                                </Link>
-                            </div>
-                        </motion.div>
                     ) : (
                         <motion.div
                             initial={{ opacity: 0 }}
@@ -172,7 +118,7 @@ export default function Browse() {
                             transition={{ duration: 0.2 }}
                             className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 lg:gap-5"
                         >
-                            {filtered.map((p, i) => (
+                            {products.map((p, i) => (
                                 <ProductCard
                                     key={p.id}
                                     id={p.id}
