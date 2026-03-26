@@ -1164,7 +1164,7 @@ export default function Admin() {
 
         // --- NEW REWARD LOGIC ---
         if (status === "completed") {
-            const { data: orderData } = await supabase.from("orders").select("buyer_id").eq("id", id).single();
+            const { data: orderData } = await supabase.from("orders").select("buyer_id, delivery_room, total_price, product_id").eq("id", id).single();
             if (orderData?.buyer_id) {
                 const buyerId = orderData.buyer_id;
                 const { data: profileData } = await supabase.from("profiles").select("total_orders, wallet_balance").eq("id", buyerId).single();
@@ -1180,6 +1180,17 @@ export default function Admin() {
                             amount: 20,
                             type: 'reward',
                             description: 'Reward: 3 orders delivered!'
+                        });
+                    }
+
+                    // Flavour Factory High Value Reward
+                    if (!orderData.product_id && orderData.total_price >= 499 && orderData.delivery_room?.toLowerCase().includes("flavour factory")) {
+                        newBalance += 30;
+                        await supabase.from("wallet_transactions").insert({
+                            user_id: buyerId,
+                            amount: 30,
+                            type: 'reward',
+                            description: 'Flavour Factory Special Reward'
                         });
                     }
                     

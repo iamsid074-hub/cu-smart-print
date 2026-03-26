@@ -581,7 +581,7 @@ export default function Cart() {
 
                                 <button onClick={handleCheckout} disabled={submitting || !isFormValid}
                                     className="w-full py-4 mt-4 rounded-full font-bold text-white text-[15px] flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-                                    style={{ background: isFormValid ? "#231942" : "#cbd5e1", boxShadow: isFormValid ? "0 4px 20px rgba(35,25,66,0.3)" : "none" }}>
+                                    style={{ background: isFormValid ? "#10b981" : "#cbd5e1", boxShadow: isFormValid ? "0 4px 20px rgba(16,185,129,0.3)" : "none" }}>
                                     {submitting ? <Loader2 className="w-5 h-5 animate-spin" /> :
                                         `Pay Securely · ₹${orderTotal}`}
                                 </button>

@@ -146,7 +146,7 @@ export default function Wallet() {
                             </div>
                             <div>
                                 <h3 className="font-bold text-slate-800 text-[15px]">Unlock ₹20 Reward</h3>
-                                <p className="text-[12px] font-medium text-slate-500">Complete 3 orders to earn.</p>
+                                <p className="text-[12px] font-medium text-slate-500">Complete 3 orders in a day to get ₹20 in your wallet.</p>
                             </div>
                         </div>
                     </div>
@@ -170,6 +170,33 @@ export default function Wallet() {
                         <p className="mt-3 text-center text-[12px] font-medium text-slate-500">
                             You have completed <strong className="text-slate-800">{totalOrders}</strong> total order{totalOrders !== 1 && 's'}.
                         </p>
+                    </div>
+                </motion.div>
+
+                {/* Flavour Factory Offer */}
+                <motion.div 
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ type: "spring", stiffness: 300, damping: 25, delay: 0.15 }}
+                    className="bg-gradient-to-br from-orange-400 to-red-500 rounded-[24px] p-6 shadow-[0_8px_20px_-10px_rgba(249,115,22,0.3)] mb-8 relative overflow-hidden"
+                >
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-bl-full pointer-events-none" />
+                    
+                    <div className="relative z-10 flex items-start flex-col sm:flex-row gap-4">
+                        <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center flex-shrink-0 shadow-md">
+                            <span className="text-xl">🍝</span>
+                        </div>
+                        <div>
+                            <h3 className="font-bold text-white text-[16px] leading-tight mb-1 flex items-center gap-2">
+                                Flavour Factory Special <span className="px-2 py-0.5 bg-white/20 rounded-full text-[10px] uppercase tracking-widest font-black">Hot Offer</span>
+                            </h3>
+                            <p className="text-[13px] font-medium text-white/90 leading-relaxed mb-4">
+                                Order worth <strong className="text-white text-[14px]">₹499</strong> or more from Flavour Factory to get <strong className="text-white text-[14px]">₹30</strong> instantly in your wallet!
+                            </p>
+                            <Link to="/food" className="inline-flex items-center gap-1.5 px-4 py-2 bg-white text-orange-600 text-xs font-black rounded-full hover:scale-105 active:scale-95 transition-all shadow-sm">
+                                Order Now <ArrowRight className="w-3.5 h-3.5" />
+                            </Link>
+                        </div>
                     </div>
                 </motion.div>
 
