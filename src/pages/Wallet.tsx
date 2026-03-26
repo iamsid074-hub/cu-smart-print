@@ -88,46 +88,41 @@ export default function Wallet() {
                     </Link>
                 </div>
 
-                {/* Centerpiece iPad UI Glassmorphism Wallet Card */}
+                {/* Brand New Centered Modern Wallet Card */}
                 <motion.div 
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ type: "spring", stiffness: 300, damping: 25 }}
-                    className="relative w-full rounded-[32px] overflow-hidden p-[1px] mb-8"
+                    initial={{ scale: 0.95, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    className="relative w-full bg-white rounded-[40px] p-8 pb-10 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.06)] border border-slate-100/60 flex flex-col items-center justify-center min-h-[300px] overflow-hidden group mb-8"
                 >
-                    {/* Rotating Premium Gradient Border Wrapper */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-white/80 via-white/10 to-slate-400/30 pointer-events-none" />
-                    
-                    {/* The iPad Screen */}
-                    <div className="relative rounded-[31px] bg-white/[0.6] backdrop-blur-[40px] px-8 py-10 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05)] border border-white/60">
-                        {/* Light Sweep Animation */}
-                        <motion.div 
-                            animate={{ x: ["-100%", "200%"] }}
-                            transition={{ repeat: Infinity, duration: 6, ease: "easeInOut", repeatDelay: 2 }}
-                            className="absolute top-0 bottom-0 left-0 w-1/3 bg-gradient-to-r from-transparent via-white/80 to-transparent skew-x-[-25deg] opacity-70"
-                        />
-                        
-                        <div className="relative z-10">
-                            <h2 className="text-sm font-semibold uppercase tracking-widest text-slate-500 mb-2">Available Balance</h2>
-                            <div className="flex items-baseline gap-1">
-                                <span className="text-3xl font-bold text-slate-400">₹</span>
-                                <motion.span 
-                                    className="text-[64px] leading-none font-black tracking-tighter text-slate-800"
-                                    initial={{ opacity: 0, scale: 0.8 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    transition={{ type: "spring", stiffness: 400, damping: 20, delay: 0.1 }}
-                                >
-                                    {walletBalance}
-                                </motion.span>
-                            </div>
-                            
-                            <p className="mt-4 text-[13px] font-medium text-slate-500 leading-relaxed max-w-[200px]">
-                                This balance is strictly rewarded by CU Bazzar. Use it directly at checkout!
-                            </p>
+                    {/* Beautiful background decorative mesh/gradient */}
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-slate-50 rounded-full blur-[60px] opacity-60 translate-x-1/2 -translate-y-1/2 pointer-events-none" />
+                    <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-indigo-50/40 rounded-full blur-[80px] opacity-80 -translate-x-1/2 translate-y-1/2 pointer-events-none" />
+                    <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-[0.03] mix-blend-multiply pointer-events-none" />
+
+
+
+                    {/* Giant Balance Centerpiece */}
+                    <div className="flex flex-col items-center justify-center z-10 mb-8 mx-auto w-full text-center">
+                        <span className="text-slate-400 text-xs font-semibold uppercase tracking-widest mb-1">Available Balance</span>
+                        <div className="flex items-start justify-center gap-0">
+                            <span className="text-4xl font-bold text-slate-300 mt-2">₹</span>
+                            <motion.span 
+                                className="text-[100px] leading-[0.85] font-black tracking-tighter text-slate-800 drop-shadow-sm"
+                                initial={{ y: 20 }}
+                                animate={{ y: 0 }}
+                                transition={{ type: "spring", stiffness: 400, damping: 20 }}
+                            >
+                                {walletBalance}
+                            </motion.span>
                         </div>
                     </div>
-                    {/* Deep shadow below glass */}
-                    <div className="absolute -bottom-8 left-10 right-10 h-8 bg-black/10 blur-xl rounded-full" />
+
+                    {/* Bottom subtle text */}
+                    <div className="text-center z-10 max-w-[220px] mx-auto mt-2">
+                        <p className="text-[13px] text-slate-500 leading-relaxed font-medium">
+                            Use this strictly at checkout for <span className="text-slate-900 font-bold">CU Bazzar</span> orders.
+                        </p>
+                    </div>
                 </motion.div>
 
                 {/* Rewards Progress Section */}
