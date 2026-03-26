@@ -34,6 +34,7 @@ export default function Cart() {
     const [loadingOrder, setLoadingOrder] = useState(true);
 
     const [walletBalance, setWalletBalance] = useState(0);
+    const [dailyWalletUsed, setDailyWalletUsed] = useState(0);
     const [useWalletBalance, setUseWalletBalance] = useState(false);
     const [totalOrdersTracker, setTotalOrdersTracker] = useState(0);
 
@@ -66,6 +67,20 @@ export default function Cart() {
              if (data) {
                  setWalletBalance(data.wallet_balance || 0);
                  setTotalOrdersTracker(data.total_orders || 0);
+             }
+
+             const startOfDay = new Date();
+             startOfDay.setHours(0, 0, 0, 0);
+             const { data: txData } = await supabase
+                .from("wallet_transactions")
+                .select("amount")
+                .eq("user_id", user.id)
+                .eq("type", "usage")
+                .gte("created_at", startOfDay.toISOString());
+             
+             if (txData) {
+                 const used = txData.reduce((acc, tx) => acc + Math.abs(tx.amount || 0), 0);
+                 setDailyWalletUsed(used);
              }
         };
 
@@ -107,18 +122,22 @@ export default function Cart() {
 
     const deliveryFee = paymentMethod === 'cod' ? 41 : (hasFlavourCombo ? specialDeliveryFee : baseDelivery);
     
+    const maxWalletUsagePerDay = 50;
+    const availableToday = Math.max(0, maxWalletUsagePerDay - dailyWalletUsed);
+    const usableWalletBalance = Math.min(walletBalance, availableToday);
+
     // Wallet Logic
     let rawTotal = totalPrice + deliveryFee;
     let walletDiscount = 0;
     let orderTotal = rawTotal;
 
-    if (useWalletBalance && walletBalance > 0) {
-        if (walletBalance >= rawTotal) {
+    if (useWalletBalance && usableWalletBalance > 0) {
+        if (usableWalletBalance >= rawTotal) {
             walletDiscount = rawTotal;
             orderTotal = 0;
         } else {
-            walletDiscount = walletBalance;
-            orderTotal = rawTotal - walletBalance;
+            walletDiscount = usableWalletBalance;
+            orderTotal = rawTotal - usableWalletBalance;
         }
     }
 
@@ -464,13 +483,19 @@ export default function Cart() {
                                             </div>
                                             <div>
                                                 <p className="font-bold text-slate-800 text-sm">Use Wallet Balance</p>
-                                                <p className="text-[11px] text-slate-500 font-medium tracking-tight">Available: ₹{walletBalance}</p>
+                                                <p className="text-[11px] text-slate-500 font-medium tracking-tight">
+                                                    {usableWalletBalance > 0 ? (
+                                                        <>Available today: ₹{usableWalletBalance} <span className="text-slate-400 font-normal opacity-70">(Max ₹50/day)</span></>
+                                                    ) : (
+                                                        <span className="text-red-400 font-bold">Daily limit of ₹50 reached</span>
+                                                    )}
+                                                </p>
                                             </div>
                                         </div>
-                                        <div className={`w-12 h-6 rounded-full p-1 transition-colors duration-300 ease-in-out ${useWalletBalance ? 'bg-emerald-500' : 'bg-slate-200'}`}>
-                                            <div className={`bg-white w-4 h-4 rounded-full shadow-sm transform transition-transform duration-300 ease-in-out ${useWalletBalance ? 'translate-x-6' : 'translate-x-0'}`} />
+                                        <div className={`w-12 h-6 rounded-full p-1 transition-colors duration-300 ease-in-out ${useWalletBalance && usableWalletBalance > 0 ? 'bg-emerald-500' : 'bg-slate-200'} ${usableWalletBalance === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                                            <div className={`bg-white w-4 h-4 rounded-full shadow-sm transform transition-transform duration-300 ease-in-out ${(useWalletBalance && usableWalletBalance > 0) ? 'translate-x-6' : 'translate-x-0'}`} />
                                             {/* Hide invisible checkbox covering the div */}
-                                            <input type="checkbox" className="hidden" checked={useWalletBalance} onChange={() => setUseWalletBalance(!useWalletBalance)} />
+                                            <input type="checkbox" className="hidden" checked={useWalletBalance && usableWalletBalance > 0} onChange={() => usableWalletBalance > 0 && setUseWalletBalance(!useWalletBalance)} disabled={usableWalletBalance === 0} />
                                         </div>
                                     </label>
                                     

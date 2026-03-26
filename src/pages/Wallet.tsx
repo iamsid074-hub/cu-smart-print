@@ -63,7 +63,7 @@ export default function Wallet() {
             </div>
 
             {/* Content Layer */}
-            <div className="relative z-10 container max-w-lg mx-auto px-4 pt-12">
+            <div className="relative z-10 container max-w-lg mx-auto px-4 pt-24">
                 
                 {/* Header: Title + Profile Access */}
                 <div className="flex items-center justify-between mb-8">

@@ -4,7 +4,7 @@ import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
-import { CheckCircle2, ShoppingBag, Tag, Package, Truck, CheckCircle, Clock, Home as HomeIcon, XCircle } from "lucide-react";
+import { CheckCircle2, ShoppingBag, Tag, Package, Truck, CheckCircle, Clock, Home as HomeIcon, XCircle, Wallet } from "lucide-react";
 
 // Fluid, bouncy spring animation mimicking Apple's Dynamic Island
 const springTransition = {
@@ -14,7 +14,7 @@ const springTransition = {
   mass: 1.2,
 };
 
-type IslandState = "default" | "browsing" | "explore" | "cart" | "profile" | "added" | "updated" | "grocery" | "sell" | "tracking";
+type IslandState = "default" | "browsing" | "explore" | "cart" | "profile" | "wallet" | "added" | "updated" | "grocery" | "sell" | "tracking";
 
 // ── Tracking status configuration ───────────────────────────────────────────
 const TRACKING_STATUSES: Record<string, { label: string; icon: typeof Package; color: string; stepIndex: number }> = {
@@ -58,13 +58,19 @@ export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
 
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
 
-    // "explore" and "tracking" states persist — no auto-dismiss
-    if (newState !== "explore" && newState !== "tracking") {
+    // "explore", "tracking", "grocery", "sell", "wallet" states persist — no auto-dismiss
+    if (newState !== "explore" && newState !== "tracking" && newState !== "grocery" && newState !== "sell" && newState !== "wallet") {
       timeoutRef.current = setTimeout(() => {
         if (location.pathname.startsWith("/browse")) {
           setIslandState("explore");
         } else if (location.pathname.startsWith("/tracking")) {
           setIslandState("tracking");
+        } else if (location.pathname.startsWith("/grocery")) {
+          setIslandState("grocery");
+        } else if (location.pathname.startsWith("/sell") || location.pathname.startsWith("/list")) {
+          setIslandState("sell");
+        } else if (location.pathname.startsWith("/wallet")) {
+          setIslandState("wallet");
         } else {
           setIslandState("default");
         }
@@ -87,6 +93,9 @@ export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
     } else if (location.pathname.startsWith("/list")) {
       setIslandState("sell");
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    } else if (location.pathname.startsWith("/wallet")) {
+      setIslandState("wallet");
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
     } else if (location.pathname === "/cart") {
       triggerState("cart");
@@ -241,6 +250,15 @@ export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
     case "profile":
       width = 170;
       content = <span className="text-sm font-medium tracking-wide">Viewing Profile</span>;
+      break;
+    case "wallet":
+      width = 140;
+      content = (
+        <div className="flex items-center justify-center gap-2">
+          <Wallet className="w-4 h-4 text-blue-400" />
+          <span className="text-sm font-semibold tracking-wide text-white/90">Wallet</span>
+        </div>
+      );
       break;
     case "added":
       width = 300;
