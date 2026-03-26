@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Copy, Clock, Gift, Award, ShoppingBag, ArrowRight } from "lucide-react";
+import { Gift, ArrowRight, Wallet as WalletIcon, CreditCard, Clock, RotateCcw, Copy, Award, ShoppingBag } from 'lucide-react';
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
 
@@ -92,8 +92,15 @@ export default function Wallet() {
                 {/* Header: Title + Profile Access */}
                 <div className="flex items-center justify-between mb-8">
                     <div>
-                        <h1 className="text-[28px] leading-tight font-black tracking-tighter text-slate-800">
-                            Your <span className="text-slate-400 font-medium">Wallet</span>
+                        <h1 className="text-[28px] leading-tight font-black tracking-tighter text-slate-800 flex items-center gap-3">
+                            Your <span className="text-slate-400 font-medium font-serif italic lowercase tracking-tight">Wallet</span>
+                            <motion.button 
+                                whileTap={{ rotate: 180 }}
+                                onClick={() => fetchWalletData()}
+                                className="p-2 rounded-full bg-white shadow-sm border border-slate-100 text-slate-400 hover:text-slate-900 transition-colors"
+                            >
+                                <RotateCcw className="w-4 h-4" />
+                            </motion.button>
                         </h1>
                     </div>
                     
