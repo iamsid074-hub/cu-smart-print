@@ -998,6 +998,9 @@ export default function Admin() {
     const [loadingStats, setLoadingStats] = useState(true);
     const [loadingProducts, setLoadingProducts] = useState(true);
     const [loadingOrders, setLoadingOrders] = useState(true);
+    
+    // Prevent duplicate triggers
+    const [processingOrderId, setProcessingOrderId] = useState<string | null>(null);
     const [loadingNotifs, setLoadingNotifs] = useState(true);
 
     // Confirmation dialog
@@ -1159,9 +1162,18 @@ export default function Admin() {
     };
 
     const handleUpdateOrderStatus = async (id: string, status: string, timestamps?: Record<string, string>) => {
-        const updates: any = { status, ...timestamps };
-        await supabase.from("orders").update(updates).eq("id", id);
+        if (processingOrderId === id) return; // Prevent concurrent requests for same order
+        setProcessingOrderId(id);
 
+        try {
+            // First verify current status from DB to ensure it hasn't already been processed by another click
+            const { data: currentOrder } = await supabase.from("orders").select("status").eq("id", id).single();
+            if (currentOrder?.status === status) {
+                return; // Order already updated, skip processing
+            }
+
+            const updates: any = { status, ...timestamps };
+            await supabase.from("orders").update(updates).eq("id", id);
         // --- NEW REWARD LOGIC (DAILY RESET @ 12 AM IST) ---
         if (status === "completed") {
             const { data: orderData } = await supabase.from("orders").select("buyer_id, delivery_room, delivery_location, total_price, base_price, product_id").eq("id", id).single();
@@ -1227,8 +1239,16 @@ export default function Admin() {
         }
         // ------------------------
 
-        setOrders(prev => prev.map(o => o.id === id ? { ...o, status } : o));
-        setRecentOrders(prev => prev.map(o => o.id === id ? { ...o, status } : o));
+        } catch (error) {
+            console.error("Error updating order status:", error);
+            alert("Warning: Order status updated but encountered an issue syncing. Refreshing may be needed.");
+        } finally {
+            setProcessingOrderId(null);
+            
+            // Optimistically update UI
+            setOrders(prev => prev.map(o => o.id === id ? { ...o, status } : o));
+            setRecentOrders(prev => prev.map(o => o.id === id ? { ...o, status } : o));
+        }
         await fetchStats();
     };
 
