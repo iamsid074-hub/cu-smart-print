@@ -9,6 +9,7 @@ export default function Wallet() {
     const { user } = useAuth();
     const [walletBalance, setWalletBalance] = useState(0);
     const [totalOrders, setTotalOrders] = useState(0);
+    const [dailyOrders, setDailyOrders] = useState(0);
     const [transactions, setTransactions] = useState([]);
 
     useEffect(() => {
@@ -30,6 +31,29 @@ export default function Wallet() {
         if (profile) {
             setWalletBalance(profile.wallet_balance || 0);
             setTotalOrders(profile.total_orders || 0);
+        }
+
+        try {
+            // --- FETCH DAILY ORDERS (12 AM IST RESET) ---
+            const now = new Date();
+            // IST is UTC + 5:30. Calculate midnight IST in UTC.
+            const istOffset = 5.5 * 60 * 60 * 1000;
+            const istTime = new Date(now.getTime() + istOffset);
+            istTime.setUTCHours(0, 0, 0, 0);
+            const startOfDayIST = new Date(istTime.getTime() - istOffset).toISOString();
+
+            const { count: dailyCount, error: countError } = await supabase
+                .from('orders')
+                .select('*', { count: 'exact', head: true })
+                .eq('buyer_id', user.id)
+                .eq('status', 'completed')
+                .gte('updated_at', startOfDayIST);
+            
+            if (countError) throw countError;
+            setDailyOrders(dailyCount || 0);
+        } catch (err) {
+            console.error("Error fetching daily orders:", err);
+            // Fallback: stay at 0 or use a different metric
         }
 
         // Fetch transactions
@@ -150,34 +174,37 @@ export default function Wallet() {
                     <div className="relative">
                         <div className="flex justify-between text-[11px] font-bold text-slate-400 mb-2 px-1">
                             {(() => {
-                                const cycleOrders = (totalOrders > 0 && totalOrders % 3 === 0) ? 3 : (totalOrders % 3);
+                                const displayCount = Math.min(dailyOrders, 3);
                                 return (
                                     <>
                                         <span>0</span>
-                                        <span className={cycleOrders >= 1 ? "text-slate-800" : ""}>1</span>
-                                        <span className={cycleOrders >= 2 ? "text-slate-800" : ""}>2</span>
-                                        <span className={`px-2 rounded-full py-0.5 relative -top-0.5 transition-all ${cycleOrders === 3 ? "text-white bg-[#ef4444] shadow-md shadow-red-500/30 font-black scale-110" : "text-[#ef4444] bg-[#ef4444]/10"}`}>₹20!</span>
+                                        <span className={displayCount >= 1 ? "text-slate-800" : ""}>1</span>
+                                        <span className={displayCount >= 2 ? "text-slate-800" : ""}>2</span>
+                                        <span className={`px-2 rounded-full py-0.5 relative -top-0.5 transition-all ${displayCount === 3 ? "text-white bg-[#ef4444] shadow-md shadow-red-500/30 font-black scale-110" : "text-[#ef4444] bg-[#ef4444]/10"}`}>₹20!</span>
                                     </>
                                 );
                             })()}
                         </div>
                         <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden relative">
                             {(() => {
-                                const cycleOrders = (totalOrders > 0 && totalOrders % 3 === 0) ? 3 : (totalOrders % 3);
+                                const displayCount = Math.min(dailyOrders, 3);
                                 return (
                                     <motion.div 
                                         initial={{ width: 0 }}
-                                        animate={{ width: `${(cycleOrders / 3) * 100}%` }}
+                                        animate={{ width: `${(displayCount / 3) * 100}%` }}
                                         transition={{ duration: 1, type: "spring" }}
-                                        className={`absolute top-0 left-0 h-full rounded-full transition-colors duration-500 ${cycleOrders === 3 ? 'bg-emerald-500' : 'bg-slate-900'}`}
+                                        className={`absolute top-0 left-0 h-full rounded-full transition-colors duration-500 ${displayCount === 3 ? 'bg-emerald-500' : 'bg-slate-900'}`}
                                     />
                                 );
                             })()}
                         </div>
                         <p className="mt-3 text-center text-[12px] font-medium text-slate-500">
-                            You have completed <strong className="text-slate-800">{totalOrders}</strong> total order{totalOrders !== 1 && 's'}.
-                            {(totalOrders > 0 && totalOrders % 3 === 0) && (
-                                <span className="block text-emerald-600 font-bold mt-1 animate-pulse">Reward Unlocked! Order again to restart streak.</span>
+                            You have completed <strong className="text-slate-900 font-bold">{dailyOrders}</strong> orders <span className="text-slate-400">TODAY</span>.
+                            {dailyOrders >= 3 && (
+                                <span className="block text-emerald-600 font-black mt-1 animate-pulse uppercase tracking-tight">Daily Reward Unlocked! ✨</span>
+                            )}
+                            {dailyOrders < 3 && (
+                                <span className="block text-slate-400 text-[10px] mt-1 italic">Goal resets tonight at 12 AM IST</span>
                             )}
                         </p>
                     </div>

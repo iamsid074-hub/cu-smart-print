@@ -1162,24 +1162,41 @@ export default function Admin() {
         const updates: any = { status, ...timestamps };
         await supabase.from("orders").update(updates).eq("id", id);
 
-        // --- NEW REWARD LOGIC ---
+        // --- NEW REWARD LOGIC (DAILY RESET @ 12 AM IST) ---
         if (status === "completed") {
             const { data: orderData } = await supabase.from("orders").select("buyer_id, delivery_room, total_price, product_id").eq("id", id).single();
             if (orderData?.buyer_id) {
                 const buyerId = orderData.buyer_id;
+
+                // Calculate Start of Day (12:00 AM) in Indian Standard Time (IST)
+                const now = new Date();
+                const istOffsetCode = 5.5 * 60 * 60 * 1000;
+                const istTime = new Date(now.getTime() + istOffsetCode);
+                istTime.setUTCHours(0, 0, 0, 0);
+                const startOfDayIST = new Date(istTime.getTime() - istOffsetCode).toISOString();
+
+                // Count how many orders this user completed TODAY (IST)
+                const { count: dailyOrdersCount } = await supabase
+                    .from("orders")
+                    .select('*', { count: 'exact', head: true })
+                    .eq("buyer_id", buyerId)
+                    .eq("status", "completed")
+                    .gte("updated_at", startOfDayIST);
+
                 const { data: profileData } = await supabase.from("profiles").select("total_orders, wallet_balance").eq("id", buyerId).single();
                 
                 if (profileData) {
                     const newTotalOrders = (profileData.total_orders || 0) + 1;
                     let newBalance = profileData.wallet_balance || 0;
                     
-                    if (newTotalOrders > 0 && newTotalOrders % 3 === 0) {
+                    // Reward ₹20 if this is exactly the 3rd order completed today
+                    if (dailyOrdersCount === 3) {
                         newBalance += 20;
                         await supabase.from("wallet_transactions").insert({
                             user_id: buyerId,
                             amount: 20,
                             type: 'reward',
-                            description: 'Reward: 3 orders delivered!'
+                            description: 'Daily Reward: 3 orders completed today!'
                         });
                     }
 
