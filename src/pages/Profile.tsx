@@ -20,6 +20,12 @@ export default function Profile() {
     const [fullName, setFullName] = useState("");
     const [hostelBlock, setHostelBlock] = useState("");
     const [phoneNumber, setPhoneNumber] = useState("");
+    
+    // Hostel Options
+    const HOSTEL_GROUPS = [
+        { name: "NC Series", options: ["NC1", "NC2", "NC3", "NC4", "NC5", "NC6"] },
+        { name: "Zakir Series", options: ["Zakir A", "Zakir B", "Zakir C", "Zakir D"] }
+    ];
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const [myProducts, setMyProducts] = useState<any[]>([]);
@@ -319,15 +325,34 @@ export default function Profile() {
                         </div>
                         <div className="col-span-2 space-y-3">
                             {isEditing ? (
-                                <div className="grid grid-cols-1 gap-2">
-                                    <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-50 border border-slate-100">
-                                        <MapPin className="w-3.5 h-3.5 text-slate-400" />
-                                        <input 
-                                            value={hostelBlock} 
-                                            onChange={e => setHostelBlock(e.target.value)} 
-                                            placeholder="Hostel + Room"
-                                            className="bg-transparent text-xs outline-none w-full text-slate-700" 
-                                        />
+                                <div className="grid grid-cols-1 gap-4">
+                                    <div className="bg-slate-50/50 rounded-2xl p-4 border border-slate-100">
+                                        <div className="flex items-center gap-2 mb-3">
+                                            <MapPin className="w-3.5 h-3.5 text-brand" />
+                                            <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Hostel Block</span>
+                                        </div>
+                                        <div className="space-y-3">
+                                            {HOSTEL_GROUPS.map((group) => (
+                                                <div key={group.name} className="space-y-1.5">
+                                                    <p className="text-[9px] font-bold text-slate-400 px-1 uppercase tracking-tighter">{group.name}</p>
+                                                    <div className="flex flex-wrap gap-1.5">
+                                                        {group.options.map((opt) => (
+                                                            <button
+                                                                key={opt}
+                                                                onClick={() => setHostelBlock(opt)}
+                                                                className={`py-1.5 px-3 rounded-lg text-[10px] font-bold transition-all border ${
+                                                                    hostelBlock === opt 
+                                                                    ? "bg-brand text-white border-brand shadow-sm scale-105" 
+                                                                    : "bg-white text-slate-600 border-slate-200 hover:border-brand/40"
+                                                                }`}
+                                                            >
+                                                                {opt}
+                                                            </button>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
                                     </div>
                                     <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-50 border border-slate-100">
                                         <Phone className="w-3.5 h-3.5 text-slate-400" />

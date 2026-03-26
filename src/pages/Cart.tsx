@@ -25,6 +25,12 @@ export default function Cart() {
     const [submitting, setSubmitting] = useState(false);
     const [showUpiModal, setShowUpiModal] = useState(false);
 
+    // Hostel Options
+    const HOSTEL_GROUPS = [
+        { name: "NC Series", options: ["NC1", "NC2", "NC3", "NC4", "NC5", "NC6"] },
+        { name: "Zakir Series", options: ["Zakir A", "Zakir B", "Zakir C", "Zakir D"] }
+    ];
+
 
 
     const [showDisclaimer, setShowDisclaimer] = useState(false);
@@ -63,10 +69,19 @@ export default function Cart() {
         };
 
         const fetchWallet = async () => {
-             const { data } = await supabase.from("profiles").select("wallet_balance, total_orders").eq("id", user.id).single();
+             const { data } = await supabase.from("profiles").select("wallet_balance, total_orders, hostel_block").eq("id", user.id).single();
              if (data) {
                  setWalletBalance(data.wallet_balance || 0);
                  setTotalOrdersTracker(data.total_orders || 0);
+                 
+                 // Auto-fill hostel from profile if not already set locally
+                 const savedHostel = localStorage.getItem("last_hostel");
+                 if (savedHostel) {
+                     setHostel(savedHostel);
+                 } else if (data.hostel_block) {
+                     setHostel(data.hostel_block);
+                     localStorage.setItem("last_hostel", data.hostel_block);
+                 }
              }
 
              const startOfDay = new Date();
@@ -529,11 +544,38 @@ export default function Cart() {
                                 className="rounded-3xl p-5 bg-white shadow-[0_4px_20px_rgba(0,0,0,0.03)] space-y-4">
                                 <h3 className="font-bold text-slate-900 text-base border-slate-50 pb-2">Delivery Details</h3>
 
-                                <div className="space-y-3 pt-1">
-                                    <div className="relative group/hostel">
-                                        <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within/hostel:text-brand transition-colors" />
-                                        <input value={hostel} onChange={e => setHostel(e.target.value)} placeholder="Hostel Block (e.g. NC) *"
-                                            className="w-full bg-white border border-slate-200 rounded-2xl pl-12 pr-4 h-[56px] text-sm text-slate-900 focus:outline-none focus:border-brand focus:ring-4 focus:ring-brand-50 transition-all placeholder:text-slate-400 font-medium" />
+                                <div className="space-y-4 pt-1">
+                                    <div className="bg-slate-50/50 rounded-[1.5rem] p-4 border border-slate-100">
+                                        <div className="flex items-center gap-2 mb-3">
+                                            <MapPin className="w-4 h-4 text-brand" />
+                                            <span className="text-[11px] font-black uppercase tracking-widest text-slate-400">Select Hostel Block *</span>
+                                        </div>
+                                        
+                                        <div className="space-y-4">
+                                            {HOSTEL_GROUPS.map((group) => (
+                                                <div key={group.name}>
+                                                    <p className="text-[10px] font-bold text-slate-400 mb-2 px-1">{group.name}</p>
+                                                    <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                                                        {group.options.map((opt) => (
+                                                            <button
+                                                                key={opt}
+                                                                onClick={() => {
+                                                                    setHostel(opt);
+                                                                    localStorage.setItem("last_hostel", opt);
+                                                                }}
+                                                                className={`py-2.5 px-2 rounded-xl text-xs font-bold transition-all border ${
+                                                                    hostel === opt 
+                                                                    ? "bg-brand text-white border-brand shadow-lg shadow-brand/20 scale-[1.02]" 
+                                                                    : "bg-white text-slate-600 border-slate-200 hover:border-brand/40 hover:bg-slate-50"
+                                                                }`}
+                                                            >
+                                                                {opt}
+                                                            </button>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
                                     </div>
 
                                     {/* Floor Selector */}
