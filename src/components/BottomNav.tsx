@@ -1,41 +1,25 @@
+import React, { memo } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Home, Compass, ShoppingCart, Utensils, User, ShoppingBag, PlusCircle, Wallet } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
 
-const NavItem = ({ to, icon: Icon, label, isActive, isCart = false, cartCount = 0 }: any) => {
+const NavItem = memo(({ to, icon: Icon, label, isActive, isCart, cartCount, index, onClick }: any) => {
     return (
         <Link 
             to={to} 
-            className="relative flex items-center justify-center py-2 transition-all duration-300 pointer-events-auto"
-            style={{ flex: isActive ? '1.8' : '1' }}
+            onClick={onClick}
+            className="relative flex-1 flex items-center justify-center py-2.5 z-10 no-underline"
         >
-            {/* Silk Morphing Background */}
-            <AnimatePresence>
-                {isActive && (
-                    <motion.div
-                        layoutId="silk-pill"
-                        className="absolute inset-x-1 inset-y-1.5 bg-slate-900 rounded-full shadow-2xl shadow-slate-900/40 z-0 ring-4 ring-white/10"
-                        transition={{ 
-                            type: "spring", 
-                            stiffness: 380, 
-                            damping: 30,
-                            mass: 1
-                        }}
-                    />
-                )}
-            </AnimatePresence>
-
-            {/* Content Container */}
             <motion.div
-                layout
                 animate={{ 
                     scale: isActive ? 1.05 : 1,
                     y: isActive ? -1 : 0
                 }}
-                className={`flex items-center gap-2 px-4 py-2 rounded-full relative z-10 transition-colors duration-300 ${
-                    isActive ? 'text-white' : 'text-slate-400 hover:text-slate-600'
+                transition={{ type: "spring", stiffness: 400, damping: 35 }}
+                className={`flex items-center gap-2 px-3 py-2 rounded-full relative transition-colors duration-300 ${
+                    isActive ? 'text-white' : 'text-slate-400 hover:text-slate-500'
                 }`}
             >
                 <Icon 
@@ -46,10 +30,10 @@ const NavItem = ({ to, icon: Icon, label, isActive, isCart = false, cartCount = 
                 <AnimatePresence mode="popLayout" initial={false}>
                     {isActive && (
                         <motion.span 
-                            initial={{ opacity: 0, x: -8 }}
+                            initial={{ opacity: 0, x: -10 }}
                             animate={{ opacity: 1, x: 0 }}
-                            exit={{ opacity: 0, x: -8 }}
-                            transition={{ duration: 0.25, ease: "easeOut" }}
+                            exit={{ opacity: 0, x: -10 }}
+                            transition={{ type: "spring", stiffness: 500, damping: 40 }}
                             className="text-[10px] font-black uppercase tracking-widest whitespace-nowrap pt-0.5"
                         >
                             {label}
@@ -57,23 +41,19 @@ const NavItem = ({ to, icon: Icon, label, isActive, isCart = false, cartCount = 
                     )}
                 </AnimatePresence>
 
-                {/* Integrated Cart Badge */}
                 {isCart && cartCount > 0 && (
-                    <AnimatePresence>
-                        <motion.div 
-                            initial={{ scale: 0 }}
-                            animate={{ scale: 1 }}
-                            exit={{ scale: 0 }}
-                            className={`absolute -top-1 -right-1 bg-brand text-white text-[9px] font-black min-w-[17px] h-[17px] px-1 rounded-full flex items-center justify-center ring-2 shadow-lg ${isActive ? 'ring-slate-900' : 'ring-white'}`}
-                        >
-                            {cartCount > 9 ? '9+' : cartCount}
-                        </motion.div>
-                    </AnimatePresence>
+                    <div 
+                        className={`absolute -top-1 -right-1 bg-brand text-white text-[9px] font-black min-w-[17px] h-[17px] px-1 rounded-full flex items-center justify-center ring-2 shadow-lg transition-all duration-300 ${isActive ? 'ring-slate-900 scale-110' : 'ring-white scale-100'}`}
+                    >
+                        {cartCount > 9 ? '9+' : cartCount}
+                    </div>
                 )}
             </motion.div>
         </Link>
     );
-};
+});
+
+NavItem.displayName = 'NavItem';
 
 export default function BottomNav() {
     const location = useLocation();
@@ -84,8 +64,6 @@ export default function BottomNav() {
         return null;
     }
 
-    const isCartActive = location.pathname === '/cart';
-
     const navItems = [
         { to: "/home", icon: Home, label: "Home" },
         { to: "/food", icon: Utensils, label: "Food" },
@@ -94,31 +72,54 @@ export default function BottomNav() {
         { to: "/wallet", icon: Wallet, label: "Wallet" }
     ];
 
+    const activeIndex = navItems.findIndex(item => 
+        item.to === "/cart" 
+        ? location.pathname === "/cart" 
+        : location.pathname.startsWith(item.to)
+    );
+
     return (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-full flex flex-col items-center pointer-events-none px-4 sm:px-6">
-            {/* Main Silk Morphing Dock */}
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-full flex flex-col items-center pointer-events-none px-4">
             <motion.div
-                initial={{ y: 50, opacity: 0 }}
+                initial={{ y: 60, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
-                transition={{ type: "spring", stiffness: 300, damping: 35 }}
-                className="w-full max-w-[440px] pointer-events-auto p-1 border border-white/60 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.2)] bg-white/75 backdrop-blur-[32px] saturate-[200%]"
+                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                className="w-full max-w-[440px] pointer-events-auto relative p-1.5 border border-white/60 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.15)] bg-white/70 backdrop-blur-[30px] saturate-[170%]"
                 style={{ borderRadius: "40px" }}
             >
-                <div className="flex items-center justify-between gap-0.5">
-                    {navItems.map((item) => {
-                        const isActive = item.to === "/cart" ? isCartActive : location.pathname.startsWith(item.to);
-                        return (
-                            <NavItem 
-                                key={item.to}
-                                to={item.to} 
-                                icon={item.icon} 
-                                label={item.label} 
-                                isActive={isActive}
-                                isCart={item.isCart}
-                                cartCount={cartCount}
-                            />
-                        );
-                    })}
+                {/* Fixed Grid Container */}
+                <div className="flex items-center relative h-[48px]">
+                    {/* Absolute GPU-Accelerated Indicator */}
+                    <motion.div
+                        layoutId="nav-pill"
+                        className="absolute top-0 bottom-0 bg-slate-900 rounded-full shadow-xl shadow-slate-900/30 z-0"
+                        initial={false}
+                        animate={{ 
+                            left: `${(activeIndex * 20)}%`,
+                            width: '20%'
+                        }}
+                        transition={{ 
+                            type: "spring", 
+                            stiffness: 380, 
+                            damping: 32,
+                            mass: 0.8
+                        }}
+                    >
+                        <div className="w-[90%] h-[90%] m-auto rounded-full ring-4 ring-white/10" />
+                    </motion.div>
+
+                    {navItems.map((item, index) => (
+                        <NavItem 
+                            key={item.to}
+                            to={item.to} 
+                            icon={item.icon} 
+                            label={item.label} 
+                            isActive={index === activeIndex}
+                            isCart={item.isCart}
+                            cartCount={cartCount}
+                            index={index}
+                        />
+                    ))}
                 </div>
             </motion.div>
         </div>
