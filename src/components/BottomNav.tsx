@@ -6,8 +6,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
 
 const NavItem = memo(({ to, icon: Icon, label, isActive, isCart = false, cartCount = 0 }: any) => {
-    // Custom widths to ensure long labels fit perfectly on mobile
-    const isGrocery = label === "Grocery";
+    // Custom widths to ensure labels fit perfectly on mobile
+    const isGro = label === "GRO";
     const isWallet = label === "Wallet";
     
     return (
@@ -21,8 +21,8 @@ const NavItem = memo(({ to, icon: Icon, label, isActive, isCart = false, cartCou
                         layoutId="silk-pill"
                         className="absolute inset-y-1.5 bg-slate-900 rounded-full shadow-[0_10px_25px_-5px_rgba(0,0,0,0.3)] z-0"
                         style={{ 
-                            left: isGrocery ? '-16%' : isWallet ? '-10%' : '2%',
-                            width: isGrocery ? '132%' : isWallet ? '120%' : '96%',
+                            left: isGro ? '-6%' : isWallet ? '-10%' : '2%',
+                            width: isGro ? '112%' : isWallet ? '120%' : '96%',
                             willChange: "transform"
                         }}
                         transition={{ 
@@ -90,7 +90,7 @@ const BottomNav = () => {
         { to: "/home", icon: Home, label: "Home" },
         { to: "/food", icon: Utensils, label: "Food" },
         { to: "/cart", icon: ShoppingCart, label: "Cart", isCart: true },
-        { to: "/grocery", icon: ShoppingBag, label: "Grocery" },
+        { to: "/grocery", icon: ShoppingBag, label: "GRO" },
         { to: "/wallet", icon: Wallet, label: "Wallet" }
     ];
 
