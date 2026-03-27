@@ -1174,42 +1174,45 @@ export default function Admin() {
 
             const updates: any = { status, ...timestamps };
             await supabase.from("orders").update(updates).eq("id", id);
-        // --- NEW REWARD LOGIC (DAILY RESET @ 12 AM IST) ---
+        // --- NEW REWARD LOGIC (WEEKLY RESET @ MONDAY 12 AM IST) ---
         if (status === "completed") {
             const { data: orderData } = await supabase.from("orders").select("buyer_id, delivery_room, delivery_location, total_price, base_price, product_id").eq("id", id).single();
             if (orderData?.buyer_id) {
                 const buyerId = orderData.buyer_id;
 
-                // Calculate Start of Day (12:00 AM) in Indian Standard Time (IST)
+                // Calculate Start of Week (Monday 12:00 AM) in Indian Standard Time (IST)
                 const now = new Date();
                 const istOffsetCode = 5.5 * 60 * 60 * 1000;
                 const istTime = new Date(now.getTime() + istOffsetCode);
                 istTime.setUTCHours(0, 0, 0, 0);
-                const startOfDayIST = new Date(istTime.getTime() - istOffsetCode).toISOString();
+                const dayOfWeek = istTime.getUTCDay(); // 0 is Sunday
+                const diffToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+                istTime.setUTCDate(istTime.getUTCDate() + diffToMonday);
+                const startOfWeekIST = new Date(istTime.getTime() - istOffsetCode).toISOString();
 
-                // Count orders already completed TODAY (IST) (including this one since we just updated it or using created_at)
-                const { count: dailyOrdersTodayNow } = await supabase
+                // Count orders already completed THIS WEEK (IST)
+                const { count: weeklyOrdersNow } = await supabase
                     .from("orders")
                     .select('*', { count: 'exact', head: true })
                     .eq("buyer_id", buyerId)
                     .eq("status", "completed")
-                    .gte("created_at", startOfDayIST);
+                    .gte("created_at", startOfWeekIST);
 
-                const currentDailyCount = Math.max(dailyOrdersTodayNow || 0, 1);
+                const currentWeeklyCount = Math.max(weeklyOrdersNow || 0, 1);
                 const { data: profileData } = await supabase.from("profiles").select("total_orders, wallet_balance").eq("id", buyerId).single();
                 
                 if (profileData) {
                     const newTotalOrders = (profileData.total_orders || 0) + 1;
                     let newBalance = profileData.wallet_balance || 0;
                     
-                    // Reward ₹20 for every 3rd completed order today (3, 6, 9...)
-                    if (currentDailyCount > 0 && currentDailyCount % 3 === 0) {
-                        newBalance += 20;
+                    // Reward ₹30 for every 3rd completed order this week (3, 6, 9...)
+                    if (currentWeeklyCount > 0 && currentWeeklyCount % 3 === 0) {
+                        newBalance += 30;
                         await supabase.from("wallet_transactions").insert({
                             user_id: buyerId,
-                            amount: 20,
+                            amount: 30,
                             type: 'reward',
-                            description: `Daily Reward: ${currentDailyCount} orders completed today!`
+                            description: `Weekly Reward: ${currentWeeklyCount} orders completed this week!`
                         });
                     }
 
