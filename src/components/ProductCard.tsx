@@ -101,12 +101,12 @@ const ProductCard = memo(({
   return (
     <Link to={`/product/${id}`} className="block w-full h-full">
       <motion.div
-        initial={{ opacity: 0, y: 15 }}
+        initial={{ opacity: 0, y: 10 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.3, delay: Math.min(delay, 0.15), ease: "easeOut" }}
-        whileHover={{ y: -4, scale: 1.01 }}
-        className="relative flex flex-col bg-[#faf5f8] rounded-2xl overflow-hidden group cursor-pointer h-full border-2 border-slate-200 shadow-[0_2px_8px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.12)] hover:border-[#e0b1cb] transition-all duration-200"
+        viewport={{ once: true, margin: "-50px" }}
+        transition={{ duration: 0.2, delay: Math.min(delay, 0.1) }}
+        whileHover={{ y: -2 }}
+        className="relative flex flex-col bg-[#faf5f8] rounded-2xl overflow-hidden group cursor-pointer h-full border-2 border-slate-200 shadow-sm hover:shadow-md hover:border-[#e0b1cb] transition-all duration-200"
       >
         {badge && (
           <div className="absolute top-3 left-3 z-10 px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#231942] text-white shadow-sm uppercase tracking-wider">

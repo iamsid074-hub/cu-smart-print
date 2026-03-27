@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, memo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
@@ -34,7 +34,7 @@ interface TopDynamicIslandProps {
   onSell?: () => void;
 }
 
-export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
+const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { items } = useCart();
@@ -487,4 +487,6 @@ export default function TopDynamicIsland({ onSell }: TopDynamicIslandProps) {
       </div>
     </>
   );
-}
+});
+
+export default TopDynamicIsland;
