@@ -9,6 +9,7 @@ interface AuthContextType {
     loading: boolean;
     isAdmin: boolean;
     signOut: () => Promise<void>;
+    signInWithGoogle: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -18,6 +19,7 @@ const AuthContext = createContext<AuthContextType>({
     loading: true,
     isAdmin: false,
     signOut: async () => { },
+    signInWithGoogle: async () => { },
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -44,7 +46,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     useEffect(() => {
         let mounted = true;
 
-        // Fallback timer ensures loading state breaks after 3s if everything hangs
         const timer = setTimeout(() => {
             if (mounted) setLoading(false);
         }, 3000);
@@ -58,7 +59,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             }
 
             if (session?.user) {
-                // Keep loading=true until profile (with is_admin) is fetched
                 fetchProfile(session.user.id, () => {
                     if (mounted) setLoading(false);
                 });
@@ -94,13 +94,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         };
     }, []);
 
+    const signInWithGoogle = async () => {
+        try {
+            const { error } = await supabase.auth.signInWithOAuth({
+                provider: 'google',
+                options: {
+                    redirectTo: `${window.location.origin}/home`,
+                }
+            });
+            if (error) throw error;
+        } catch (err) {
+            console.error("Google sign-in error:", err);
+            throw err;
+        }
+    };
+
     const signOut = async () => {
         try {
             await supabase.auth.signOut();
         } catch (e) {
             console.error("Sign out API error (ignored):", e);
         }
-        // Always clear state locally, even if the API call fails
         setUser(null);
         setSession(null);
         setProfile(null);
@@ -114,8 +128,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         profile,
         loading,
         isAdmin,
-        signOut
-    }), [user, session, profile, loading, isAdmin]);
+        signOut,
+        signInWithGoogle
+    }), [user, session, profile, loading, isAdmin, signOut, signInWithGoogle]);
 
     return (
         <AuthContext.Provider value={contextValue}>
