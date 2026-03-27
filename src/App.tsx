@@ -85,14 +85,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   if (loading) return <BrandedLoading />;
   if (!user) return <Navigate to="/login" />;
 
-  return (
-    <>
-      {children}
-      {user && profile && !profile.username && (
-        <UsernameSetup onComplete={() => window.location.reload()} />
-      )}
-    </>
-  );
+  return <>{children}</>;
 }
 
 function AdminRoute({ children }: { children: React.ReactNode }) {
