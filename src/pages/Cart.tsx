@@ -8,10 +8,12 @@ import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
 import PaymentSelector from "@/components/PaymentSelector";
 import UpiPaymentModal from "@/components/UpiPaymentModal";
+import RiskAlert from "@/components/RiskAlert";
+import { evaluateOrderRisk, RiskEvaluation } from "@/lib/risk";
 
 
 export default function Cart() {
-    const { items, removeItem, updateQuantity, clearCart, totalItems, totalPrice } = useCart();
+    const { items, removeItem, updateQuantity, clearCart, totalItems, totalPrice, rapidAddDetected } = useCart();
     const { user } = useAuth();
     const navigate = useNavigate();
     const { toast } = useToast();
@@ -24,6 +26,10 @@ export default function Cart() {
     const [floor, setFloor] = useState<number>(1);
     const [submitting, setSubmitting] = useState(false);
     const [showUpiModal, setShowUpiModal] = useState(false);
+
+    // Risk Detection State
+    const [riskEval, setRiskEval] = useState<RiskEvaluation | null>(null);
+    const [showRiskAlert, setShowRiskAlert] = useState(false);
 
     // Hostel Options
     const HOSTEL_GROUPS = [
@@ -228,7 +234,42 @@ export default function Cart() {
             return;
         }
         if (!isFormValid) return;
-        // Always require disclaimer acceptance before each order
+
+        // 1. Evaluate Smart Risk
+        const evaluation = evaluateOrderRisk(
+            orderTotal,
+            totalOrdersTracker,
+            user?.user_metadata?.full_name || user?.email?.split('@')[0] || "Student"
+        );
+
+        // 2. High Priority Block: Rapid Adding (Spam)
+        if (rapidAddDetected) {
+            setRiskEval({
+                isBlocked: true,
+                requiresConfirmation: false,
+                level: "high",
+                reason: "Suspicious activity detected (rapid item additions). Checkout is temporarily limited to prevent automated spam. Please wait a few moments."
+            });
+            setShowRiskAlert(true);
+            return;
+        }
+
+        // 3. Handle Risk Evaluation Results
+        if (evaluation.isBlocked || evaluation.requiresConfirmation) {
+            setRiskEval(evaluation);
+            setShowRiskAlert(true);
+            return;
+        }
+
+        // 4. Safe Flow: Show disclaimer
+        setDisclaimerAccepted(false);
+        setShowDisclaimer(true);
+    };
+
+    const handleRiskConfirmed = () => {
+        setShowRiskAlert(false);
+        setRiskEval(null);
+        // Proceed to disclaimer after confirming risk
         setDisclaimerAccepted(false);
         setShowDisclaimer(true);
     };
@@ -253,6 +294,16 @@ export default function Cart() {
 
     return (
         <div className="min-h-screen bg-slate-50 pt-[5.5rem] pb-24 px-4 sm:px-6">
+            {/* Risk Detection Alert */}
+            <RiskAlert 
+                isOpen={showRiskAlert}
+                onClose={() => setShowRiskAlert(false)}
+                onConfirm={handleRiskConfirmed}
+                level={riskEval?.level || "low"}
+                reason={riskEval?.reason || ""}
+                isBlocked={riskEval?.isBlocked || false}
+            />
+
             {/* Food Safety Disclaimer Modal */}
             {showDisclaimer && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center px-4" style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }}>

@@ -27,6 +27,7 @@ interface CartContextType {
     totalItems: number;
     totalPrice: number;
     lastAction: CartAction | null;
+    rapidAddDetected: boolean;
 }
 
 const CartContext = createContext<CartContextType | null>(null);
@@ -39,12 +40,26 @@ export function CartProvider({ children }: { children: ReactNode }) {
         } catch { return []; }
     });
     const [lastAction, setLastAction] = useState<CartAction | null>(null);
+    const [additionHistory, setAdditionHistory] = useState<number[]>([]);
+    const [rapidAddDetected, setRapidAddDetected] = useState(false);
 
     useEffect(() => {
         localStorage.setItem("food_cart", JSON.stringify(items));
     }, [items]);
 
+    // Check for spam adding (e.g., > 8 items in 12 seconds)
+    useEffect(() => {
+        const now = Date.now();
+        const recentAdds = additionHistory.filter(ts => now - ts < 12000);
+        if (recentAdds.length >= 8) {
+            setRapidAddDetected(true);
+        } else if (recentAdds.length === 0) {
+            setRapidAddDetected(false);
+        }
+    }, [additionHistory]);
+
     const addItem = (item: Omit<CartItem, "quantity"> & { quantity?: number }) => {
+        const now = Date.now();
         setItems(prev => {
             const existing = prev.find(i => i.id === item.id);
             const qtyToAdd = item.quantity || 1;
@@ -53,7 +68,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
             }
             return [...prev, { ...item, quantity: qtyToAdd }];
         });
-        setLastAction({ type: "add", itemTitle: item.title, itemPrice: item.price, timestamp: Date.now() });
+        setLastAction({ type: "add", itemTitle: item.title, itemPrice: item.price, timestamp: now });
+        setAdditionHistory(prev => [...prev.slice(-15), now]);
     };
 
     const removeItem = (id: string) => {
@@ -83,8 +99,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
         clearCart,
         totalItems,
         totalPrice,
-        lastAction
-    }), [items, addItem, removeItem, updateQuantity, clearCart, totalItems, totalPrice, lastAction]);
+        lastAction,
+        rapidAddDetected
+    }), [items, addItem, removeItem, updateQuantity, clearCart, totalItems, totalPrice, lastAction, rapidAddDetected]);
 
     return (
         <CartContext.Provider value={contextValue}>
