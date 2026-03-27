@@ -15,25 +15,28 @@ const NavItem = memo(({ to, icon: Icon, label, isActive, isCart = false, cartCou
             to={to} 
             className="relative flex-1 flex items-center justify-center py-2.5 z-10 no-underline pointer-events-auto"
         >
-            <AnimatePresence>
+            {/* Static Anchor for Silk Pill Positioning (Performance v7.0) */}
+            <div 
+                className="absolute inset-y-1.5 z-0 pointer-events-none"
+                style={{ 
+                    left: isGro ? '-6%' : isWallet ? '-10%' : '2%',
+                    width: isGro ? '112%' : isWallet ? '120%' : '96%'
+                }}
+            >
                 {isActive && (
                     <motion.div
                         layoutId="silk-pill"
-                        className="absolute inset-y-1.5 bg-slate-900 rounded-full shadow-[0_10px_25px_-5px_rgba(0,0,0,0.3)] z-0"
-                        style={{ 
-                            left: isGro ? '-6%' : isWallet ? '-10%' : '2%',
-                            width: isGro ? '112%' : isWallet ? '120%' : '96%',
-                            willChange: "transform"
-                        }}
+                        className="w-full h-full bg-slate-900 rounded-full shadow-[0_10px_25px_-5px_rgba(0,0,0,0.3)]"
                         transition={{ 
                             type: "spring", 
-                            stiffness: 480, 
-                            damping: 35,
-                            mass: 1
+                            stiffness: 550, 
+                            damping: 42,
+                            mass: 0.8
                         }}
+                        style={{ willChange: "transform" }}
                     />
                 )}
-            </AnimatePresence>
+            </div>
 
             <motion.div
                 animate={{ 
