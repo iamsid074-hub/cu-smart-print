@@ -6,18 +6,42 @@ import { useAuth } from "@/contexts/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
 
 const NavItem = memo(({ to, icon: Icon, label, isActive, isCart = false, cartCount = 0 }: any) => {
+    // Custom widths to ensure long labels fit perfectly on mobile
+    const isGrocery = label === "Grocery";
+    const isWallet = label === "Wallet";
+    
     return (
         <Link 
             to={to} 
             className="relative flex-1 flex items-center justify-center py-2.5 z-10 no-underline pointer-events-auto"
         >
+            <AnimatePresence>
+                {isActive && (
+                    <motion.div
+                        layoutId="silk-pill"
+                        className="absolute inset-y-1.5 bg-slate-900 rounded-full shadow-[0_10px_25px_-5px_rgba(0,0,0,0.3)] z-0"
+                        style={{ 
+                            left: isGrocery ? '-16%' : isWallet ? '-10%' : '2%',
+                            width: isGrocery ? '132%' : isWallet ? '120%' : '96%',
+                            willChange: "transform"
+                        }}
+                        transition={{ 
+                            type: "spring", 
+                            stiffness: 480, 
+                            damping: 35,
+                            mass: 1
+                        }}
+                    />
+                )}
+            </AnimatePresence>
+
             <motion.div
                 animate={{ 
                     scale: isActive ? 1.05 : 1,
                     y: isActive ? -1 : 0
                 }}
                 transition={{ type: "spring", stiffness: 450, damping: 35 }}
-                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full relative transition-colors duration-200 ${
+                className={`flex items-center gap-1.5 px-2 py-1.5 rounded-full relative z-10 transition-colors duration-200 ${
                     isActive ? 'text-white' : 'text-slate-400 hover:text-slate-500'
                 }`}
             >
@@ -76,43 +100,17 @@ const BottomNav = () => {
         : location.pathname.startsWith(item.to)
     );
 
-    // Dynamic width mapping based on label length
-    // Home (20%), Food (20%), Cart (20%), Grocery (28%), Wallet (26%)
-    const widthMap = ["20.5%", "20.5%", "20.5%", "28%", "25.5%"];
-    const activeWidth = parseFloat(widthMap[activeIndex] || "20");
-    
-    // Center the wider pill in its 20% slot
-    const pillCenterOffset = (activeWidth - 20) / 2;
-
     return (
         <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-full flex flex-col items-center pointer-events-none px-4">
             <motion.div
                 initial={{ y: 80, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                className="w-full max-w-[460px] pointer-events-auto relative p-1.5 border border-white/40 shadow-[0_15px_40px_-5px_rgba(0,0,0,0.1)] bg-white/70 backdrop-blur-[16px] saturate-[140%]"
-                style={{ borderRadius: "40px", willChange: "transform" }}
+                className="w-full max-w-[440px] pointer-events-auto relative p-1.5 border border-white/40 shadow-[0_15px_40px_-5px_rgba(0,0,0,0.15)] bg-white/70 backdrop-blur-[16px] saturate-[140%]"
+                style={{ borderRadius: "40px" }}
             >
                 {/* Fixed Grid Container (Zero Layout Shifting) */}
                 <div className="flex items-center relative h-[48px]">
-                    {/* GPU-Accelerated Dynamic Silk Pill Indicator (v5.2) */}
-                    <motion.div
-                        className="absolute top-0 bottom-0 bg-slate-900 rounded-full shadow-lg shadow-slate-900/40 z-0"
-                        initial={false}
-                        animate={{ 
-                            left: `${(activeIndex * 20) - pillCenterOffset}%`,
-                            width: `${activeWidth}%`
-                        }}
-                        transition={{ 
-                            type: "spring", 
-                            stiffness: 450, 
-                            damping: 38,
-                            mass: 0.9
-                        }}
-                    >
-                        <div className="w-full h-full rounded-full ring-4 ring-white/10" />
-                    </motion.div>
-
                     {navItems.map((item, index) => (
                         <NavItem 
                             key={item.to}
