@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/lib/supabase";
 import { useNavigate, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Mail, Lock, Loader2, ArrowRight, Sparkles, ShoppingBag, Users, Zap } from "lucide-react";
+import { Mail, Lock, Loader2, ArrowRight, Sparkles, ShoppingBag, Users, Zap, Phone } from "lucide-react";
 import { toast } from "sonner";
 
 const fontH: React.CSSProperties = { fontFamily: "'Space Grotesk', sans-serif" };
@@ -12,16 +12,13 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Capacitor } from "@capacitor/core";
 
 export default function Login() {
-    const { signInWithGoogle } = useAuth();
+    const { signInWithGoogle, signInWithPhone } = useAuth();
     const [showIntro, setShowIntro] = useState(Capacitor.isNativePlatform());
     const [isLogin, setIsLogin] = useState(false);
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+    const [phone, setPhone] = useState("");
     const [loading, setLoading] = useState(false);
     const [focusedField, setFocusedField] = useState<string | null>(null);
     const [acceptedTerms, setAcceptedTerms] = useState(false);
-    const [forgotPassword, setForgotPassword] = useState(false);
-    const [resetSent, setResetSent] = useState(false);
     const [formError, setFormError] = useState<string | null>(null);
     const [showOtp, setShowOtp] = useState(false);
     const [otp, setOtp] = useState("");
@@ -36,51 +33,22 @@ export default function Login() {
     // Clear error when user interacts
     useEffect(() => {
         setFormError(null);
-    }, [email, password, acceptedTerms, isLogin, otp]);
-
-    const handleForgotPassword = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!email.trim()) { toast.error("Enter your email first."); return; }
-        setLoading(true);
-        try {
-            const { error } = await supabase.auth.resetPasswordForEmail(email, {
-                redirectTo: `${window.location.origin}/reset-password`,
-            });
-            if (error) throw error;
-            setResetSent(true);
-            toast.success("Reset link sent! Check your inbox 📧");
-        } catch (err: any) {
-            toast.error(err.message || "Could not send reset link. Try again.");
-        } finally {
-            setLoading(false);
-        }
-    };
+    }, [phone, acceptedTerms, isLogin, otp]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setFormError(null);
 
         // Local Validation
-        if (!email.trim() || !password.trim()) {
-            setFormError("Please fill in all required fields.");
+        if (!phone.trim()) {
+            setFormError("Please enter your phone number.");
             return;
         }
 
-        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-        if (!emailRegex.test(email)) {
-            setFormError("Please enter a valid email address structure.");
-            return;
-        }
-
-        const domain = email.split('@')[1]?.toLowerCase();
-        const invalidDomains = ['gmail.coom', 'gmail.con', 'gmal.com', 'yhaoo.com', 'yahoo.cmo', 'outlok.com'];
-        if (domain && invalidDomains.includes(domain)) {
-            setFormError("That email domain looks incorrect. Please double check.");
-            return;
-        }
-
-        if (password.length < 6) {
-            setFormError("Password must be at least 6 characters.");
+        // Simple phone regex for India (+91 or 10 digits)
+        const phoneRegex = /^(\+91[\-\s]?)?[0]?(91)?[6789]\d{9}$/;
+        if (!phoneRegex.test(phone.replace(/\s/g, ""))) {
+            setFormError("Please enter a valid 10-digit phone number.");
             return;
         }
 
@@ -91,38 +59,18 @@ export default function Login() {
 
         setLoading(true);
         try {
-            if (isLogin) {
-                const { error } = await supabase.auth.signInWithPassword({ email, password });
-                if (error) {
-                    if (error.message.toLowerCase().includes("invalid login")) {
-                        setFormError("Invalid email or password. Please try again.");
-                    } else {
-                        setFormError(error.message);
-                    }
-                    setLoading(false);
-                    return;
-                }
-                toast.success("Welcome back! 🎉");
-                navigate("/home");
-            } else {
-                const { data, error } = await supabase.auth.signUp({
-                    email, password,
-                    options: { data: { full_name: email.split('@')[0] } }
-                });
-                if (error) {
-                    if (error.message.toLowerCase().includes("already registered")) {
-                        setFormError("This email is already registered. Please log in instead.");
-                    } else {
-                        setFormError(error.message);
-                    }
-                    setLoading(false);
-                    return;
-                }
-                
-                // Show OTP UI
-                setShowOtp(true);
-                toast.success("Verification code sent to your email! 📧");
+            const cleanPhone = phone.startsWith("+") ? phone : `+91${phone.replace(/\D/g, "").slice(-10)}`;
+            const { error }: any = await signInWithPhone(cleanPhone);
+            
+            if (error) {
+                setFormError(error.message);
+                setLoading(false);
+                return;
             }
+            
+            // Show OTP UI
+            setShowOtp(true);
+            toast.success("Verification code sent to your phone! 📱");
         } catch {
             setFormError("Something went sideways. Give it another shot?");
         } finally {
@@ -140,17 +88,22 @@ export default function Login() {
         setFormError(null);
 
         try {
+            const cleanPhone = phone.startsWith("+") ? phone : `+91${phone.replace(/\D/g, "").slice(-10)}`;
             const { data, error } = await supabase.auth.verifyOtp({
-                email,
+                phone: cleanPhone,
                 token: otp,
-                type: 'signup'
+                type: 'sms'
             });
             if (error) throw error;
 
             if (data.user) {
-                await supabase.from("profiles").upsert({ id: data.user.id, full_name: email.split('@')[0] });
+                // For phone auth, full_name might not exist in metadata yet
+                await supabase.from("profiles").upsert({ 
+                    id: data.user.id, 
+                    full_name: `User ${cleanPhone.slice(-4)}` 
+                });
             }
-            toast.success("Email verified! Welcome to the crew 🚀");
+            toast.success("Welcome to the crew 🚀");
             navigate("/home");
         } catch (err: any) {
             setFormError(err.message || "Invalid or expired verification code. Please try again.");
@@ -358,10 +311,10 @@ export default function Login() {
                                         <Lock className="w-3.5 h-3.5" /> Secure Authentication
                                     </p>
                                     <h2 className="text-2xl sm:text-[1.75rem] font-bold tracking-tight" style={{ ...fontH, color: "#0F172A" }}>
-                                        Check your email
+                                        Check your phone
                                     </h2>
                                     <p className="text-sm mt-1.5 leading-relaxed" style={{ color: "#64748B" }}>
-                                        We sent a 6-digit verification code to <br/> <strong className="text-slate-800">{email}</strong>
+                                        We sent a 6-digit verification code to <br/> <strong className="text-slate-800">{phone}</strong>
                                     </p>
                                 </motion.div>
                             ) : (
@@ -379,7 +332,7 @@ export default function Login() {
                                         {isLogin ? "Welcome back" : "Create your account"}
                                     </h2 >
                                     <p className="text-sm mt-1.5 leading-relaxed" style={{ color: "#64748B" }}>
-                                        {isLogin ? "Sign in to continue your campus journey." : "Join hundreds of students on CU Bazzar."}
+                                        {isLogin ? "Sign in with your phone to continue." : "Join hundreds of students on CU Bazzar."}
                                     </p>
                                 </motion.div>
                             )}
@@ -429,49 +382,11 @@ export default function Login() {
                                     <motion.button type="submit" disabled={loading || otp.length !== 6} whileHover={{ y: -1 }} whileTap={{ scale: 0.985 }}
                                         className="w-full py-3.5 mt-4 rounded-xl text-white font-semibold text-sm flex items-center justify-center gap-2 h-[52px] disabled:opacity-50"
                                         style={{ ...fontH, background: '#10B981', boxShadow: '0 4px 20px rgba(16,185,129,0.3)' }}>
-                                        {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <>Verify & Create Account <ArrowRight className="w-4 h-4" /></>}
+                                        {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <>Verify & Get In <ArrowRight className="w-4 h-4" /></>}
                                     </motion.button>
                                     
-                                    <button type="button" onClick={() => { setShowOtp(false); setOtp(""); setFormError(null); }} className="w-full text-sm mt-2" style={{ color: '#64748B' }}>← Use a different email</button>
+                                    <button type="button" onClick={() => { setShowOtp(false); setOtp(""); setFormError(null); }} className="w-full text-sm mt-2" style={{ color: '#64748B' }}>← Use a different number</button>
                                 </form>
-                            </motion.div>
-                        ) : forgotPassword ? (
-                            <motion.div key="forgot" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.2 }}>
-                                {resetSent ? (
-                                    <div className="py-6 text-center space-y-3">
-                                        <div className="w-12 h-12 rounded-full flex items-center justify-center mx-auto" style={{ backgroundColor: 'rgba(77,184,172,0.12)', border: '1px solid rgba(77,184,172,0.2)' }}>
-                                            <Mail className="w-5 h-5" style={{ color: '#4DB8AC' }} />
-                                        </div>
-                                        <p className="font-semibold" style={{ color: '#0F172A' }}>Check your inbox!</p>
-                                        <p className="text-sm" style={{ color: '#64748B' }}>We sent a password reset link to <strong style={{ color: '#0F172A' }}>{email}</strong>.</p>
-                                        <button type="button" onClick={() => { setForgotPassword(false); setResetSent(false); }} className="text-sm font-semibold mt-2" style={{ color: '#231942' }}>← Back to login</button>
-                                    </div>
-                                ) : (
-                                    <form onSubmit={handleForgotPassword} className="space-y-4">
-                                        <div>
-                                            <p className="text-sm mb-1" style={{ color: '#64748B' }}>Enter your email address and we'll send a reset link.</p>
-                                        </div>
-                                        <div>
-                                            <label className="block text-sm mb-1.5 font-medium" style={{ color: '#64748B' }}>Email Address</label>
-                                            <div className="relative rounded-xl transition-all duration-300" style={{ boxShadow: focusedField === 'reset-email' ? '0 0 0 2px rgba(35,25,66,0.35)' : '0 0 0 1px rgba(15,23,42,0.1)' }}>
-                                                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                                                    <Mail className="h-4 w-4" style={{ color: focusedField === 'reset-email' ? '#231942' : 'rgba(15,23,42,0.3)' }} />
-                                                </div>
-                                                <input type="email" required value={email} onChange={e => setEmail(e.target.value)}
-                                                    onFocus={() => setFocusedField('reset-email')} onBlur={() => setFocusedField(null)}
-                                                    className="w-full rounded-xl pl-10 pr-4 h-[52px] text-sm focus:outline-none transition-colors"
-                                                    style={{ backgroundColor: 'rgba(15,23,42,0.03)', color: '#0F172A' }}
-                                                    placeholder="you@example.com" />
-                                            </div>
-                                        </div>
-                                        <motion.button type="submit" disabled={loading} whileHover={{ y: -1 }} whileTap={{ scale: 0.985 }}
-                                            className="w-full py-3.5 rounded-xl text-white font-semibold text-sm flex items-center justify-center gap-2 h-[52px] disabled:opacity-50"
-                                            style={{ ...fontH, background: '#231942', boxShadow: '0 4px 20px rgba(35,25,66,0.25)' }}>
-                                            {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <><Mail className="w-4 h-4" /> Send Reset Link</>}
-                                        </motion.button>
-                                        <button type="button" onClick={() => setForgotPassword(false)} className="w-full text-sm" style={{ color: '#64748B' }}>← Back to login</button>
-                                    </form>
-                                )}
                             </motion.div>
                         ) : (
                             <motion.div key="main" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.2 }}>
@@ -501,58 +416,34 @@ export default function Login() {
                                         <div className="w-full border-t border-slate-200"></div>
                                     </div>
                                     <span className="relative px-3 bg-white text-[11px] font-semibold text-slate-400 tracking-widest uppercase">
-                                        or use email
+                                        or use phone
                                     </span>
                                 </div>
 
                                 {/* Form */}
                                 <form onSubmit={handleSubmit} className="space-y-4">
-                                    {/* Email */}
+                                    {/* Phone */}
                                     <div>
-                                        <label className="block text-sm mb-1.5 font-medium" style={{ color: "#64748B" }}>Email Address</label>
+                                        <label className="block text-sm mb-1.5 font-medium" style={{ color: "#64748B" }}>Phone Number</label>
                                         <div className="relative rounded-xl transition-all duration-300" style={{
-                                            boxShadow: focusedField === "email"
+                                            boxShadow: focusedField === "phone"
                                                 ? "0 0 0 2px rgba(35,25,66,0.35), 0 0 16px rgba(35,25,66,0.08)"
                                                 : "0 0 0 1px rgba(15,23,42,0.1)"
                                         }}>
                                             <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                                                <Mail className="h-4 w-4 transition-colors duration-200" style={{ color: focusedField === "email" ? "#231942" : "rgba(15,23,42,0.3)" }} />
+                                                <Phone className="h-4 w-4 transition-colors duration-200" style={{ color: focusedField === "phone" ? "#231942" : "rgba(15,23,42,0.3)" }} />
                                             </div>
                                             <input
-                                                type="email" required value={email}
-                                                onChange={(e) => setEmail(e.target.value)}
-                                                onFocus={() => setFocusedField("email")}
+                                                type="tel" required value={phone}
+                                                onChange={(e) => setPhone(e.target.value)}
+                                                onFocus={() => setFocusedField("phone")}
                                                 onBlur={() => setFocusedField(null)}
                                                 className="w-full rounded-xl pl-10 pr-4 h-[52px] text-sm focus:outline-none transition-colors"
                                                 style={{ backgroundColor: "rgba(15,23,42,0.03)", color: "#0F172A" }}
-                                                placeholder="you@example.com"
+                                                placeholder="Enter phone number"
                                             />
                                         </div>
-                                    </div>
-
-                                    {/* Password */}
-                                    <div>
-                                        <label className="block text-sm mb-1.5 font-medium" style={{ color: "#64748B" }}>Password</label>
-                                        <div className="relative rounded-xl transition-all duration-300" style={{
-                                            boxShadow: focusedField === "password"
-                                                ? "0 0 0 2px rgba(35,25,66,0.35), 0 0 16px rgba(35,25,66,0.08)"
-                                                : "0 0 0 1px rgba(15,23,42,0.1)"
-                                        }}>
-                                            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                                                <Lock className="h-4 w-4 transition-colors duration-200" style={{ color: focusedField === "password" ? "#231942" : "rgba(15,23,42,0.3)" }} />
-                                            </div>
-                                            <input
-                                                type="password" required value={password}
-                                                onChange={(e) => setPassword(e.target.value)}
-                                                onFocus={() => setFocusedField("password")}
-                                                onBlur={() => setFocusedField(null)}
-                                                className="w-full rounded-xl pl-10 pr-4 h-[52px] text-sm focus:outline-none transition-colors"
-                                                style={{ backgroundColor: "rgba(15,23,42,0.03)", color: "#0F172A" }}
-                                                placeholder="something secret..."
-                                                minLength={6}
-                                            />
-                                        </div>
-                                        {!isLogin && <p className="text-[11px] mt-1 ml-0.5" style={{ color: "#64748B" }}>At least 6 characters — make it count!</p>}
+                                        <p className="text-[11px] mt-1 ml-0.5" style={{ color: "#64748B" }}>We'll send a 6-digit OTP for instant login.</p>
                                     </div>
 
                                     {/* T&C Accept Checkbox — signup only */}
@@ -585,16 +476,6 @@ export default function Login() {
                                         </div>
                                     )}
 
-                                    {/* Forgot password link — login only */}
-                                    {isLogin && (
-                                        <div className="flex justify-end -mt-1">
-                                            <button type="button" onClick={() => { setForgotPassword(true); setResetSent(false); }}
-                                                className="text-xs transition-opacity hover:opacity-80"
-                                                style={{ color: '#64748B' }}
-                                            >Forgot password?</button>
-                                        </div>
-                                    )}
-
                                     {/* Error Message */}
                                     <AnimatePresence mode="wait">
                                         {formError && (
@@ -624,7 +505,7 @@ export default function Login() {
                                         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
                                         <span className="relative flex items-center justify-center gap-2">
                                             {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : (
-                                                <>{isLogin ? "Let's get you in" : "Create my account"}<ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" /></>
+                                                <>{isLogin ? "Send Verification Code" : "Create my account"}<ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" /></>
                                             )}
                                         </span>
                                     </motion.button>

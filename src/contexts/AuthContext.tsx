@@ -10,6 +10,7 @@ interface AuthContextType {
     isAdmin: boolean;
     signOut: () => Promise<void>;
     signInWithGoogle: () => Promise<void>;
+    signInWithPhone: (phone: string) => Promise<{ error: any }>;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -20,6 +21,7 @@ const AuthContext = createContext<AuthContextType>({
     isAdmin: false,
     signOut: async () => { },
     signInWithGoogle: async () => { },
+    signInWithPhone: async (phone: string) => { return { error: null } },
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -109,6 +111,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
     };
 
+    const signInWithPhone = async (phone: string) => {
+        return await supabase.auth.signInWithOtp({
+            phone
+        });
+    };
+
     const signOut = async () => {
         try {
             await supabase.auth.signOut();
@@ -129,8 +137,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         loading,
         isAdmin,
         signOut,
-        signInWithGoogle
-    }), [user, session, profile, loading, isAdmin, signOut, signInWithGoogle]);
+        signInWithGoogle,
+        signInWithPhone
+    }), [user, session, profile, loading, isAdmin, signOut, signInWithGoogle, signInWithPhone]);
 
     return (
         <AuthContext.Provider value={contextValue}>
