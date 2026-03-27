@@ -12,16 +12,17 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Capacitor } from "@capacitor/core";
 
 export default function Login() {
-    const { signInWithGoogle, signInWithPhone } = useAuth();
+    const { signInWithGoogle, signIn, signUp } = useAuth();
     const [showIntro, setShowIntro] = useState(Capacitor.isNativePlatform());
     const [isLogin, setIsLogin] = useState(false);
-    const [phone, setPhone] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
     const [focusedField, setFocusedField] = useState<string | null>(null);
     const [acceptedTerms, setAcceptedTerms] = useState(false);
     const [formError, setFormError] = useState<string | null>(null);
-    const [showOtp, setShowOtp] = useState(false);
-    const [otp, setOtp] = useState("");
+    const [forgotPassword, setForgotPassword] = useState(false);
+    const [resetSent, setResetSent] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -33,22 +34,41 @@ export default function Login() {
     // Clear error when user interacts
     useEffect(() => {
         setFormError(null);
-    }, [phone, acceptedTerms, isLogin, otp]);
+    }, [email, password, acceptedTerms, isLogin]);
+
+    const handleForgotPassword = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!email.trim() || !email.includes("@")) {
+            setFormError("Please enter a valid email address.");
+            return;
+        }
+        setLoading(true);
+        setFormError(null);
+        try {
+            const { error }: any = await supabase.auth.resetPasswordForEmail(email, {
+                redirectTo: `${window.location.origin}/reset-password`,
+            });
+            if (error) throw error;
+            setResetSent(true);
+            toast.success("Password reset link sent! Check your inbox.");
+        } catch (err: any) {
+            setFormError(err.message || "Failed to send reset link. Try again.");
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setFormError(null);
 
-        // Local Validation
-        if (!phone.trim()) {
-            setFormError("Please enter your phone number.");
+        if (!email.trim() || !password.trim()) {
+            setFormError("Looks like you missed a spot.");
             return;
         }
 
-        // Simple phone regex for India (+91 or 10 digits)
-        const phoneRegex = /^(\+91[\-\s]?)?[0]?(91)?[6789]\d{9}$/;
-        if (!phoneRegex.test(phone.replace(/\s/g, ""))) {
-            setFormError("Please enter a valid 10-digit phone number.");
+        if (password.length < 6) {
+            setFormError("Password needs to be at least 6 characters.");
             return;
         }
 
@@ -58,55 +78,43 @@ export default function Login() {
         }
 
         setLoading(true);
-        try {
-            const cleanPhone = phone.startsWith("+") ? phone : `+91${phone.replace(/\D/g, "").slice(-10)}`;
-            const { error }: any = await signInWithPhone(cleanPhone);
-            
-            if (error) {
-                setFormError(error.message);
-                setLoading(false);
-                return;
-            }
-            
-            // Show OTP UI
-            setShowOtp(true);
-            toast.success("Verification code sent to your phone! 📱");
-        } catch {
-            setFormError("Something went sideways. Give it another shot?");
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const handleVerifyOtp = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (otp.length !== 6) {
-            setFormError("OTP must be exactly 6 digits.");
-            return;
-        }
-        setLoading(true);
-        setFormError(null);
 
         try {
-            const cleanPhone = phone.startsWith("+") ? phone : `+91${phone.replace(/\D/g, "").slice(-10)}`;
-            const { data, error } = await supabase.auth.verifyOtp({
-                phone: cleanPhone,
-                token: otp,
-                type: 'sms'
-            });
-            if (error) throw error;
+            if (isLogin) {
+                const { error }: any = await signIn(email, password);
+                if (error) {
+                    setFormError(error.message === "Invalid login credentials"
+                        ? "Wait, that doesn't look right. Double-check your details?"
+                        : error.message);
+                    setLoading(false);
+                    return;
+                }
+                toast.success("Welcome back! 🚀");
+            } else {
+                const { error }: any = await signUp(email, password);
+                if (error) {
+                    setFormError(error.message);
+                    setLoading(false);
+                    return;
+                }
+                const parts = email.split('@');
+                const usernameBase = parts[0].replace(/[^a-zA-Z0-9_]/g, '').slice(0, 15);
+                const randomNum = Math.floor(1000 + Math.random() * 9000);
+                const fallbackUsername = `${usernameBase}${randomNum}`;
 
-            if (data.user) {
-                // For phone auth, full_name might not exist in metadata yet
-                await supabase.from("profiles").upsert({ 
-                    id: data.user.id, 
-                    full_name: `User ${cleanPhone.slice(-4)}` 
-                });
+                const { data: sessionData } = await supabase.auth.getSession();
+                if (sessionData?.session?.user) {
+                    await supabase.from("profiles").upsert({
+                        id: sessionData.session.user.id,
+                        username: fallbackUsername,
+                        full_name: parts[0]
+                    });
+                }
+                toast.success("Account created successfully! ✨");
             }
-            toast.success("Welcome to the crew 🚀");
             navigate("/home");
         } catch (err: any) {
-            setFormError(err.message || "Invalid or expired verification code. Please try again.");
+            setFormError("Something went sideways. Give it another shot?");
         } finally {
             setLoading(false);
         }
@@ -299,22 +307,22 @@ export default function Login() {
                     {/* Greeting */}
                     <div className="mb-6">
                         <AnimatePresence mode="wait">
-                            {showOtp ? (
+                            {forgotPassword ? (
                                 <motion.div
-                                    key="verify-otp"
+                                    key="forgot-password"
                                     initial={{ opacity: 0, y: 6 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, y: -6 }}
                                     transition={{ duration: 0.2 }}
                                 >
                                     <p className="text-sm mb-1.5 font-medium flex items-center gap-2" style={{ color: "#64748B" }}>
-                                        <Lock className="w-3.5 h-3.5" /> Secure Authentication
+                                        <Lock className="w-3.5 h-3.5" /> Secure Recovery
                                     </p>
                                     <h2 className="text-2xl sm:text-[1.75rem] font-bold tracking-tight" style={{ ...fontH, color: "#0F172A" }}>
-                                        Check your phone
+                                        Reset your password
                                     </h2>
                                     <p className="text-sm mt-1.5 leading-relaxed" style={{ color: "#64748B" }}>
-                                        We sent a 6-digit verification code to <br/> <strong className="text-slate-800">{phone}</strong>
+                                        Don't worry, we'll help you get back into your account.
                                     </p>
                                 </motion.div>
                             ) : (
@@ -332,7 +340,7 @@ export default function Login() {
                                         {isLogin ? "Welcome back" : "Create your account"}
                                     </h2 >
                                     <p className="text-sm mt-1.5 leading-relaxed" style={{ color: "#64748B" }}>
-                                        {isLogin ? "Sign in with your phone to continue." : "Join hundreds of students on CU Bazzar."}
+                                        {isLogin ? "Sign in to continue your campus journey." : "Join hundreds of students on CU Bazzar."}
                                     </p>
                                 </motion.div>
                             )}
@@ -341,52 +349,43 @@ export default function Login() {
 
                     {/* ── FLOW CONTROL ── */}
                     <AnimatePresence mode="wait">
-                        {showOtp ? (
-                            <motion.div key="otp-form" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.2 }}>
-                                <form onSubmit={handleVerifyOtp} className="space-y-4">
-                                    <div>
-                                        <label className="block text-sm mb-1.5 font-medium" style={{ color: '#64748B' }}>Verification Code</label>
-                                        <div className="relative rounded-xl transition-all duration-300" style={{ boxShadow: focusedField === 'otp' ? '0 0 0 2px rgba(35,25,66,0.35)' : '0 0 0 1px rgba(15,23,42,0.1)' }}>
-                                            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                                                <Lock className="h-4 w-4" style={{ color: focusedField === 'otp' ? '#231942' : 'rgba(15,23,42,0.3)' }} />
-                                            </div>
-                                            <input type="text" required value={otp} onChange={e => {
-                                                    const val = e.target.value.replace(/\D/g, '').slice(0, 6);
-                                                    setOtp(val);
-                                                }}
-                                                onFocus={() => setFocusedField('otp')} onBlur={() => setFocusedField(null)}
-                                                className="w-full rounded-xl pl-10 pr-4 h-[52px] text-lg tracking-[0.2em] font-bold focus:outline-none transition-colors"
-                                                style={{ backgroundColor: 'rgba(15,23,42,0.03)', color: '#0F172A' }}
-                                                placeholder="123456" />
+                        {forgotPassword ? (
+                            <motion.div key="forgot" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.2 }}>
+                                {resetSent ? (
+                                    <div className="py-6 text-center space-y-3">
+                                        <div className="w-12 h-12 rounded-full flex items-center justify-center mx-auto" style={{ backgroundColor: 'rgba(77,184,172,0.12)', border: '1px solid rgba(77,184,172,0.2)' }}>
+                                            <Mail className="w-5 h-5" style={{ color: '#4DB8AC' }} />
                                         </div>
+                                        <p className="font-semibold" style={{ color: '#0F172A' }}>Check your inbox!</p>
+                                        <p className="text-sm" style={{ color: '#64748B' }}>We sent a password reset link to <strong style={{ color: '#0F172A' }}>{email}</strong>.</p>
+                                        <button type="button" onClick={() => { setForgotPassword(false); setResetSent(false); }} className="text-sm font-semibold mt-2" style={{ color: '#231942' }}>← Back to login</button>
                                     </div>
-
-                                    {/* Error Message */}
-                                    <AnimatePresence mode="wait">
-                                        {formError && (
-                                            <motion.div
-                                                initial={{ opacity: 0, height: 0, scale: 0.95 }}
-                                                animate={{ opacity: 1, height: 'auto', scale: 1 }}
-                                                exit={{ opacity: 0, height: 0, scale: 0.95 }}
-                                                transition={{ duration: 0.2 }}
-                                                className="bg-red-50 border border-red-100 rounded-xl p-3 flex items-start gap-2.5 overflow-hidden shadow-sm shadow-red-500/5 mt-2"
-                                            >
-                                                <div className="w-1.5 h-1.5 rounded-full bg-red-500 mt-1.5 shrink-0 animate-pulse" />
-                                                <p className="text-[13px] font-medium text-red-600 leading-tight">
-                                                    {formError}
-                                                </p>
-                                            </motion.div>
-                                        )}
-                                    </AnimatePresence>
-
-                                    <motion.button type="submit" disabled={loading || otp.length !== 6} whileHover={{ y: -1 }} whileTap={{ scale: 0.985 }}
-                                        className="w-full py-3.5 mt-4 rounded-xl text-white font-semibold text-sm flex items-center justify-center gap-2 h-[52px] disabled:opacity-50"
-                                        style={{ ...fontH, background: '#10B981', boxShadow: '0 4px 20px rgba(16,185,129,0.3)' }}>
-                                        {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <>Verify & Get In <ArrowRight className="w-4 h-4" /></>}
-                                    </motion.button>
-                                    
-                                    <button type="button" onClick={() => { setShowOtp(false); setOtp(""); setFormError(null); }} className="w-full text-sm mt-2" style={{ color: '#64748B' }}>← Use a different number</button>
-                                </form>
+                                ) : (
+                                    <form onSubmit={handleForgotPassword} className="space-y-4">
+                                        <div>
+                                            <p className="text-sm mb-1" style={{ color: '#64748B' }}>Enter your email address and we'll send a reset link.</p>
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm mb-1.5 font-medium" style={{ color: '#64748B' }}>Email Address</label>
+                                            <div className="relative rounded-xl transition-all duration-300" style={{ boxShadow: focusedField === 'reset-email' ? '0 0 0 2px rgba(35,25,66,0.35)' : '0 0 0 1px rgba(15,23,42,0.1)' }}>
+                                                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                                                    <Mail className="h-4 w-4" style={{ color: focusedField === 'reset-email' ? '#231942' : 'rgba(15,23,42,0.3)' }} />
+                                                </div>
+                                                <input type="email" required value={email} onChange={e => setEmail(e.target.value)}
+                                                    onFocus={() => setFocusedField('reset-email')} onBlur={() => setFocusedField(null)}
+                                                    className="w-full rounded-xl pl-10 pr-4 h-[52px] text-sm focus:outline-none transition-colors"
+                                                    style={{ backgroundColor: 'rgba(15,23,42,0.03)', color: '#0F172A' }}
+                                                    placeholder="you@example.com" />
+                                            </div>
+                                        </div>
+                                        <motion.button type="submit" disabled={loading} whileHover={{ y: -1 }} whileTap={{ scale: 0.985 }}
+                                            className="w-full py-3.5 rounded-xl text-white font-semibold text-sm flex items-center justify-center gap-2 h-[52px] disabled:opacity-50"
+                                            style={{ ...fontH, background: '#231942', boxShadow: '0 4px 20px rgba(35,25,66,0.25)' }}>
+                                            {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <><Mail className="w-4 h-4" /> Send Reset Link</>}
+                                        </motion.button>
+                                        <button type="button" onClick={() => setForgotPassword(false)} className="w-full text-sm" style={{ color: '#64748B' }}>← Back to login</button>
+                                    </form>
+                                )}
                             </motion.div>
                         ) : (
                             <motion.div key="main" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.2 }}>
@@ -416,34 +415,58 @@ export default function Login() {
                                         <div className="w-full border-t border-slate-200"></div>
                                     </div>
                                     <span className="relative px-3 bg-white text-[11px] font-semibold text-slate-400 tracking-widest uppercase">
-                                        or use phone
+                                        or use email
                                     </span>
                                 </div>
 
                                 {/* Form */}
                                 <form onSubmit={handleSubmit} className="space-y-4">
-                                    {/* Phone */}
+                                    {/* Email */}
                                     <div>
-                                        <label className="block text-sm mb-1.5 font-medium" style={{ color: "#64748B" }}>Phone Number</label>
+                                        <label className="block text-sm mb-1.5 font-medium" style={{ color: "#64748B" }}>Email Address</label>
                                         <div className="relative rounded-xl transition-all duration-300" style={{
-                                            boxShadow: focusedField === "phone"
+                                            boxShadow: focusedField === "email"
                                                 ? "0 0 0 2px rgba(35,25,66,0.35), 0 0 16px rgba(35,25,66,0.08)"
                                                 : "0 0 0 1px rgba(15,23,42,0.1)"
                                         }}>
                                             <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                                                <Phone className="h-4 w-4 transition-colors duration-200" style={{ color: focusedField === "phone" ? "#231942" : "rgba(15,23,42,0.3)" }} />
+                                                <Mail className="h-4 w-4 transition-colors duration-200" style={{ color: focusedField === "email" ? "#231942" : "rgba(15,23,42,0.3)" }} />
                                             </div>
                                             <input
-                                                type="tel" required value={phone}
-                                                onChange={(e) => setPhone(e.target.value)}
-                                                onFocus={() => setFocusedField("phone")}
+                                                type="email" required value={email}
+                                                onChange={(e) => setEmail(e.target.value)}
+                                                onFocus={() => setFocusedField("email")}
                                                 onBlur={() => setFocusedField(null)}
                                                 className="w-full rounded-xl pl-10 pr-4 h-[52px] text-sm focus:outline-none transition-colors"
                                                 style={{ backgroundColor: "rgba(15,23,42,0.03)", color: "#0F172A" }}
-                                                placeholder="Enter phone number"
+                                                placeholder="you@example.com"
                                             />
                                         </div>
-                                        <p className="text-[11px] mt-1 ml-0.5" style={{ color: "#64748B" }}>We'll send a 6-digit OTP for instant login.</p>
+                                    </div>
+
+                                    {/* Password */}
+                                    <div>
+                                        <label className="block text-sm mb-1.5 font-medium" style={{ color: "#64748B" }}>Password</label>
+                                        <div className="relative rounded-xl transition-all duration-300" style={{
+                                            boxShadow: focusedField === "password"
+                                                ? "0 0 0 2px rgba(35,25,66,0.35), 0 0 16px rgba(35,25,66,0.08)"
+                                                : "0 0 0 1px rgba(15,23,42,0.1)"
+                                        }}>
+                                            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                                                <Lock className="h-4 w-4 transition-colors duration-200" style={{ color: focusedField === "password" ? "#231942" : "rgba(15,23,42,0.3)" }} />
+                                            </div>
+                                            <input
+                                                type="password" required value={password}
+                                                onChange={(e) => setPassword(e.target.value)}
+                                                onFocus={() => setFocusedField("password")}
+                                                onBlur={() => setFocusedField(null)}
+                                                className="w-full rounded-xl pl-10 pr-4 h-[52px] text-sm focus:outline-none transition-colors"
+                                                style={{ backgroundColor: "rgba(15,23,42,0.03)", color: "#0F172A" }}
+                                                placeholder="something secret..."
+                                                minLength={6}
+                                            />
+                                        </div>
+                                        {!isLogin && <p className="text-[11px] mt-1 ml-0.5" style={{ color: "#64748B" }}>At least 6 characters — make it count!</p>}
                                     </div>
 
                                     {/* T&C Accept Checkbox — signup only */}
@@ -476,6 +499,16 @@ export default function Login() {
                                         </div>
                                     )}
 
+                                    {/* Forgot password link — login only */}
+                                    {isLogin && (
+                                        <div className="flex justify-end -mt-1">
+                                            <button type="button" onClick={() => { setForgotPassword(true); setResetSent(false); }}
+                                                className="text-xs transition-opacity hover:opacity-80"
+                                                style={{ color: '#64748B' }}
+                                            >Forgot password?</button>
+                                        </div>
+                                    )}
+
                                     {/* Error Message */}
                                     <AnimatePresence mode="wait">
                                         {formError && (
@@ -505,7 +538,7 @@ export default function Login() {
                                         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
                                         <span className="relative flex items-center justify-center gap-2">
                                             {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : (
-                                                <>{isLogin ? "Send Verification Code" : "Create my account"}<ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" /></>
+                                                <>{isLogin ? "Let's get you in" : "Create my account"}<ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" /></>
                                             )}
                                         </span>
                                     </motion.button>
@@ -515,7 +548,7 @@ export default function Login() {
                     </AnimatePresence>
 
                     {/* Toggle */}
-                    {!showOtp && (
+                    {!forgotPassword && (
                         <p className="text-sm mt-6" style={{ color: "#64748B" }}>
                             {isLogin ? "New around here?" : "Already one of us?"}{" "}
                             <button type="button" onClick={() => { setIsLogin(!isLogin); setFormError(null); }}
@@ -526,7 +559,8 @@ export default function Login() {
                         </p>
                     )}
 
-                    <p className={`text-[11px] leading-relaxed ${showOtp ? 'mt-8' : 'mt-6'}`} style={{ color: "#94A3B8" }}>
+                    <p className={`text-[11px] leading-relaxed ${forgotPassword ? 'mt-8' : 'mt-6'}`} style={{ color: "#94A3B8" }}>
+
                         By continuing, you agree to our{" "}
                         <Link to="/terms" className="underline underline-offset-2 hover:opacity-60 transition-opacity" style={{ color: "#231942" }}>Terms &amp; Conditions</Link>
                         {" "}and to be a good campus citizen. 🤝

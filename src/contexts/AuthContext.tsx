@@ -10,7 +10,8 @@ interface AuthContextType {
     isAdmin: boolean;
     signOut: () => Promise<void>;
     signInWithGoogle: () => Promise<void>;
-    signInWithPhone: (phone: string) => Promise<{ error: any }>;
+    signIn: (email: string, pass: string) => Promise<{ error: any }>;
+    signUp: (email: string, pass: string) => Promise<{ error: any }>;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -21,7 +22,8 @@ const AuthContext = createContext<AuthContextType>({
     isAdmin: false,
     signOut: async () => { },
     signInWithGoogle: async () => { },
-    signInWithPhone: async (phone: string) => { return { error: null } },
+    signIn: async () => { return { error: null } },
+    signUp: async () => { return { error: null } },
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -111,6 +113,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
     };
 
+    const signIn = async (email: string, pass: string) => {
+        return await supabase.auth.signInWithPassword({
+            email,
+            password: pass,
+        });
+    };
+
+    const signUp = async (email: string, pass: string) => {
+        return await supabase.auth.signUp({
+            email,
+            password: pass,
+        });
+    };
+
     const signInWithPhone = async (phone: string) => {
         return await supabase.auth.signInWithOtp({
             phone
@@ -138,8 +154,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isAdmin,
         signOut,
         signInWithGoogle,
+        signIn,
+        signUp,
         signInWithPhone
-    }), [user, session, profile, loading, isAdmin, signOut, signInWithGoogle, signInWithPhone]);
+    }), [user, session, profile, loading, isAdmin, signOut, signInWithGoogle, signIn, signUp, signInWithPhone]);
 
     return (
         <AuthContext.Provider value={contextValue}>
