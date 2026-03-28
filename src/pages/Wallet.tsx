@@ -210,9 +210,7 @@ export default function Wallet() {
                         </div>
                         <p className="mt-3 text-center text-[12px] font-medium text-slate-500">
                             You have completed <strong className="text-slate-900 font-bold">{weeklyOrders}</strong> orders <span className="text-slate-400">THIS WEEK</span>.
-                            {weeklyOrders >= 3 && (
-                                <span className="block text-emerald-600 font-black mt-1 animate-pulse uppercase tracking-tight">Weekly Reward Unlocked! ✨</span>
-                            )}
+
                             {weeklyOrders < 3 && (
                                 <span className="block text-slate-400 text-[10px] mt-1 italic">Goal resets Monday at 12 AM IST</span>
                             )}
