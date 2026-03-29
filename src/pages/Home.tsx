@@ -27,230 +27,13 @@ const categories = [
 
 type Product = Database["public"]["Tables"]["products"]["Row"];
 
-const fontH: React.CSSProperties = { fontFamily: "'Space Grotesk', sans-serif" };
+const fontH: React.CSSProperties = { fontFamily: "-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" };
 
-
-
-// campusEssentials imported above from @/config/campusEssentials
-
-const FloatingParticles = () => {
-    const particles = Array.from({ length: 15 });
-    return (
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            {particles.map((_, i) => (
-                <motion.div
-                    key={i}
-                    className="absolute rounded-full"
-                    style={{
-                        width: Math.random() * 8 + 4,
-                        height: Math.random() * 8 + 4,
-                        left: `${Math.random() * 100}%`,
-                        top: `${Math.random() * 100}%`,
-                        background: i % 3 === 0 ? 'rgba(77, 184, 172, 0.4)' : i % 3 === 1 ? 'rgba(236, 72, 153, 0.3)' : 'rgba(255, 255, 255, 0.2)',
-                        boxShadow: '0 0 15px rgba(255,255,255,0.1)',
-                    }}
-                    animate={{
-                        y: [0, -100, 0],
-                        x: [0, Math.random() * 50 - 25, 0],
-                        opacity: [0, 0.8, 0],
-                        scale: [0.5, 1.2, 0.5],
-                    }}
-                    transition={{
-                        duration: Math.random() * 10 + 10,
-                        repeat: Infinity,
-                        ease: "linear",
-                        delay: Math.random() * 5,
-                    }}
-                />
-            ))}
-        </div>
-    );
-};
-
-type FeatureCardType = {
-  icon: any;
-  title: string;
-  desc: string;
-  cta: string;
-  link: string;
-  gradient: string;
-  iconColor: string;
-  borderColor: string;
-  badge?: string;
-};
-
-const featureCards: FeatureCardType[] = [
-  {
-    icon: UtensilsCrossed,
-    title: "Food Delivery to Your Room",
-    desc: "Hungry? Get your favorite food delivered straight to your hostel. Fast, fresh, and hassle-free.",
-    cta: "Order Food",
-    link: "/food",
-    gradient: "from-orange-500/20 via-red-500/10 to-amber-500/20",
-    iconColor: "#FF6B6B",
-    borderColor: "rgba(255,107,107,0.25)",
-  },
-  {
-    icon: Package,
-    title: "Sell Your Old Products",
-    desc: "Got old books, gadgets, or clothes? List them in 30 seconds and turn them into cash.",
-    cta: "Start Selling",
-    link: "/list",
-    gradient: "from-emerald-500/20 via-teal-500/10 to-green-500/20",
-    iconColor: "#4DB8AC",
-    borderColor: "rgba(77,184,172,0.25)",
-  },
-  {
-    icon: Rocket,
-    title: "Super Fast Campus Delivery",
-    desc: "Within-campus delivery in under 30 minutes. From hostel to hostel, we handle it.",
-    cta: "See How It Works",
-    link: "/browse",
-    gradient: "from-blue-500/20 via-cyan-500/10 to-sky-500/20",
-    iconColor: "#60A5FA",
-    borderColor: "rgba(96,165,250,0.25)",
-  },
-
-  {
-    icon: ShieldCheck,
-    title: "100% Safe & Verified",
-    desc: "Every transaction is campus-verified. Buy and sell with full confidence in our student community.",
-    cta: "Learn More",
-    link: "/browse",
-    gradient: "from-brand-accent/20 via-purple-500/10 to-indigo-500/20",
-    iconColor: "#A78BFA",
-    borderColor: "rgba(167,139,250,0.25)",
-  },
-  {
-    icon: BadgePercent,
-    title: "Student-Only Prices",
-    desc: "Prices you won't find anywhere else. Save on everything from books to gadgets, only for CU students.",
-    cta: "Browse Deals",
-    link: "/browse",
-    gradient: "from-amber-500/20 via-yellow-500/10 to-orange-500/20",
-    iconColor: "#FBBF24",
-    borderColor: "rgba(251,191,36,0.25)",
-  },
-
-];
-
-function FeatureCard({ card, index }: { card: FeatureCardType; index: number }) {
-  const cardRef = useRef<HTMLDivElement>(null);
-  const [tilt, setTilt] = useState({ x: 0, y: 0, active: false });
-
-  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    const el = cardRef.current;
-    if (!el) return;
-    const rect = el.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / rect.width;
-    const y = (e.clientY - rect.top) / rect.height;
-    setTilt({ x: (y - 0.5) * -14, y: (x - 0.5) * 14, active: true });
-  }, []);
-
-  const handleMouseLeave = useCallback(() => {
-    setTilt({ x: 0, y: 0, active: false });
-  }, []);
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 24, scale: 0.95 }}
-      whileInView={{ opacity: 1, y: 0, scale: 1 }}
-      viewport={{ once: true }}
-      transition={{ delay: index * 0.08, duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
-      style={{ scrollSnapAlign: 'start' }}
-      className="flex-shrink-0"
-    >
-      <Link to={card.link} className="block w-full h-full">
-        <div
-          ref={cardRef}
-          onMouseMove={handleMouseMove}
-          onMouseLeave={handleMouseLeave}
-          className="w-[68vw] sm:w-[230px] lg:w-[260px] h-full rounded-[2rem] overflow-hidden cursor-pointer"
-          style={{ perspective: '800px' }}
-        >
-          <div
-            className="relative p-5 rounded-[2rem] transition-transform duration-200 ease-out h-full flex flex-col justify-between bg-white border border-slate-900 shadow-[2px_2px_0px_rgba(15,23,42,0.1)] hover:shadow-[4px_4px_0px_rgba(15,23,42,0.15)]"
-            style={{
-              transform: tilt.active
-                ? `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) scale(1.03)`
-                : 'rotateX(0) rotateY(0) scale(1)',
-              transformStyle: 'preserve-3d',
-            }}
-          >
-            {/* Cursor light reflection */}
-            {tilt.active && (
-              <div
-                className="absolute inset-0 rounded-3xl pointer-events-none z-0"
-                style={{
-                  background: `radial-gradient(circle at ${(tilt.y / 14 + 0.5) * 100}% ${(-tilt.x / 14 + 0.5) * 100}%, ${card.iconColor}10, transparent 60%)`,
-                }}
-              />
-            )}
-
-            <div className="flex flex-col items-start gap-3 relative z-10 h-full">
-              <div
-                className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
-                style={{ backgroundColor: `${card.iconColor}15` }}
-              >
-                <card.icon className="w-[18px] h-[18px]" style={{ color: card.iconColor }} />
-              </div>
-              <div className="flex-1 min-w-0">
-                <h3 className="text-[13px] font-bold leading-tight mb-1.5 text-slate-900" style={fontH}>
-                  {card.title}
-                </h3>
-                <p className="text-[11px] leading-relaxed line-clamp-3 text-slate-500">
-                  {card.desc}
-                </p>
-              </div>
-            </div>
-
-            <div className="mt-3 flex items-center gap-0.5 relative z-10 w-fit">
-              <span className="text-[10px] font-semibold" style={{ color: card.iconColor }}>{card.cta}</span>
-              <ChevronRight className="w-3 h-3" style={{ color: card.iconColor }} />
-            </div>
-          </div>
-        </div>
-      </Link>
-    </motion.div>
-  );
-}
-
-const Ribbon = ({ text, color, className, rotation }: { text: string, color: string, className?: string, rotation: string }) => (
-  <motion.div
-    initial={{ x: -20, opacity: 0, rotate: rotation }}
-    animate={{ x: 0, opacity: 1 }}
-    whileHover={{ scale: 1.05, filter: "brightness(1.1)" }}
-    className={`absolute z-30 px-4 py-1.5 sm:px-6 sm:py-2 shadow-2xl border border-white/20 backdrop-blur-sm ${className}`}
-    style={{ 
-      backgroundColor: `${color}ee`,
-      clipPath: "polygon(100% 0%, 95% 50%, 100% 100%, 0% 100%, 5% 50%, 0% 0%)",
-      transformOrigin: "center left"
-    }}
-  >
-    <span className="text-[9px] sm:text-[11px] font-black uppercase tracking-[0.2em] text-white drop-shadow-md whitespace-nowrap">
-      {text}
-    </span>
-  </motion.div>
-);
-
-const LedScreen = ({ children }: { children: React.ReactNode }) => (
-  <div className="relative p-2 sm:p-4 bg-[#080808] rounded-[2.2rem] sm:rounded-[3.2rem] shadow-[0_30px_60px_rgba(0,0,0,0.6),0_0_30px_rgba(77,184,172,0.1)] border-[3px] border-[#1a1a1a] ring-1 ring-white/5">
-    {/* Inner Screen Bezel Glow */}
-    <div className="absolute inset-0 rounded-[2rem] sm:rounded-[3rem] shadow-[inset_0_0_15px_rgba(255,255,255,0.05)] pointer-events-none" />
-    
-    {/* Glass Reflection */}
-    <div className="absolute top-0 left-1/4 w-1/2 h-1/2 bg-gradient-to-br from-white/[0.08] to-transparent rounded-full blur-3xl pointer-events-none z-10" />
-    
-    {/* Scanline Texture Overlay */}
-    <div className="absolute inset-0 pointer-events-none z-20 opacity-[0.04]" 
-         style={{ backgroundImage: 'repeating-linear-gradient(rgba(0,0,0,0) 0px, rgba(0,0,0,0) 1px, rgba(0,0,0,0.5) 2px)' }} />
-
-    {/* Ambient Corner Glows - Branded Emerald & Pink */}
-    <div className="absolute -top-10 -left-10 w-40 h-40 bg-emerald-500/10 blur-[60px] rounded-full pointer-events-none" />
-    <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-pink-500/10 blur-[60px] rounded-full pointer-events-none" />
-
-    {/* The Carousel Container */}
-    <div className="relative rounded-[1.6rem] sm:rounded-[2.6rem] overflow-hidden border border-white/5">
+const LiquidGlassScreen = ({ children }: { children: React.ReactNode }) => (
+  <div className="relative p-2 sm:p-4 bg-white/40 backdrop-blur-3xl rounded-[2.2rem] sm:rounded-[3.2rem] shadow-[0_20px_40px_rgba(0,0,0,0.06),inset_0_1px_0_rgba(255,255,255,0.8)] border border-white/60">
+    <div className="absolute top-0 right-0 w-64 h-64 bg-blue-400/10 blur-[60px] rounded-full pointer-events-none" />
+    <div className="absolute bottom-0 left-0 w-64 h-64 bg-teal-400/10 blur-[60px] rounded-full pointer-events-none" />
+    <div className="relative rounded-[1.6rem] sm:rounded-[2.6rem] overflow-hidden border border-white/40 shadow-sm bg-white/20">
       {children}
     </div>
   </div>
@@ -268,10 +51,9 @@ function HeroCarousel() {
   const count = heroSlides.length;
   const INTERVAL = 5000;
 
-  // Autoplay with progress bar
   useEffect(() => {
     if (count <= 1) return;
-    const step = 50; // ms
+    const step = 50;
     let elapsed = 0;
     const timer = setInterval(() => {
       elapsed += step;
@@ -289,7 +71,6 @@ function HeroCarousel() {
   const prev = () => goTo((current - 1 + count) % count);
   const next = () => goTo((current + 1) % count);
 
-  // Touch/swipe support
   const touchRef = useRef<number>(0);
   const handleTouchStart = (e: React.TouchEvent) => { touchRef.current = e.touches[0].clientX; };
   const handleTouchEnd = (e: React.TouchEvent) => {
@@ -299,13 +80,12 @@ function HeroCarousel() {
   };
 
   return (
-    <LedScreen>
+    <LiquidGlassScreen>
       <div
         className="relative w-full overflow-hidden group aspect-video max-h-[280px] sm:max-h-[450px]"
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
-        {/* Slides with crossfade */}
         {heroSlides.map((slide, i) => (
           <motion.div
             key={i}
@@ -321,24 +101,21 @@ function HeroCarousel() {
 
         {count > 1 && (
           <>
-            {/* Gradient overlay at bottom for dots */}
-            <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-black/50 to-transparent z-10 pointer-events-none" />
+            <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-black/20 to-transparent z-10 pointer-events-none" />
 
-            {/* Navigation arrows */}
             <button
               onClick={prev}
-              className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white/40 hover:scale-110"
+              className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/40 backdrop-blur-md border border-white/60 flex items-center justify-center text-black opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white/60 hover:scale-110 shadow-sm"
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
             <button
               onClick={next}
-              className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white/40 hover:scale-110"
+              className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/40 backdrop-blur-md border border-white/60 flex items-center justify-center text-black opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white/60 hover:scale-110 shadow-sm"
             >
               <ChevronRight className="w-5 h-5" />
             </button>
 
-            {/* Dots + progress */}
             <div className="absolute bottom-3 sm:bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2">
               {heroSlides.map((_, i) => (
                 <button
@@ -347,7 +124,7 @@ function HeroCarousel() {
                   className="relative h-1.5 rounded-full overflow-hidden transition-all duration-300"
                   style={{
                     width: i === current ? 32 : 8,
-                    backgroundColor: i === current ? 'rgba(255,255,255,0.3)' : 'rgba(255,255,255,0.5)',
+                    backgroundColor: i === current ? 'rgba(255,255,255,0.8)' : 'rgba(255,255,255,0.4)',
                   }}
                 >
                   {i === current && (
@@ -362,41 +139,7 @@ function HeroCarousel() {
           </>
         )}
       </div>
-    </LedScreen>
-  );
-}
-
-
-const sliderItems = [
-  { img: "https://images.unsplash.com/photo-1527443154391-507e9dc6c5cc?q=80&w=200&auto=format&fit=crop", label: "Stationery" },
-  { img: "https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=200&auto=format&fit=crop", label: "Snacks" },
-  { img: "https://images.unsplash.com/photo-1498049794561-7780e7231661?q=80&w=200&auto=format&fit=crop", label: "Electronics" },
-  { img: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?q=80&w=200&auto=format&fit=crop", label: "Books" },
-  { img: "https://images.unsplash.com/photo-1621939514649-280e2ee25f60?q=80&w=200&auto=format&fit=crop", label: "Munchies" },
-  { img: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=200&auto=format&fit=crop", label: "Audio" },
-];
-
-function AnimatedProductSlider() {
-  return (
-    <div className="w-full relative overflow-hidden h-32 flex items-center">
-      <div className="absolute inset-y-0 left-0 w-8 sm:w-16 bg-gradient-to-r from-[#231942] to-transparent z-10 pointer-events-none" />
-      <div className="absolute inset-y-0 right-0 w-8 sm:w-16 bg-gradient-to-l from-[#231942] to-transparent z-10 pointer-events-none" />
-
-      <motion.div
-        animate={{ x: ["0%", "-50%"] }}
-        transition={{ repeat: Infinity, ease: "linear", duration: 30 }}
-        className="flex gap-4 w-max"
-      >
-        {[...sliderItems, ...sliderItems].map((item, i) => (
-          <div key={i} className="flex flex-col items-center justify-center bg-white/10 hover:bg-white/20 transition-colors backdrop-blur-md rounded-2xl p-3 w-28 h-28 border border-white/20 flex-shrink-0 cursor-pointer shadow-lg">
-            <div className="w-14 h-14 rounded-full overflow-hidden mb-2 shadow-inner bg-white/20">
-              <img src={item.img} alt={item.label} className="w-full h-full object-cover" />
-            </div>
-            <span className="text-white text-xs font-bold tracking-wide shadow-sm">{item.label}</span>
-          </div>
-        ))}
-      </motion.div>
-    </div>
+    </LiquidGlassScreen>
   );
 }
 
@@ -433,24 +176,12 @@ export default function Home() {
   );
 
   return (
-    <div className="min-h-screen bg-slate-50 pt-[5.5rem] pb-32 relative">
+    <div className="min-h-screen pt-[5.5rem] pb-32 relative text-[#1D1D1F]">
       <div className="max-w-[1600px] mx-auto relative px-4">
       </div>
 
-
       {/* ─── Hero Section ─── */}
-      <div
-        className="relative px-4 pt-7 pb-12 sm:px-8 sm:pt-10 sm:pb-16 mb-8 mx-2 sm:mx-0 rounded-[2.2rem] sm:rounded-[2.8rem] overflow-hidden"
-        style={{ background: 'linear-gradient(160deg, #0f0c29 0%, #1a1048 45%, #24243e 100%)' }}
-      >
-        {/* Layered ambient glows */}
-        <div className="absolute -top-20 -right-20 w-80 h-80 rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(139,92,246,0.25) 0%, transparent 70%)' }} />
-        <div className="absolute -bottom-16 -left-16 w-72 h-72 rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(52,211,153,0.12) 0%, transparent 70%)' }} />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] pointer-events-none opacity-20" style={{ background: 'radial-gradient(ellipse, rgba(109,40,217,0.4) 0%, transparent 70%)' }} />
-
-        {/* Subtle noise texture */}
-        <div className="absolute inset-0 pointer-events-none opacity-[0.03]" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'n\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.75\' numOctaves=\'4\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23n)\'/%3E%3C/svg%3E")' }} />
-
+      <div className="relative px-4 pt-4 pb-8 sm:px-8 sm:pt-8 sm:pb-12 mb-8 mx-2 sm:mx-0 rounded-[2.2rem] sm:rounded-[2.8rem] overflow-hidden">
         <div className="max-w-[1600px] mx-auto relative z-10">
           <motion.div
             initial={{ opacity: 0, y: -18 }}
@@ -458,24 +189,20 @@ export default function Home() {
             transition={{ duration: 0.55 }}
             className="text-center mb-6 sm:mb-8"
           >
-            {/* Pill tagline */}
-            <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 backdrop-blur px-3.5 py-1 mb-4 sm:mb-5">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_2px_rgba(52,211,153,0.6)]" />
-              <span className="text-[10px] sm:text-[11px] font-bold text-white/70 uppercase tracking-[0.18em]">CU Bazzar &nbsp;·&nbsp; Your Campus Store</span>
+            <div className="inline-flex items-center gap-2 rounded-full border border-black/5 bg-black/5 backdrop-blur px-3.5 py-1 mb-4 sm:mb-5">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#007AFF] shadow-[0_0_6px_2px_rgba(0,122,255,0.4)]" />
+              <span className="text-[10px] sm:text-[11px] font-bold text-[#8E8E93] uppercase tracking-[0.18em]">CU Bazzar &nbsp;·&nbsp; Your Campus Store</span>
             </div>
 
-            <h1 className="font-extrabold tracking-tight text-white leading-[1.12] mb-0" style={{ ...fontH, fontSize: 'clamp(1.65rem, 5vw, 3.5rem)' }}>
+            <h1 className="font-extrabold tracking-tight text-[#1D1D1F] leading-[1.05] mb-0" style={{ ...fontH, fontSize: 'clamp(2rem, 6vw, 4.5rem)' }}>
               Everything{' '}
-              <span style={{ background: 'linear-gradient(90deg, #6ee7b7, #34d399)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+              <span style={{ color: '#007AFF' }}>
                 Delivered
               </span>
               <br className="sm:hidden" />
               {' '}To Your Room
             </h1>
           </motion.div>
-
-          {/* Thin glowing divider before the carousel */}
-          <div className="w-20 h-px mx-auto mb-6 sm:mb-7 rounded-full" style={{ background: 'linear-gradient(90deg, transparent, rgba(110,231,183,0.6), transparent)' }} />
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -487,31 +214,23 @@ export default function Home() {
         </div>
       </div>
 
-
       <div className="max-w-[1600px] mx-auto px-3 sm:px-6 lg:px-10">
-
-
-
-
         <div className="w-full">
-
-
 
           {/* ─── Digital Vending Machine Section ─── */}
           <VendingMachine />
 
           {/* ─── EXPLORE / BROWSE SECTION ─── */}
           <section className="mb-10 sm:mb-16 mt-8">
-            {/* Header & Search */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
               <div className="flex items-center gap-2">
-                <Compass className="w-5 h-5 text-brand" />
-                <h2 className="text-base sm:text-lg font-black uppercase tracking-tight text-slate-900" style={fontH}>
+                <Compass className="w-5 h-5 text-[#007AFF]" />
+                <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-[#1D1D1F]">
                   Explore Products
                 </h2>
               </div>
 
-              <Link to="/browse" className="flex items-center gap-0.5 text-xs sm:text-sm text-brand font-bold mr-auto sm:mr-0 sm:ml-auto pr-4">
+              <Link to="/browse" className="flex items-center gap-1 text-[13px] sm:text-[15px] text-[#007AFF] font-semibold hover:underline mr-auto sm:mr-0 sm:ml-auto pr-4">
                 See all <ChevronRight className="w-4 h-4" />
               </Link>
             </div>
@@ -524,10 +243,10 @@ export default function Home() {
                   <button
                     key={cat.id}
                     onClick={() => setActiveCategory(cat.id)}
-                    className={`flex items-center gap-1.5 px-4 py-2 rounded-xl font-bold transition-all duration-200 flex-shrink-0 text-[10px] sm:text-xs whitespace-nowrap border ${
+                    className={`flex items-center gap-1.5 px-4 py-2 rounded-full font-semibold transition-all duration-200 flex-shrink-0 text-[13px] sm:text-[15px] whitespace-nowrap shadow-sm ${
                       isActive
-                        ? 'bg-brand text-white border-brand shadow-md scale-105'
-                        : 'bg-white text-slate-500 border-slate-100 hover:border-brand/30 hover:bg-slate-50'
+                        ? 'bg-[#1D1D1F] text-white ios-shadow scale-105'
+                        : 'ios-glass text-[#8E8E93] hover:text-[#1D1D1F] hover:bg-white/80'
                     }`}
                   >
                     {cat.label}
@@ -538,23 +257,23 @@ export default function Home() {
 
             {/* Product Grid */}
             {productsLoading ? (
-              <div className="flex flex-col items-center justify-center py-12 gap-3">
-                <Loader2 className="w-8 h-8 animate-spin text-brand/40" />
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Finding Items...</p>
+              <div className="flex flex-col items-center justify-center py-16 gap-3">
+                <Loader2 className="w-8 h-8 animate-spin text-[#007AFF]" />
+                <p className="text-[12px] font-bold text-[#8E8E93] uppercase tracking-widest">Finding Items...</p>
               </div>
             ) : filteredProducts.length === 0 ? (
-              <div className="text-center py-16 bg-white rounded-[2rem] border border-slate-100">
-                <Package className="w-10 h-10 text-slate-200 mx-auto mb-3" />
-                <p className="text-sm font-bold text-slate-400">No products found</p>
+              <div className="text-center py-20 ios-glass rounded-[2rem]">
+                <Package className="w-12 h-12 text-[#8E8E93] mx-auto mb-4" />
+                <p className="text-lg font-semibold text-[#1D1D1F]">No products found</p>
                 <button 
                   onClick={() => { setSearchQuery(""); setActiveCategory("All"); }}
-                  className="mt-4 text-[10px] font-black uppercase tracking-widest text-brand"
+                  className="mt-4 text-[13px] font-bold uppercase tracking-widest text-[#007AFF]"
                 >
                   Reset Filters
                 </button>
               </div>
             ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 lg:gap-5">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-5 lg:gap-6">
                 {filteredProducts.slice(0, 3).map((p, i) => (
                   <ProductCard
                     key={p.id}
@@ -567,66 +286,57 @@ export default function Home() {
                     category={p.category}
                     rating={4.5}
                     seller={p.profiles?.full_name || "Student"}
-                    delay={i * 0.03}
+                    delay={i * 0.05}
                   />
                 ))}
               </div>
             )}
           </section>
 
-
-          {/* {"\u2500\u2500\u2500"} TRUST & SAFETY {"\u2500\u2500\u2500"} */}
+          {/* ─── TRUST & SAFETY ─── */}
           <section className="mb-6">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="rounded-3xl sm:rounded-[2rem] overflow-hidden bg-emerald-50 border border-emerald-100/50"
+              className="rounded-3xl sm:rounded-[2.5rem] overflow-hidden ios-glass shadow-sm"
             >
               {/* Header */}
-              <div className="px-5 pt-5 pb-3 sm:px-8 sm:pt-7 sm:pb-4 text-center">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full mb-3 bg-emerald-100 border border-emerald-200">
-                  <Shield className="w-3.5 h-3.5 text-emerald-600" />
-                  <span className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-emerald-700">Safe & Trusted</span>
+              <div className="px-5 pt-8 pb-3 sm:px-8 sm:pt-10 sm:pb-6 text-center">
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-4 bg-[#34C759]/10 border border-[#34C759]/20">
+                  <Shield className="w-4 h-4 text-[#34C759]" />
+                  <span className="text-[11px] sm:text-xs font-bold uppercase tracking-widest text-[#34C759]">Safe & Trusted</span>
                 </div>
-                <h2 className="text-lg sm:text-2xl font-black mb-1 text-slate-900" style={fontH}>Your Safety is Our Priority</h2>
-                <p className="text-xs sm:text-sm max-w-lg mx-auto text-slate-600">CU Bazzar is run with full transparency. Every delivery is handled personally with zero tolerance for prohibited items.</p>
+                <h2 className="text-2xl sm:text-3xl font-bold mb-3 text-[#1D1D1F] tracking-tight">Your Safety is Our Priority</h2>
+                <p className="text-[15px] max-w-lg mx-auto text-[#8E8E93] font-medium leading-relaxed">CU Bazzar is run with full transparency. Every delivery is handled personally with zero tolerance for prohibited items.</p>
               </div>
 
               {/* Trust Pillars */}
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 px-4 pb-5 sm:px-6 sm:pb-7">
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 px-5 pb-6 sm:px-8 pb-8">
                 {[
                   {
                     icon: Package,
                     title: "Personal Delivery",
                     desc: "Platform owner personally handles every single delivery. No third parties.",
-                    color: "#10B981",
-                    bg: "#ffffff",
-                    border: "#d1fae5",
+                    color: "#34C759",
                   },
                   {
                     icon: Ban,
                     title: "No Illegal Items",
                     desc: "Strict zero-tolerance policy. No drugs, alcohol, weapons, or prohibited goods.",
-                    color: "#F43F5E",
-                    bg: "#ffffff",
-                    border: "#ffe4e6",
+                    color: "#FF3B30",
                   },
                   {
                     icon: ShieldCheck,
                     title: "Direct Accountability",
                     desc: "Real person, real responsibility. We stand behind every order and transaction.",
-                    color: "#3B82F6",
-                    bg: "#ffffff",
-                    border: "#dbeafe",
+                    color: "#007AFF",
                   },
                   {
                     icon: Headset,
                     title: "24/7 Help Center",
                     desc: "Need help? Our support is available round the clock. Instant response guaranteed.",
-                    color: "#231942",
-                    bg: "#ffffff",
-                    border: "#ede9fe",
+                    color: "#FF9500",
                   },
                 ].map((item, i) => (
                   <motion.div
@@ -635,28 +345,15 @@ export default function Home() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: i * 0.08 }}
-                    className="rounded-2xl sm:rounded-3xl p-3.5 sm:p-5 flex flex-col transition-all duration-300 hover:-translate-y-0.5 shadow-sm"
-                    style={{ background: item.bg, border: `1px solid ${item.border}` }}
+                    className="rounded-2xl sm:rounded-3xl p-5 sm:p-6 flex flex-col transition-all duration-300 bg-white/50 border border-white/60 shadow-sm"
                   >
-                    <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center mb-3" style={{ background: `${item.color}10`, border: `1px solid ${item.color}20` }}>
-                      <item.icon className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: item.color }} />
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center mb-4 bg-white shadow-sm border border-black/5">
+                      <item.icon className="w-5 h-5 sm:w-6 sm:h-6" style={{ color: item.color }} />
                     </div>
-                    <h3 className="text-xs sm:text-sm font-bold mb-1 text-slate-900">{item.title}</h3>
-                    <p className="text-[10px] sm:text-xs leading-relaxed text-slate-500">{item.desc}</p>
+                    <h3 className="text-[15px] sm:text-base font-bold mb-1.5 text-[#1D1D1F] tracking-tight">{item.title}</h3>
+                    <p className="text-[13px] leading-relaxed text-[#8E8E93] font-medium">{item.desc}</p>
                   </motion.div>
                 ))}
-              </div>
-
-              {/* Help Center CTA */}
-              <div className="px-4 pb-5 sm:px-6 sm:pb-7">
-                <Link
-                  to="/help"
-                  className="flex items-center justify-center gap-2 w-full sm:w-auto sm:mx-auto px-6 py-3 rounded-xl text-sm font-semibold transition-all hover:scale-105 active:scale-[0.98] bg-white border border-emerald-200 text-emerald-600 shadow-sm"
-                >
-                  <Headset className="w-4 h-4" />
-                  Visit Help Center
-                  <ExternalLink className="w-3.5 h-3.5 opacity-60" />
-                </Link>
               </div>
             </motion.div>
           </section>

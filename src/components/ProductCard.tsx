@@ -34,10 +34,10 @@ interface ProductCardProps {
 }
 
 const conditionColors: Record<string, string> = {
-  New: "bg-emerald-100 text-emerald-700",
-  "Like New": "bg-brand-50 text-brand",
-  Good: "bg-amber-100 text-amber-700",
-  Fair: "bg-slate-100 text-slate-600",
+  New: "bg-[#34C759]/10 text-[#34C759]",
+  "Like New": "bg-[#007AFF]/10 text-[#007AFF]",
+  Good: "bg-[#FF9500]/10 text-[#FF9500]",
+  Fair: "bg-[#8E8E93]/10 text-[#8E8E93]",
 };
 
 const ProductCard = memo(({
@@ -101,26 +101,25 @@ const ProductCard = memo(({
   return (
     <Link to={`/product/${id}`} className="block w-full h-full">
       <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        whileInView={{ opacity: 1, y: 0 }}
+        initial={{ opacity: 0, y: 10, scale: 0.95 }}
+        whileInView={{ opacity: 1, y: 0, scale: 1 }}
         viewport={{ once: true, margin: "-50px" }}
-        transition={{ duration: 0.2, delay: Math.min(delay, 0.1) }}
-        whileHover={{ y: -2 }}
-        className="relative flex flex-col bg-[#faf5f8] rounded-2xl overflow-hidden group cursor-pointer h-full border-2 border-slate-200 shadow-sm hover:shadow-md hover:border-[#e0b1cb] transition-all duration-200"
+        transition={{ duration: 0.4, delay: Math.min(delay, 0.1), ease: [0.16, 1, 0.3, 1] }}
+        className="relative flex flex-col ios-glass rounded-[24px] overflow-hidden group cursor-pointer h-full border border-white/60 shadow-sm hover:shadow-lg transition-all duration-300 card-hover bg-white/40"
       >
         {badge && (
-          <div className="absolute top-3 left-3 z-10 px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#231942] text-white shadow-sm uppercase tracking-wider">
+          <div className="absolute top-3 left-3 z-10 px-2.5 py-1 rounded-full text-[10px] font-bold bg-[#1D1D1F] text-white shadow-sm uppercase tracking-wider">
             {badge}
           </div>
         )}
 
-        <div className="absolute top-3 right-3 z-10 flex gap-1.5">
+        <div className="absolute top-3 right-3 z-10 flex gap-1.5 opacity-0 sm:opacity-100 sm:group-hover:opacity-100 transition-opacity duration-300">
           <motion.button
             onClick={handleFav}
             whileTap={{ scale: 0.75 }}
             className={`w-8 h-8 rounded-full flex items-center justify-center shadow-sm transition-all duration-300 ${isFav
-              ? 'bg-pink-50 text-pink-500 shadow-pink-100'
-              : 'bg-white/80 backdrop-blur-md text-slate-400 hover:text-pink-500 hover:bg-white'
+              ? 'bg-[#FF3B30]/10 text-[#FF3B30] backdrop-blur-md border border-[#FF3B30]/20'
+              : 'bg-white/70 backdrop-blur-xl border border-white/60 text-[#8E8E93] hover:text-[#FF3B30] hover:bg-white'
               }`}
           >
             <Heart className={`w-4 h-4 transition-all ${isFav ? 'fill-current scale-110' : ''}`} />
@@ -128,21 +127,20 @@ const ProductCard = memo(({
           <motion.button
             onClick={handleShare}
             whileTap={{ scale: 0.75 }}
-            className="bg-white/80 backdrop-blur-md w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:text-brand-accent hover:bg-white shadow-sm transition-colors"
+            className="w-8 h-8 rounded-full flex items-center justify-center bg-white/70 backdrop-blur-xl border border-white/60 text-[#8E8E93] hover:text-[#007AFF] hover:bg-white shadow-sm transition-colors duration-300"
           >
             <Share2 className="w-3.5 h-3.5" />
           </motion.button>
         </div>
 
-        <div className="relative overflow-hidden shrink-0 h-40 sm:h-48 bg-slate-100/80">
+        <div className="relative overflow-hidden shrink-0 h-44 sm:h-52 bg-[#F5F5F7]">
           {!imgLoaded && !imgError && (
-            <div className="absolute inset-0 animate-pulse" style={{ background: 'linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%)', backgroundSize: '200% 100%' }} />
+            <div className="absolute inset-0 animate-pulse bg-gradient-to-r from-transparent via-black/5 to-transparent bg-[length:200%_100%]" />
           )}
           <img
             src={displaySrc}
             alt={title}
-            className={`w-full h-full object-cover transition-all duration-300 group-hover:scale-105 ${imgLoaded ? 'opacity-100' : 'opacity-0'
-              }`}
+            className={`w-full h-full object-cover transition-all duration-500 group-hover:scale-105 ${imgLoaded ? 'opacity-100' : 'opacity-0'}`}
             onLoad={() => setImgLoaded(true)}
             onError={() => { setImgError(true); setImgLoaded(true); }}
             loading="lazy"
@@ -150,41 +148,45 @@ const ProductCard = memo(({
           />
         </div>
 
-        <div className="p-3 sm:p-4 flex flex-col flex-1">
+        <div className="p-4 flex flex-col flex-1">
           <div>
             <div className="flex items-start justify-between gap-2 mb-2">
-              <h3 className="font-semibold text-sm text-slate-900 leading-tight line-clamp-2">{title}</h3>
+              <h3 className="font-bold text-[15px] text-[#1D1D1F] leading-snug tracking-tight line-clamp-2">{title}</h3>
             </div>
-            <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] uppercase tracking-wider font-bold mb-3 ${conditionColors[condition]}`}>
+            
+            <span className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] uppercase tracking-wider font-bold mb-3 border border-current/20 ${conditionColors[condition]}`}>
               {condition}
             </span>
-            <div className="flex items-center gap-1 mb-3">
-              <span className="text-xs text-slate-500 font-medium">{seller}</span>
-              <BadgeCheck className="w-3.5 h-3.5 text-brand-accent ml-0.5" />
+            
+            <div className="flex items-center gap-1.5 mb-3">
+              <span className="text-[11px] text-[#8E8E93] font-semibold">{seller}</span>
+              <BadgeCheck className="w-3.5 h-3.5 text-[#007AFF]" />
               {rating && (
                 <>
-                  <Star className="w-3 h-3 text-amber-400 fill-current ml-1" />
-                  <span className="text-xs text-slate-500 font-medium">{rating}</span>
+                  <Star className="w-3 h-3 text-[#FF9500] fill-current ml-1" />
+                  <span className="text-[11px] text-[#8E8E93] font-semibold">{rating}</span>
                 </>
               )}
             </div>
           </div>
+          
           <div className="flex items-center justify-between mt-auto">
-            <div>
-              <span className="font-extrabold text-lg text-slate-900">₹{price.toLocaleString()}</span>
+            <div className="flex items-baseline gap-2">
+              <span className="font-bold text-xl tracking-tight text-[#1D1D1F]">₹{price.toLocaleString()}</span>
               {originalPrice && (
-                <span className="text-xs text-slate-400 line-through ml-2">₹{originalPrice.toLocaleString()}</span>
+                <span className="textxs font-semibold text-[#8E8E93] line-through">₹{originalPrice.toLocaleString()}</span>
               )}
             </div>
+            
             <motion.button
               onClick={handleAddToCart}
               whileTap={{ scale: 0.9 }}
-              className="w-8 h-8 sm:w-auto sm:h-auto sm:px-4 sm:py-2.5 bg-emerald-50 hover:bg-emerald-500 text-emerald-700 hover:text-white rounded-xl transition-all flex items-center justify-center gap-1.5 active:scale-95 border border-emerald-200 hover:border-emerald-500"
+              className="w-9 h-9 sm:w-auto sm:h-auto sm:px-4 sm:py-2 ios-action-button rounded-full flex items-center justify-center gap-1.5"
             >
               <ShoppingCart className="w-4 h-4 sm:hidden" />
               <div className="hidden sm:flex items-center gap-1.5">
-                <ShoppingCart className="w-3.5 h-3.5" />
-                <span className="text-xs font-bold">Cart</span>
+                <ShoppingCart className="w-4 h-4" />
+                <span className="text-xs font-bold tracking-tight">Add</span>
               </div>
             </motion.button>
           </div>

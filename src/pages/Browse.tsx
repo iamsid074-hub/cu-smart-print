@@ -53,31 +53,28 @@ export default function Browse() {
 
     const activeCategory = categoryParam || "All";
 
-
-
     return (
-        <div className="min-h-screen pt-24 pb-32 px-4 sm:px-6 bg-slate-50">
-            <div className="max-w-7xl mx-auto">
+        <div className="min-h-screen pt-24 pb-32 px-4 sm:px-6 relative text-[#1D1D1F]">
+            <div className="max-w-[1600px] mx-auto relative z-10">
 
                 {/* ── Hero Header ─────────────────────────────────────── */}
                 <motion.div
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3 }}
+                    transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
                     className="mb-6 sm:mb-8"
                 >
-                    <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-6">
+                    <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
                         <div>
-                            <div style={{ height: "1.5rem" }} />
-                            <p className="text-sm mt-1 text-slate-500 font-medium">
+                            <h1 className="text-3xl sm:text-4xl font-black tracking-tight mb-2">Campus Market</h1>
+                            <p className="text-[15px] sm:text-base text-[#8E8E93] font-medium leading-relaxed">
                                 {products.length} {products.length === 1 ? 'item' : 'items'} available from CU students
                             </p>
                         </div>
 
                         {/* Sell Button */}
                         <div className="w-full sm:w-auto">
-                            <Link to="/list" className="flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-2xl font-bold text-sm text-white transition-all bg-brand shadow-[0_10px_25px_rgba(35,25,66,0.2)] hover:scale-105 active:scale-95 group overflow-hidden relative">
-                                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
+                            <Link to="/list" className="flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-full font-bold text-[15px] text-white transition-all ios-action-button hover:scale-105 active:scale-95">
                                 <PlusCircle className="w-4 h-4" />
                                 <span>Sell Something</span>
                             </Link>
@@ -85,16 +82,16 @@ export default function Browse() {
                     </div>
 
                     {/* ── Category Pills ────────────────────────────────── */}
-                    <div className="flex gap-2 overflow-x-auto pb-4 scrollbar-hide -mx-1 px-1" style={{ WebkitOverflowScrolling: 'touch' }}>
+                    <div className="flex gap-2 overflow-x-auto pb-6 scrollbar-hide -mx-2 px-2" style={{ WebkitOverflowScrolling: 'touch' }}>
                         {categories.map((cat) => {
                             const isActive = activeCategory === cat.id;
                             return (
                                 <button
                                     key={cat.id}
                                     onClick={() => handleCategoryClick(cat.id)}
-                                    className={`flex items-center gap-1.5 px-5 py-2.5 rounded-3xl font-bold transition-all duration-200 flex-shrink-0 text-xs sm:text-sm whitespace-nowrap border ${isActive
-                                        ? 'bg-brand text-white border-brand shadow-lg'
-                                        : 'bg-white text-slate-600 border-slate-200 hover:border-brand-muted hover:bg-brand-50 shadow-sm'
+                                    className={`flex items-center gap-1.5 px-5 py-2.5 rounded-full font-semibold transition-all duration-300 flex-shrink-0 text-[14px] whitespace-nowrap shadow-sm border ${isActive
+                                        ? 'bg-[#1D1D1F] text-white border-[#1D1D1F] ios-shadow scale-105'
+                                        : 'ios-glass text-[#8E8E93] border-white/40 hover:text-[#1D1D1F] hover:bg-white/80'
                                         }`}
                                 >
                                     {cat.label}
@@ -107,16 +104,32 @@ export default function Browse() {
                 {/* ── Content ──────────────────────────────────────────── */}
                 {
                     loading ? (
-                        <div className="flex flex-col items-center justify-center py-32 gap-4">
-                            <Loader2 className="w-10 h-10 animate-spin text-brand" />
-                            <p className="text-sm font-medium text-slate-500">Loading products...</p>
+                        <div className="flex flex-col items-center justify-center py-32 gap-3">
+                            <Loader2 className="w-8 h-8 animate-spin text-[#007AFF]" />
+                            <p className="text-[12px] font-bold uppercase tracking-widest text-[#8E8E93]">Finding Items...</p>
                         </div>
+                    ) : products.length === 0 ? (
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            className="flex flex-col items-center justify-center py-24 ios-glass rounded-[2rem] text-center px-4"
+                        >
+                            <Package className="w-16 h-16 text-[#8E8E93] mb-4 opacity-50" />
+                            <h3 className="text-xl font-bold tracking-tight mb-2">No items found</h3>
+                            <p className="text-[#8E8E93] font-medium max-w-sm mb-6">There are currently no items available in this category. Try expanding your search or check back soon.</p>
+                            <button 
+                              onClick={() => handleCategoryClick("All")}
+                              className="text-[13px] font-bold text-[#007AFF] uppercase tracking-widest px-6 py-2.5 bg-[#007AFF]/10 rounded-full hover:bg-[#007AFF]/20 transition-colors"
+                            >
+                                View All Items
+                            </button>
+                        </motion.div>
                     ) : (
                         <motion.div
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
-                            transition={{ duration: 0.2 }}
-                            className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 lg:gap-5"
+                            transition={{ duration: 0.3 }}
+                            className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-5 lg:gap-6"
                         >
                             {products.map((p, i) => (
                                 <ProductCard
@@ -130,13 +143,13 @@ export default function Browse() {
                                     category={p.category}
                                     rating={4.5}
                                     seller={p.profiles?.full_name || "Student"}
-                                    delay={i * 0.03}
+                                    delay={i * 0.04}
                                 />
                             ))}
                         </motion.div>
                     )
                 }
-            </div >
-        </div >
+            </div>
+        </div>
     );
 }

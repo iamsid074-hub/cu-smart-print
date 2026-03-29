@@ -259,12 +259,7 @@ export default function VendingMachine() {
     <section className="py-12 px-4 relative overflow-hidden">
       <div className="max-w-4xl mx-auto">
         <div className="flex flex-col items-center mb-10 text-center">
-          <div
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-900 border border-slate-800 text-emerald-400 text-[10px] font-black uppercase tracking-widest mb-4 shadow-xl"
-          >
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            Live Inventory
-          </div>
+
           <h2 className="text-3xl sm:text-4xl font-black text-slate-900 mb-2">Hostel Smart Vending Machine</h2>
         </div>
 

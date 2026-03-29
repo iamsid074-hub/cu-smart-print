@@ -73,20 +73,14 @@ export default function Wallet() {
     };
 
     return (
-        <div className="relative min-h-screen pb-32 overflow-hidden selection:bg-slate-200" style={{ backgroundColor: "#F7F7F8" }}>
+        <div className="relative min-h-screen pb-32 overflow-hidden bg-[#F5F5F7] text-[#1D1D1F]">
             {/* Background & Studio Ambience Layer */}
             <div className="absolute inset-0 pointer-events-none z-0">
-                {/* Desk/Wall gradient base */}
-                <div className="absolute inset-0 bg-gradient-to-b from-[#e8eaef] to-[#f4f5f8]" />
-                
-                {/* Soft Spotlight from Top-Right */}
-                <div 
-                    className="absolute top-[-20%] right-[-10%] w-[70vw] h-[70vw] rounded-full blur-[100px] opacity-60"
-                    style={{ background: "radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 70%)" }}
-                />
+                <div className="absolute top-0 right-1/4 w-[400px] h-[400px] bg-[#007AFF]/5 rounded-full blur-[100px] opacity-80" />
+                <div className="absolute top-[20%] left-1/4 w-[500px] h-[500px] bg-[#34C759]/5 rounded-full blur-[120px] opacity-80" />
                 
                 {/* Deep Ambient Shadow at the bottom representing the "desk" gap */}
-                <div className="absolute bottom-0 w-full h-[40vh] bg-gradient-to-t from-slate-300/30 to-transparent blur-3xl opacity-50" />
+                <div className="absolute bottom-0 w-full h-[30vh] bg-gradient-to-t from-black/5 to-transparent opacity-50" />
             </div>
 
             {/* Content Layer */}
@@ -95,12 +89,12 @@ export default function Wallet() {
                 {/* Header: Title + Profile Access */}
                 <div className="flex items-center justify-between mb-8">
                     <div>
-                        <h1 className="text-[28px] leading-tight font-black tracking-tighter text-slate-800 flex items-center gap-3">
-                            Your <span className="text-slate-400 font-medium font-serif italic lowercase tracking-tight">Wallet</span>
+                        <h1 className="text-[28px] leading-tight font-black tracking-tighter text-[#1D1D1F] flex items-center gap-3">
+                            Your <span className="text-[#8E8E93] font-medium font-serif italic lowercase tracking-tight">Wallet</span>
                             <motion.button 
                                 whileTap={{ rotate: 180 }}
                                 onClick={() => fetchWalletData()}
-                                className="p-2 rounded-full bg-white shadow-sm border border-slate-100 text-slate-400 hover:text-slate-900 transition-colors"
+                                className="p-2 rounded-full ios-glass border border-white/60 text-[#8E8E93] hover:text-[#1D1D1F] transition-colors shadow-sm bg-white/60"
                             >
                                 <RotateCcw className="w-4 h-4" />
                             </motion.button>
@@ -111,7 +105,7 @@ export default function Wallet() {
                     <Link to="/profile">
                         <motion.div 
                             whileTap={{ scale: 0.9 }}
-                            className="w-10 h-10 rounded-full bg-white shadow-[0_4px_12px_rgba(0,0,0,0.05)] border border-slate-100 flex items-center justify-center overflow-hidden"
+                            className="w-10 h-10 rounded-full bg-white shadow-sm border border-black/5 flex items-center justify-center overflow-hidden"
                         >
                             <img 
                                 src={`https://api.dicebear.com/7.x/notionists/svg?seed=${user?.id || 'bazzar'}&backgroundColor=f1f5f9`} 
@@ -124,24 +118,22 @@ export default function Wallet() {
 
                 {/* Brand New Centered Modern Wallet Card */}
                 <motion.div 
-                    initial={{ scale: 0.95, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    className="relative w-full bg-white rounded-[40px] p-8 pb-10 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.06)] border border-slate-100/60 flex flex-col items-center justify-center min-h-[300px] overflow-hidden group mb-8"
+                    initial={{ scale: 0.95, opacity: 0, y: 10 }}
+                    animate={{ scale: 1, opacity: 1, y: 0 }}
+                    transition={{ type: "spring", damping: 20, stiffness: 300 }}
+                    className="relative w-full ios-glass bg-white/40 backdrop-blur-3xl rounded-[2.5rem] p-8 pb-10 shadow-lg border border-white/60 flex flex-col items-center justify-center min-h-[300px] overflow-hidden group mb-8"
                 >
                     {/* Beautiful background decorative mesh/gradient */}
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-slate-50 rounded-full blur-[60px] opacity-60 translate-x-1/2 -translate-y-1/2 pointer-events-none" />
-                    <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-indigo-50/40 rounded-full blur-[80px] opacity-80 -translate-x-1/2 translate-y-1/2 pointer-events-none" />
-                    <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-[0.03] mix-blend-multiply pointer-events-none" />
-
-
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-white rounded-full blur-[60px] opacity-60 translate-x-1/2 -translate-y-1/2 pointer-events-none" />
+                    <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-[#007AFF]/10 rounded-full blur-[80px] opacity-80 -translate-x-1/2 translate-y-1/2 pointer-events-none" />
 
                     {/* Giant Balance Centerpiece */}
-                    <div className="flex flex-col items-center justify-center z-10 mb-8 mx-auto w-full text-center">
-                        <span className="text-slate-400 text-xs font-semibold uppercase tracking-widest mb-1">Available Balance</span>
+                    <div className="flex flex-col items-center justify-center z-10 mb-8 mx-auto w-full text-center mt-4">
+                        <span className="text-[#8E8E93] text-[11px] font-bold uppercase tracking-[0.15em] mb-1">Available Balance</span>
                         <div className="flex items-start justify-center gap-0">
-                            <span className="text-4xl font-bold text-slate-300 mt-2">₹</span>
+                            <span className="text-4xl font-bold text-[#8E8E93] mt-3">₹</span>
                             <motion.span 
-                                className="text-[100px] leading-[0.85] font-black tracking-tighter text-slate-800 drop-shadow-sm"
+                                className="text-[90px] leading-[0.85] font-black tracking-tighter text-[#1D1D1F]"
                                 initial={{ y: 20 }}
                                 animate={{ y: 0 }}
                                 transition={{ type: "spring", stiffness: 400, damping: 20 }}
@@ -152,9 +144,9 @@ export default function Wallet() {
                     </div>
 
                     {/* Bottom subtle text */}
-                    <div className="text-center z-10 max-w-[220px] mx-auto mt-2">
-                        <p className="text-[13px] text-slate-500 leading-relaxed font-medium">
-                            Use this strictly at checkout for <span className="text-slate-900 font-bold">CU Bazzar</span> orders.
+                    <div className="text-center z-10 max-w-[220px] mx-auto mt-2 bg-white/50 backdrop-blur-md px-4 py-2.5 rounded-full border border-white/60 shadow-sm">
+                        <p className="text-[12px] text-[#8E8E93] font-medium leading-tight">
+                            Use this strictly at checkout for <span className="text-[#1D1D1F] font-bold">CU Bazzar</span> orders.
                         </p>
                     </div>
                 </motion.div>
@@ -164,38 +156,38 @@ export default function Wallet() {
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ type: "spring", stiffness: 300, damping: 25, delay: 0.1 }}
-                    className="bg-white rounded-[24px] p-6 shadow-[0_8px_20px_-10px_rgba(0,0,0,0.03)] border border-slate-100 mb-8 relative overflow-hidden"
+                    className="ios-glass bg-white/40 backdrop-blur-3xl rounded-[2rem] p-6 shadow-sm border border-white/60 mb-8 relative overflow-hidden"
                 >
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-slate-50 rounded-bl-full -z-0" />
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-white/40 to-transparent rounded-bl-full -z-0 pointer-events-none" />
                     
                     <div className="relative z-10 flex items-start justify-between mb-5">
-                        <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-slate-900 flex items-center justify-center">
+                        <div className="flex items-center gap-3.5">
+                            <div className="w-10 h-10 rounded-full bg-[#1D1D1F] flex items-center justify-center shadow-lg">
                                 <Gift className="w-5 h-5 text-white" />
                             </div>
                             <div>
-                                <h3 className="font-bold text-slate-800 text-[15px]">Unlock ₹30 Reward</h3>
-                                <p className="text-[12px] font-medium text-slate-500">Complete 3 orders in a week to get ₹30 in your wallet.</p>
+                                <h3 className="font-bold text-[#1D1D1F] text-[16px] tracking-tight">Unlock ₹30 Reward</h3>
+                                <p className="text-[12px] font-medium text-[#8E8E93]">Complete 3 orders in a week to get ₹30 in your wallet.</p>
                             </div>
                         </div>
                     </div>
 
                     {/* Progress Bar Container */}
                     <div className="relative">
-                        <div className="flex justify-between text-[11px] font-bold text-slate-400 mb-2 px-1">
+                        <div className="flex justify-between text-[11px] font-black text-[#8E8E93] mb-2 px-1">
                             {(() => {
                                 const displayCount = Math.min(weeklyOrders, 3);
                                 return (
                                     <>
                                         <span>0</span>
-                                        <span className={displayCount >= 1 ? "text-slate-800" : ""}>1</span>
-                                        <span className={displayCount >= 2 ? "text-slate-800" : ""}>2</span>
-                                        <span className={`px-2 rounded-full py-0.5 relative -top-0.5 transition-all ${displayCount === 3 ? "text-white bg-[#ef4444] shadow-md shadow-red-500/30 font-black scale-110" : "text-[#ef4444] bg-[#ef4444]/10"}`}>₹30!</span>
+                                        <span className={displayCount >= 1 ? "text-[#1D1D1F]" : ""}>1</span>
+                                        <span className={displayCount >= 2 ? "text-[#1D1D1F]" : ""}>2</span>
+                                        <span className={`px-2 rounded-full py-0.5 relative -top-0.5 transition-all shadow-sm ${displayCount === 3 ? "text-white bg-[#FF3B30] scale-[1.15]" : "text-[#FF3B30] bg-[#FF3B30]/10"}`}>₹30!</span>
                                     </>
                                 );
                             })()}
                         </div>
-                        <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden relative">
+                        <div className="w-full h-3 bg-black/5 rounded-full overflow-hidden relative shadow-inner">
                             {(() => {
                                 const displayCount = Math.min(weeklyOrders, 3);
                                 return (
@@ -203,16 +195,16 @@ export default function Wallet() {
                                         initial={{ width: 0 }}
                                         animate={{ width: `${(displayCount / 3) * 100}%` }}
                                         transition={{ duration: 1, type: "spring" }}
-                                        className={`absolute top-0 left-0 h-full rounded-full transition-colors duration-500 ${displayCount === 3 ? 'bg-emerald-500' : 'bg-slate-900'}`}
+                                        className={`absolute top-0 left-0 h-full rounded-full transition-colors duration-500 ${displayCount === 3 ? 'bg-[#34C759]' : 'bg-[#1D1D1F]'}`}
                                     />
                                 );
                             })()}
                         </div>
-                        <p className="mt-3 text-center text-[12px] font-medium text-slate-500">
-                            You have completed <strong className="text-slate-900 font-bold">{weeklyOrders}</strong> orders <span className="text-slate-400">THIS WEEK</span>.
+                        <p className="mt-4 text-center text-[13px] font-medium text-[#8E8E93]">
+                            You have completed <strong className="text-[#1D1D1F] font-bold">{weeklyOrders}</strong> orders <span className="text-[#8E8E93] font-bold">THIS WEEK</span>.
 
                             {weeklyOrders < 3 && (
-                                <span className="block text-slate-400 text-[10px] mt-1 italic">Goal resets Monday at 12 AM IST</span>
+                                <span className="block text-[#8E8E93]/60 text-[10px] mt-1 italic font-bold">Goal resets Monday at 12 AM IST</span>
                             )}
                         </p>
                     </div>
@@ -223,22 +215,23 @@ export default function Wallet() {
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ type: "spring", stiffness: 300, damping: 25, delay: 0.15 }}
-                    className="bg-gradient-to-br from-orange-400 to-red-500 rounded-[24px] p-6 shadow-[0_8px_20px_-10px_rgba(249,115,22,0.3)] mb-8 relative overflow-hidden"
+                    className="ios-glass relative overflow-hidden rounded-[2.5rem] p-6 mb-8 border border-white/60 shadow-lg"
+                    style={{ background: 'linear-gradient(135deg, #FF9500 0%, #FF3B30 100%)' }}
                 >
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-bl-full pointer-events-none" />
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-white/20 blur-xl rounded-full pointer-events-none" />
                     
                     <div className="relative z-10 flex items-start flex-col sm:flex-row gap-4">
-                        <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center flex-shrink-0 shadow-md">
+                        <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center flex-shrink-0 shadow-sm border border-white/30">
                             <span className="text-xl">🍝</span>
                         </div>
                         <div>
-                            <h3 className="font-bold text-white text-[16px] leading-tight mb-1 flex items-center gap-2">
-                                Flavour Factory Special <span className="px-2 py-0.5 bg-white/20 rounded-full text-[10px] uppercase tracking-widest font-black">Hot Offer</span>
+                            <h3 className="font-bold text-white text-[17px] leading-tight mb-1.5 flex items-center gap-2">
+                                Flavour Factory Special <span className="px-2 py-0.5 bg-white/30 rounded-full text-[9px] uppercase tracking-widest font-black shadow-sm">Hot Offer</span>
                             </h3>
                             <p className="text-[13px] font-medium text-white/90 leading-relaxed mb-4">
                                 Order worth <strong className="text-white text-[14px]">₹499</strong> or more from Flavour Factory to get <strong className="text-white text-[14px]">₹30</strong> instantly in your wallet!
                             </p>
-                            <Link to="/food" className="inline-flex items-center gap-1.5 px-4 py-2 bg-white text-orange-600 text-xs font-black rounded-full hover:scale-105 active:scale-95 transition-all shadow-sm">
+                            <Link to="/food" className="inline-flex items-center gap-1.5 px-4 py-2 bg-white text-[#FF3B30] text-[13px] font-black rounded-full hover:scale-105 active:scale-95 transition-transform shadow-md">
                                 Order Now <ArrowRight className="w-3.5 h-3.5" />
                             </Link>
                         </div>
@@ -251,34 +244,34 @@ export default function Wallet() {
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ type: "spring", stiffness: 300, damping: 25, delay: 0.2 }}
                 >
-                    <h3 className="text-sm font-bold uppercase tracking-widest text-slate-400 mb-4 px-2">Recent Activity</h3>
+                    <h3 className="text-[12px] font-bold uppercase tracking-widest text-[#8E8E93] mb-4 px-3">Recent Activity</h3>
                     
-                    <div className="bg-white rounded-[24px] p-2 shadow-[0_8px_20px_-10px_rgba(0,0,0,0.03)] border border-slate-100">
+                    <div className="ios-glass bg-white/50 backdrop-blur-3xl rounded-[2rem] p-3 shadow-sm border border-white/60">
                         {transactions.length > 0 ? (
                             <div className="flex flex-col">
                                 {transactions.map((tx: any, idx: number) => (
-                                    <div key={tx.id} className={`flex items-center justify-between p-4 ${idx !== transactions.length - 1 ? 'border-b border-slate-50' : ''}`}>
-                                        <div className="flex items-center gap-4">
-                                            <div className={`w-10 h-10 rounded-2xl flex items-center justify-center ${tx.amount > 0 ? 'bg-[#10b981]/10 text-[#10b981]' : 'bg-slate-100 text-slate-600'}`}>
+                                    <div key={tx.id} className={`flex items-center justify-between p-3.5 ${idx !== transactions.length - 1 ? 'border-b border-black/5' : ''}`}>
+                                        <div className="flex items-center gap-3.5">
+                                            <div className={`w-10 h-10 rounded-[12px] flex items-center justify-center shadow-sm ${tx.amount > 0 ? 'bg-[#34C759]/10 text-[#34C759] border border-[#34C759]/20' : 'bg-white text-[#8E8E93] border border-black/5'}`}>
                                                 {tx.amount > 0 ? <Award className="w-5 h-5" /> : <ShoppingBag className="w-5 h-5" />}
                                             </div>
                                             <div>
-                                                <p className="font-bold text-slate-800 text-[14px]">{tx.description}</p>
-                                                <p className="text-[11px] font-medium text-slate-400">
+                                                <p className="font-bold text-[#1D1D1F] text-[15px]">{tx.description}</p>
+                                                <p className="text-[11px] font-semibold text-[#8E8E93] mt-[1px]">
                                                     {new Date(tx.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
                                                 </p>
                                             </div>
                                         </div>
-                                        <span className={`font-black tracking-tight ${tx.amount > 0 ? 'text-[#10b981]' : 'text-slate-800'}`}>
+                                        <span className={`font-black tracking-tight text-[16px] ${tx.amount > 0 ? 'text-[#34C759]' : 'text-[#1D1D1F]'}`}>
                                             {tx.amount > 0 ? '+' : ''}₹{Math.abs(tx.amount)}
                                         </span>
                                     </div>
                                 ))}
                             </div>
                         ) : (
-                            <div className="py-10 flex flex-col items-center justify-center opacity-50">
-                                <Clock className="w-10 h-10 text-slate-400 mb-3" />
-                                <p className="text-[13px] font-medium text-slate-500">No recent activity</p>
+                            <div className="py-12 flex flex-col items-center justify-center opacity-60">
+                                <Clock className="w-10 h-10 text-[#8E8E93] mb-3" />
+                                <p className="text-[13px] font-medium text-[#8E8E93]">No recent activity</p>
                             </div>
                         )}
                     </div>

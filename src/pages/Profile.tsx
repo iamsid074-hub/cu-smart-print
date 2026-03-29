@@ -187,13 +187,13 @@ export default function Profile() {
     if (!user) return null;
 
     return (
-        <div className="min-h-screen bg-white pb-32">
+        <div className="min-h-screen bg-[#F5F5F7] pb-32">
             {/* ── IMMERSIVE HEADER ── */}
-            <div className="relative h-48 sm:h-64 bg-slate-900 overflow-hidden">
+            <div className="relative h-48 sm:h-64 bg-[#1D1D1F] overflow-hidden">
                 {/* Animated Background Gradient */}
-                <div className="absolute inset-0 bg-gradient-to-br from-brand via-brand-accent to-fuchsia-600 opacity-80" />
+                <div className="absolute inset-0 bg-gradient-to-br from-[#007AFF] via-[#5856D6] to-[#AF52DE] opacity-80" />
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_30%,rgba(255,255,255,0.15),transparent_70%)]" />
-                <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 mix-blend-overlay" />
+                <div className="absolute inset-0 bg-white/5 backdrop-blur-[100px]" />
                 
                 {/* Back Button */}
                 <div className="absolute top-20 left-4 z-20">
@@ -230,32 +230,33 @@ export default function Profile() {
                 <motion.div 
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="bg-white rounded-[2.5rem] p-6 sm:p-8 shadow-[0_20px_50px_rgba(0,0,0,0.08)] border border-slate-100"
+                    transition={{ type: "spring", damping: 25, stiffness: 300 }}
+                    className="ios-glass bg-white/40 backdrop-blur-3xl rounded-[2.5rem] p-6 sm:p-8 shadow-sm border border-white/60"
                 >
                     <div className="flex flex-col sm:flex-row items-center sm:items-end gap-6 sm:gap-8">
                         {/* Avatar */}
                         <div className="relative group -mt-16 sm:-mt-20">
-                            <div className="w-32 h-32 sm:w-40 sm:h-40 rounded-[2.5rem] p-1.5 bg-white shadow-xl relative z-10">
+                            <div className="w-32 h-32 sm:w-40 sm:h-40 rounded-[2.5rem] p-1.5 bg-white/80 backdrop-blur-md shadow-lg border border-white/60 relative z-10">
                                 <div 
-                                    className="w-full h-full rounded-[2.2rem] overflow-hidden bg-slate-50 border border-slate-100 cursor-pointer relative"
+                                    className="w-full h-full rounded-[2.2rem] overflow-hidden bg-[#F5F5F7] cursor-pointer relative"
                                     onClick={() => { if (isEditing) fileInputRef.current?.click(); }}
                                 >
                                     {profile?.avatar_url ? (
                                         <img src={profile.avatar_url} alt="" className="w-full h-full object-cover" />
                                     ) : (
                                         <div className="w-full h-full flex items-center justify-center">
-                                            <User className="w-12 h-12 text-slate-300" />
+                                            <User className="w-12 h-12 text-[#8E8E93]" />
                                         </div>
                                     )}
                                     {isEditing && (
-                                        <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <Camera className="w-6 h-6 text-white" />
+                                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm">
+                                            <Camera className="w-6 h-6 text-white drop-shadow-md" />
                                         </div>
                                     )}
                                 </div>
                             </div>
                             {/* Status Indicator */}
-                            <div className="absolute bottom-4 right-4 w-6 h-6 rounded-full bg-emerald-500 border-4 border-white z-20" />
+                            <div className="absolute bottom-4 right-4 w-6 h-6 rounded-full bg-[#34C759] border-4 border-white z-20 shadow-sm" />
                             <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleAvatarUpload} />
                         </div>
 
@@ -267,15 +268,15 @@ export default function Profile() {
                                         value={fullName} 
                                         onChange={e => setFullName(e.target.value)} 
                                         placeholder="Full Name"
-                                        className="text-2xl font-black w-full rounded-2xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-light bg-slate-50 border-none text-slate-900" 
+                                        className="text-2xl font-black w-full rounded-2xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#007AFF]/20 bg-white/60 border border-white/60 shadow-sm text-[#1D1D1F]" 
                                     />
                                     <div className="flex gap-3">
-                                        <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl flex-1 bg-slate-50 border-none">
-                                            <span className="text-slate-400 font-bold">@</span>
+                                        <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl flex-1 bg-white/60 border border-white/60 shadow-sm">
+                                            <span className="text-[#8E8E93] font-bold">@</span>
                                             <input 
                                                 value={profile?.username || ""} 
                                                 onChange={e => setProfile({ ...profile, username: e.target.value.toLowerCase().trim() })}
-                                                className="bg-transparent outline-none font-bold text-slate-800 w-full" 
+                                                className="bg-transparent outline-none font-bold text-[#1D1D1F] w-full" 
                                                 placeholder="username" 
                                                 maxLength={20} 
                                             />
@@ -285,10 +286,10 @@ export default function Profile() {
                             ) : (
                                 <div className="pt-2">
                                     <div className="flex items-center justify-center sm:justify-start gap-2 mb-1">
-                                        <h1 className="text-3xl font-black text-slate-900" style={fontH}>{profile?.full_name || "Student"}</h1>
-                                        <CheckCircle className="w-5 h-5 text-blue-500 fill-blue-50" />
+                                        <h1 className="text-[28px] tracking-tight font-black text-[#1D1D1F]">{profile?.full_name || "Student"}</h1>
+                                        <CheckCircle className="w-5 h-5 text-[#007AFF] fill-[#007AFF]/10" />
                                     </div>
-                                    <p className="text-slate-500 font-bold text-sm tracking-wide">
+                                    <p className="text-[#8E8E93] font-bold text-sm tracking-wide">
                                         @{profile?.username || "user"} <span className="mx-1.5 opacity-30">|</span> {user.email}
                                     </p>
                                 </div>
@@ -300,10 +301,10 @@ export default function Profile() {
                             <button
                                 onClick={() => { if (isEditing) handleSaveProfile(); else setIsEditing(true); }}
                                 disabled={loading}
-                                className={`px-6 py-3 rounded-2xl font-black text-sm transition-all flex items-center gap-2 ${
+                                className={`px-6 py-3 rounded-full font-black text-[15px] transition-all flex items-center gap-2 ios-action-button duration-300 ${
                                     isEditing 
-                                    ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/30' 
-                                    : 'bg-slate-900 text-white shadow-lg shadow-slate-900/10 hover:shadow-slate-900/20 active:scale-95'
+                                    ? 'bg-[#34C759] text-white shadow-lg shadow-[#34C759]/30 hover:bg-[#32B853]' 
+                                    : 'bg-[#1D1D1F] text-white shadow-md hover:shadow-lg'
                                 }`}
                             >
                                 {loading ? <Loader2 className="w-4 h-4 animate-spin" /> :
@@ -314,36 +315,36 @@ export default function Profile() {
                     </div>
 
                     {/* Stats & Detailed Info */}
-                    <div className="mt-10 pt-8 border-t border-slate-50 grid grid-cols-2 sm:grid-cols-4 gap-6">
+                    <div className="mt-10 pt-8 border-t border-black/5 grid grid-cols-2 sm:grid-cols-4 gap-6">
                         <div className="text-center sm:text-left">
-                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Listings</p>
-                            <p className="text-xl font-black text-slate-900">{myProducts.length}</p>
+                            <p className="text-[11px] font-black uppercase tracking-widest text-[#8E8E93] mb-1">Listings</p>
+                            <p className="text-[22px] font-black tracking-tight text-[#1D1D1F]">{myProducts.length}</p>
                         </div>
                         <div className="text-center sm:text-left">
-                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Sold</p>
-                            <p className="text-xl font-black text-emerald-600">{myProducts.filter(p => p.status === 'sold').length}</p>
+                            <p className="text-[11px] font-black uppercase tracking-widest text-[#8E8E93] mb-1">Sold</p>
+                            <p className="text-[22px] font-black tracking-tight text-[#34C759]">{myProducts.filter(p => p.status === 'sold').length}</p>
                         </div>
                         <div className="col-span-2 space-y-3">
                             {isEditing ? (
                                 <div className="grid grid-cols-1 gap-4">
-                                    <div className="bg-slate-50/50 rounded-2xl p-4 border border-slate-100">
+                                    <div className="bg-white/60 rounded-2xl p-4 border border-white/60 shadow-sm">
                                         <div className="flex items-center gap-2 mb-3">
-                                            <MapPin className="w-3.5 h-3.5 text-brand" />
-                                            <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Hostel Block</span>
+                                            <MapPin className="w-3.5 h-3.5 text-[#007AFF]" />
+                                            <span className="text-[10px] font-black uppercase tracking-widest text-[#8E8E93]">Hostel Block</span>
                                         </div>
                                         <div className="space-y-3">
                                             {HOSTEL_GROUPS.map((group) => (
                                                 <div key={group.name} className="space-y-1.5">
-                                                    <p className="text-[9px] font-bold text-slate-400 px-1 uppercase tracking-tighter">{group.name}</p>
+                                                    <p className="text-[10px] font-bold text-[#8E8E93] px-1 tracking-tight">{group.name}</p>
                                                     <div className="flex flex-wrap gap-1.5">
                                                         {group.options.map((opt) => (
                                                             <button
                                                                 key={opt}
                                                                 onClick={() => setHostelBlock(opt)}
-                                                                className={`py-1.5 px-3 rounded-lg text-[10px] font-bold transition-all border ${
+                                                                className={`py-1.5 px-3 rounded-full text-[12px] font-bold transition-all border ${
                                                                     hostelBlock === opt 
-                                                                    ? "bg-brand text-white border-brand shadow-sm scale-105" 
-                                                                    : "bg-white text-slate-600 border-slate-200 hover:border-brand/40"
+                                                                    ? "bg-[#1D1D1F] text-white border-[#1D1D1F] shadow-md scale-[1.02]" 
+                                                                    : "bg-white/80 text-[#8E8E93] border-white/60 hover:text-[#1D1D1F] hover:bg-white"
                                                                 }`}
                                                             >
                                                                 {opt}
@@ -354,25 +355,25 @@ export default function Profile() {
                                             ))}
                                         </div>
                                     </div>
-                                    <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-50 border border-slate-100">
-                                        <Phone className="w-3.5 h-3.5 text-slate-400" />
+                                    <div className="flex items-center gap-2 px-4 py-3 rounded-[1.2rem] bg-white/60 border border-white/60 shadow-sm">
+                                        <Phone className="w-4 h-4 text-[#8E8E93]" />
                                         <input 
                                             value={phoneNumber} 
                                             onChange={e => setPhoneNumber(e.target.value)} 
                                             placeholder="Phone Number"
-                                            className="bg-transparent text-xs outline-none w-full text-slate-700" 
+                                            className="bg-transparent text-[14px] font-bold outline-none w-full text-[#1D1D1F] placeholder:font-medium placeholder:text-[#8E8E93]" 
                                         />
                                     </div>
                                 </div>
                             ) : (
-                                <div className="flex flex-col gap-2">
-                                    <div className="flex items-center justify-center sm:justify-start gap-2 text-slate-600">
-                                        <MapPin className="w-4 h-4 text-brand" />
-                                        <span className="text-xs font-bold">{profile?.hostel_block || "Location not set"}</span>
+                                <div className="flex flex-col gap-2.5">
+                                    <div className="flex items-center justify-center sm:justify-start gap-2.5 text-[#1D1D1F]">
+                                        <MapPin className="w-4 h-4 text-[#007AFF]" />
+                                        <span className="text-[14px] font-bold">{profile?.hostel_block || "Location not set"}</span>
                                     </div>
-                                    <div className="flex items-center justify-center sm:justify-start gap-2 text-slate-600">
-                                        <Phone className="w-4 h-4 text-brand" />
-                                        <span className="text-xs font-bold">{profile?.phone_number || "Contact not set"}</span>
+                                    <div className="flex items-center justify-center sm:justify-start gap-2.5 text-[#1D1D1F]">
+                                        <Phone className="w-4 h-4 text-[#007AFF]" />
+                                        <span className="text-[14px] font-bold">{profile?.phone_number || "Contact not set"}</span>
                                     </div>
                                 </div>
                             )}
@@ -382,13 +383,13 @@ export default function Profile() {
 
                 {/* ── TABS ── */}
                 <div className="mt-12">
-                    <div className="flex gap-8 border-b border-slate-100 px-2 overflow-x-auto hide-scroll">
+                    <div className="flex gap-8 border-b border-black/5 px-2 overflow-x-auto hide-scroll">
                         {tabs.map(tab => (
                             <button
                                 key={tab.id}
                                 onClick={() => setActiveTab(tab.id)}
-                                className={`relative pb-4 text-sm sm:text-base font-black tracking-tight transition-all flex items-center gap-2.5 whitespace-nowrap ${
-                                    activeTab === tab.id ? 'text-slate-900' : 'text-slate-400 hover:text-slate-600'
+                                className={`relative pb-4 text-[15px] sm:text-[16px] font-bold tracking-tight transition-all flex items-center gap-2.5 whitespace-nowrap ${
+                                    activeTab === tab.id ? 'text-[#1D1D1F]' : 'text-[#8E8E93] hover:text-[#505055]'
                                 }`}
                             >
                                 {tab.id === 'listings' && <Package className="w-4 h-4" />}
@@ -396,8 +397,8 @@ export default function Profile() {
                                 {tab.id === 'saved' && <Heart className="w-4 h-4" />}
                                 {tab.label}
                                 {tab.count !== undefined && tab.count > 0 && (
-                                    <span className={`text-[10px] px-2 py-0.5 rounded-full font-black ${
-                                        tab.id === 'orders' ? 'bg-orange-500 text-white' : 'bg-brand text-white'
+                                    <span className={`text-[11px] px-2 py-0.5 rounded-full font-black shadow-sm ${
+                                        tab.id === 'orders' ? 'bg-[#FF9500] text-white' : 'bg-[#007AFF] text-white'
                                     }`}>
                                         {tab.count}
                                     </span>
@@ -405,7 +406,7 @@ export default function Profile() {
                                 {activeTab === tab.id && (
                                     <motion.div 
                                         layoutId="active-tab" 
-                                        className="absolute bottom-0 left-0 right-0 h-1 bg-brand rounded-t-full shadow-[0_-4px_10px_rgba(var(--brand-rgb),0.3)]" 
+                                        className="absolute bottom-0 left-0 right-0 h-1 bg-[#1D1D1F] rounded-t-full shadow-sm" 
                                     />
                                 )}
                             </button>
@@ -418,16 +419,16 @@ export default function Profile() {
                             {activeTab === 'listings' && (
                                 <motion.div key="listings" initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 10 }} className="space-y-4">
                                     {loadingListings ? (
-                                        <div className="flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin text-brand/20" /></div>
+                                        <div className="flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin text-[#8E8E93]" /></div>
                                     ) : myProducts.length === 0 ? (
-                                        <div className="py-20 text-center bg-slate-50 rounded-[2.5rem] border border-dashed border-slate-200">
-                                            <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm">
-                                                <Package className="w-8 h-8 text-slate-200" />
+                                        <div className="py-20 text-center bg-white/40 ios-glass rounded-[2.5rem] border border-white/60 border-dashed shadow-sm">
+                                            <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mx-auto mb-4 xl-shadow shadow-sm">
+                                                <Package className="w-8 h-8 text-[#8E8E93]" />
                                             </div>
-                                            <h3 className="text-lg font-black text-slate-800">No active listings</h3>
-                                            <p className="text-sm text-slate-400 mt-1 mb-8">Ready to turn your stuff into cash?</p>
+                                            <h3 className="text-[18px] font-bold text-[#1D1D1F] tracking-tight">No active listings</h3>
+                                            <p className="text-[14px] text-[#8E8E93] mt-1 mb-8 font-medium">Ready to turn your stuff into cash?</p>
                                             <button onClick={() => navigate('/list')}
-                                                className="px-6 py-3 rounded-2xl bg-brand text-white text-sm font-black shadow-lg shadow-brand/20 hover:scale-105 active:scale-95 transition-all">
+                                                className="px-6 py-3 rounded-full bg-[#1D1D1F] text-white text-[15px] font-bold shadow-lg shadow-black/20 hover:scale-105 active:scale-95 transition-all">
                                                 Start Selling
                                             </button>
                                         </div>
@@ -437,17 +438,17 @@ export default function Profile() {
                                                 <motion.div 
                                                     layout
                                                     key={item.id}
-                                                    className="group bg-white p-4 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-all flex items-center gap-4"
+                                                    className="group ios-glass bg-white/50 p-4 rounded-3xl border border-white/60 shadow-sm hover:shadow-md transition-all flex items-center gap-4"
                                                 >
-                                                    <div className="w-20 h-20 rounded-2xl overflow-hidden bg-slate-50 border border-slate-50 flex-shrink-0">
+                                                    <div className="w-20 h-20 rounded-[1.2rem] overflow-hidden bg-[#F5F5F7] shadow-inner flex-shrink-0">
                                                         <img src={item.image_url || 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=120'} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                                                     </div>
                                                     <div className="flex-1 min-w-0">
-                                                        <h4 className="text-sm font-black text-slate-800 truncate mb-1">{item.title}</h4>
-                                                        <div className="flex items-center gap-3">
-                                                            <span className="text-lg font-black text-brand">₹{item.price}</span>
+                                                        <h4 className="text-[15px] font-bold text-[#1D1D1F] truncate mb-1 tracking-tight">{item.title}</h4>
+                                                        <div className="flex items-center gap-2.5">
+                                                            <span className="text-[17px] font-black tracking-tight text-[#1D1D1F]">₹{item.price}</span>
                                                             <span className={`text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-widest ${
-                                                                item.status === 'sold' ? 'bg-slate-100 text-slate-400' : 'bg-emerald-100 text-emerald-600'
+                                                                item.status === 'sold' ? 'bg-black/5 text-[#8E8E93]' : 'bg-[#34C759]/10 text-[#34C759]'
                                                             }`}>
                                                                 {item.status === 'sold' ? 'Sold' : 'Active'}
                                                             </span>
@@ -457,7 +458,7 @@ export default function Profile() {
                                                         {item.status !== 'sold' && (
                                                             <button 
                                                                 onClick={() => handleMarkSold(item.id)} 
-                                                                className="w-10 h-10 rounded-xl flex items-center justify-center bg-slate-50 text-slate-400 hover:bg-emerald-500 hover:text-white transition-all shadow-sm"
+                                                                className="w-10 h-10 rounded-full flex items-center justify-center bg-white border border-white/60 text-[#8E8E93] hover:bg-[#34C759] hover:text-white transition-all shadow-sm"
                                                                 title="Mark Sold"
                                                             >
                                                                 <Check className="w-4 h-4" />
@@ -465,7 +466,7 @@ export default function Profile() {
                                                         )}
                                                         <button 
                                                             onClick={() => handleDeleteListing(item.id)} 
-                                                            className="w-10 h-10 rounded-xl flex items-center justify-center bg-slate-50 text-slate-400 hover:bg-red-500 hover:text-white transition-all shadow-sm"
+                                                            className="w-10 h-10 rounded-full flex items-center justify-center bg-white border border-white/60 text-[#8E8E93] hover:bg-[#FF3B30] hover:text-white transition-all shadow-sm"
                                                             title="Delete"
                                                         >
                                                             <Trash2 className="w-4 h-4" />
@@ -482,14 +483,14 @@ export default function Profile() {
                             {activeTab === 'orders' && (
                                 <motion.div key="orders" initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 10 }} className="space-y-4">
                                     {loadingOrders ? (
-                                        <div className="flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin text-brand/20" /></div>
+                                        <div className="flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin text-[#8E8E93]" /></div>
                                     ) : incomingOrders.length === 0 ? (
-                                        <div className="py-20 text-center bg-slate-50 rounded-[2.5rem] border border-dashed border-slate-200">
+                                        <div className="py-20 text-center bg-white/40 ios-glass rounded-[2.5rem] border border-white/60 border-dashed shadow-sm">
                                             <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm">
-                                                <ShoppingCart className="w-8 h-8 text-slate-200" />
+                                                <ShoppingCart className="w-8 h-8 text-[#8E8E93]" />
                                             </div>
-                                            <h3 className="text-lg font-black text-slate-800">No incoming orders</h3>
-                                            <p className="text-sm text-slate-400 mt-1">Orders from buyers will appear here.</p>
+                                            <h3 className="text-[18px] font-bold text-[#1D1D1F] tracking-tight">No incoming orders</h3>
+                                            <p className="text-[14px] text-[#8E8E93] font-medium mt-1">Orders from buyers will appear here.</p>
                                         </div>
                                     ) : (
                                         <div className="space-y-4">
@@ -497,57 +498,57 @@ export default function Profile() {
                                                 <motion.div 
                                                     layout
                                                     key={order.id} 
-                                                    className="bg-white rounded-[2rem] p-6 border border-slate-100 shadow-sm"
+                                                    className="ios-glass bg-white/50 backdrop-blur-3xl rounded-[2rem] p-6 border border-white/60 shadow-sm hover:shadow-md transition-shadow"
                                                 >
                                                     <div className="flex items-start gap-4 mb-6">
-                                                        <div className="w-16 h-16 rounded-2xl overflow-hidden bg-slate-50 border border-slate-50 flex-shrink-0">
+                                                        <div className="w-16 h-16 rounded-[1.2rem] overflow-hidden bg-[#F5F5F7] shadow-inner flex-shrink-0">
                                                             <img src={order.products?.image_url || "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=100"} alt="" className="w-full h-full object-cover" />
                                                         </div>
                                                         <div className="flex-1 min-w-0">
-                                                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Incoming Order</p>
-                                                            <h4 className="text-base font-black text-slate-900 truncate">{order.products?.title || "Product"}</h4>
+                                                            <p className="text-[10px] font-black uppercase tracking-widest text-[#8E8E93] mb-1">Incoming Order</p>
+                                                            <h4 className="text-[16px] font-bold text-[#1D1D1F] truncate tracking-tight">{order.products?.title || "Product"}</h4>
                                                             <div className="flex items-center gap-3 mt-1">
-                                                                <span className="text-xl font-black text-brand">₹{order.total_price}</span>
-                                                                <span className={`text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-widest ${
-                                                                    order.status === "pending" ? 'bg-orange-100 text-orange-600' :
-                                                                    order.status === "seller_accepted" ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600'
+                                                                <span className="text-[18px] font-black text-[#1D1D1F]">₹{order.total_price}</span>
+                                                                <span className={`text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-widest shadow-sm ${
+                                                                    order.status === "pending" ? 'bg-[#FF9500]/10 text-[#FF9500]' :
+                                                                    order.status === "seller_accepted" ? 'bg-[#34C759]/10 text-[#34C759]' : 'bg-[#FF3B30]/10 text-[#FF3B30]'
                                                                 }`}>
                                                                     {order.status}
                                                                 </span>
                                                             </div>
                                                         </div>
                                                         <div className="text-right">
-                                                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Date</p>
-                                                            <p className="text-xs font-black text-slate-700">{new Date(order.created_at).toLocaleDateString()}</p>
+                                                            <p className="text-[10px] font-black text-[#8E8E93] uppercase tracking-widest">Date</p>
+                                                            <p className="text-[12px] font-bold text-[#1D1D1F] mt-[1px]">{new Date(order.created_at).toLocaleDateString()}</p>
                                                         </div>
                                                     </div>
 
-                                                    <div className="bg-slate-50 rounded-2xl p-4 flex flex-col sm:flex-row gap-4 mb-6">
+                                                    <div className="bg-white/60 border border-white/60 rounded-[1.2rem] p-4 flex flex-col sm:flex-row gap-4 mb-6 shadow-[inset_0_2px_10px_rgba(0,0,0,0.02)]">
                                                         <div className="flex-1 flex items-center gap-3">
-                                                            <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-slate-400 shadow-sm">
-                                                                <User className="w-5 h-5" />
+                                                            <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-[#8E8E93] shadow-sm">
+                                                                <User className="w-4 h-4" />
                                                             </div>
                                                             <div>
-                                                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Buyer</p>
-                                                                <p className="text-xs font-black text-slate-800">{order.buyer?.full_name}</p>
+                                                                <p className="text-[10px] font-black text-[#8E8E93] uppercase tracking-widest">Buyer</p>
+                                                                <p className="text-[13px] font-bold text-[#1D1D1F]">{order.buyer?.full_name}</p>
                                                             </div>
                                                         </div>
                                                         <div className="flex-1 flex items-center gap-3">
-                                                            <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-slate-400 shadow-sm">
-                                                                <Phone className="w-5 h-5" />
+                                                            <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-[#8E8E93] shadow-sm">
+                                                                <Phone className="w-4 h-4" />
                                                             </div>
                                                             <div>
-                                                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Contact</p>
-                                                                <p className="text-xs font-black text-slate-800">{order.buyer_phone}</p>
+                                                                <p className="text-[10px] font-black text-[#8E8E93] uppercase tracking-widest">Contact</p>
+                                                                <p className="text-[13px] font-bold text-[#1D1D1F]">{order.buyer_phone}</p>
                                                             </div>
                                                         </div>
                                                         <div className="flex-1 flex items-center gap-3">
-                                                            <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-slate-400 shadow-sm">
-                                                                <MapPin className="w-5 h-5" />
+                                                            <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-[#8E8E93] shadow-sm">
+                                                                <MapPin className="w-4 h-4" />
                                                             </div>
                                                             <div>
-                                                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Location</p>
-                                                                <p className="text-xs font-black text-slate-800">{order.delivery_location}</p>
+                                                                <p className="text-[10px] font-black text-[#8E8E93] uppercase tracking-widest">Location</p>
+                                                                <p className="text-[13px] font-bold text-[#1D1D1F]">{order.delivery_location}</p>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -557,16 +558,16 @@ export default function Profile() {
                                                             <button 
                                                                 onClick={() => handleAcceptOrder(order.id)} 
                                                                 disabled={processingOrderId === order.id}
-                                                                className="flex-1 h-12 rounded-2xl bg-emerald-500 text-white text-sm font-black shadow-lg shadow-emerald-500/20 hover:bg-emerald-600 active:scale-95 transition-all flex items-center justify-center gap-2"
+                                                                className="flex-1 h-12 rounded-full ios-action-button text-[14px] font-bold bg-[#34C759] text-white hover:bg-[#32B853] flex items-center justify-center gap-2"
                                                             >
                                                                 {processingOrderId === order.id ? <Loader2 className="w-5 h-5 animate-spin" /> : <><CheckCircle className="w-5 h-5" /> Accept Order</>}
                                                             </button>
                                                             <button 
                                                                 onClick={() => handleRejectOrder(order.id)} 
                                                                 disabled={processingOrderId === order.id}
-                                                                className="h-12 w-12 rounded-2xl bg-red-50 text-red-500 border border-red-100 flex items-center justify-center hover:bg-red-500 hover:text-white transition-all active:scale-95"
+                                                                className="h-12 w-12 rounded-full bg-[#FF3B30]/10 text-[#FF3B30] flex items-center justify-center hover:bg-[#FF3B30] hover:text-white transition-all active:scale-95"
                                                             >
-                                                                <XCircle className="w-6 h-6" />
+                                                                <XCircle className="w-5 h-5" />
                                                             </button>
                                                         </div>
                                                     )}
@@ -579,14 +580,14 @@ export default function Profile() {
 
                             {/* SAVED */}
                             {activeTab === 'saved' && (
-                                <motion.div key="saved" initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 10 }} className="py-20 text-center">
-                                    <div className="w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                                        <Heart className="w-8 h-8 text-slate-300" />
+                                <motion.div key="saved" initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 10 }} className="py-20 text-center bg-white/40 ios-glass rounded-[2.5rem] border border-white/60 border-dashed shadow-sm">
+                                    <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm">
+                                        <Heart className="w-8 h-8 text-[#FF3B30]/40" />
                                     </div>
-                                    <h3 className="text-lg font-black text-slate-800">Your wishlist is empty</h3>
-                                    <p className="text-sm text-slate-400 mt-1 mb-8">Save items you like for later!</p>
+                                    <h3 className="text-[18px] font-bold text-[#1D1D1F] tracking-tight">Your wishlist is empty</h3>
+                                    <p className="text-[14px] text-[#8E8E93] mt-1 mb-8 font-medium">Save items you like for later!</p>
                                     <button onClick={() => navigate('/browse')}
-                                        className="px-6 py-3 rounded-2xl bg-brand text-white text-sm font-black shadow-lg shadow-brand/20 hover:scale-105 active:scale-95 transition-all">
+                                        className="px-6 py-3 rounded-full ios-action-button text-[15px] font-bold flex items-center gap-2 mx-auto">
                                         Explore Items
                                     </button>
                                 </motion.div>

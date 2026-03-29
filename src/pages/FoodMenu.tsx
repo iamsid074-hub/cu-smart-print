@@ -154,18 +154,19 @@ export default function FoodMenu() {
     };
 
     return (
-        <div className="min-h-screen bg-[#fafafa] pt-[5.5rem] pb-16 px-4 sm:px-6 overflow-x-hidden relative font-sans">
-            <div className="absolute top-0 left-1/4 w-96 h-96 bg-brand-accent/5 rounded-full blur-[120px] pointer-events-none" />
-            <div className="absolute top-1/3 right-1/4 w-96 h-96 bg-emerald-500/5 rounded-full blur-[120px] pointer-events-none" />
+        <div className="min-h-screen bg-[#F5F5F7] pt-[5.5rem] pb-16 px-4 sm:px-6 overflow-x-hidden relative font-sans text-[#1D1D1F]">
+            {/* Ambient Meshes */}
+            <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#007AFF]/5 rounded-full blur-[120px] pointer-events-none" />
+            <div className="absolute top-1/3 right-1/4 w-96 h-96 bg-[#34C759]/5 rounded-full blur-[120px] pointer-events-none" />
 
-            <div className="max-w-6xl mx-auto relative z-10">
-                <div className="flex bg-white/50 backdrop-blur-md p-1.5 rounded-2xl border border-slate-200 mb-6 shadow-sm max-w-md mx-auto">
+            <div className="max-w-[1600px] mx-auto relative z-10">
+                <div className="flex ios-glass p-1.5 rounded-full mb-6 shadow-sm border border-white/60 max-w-md mx-auto">
                     <button
                         onClick={() => setActiveTab('shops')}
-                        className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-sm font-bold transition-all duration-300 ${
+                        className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-full text-[14px] font-bold transition-all duration-300 ${
                             activeTab === 'shops'
-                                ? 'bg-white text-brand shadow-md border border-slate-100'
-                                : 'text-slate-500 hover:text-slate-700'
+                                ? 'bg-[#1D1D1F] text-white ios-shadow scale-[1.02]'
+                                : 'text-[#8E8E93] hover:text-[#1D1D1F]'
                         }`}
                     >
                         <Store className="w-4 h-4" />
@@ -173,10 +174,10 @@ export default function FoodMenu() {
                     </button>
                     <button
                         onClick={() => setActiveTab('custom')}
-                        className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-sm font-bold transition-all duration-300 ${
+                        className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-full text-[14px] font-bold transition-all duration-300 ${
                             activeTab === 'custom'
-                                ? 'bg-white text-brand shadow-md border border-slate-100'
-                                : 'text-slate-500 hover:text-slate-700'
+                                ? 'bg-[#1D1D1F] text-white ios-shadow scale-[1.02]'
+                                : 'text-[#8E8E93] hover:text-[#1D1D1F]'
                         }`}
                     >
                         <Sparkles className="w-4 h-4" />
@@ -194,9 +195,9 @@ export default function FoodMenu() {
                             className="space-y-4"
                         >
                             <div className="flex items-center justify-between mb-2 px-1">
-                                <p className="text-sm text-slate-500 flex items-center gap-1.5 font-medium">
-                                    <BadgeCheck className="w-4 h-4 text-emerald-500" />
-                                    <span className="text-slate-900 font-bold">{shops.length}</span> verified campus shops
+                                <p className="text-[13px] text-[#8E8E93] flex items-center gap-1.5 font-semibold">
+                                    <BadgeCheck className="w-4 h-4 text-[#34C759]" />
+                                    <span className="text-[#1D1D1F] font-bold">{shops.length}</span> verified campus shops
                                 </p>
                             </div>
 
@@ -205,10 +206,10 @@ export default function FoodMenu() {
 
                             {/* ─── Flavour Factory Header ─── */}
                             <div className="mb-6 mt-4 px-2">
-                                <h2 className="text-2xl font-black text-slate-800 tracking-tight">
-                                    Order from <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-orange-500">Flavour Factory</span>
+                                <h2 className="text-3xl sm:text-4xl font-black tracking-tight mb-1">
+                                    Order from <span style={{ background: 'linear-gradient(90deg, #FF3B30, #FF9500)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Flavour Factory</span>
                                 </h2>
-                                <p className="text-sm text-slate-500 font-medium mt-1">Explore our exclusive campus menu below</p>
+                                <p className="text-[15px] sm:text-base text-[#8E8E93] font-medium leading-relaxed">Explore our exclusive campus menu below</p>
                             </div>
 
                             {sortedShops.map((shop) => (
@@ -240,27 +241,27 @@ export default function FoodMenu() {
                 </AnimatePresence>
 
                 <Dialog open={!!previewOrder} onOpenChange={() => setPreviewOrder(null)}>
-                    <DialogContent className="rounded-[3rem] max-w-[90vw] sm:max-w-md p-8 border-none bg-white shadow-2xl">
+                    <DialogContent className="rounded-[2.5rem] sm:rounded-[3rem] max-w-[90vw] sm:max-w-md p-6 sm:p-8 bg-white/70 backdrop-blur-3xl border border-white/60 shadow-2xl">
                         <DialogHeader className="space-y-3 mb-6">
-                            <div className="w-16 h-16 rounded-[2rem] bg-brand/10 text-brand flex items-center justify-center mx-auto">
+                            <div className="w-16 h-16 rounded-[2rem] bg-[#007AFF]/10 text-[#007AFF] flex items-center justify-center mx-auto shadow-inner">
                                 <ShoppingBag className="w-8 h-8" />
                             </div>
-                            <DialogTitle className="text-2xl font-black text-center text-slate-900">Order Preview</DialogTitle>
+                            <DialogTitle className="text-2xl font-black text-center text-[#1D1D1F] tracking-tight">Order Preview</DialogTitle>
                         </DialogHeader>
                         
                         <div className="space-y-4">
                             <div className="max-h-[350px] overflow-y-auto scrollbar-hide space-y-3 px-1">
                                 {previewOrder?.items.map((item: any) => (
-                                    <div key={item.id} className="p-5 rounded-[2rem] bg-slate-50 border border-slate-100">
+                                    <div key={item.id} className="p-5 rounded-[2rem] ios-glass border border-white/60">
                                         <div className="flex justify-between items-start mb-3">
                                             <div className="flex-1 min-w-0">
-                                                <p className="text-base font-bold text-slate-800 truncate">{item.name}</p>
-                                                <p className="text-sm font-bold text-brand">{"\u20B9"}{item.price} x {item.quantity}</p>
+                                                <p className="text-[15px] sm:text-base font-bold text-[#1D1D1F] truncate">{item.name}</p>
+                                                <p className="text-[13px] font-bold text-[#007AFF]">{"\u20B9"}{item.price} x {item.quantity}</p>
                                             </div>
                                         </div>
                                         {item.notes && (
-                                            <div className="mt-2 pt-2 border-t border-slate-200/50">
-                                                <p className="text-[10px] text-slate-400 italic flex items-center gap-1.5">
+                                            <div className="mt-2 pt-2 border-t border-[#8E8E93]/20">
+                                                <p className="text-[11px] text-[#8E8E93] italic flex items-center gap-1.5 font-medium">
                                                     <MessageSquare className="w-3 h-3" /> {item.notes}
                                                 </p>
                                             </div>
@@ -287,7 +288,7 @@ export default function FoodMenu() {
                                     setCustomItemList([]);
                                     setPreviewOrder(null);
                                 }}
-                                className="w-full h-14 rounded-2xl bg-brand text-white font-black shadow-lg"
+                                className="w-full h-14 rounded-full ios-action-button flex items-center justify-center font-bold text-[15px]"
                             >
                                 Confirm & Add to Cart
                             </button>
