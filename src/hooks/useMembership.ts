@@ -9,6 +9,7 @@ export interface MembershipData {
     startDate: string | null;
     usedDeliveries: number;
     lastReset: string | null;
+    pendingPlan: string | null;
 }
 
 export const getDeliveriesLimit = (plan: MembershipPlan) => {
@@ -24,7 +25,8 @@ export const useMembership = () => {
         plan: null,
         startDate: null,
         usedDeliveries: 0,
-        lastReset: null
+        lastReset: null,
+        pendingPlan: null
     });
     const [isLoaded, setIsLoaded] = useState(false);
 
@@ -41,9 +43,27 @@ export const useMembership = () => {
                 .eq('id', user.id)
                 .single();
 
+            const { data: pendingOrders } = await supabase
+                .from('orders')
+                .select('delivery_location')
+                .eq('buyer_id', user.id)
+                .eq('status', 'pending')
+                .like('delivery_location', '%[SUBSCRIPTION]%')
+                .order('created_at', { ascending: false })
+                .limit(1);
+
+            let currentPendingPlan = null;
+            if (pendingOrders && pendingOrders.length > 0) {
+                const planNameMatch = pendingOrders[0].delivery_location.split('] ')[1];
+                currentPendingPlan = planNameMatch || 'Membership';
+            }
+
+            let used = 0;
+            let lastReset = null;
+
             if (profile && profile.membership_plan) {
-                let used = profile.free_deliveries_used || 0;
-                let lastReset = profile.membership_last_reset || profile.membership_start_date;
+                used = profile.free_deliveries_used || 0;
+                lastReset = profile.membership_last_reset || profile.membership_start_date;
 
                 // Automatic 7-day reset logic
                 if (lastReset) {
@@ -65,14 +85,15 @@ export const useMembership = () => {
                             .eq('id', user.id);
                     }
                 }
-
-                setData({
-                    plan: profile.membership_plan as MembershipPlan,
-                    startDate: profile.membership_start_date,
-                    usedDeliveries: used,
-                    lastReset: lastReset
-                });
             }
+
+            setData({
+                plan: profile?.membership_plan as MembershipPlan || null,
+                startDate: profile?.membership_start_date || null,
+                usedDeliveries: used,
+                lastReset: lastReset,
+                pendingPlan: currentPendingPlan
+            });
             setIsLoaded(true);
         };
 
@@ -94,6 +115,7 @@ export const useMembership = () => {
     const totalDeliveriesLimit = getDeliveriesLimit(data.plan);
     const remainingDeliveries = Math.max(0, totalDeliveriesLimit - data.usedDeliveries);
     const isActive = data.plan !== null;
+    const isPendingApproval = data.pendingPlan !== null;
     const hasFreeDelivery = isActive && remainingDeliveries > 0;
 
     return {
@@ -102,6 +124,7 @@ export const useMembership = () => {
         totalDeliveriesLimit,
         remainingDeliveries,
         isActive,
+        isPendingApproval,
         hasFreeDelivery,
         incrementUsage
     };

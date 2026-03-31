@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Check, Zap, Sparkles, Crown } from 'lucide-react';
+import { X, Check, Zap, Sparkles, Crown, Clock } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
@@ -49,6 +49,7 @@ export default function MembershipPlansModal({ isOpen, onClose }: MembershipPlan
     const { toast } = useToast();
     const [selectedPlan, setSelectedPlan] = useState<typeof PLANS[0] | null>(null);
     const [isPaymentOpen, setIsPaymentOpen] = useState(false);
+    const [isPendingApproval, setIsPendingApproval] = useState(false);
 
     const handleSubscribeClick = (plan: typeof PLANS[0]) => {
         if (!user) {
@@ -62,26 +63,26 @@ export default function MembershipPlansModal({ isOpen, onClose }: MembershipPlan
     const handlePaymentVerify = async (paymentId: string) => {
         if (!user || !selectedPlan) return;
         
-        const now = new Date().toISOString();
         const { error } = await supabase
-            .from('profiles')
-            .update({
-                membership_plan: selectedPlan.id,
-                membership_start_date: now,
-                free_deliveries_used: 0,
-                membership_last_reset: now
-            })
-            .eq('id', user.id);
+            .from('orders')
+            .insert({
+                buyer_id: user.id,
+                seller_id: user.id, // self as placeholder
+                base_price: selectedPlan.price,
+                total_price: selectedPlan.price,
+                delivery_location: `[SUBSCRIPTION] ${selectedPlan.name}`,
+                delivery_room: `[PLAN_ID:${selectedPlan.id}]`,
+                status: 'pending',
+                payment_status: 'verifying',
+                razorpay_payment_id: paymentId
+            });
 
         if (error) {
-            throw new Error("Failed to activate membership. Please contact support.");
+            throw new Error("Failed to submit membership request. Please contact support.");
         }
         
-        // Success handled by UpiPaymentModal
-        setTimeout(() => {
-            onClose(); // Close the plans modal too
-            window.location.reload(); // Quick refresh to apply hook changes globally
-        }, 1500);
+        setIsPaymentOpen(false);
+        setIsPendingApproval(true);
     };
 
     return (
@@ -105,49 +106,68 @@ export default function MembershipPlansModal({ isOpen, onClose }: MembershipPlan
                         className="relative w-full max-w-md bg-[#0F1115] sm:rounded-3xl rounded-t-[2.5rem] shadow-2xl overflow-hidden pt-6 pb-8 mx-0 sm:mx-4 transform-gpu border border-white/10"
                         style={{ willChange: "transform, opacity" }}
                     >
-                        <div className="absolute top-0 inset-x-0 h-40 bg-gradient-to-b from-purple-500/20 to-transparent pointer-events-none" />
-
-                        <div className="flex items-center justify-between px-6 pb-2 relative z-10">
-                            <div>
-                                <h2 className="text-2xl font-black text-white tracking-tight">CU Membership</h2>
-                                <p className="text-sm text-slate-400 font-medium tracking-wide">Unlock free deliveries & more</p>
+                        {isPendingApproval ? (
+                            <div className="px-6 mt-6 pb-6 text-center relative z-10 w-full">
+                                <div className="w-20 h-20 rounded-full bg-orange-500/10 text-orange-400 mx-auto flex items-center justify-center mb-6 border border-orange-500/20 shadow-[0_0_30px_rgba(249,115,22,0.15)]">
+                                    <Clock className="w-10 h-10 object-contain text-orange-400 drop-shadow-lg animate-pulse" />
+                                </div>
+                                <h3 className="text-2xl font-black text-white mb-3">Verification Pending</h3>
+                                <p className="text-sm text-slate-400 font-medium leading-relaxed mb-8">
+                                    Your payment of <span className="text-white font-bold">₹{selectedPlan?.price}</span> for <span className="text-purple-400 font-bold">{selectedPlan?.name}</span> has been received! Our admin will verify your payment details and activate your membership shortly.
+                                </p>
+                                <button 
+                                    onClick={() => { setIsPendingApproval(false); onClose(); window.location.reload(); }} 
+                                    className="w-full py-4 bg-white/10 hover:bg-white/15 text-white font-bold rounded-2xl transition-all border border-white/20 active:scale-[0.98]"
+                                >
+                                    Got it
+                                </button>
                             </div>
-                            <button onClick={onClose} className="p-2 rounded-full bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-colors cursor-pointer backdrop-blur-md">
-                                <X className="w-5 h-5" />
-                            </button>
-                        </div>
+                        ) : (
+                            <>
+                                <div className="absolute top-0 inset-x-0 h-40 bg-gradient-to-b from-purple-500/20 to-transparent pointer-events-none" />
 
-                        <div className="px-6 mt-6 space-y-4 max-h-[65vh] overflow-y-auto relative z-10 custom-scrollbar">
-                            {PLANS.map((plan) => {
-                                const Icon = plan.icon;
-                                return (
-                                    <div 
-                                        key={plan.id}
-                                        className={`relative rounded-2xl p-5 border transition-all duration-300 ${plan.popular ? 'bg-white/10 border-purple-500/50 shadow-[0_0_30px_rgba(168,85,247,0.15)]' : 'bg-white/5 border-white/10 hover:border-white/20'}`}
-                                    >
-                                        {plan.popular && (
-                                            <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-purple-500 to-indigo-500 text-white text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full shadow-lg">
-                                                Most Popular
-                                            </div>
-                                        )}
-                                        
-                                        <div className="flex justify-between items-start mb-4">
-                                            <div className="flex items-center gap-3">
-                                                <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${plan.color} flex items-center justify-center shadow-inner`}>
-                                                    <Icon className="w-5 h-5 text-white" />
-                                                </div>
-                                                <div>
-                                                    <h3 className="text-lg font-black text-white tracking-tight">{plan.name}</h3>
-                                                    <p className="text-xs text-slate-400 font-medium">Auto-renews weekly</p>
-                                                </div>
-                                            </div>
-                                            <div className="text-right">
-                                                <span className="text-2xl font-black text-white">₹{plan.price}</span>
-                                                <span className="text-slate-400 text-xs font-medium block">/ week</span>
-                                            </div>
-                                        </div>
+                                <div className="flex items-center justify-between px-6 pb-2 relative z-10">
+                                    <div>
+                                        <h2 className="text-2xl font-black text-white tracking-tight">CU Membership</h2>
+                                        <p className="text-sm text-slate-400 font-medium tracking-wide">Unlock free deliveries & more</p>
+                                    </div>
+                                    <button onClick={onClose} className="p-2 rounded-full bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-colors cursor-pointer backdrop-blur-md">
+                                        <X className="w-5 h-5" />
+                                    </button>
+                                </div>
 
-                                        <div className="space-y-2 mb-5">
+                                <div className="px-6 mt-6 space-y-4 max-h-[65vh] overflow-y-auto relative z-10 custom-scrollbar">
+                                    {PLANS.map((plan) => {
+                                        const Icon = plan.icon;
+                                        return (
+                                            <div 
+                                                key={plan.id}
+                                                className={`relative rounded-2xl p-5 border transition-all duration-300 ${plan.popular ? 'bg-white/10 border-purple-500/50 shadow-[0_0_30px_rgba(168,85,247,0.15)]' : 'bg-white/5 border-white/10 hover:border-white/20'}`}
+                                            >
+                                                {plan.popular && (
+                                                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-purple-500 to-indigo-500 text-white text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full shadow-lg">
+                                                        Most Popular
+                                                    </div>
+                                                )}
+                                                
+                                                <div className="flex justify-between items-start mb-4">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${plan.color} flex items-center justify-center shadow-inner`}>
+                                                            <Icon className="w-5 h-5 text-white" />
+                                                        </div>
+                                                        <div>
+                                                            <h3 className="text-lg font-black text-white tracking-tight">{plan.name}</h3>
+                                                            <p className="text-xs text-slate-400 font-medium">Auto-renews weekly</p>
+                                                        </div>
+                                                    </div>
+                                                    <div className="text-right">
+                                                        <span className="text-2xl font-black text-white">₹{plan.price}</span>
+                                                        <span className="text-slate-400 text-xs font-medium block">/ week</span>
+                                                    </div>
+                                                </div>
+
+                                                <div className="space-y-2 mb-5">
+
                                             <div className="flex items-center gap-2 text-sm text-slate-300">
                                                 <div className="w-4 h-4 rounded-full bg-emerald-500/20 flex items-center justify-center">
                                                     <Check className="w-3 h-3 text-emerald-400" />
@@ -180,6 +200,8 @@ export default function MembershipPlansModal({ isOpen, onClose }: MembershipPlan
                                 );
                             })}
                         </div>
+                            </>
+                        )}
                     </motion.div>
                 </div>
             )}

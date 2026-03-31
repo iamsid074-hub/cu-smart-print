@@ -611,7 +611,18 @@ export default function Profile() {
                             {/* MEMBERSHIP */}
                             {activeTab === 'membership' && (
                                 <motion.div key="membership" initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 10 }} className="space-y-4">
-                                    {!membership.isActive ? (
+                                    {membership.isPendingApproval ? (
+                                        <div className="py-20 text-center bg-white/40 ios-glass rounded-[2.5rem] border border-orange-500/30 shadow-[0_4px_24px_rgba(249,115,22,0.1)] relative overflow-hidden">
+                                            <div className="w-16 h-16 bg-gradient-to-br from-orange-400 to-amber-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm animate-pulse border border-orange-500/20">
+                                                <Clock className="w-8 h-8 text-white" />
+                                            </div>
+                                            <h3 className="text-[18px] font-bold text-[#1D1D1F] tracking-tight mb-2">Verification Pending</h3>
+                                            <p className="text-[14px] text-[#8E8E93] font-medium px-4">
+                                                Your payment for <span className="text-orange-500 font-bold">{membership.pendingPlan || 'CB Membership'}</span> is verifying.
+                                            </p>
+                                            <p className="text-[12px] text-[#8E8E93] font-medium px-4 mt-1">Our admin will approve it shortly!</p>
+                                        </div>
+                                    ) : !membership.isActive ? (
                                         <div className="py-20 text-center bg-white/40 ios-glass rounded-[2.5rem] border border-white/60 border-dashed shadow-sm">
                                             <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-indigo-500 rounded-2xl flex items-center justify-center mx-auto mb-4 xl-shadow shadow-sm">
                                                 <Crown className="w-8 h-8 text-white" />

@@ -6,7 +6,7 @@ import {
     Trash2, CheckCircle, Truck, Home as HomeIcon, Clock, TrendingUp,
     AlertTriangle, ChevronRight, Loader2, Eye, RefreshCw, Shield,
     LogOut, Star, MapPin, Phone, User, Calendar, DollarSign,
-    Activity, Box, ShoppingBag, Copy, AlertCircle, UtensilsCrossed, Filter, Wrench
+    Activity, Box, ShoppingBag, Copy, AlertCircle, UtensilsCrossed, Filter, Wrench, Crown
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
@@ -483,7 +483,7 @@ function ProductsSection({ products, loading, onDelete }: {
 }
 
 // ─── Helper: detect food order ─────────────────────────────────────────────────
-const NON_FOOD_KEYWORDS = ['practical file', 'notebook', 'register', 'pen', 'pencil', 'eraser', 'stapler', 'folder', 'chart', 'paper', 'assignment', 'lab manual', 'journal', 'project', 'file'];
+const NON_FOOD_KEYWORDS = ['practical file', 'notebook', 'register', 'pen', 'pencil', 'eraser', 'stapler', 'folder', 'chart', 'paper', 'assignment', 'lab manual', 'journal', 'project', 'file', 'subscription', 'cb prime'];
 function isFoodOrder(order: Order): boolean {
     // If product_id exists, it's a marketplace/listed item order
     if (order.product_id) return false;
@@ -608,8 +608,8 @@ function applyFilter(orders: Order[], filter: string): Order[] {
 }
 
 // ─── Item Orders Section ────────────────────────────────────────────────────────
-function ItemOrdersSection({ orders, loading, onUpdateStatus, onVerifyUpi }: {
-    orders: Order[]; loading: boolean; onUpdateStatus: (id: string, status: string, timestamps?: Record<string, string>) => void; onVerifyUpi: (id: string) => void;
+function ItemOrdersSection({ orders, loading, onUpdateStatus, onVerifyUpi, onApproveSubscription }: {
+    orders: Order[]; loading: boolean; onUpdateStatus: (id: string, status: string, timestamps?: Record<string, string>) => void; onVerifyUpi: (id: string) => void; onApproveSubscription: (order: Order) => void;
 }) {
     const [filter, setFilter] = useState('all');
     const itemOrders = orders.filter(o => !isFoodOrder(o));
@@ -649,6 +649,7 @@ function ItemOrdersSection({ orders, loading, onUpdateStatus, onVerifyUpi }: {
                     {filtered.map((order, i) => {
                         const action = nextStatus[order.status];
                         const details = parseOrderDetails(order);
+                        const isSubscription = order.delivery_location?.includes('[SUBSCRIPTION]');
                         return (
                             <motion.div key={order.id} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}
                                 className="bg-white  rounded-2xl border border-slate-200 overflow-hidden hover:border-slate-300 transition-all">
@@ -714,7 +715,22 @@ function ItemOrdersSection({ orders, loading, onUpdateStatus, onVerifyUpi }: {
                                         )}
                                         {order.seller?.hostel_block && <p className="text-xs text-slate-900/70 flex items-start gap-1 mt-1 break-words"><MapPin className="w-3 h-3 flex-shrink-0 mt-0.5" /> <span className="flex-1 min-w-0">{order.seller.hostel_block}</span></p>}
                                     </div>
-                                    {action && (
+                                    {isSubscription && order.status === 'pending' ? (
+                                        <div className="flex flex-col sm:flex-row gap-2">
+                                            <button 
+                                                onClick={() => onApproveSubscription(order)}
+                                                className="flex-1 flex w-full sm:w-auto items-center justify-center gap-2 py-2.5 rounded-xl border border-purple-500/40 text-sm font-bold transition-all bg-purple-500/20 text-purple-600 hover:bg-purple-500/30 shadow-[0_4px_12px_rgba(168,85,247,0.2)]"
+                                            >
+                                                <Crown className="w-4 h-4" /> Approve Subscription
+                                            </button>
+                                            <button 
+                                                onClick={() => onUpdateStatus(order.id, 'cancelled')}
+                                                className="px-4 w-full sm:w-auto py-2.5 rounded-xl border border-red-500/30 bg-red-500/10 text-red-500 text-sm font-bold hover:bg-red-500/20 transition-all"
+                                            >
+                                                Decline
+                                            </button>
+                                        </div>
+                                    ) : action && (
                                         <div className="flex flex-col sm:flex-row gap-2">
                                             <button onClick={() => onUpdateStatus(order.id, action.status, (action as any).timestamps)}
                                                 className={`flex-1 flex w-full sm:w-auto items-center justify-center gap-2 py-2.5 rounded-xl border text-sm font-bold transition-all ${action.color}`}>
@@ -722,7 +738,7 @@ function ItemOrdersSection({ orders, loading, onUpdateStatus, onVerifyUpi }: {
                                             </button>
                                             {order.status === 'pending' && (
                                                 <button onClick={() => onUpdateStatus(order.id, 'cancelled')}
-                                                    className="px-4 w-full sm:w-auto py-2.5 rounded-xl border border-red-500/30 bg-red-500/10 text-red-400 text-sm font-bold hover:bg-red-500/20 transition-all">
+                                                    className="px-4 w-full sm:w-auto py-2.5 rounded-xl border border-red-500/30 bg-red-500/10 text-red-500 text-sm font-bold hover:bg-red-500/20 transition-all">
                                                     Decline
                                                 </button>
                                             )}
@@ -1263,6 +1279,44 @@ export default function Admin() {
         alert("UPI Payment Verified Successfully!");
     };
 
+    const handleApproveSubscription = async (order: Order) => {
+        try {
+            const planIdMatch = order.delivery_room?.match(/\[PLAN_ID:(.*?)\]/);
+            const planId = planIdMatch ? planIdMatch[1] : 'prime';
+            const now = new Date().toISOString();
+
+            // 1. Update user profile
+            const { error: profileError } = await supabase
+                .from('profiles')
+                .update({
+                    membership_plan: planId,
+                    membership_start_date: now,
+                    free_deliveries_used: 0,
+                    membership_last_reset: now
+                })
+                .eq('id', order.buyer_id);
+
+            if (profileError) throw profileError;
+
+            // 2. Complete the order
+            const { error: orderError } = await supabase
+                .from('orders')
+                .update({ status: 'completed', payment_status: 'paid' })
+                .eq('id', order.id);
+
+            if (orderError) throw orderError;
+
+            await fetchOrders();
+            await fetchStats();
+            
+            // Assuming toast is available, but if not we still fetched orders
+            alert("Subscription Approved Successfully!");
+        } catch (err: any) {
+            console.error(err);
+            alert("Error approving subscription");
+        }
+    };
+
     const handleMarkRead = async (id: string) => {
         await supabase.from("admin_notifications").update({ is_read: true }).eq("id", id);
         setNotifications(prev => prev.map(n => n.id === id ? { ...n, is_read: true } : n));
@@ -1434,6 +1488,7 @@ export default function Admin() {
                                     loading={loadingOrders}
                                     onUpdateStatus={handleUpdateOrderStatus}
                                     onVerifyUpi={handleVerifyUpi}
+                                    onApproveSubscription={handleApproveSubscription}
                                 />
                             )}
                             {section === "food_orders" && (
