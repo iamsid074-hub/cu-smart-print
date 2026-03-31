@@ -297,7 +297,7 @@ export default function Profile() {
                                         {membership.isActive && (
                                             <button 
                                                 onClick={() => { setActiveTab('membership'); }}
-                                                className="ml-1 text-[10px] sm:text-[11px] font-black uppercase tracking-widest bg-gradient-to-r from-amber-200 to-yellow-500 bg-clip-text text-transparent border border-amber-300/30 px-2.5 py-1 rounded-full shadow-[0_0_15px_rgba(251,191,36,0.15)] hover:bg-amber-500/10 hover:scale-105 active:scale-95 transition-all outline outline-1 outline-amber-400/20"
+                                                className="ml-2 text-[10px] sm:text-[11px] font-black uppercase tracking-widest bg-gradient-to-r from-yellow-400 to-amber-500 text-black px-3 py-1.5 rounded-full shadow-[0_4px_10px_rgba(245,158,11,0.3)] hover:scale-105 active:scale-95 transition-all outline outline-2 outline-white/50"
                                             >
                                                 MEMBER
                                             </button>

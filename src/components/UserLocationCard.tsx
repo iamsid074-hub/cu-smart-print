@@ -21,17 +21,6 @@ export default function UserLocationCard() {
   return (
     <>
       <div className="absolute top-[4.5rem] sm:top-5 left-0 right-0 px-4 lg:px-8 z-[99] flex justify-between items-center pointer-events-none drop-shadow-sm">
-        {/* Optimized Premium Purple Background Shine without heavy CSS blurs */}
-        <div className="absolute inset-0 z-[-1] flex items-center justify-center pointer-events-none transform-gpu overflow-hidden">
-          <div 
-            className="w-[120%] h-[150%] max-w-[600px] pointer-events-none"
-            style={{
-              background: 'radial-gradient(ellipse at top center, rgba(127,119,221,0.25) 0%, rgba(127,119,221,0.05) 40%, transparent 70%)',
-              transform: 'translateZ(0)',
-              willChange: 'transform',
-            }}
-          />
-        </div>
 
         <div className="flex flex-col items-start gap-1 pointer-events-auto relative">
           <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-none pl-[2px]">
@@ -45,7 +34,7 @@ export default function UserLocationCard() {
                 <MapPin className="w-3.5 h-3.5 text-purple-600 shrink-0" strokeWidth={3} />
             </div>
             <span className="text-[13px] sm:text-[15px] font-black tracking-tight truncate ml-0.5 leading-snug">
-              {hasLocation ? `${data.hostel} ${data.room}` : "Add Location"}
+              {hasLocation ? `${data.room}, ${data.hostel}` : "Add Location"}
             </span>
             <ChevronDown className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-800 transition-colors shrink-0 mt-0.5" strokeWidth={3} />
           </button>
@@ -55,7 +44,7 @@ export default function UserLocationCard() {
           {isActive && (
             <button 
               onClick={() => setIsPlansOpen(true)}
-              className="text-[10px] sm:text-[11px] font-black uppercase tracking-widest bg-gradient-to-r from-amber-200 to-yellow-500 bg-clip-text text-transparent border border-amber-300/30 px-2.5 py-1 rounded-full shadow-[0_0_15px_rgba(251,191,36,0.15)] hover:bg-amber-500/10 hover:scale-105 active:scale-95 transition-all outline outline-1 outline-amber-400/20"
+              className="text-[10px] sm:text-[11px] font-black uppercase tracking-widest bg-gradient-to-r from-yellow-400 to-amber-500 text-black px-3 py-1.5 rounded-full shadow-[0_4px_10px_rgba(245,158,11,0.3)] hover:scale-105 active:scale-95 transition-all outline outline-2 outline-white/50"
             >
               MEMBER
             </button>
