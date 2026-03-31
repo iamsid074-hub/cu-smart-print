@@ -189,10 +189,7 @@ export default function Home() {
             transition={{ duration: 0.55 }}
             className="text-center mb-6 sm:mb-8"
           >
-            <div className="inline-flex items-center gap-2 rounded-full border border-black/5 bg-black/5 backdrop-blur px-3.5 py-1 mb-4 sm:mb-5">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#007AFF] shadow-[0_0_6px_2px_rgba(0,122,255,0.4)]" />
-              <span className="text-[10px] sm:text-[11px] font-bold text-[#8E8E93] uppercase tracking-[0.18em]">CU Bazzar &nbsp;·&nbsp; Your Campus Store</span>
-            </div>
+
 
             <h1 className="font-extrabold tracking-tight text-[#1D1D1F] leading-[1.05] mb-0" style={{ ...fontH, fontSize: 'clamp(2rem, 6vw, 4.5rem)' }}>
               Everything{' '}
