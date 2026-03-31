@@ -10,7 +10,7 @@ const pastaItems = [
 
 export default function FlavourFactoryBanner() {
   return (
-    <div className="w-full h-full relative flex flex-col items-center justify-end overflow-hidden"
+    <div className="w-full h-full relative flex flex-col items-center justify-end overflow-hidden border-2 border-black rounded-[1.6rem] sm:rounded-[2.6rem] box-border"
       style={{ background: "linear-gradient(160deg, #1a0a00 0%, #2d1200 30%, #3d1a00 60%, #1a0800 100%)" }}
     >
       {/* Warm ambient glows */}
