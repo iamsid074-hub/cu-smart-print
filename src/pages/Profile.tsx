@@ -1,17 +1,22 @@
 import { useEffect, useState, useRef } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
-import { LogOut, User, MapPin, Phone, Package, Heart, Edit2, Check, Loader2, Camera, ShoppingCart, CheckCircle, XCircle, Clock, Bell, Plus, Trash2, Tag, X, Mail, Globe, Shield, ArrowLeft } from "lucide-react";
+import { LogOut, User, MapPin, Phone, Package, Heart, Edit2, Check, Loader2, Camera, ShoppingCart, CheckCircle, XCircle, Clock, Bell, Plus, Trash2, Tag, X, Mail, Globe, Shield, ArrowLeft, Crown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { useMembership } from "@/hooks/useMembership";
+import MembershipPlansModal from "@/components/MembershipPlansModal";
 
-type TabId = 'listings' | 'orders' | 'saved';
+type TabId = 'listings' | 'orders' | 'saved' | 'membership';
 
 export default function Profile() {
     const { user, isAdmin, signOut } = useAuth();
     const navigate = useNavigate();
     const fontH = { fontFamily: "'Outfit', sans-serif" };
+
+    const membership = useMembership();
+    const [isPlansOpen, setIsPlansOpen] = useState(false);
 
     const [profile, setProfile] = useState<any>(null);
     const [isEditing, setIsEditing] = useState(false);
@@ -181,6 +186,7 @@ export default function Profile() {
         { id: 'listings', label: 'Listings', count: myProducts.length },
         { id: 'orders', label: 'Orders', count: pendingCount || undefined },
         { id: 'saved', label: 'Saved' },
+        { id: 'membership', label: 'Membership' },
     ];
 
 
@@ -395,6 +401,7 @@ export default function Profile() {
                                 {tab.id === 'listings' && <Package className="w-4 h-4" />}
                                 {tab.id === 'orders' && <ShoppingCart className="w-4 h-4" />}
                                 {tab.id === 'saved' && <Heart className="w-4 h-4" />}
+                                {tab.id === 'membership' && <Crown className="w-4 h-4" />}
                                 {tab.label}
                                 {tab.count !== undefined && tab.count > 0 && (
                                     <span className={`text-[11px] px-2 py-0.5 rounded-full font-black shadow-sm ${
@@ -592,11 +599,77 @@ export default function Profile() {
                                     </button>
                                 </motion.div>
                             )}
+
+                            {/* MEMBERSHIP */}
+                            {activeTab === 'membership' && (
+                                <motion.div key="membership" initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 10 }} className="space-y-4">
+                                    {!membership.isActive ? (
+                                        <div className="py-20 text-center bg-white/40 ios-glass rounded-[2.5rem] border border-white/60 border-dashed shadow-sm">
+                                            <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-indigo-500 rounded-2xl flex items-center justify-center mx-auto mb-4 xl-shadow shadow-sm">
+                                                <Crown className="w-8 h-8 text-white" />
+                                            </div>
+                                            <h3 className="text-[18px] font-bold text-[#1D1D1F] tracking-tight">Unlock free deliveries</h3>
+                                            <p className="text-[14px] text-[#8E8E93] mt-1 mb-8 font-medium">Get CB Membership for exclusive perks.</p>
+                                            <button onClick={() => setIsPlansOpen(true)}
+                                                className="px-6 py-3 rounded-full bg-gradient-to-r from-purple-500 to-indigo-500 text-white text-[15px] font-bold shadow-lg shadow-purple-500/30 hover:scale-105 active:scale-95 transition-all">
+                                                Explore Plans
+                                            </button>
+                                        </div>
+                                    ) : (
+                                        <div className="ios-glass bg-white/50 backdrop-blur-3xl rounded-[2rem] p-6 sm:p-8 border border-white/60 shadow-sm relative overflow-hidden">
+                                            <div className="absolute top-0 right-0 w-48 h-48 bg-purple-500/10 blur-[50px] rounded-full pointer-events-none" />
+                                            <div className="absolute bottom-0 left-0 w-32 h-32 bg-indigo-500/10 blur-[50px] rounded-full pointer-events-none" />
+                                            
+                                            <div className="flex items-center gap-4 mb-6 relative z-10">
+                                                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center shadow-lg shadow-purple-500/30">
+                                                    <Crown className="w-8 h-8 text-white" />
+                                                </div>
+                                                <div>
+                                                    <p className="text-[11px] font-black uppercase tracking-widest text-[#8E8E93] mb-1">Active Plan</p>
+                                                    <h3 className="text-[24px] font-black text-[#1D1D1F] tracking-tight">CB {membership.plan?.replace('_', ' ').toUpperCase()}</h3>
+                                                </div>
+                                            </div>
+
+                                            <div className="bg-white/60 border border-white/60 rounded-[1.5rem] p-5 mb-6 shadow-sm relative z-10">
+                                                <div className="flex justify-between items-end mb-3">
+                                                    <div>
+                                                        <p className="text-[13px] font-bold text-[#8E8E93] tracking-tight mb-1">Free Deliveries This Week</p>
+                                                        <p className="text-[16px] font-black text-[#1D1D1F]">
+                                                            {membership.remainingDeliveries} <span className="text-[#8E8E93]">/ {membership.totalDeliveriesLimit}</span>
+                                                        </p>
+                                                    </div>
+                                                    <div className="text-right">
+                                                        <span className="text-[12px] font-bold text-[#007AFF] bg-[#007AFF]/10 px-3 py-1.5 rounded-full">
+                                                            {membership.usedDeliveries} Used
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div className="h-3 w-full bg-[#1D1D1F]/5 rounded-full overflow-hidden">
+                                                    <motion.div 
+                                                        initial={{ width: 0 }}
+                                                        animate={{ width: `${(membership.usedDeliveries / membership.totalDeliveriesLimit) * 100}%` }}
+                                                        className="h-full bg-gradient-to-r from-purple-500 to-indigo-500 rounded-full"
+                                                        transition={{ duration: 1, type: "spring" }}
+                                                    />
+                                                </div>
+                                                <p className="text-[11px] font-bold text-[#8E8E93] tracking-tight mt-3 text-center">
+                                                    Counter auto-resets every 7 days.
+                                                </p>
+                                            </div>
+
+                                            <div className="text-center relative z-10">
+                                                 <p className="text-[13px] font-bold text-[#8E8E93]">Member since: {new Date(membership.startDate!).toLocaleDateString()}</p>
+                                            </div>
+                                        </div>
+                                    )}
+                                </motion.div>
+                            )}
                         </AnimatePresence>
                     </div>
                 </div>
             </div>
 
+            <MembershipPlansModal isOpen={isPlansOpen} onClose={() => setIsPlansOpen(false)} />
 
             <style>{`
                 .hide-scroll::-webkit-scrollbar { display: none; }

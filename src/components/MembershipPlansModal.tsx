@@ -1,0 +1,187 @@
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { X, Check, Zap, Sparkles, Crown } from 'lucide-react';
+import { supabase } from '@/lib/supabase';
+import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/hooks/use-toast';
+import UpiPaymentModal from './UpiPaymentModal';
+
+interface MembershipPlansModalProps {
+    isOpen: boolean;
+    onClose: () => void;
+}
+
+const PLANS = [
+    {
+        id: 'plus',
+        name: 'CB PLUS',
+        price: 49,
+        deliveries: 5,
+        color: 'from-blue-500 to-cyan-400',
+        icon: Zap,
+        popular: false
+    },
+    {
+        id: 'prime',
+        name: 'CB PRIME',
+        price: 149,
+        deliveries: 15,
+        color: 'from-purple-600 to-indigo-500',
+        icon: Sparkles,
+        popular: true
+    },
+    {
+        id: 'prime_plus',
+        name: 'CB PRIME+',
+        price: 249,
+        deliveries: 25,
+        color: 'from-amber-500 to-orange-500',
+        icon: Crown,
+        popular: false
+    }
+];
+
+export default function MembershipPlansModal({ isOpen, onClose }: MembershipPlansModalProps) {
+    const { user } = useAuth();
+    const { toast } = useToast();
+    const [selectedPlan, setSelectedPlan] = useState<typeof PLANS[0] | null>(null);
+    const [isPaymentOpen, setIsPaymentOpen] = useState(false);
+
+    const handleSubscribeClick = (plan: typeof PLANS[0]) => {
+        if (!user) {
+            toast({ title: "Please login to subscribe", variant: "destructive" });
+            return;
+        }
+        setSelectedPlan(plan);
+        setIsPaymentOpen(true);
+    };
+
+    const handlePaymentVerify = async (paymentId: string) => {
+        if (!user || !selectedPlan) return;
+        
+        const now = new Date().toISOString();
+        const { error } = await supabase
+            .from('profiles')
+            .update({
+                membership_plan: selectedPlan.id,
+                membership_start_date: now,
+                free_deliveries_used: 0,
+                membership_last_reset: now
+            })
+            .eq('id', user.id);
+
+        if (error) {
+            throw new Error("Failed to activate membership. Please contact support.");
+        }
+        
+        // Success handled by UpiPaymentModal
+        setTimeout(() => {
+            onClose(); // Close the plans modal too
+            window.location.reload(); // Quick refresh to apply hook changes globally
+        }, 1500);
+    };
+
+    return (
+        <AnimatePresence>
+            {isOpen && (
+                <div className="fixed inset-0 z-[10000] flex items-end sm:items-center justify-center pointer-events-auto">
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="absolute inset-0 bg-black/60 transform-gpu"
+                        style={{ willChange: "opacity" }}
+                        onClick={onClose}
+                    />
+
+                    <motion.div
+                        initial={{ y: "100%", opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        exit={{ y: "100%", opacity: 0 }}
+                        transition={{ type: "spring", damping: 25, stiffness: 300 }}
+                        className="relative w-full max-w-md bg-[#0F1115] sm:rounded-3xl rounded-t-[2.5rem] shadow-2xl overflow-hidden pt-6 pb-8 mx-0 sm:mx-4 transform-gpu border border-white/10"
+                        style={{ willChange: "transform, opacity" }}
+                    >
+                        <div className="absolute top-0 inset-x-0 h-40 bg-gradient-to-b from-purple-500/20 to-transparent pointer-events-none" />
+
+                        <div className="flex items-center justify-between px-6 pb-2 relative z-10">
+                            <div>
+                                <h2 className="text-2xl font-black text-white tracking-tight">CU Membership</h2>
+                                <p className="text-sm text-slate-400 font-medium tracking-wide">Unlock free deliveries & more</p>
+                            </div>
+                            <button onClick={onClose} className="p-2 rounded-full bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-colors cursor-pointer backdrop-blur-md">
+                                <X className="w-5 h-5" />
+                            </button>
+                        </div>
+
+                        <div className="px-6 mt-6 space-y-4 max-h-[65vh] overflow-y-auto relative z-10 custom-scrollbar">
+                            {PLANS.map((plan) => {
+                                const Icon = plan.icon;
+                                return (
+                                    <div 
+                                        key={plan.id}
+                                        className={`relative rounded-2xl p-5 border transition-all duration-300 ${plan.popular ? 'bg-white/10 border-purple-500/50 shadow-[0_0_30px_rgba(168,85,247,0.15)]' : 'bg-white/5 border-white/10 hover:border-white/20'}`}
+                                    >
+                                        {plan.popular && (
+                                            <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-purple-500 to-indigo-500 text-white text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full shadow-lg">
+                                                Most Popular
+                                            </div>
+                                        )}
+                                        
+                                        <div className="flex justify-between items-start mb-4">
+                                            <div className="flex items-center gap-3">
+                                                <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${plan.color} flex items-center justify-center shadow-inner`}>
+                                                    <Icon className="w-5 h-5 text-white" />
+                                                </div>
+                                                <div>
+                                                    <h3 className="text-lg font-black text-white tracking-tight">{plan.name}</h3>
+                                                    <p className="text-xs text-slate-400 font-medium">Auto-renews monthly</p>
+                                                </div>
+                                            </div>
+                                            <div className="text-right">
+                                                <span className="text-2xl font-black text-white">₹{plan.price}</span>
+                                                <span className="text-slate-400 text-xs font-medium block">/ month</span>
+                                            </div>
+                                        </div>
+
+                                        <div className="space-y-2 mb-5">
+                                            <div className="flex items-center gap-2 text-sm text-slate-300">
+                                                <div className="w-4 h-4 rounded-full bg-emerald-500/20 flex items-center justify-center">
+                                                    <Check className="w-3 h-3 text-emerald-400" />
+                                                </div>
+                                                <span className="font-medium"><span className="text-white font-bold">{plan.deliveries}</span> FREE Deliveries / week</span>
+                                            </div>
+                                            <div className="flex items-center gap-2 text-sm text-slate-300">
+                                                <div className="w-4 h-4 rounded-full bg-emerald-500/20 flex items-center justify-center">
+                                                    <Check className="w-3 h-3 text-emerald-400" />
+                                                </div>
+                                                <span className="font-medium">Priority Support</span>
+                                            </div>
+                                        </div>
+
+                                        <button 
+                                            onClick={() => handleSubscribeClick(plan)}
+                                            className={`w-full py-3.5 rounded-xl font-bold text-sm transition-all active:scale-[0.98] ${plan.popular ? 'bg-white text-black hover:bg-slate-200' : 'bg-white/10 text-white hover:bg-white/20'}`}
+                                        >
+                                            Subscribe to {plan.name}
+                                        </button>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </motion.div>
+                </div>
+            )}
+
+            {selectedPlan && (
+                <UpiPaymentModal 
+                    isOpen={isPaymentOpen}
+                    onClose={() => setIsPaymentOpen(false)}
+                    amount={selectedPlan.price}
+                    orderIdText={`CB_MEMBERSHIP_${selectedPlan.id.toUpperCase()}`}
+                    onPaymentVerify={handlePaymentVerify}
+                />
+            )}
+        </AnimatePresence>
+    );
+}

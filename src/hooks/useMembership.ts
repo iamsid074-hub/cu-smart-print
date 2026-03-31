@@ -1,0 +1,108 @@
+import { useState, useEffect } from 'react';
+import { supabase } from '@/lib/supabase';
+import { useAuth } from '@/contexts/AuthContext';
+
+export type MembershipPlan = 'plus' | 'prime' | 'prime_plus' | null;
+
+export interface MembershipData {
+    plan: MembershipPlan;
+    startDate: string | null;
+    usedDeliveries: number;
+    lastReset: string | null;
+}
+
+export const getDeliveriesLimit = (plan: MembershipPlan) => {
+    if (plan === 'plus') return 5;
+    if (plan === 'prime') return 15;
+    if (plan === 'prime_plus') return 25;
+    return 0;
+};
+
+export const useMembership = () => {
+    const { user } = useAuth();
+    const [data, setData] = useState<MembershipData>({
+        plan: null,
+        startDate: null,
+        usedDeliveries: 0,
+        lastReset: null
+    });
+    const [isLoaded, setIsLoaded] = useState(false);
+
+    useEffect(() => {
+        if (!user) {
+            setIsLoaded(true);
+            return;
+        }
+
+        const fetchAndSyncMembership = async () => {
+            const { data: profile } = await supabase
+                .from('profiles')
+                .select('membership_plan, membership_start_date, free_deliveries_used, membership_last_reset')
+                .eq('id', user.id)
+                .single();
+
+            if (profile && profile.membership_plan) {
+                let used = profile.free_deliveries_used || 0;
+                let lastReset = profile.membership_last_reset || profile.membership_start_date;
+
+                // Automatic 7-day reset logic
+                if (lastReset) {
+                    const resetDate = new Date(lastReset);
+                    const now = new Date();
+                    const daysSinceReset = (now.getTime() - resetDate.getTime()) / (1000 * 60 * 60 * 24);
+
+                    if (daysSinceReset >= 7) {
+                        // Reset the used count and update last_reset
+                        used = 0;
+                        lastReset = now.toISOString();
+
+                        await supabase
+                            .from('profiles')
+                            .update({
+                                free_deliveries_used: 0,
+                                membership_last_reset: lastReset
+                            })
+                            .eq('id', user.id);
+                    }
+                }
+
+                setData({
+                    plan: profile.membership_plan as MembershipPlan,
+                    startDate: profile.membership_start_date,
+                    usedDeliveries: used,
+                    lastReset: lastReset
+                });
+            }
+            setIsLoaded(true);
+        };
+
+        fetchAndSyncMembership();
+    }, [user]);
+
+    const incrementUsage = async () => {
+        if (!user || !data.plan) return;
+        
+        const newUsed = data.usedDeliveries + 1;
+        setData(prev => ({ ...prev, usedDeliveries: newUsed }));
+
+        await supabase
+            .from('profiles')
+            .update({ free_deliveries_used: newUsed })
+            .eq('id', user.id);
+    };
+
+    const totalDeliveriesLimit = getDeliveriesLimit(data.plan);
+    const remainingDeliveries = Math.max(0, totalDeliveriesLimit - data.usedDeliveries);
+    const isActive = data.plan !== null;
+    const hasFreeDelivery = isActive && remainingDeliveries > 0;
+
+    return {
+        ...data,
+        isLoaded,
+        totalDeliveriesLimit,
+        remainingDeliveries,
+        isActive,
+        hasFreeDelivery,
+        incrementUsage
+    };
+};

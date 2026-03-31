@@ -11,6 +11,8 @@ import UpiPaymentModal from "@/components/UpiPaymentModal";
 import RiskAlert from "@/components/RiskAlert";
 import { evaluateOrderRisk, RiskEvaluation } from "@/lib/risk";
 import { useUserLocation } from "@/hooks/useUserLocation";
+import { useMembership } from "@/hooks/useMembership";
+import MembershipUpsell from "@/components/MembershipUpsell";
 
 
 export default function Cart() {
@@ -19,6 +21,7 @@ export default function Cart() {
     const navigate = useNavigate();
     const { toast } = useToast();
     const { data: locationData, saveLocation, isLoaded: locationLoaded } = useUserLocation();
+    const { hasFreeDelivery, remainingDeliveries, incrementUsage, plan } = useMembership();
 
     const [showCheckout, setShowCheckout] = useState(false);
     const [hostel, setHostel] = useState("");
@@ -213,6 +216,11 @@ export default function Cart() {
         if (error) {
             console.error("Supabase Insert Error:", error);
             throw error;
+        }
+
+        // Apply Free Delivery limit deduction
+        if (hasFreeDelivery && paymentMethod !== "cod") {
+            await incrementUsage();
         }
 
         // Wallet Deduction
@@ -513,6 +521,10 @@ export default function Cart() {
                             </AnimatePresence>
                         </div>
 
+                        {/* Membership Smart Upsell */}
+                        {!hasFreeDelivery && (
+                            <MembershipUpsell currentDeliveryFee={paymentMethod === 'cod' ? 51 : baseDelivery} />
+                        )}
 
                         {/* Price Summary */}
                         <div className="rounded-3xl p-5 sm:p-6 bg-white shadow-[0_4px_20px_rgba(0,0,0,0.03)] mb-4">
@@ -524,13 +536,28 @@ export default function Cart() {
                                 <span className="flex items-center gap-1.5">
                                     <Clock className="w-4 h-4 text-emerald-500" /> {hasVending ? `Floor ${floor} Delivery` : 'Delivery Fee'}
                                 </span>
-                                {paymentMethod !== 'cod' && ((!hasVending && [2, 3].includes(floor)) || hasFlavourCombo) && (
+                                {paymentMethod !== 'cod' && ((!hasVending && [2, 3].includes(floor)) || hasFlavourCombo || hasFreeDelivery) && (
                                     <span className="text-slate-400 line-through text-xs">₹{originalDeliveryFee}</span>
                                 )}
-                                <span className={(paymentMethod !== 'cod' && (hasVending || (!hasVending && [2, 3].includes(floor)) || hasFlavourCombo)) ? "text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded" : "font-medium text-slate-900"}>+ ₹{deliveryFee}</span>
+                                <span className={(paymentMethod !== 'cod' && (hasVending || (!hasVending && [2, 3].includes(floor)) || hasFlavourCombo || hasFreeDelivery)) ? "text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded" : "font-medium text-slate-900"}>+ ₹{deliveryFee}</span>
                             </div>
 
-                            {paymentMethod !== 'cod' && hasFlavourCombo && (
+                            {paymentMethod !== 'cod' && hasFreeDelivery && (
+                                <div className="mb-4 bg-gradient-to-r from-purple-500/10 to-indigo-500/10 border border-purple-500/20 rounded-2xl p-4 flex items-center justify-between">
+                                    <div className="flex items-center gap-3">
+                                        <div className="bg-purple-100 p-1.5 rounded-full text-purple-600">
+                                            <Zap className="w-5 h-5" />
+                                        </div>
+                                        <div>
+                                            <p className="text-purple-900 font-bold text-sm">CB Membership applied</p>
+                                            <p className="text-purple-700/80 text-xs font-medium">{remainingDeliveries - 1} free deliveries left this week</p>
+                                        </div>
+                                    </div>
+                                    <span className="text-purple-700 font-black">-₹{hasFlavourCombo ? specialDeliveryFee : baseDelivery}</span>
+                                </div>
+                            )}
+
+                            {paymentMethod !== 'cod' && !hasFreeDelivery && hasFlavourCombo && (
                                 <div className="mb-4 bg-orange-50 border border-orange-100 rounded-2xl p-4 flex items-center gap-2 text-orange-800 text-xs sm:text-sm font-medium">
                                     <Zap className="w-4 h-4 flex-shrink-0 text-orange-500" />
                                     <span>Flavour Factory Offer: Special ₹21 delivery fee applied!</span>

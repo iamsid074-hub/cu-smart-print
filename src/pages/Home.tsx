@@ -12,6 +12,7 @@ import { Capacitor } from "@capacitor/core";
 import { groceryItems } from "@/config/groceryItems";
 import { ADMIN_SELLER_ID } from "@/config/campusEssentials";
 import type { Database } from "@/types/supabase";
+import MembershipBanner from "@/components/MembershipBanner";
 
 const categories = [
     { id: "All", label: "All" },
@@ -211,7 +212,8 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="max-w-[1600px] mx-auto px-3 sm:px-6 lg:px-10">
+      <div className="max-w-[1600px] mx-auto px-3 sm:px-6 lg:px-10 mt-[-1rem]">
+          <MembershipBanner />
         <div className="w-full">
 
           {/* ─── Digital Vending Machine Section ─── */}
