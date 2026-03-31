@@ -148,7 +148,7 @@ const ProductCard = memo(({
           />
         </div>
 
-        <div className="p-4 flex flex-col flex-1">
+          <div className="p-4 flex flex-col flex-1">
           <div>
             <div className="flex items-start justify-between gap-2 mb-2">
               <h3 className="font-bold text-[15px] text-[#1D1D1F] leading-snug tracking-tight line-clamp-2">{title}</h3>
@@ -157,37 +157,17 @@ const ProductCard = memo(({
             <span className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] uppercase tracking-wider font-bold mb-3 border border-current/20 ${conditionColors[condition]}`}>
               {condition}
             </span>
-            
-            <div className="flex items-center gap-1.5 mb-3">
-              <span className="text-[11px] text-[#8E8E93] font-semibold">{seller}</span>
-              <BadgeCheck className="w-3.5 h-3.5 text-[#007AFF]" />
-              {rating && (
-                <>
-                  <Star className="w-3 h-3 text-[#FF9500] fill-current ml-1" />
-                  <span className="text-[11px] text-[#8E8E93] font-semibold">{rating}</span>
-                </>
-              )}
-            </div>
           </div>
           
-          <div className="flex items-center justify-between mt-auto">
-            <div className="flex items-baseline gap-2">
-              <span className="font-bold text-xl tracking-tight text-[#1D1D1F]">₹{price.toLocaleString()}</span>
-              {originalPrice && (
-                <span className="textxs font-semibold text-[#8E8E93] line-through">₹{originalPrice.toLocaleString()}</span>
-              )}
-            </div>
+          <div className="flex items-center justify-between mt-auto pt-2">
+            <span className="font-bold text-xl tracking-tight text-[#1D1D1F] truncate pr-2">₹{price.toLocaleString()}</span>
             
             <motion.button
               onClick={handleAddToCart}
               whileTap={{ scale: 0.9 }}
-              className="w-9 h-9 sm:w-auto sm:h-auto sm:px-4 sm:py-2 ios-action-button rounded-full flex items-center justify-center gap-1.5"
+              className="w-9 h-9 sm:w-10 sm:h-10 bg-[#007AFF] text-white rounded-full flex shrink-0 items-center justify-center shadow-md hover:bg-[#0066CC] transition-colors"
             >
-              <ShoppingCart className="w-4 h-4 sm:hidden" />
-              <div className="hidden sm:flex items-center gap-1.5">
-                <ShoppingCart className="w-4 h-4" />
-                <span className="text-xs font-bold tracking-tight">Add</span>
-              </div>
+              <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5" />
             </motion.button>
           </div>
         </div>
