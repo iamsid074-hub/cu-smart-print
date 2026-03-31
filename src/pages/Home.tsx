@@ -339,20 +339,24 @@ export default function Home() {
                     color: "#FF9500",
                   },
                 ].map((item, i) => (
-                  <motion.div
-                    key={item.title}
-                    initial={{ opacity: 0, y: 16 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: i * 0.08 }}
-                    className="rounded-2xl sm:rounded-3xl p-5 sm:p-6 flex flex-col transition-all duration-300 bg-white/50 border border-white/60 shadow-sm"
-                  >
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center mb-4 bg-white shadow-sm border border-black/5">
-                      <item.icon className="w-5 h-5 sm:w-6 sm:h-6" style={{ color: item.color }} />
-                    </div>
-                    <h3 className="text-[15px] sm:text-base font-bold mb-1.5 text-[#1D1D1F] tracking-tight">{item.title}</h3>
-                    <p className="text-[13px] leading-relaxed text-[#8E8E93] font-medium">{item.desc}</p>
-                  </motion.div>
+                  <Link to="/help" key={item.title} className="block group">
+                    <motion.div
+                      initial={{ opacity: 0, y: 16 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: i * 0.08 }}
+                      className="rounded-2xl sm:rounded-3xl p-5 sm:p-6 flex flex-col transition-all duration-300 bg-white/50 border border-white/60 shadow-sm hover:shadow-md hover:bg-white h-full"
+                    >
+                      <div className="flex items-start justify-between mb-4">
+                        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center bg-white shadow-sm border border-black/5 group-hover:scale-110 transition-transform duration-300">
+                          <item.icon className="w-5 h-5 sm:w-6 sm:h-6" style={{ color: item.color }} />
+                        </div>
+                        <ExternalLink className="w-4 h-4 sm:w-5 sm:h-5 text-black/10 group-hover:text-[#007AFF] transition-colors opacity-0 group-hover:opacity-100" />
+                      </div>
+                      <h3 className="text-[15px] sm:text-base font-bold mb-1.5 text-[#1D1D1F] tracking-tight group-hover:text-[#007AFF] transition-colors">{item.title}</h3>
+                      <p className="text-[13px] leading-relaxed text-[#8E8E93] font-medium">{item.desc}</p>
+                    </motion.div>
+                  </Link>
                 ))}
               </div>
             </motion.div>
