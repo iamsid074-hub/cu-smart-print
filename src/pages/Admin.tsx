@@ -12,7 +12,7 @@ import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
-type AdminSection = "dashboard" | "products" | "item_orders" | "food_orders" | "notifications";
+type AdminSection = "dashboard" | "products" | "item_orders" | "food_orders" | "subscriptions" | "notifications";
 
 interface Product {
     id: string;
@@ -484,9 +484,17 @@ function ProductsSection({ products, loading, onDelete }: {
 
 // ─── Helper: detect food order ─────────────────────────────────────────────────
 const NON_FOOD_KEYWORDS = ['practical file', 'notebook', 'register', 'pen', 'pencil', 'eraser', 'stapler', 'folder', 'chart', 'paper', 'assignment', 'lab manual', 'journal', 'project', 'file', 'subscription', 'cb prime'];
+
+function isSubscriptionOrder(order: Order): boolean {
+    return !!order.delivery_location?.includes('[SUBSCRIPTION]');
+}
+
 function isFoodOrder(order: Order): boolean {
     // If product_id exists, it's a marketplace/listed item order
     if (order.product_id) return false;
+    
+    // Subscriptions are strictly not food orders
+    if (isSubscriptionOrder(order)) return false;
     
     // If no product_id, it's a food/vending/grocery order from the cart/food menu
     // We check if the items list contains any non-food keywords
@@ -612,7 +620,7 @@ function ItemOrdersSection({ orders, loading, onUpdateStatus, onVerifyUpi, onApp
     orders: Order[]; loading: boolean; onUpdateStatus: (id: string, status: string, timestamps?: Record<string, string>) => void; onVerifyUpi: (id: string) => void; onApproveSubscription: (order: Order) => void;
 }) {
     const [filter, setFilter] = useState('all');
-    const itemOrders = orders.filter(o => !isFoodOrder(o));
+    const itemOrders = orders.filter(o => !isFoodOrder(o) && !isSubscriptionOrder(o));
     const filtered = applyFilter(itemOrders, filter);
 
     const nextStatus: Record<string, { label: string; status: string; icon: any; color: string; timestamps?: object } | null> = {
@@ -995,6 +1003,101 @@ function NotificationsSection({ notifications, loading, onMarkRead, onMarkAllRea
     );
 }
 
+// ─── Subscriptions Section ────────────────────────────────────────────────────────
+function SubscriptionsSection({ orders, loading, onUpdateStatus, onApproveSubscription }: {
+    orders: Order[]; loading: boolean; onUpdateStatus: (id: string, status: string) => void; onApproveSubscription: (order: Order) => void;
+}) {
+    const subscriptionOrders = orders.filter(isSubscriptionOrder);
+    const pendingCount = subscriptionOrders.filter(o => o.status === 'pending').length;
+
+    return (
+        <div className="space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-slate-900">
+                <div>
+                    <h2 className="text-2xl font-black mb-1 flex items-center gap-2"><Crown className="w-6 h-6 text-purple-500" /> Membership Subscriptions</h2>
+                    <p className="text-slate-900/70 text-sm">Review incoming subscription activations.</p>
+                </div>
+                {pendingCount > 0 && (
+                    <div className="bg-purple-100 text-purple-700 px-4 py-2 rounded-full font-bold text-sm">
+                        {pendingCount} Pending Request{pendingCount > 1 ? 's' : ''}
+                    </div>
+                )}
+            </div>
+
+            {loading ? (
+                <div className="py-20 flex justify-center"><Loader2 className="w-8 h-8 text-slate-400 animate-spin" /></div>
+            ) : subscriptionOrders.length === 0 ? (
+                <div className="py-20 text-center bg-white rounded-3xl border border-slate-200">
+                    <Crown className="w-12 h-12 text-slate-300 mx-auto mb-4" />
+                    <p className="font-semibold text-slate-900">No subscription requests.</p>
+                </div>
+            ) : (
+                <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+                    {subscriptionOrders.map((order, i) => {
+                        const planIdMatch = order.delivery_room?.match(/\[PLAN_ID:(.*?)\]/);
+                        const planId = planIdMatch ? planIdMatch[1].toUpperCase() : 'UNKNOWN';
+
+                        return (
+                            <motion.div key={order.id} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}
+                                className="bg-white rounded-2xl border border-slate-200 overflow-hidden hover:border-purple-300 transition-all p-5">
+                                
+                                <div className="flex justify-between items-start mb-4">
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center">
+                                            <Crown className="w-5 h-5 text-purple-600" />
+                                        </div>
+                                        <div>
+                                            <p className="font-black text-slate-900 text-lg">{order.buyer?.full_name || 'Unknown User'}</p>
+                                            <p className="text-xs text-slate-500 font-medium">Applied for <strong className="text-purple-600">CB {planId}</strong></p>
+                                        </div>
+                                    </div>
+                                    <StatusBadge status={order.status} isFood={false} />
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-3 mb-5">
+                                    <div className="bg-slate-50 rounded-xl p-3 border border-slate-200">
+                                        <p className="text-xs text-slate-500 font-bold uppercase tracking-wider mb-1 flex items-center gap-1"><MapPin className="w-3 h-3" /> Location</p>
+                                        <p className="text-sm font-semibold text-slate-900 truncate">{order.buyer?.hostel_block || 'N/A'}</p>
+                                    </div>
+                                    <div className="bg-slate-50 rounded-xl p-3 border border-slate-200">
+                                        <p className="text-xs text-slate-500 font-bold uppercase tracking-wider mb-1 flex items-center gap-1"><Phone className="w-3 h-3" /> Contact</p>
+                                        <div className="flex items-center gap-2">
+                                            <p className="text-sm font-semibold text-slate-900 truncate">{order.buyer?.phone_number || order.buyer_phone || 'N/A'}</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {order.status === 'pending' ? (
+                                    <div className="flex flex-col sm:flex-row gap-2 mt-4 pt-4 border-t border-slate-100">
+                                        <button 
+                                            onClick={() => onApproveSubscription(order)}
+                                            className="flex-1 flex w-full sm:w-auto items-center justify-center gap-2 py-3 rounded-xl border border-purple-500/40 text-sm font-bold transition-all bg-purple-500 text-white hover:bg-purple-600 shadow-[0_4px_12px_rgba(168,85,247,0.3)]"
+                                        >
+                                            <CheckCircle className="w-4 h-4" /> Approve & Activate
+                                        </button>
+                                        <button 
+                                            onClick={() => onUpdateStatus(order.id, 'cancelled')}
+                                            className="px-4 w-full sm:w-auto py-3 rounded-xl border border-red-500/30 bg-red-50/50 text-red-500 text-sm font-bold hover:bg-red-100 transition-all"
+                                        >
+                                            Decline
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <div className="mt-4 pt-4 border-t border-slate-100 text-center">
+                                        <span className={`text-xs font-bold px-3 py-1 rounded-full ${order.status === 'completed' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                                            {order.status === 'completed' ? 'Subscription Active' : 'Request Declined'}
+                                        </span>
+                                    </div>
+                                )}
+                            </motion.div>
+                        );
+                    })}
+                </div>
+            )}
+        </div>
+    );
+}
+
 // ─── Main Admin Page ───────────────────────────────────────────────────────────
 export default function Admin() {
     const { user, profile, isAdmin, signOut } = useAuth();
@@ -1331,8 +1434,9 @@ export default function Admin() {
     const navItems: { id: AdminSection; label: string; icon: any; badge?: number }[] = [
         { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
         { id: "products", label: "Products", icon: Package, badge: products.length },
-        { id: "item_orders", label: "Item Orders", icon: ShoppingCart, badge: orders.filter(o => !isFoodOrder(o) && o.status === 'pending').length || undefined },
+        { id: "item_orders", label: "Item Orders", icon: ShoppingCart, badge: orders.filter(o => !isFoodOrder(o) && !isSubscriptionOrder(o) && o.status === 'pending').length || undefined },
         { id: "food_orders", label: "Food Orders", icon: UtensilsCrossed, badge: orders.filter(o => isFoodOrder(o) && o.status === 'pending').length || undefined },
+        { id: "subscriptions", label: "Subscriptions", icon: Crown, badge: orders.filter(o => isSubscriptionOrder(o) && o.status === 'pending').length || undefined },
         { id: "notifications", label: "Notifications", icon: Bell, badge: unreadCount || undefined },
     ];
 
@@ -1497,6 +1601,22 @@ export default function Admin() {
                                     loading={loadingOrders}
                                     onUpdateStatus={handleUpdateOrderStatus}
                                     onVerifyUpi={handleVerifyUpi}
+                                />
+                            )}
+                            {section === "subscriptions" && (
+                                <SubscriptionsSection
+                                    orders={orders}
+                                    loading={loadingOrders}
+                                    onUpdateStatus={handleUpdateOrderStatus}
+                                    onApproveSubscription={handleApproveSubscription}
+                                />
+                            )}
+                            {section === "subscriptions" && (
+                                <SubscriptionsSection
+                                    orders={orders}
+                                    loading={loadingOrders}
+                                    onUpdateStatus={handleUpdateOrderStatus}
+                                    onApproveSubscription={handleApproveSubscription}
                                 />
                             )}
                             {section === "notifications" && (
