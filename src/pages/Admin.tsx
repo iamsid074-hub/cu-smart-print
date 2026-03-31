@@ -1004,8 +1004,8 @@ function NotificationsSection({ notifications, loading, onMarkRead, onMarkAllRea
 }
 
 // ─── Subscriptions Section ────────────────────────────────────────────────────────
-function SubscriptionsSection({ orders, loading, onUpdateStatus, onApproveSubscription }: {
-    orders: Order[]; loading: boolean; onUpdateStatus: (id: string, status: string) => void; onApproveSubscription: (order: Order) => void;
+function SubscriptionsSection({ orders, loading, onApproveSubscription, onDeclineSubscription }: {
+    orders: Order[]; loading: boolean; onApproveSubscription: (order: Order) => void; onDeclineSubscription: (order: Order) => void;
 }) {
     const subscriptionOrders = orders.filter(isSubscriptionOrder);
     const pendingCount = subscriptionOrders.filter(o => o.status === 'pending').length;
@@ -1051,7 +1051,7 @@ function SubscriptionsSection({ orders, loading, onUpdateStatus, onApproveSubscr
                                             <p className="text-xs text-slate-500 font-medium">Applied for <strong className="text-purple-600">CB {planId}</strong></p>
                                         </div>
                                     </div>
-                                    <StatusBadge status={order.status} isFood={false} />
+                                    <StatusBadge status={order.status} />
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-3 mb-5">
@@ -1076,7 +1076,7 @@ function SubscriptionsSection({ orders, loading, onUpdateStatus, onApproveSubscr
                                             <CheckCircle className="w-4 h-4" /> Approve & Activate
                                         </button>
                                         <button 
-                                            onClick={() => onUpdateStatus(order.id, 'cancelled')}
+                                            onClick={() => onDeclineSubscription(order)}
                                             className="px-4 w-full sm:w-auto py-3 rounded-xl border border-red-500/30 bg-red-50/50 text-red-500 text-sm font-bold hover:bg-red-100 transition-all"
                                         >
                                             Decline
@@ -1420,6 +1420,43 @@ export default function Admin() {
         }
     };
 
+    const handleDeclineSubscription = async (order: Order) => {
+        try {
+            // 1. Cancel the order
+            const { error: orderError } = await supabase
+                .from('orders')
+                .update({ status: 'cancelled', payment_status: 'failed' })
+                .eq('id', order.id);
+
+            if (orderError) throw orderError;
+
+            // 2. Send notification to user
+            const planIdMatch = order.delivery_room?.match(/\[PLAN_ID:(.*?)\]/);
+            const planId = planIdMatch ? planIdMatch[1].toUpperCase() : 'Membership';
+
+            await supabase.from('admin_notifications').insert({
+                type: 'new_order',
+                payload: {
+                    buyer_name: order.buyer?.full_name || 'User',
+                    plan: `CB ${planId}`,
+                    message: `Subscription request for CB ${planId} by ${order.buyer?.full_name || 'a user'} has been declined.`,
+                    declined: true
+                },
+                is_read: false
+            });
+
+            // 3. Also notify user via their profile (using a simple approach - insert into notifications if table exists)
+            // For now, the order status change to 'cancelled' will be picked up by the useMembership hook
+
+            await fetchOrders();
+            await fetchStats();
+            alert(`Subscription for ${order.buyer?.full_name || 'user'} has been declined.`);
+        } catch (err: any) {
+            console.error(err);
+            alert("Error declining subscription");
+        }
+    };
+
     const handleMarkRead = async (id: string) => {
         await supabase.from("admin_notifications").update({ is_read: true }).eq("id", id);
         setNotifications(prev => prev.map(n => n.id === id ? { ...n, is_read: true } : n));
@@ -1607,16 +1644,8 @@ export default function Admin() {
                                 <SubscriptionsSection
                                     orders={orders}
                                     loading={loadingOrders}
-                                    onUpdateStatus={handleUpdateOrderStatus}
                                     onApproveSubscription={handleApproveSubscription}
-                                />
-                            )}
-                            {section === "subscriptions" && (
-                                <SubscriptionsSection
-                                    orders={orders}
-                                    loading={loadingOrders}
-                                    onUpdateStatus={handleUpdateOrderStatus}
-                                    onApproveSubscription={handleApproveSubscription}
+                                    onDeclineSubscription={handleDeclineSubscription}
                                 />
                             )}
                             {section === "notifications" && (
