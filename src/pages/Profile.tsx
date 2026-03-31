@@ -40,7 +40,7 @@ export default function Profile() {
     const [loadingOrders, setLoadingOrders] = useState(true);
     const [processingOrderId, setProcessingOrderId] = useState<string | null>(null);
 
-    const [activeTab, setActiveTab] = useState<TabId>('listings');
+    const [activeTab, setActiveTab] = useState<TabId>('membership');
 
     useEffect(() => {
         async function fetchProfileAndListings() {
@@ -183,10 +183,10 @@ export default function Profile() {
     const pendingCount = incomingOrders.filter(o => o.status === "pending").length;
 
     const tabs: { id: TabId; label: string; count?: number }[] = [
+        { id: 'membership', label: 'Membership' },
         { id: 'listings', label: 'Listings', count: myProducts.length },
         { id: 'orders', label: 'Orders', count: pendingCount || undefined },
         { id: 'saved', label: 'Saved' },
-        { id: 'membership', label: 'Membership' },
     ];
 
 
