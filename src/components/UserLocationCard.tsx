@@ -16,9 +16,9 @@ export default function UserLocationCard() {
 
   return (
     <>
-      <div className="absolute top-[4.5rem] sm:top-5 left-0 right-0 px-4 lg:px-8 z-[10000] flex justify-between items-start pointer-events-none drop-shadow-sm">
+      <div className="absolute top-[4.5rem] sm:top-5 left-0 right-0 px-4 lg:px-8 z-[10000] flex justify-between items-center pointer-events-none drop-shadow-sm">
         <div className="flex flex-col items-start gap-1 pointer-events-auto">
-          <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-none pl-0.5">
+          <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-none pl-[2px]">
             Your location
           </p>
           <button 
@@ -35,7 +35,7 @@ export default function UserLocationCard() {
         
         <Link 
           to="/profile" 
-          className="w-10 h-10 rounded-full bg-white/80 backdrop-blur-md border border-slate-200/60 shadow-sm flex items-center justify-center text-slate-600 hover:text-brand hover:scale-105 transition-all pointer-events-auto mt-0.5"
+          className="w-10 h-10 rounded-full bg-white/80 backdrop-blur-md border border-slate-200/60 shadow-sm flex items-center justify-center text-slate-600 hover:text-brand hover:scale-105 transition-all pointer-events-auto"
         >
           <User className="w-[18px] h-[18px]" strokeWidth={2.5} />
         </Link>

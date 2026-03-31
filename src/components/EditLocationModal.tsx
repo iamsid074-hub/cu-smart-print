@@ -42,7 +42,7 @@ export default function EditLocationModal({ isOpen, onClose }: EditLocationModal
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center pointer-events-auto">
+        <div className="fixed inset-0 z-[99999] flex items-end sm:items-center justify-center pointer-events-auto">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
