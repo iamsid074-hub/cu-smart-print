@@ -8,7 +8,7 @@ import { useCart } from "@/contexts/CartContext";
 import { useToast } from "@/hooks/use-toast";
 import PaymentSelector from "@/components/PaymentSelector";
 import UpiPaymentModal from "@/components/UpiPaymentModal";
-// Removed old offerTimer imports
+import { useUserLocation } from "@/hooks/useUserLocation";
 
 import {
     Dialog,
@@ -25,6 +25,7 @@ export default function ProductDetail() {
     const { user } = useAuth();
     const { toast } = useToast();
     const { addItem } = useCart();
+    const { data: locationData, saveLocation, isLoaded: locationLoaded } = useUserLocation();
 
     const [product, setProduct] = useState<any>(null);
     const [loading, setLoading] = useState(true);
@@ -33,6 +34,15 @@ export default function ProductDetail() {
     const [deliveryLocation, setDeliveryLocation] = useState("");
     const [deliveryRoom, setDeliveryRoom] = useState("");
     const [phone, setPhone] = useState("");
+    
+    useEffect(() => {
+        if (locationLoaded && locationData) {
+            if (locationData.hostel) setDeliveryLocation(locationData.hostel);
+            if (locationData.room) setDeliveryRoom(locationData.room);
+            if (locationData.phone) setPhone(locationData.phone);
+        }
+    }, [locationLoaded, locationData]);
+
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [paymentMethod, setPaymentMethod] = useState<"online" | "cod">("online");
     const [showUpiModal, setShowUpiModal] = useState(false);
@@ -114,7 +124,7 @@ export default function ProductDetail() {
 
 
     // Delivery fee - dynamic for COD
-    const deliveryFee = paymentMethod === "cod" ? 41 : 29;
+    const deliveryFee = paymentMethod === "cod" ? 51 : 29;
     const totalAmount = product ? product.price + deliveryFee : 0;
 
     const handleBuyNow = async (e: React.FormEvent) => {
@@ -179,6 +189,7 @@ export default function ProductDetail() {
             if (error) throw error;
 
             toast({ title: method === "online" ? "Order submitted" : "Order placed", description: method === "online" ? `Admin will verify payment.` : "First money, then order. Collect at gate." });
+            saveLocation({ hostel: deliveryLocation, room: deliveryRoom, phone: phone.replace(/\D/g, "") });
             setIsBuyModalOpen(false);
             setShowUpiModal(false);
             navigate(`/tracking`);

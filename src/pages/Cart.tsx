@@ -10,6 +10,7 @@ import PaymentSelector from "@/components/PaymentSelector";
 import UpiPaymentModal from "@/components/UpiPaymentModal";
 import RiskAlert from "@/components/RiskAlert";
 import { evaluateOrderRisk, RiskEvaluation } from "@/lib/risk";
+import { useUserLocation } from "@/hooks/useUserLocation";
 
 
 export default function Cart() {
@@ -17,11 +18,27 @@ export default function Cart() {
     const { user } = useAuth();
     const navigate = useNavigate();
     const { toast } = useToast();
+    const { data: locationData, saveLocation, isLoaded: locationLoaded } = useUserLocation();
 
     const [showCheckout, setShowCheckout] = useState(false);
     const [hostel, setHostel] = useState("");
     const [room, setRoom] = useState("");
     const [phone, setPhone] = useState("");
+    
+    useEffect(() => {
+        if (locationLoaded && locationData) {
+            if (locationData.hostel) setHostel(locationData.hostel);
+            if (locationData.room) {
+                setRoom(locationData.room);
+                const firstDigit = parseInt(locationData.room[0]);
+                if (!isNaN(firstDigit) && firstDigit > 0) {
+                    setFloor(firstDigit);
+                }
+            }
+            if (locationData.phone) setPhone(locationData.phone);
+        }
+    }, [locationLoaded, locationData]);
+
     const [paymentMethod, setPaymentMethod] = useState<"online" | "cod">("online");
     const [floor, setFloor] = useState<number>(1);
     const [submitting, setSubmitting] = useState(false);
@@ -79,15 +96,6 @@ export default function Cart() {
              if (data) {
                  setWalletBalance(data.wallet_balance || 0);
                  setTotalOrdersTracker(data.total_orders || 0);
-                 
-                 // Auto-fill hostel from profile if not already set locally
-                 const savedHostel = localStorage.getItem("last_hostel");
-                 if (savedHostel) {
-                     setHostel(savedHostel);
-                 } else if (data.hostel_block) {
-                     setHostel(data.hostel_block);
-                     localStorage.setItem("last_hostel", data.hostel_block);
-                 }
              }
 
              const startOfDay = new Date();
@@ -141,7 +149,7 @@ export default function Cart() {
             ? calculateVendingDelivery(floor)
             : ([2, 3].includes(floor) ? specialDeliveryFee : originalDeliveryFee));
 
-    const deliveryFee = paymentMethod === 'cod' ? 41 : (hasFlavourCombo ? specialDeliveryFee : baseDelivery);
+    const deliveryFee = paymentMethod === 'cod' ? 51 : (hasFlavourCombo ? specialDeliveryFee : baseDelivery);
     
     const maxWalletUsagePerDay = 50;
     const availableToday = Math.max(0, maxWalletUsagePerDay - dailyWalletUsed);
@@ -219,6 +227,9 @@ export default function Cart() {
             });
         }
         
+        // Save location for future auto-fill
+        saveLocation({ hostel, room, phone: phoneClean });
+
         // Clean up UI and state
         clearCart();
         setShowCheckout(false);
@@ -612,7 +623,6 @@ export default function Cart() {
                                                                 key={opt}
                                                                 onClick={() => {
                                                                     setHostel(opt);
-                                                                    localStorage.setItem("last_hostel", opt);
                                                                 }}
                                                                 className={`py-2.5 px-2 rounded-xl text-xs font-bold transition-all border ${
                                                                     hostel === opt 
