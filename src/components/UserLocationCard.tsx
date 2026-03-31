@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { MapPin, ChevronDown } from 'lucide-react';
-import { useLocation } from 'react-router-dom';
+import { MapPin, ChevronDown, User } from 'lucide-react';
+import { useLocation, Link } from 'react-router-dom';
 import { useUserLocation } from '@/hooks/useUserLocation';
 import EditLocationModal from './EditLocationModal';
 
@@ -16,20 +16,29 @@ export default function UserLocationCard() {
 
   return (
     <>
-      <div className="absolute top-[4.5rem] sm:top-5 left-4 lg:left-8 z-[10000] flex flex-col items-start gap-1 pointer-events-auto drop-shadow-sm">
-        <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-none pl-0.5">
-          Your location
-        </p>
-        <button 
-          onClick={() => setIsEditOpen(true)}
-          className="flex items-center gap-1 text-slate-900 transition-opacity hover:opacity-80 group max-w-[140px] sm:max-w-[180px]"
+      <div className="absolute top-[4.5rem] sm:top-5 left-0 right-0 px-4 lg:px-8 z-[10000] flex justify-between items-start pointer-events-none drop-shadow-sm">
+        <div className="flex flex-col items-start gap-1 pointer-events-auto">
+          <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-none pl-0.5">
+            Your location
+          </p>
+          <button 
+            onClick={() => setIsEditOpen(true)}
+            className="flex items-center gap-1 text-slate-900 transition-opacity hover:opacity-80 group max-w-[140px] sm:max-w-[180px]"
+          >
+            <MapPin className="w-4 h-4 sm:w-[18px] sm:h-[18px] text-slate-800 shrink-0" strokeWidth={2.5} />
+            <span className="text-[13px] sm:text-[15px] font-black tracking-tight truncate ml-0.5 leading-snug">
+              {hasLocation ? `${data.hostel} ${data.room}` : "Add Location"}
+            </span>
+            <ChevronDown className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-800 transition-colors shrink-0 mt-0.5" strokeWidth={3} />
+          </button>
+        </div>
+        
+        <Link 
+          to="/profile" 
+          className="w-10 h-10 rounded-full bg-white/80 backdrop-blur-md border border-slate-200/60 shadow-sm flex items-center justify-center text-slate-600 hover:text-brand hover:scale-105 transition-all pointer-events-auto mt-0.5"
         >
-          <MapPin className="w-4 h-4 sm:w-[18px] sm:h-[18px] text-slate-800 shrink-0" strokeWidth={2.5} />
-          <span className="text-[13px] sm:text-[15px] font-black tracking-tight truncate ml-0.5 leading-snug">
-            {hasLocation ? `${data.hostel} ${data.room}` : "Add Location"}
-          </span>
-          <ChevronDown className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-800 transition-colors shrink-0 mt-0.5" strokeWidth={3} />
-        </button>
+          <User className="w-[18px] h-[18px]" strokeWidth={2.5} />
+        </Link>
       </div>
 
       <EditLocationModal isOpen={isEditOpen} onClose={() => setIsEditOpen(false)} />
