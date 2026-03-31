@@ -14,8 +14,8 @@ export default function UserLocationCard() {
 
   return (
     <>
-      <div className="fixed top-2 sm:top-4 left-4 z-40 flex flex-col items-start gap-0.5 pointer-events-auto">
-        <p className="text-[10px] sm:text-[11px] font-bold text-slate-400/90 leading-none pl-0.5 tracking-wide">
+      <div className="fixed top-3 sm:top-5 left-4 z-[10000] flex flex-col items-start gap-1 pointer-events-auto drop-shadow-sm">
+        <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-none pl-0.5">
           Your location
         </p>
         <button 
