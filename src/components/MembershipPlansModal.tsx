@@ -19,7 +19,8 @@ const PLANS = [
         deliveries: 5,
         color: 'from-blue-500 to-cyan-400',
         icon: Zap,
-        popular: false
+        popular: false,
+        features: []
     },
     {
         id: 'prime',
@@ -28,7 +29,8 @@ const PLANS = [
         deliveries: 15,
         color: 'from-purple-600 to-indigo-500',
         icon: Sparkles,
-        popular: true
+        popular: true,
+        features: ['Faster Delivery']
     },
     {
         id: 'prime_plus',
@@ -37,7 +39,8 @@ const PLANS = [
         deliveries: 25,
         color: 'from-amber-500 to-orange-500',
         icon: Crown,
-        popular: false
+        popular: false,
+        features: ['Faster Delivery', 'Extreme fast delivery ⚡']
     }
 ];
 
@@ -135,12 +138,12 @@ export default function MembershipPlansModal({ isOpen, onClose }: MembershipPlan
                                                 </div>
                                                 <div>
                                                     <h3 className="text-lg font-black text-white tracking-tight">{plan.name}</h3>
-                                                    <p className="text-xs text-slate-400 font-medium">Auto-renews monthly</p>
+                                                    <p className="text-xs text-slate-400 font-medium">Auto-renews weekly</p>
                                                 </div>
                                             </div>
                                             <div className="text-right">
                                                 <span className="text-2xl font-black text-white">₹{plan.price}</span>
-                                                <span className="text-slate-400 text-xs font-medium block">/ month</span>
+                                                <span className="text-slate-400 text-xs font-medium block">/ week</span>
                                             </div>
                                         </div>
 
@@ -157,6 +160,14 @@ export default function MembershipPlansModal({ isOpen, onClose }: MembershipPlan
                                                 </div>
                                                 <span className="font-medium">Priority Support</span>
                                             </div>
+                                            {plan.features.map((feature, i) => (
+                                                <div key={i} className="flex items-center gap-2 text-sm">
+                                                    <div className="w-4 h-4 rounded-full bg-emerald-500/20 flex items-center justify-center outline outline-1 outline-emerald-500/50 shadow-[0_0_8px_rgba(52,211,153,0.3)]">
+                                                        <Check className="w-3 h-3 text-emerald-400 font-bold" />
+                                                    </div>
+                                                    <span className="font-bold text-white tracking-wide">{feature}</span>
+                                                </div>
+                                            ))}
                                         </div>
 
                                         <button 
