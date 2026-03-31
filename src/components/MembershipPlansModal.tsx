@@ -66,15 +66,21 @@ export default function MembershipPlansModal({ isOpen, onClose }: MembershipPlan
         const { error } = await supabase
             .from('orders')
             .insert({
+                product_id: null,
                 buyer_id: user.id,
-                seller_id: user.id, // self as placeholder
+                seller_id: "7450c873-f51d-469e-a33d-c44ca80beb0c", // Admin system user
                 base_price: selectedPlan.price,
+                commission: 0,
+                delivery_charge: 0,
                 total_price: selectedPlan.price,
                 delivery_location: `[SUBSCRIPTION] ${selectedPlan.name}`,
                 delivery_room: `[PLAN_ID:${selectedPlan.id}]`,
+                buyer_phone: "9999999999", // Placeholder
                 status: 'pending',
+                payment_method: 'cashfree',
                 payment_status: 'verifying',
-                razorpay_payment_id: paymentId
+                razorpay_payment_id: paymentId,
+                seller_notified_at: new Date().toISOString()
             });
 
         if (error) {
