@@ -3,11 +3,15 @@ import { motion } from 'framer-motion';
 import { MapPin, ChevronDown, User } from 'lucide-react';
 import { useLocation, Link } from 'react-router-dom';
 import { useUserLocation } from '@/hooks/useUserLocation';
+import { useMembership } from '@/hooks/useMembership';
 import EditLocationModal from './EditLocationModal';
+import MembershipPlansModal from './MembershipPlansModal';
 
 export default function UserLocationCard() {
   const { data, isLoaded } = useUserLocation();
+  const { isActive, plan } = useMembership();
   const [isEditOpen, setIsEditOpen] = useState(false);
+  const [isPlansOpen, setIsPlansOpen] = useState(false);
   const location = useLocation();
 
   if (!isLoaded || location.pathname !== '/home') return null;
@@ -47,15 +51,26 @@ export default function UserLocationCard() {
           </button>
         </div>
         
-        <Link 
-          to="/profile" 
-          className="w-10 h-10 rounded-full bg-white/90 backdrop-blur-md border border-purple-100 shadow-[0_2px_12px_rgba(127,119,221,0.15)] flex items-center justify-center text-purple-600 hover:text-purple-700 hover:scale-105 transition-all pointer-events-auto"
-        >
-          <User className="w-[18px] h-[18px]" strokeWidth={2.5} />
-        </Link>
+        <div className="flex items-center gap-2 pointer-events-auto">
+          {isActive && (
+            <button 
+              onClick={() => setIsPlansOpen(true)}
+              className="text-[10px] sm:text-[11px] font-black uppercase tracking-widest bg-gradient-to-r from-amber-200 to-yellow-500 bg-clip-text text-transparent border border-amber-300/30 px-2.5 py-1 rounded-full shadow-[0_0_15px_rgba(251,191,36,0.15)] hover:bg-amber-500/10 hover:scale-105 active:scale-95 transition-all outline outline-1 outline-amber-400/20"
+            >
+              MEMBER
+            </button>
+          )}
+          <Link 
+            to="/profile" 
+            className="w-10 h-10 rounded-full bg-white/90 backdrop-blur-md border border-purple-100 shadow-[0_2px_12px_rgba(127,119,221,0.15)] flex items-center justify-center text-purple-600 hover:text-purple-700 hover:scale-105 transition-all pointer-events-auto"
+          >
+            <User className="w-[18px] h-[18px]" strokeWidth={2.5} />
+          </Link>
+        </div>
       </div>
 
       <EditLocationModal isOpen={isEditOpen} onClose={() => setIsEditOpen(false)} />
+      <MembershipPlansModal isOpen={isPlansOpen} onClose={() => setIsPlansOpen(false)} />
     </>
   );
 }

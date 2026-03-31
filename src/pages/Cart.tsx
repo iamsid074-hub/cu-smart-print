@@ -152,7 +152,7 @@ export default function Cart() {
             ? calculateVendingDelivery(floor)
             : ([2, 3].includes(floor) ? specialDeliveryFee : originalDeliveryFee));
 
-    const deliveryFee = paymentMethod === 'cod' ? 51 : (hasFlavourCombo ? specialDeliveryFee : baseDelivery);
+    const deliveryFee = paymentMethod === 'cod' ? 51 : (hasFreeDelivery ? 0 : (hasFlavourCombo ? specialDeliveryFee : baseDelivery));
     
     const maxWalletUsagePerDay = 50;
     const availableToday = Math.max(0, maxWalletUsagePerDay - dailyWalletUsed);

@@ -294,6 +294,14 @@ export default function Profile() {
                                     <div className="flex items-center justify-center sm:justify-start gap-2 mb-1">
                                         <h1 className="text-[28px] tracking-tight font-black text-[#1D1D1F]">{profile?.full_name || "Student"}</h1>
                                         <CheckCircle className="w-5 h-5 text-[#007AFF] fill-[#007AFF]/10" />
+                                        {membership.isActive && (
+                                            <button 
+                                                onClick={() => { setActiveTab('membership'); }}
+                                                className="ml-1 text-[10px] sm:text-[11px] font-black uppercase tracking-widest bg-gradient-to-r from-amber-200 to-yellow-500 bg-clip-text text-transparent border border-amber-300/30 px-2.5 py-1 rounded-full shadow-[0_0_15px_rgba(251,191,36,0.15)] hover:bg-amber-500/10 hover:scale-105 active:scale-95 transition-all outline outline-1 outline-amber-400/20"
+                                            >
+                                                MEMBER
+                                            </button>
+                                        )}
                                     </div>
                                     <p className="text-[#8E8E93] font-bold text-sm tracking-wide">
                                         @{profile?.username || "user"} <span className="mx-1.5 opacity-30">|</span> {user.email}
