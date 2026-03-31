@@ -16,15 +16,15 @@ export default function UserLocationCard() {
 
   return (
     <>
-      <div className="absolute top-[4.5rem] sm:top-5 left-0 right-0 px-4 lg:px-8 z-[10000] flex justify-between items-center pointer-events-none drop-shadow-sm">
-        {/* Unique Organic Purple Shape Background */}
-        <div className="absolute inset-0 z-[-1] flex items-center justify-center pointer-events-none">
+      <div className="absolute top-[4.5rem] sm:top-5 left-0 right-0 px-4 lg:px-8 z-[99] flex justify-between items-center pointer-events-none drop-shadow-sm">
+        {/* Optimized Premium Purple Background Shine without heavy CSS blurs */}
+        <div className="absolute inset-0 z-[-1] flex items-center justify-center pointer-events-none transform-gpu overflow-hidden">
           <div 
-            className="w-full h-full max-w-[400px] opacity-[0.14] animate-pulse pointer-events-none"
+            className="w-[120%] h-[150%] max-w-[600px] pointer-events-none"
             style={{
-              background: 'radial-gradient(circle, #7F77DD 0%, transparent 70%)',
-              filter: 'blur(35px)',
-              clipPath: 'polygon(25% 0%, 100% 0%, 75% 100%, 0% 100%)', // Unique trapezoidal/organic blend
+              background: 'radial-gradient(ellipse at top center, rgba(127,119,221,0.25) 0%, rgba(127,119,221,0.05) 40%, transparent 70%)',
+              transform: 'translateZ(0)',
+              willChange: 'transform',
             }}
           />
         </div>

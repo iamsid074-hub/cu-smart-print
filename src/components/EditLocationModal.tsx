@@ -47,7 +47,8 @@ export default function EditLocationModal({ isOpen, onClose }: EditLocationModal
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+            className="absolute inset-0 bg-black/60 transform-gpu"
+            style={{ willChange: "opacity" }}
             onClick={onClose}
           />
           <motion.div
@@ -55,7 +56,8 @@ export default function EditLocationModal({ isOpen, onClose }: EditLocationModal
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: "100%", opacity: 0 }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="relative w-full max-w-md bg-white rounded-t-[2.5rem] sm:rounded-3xl shadow-2xl overflow-hidden pb-8 sm:pb-0 mx-0 sm:mx-4"
+            className="relative w-full max-w-md bg-white rounded-t-[2.5rem] sm:rounded-3xl shadow-2xl overflow-hidden pb-8 sm:pb-0 mx-0 sm:mx-4 transform-gpu"
+            style={{ willChange: "transform, opacity" }}
           >
             <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-slate-100">
               <h2 className="text-xl font-bold text-slate-900">Edit Location</h2>

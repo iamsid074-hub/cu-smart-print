@@ -524,27 +524,27 @@ export default function Cart() {
                                 <span className="flex items-center gap-1.5">
                                     <Clock className="w-4 h-4 text-emerald-500" /> {hasVending ? `Floor ${floor} Delivery` : 'Delivery Fee'}
                                 </span>
-                                {((!hasVending && [2, 3].includes(floor)) || hasFlavourCombo) && (
+                                {paymentMethod !== 'cod' && ((!hasVending && [2, 3].includes(floor)) || hasFlavourCombo) && (
                                     <span className="text-slate-400 line-through text-xs">₹{originalDeliveryFee}</span>
                                 )}
-                                <span className={(hasVending || (!hasVending && [2, 3].includes(floor)) || hasFlavourCombo) ? "text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded" : "font-medium text-slate-900"}>+ ₹{deliveryFee}</span>
+                                <span className={(paymentMethod !== 'cod' && (hasVending || (!hasVending && [2, 3].includes(floor)) || hasFlavourCombo)) ? "text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded" : "font-medium text-slate-900"}>+ ₹{deliveryFee}</span>
                             </div>
 
-                            {hasFlavourCombo && (
+                            {paymentMethod !== 'cod' && hasFlavourCombo && (
                                 <div className="mb-4 bg-orange-50 border border-orange-100 rounded-2xl p-4 flex items-center gap-2 text-orange-800 text-xs sm:text-sm font-medium">
                                     <Zap className="w-4 h-4 flex-shrink-0 text-orange-500" />
                                     <span>Flavour Factory Offer: Special ₹21 delivery fee applied!</span>
                                 </div>
                             )}
 
-                            {!hasVending && [2, 3].includes(floor) && (
+                            {paymentMethod !== 'cod' && !hasVending && [2, 3].includes(floor) && (
                                 <div className="mb-4 bg-emerald-50 rounded-2xl p-4 flex items-center gap-2 text-emerald-700 text-xs sm:text-sm font-medium">
                                     <Zap className="w-4 h-4 flex-shrink-0 text-amber-500" />
                                     <span>Floor {floor} Special: Delivery charge reduced to ₹{specialDeliveryFee}!</span>
                                 </div>
                             )}
 
-                            {hasVending && (
+                            {paymentMethod !== 'cod' && hasVending && (
                                 <div className="mb-4 bg-emerald-50 rounded-2xl p-4 flex items-center gap-2 text-emerald-700 text-xs sm:text-sm font-medium">
                                     <Zap className="w-4 h-4 flex-shrink-0 text-amber-500" />
                                     <span>Vending Mode: Reduced delivery charge based on your floor!</span>

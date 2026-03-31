@@ -403,13 +403,13 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
 
       {/* Apple-style gradient glass blur background for the top header */}
       <div 
-        className="fixed top-0 left-0 right-0 h-24 sm:h-28 z-[9998] pointer-events-none"
+        className="fixed top-0 left-0 right-0 h-[4.5rem] sm:h-20 z-[9998] pointer-events-none"
         style={{ 
           background: 'linear-gradient(to bottom, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 100%)',
           backdropFilter: "blur(20px)",
           WebkitBackdropFilter: "blur(20px)",
-          maskImage: 'linear-gradient(to bottom, black 40%, transparent 100%)',
-          WebkitMaskImage: 'linear-gradient(to bottom, black 40%, transparent 100%)'
+          maskImage: 'linear-gradient(to bottom, black 50%, transparent 100%)',
+          WebkitMaskImage: 'linear-gradient(to bottom, black 50%, transparent 100%)'
         }} 
       />
 
