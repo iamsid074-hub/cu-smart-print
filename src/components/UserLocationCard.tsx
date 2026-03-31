@@ -20,7 +20,8 @@ export default function UserLocationCard() {
 
   return (
     <>
-      <div className="absolute top-[4.5rem] sm:top-5 left-0 right-0 px-4 lg:px-8 z-[99] flex justify-between items-center pointer-events-none drop-shadow-sm">
+      <div className="absolute top-[4.5rem] sm:top-[6rem] left-0 right-0 z-[99] pointer-events-none drop-shadow-sm flex justify-center">
+        <div className="w-full max-w-[1600px] px-4 lg:px-10 flex justify-between items-center">
 
         <div className="flex flex-col items-start gap-1 pointer-events-auto relative">
           <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-none pl-[2px]">
@@ -55,6 +56,7 @@ export default function UserLocationCard() {
           >
             <User className="w-[18px] h-[18px]" strokeWidth={2.5} />
           </Link>
+        </div>
         </div>
       </div>
 
