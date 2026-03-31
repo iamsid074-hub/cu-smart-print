@@ -1,14 +1,16 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { MapPin, ChevronDown } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
 import { useUserLocation } from '@/hooks/useUserLocation';
 import EditLocationModal from './EditLocationModal';
 
 export default function UserLocationCard() {
   const { data, isLoaded } = useUserLocation();
   const [isEditOpen, setIsEditOpen] = useState(false);
+  const location = useLocation();
 
-  if (!isLoaded) return null;
+  if (!isLoaded || location.pathname !== '/home') return null;
 
   const hasLocation = data && (data.hostel || data.phone);
 
