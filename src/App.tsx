@@ -43,7 +43,7 @@ import LiveOrderBanner from "./components/LiveOrderBanner";
 import UsernameSetup from "./components/UsernameSetup";
 import ScrollToTop from "./components/ScrollToTop";
 import StickyStripBanner from "./components/StickyStripBanner";
-import FloatingMiniBanner from "./components/FloatingMiniBanner";
+
 import ErrorBoundary from "./components/ErrorBoundary";
 import { usePushNotifications } from "./hooks/usePushNotifications";
 import { useSiteGate, ClosedScreen, MaintenanceScreen } from "./components/SiteGate";
@@ -136,7 +136,7 @@ function AppLayout() {
         <>
           {location.pathname !== "/pasta-offer" && <Navbar />}
           {location.pathname !== "/pasta-offer" && <BottomNav />}
-          <FloatingMiniBanner />
+
         </>
       )}
       <ErrorBoundary>
