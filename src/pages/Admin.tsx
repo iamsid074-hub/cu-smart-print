@@ -492,15 +492,15 @@ function isSubscriptionOrder(order: Order): boolean {
 function isFoodOrder(order: Order): boolean {
     // If product_id exists, it's a marketplace/listed item order
     if (order.product_id) return false;
-    
+
     // Subscriptions are strictly not food orders
     if (isSubscriptionOrder(order)) return false;
-    
+
     // If no product_id, it's a food/vending/grocery order from the cart/food menu
     // We check if the items list contains any non-food keywords
     const details = parseOrderDetails(order);
     const itemsText = details.items.toLowerCase();
-    
+
     const hasNonFood = NON_FOOD_KEYWORDS.some(key => itemsText.includes(key));
     if (hasNonFood) return false;
 
@@ -525,7 +525,7 @@ function parseOrderDetails(order: Order): { hostel: string; room: string; items:
     if (newFormatMatch) {
         room = newFormatMatch[1].trim();
         items = newFormatMatch[2].trim();
-    } 
+    }
     // 2. Vending Machine Parsing [VENDING MACHINE: Room XXX]
     else if (rawRoom.includes('[VENDING MACHINE:')) {
         const roomMatch = rawRoom.match(/\[VENDING MACHINE:\s*Room\s+(.+?)\]/);
@@ -562,17 +562,17 @@ function parseOrderDetails(order: Order): { hostel: string; room: string; items:
             if (priceMatch) {
                 price = `₹${priceMatch[1]}`;
             }
-            
+
             let name = line;
             if (line.includes('[IMG:')) {
                 name = line.split('[IMG:')[0];
             } else if (priceMatch) {
                 name = line.replace(priceMatch[0], '');
             }
-            
+
             // Remove trailing empty parentheses or standalone (category) markers
             name = name.trim().replace(/\(\s*\)$/, '').trim();
-            
+
             return price ? `${name} - ${price}` : name;
         })
         .join('\n');
@@ -725,13 +725,13 @@ function ItemOrdersSection({ orders, loading, onUpdateStatus, onVerifyUpi, onApp
                                     </div>
                                     {isSubscription && order.status === 'pending' ? (
                                         <div className="flex flex-col sm:flex-row gap-2">
-                                            <button 
+                                            <button
                                                 onClick={() => onApproveSubscription(order)}
                                                 className="flex-1 flex w-full sm:w-auto items-center justify-center gap-2 py-2.5 rounded-xl border border-purple-500/40 text-sm font-bold transition-all bg-purple-500/20 text-purple-600 hover:bg-purple-500/30 shadow-[0_4px_12px_rgba(168,85,247,0.2)]"
                                             >
                                                 <Crown className="w-4 h-4" /> Approve Subscription
                                             </button>
-                                            <button 
+                                            <button
                                                 onClick={() => onUpdateStatus(order.id, 'cancelled')}
                                                 className="px-4 w-full sm:w-auto py-2.5 rounded-xl border border-red-500/30 bg-red-500/10 text-red-500 text-sm font-bold hover:bg-red-500/20 transition-all"
                                             >
@@ -1040,7 +1040,7 @@ function SubscriptionsSection({ orders, loading, onApproveSubscription, onDeclin
                         return (
                             <motion.div key={order.id} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}
                                 className="bg-white rounded-2xl border border-slate-200 overflow-hidden hover:border-purple-300 transition-all p-5">
-                                
+
                                 <div className="flex justify-between items-start mb-4">
                                     <div className="flex items-center gap-2">
                                         <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center">
@@ -1069,13 +1069,13 @@ function SubscriptionsSection({ orders, loading, onApproveSubscription, onDeclin
 
                                 {order.status === 'pending' ? (
                                     <div className="flex flex-col sm:flex-row gap-2 mt-4 pt-4 border-t border-slate-100">
-                                        <button 
+                                        <button
                                             onClick={() => onApproveSubscription(order)}
                                             className="flex-1 flex w-full sm:w-auto items-center justify-center gap-2 py-3 rounded-xl border border-purple-500/40 text-sm font-bold transition-all bg-purple-500 text-white hover:bg-purple-600 shadow-[0_4px_12px_rgba(168,85,247,0.3)]"
                                         >
                                             <CheckCircle className="w-4 h-4" /> Approve & Activate
                                         </button>
-                                        <button 
+                                        <button
                                             onClick={() => onDeclineSubscription(order)}
                                             className="px-4 w-full sm:w-auto py-3 rounded-xl border border-red-500/30 bg-red-50/50 text-red-500 text-sm font-bold hover:bg-red-100 transition-all"
                                         >
@@ -1117,7 +1117,7 @@ export default function Admin() {
     const [loadingStats, setLoadingStats] = useState(true);
     const [loadingProducts, setLoadingProducts] = useState(true);
     const [loadingOrders, setLoadingOrders] = useState(true);
-    
+
     // Prevent duplicate triggers
     const [processingOrderId, setProcessingOrderId] = useState<string | null>(null);
     const [loadingNotifs, setLoadingNotifs] = useState(true);
@@ -1293,80 +1293,80 @@ export default function Admin() {
 
             const updates: any = { status, ...timestamps };
             await supabase.from("orders").update(updates).eq("id", id);
-        // --- NEW REWARD LOGIC (WEEKLY RESET @ MONDAY 12 AM IST) ---
-        if (status === "completed") {
-            const { data: orderData } = await supabase.from("orders").select("buyer_id, delivery_room, delivery_location, total_price, base_price, product_id").eq("id", id).single();
-            if (orderData?.buyer_id) {
-                const buyerId = orderData.buyer_id;
+            // --- NEW REWARD LOGIC (WEEKLY RESET @ MONDAY 12 AM IST) ---
+            if (status === "completed") {
+                const { data: orderData } = await supabase.from("orders").select("buyer_id, delivery_room, delivery_location, total_price, base_price, product_id").eq("id", id).single();
+                if (orderData?.buyer_id) {
+                    const buyerId = orderData.buyer_id;
 
-                // Calculate Start of Week (Monday 12:00 AM) in Indian Standard Time (IST)
-                const now = new Date();
-                const istOffsetCode = 5.5 * 60 * 60 * 1000;
-                const istTime = new Date(now.getTime() + istOffsetCode);
-                istTime.setUTCHours(0, 0, 0, 0);
-                const dayOfWeek = istTime.getUTCDay(); // 0 is Sunday
-                const diffToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
-                istTime.setUTCDate(istTime.getUTCDate() + diffToMonday);
-                const startOfWeekIST = new Date(istTime.getTime() - istOffsetCode).toISOString();
+                    // Calculate Start of Week (Monday 12:00 AM) in Indian Standard Time (IST)
+                    const now = new Date();
+                    const istOffsetCode = 5.5 * 60 * 60 * 1000;
+                    const istTime = new Date(now.getTime() + istOffsetCode);
+                    istTime.setUTCHours(0, 0, 0, 0);
+                    const dayOfWeek = istTime.getUTCDay(); // 0 is Sunday
+                    const diffToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+                    istTime.setUTCDate(istTime.getUTCDate() + diffToMonday);
+                    const startOfWeekIST = new Date(istTime.getTime() - istOffsetCode).toISOString();
 
-                // Count orders already completed THIS WEEK (IST)
-                const { count: weeklyOrdersNow } = await supabase
-                    .from("orders")
-                    .select('*', { count: 'exact', head: true })
-                    .eq("buyer_id", buyerId)
-                    .eq("status", "completed")
-                    .gte("created_at", startOfWeekIST);
+                    // Count orders already completed THIS WEEK (IST)
+                    const { count: weeklyOrdersNow } = await supabase
+                        .from("orders")
+                        .select('*', { count: 'exact', head: true })
+                        .eq("buyer_id", buyerId)
+                        .eq("status", "completed")
+                        .gte("created_at", startOfWeekIST);
 
-                const currentWeeklyCount = Math.max(weeklyOrdersNow || 0, 1);
-                const { data: profileData } = await supabase.from("profiles").select("total_orders, wallet_balance").eq("id", buyerId).single();
-                
-                if (profileData) {
-                    const newTotalOrders = (profileData.total_orders || 0) + 1;
-                    let newBalance = profileData.wallet_balance || 0;
-                    
-                    // Reward ₹30 for every 3rd completed order this week (3, 6, 9...)
-                    if (currentWeeklyCount > 0 && currentWeeklyCount % 3 === 0) {
-                        newBalance += 30;
-                        await supabase.from("wallet_transactions").insert({
-                            user_id: buyerId,
-                            amount: 30,
-                            type: 'reward',
-                            description: `Weekly Reward: ${currentWeeklyCount} orders completed this week!`
-                        });
+                    const currentWeeklyCount = Math.max(weeklyOrdersNow || 0, 1);
+                    const { data: profileData } = await supabase.from("profiles").select("total_orders, wallet_balance").eq("id", buyerId).single();
+
+                    if (profileData) {
+                        const newTotalOrders = (profileData.total_orders || 0) + 1;
+                        let newBalance = profileData.wallet_balance || 0;
+
+                        // Reward ₹30 exactly on the 3rd completed order this week (limit once per week)
+                        if (currentWeeklyCount === 3) {
+                            newBalance += 30;
+                            await supabase.from("wallet_transactions").insert({
+                                user_id: buyerId,
+                                amount: 30,
+                                type: 'reward',
+                                description: `Weekly Reward: ${currentWeeklyCount} orders completed this week!`
+                            });
+                        }
+
+                        // Flavour Factory High Value Reward (₹499+)
+                        // Using base_price instead of total_price so discounts don't void the reward
+                        const isFlavourFactory = orderData.delivery_room?.toLowerCase().includes("flavour factory") ||
+                            orderData.delivery_location?.toLowerCase().includes("flavour factory");
+
+                        const orderValue = orderData.base_price || orderData.total_price || 0;
+
+                        if (!orderData.product_id && orderValue >= 499 && isFlavourFactory) {
+                            newBalance += 30;
+                            await supabase.from("wallet_transactions").insert({
+                                user_id: buyerId,
+                                amount: 30,
+                                type: 'reward',
+                                description: 'Flavour Factory Special Reward (₹499+ Order)'
+                            });
+                        }
+
+                        await supabase.from("profiles").update({
+                            total_orders: newTotalOrders,
+                            wallet_balance: newBalance
+                        }).eq("id", buyerId);
                     }
-
-                    // Flavour Factory High Value Reward (₹499+)
-                    // Using base_price instead of total_price so discounts don't void the reward
-                    const isFlavourFactory = orderData.delivery_room?.toLowerCase().includes("flavour factory") || 
-                                             orderData.delivery_location?.toLowerCase().includes("flavour factory");
-                    
-                    const orderValue = orderData.base_price || orderData.total_price || 0;
-                    
-                    if (!orderData.product_id && orderValue >= 499 && isFlavourFactory) {
-                        newBalance += 30;
-                        await supabase.from("wallet_transactions").insert({
-                            user_id: buyerId,
-                            amount: 30,
-                            type: 'reward',
-                            description: 'Flavour Factory Special Reward (₹499+ Order)'
-                        });
-                    }
-                    
-                    await supabase.from("profiles").update({
-                        total_orders: newTotalOrders,
-                        wallet_balance: newBalance
-                    }).eq("id", buyerId);
                 }
             }
-        }
-        // ------------------------
+            // ------------------------
 
         } catch (error) {
             console.error("Error updating order status:", error);
             alert("Warning: Order status updated but encountered an issue syncing. Refreshing may be needed.");
         } finally {
             setProcessingOrderId(null);
-            
+
             // Optimistically update UI
             setOrders(prev => prev.map(o => o.id === id ? { ...o, status } : o));
             setRecentOrders(prev => prev.map(o => o.id === id ? { ...o, status } : o));
@@ -1411,7 +1411,7 @@ export default function Admin() {
 
             await fetchOrders();
             await fetchStats();
-            
+
             // Assuming toast is available, but if not we still fetched orders
             alert("Subscription Approved Successfully!");
         } catch (err: any) {
