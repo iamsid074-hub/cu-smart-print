@@ -204,13 +204,6 @@ export default function FoodMenu() {
                             {/* ─── Pasta Offer Highlight ─── */}
                             <PastaHighlightSection />
 
-                            {/* ─── Flavour Factory Header ─── */}
-                            <div className="mb-6 mt-4 px-2">
-                                <h2 className="text-3xl sm:text-4xl font-black tracking-tight mb-1">
-                                    Order from <span style={{ background: 'linear-gradient(90deg, #FF3B30, #FF9500)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Flavour Factory</span>
-                                </h2>
-                                <p className="text-[15px] sm:text-base text-[#8E8E93] font-medium leading-relaxed">Explore our exclusive campus menu below</p>
-                            </div>
 
                             {sortedShops.map((shop) => (
                                 <div key={shop.id} id={`${shop.id}-card`}>
