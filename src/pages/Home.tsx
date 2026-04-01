@@ -177,7 +177,7 @@ export default function Home() {
   );
 
   return (
-    <div className="min-h-screen pt-[8rem] sm:pt-[6.5rem] pb-32 relative text-[#1D1D1F]">
+    <div className="min-h-screen pt-[8rem] sm:pt-[6.5rem] lg:pt-[10rem] pb-32 relative text-[#1D1D1F]">
       <div className="max-w-[1600px] mx-auto relative px-4">
       </div>
 
