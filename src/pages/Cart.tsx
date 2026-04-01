@@ -532,49 +532,38 @@ export default function Cart() {
                                 <span>Subtotal ({totalItems} items)</span>
                                 <span className="font-medium text-slate-900">₹{totalPrice}</span>
                             </div>
-                            <div className="flex justify-between items-center text-sm text-slate-600 mb-4">
+                            <div className="flex justify-between items-center text-sm text-slate-600 mb-3">
                                 <span className="flex items-center gap-1.5">
-                                    <Clock className="w-4 h-4 text-emerald-500" /> {hasVending ? `Floor ${floor} Delivery` : 'Delivery Fee'}
+                                    <Clock className="w-4 h-4 text-slate-400" /> {hasVending ? `Floor ${floor} Delivery` : 'Delivery Fee'}
                                 </span>
-                                {paymentMethod !== 'cod' && ((!hasVending && [2, 3].includes(floor)) || hasFlavourCombo || hasFreeDelivery) && (
-                                    <span className="text-slate-400 line-through text-xs">₹{originalDeliveryFee}</span>
-                                )}
-                                <span className={(paymentMethod !== 'cod' && (hasVending || (!hasVending && [2, 3].includes(floor)) || hasFlavourCombo || hasFreeDelivery)) ? "text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded" : "font-medium text-slate-900"}>+ ₹{deliveryFee}</span>
+                                <span className="font-medium text-slate-900">+ ₹{originalDeliveryFee}</span>
                             </div>
 
                             {paymentMethod !== 'cod' && hasFreeDelivery && (
-                                <div className="mb-4 bg-gradient-to-r from-purple-500/10 to-indigo-500/10 border border-purple-500/20 rounded-2xl p-4 flex items-center justify-between">
-                                    <div className="flex items-center gap-3">
-                                        <div className="bg-purple-100 p-1.5 rounded-full text-purple-600">
-                                            <Zap className="w-5 h-5" />
-                                        </div>
-                                        <div>
-                                            <p className="text-purple-900 font-bold text-sm">CB Membership applied</p>
-                                            <p className="text-purple-700/80 text-xs font-medium">{remainingDeliveries - 1} free deliveries left this week</p>
-                                        </div>
-                                    </div>
-                                    <span className="text-purple-700 font-black">-₹{hasFlavourCombo ? specialDeliveryFee : baseDelivery}</span>
+                                <div className="flex justify-between items-center text-sm text-slate-600 mb-3">
+                                    <span>CB Membership <span className="text-xs text-slate-400">({remainingDeliveries - 1} left)</span></span>
+                                    <span className="font-medium text-slate-900">-₹{hasFlavourCombo ? specialDeliveryFee : baseDelivery}</span>
                                 </div>
                             )}
 
                             {paymentMethod !== 'cod' && !hasFreeDelivery && hasFlavourCombo && (
-                                <div className="mb-4 bg-orange-50 border border-orange-100 rounded-2xl p-4 flex items-center gap-2 text-orange-800 text-xs sm:text-sm font-medium">
-                                    <Zap className="w-4 h-4 flex-shrink-0 text-orange-500" />
-                                    <span>Flavour Factory Offer: Special ₹21 delivery fee applied!</span>
+                                <div className="flex justify-between items-center text-sm text-slate-600 mb-3">
+                                    <span>Flavour Factory Offer</span>
+                                    <span className="font-medium text-slate-900">-₹{originalDeliveryFee - specialDeliveryFee}</span>
                                 </div>
                             )}
 
                             {paymentMethod !== 'cod' && !hasVending && [2, 3].includes(floor) && (
-                                <div className="mb-4 bg-emerald-50 rounded-2xl p-4 flex items-center gap-2 text-emerald-700 text-xs sm:text-sm font-medium">
-                                    <Zap className="w-4 h-4 flex-shrink-0 text-amber-500" />
-                                    <span>Floor {floor} Special: Delivery charge reduced to ₹{specialDeliveryFee}!</span>
+                                <div className="flex justify-between items-center text-sm text-slate-600 mb-3">
+                                    <span>Floor {floor} Special</span>
+                                    <span className="font-medium text-slate-900">-₹{originalDeliveryFee - specialDeliveryFee}</span>
                                 </div>
                             )}
 
                             {paymentMethod !== 'cod' && hasVending && (
-                                <div className="mb-4 bg-emerald-50 rounded-2xl p-4 flex items-center gap-2 text-emerald-700 text-xs sm:text-sm font-medium">
-                                    <Zap className="w-4 h-4 flex-shrink-0 text-amber-500" />
-                                    <span>Vending Mode: Reduced delivery charge based on your floor!</span>
+                                <div className="flex justify-between items-center text-sm text-slate-600 mb-3">
+                                    <span>Vending Mode Discount</span>
+                                    <span className="font-medium text-slate-900">-₹{originalDeliveryFee - specialDeliveryFee}</span>
                                 </div>
                             )}
 
