@@ -88,12 +88,15 @@ export default function ListProduct() {
           const fileExt = imageFile.name.split('.').pop()?.toLowerCase() || 'jpg';
           const fileName = `${Date.now()}_${Math.random().toString(36).slice(2)}.${fileExt}`;
           const { error: uploadError } = await supabase.storage.from("product-images").upload(fileName, compressedBlob, { contentType: imageFile.type });
-          if (uploadError) throw uploadError;
+          if (uploadError) {
+            console.error("[ListProduct] Image upload error:", uploadError);
+            throw new Error(`Image upload failed: ${uploadError.message}`);
+          }
           const { data } = supabase.storage.from("product-images").getPublicUrl(fileName);
           imageUrl = data.publicUrl;
         }
 
-        const { error } = await supabase.from("products").insert({
+        const { data: insertedData, error } = await supabase.from("products").insert({
           seller_id: user.id,
           title: formData.title,
           category: formData.category,
@@ -104,9 +107,18 @@ export default function ListProduct() {
           image_url: imageUrl,
           status: "available",
           is_trending: false,
-        });
+        }).select();
 
-        if (error) throw error;
+        if (error) {
+          console.error("[ListProduct] Insert error:", error);
+          throw new Error(error.message || "Failed to insert product.");
+        }
+
+        // RLS may silently block inserts — check if data was actually inserted
+        if (!insertedData || insertedData.length === 0) {
+          console.error("[ListProduct] Insert returned no data — likely blocked by RLS policy");
+          throw new Error("Permission denied. Your account may not have listing permissions. Please contact admin.");
+        }
 
         // Also update the seller's profile with phone/hostel/room
         const profileUpdate = {
@@ -124,8 +136,8 @@ export default function ListProduct() {
         setStep(5);
         toast.success("Item published successfully!");
       } catch (err: any) {
-        console.error("Failed to publish:", err);
-        toast.error(err.message || "Failed to publish item.");
+        console.error("[ListProduct] Failed to publish:", err);
+        toast.error(err.message || "Failed to publish item. Please try again.");
       } finally {
         setLoading(false);
       }
