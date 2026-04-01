@@ -84,13 +84,23 @@ export default function ListProduct() {
         let imageUrl = null;
         if (imageFile) {
           // Compress image before uploading
-          const compressedBlob = await compressImage(imageFile, 1200, 0.82);
+          let compressedBlob: Blob;
+          try {
+            compressedBlob = await compressImage(imageFile, 1200, 0.82);
+          } catch (compressErr: any) {
+            console.error("[ListProduct] Image compress error:", compressErr);
+            alert("Image compression failed: " + (compressErr?.message || "Unknown error"));
+            setLoading(false);
+            return;
+          }
           const fileExt = imageFile.name.split('.').pop()?.toLowerCase() || 'jpg';
           const fileName = `${Date.now()}_${Math.random().toString(36).slice(2)}.${fileExt}`;
           const { error: uploadError } = await supabase.storage.from("product-images").upload(fileName, compressedBlob, { contentType: imageFile.type });
           if (uploadError) {
             console.error("[ListProduct] Image upload error:", uploadError);
-            throw new Error(`Image upload failed: ${uploadError.message}`);
+            alert("Image upload failed: " + uploadError.message);
+            setLoading(false);
+            return;
           }
           const { data } = supabase.storage.from("product-images").getPublicUrl(fileName);
           imageUrl = data.publicUrl;
@@ -111,13 +121,17 @@ export default function ListProduct() {
 
         if (error) {
           console.error("[ListProduct] Insert error:", error);
-          throw new Error(error.message || "Failed to insert product.");
+          alert("Product insert failed: " + (error.message || JSON.stringify(error)));
+          setLoading(false);
+          return;
         }
 
         // RLS may silently block inserts — check if data was actually inserted
         if (!insertedData || insertedData.length === 0) {
           console.error("[ListProduct] Insert returned no data — likely blocked by RLS policy");
-          throw new Error("Permission denied. Your account may not have listing permissions. Please contact admin.");
+          alert("Permission denied — RLS blocked. Your account may not have permission to list items.");
+          setLoading(false);
+          return;
         }
 
         // Also update the seller's profile with phone/hostel/room
@@ -136,8 +150,8 @@ export default function ListProduct() {
         setStep(5);
         toast.success("Item published successfully!");
       } catch (err: any) {
-        console.error("[ListProduct] Failed to publish:", err);
-        toast.error(err.message || "Failed to publish item. Please try again.");
+        console.error("[ListProduct] Unexpected error:", err);
+        alert("Publish failed: " + (err?.message || JSON.stringify(err)));
       } finally {
         setLoading(false);
       }
