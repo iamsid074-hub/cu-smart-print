@@ -464,22 +464,7 @@ export default function ListProduct() {
                   {errors.sellerRoom && <p className="text-xs text-rose-500 mt-2 font-bold flex items-center gap-1"><AlertCircle className="w-3.5 h-3.5" /> {errors.sellerRoom}</p>}
                 </div>
 
-                {/* Meetup Location */}
-                <div>
-                  <label className="text-sm font-bold text-slate-600 mb-3 block">Preferred Meetup Spot</label>
-                  {["Main Gate", "Library", "Canteen", "C-Block Lobby", "Sports Complex"].map((spot) => (
-                    <button
-                      key={spot}
-                      onClick={() => setFormData({ ...formData, meetup: spot })}
-                      className={`mr-2 mb-2 px-4 py-2.5 rounded-2xl text-[13px] font-bold transition-all ${formData.meetup === spot
-                        ? "bg-brand text-white shadow-md border border-brand"
-                        : "bg-white border border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50"
-                        }`}
-                    >
-                      📍 {spot}
-                    </button>
-                  ))}
-                </div>
+
 
                 {/* Validation hint */}
                 {(!formData.sellerPhone || !formData.sellerHostel || !formData.sellerRoom) && (
