@@ -114,10 +114,10 @@ export default function MembershipPlansModal({ isOpen, onClose }: MembershipPlan
                     >
                         {isPendingApproval ? (
                             <div className="px-6 mt-6 pb-6 text-center relative z-10 w-full">
-                                <div className="w-20 h-20 rounded-full bg-orange-500/10 text-orange-400 mx-auto flex items-center justify-center mb-6 border border-orange-500/20 shadow-[0_0_30px_rgba(249,115,22,0.15)]">
-                                    <Clock className="w-10 h-10 object-contain text-orange-400 drop-shadow-lg animate-pulse" />
+                                <div className="w-16 h-16 rounded-full bg-orange-500/10 text-orange-400 mx-auto flex items-center justify-center mb-5 border border-orange-500/20 shadow-[0_0_30px_rgba(249,115,22,0.15)]">
+                                    <Clock className="w-8 h-8 object-contain text-orange-400 drop-shadow-lg animate-pulse" />
                                 </div>
-                                <h3 className="text-2xl font-black text-white mb-3">Verification Pending</h3>
+                                <h3 className="text-lg font-black text-white mb-2">Verification Pending</h3>
                                 <p className="text-sm text-slate-400 font-medium leading-relaxed mb-8">
                                     Your payment of <span className="text-white font-bold">₹{selectedPlan?.price}</span> for <span className="text-purple-400 font-bold">{selectedPlan?.name}</span> has been received! Our admin will verify your payment details and activate your membership shortly.
                                 </p>
@@ -134,8 +134,8 @@ export default function MembershipPlansModal({ isOpen, onClose }: MembershipPlan
 
                                 <div className="flex items-center justify-between px-6 pb-2 relative z-10">
                                     <div>
-                                        <h2 className="text-2xl font-black text-white tracking-tight">CU Membership</h2>
-                                        <p className="text-sm text-slate-400 font-medium tracking-wide">Unlock free deliveries & more</p>
+                                        <h2 className="text-xl font-black text-white tracking-tight">CU Membership</h2>
+                                        <p className="text-xs text-slate-400 font-medium tracking-wide">Unlock free deliveries & more</p>
                                     </div>
                                     <button onClick={onClose} className="p-2 rounded-full bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-colors cursor-pointer backdrop-blur-md">
                                         <X className="w-5 h-5" />
@@ -158,38 +158,38 @@ export default function MembershipPlansModal({ isOpen, onClose }: MembershipPlan
                                                 
                                                 <div className="flex justify-between items-start mb-4">
                                                     <div className="flex items-center gap-3">
-                                                        <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${plan.color} flex items-center justify-center shadow-inner`}>
-                                                            <Icon className="w-5 h-5 text-white" />
+                                                        <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${plan.color} flex items-center justify-center shadow-inner`}>
+                                                            <Icon className="w-4 h-4 text-white" />
                                                         </div>
                                                         <div>
-                                                            <h3 className="text-lg font-black text-white tracking-tight">{plan.name}</h3>
+                                                            <h3 className="text-[15px] font-black text-white tracking-tight">{plan.name}</h3>
                                                             <p className="text-xs text-slate-400 font-medium">Auto-renews weekly</p>
                                                         </div>
                                                     </div>
                                                     <div className="text-right">
-                                                        <span className="text-2xl font-black text-white">₹{plan.price}</span>
-                                                        <span className="text-slate-400 text-xs font-medium block">/ week</span>
+                                                        <span className="text-xl font-black text-white">₹{plan.price}</span>
+                                                        <span className="text-slate-400 text-[10px] font-medium block">/ week</span>
                                                     </div>
                                                 </div>
 
                                                 <div className="space-y-2 mb-5">
 
-                                            <div className="flex items-center gap-2 text-sm text-slate-300">
-                                                <div className="w-4 h-4 rounded-full bg-emerald-500/20 flex items-center justify-center">
-                                                    <Check className="w-3 h-3 text-emerald-400" />
+                                            <div className="flex items-center gap-2 text-xs text-slate-300">
+                                                <div className="w-3.5 h-3.5 rounded-full bg-emerald-500/20 flex items-center justify-center">
+                                                    <Check className="w-2.5 h-2.5 text-emerald-400" />
                                                 </div>
                                                 <span className="font-medium"><span className="text-white font-bold">{plan.deliveries}</span> FREE Deliveries / week</span>
                                             </div>
-                                            <div className="flex items-center gap-2 text-sm text-slate-300">
-                                                <div className="w-4 h-4 rounded-full bg-emerald-500/20 flex items-center justify-center">
-                                                    <Check className="w-3 h-3 text-emerald-400" />
+                                            <div className="flex items-center gap-2 text-xs text-slate-300">
+                                                <div className="w-3.5 h-3.5 rounded-full bg-emerald-500/20 flex items-center justify-center">
+                                                    <Check className="w-2.5 h-2.5 text-emerald-400" />
                                                 </div>
                                                 <span className="font-medium">Priority Support</span>
                                             </div>
                                             {plan.features.map((feature, i) => (
-                                                <div key={i} className="flex items-center gap-2 text-sm">
-                                                    <div className="w-4 h-4 rounded-full bg-emerald-500/20 flex items-center justify-center outline outline-1 outline-emerald-500/50 shadow-[0_0_8px_rgba(52,211,153,0.3)]">
-                                                        <Check className="w-3 h-3 text-emerald-400 font-bold" />
+                                                <div key={i} className="flex items-center gap-2 text-xs">
+                                                    <div className="w-3.5 h-3.5 rounded-full bg-emerald-500/20 flex items-center justify-center outline outline-1 outline-emerald-500/50 shadow-[0_0_8px_rgba(52,211,153,0.3)]">
+                                                        <Check className="w-2.5 h-2.5 text-emerald-400 font-bold" />
                                                     </div>
                                                     <span className="font-bold text-white tracking-wide">{feature}</span>
                                                 </div>
@@ -198,7 +198,7 @@ export default function MembershipPlansModal({ isOpen, onClose }: MembershipPlan
 
                                         <button 
                                             onClick={() => handleSubscribeClick(plan)}
-                                            className={`w-full py-3.5 rounded-xl font-bold text-sm transition-all active:scale-[0.98] ${plan.popular ? 'bg-white text-black hover:bg-slate-200' : 'bg-white/10 text-white hover:bg-white/20'}`}
+                                            className={`w-full py-3 rounded-xl font-bold text-xs transition-all active:scale-[0.98] ${plan.popular ? 'bg-white text-black hover:bg-slate-200' : 'bg-white/10 text-white hover:bg-white/20'}`}
                                         >
                                             Subscribe to {plan.name}
                                         </button>
