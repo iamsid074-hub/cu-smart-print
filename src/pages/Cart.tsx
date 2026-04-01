@@ -152,7 +152,9 @@ export default function Cart() {
             ? calculateVendingDelivery(floor)
             : ([2, 3].includes(floor) ? specialDeliveryFee : originalDeliveryFee));
 
-    const deliveryFee = paymentMethod === 'cod' ? 51 : (hasFreeDelivery ? 0 : (hasFlavourCombo ? specialDeliveryFee : baseDelivery));
+    const deliveryFee = hasFreeDelivery 
+        ? 0 
+        : (paymentMethod === 'cod' ? 51 : (hasFlavourCombo ? specialDeliveryFee : baseDelivery));
     
     const maxWalletUsagePerDay = 50;
     const availableToday = Math.max(0, maxWalletUsagePerDay - dailyWalletUsed);
@@ -219,7 +221,7 @@ export default function Cart() {
         }
 
         // Apply Free Delivery limit deduction
-        if (hasFreeDelivery && paymentMethod !== "cod") {
+        if (hasFreeDelivery) {
             await incrementUsage();
         }
 
@@ -536,13 +538,13 @@ export default function Cart() {
                                 <span className="flex items-center gap-1.5">
                                     <Clock className="w-4 h-4 text-slate-400" /> {hasVending ? `Floor ${floor} Delivery` : 'Delivery Fee'}
                                 </span>
-                                <span className="font-medium text-slate-900">+ ₹{originalDeliveryFee}</span>
+                                <span className="font-medium text-slate-900">+ ₹{paymentMethod === 'cod' ? 51 : originalDeliveryFee}</span>
                             </div>
 
-                            {paymentMethod !== 'cod' && hasFreeDelivery && (
+                            {hasFreeDelivery && (
                                 <div className="flex justify-between items-center text-sm text-slate-600 mb-3">
                                     <span>CB Membership <span className="text-xs text-slate-400">({remainingDeliveries - 1} left)</span></span>
-                                    <span className="font-medium text-slate-900">-₹{hasFlavourCombo ? specialDeliveryFee : baseDelivery}</span>
+                                    <span className="font-medium text-slate-900">-₹{paymentMethod === 'cod' ? 51 : (hasFlavourCombo ? specialDeliveryFee : baseDelivery)}</span>
                                 </div>
                             )}
 
