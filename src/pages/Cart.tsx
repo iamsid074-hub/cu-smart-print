@@ -133,6 +133,7 @@ export default function Cart() {
 
     const vendingCartItems = items.filter(item => item.category === "Vending Machine");
     const hasVending = vendingCartItems.length > 0;
+    const isFoodOrder = !items.some(item => item.category === "Vending Machine" || item.category?.toLowerCase() === "grocery");
 
     const calculateVendingDelivery = (f: number) => {
         if (f <= 3) return 8;
@@ -156,9 +157,11 @@ export default function Cart() {
         ? 0 
         : (paymentMethod === 'cod' ? 51 : (hasFlavourCombo ? specialDeliveryFee : baseDelivery));
     
+    const displayedDeliveryFee = paymentMethod === 'cod' ? 51 : (hasVending ? calculateVendingDelivery(floor) : originalDeliveryFee);
+
     const maxWalletUsagePerDay = 50;
     const availableToday = Math.max(0, maxWalletUsagePerDay - dailyWalletUsed);
-    const usableWalletBalance = Math.min(walletBalance, availableToday);
+    const usableWalletBalance = isFoodOrder ? Math.min(walletBalance, availableToday) : 0;
 
     // Wallet Logic
     let rawTotal = totalPrice + deliveryFee;
@@ -538,13 +541,13 @@ export default function Cart() {
                                 <span className="flex items-center gap-1.5">
                                     <Clock className="w-4 h-4 text-slate-400" /> {hasVending ? `Floor ${floor} Delivery` : 'Delivery Fee'}
                                 </span>
-                                <span className="font-medium text-slate-900">+ ₹{paymentMethod === 'cod' ? 51 : originalDeliveryFee}</span>
+                                <span className="font-medium text-slate-900">+ ₹{displayedDeliveryFee}</span>
                             </div>
 
                             {hasFreeDelivery && (
                                 <div className="flex justify-between items-center text-sm text-slate-600 mb-3">
                                     <span>CB Membership <span className="text-xs text-slate-400">({remainingDeliveries - 1} left)</span></span>
-                                    <span className="font-medium text-slate-900">-₹{paymentMethod === 'cod' ? 51 : (hasFlavourCombo ? specialDeliveryFee : baseDelivery)}</span>
+                                    <span className="font-medium text-slate-900">-₹{displayedDeliveryFee}</span>
                                 </div>
                             )}
 
@@ -562,14 +565,7 @@ export default function Cart() {
                                 </div>
                             )}
 
-                            {paymentMethod !== 'cod' && hasVending && (
-                                <div className="flex justify-between items-center text-sm text-slate-600 mb-3">
-                                    <span>Vending Mode Discount</span>
-                                    <span className="font-medium text-slate-900">-₹{originalDeliveryFee - specialDeliveryFee}</span>
-                                </div>
-                            )}
-
-                            {walletBalance > 0 && (
+                            {isFoodOrder && walletBalance > 0 && (
                                 <div className="border-t border-slate-100 pt-4 pb-1 mb-2">
                                     <label className="flex items-center justify-between cursor-pointer group">
                                         <div className="flex items-center gap-3">
