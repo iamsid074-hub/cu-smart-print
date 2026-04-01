@@ -107,8 +107,14 @@ export default function ListProduct() {
         }
 
         // Ensure profile exists FIRST (products.seller_id references profiles.id)
+        const userName = profile?.full_name 
+          || user.user_metadata?.full_name 
+          || user.user_metadata?.name 
+          || user.email?.split('@')[0] 
+          || "User";
         const profileUpdate = {
           id: user.id,
+          full_name: userName,
           phone_number: formData.sellerPhone,
           hostel_block: formData.sellerHostel.trim()
             ? `${formData.sellerHostel.trim()}, Room ${formData.sellerRoom.trim()}`
