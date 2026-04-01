@@ -106,6 +106,22 @@ export default function ListProduct() {
           imageUrl = data.publicUrl;
         }
 
+        // Ensure profile exists FIRST (products.seller_id references profiles.id)
+        const profileUpdate = {
+          id: user.id,
+          phone_number: formData.sellerPhone,
+          hostel_block: formData.sellerHostel.trim()
+            ? `${formData.sellerHostel.trim()}, Room ${formData.sellerRoom.trim()}`
+            : null,
+        };
+        const { error: profileError } = await supabase.from("profiles").upsert(profileUpdate, { onConflict: "id" });
+        if (profileError) {
+          console.error("[ListProduct] Profile upsert error:", profileError);
+          alert("Profile save failed: " + profileError.message);
+          setLoading(false);
+          return;
+        }
+
         const { data: insertedData, error } = await supabase.from("products").insert({
           seller_id: user.id,
           title: formData.title,
@@ -126,25 +142,11 @@ export default function ListProduct() {
           return;
         }
 
-        // RLS may silently block inserts — check if data was actually inserted
         if (!insertedData || insertedData.length === 0) {
           console.error("[ListProduct] Insert returned no data — likely blocked by RLS policy");
           alert("Permission denied — RLS blocked. Your account may not have permission to list items.");
           setLoading(false);
           return;
-        }
-
-        // Also update the seller's profile with phone/hostel/room
-        const profileUpdate = {
-          id: user.id,
-          phone_number: formData.sellerPhone,
-          hostel_block: formData.sellerHostel.trim()
-            ? `${formData.sellerHostel.trim()}, Room ${formData.sellerRoom.trim()}`
-            : null,
-        };
-        const { error: profileError } = await supabase.from("profiles").upsert(profileUpdate, { onConflict: "id" });
-        if (profileError) {
-          console.error("[ListProduct] Profile upsert error:", profileError);
         }
 
         setStep(5);
