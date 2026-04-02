@@ -9,7 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import UpiPaymentModal from "@/components/UpiPaymentModal";
 import { shops } from "@/config/shopMenus";
 import { getFoodSuggestions, estimatePrice } from "@/utils/foodUtils";
-import PastaHighlightSection from "@/components/PastaHighlightSection";
+import ComboHighlightSection from "@/components/ComboHighlightSection";
 import {
     Dialog,
     DialogContent,
@@ -201,8 +201,8 @@ export default function FoodMenu() {
                                 </p>
                             </div>
 
-                            {/* ─── Pasta Offer Highlight ─── */}
-                            <PastaHighlightSection />
+                            {/* ─── Featured Combos ─── */}
+                            <ComboHighlightSection />
 
 
                             {sortedShops.map((shop) => (
