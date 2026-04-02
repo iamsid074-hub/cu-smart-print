@@ -74,11 +74,23 @@ export default function ComboHighlightSection() {
                 <div className="h-[2px] w-full bg-gradient-to-r from-[#D4AF37] to-transparent rounded-full opacity-60 mt-0.5"></div>
              </div>
           </div>
-          <span className="text-[10px] font-bold text-white/30 uppercase tracking-[0.2em]">Scroll to explore</span>
         </div>
 
         {/* COMPACT Horizontal Carousel */}
-        <div className="flex overflow-x-auto pb-4 gap-4 px-5 scrollbar-none snap-x snap-mandatory">
+        <div 
+          className="flex overflow-x-auto pb-4 gap-4 px-5 snap-x snap-mandatory"
+          style={{
+            scrollbarWidth: "none",
+            msOverflowStyle: "none",
+            WebkitOverflowScrolling: "touch",
+          }}
+        >
+          {/* Add a CSS in JS style to hide webkit scrollbars */}
+          <style>{`
+            div::-webkit-scrollbar {
+              display: none;
+            }
+          `}</style>
           {comboItems.map((item, i) => (
             <motion.div
               key={item.id}
