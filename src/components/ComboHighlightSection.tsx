@@ -66,12 +66,12 @@ export default function ComboHighlightSection() {
         {/* Compact Header */}
         <div className="flex items-center justify-between mb-4 px-5">
           <div className="flex items-center gap-3">
-             <div className="w-8 h-8 rounded-full bg-[#D4AF37]/10 flex items-center justify-center border border-[#D4AF37]/20">
+             <div className="w-8 h-8 rounded-full bg-[#D4AF37]/20 flex items-center justify-center border border-[#D4AF37]/40">
                 <Trophy className="w-4 h-4 text-[#D4AF37]" />
              </div>
              <div>
-                <h3 className="text-sm font-black text-white uppercase tracking-wider">Top Combos</h3>
-                <div className="h-[2px] w-full bg-gradient-to-r from-[#D4AF37] to-transparent rounded-full opacity-50 mt-0.5"></div>
+                <h3 className="text-sm font-black text-[#1D1D1F] uppercase tracking-wider">Top Combos</h3>
+                <div className="h-[2px] w-full bg-gradient-to-r from-[#D4AF37] to-transparent rounded-full opacity-60 mt-0.5"></div>
              </div>
           </div>
           <span className="text-[10px] font-bold text-white/30 uppercase tracking-[0.2em]">Scroll to explore</span>
