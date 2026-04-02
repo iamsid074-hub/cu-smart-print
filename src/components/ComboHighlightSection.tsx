@@ -3,32 +3,28 @@ import { Plus, CheckCircle2, Crown } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { toast } from "sonner";
 import { useState } from "react";
-import { Link } from "react-router-dom";
 
 const comboItems = [
   {
     id: "combo-1",
-    name: "Classic Student Combo",
-    description: "Burger + Fries + Coke",
-    price: 149,
-    image: "/banners/white_sauce_pasta.png", // Demo image
-    zIndex: 1,
+    name: "Pasta & Burger Feast",
+    description: "White Sauce Pasta + Veg Burger + 2 Mountain Dew",
+    price: 199,
+    image: "/banners/combo_1.png",
   },
   {
     id: "combo-2",
-    name: "The Bazzar Special",
-    description: "Pizza + Garlic Bread + Shake",
-    price: 299,
-    image: "/banners/red_sauce_pasta.png", // Demo image
-    zIndex: 3,
+    name: "Vada Pav Delight",
+    description: "2 Mumbai Vada Pav + Mountain Dew",
+    price: 110,
+    image: "/banners/combo_2.png",
   },
   {
     id: "combo-3",
-    name: "Midnight Cravings",
-    description: "Noodles + Manchurian + Coke",
-    price: 199,
-    image: "/banners/mixed_sauce_pasta.png", // Demo image
-    zIndex: 1,
+    name: "Street Style Snack",
+    description: "Pani Puri (6 Pieces)",
+    price: 90,
+    image: "/banners/combo_3.png",
   },
 ];
 
@@ -98,14 +94,12 @@ export default function ComboHighlightSection() {
               viewport={{ once: true }}
               transition={{ delay: i * 0.15, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
               whileHover={{ y: -5 }}
-              className="relative min-w-[200px] w-[200px] sm:w-auto h-full rounded-2xl overflow-hidden border border-white/10 bg-black/20 backdrop-blur-xl snap-center flex flex-col group transition-all duration-300 hover:border-[#D4AF37]/30 hover:shadow-[0_10px_30px_-5px_rgba(212,175,55,0.15)]"
+              className="relative min-w-[220px] w-[220px] sm:w-auto h-full rounded-2xl overflow-hidden border border-white/10 bg-black/20 backdrop-blur-xl snap-center flex flex-col group transition-all duration-300 hover:border-[#D4AF37]/30 hover:shadow-[0_10px_30px_-5px_rgba(212,175,55,0.15)]"
             >
               {/* Image Container */}
-              <div className="relative h-28 sm:h-36 overflow-hidden bg-[#2A2A2C]">
-                {/* Fallback pattern if image is just demo */}
-                <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(#D4AF37 1px, transparent 1px)", backgroundSize: "10px 10px" }}></div>
-                <img src={item.image} alt={item.name} className="w-full h-full object-cover opacity-80 group-hover:scale-110 group-hover:opacity-100 transition-all duration-700" />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#1D1D1F] via-[#1D1D1F]/50 to-transparent" />
+              <div className="relative h-32 sm:h-40 overflow-hidden bg-[#2A2A2C]">
+                <img src={item.image} alt={item.name} className="w-full h-full object-cover opacity-90 group-hover:scale-110 group-hover:opacity-100 transition-all duration-700" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#1D1D1F] via-[#1D1D1F]/40 to-transparent" />
                 
                 {/* Gold Price Badge */}
                 <div className="absolute top-3 right-3 px-2.5 py-1 rounded-xl text-xs font-bold text-[#1D1D1F] bg-gradient-to-r from-[#D4AF37] to-[#F3E5AB] shadow-[0_4px_15px_-3px_rgba(212,175,55,0.3)]">
@@ -115,8 +109,8 @@ export default function ComboHighlightSection() {
 
               {/* Info */}
               <div className="p-4 flex flex-col flex-1 bg-gradient-to-b from-[#1D1D1F]/80 to-[#1D1D1F] backdrop-blur-sm -mt-2 relative z-10">
-                <p className="text-sm sm:text-base font-bold text-white/95 leading-tight">{item.name}</p>
-                <p className="text-xs text-white/50 mt-1.5 flex-1 line-clamp-2">{item.description}</p>
+                <p className="text-sm sm:text-[15px] font-bold text-white/95 leading-tight">{item.name}</p>
+                <p className="text-[11px] text-white/50 mt-1.5 flex-1 line-clamp-2 leading-relaxed">{item.description}</p>
                 
                 <button
                   onClick={(e) => { e.preventDefault(); handleAdd(item); }}
