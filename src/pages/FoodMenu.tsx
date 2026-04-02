@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ShoppingBag, Loader2, BadgeCheck, Sparkles, Store, ShoppingCart, MessageSquare } from "lucide-react";
@@ -201,21 +201,25 @@ export default function FoodMenu() {
                                 </p>
                             </div>
 
-                            {/* ─── Featured Combos ─── */}
-                            <ComboHighlightSection />
-
-
-                            {sortedShops.map((shop) => (
-                                <div key={shop.id} id={`${shop.id}-card`}>
-                                    <ShopCard
-                                        shop={shop}
-                                        isExpanded={expandedShop === shop.id}
-                                        onToggle={handleUpdateActiveShop}
-                                        expandedMenuCat={expandedMenuCat}
-                                        onToggleCategory={handleUpdateMenuCat}
-                                        onAddItem={handleAddToCartItem}
-                                    />
-                                </div>
+                            {sortedShops.map((shop, index) => (
+                                <React.Fragment key={shop.id}>
+                                    <div id={`${shop.id}-card`}>
+                                        <ShopCard
+                                            shop={shop}
+                                            isExpanded={expandedShop === shop.id}
+                                            onToggle={handleUpdateActiveShop}
+                                            expandedMenuCat={expandedMenuCat}
+                                            onToggleCategory={handleUpdateMenuCat}
+                                            onAddItem={handleAddToCartItem}
+                                        />
+                                    </div>
+                                    {/* ─── Featured Combos after 2nd Shop ─── */}
+                                    {index === 1 && (
+                                        <div className="py-2">
+                                            <ComboHighlightSection />
+                                        </div>
+                                    )}
+                                </React.Fragment>
                             ))}
 
                         </motion.div>
