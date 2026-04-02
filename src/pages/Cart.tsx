@@ -131,8 +131,7 @@ export default function Cart() {
         };
     }, [user]);
 
-    const vendingCartItems = items.filter(item => item.category === "Vending Machine");
-    const hasVending = vendingCartItems.length > 0;
+    const hasVending = items.some(item => item.category === "Vending Machine");
     const isFoodOrder = !items.some(item => item.category === "Vending Machine" || item.category?.toLowerCase() === "grocery");
 
     const calculateVendingDelivery = (f: number) => {
@@ -145,19 +144,29 @@ export default function Cart() {
     const originalDeliveryFee = 29;
     const specialDeliveryFee = 21;
 
+    // A "Food Shop" item is any item that is NOT from the Vending Machine or Grocery
+    const hasFoodShopItem = items.some(item => 
+        item.category !== "Vending Machine" && 
+        item.category?.toLowerCase() !== "grocery"
+    );
+
     const hasFlavourCombo = items.some(item => item.id === "flavour-factory-combo");
 
+    // Logic: If there's a food shop item, prioritize the 29rs/21rs fee.
+    // Only if it's EXCLUSIVELY Vending/Grocery, use the floor-based vending fee.
     const baseDelivery = hasFlavourCombo
         ? specialDeliveryFee
-        : (hasVending
-            ? calculateVendingDelivery(floor)
-            : ([2, 3].includes(floor) ? specialDeliveryFee : originalDeliveryFee));
+        : (hasFoodShopItem
+            ? ([2, 3].includes(floor) ? specialDeliveryFee : originalDeliveryFee)
+            : calculateVendingDelivery(floor));
 
     const deliveryFee = hasFreeDelivery 
         ? 0 
-        : (paymentMethod === 'cod' ? 51 : (hasFlavourCombo ? specialDeliveryFee : baseDelivery));
+        : (paymentMethod === 'cod' ? 51 : baseDelivery);
     
-    const displayedDeliveryFee = paymentMethod === 'cod' ? 51 : (hasVending ? calculateVendingDelivery(floor) : originalDeliveryFee);
+    const displayedDeliveryFee = paymentMethod === 'cod' 
+        ? 51 
+        : (hasFoodShopItem ? ([2, 3].includes(floor) ? specialDeliveryFee : originalDeliveryFee) : calculateVendingDelivery(floor));
 
     const maxWalletUsagePerDay = 50;
     const availableToday = Math.max(0, maxWalletUsagePerDay - dailyWalletUsed);
