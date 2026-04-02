@@ -11,6 +11,8 @@ const comboItems = [
     description: "White Sauce Pasta + Veg Burger + 2 Mountain Dew",
     price: 199,
     image: "/banners/combo_1.png",
+    theme: "from-orange-500/20 to-red-500/10",
+    accent: "#D4AF37"
   },
   {
     id: "combo-2",
@@ -18,6 +20,8 @@ const comboItems = [
     description: "2 Mumbai Vada Pav + Mountain Dew",
     price: 110,
     image: "/banners/combo_2.png",
+    theme: "from-amber-400/20 to-orange-600/10",
+    accent: "#F59E0B"
   },
   {
     id: "combo-3",
@@ -25,6 +29,8 @@ const comboItems = [
     description: "Pani Puri (6 Pieces)",
     price: 90,
     image: "/banners/combo_3.png",
+    theme: "from-emerald-400/20 to-teal-600/10",
+    accent: "#10B981"
   },
 ];
 
@@ -54,80 +60,95 @@ export default function ComboHighlightSection() {
 
   return (
     <motion.section
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
       viewport={{ once: true }}
-      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-      className="mb-8 rounded-3xl overflow-hidden relative border border-white/5"
-      style={{
-        background: "linear-gradient(135deg, #1D1D1F 0%, #2A2A2C 100%)",
-        boxShadow: "0 20px 40px -15px rgba(0,0,0,0.5)"
-      }}
+      className="mb-12 mt-12 relative"
     >
-      {/* Premium ambient glows */}
-      <div className="absolute top-0 right-0 w-64 h-64 rounded-full pointer-events-none opacity-20"
-        style={{ background: "radial-gradient(circle, rgba(212,175,55,0.4) 0%, transparent 70%)", transform: "translate(30%, -30%)" }} />
-      <div className="absolute bottom-0 left-0 w-48 h-48 rounded-full pointer-events-none opacity-10"
-        style={{ background: "radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%)", transform: "translate(-30%, 30%)" }} />
+      {/* Background Decorative Text */}
+      <div className="absolute -top-10 left-0 text-[80px] font-black text-white/[0.03] select-none pointer-events-none uppercase tracking-tighter">
+        Exclusive
+      </div>
 
-      <div className="relative z-10 px-5 py-6 sm:px-8 sm:py-8">
+      <div className="relative z-10 px-4">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-[#D4AF37]/20 to-transparent flex items-center justify-center border border-[#D4AF37]/30 backdrop-blur-md">
-              <Crown className="w-5 h-5 text-[#D4AF37]" strokeWidth={2.5} />
-            </div>
-            <div>
-              <h3 className="text-lg sm:text-xl font-bold tracking-tight text-white/95 leading-tight">Featured Combos</h3>
-              <p className="text-[11px] sm:text-xs text-[#D4AF37]/70 font-semibold tracking-wide uppercase mt-0.5">Premium Value Packs</p>
-            </div>
+        <div className="flex items-end justify-between mb-16 px-2">
+          <div className="flex flex-col gap-1">
+             <div className="flex items-center gap-2 mb-1">
+                <span className="h-[2px] w-8 bg-[#D4AF37]"></span>
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#D4AF37]">Special Curation</p>
+             </div>
+             <h3 className="text-3xl sm:text-4xl font-black text-white tracking-tight leading-none italic">
+                C<span className="text-[#D4AF37]">O</span>MB<span className="text-[#D4AF37]">O</span>S
+             </h3>
+          </div>
+          <div className="bg-white/5 border border-white/10 rounded-2xl p-2 backdrop-blur-md">
+             <Crown className="w-5 h-5 text-[#D4AF37] animate-pulse" />
           </div>
         </div>
 
-        {/* Combo Cards (Horizontal scroll on mobile, flex on desktop) */}
-        <div className="flex overflow-x-auto pb-4 -mx-5 px-5 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-3 gap-4 sm:gap-5 min-w-full scrollbar-none snap-x snap-mandatory">
+        {/* Combo Cards Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-y-24 sm:gap-x-8">
           {comboItems.map((item, i) => (
             <motion.div
               key={item.id}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: i * 0.15, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-              whileHover={{ y: -5 }}
-              className="relative min-w-[220px] w-[220px] sm:w-auto h-full rounded-2xl overflow-hidden border border-white/10 bg-black/20 backdrop-blur-xl snap-center flex flex-col group transition-all duration-300 hover:border-[#D4AF37]/30 hover:shadow-[0_10px_30px_-5px_rgba(212,175,55,0.15)]"
+              transition={{ delay: i * 0.1, duration: 0.6 }}
+              className="group relative"
             >
-              {/* Image Container */}
-              <div className="relative h-32 sm:h-40 overflow-hidden bg-[#2A2A2C]">
-                <img src={item.image} alt={item.name} className="w-full h-full object-cover opacity-90 group-hover:scale-110 group-hover:opacity-100 transition-all duration-700" />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#1D1D1F] via-[#1D1D1F]/40 to-transparent" />
-                
-                {/* Gold Price Badge */}
-                <div className="absolute top-3 right-3 px-2.5 py-1 rounded-xl text-xs font-bold text-[#1D1D1F] bg-gradient-to-r from-[#D4AF37] to-[#F3E5AB] shadow-[0_4px_15px_-3px_rgba(212,175,55,0.3)]">
-                  {"\u20B9"}{item.price}
-                </div>
-              </div>
+              {/* The "Outside" Image - Floating above card */}
+              <motion.div 
+                animate={{ y: [0, -10, 0] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: i * 0.5 }}
+                className="absolute -top-16 left-1/2 -translate-x-1/2 z-20 w-44 h-44 pointer-events-none"
+              >
+                <div className="relative w-full h-full p-2">
+                   {/* Glow effect behind image */}
+                   <div className={`absolute inset-4 rounded-full blur-2xl opacity-40 bg-gradient-to-br ${item.theme}`}></div>
+                   
+                   {/* Main Image in a premium circular/squircle frame */}
+                   <div className="w-full h-full rounded-[2.5rem] overflow-hidden border-[4px] border-[#1D1D1F] shadow-2xl rotate-3 group-hover:rotate-0 transition-all duration-500">
+                      <img src={item.image} alt={item.name} className="w-full h-full object-cover scale-110 group-hover:scale-125 transition-transform duration-700" />
+                   </div>
 
-              {/* Info */}
-              <div className="p-4 flex flex-col flex-1 bg-gradient-to-b from-[#1D1D1F]/80 to-[#1D1D1F] backdrop-blur-sm -mt-2 relative z-10">
-                <p className="text-sm sm:text-[15px] font-bold text-white/95 leading-tight">{item.name}</p>
-                <p className="text-[11px] text-white/50 mt-1.5 flex-1 line-clamp-2 leading-relaxed">{item.description}</p>
-                
-                <button
-                  onClick={(e) => { e.preventDefault(); handleAdd(item); }}
-                  className="mt-4 w-full h-9 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all active:scale-95 overflow-hidden relative group/btn"
-                  style={{
-                    background: addedIds.has(item.id) ? "rgba(34,197,94,0.15)" : "rgba(212,175,55,0.1)",
-                    color: addedIds.has(item.id) ? "#4ADE80" : "#D4AF37",
-                    border: `1px solid ${addedIds.has(item.id) ? "rgba(34,197,94,0.3)" : "rgba(212,175,55,0.3)"}`,
-                  }}
-                >
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#D4AF37]/10 to-transparent -translate-x-[150%] animate-[shimmer_2s_infinite] group-hover/btn:translate-x-[150%] transition-all duration-700"></div>
-                  {addedIds.has(item.id) ? (
-                    <><CheckCircle2 className="w-4 h-4" /> Added</>
-                  ) : (
-                    <><Plus className="w-4 h-4" /> Add Combo</>
-                  )}
-                </button>
+                   {/* Float Badge - Price */}
+                   <div className="absolute -bottom-2 -right-2 bg-[#D4AF37] text-black w-14 h-14 rounded-full flex flex-col items-center justify-center font-black shadow-lg border-2 border-[#1D1D1F] -rotate-12 group-hover:rotate-0 transition-all duration-300">
+                      <span className="text-[10px] leading-none mb-0.5">₹</span>
+                      <p className="text-sm leading-none">{item.price}</p>
+                   </div>
+                </div>
+              </motion.div>
+
+              {/* The Main Card Body */}
+              <div className="pt-24 h-full">
+                <div className="h-full rounded-[2.5rem] bg-gradient-to-b from-[#2A2A2C]/60 to-[#1D1D1F]/90 backdrop-blur-xl border border-white/5 p-6 flex flex-col items-center text-center group-hover:border-[#D4AF37]/30 transition-all duration-500 shadow-xl self-end">
+                   <div className="mb-4 pt-4">
+                      <h4 className="text-lg font-black text-white group-hover:text-[#D4AF37] transition-colors duration-300">{item.name}</h4>
+                      <div className="h-1 w-8 bg-[#D4AF37]/30 rounded-full mx-auto mt-2 group-hover:w-16 transition-all duration-300"></div>
+                   </div>
+                   
+                   <p className="text-xs text-white/40 font-medium leading-relaxed max-w-[180px] mb-8 min-h-[3rem]">
+                      {item.description}
+                   </p>
+
+                   {/* Premium Button */}
+                   <button
+                     onClick={() => handleAdd(item)}
+                     className={`w-full py-4 rounded-2xl text-xs font-black uppercase tracking-widest transition-all duration-300 flex items-center justify-center gap-2 ${
+                        addedIds.has(item.id) 
+                        ? "bg-green-500/20 text-green-500 border border-green-500/30" 
+                        : "bg-white/5 text-[#D4AF37] border border-[#D4AF37]/20 hover:bg-[#D4AF37] hover:text-black hover:border-transparent active:scale-95"
+                     }`}
+                   >
+                     {addedIds.has(item.id) ? (
+                       <><CheckCircle2 className="w-4 h-4" /> Selected</>
+                     ) : (
+                       <><Plus className="w-4 h-4" /> Add to Order</>
+                     )}
+                   </button>
+                </div>
               </div>
             </motion.div>
           ))}
