@@ -43,9 +43,9 @@ const LiquidGlassScreen = ({ children }: { children: React.ReactNode }) => (
 // import FlavourFactoryBanner from "@/components/FlavourFactoryBanner";
 
 const heroSlides = [
-  { img: "/banners/promo_subscription.png", link: "/membership", label: "Subscription" },
-  { img: "/banners/promo_wallet.png", link: "/food", label: "Wallet Rewards" },
-  { img: "/banners/promo_combos.png", link: "/food", label: "Featured Combos" },
+  { img: "/banners/delivery.webp", link: "/food", label: "Fast Delivery" },
+  { img: "/banners/sell.webp", link: "/profile", label: "Sell Items" },
+  { img: "/banners/community.webp", link: "/chat", label: "Community Chat" },
 ];
 
 function HeroCarousel() {
