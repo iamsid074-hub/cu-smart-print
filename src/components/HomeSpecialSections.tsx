@@ -274,11 +274,13 @@ export default function HomeSpecialSections({ activeCat, onCatChange }: FoodSect
                          <span className="text-[11px] font-black text-[#007AFF] uppercase tracking-wider">Flat ₹50 OFF above ₹199</span>
                       </div>
 
-                      {/* Veg Indicator Badge */}
-                      <div className="flex items-center gap-1.5 mb-4 px-2 py-1 bg-[#F2FBF4] rounded-lg border border-[#34C759]/10 w-fit">
-                         <Leaf className="w-3 h-3 text-[#34C759]" />
-                         <span className="text-[9px] font-black uppercase text-[#34C759] tracking-widest">Pure Veg restaurant</span>
-                      </div>
+                      {/* Veg Indicator Badge - ONLY FOR PUNJABI RASOI */}
+                      {(item.shop === "Punjabi Rasoi" || item.shopName === "Punjabi Rasoi") && (
+                        <div className="flex items-center gap-1.5 mb-4 px-2 py-1 bg-[#F2FBF4] rounded-lg border border-[#34C759]/10 w-fit">
+                           <Leaf className="w-3 h-3 text-[#34C759]" />
+                           <span className="text-[9px] font-black uppercase text-[#34C759] tracking-widest">Pure Veg restaurant</span>
+                        </div>
+                      )}
                       
                       <button
                         onClick={() => handleAdd(item)}
