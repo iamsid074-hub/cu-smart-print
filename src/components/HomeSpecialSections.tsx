@@ -7,6 +7,11 @@ import { shops } from "@/config/shopMenus";
 
 type CategoryType = "all" | "combos" | "burgers" | "pizza" | "biryani" | "pasta" | "specials";
 
+interface FoodSectionsProps {
+  activeCat: string;
+  onCatChange: (cat: string) => void;
+}
+
 interface FilterOption {
   id: string;
   label: string;
@@ -15,12 +20,12 @@ interface FilterOption {
 }
 
 const categories = [
-  { id: "all", label: "All", img: "/banners/cat_all.png" },
-  { id: "pizza", label: "Pizza", img: "/banners/cat_pizza.png" },
-  { id: "burgers", label: "Burger", img: "/banners/cat_burger.png" },
-  { id: "biryani", label: "Biryani", img: "/banners/cat_biryani.png" },
-  { id: "pasta", label: "Pasta", img: "/banners/mixed_sauce_pasta.png" },
-  { id: "combos", label: "Combos", img: "/banners/combo_feast.png" },
+  { id: "all", label: "All", img: "/banners/cat_all.webp" },
+  { id: "pizza", label: "Pizza", img: "/banners/cat_pizza.webp" },
+  { id: "burgers", label: "Burger", img: "/banners/cat_burger.webp" },
+  { id: "biryani", label: "Biryani", img: "/banners/cat_biryani.webp" },
+  { id: "pasta", label: "Pasta", img: "/banners/mixed_sauce_pasta.webp" },
+  { id: "combos", label: "Combos", img: "/banners/combo_feast.webp" },
 ];
 
 const filters: FilterOption[] = [
@@ -38,7 +43,7 @@ const comboItems = [
     rating: 4.8,
     description: "White Sauce Pasta + Veg Burger + 2 Mountain Dew",
     price: 199,
-    image: "/banners/combo_1.png",
+    image: "/banners/combo_1.webp",
   },
   {
     id: "combo-2",
@@ -47,7 +52,7 @@ const comboItems = [
     rating: 4.7,
     description: "2 Mumbai Vada Pav + Mountain Dew",
     price: 110,
-    image: "/banners/combo_2.png",
+    image: "/banners/combo_2.webp",
   },
   {
     id: "combo-3",
@@ -56,13 +61,12 @@ const comboItems = [
     rating: 4.9,
     description: "Pani Puri (6 Pieces)",
     price: 90,
-    image: "/banners/combo_3.png",
+    image: "/banners/combo_3.webp",
   },
 ];
 
-export default function HomeSpecialSections() {
+export default function HomeSpecialSections({ activeCat, onCatChange }: FoodSectionsProps) {
   const { addItem } = useCart();
-  const [activeCat, setActiveCat] = useState<CategoryType>("all");
   const [addedIds, setAddedIds] = useState<Set<string>>(new Set());
   const [activeFilters, setActiveFilters] = useState<Set<string>>(new Set());
 
@@ -73,13 +77,12 @@ export default function HomeSpecialSections() {
     let items: any[] = [];
     
     if (activeCat === "all") {
-       // Just grab popular things or recommended ones
        const favorites = ["Burger", "Pizza", "Biryani", "Paneer", "Noodles"];
        shops.forEach(shop => {
          shop.categories.forEach(cat => {
            cat.items.forEach(item => {
              if (favorites.some(f => item.name.includes(f))) {
-               items.push({ ...item, id: `all-${shop.id}-${item.name}`, shopName: shop.name, rating: (4.1 + Math.random() * 0.8).toFixed(1), image: item.name.includes("Burger") ? "/banners/burger_special.png" : item.name.includes("Pizza") ? "/banners/today_special.png" : "/banners/combo_feast.png" });
+               items.push({ ...item, id: `all-${shop.id}-${item.name}`, shopName: shop.name, rating: (4.1 + Math.random() * 0.8).toFixed(1), image: item.name.includes("Burger") ? "/banners/burger_special.webp" : item.name.includes("Pizza") ? "/banners/today_special.webp" : "/banners/combo_feast.webp" });
              }
            });
          });
@@ -87,7 +90,6 @@ export default function HomeSpecialSections() {
        return items.sort(() => 0.5 - Math.random()).slice(0, 8);
     }
 
-    // specific categories
     shops.forEach(shop => {
       shop.categories.forEach(cat => {
         const isMatch = 
@@ -101,22 +103,18 @@ export default function HomeSpecialSections() {
               id: `${activeCat}-${shop.id}-${item.name}`,
               shopName: shop.name,
               rating: (4.2 + Math.random() * 0.7).toFixed(1),
-              image: activeCat === "burgers" ? "/banners/burger_special.png" : "/banners/today_special.png"
+              image: activeCat === "burgers" ? "/banners/burger_special.webp" : activeCat === "pizza" ? "/banners/cat_pizza.webp" : "/banners/today_special.webp"
             });
           });
         }
       });
     });
 
-    // Handle secondary filters
     if (activeFilters.has("under-250")) {
       items = items.filter(i => i.price <= 250);
     }
-    if (activeFilters.has("pure-veg")) {
-      // In a real app we'd check item.isVeg, here we'll simulate or skip for simplicity if not in data
-    }
 
-    return items.slice(0, 10);
+    return items;
   }, [activeCat, activeFilters]);
 
   const handleAdd = (item: any) => {
@@ -147,14 +145,15 @@ export default function HomeSpecialSections() {
     });
   };
 
+  const isListView = activeCat !== "all";
+
   return (
     <section className="mt-6 mb-12">
       {/* 1. Food Bubbles Row */}
       <div className="flex items-start gap-5 overflow-x-auto pb-4 scrollbar-hide px-1">
-        {/* Promo Tile */}
         <div className="flex-shrink-0 flex flex-col items-center">
            <div className="w-[72px] h-[72px] rounded-2xl overflow-hidden shadow-[0_4px_12px_rgba(0,0,0,0.12)] border border-black/5 active:scale-95 transition-transform hover:shadow-xl">
-              <img src="/banners/promo_meals_under_250.png" alt="Promo" className="w-full h-full object-cover" />
+              <img src="/banners/promo_meals_under_250.webp" alt="Promo" className="w-full h-full object-cover" />
            </div>
         </div>
 
@@ -163,7 +162,7 @@ export default function HomeSpecialSections() {
           return (
             <button
               key={cat.id}
-              onClick={() => setActiveCat(cat.id as CategoryType)}
+              onClick={() => onCatChange(cat.id)}
               className="flex-shrink-0 flex flex-col items-center gap-2.5 group"
             >
               <div className={`w-[72px] h-[72px] rounded-full overflow-hidden transition-all duration-300 relative ${
@@ -178,9 +177,6 @@ export default function HomeSpecialSections() {
               }`}>
                 {cat.label}
               </span>
-              {isActive && (
-                <motion.div layoutId="active-indicator" className="h-1 w-8 bg-[#34C759] rounded-full mt-[-4px]" />
-              )}
             </button>
           );
         })}
@@ -211,73 +207,109 @@ export default function HomeSpecialSections() {
         })}
       </div>
 
-      <h3 className="text-sm font-black text-[#1D1D1F]/40 uppercase tracking-[0.15em] mb-6 px-1">
-        Recommended For You
-      </h3>
+      {activeCat === 'all' && (
+        <h3 className="text-sm font-black text-[#1D1D1F]/40 uppercase tracking-[0.15em] mb-6 px-1">
+          Recommended For You
+        </h3>
+      )}
 
-      {/* 3. Items Carousel (matching current theme) */}
-      <div 
-        className="flex overflow-x-auto pb-8 gap-5 px-1 snap-x snap-mandatory scrollbar-hide"
-        style={{ WebkitOverflowScrolling: "touch" }}
-      >
-        <AnimatePresence mode="wait">
+      {/* 3. Items View: Horizontal for 'all', Grid for Specific */}
+      <div className={isListView ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500" : "flex overflow-x-auto pb-8 gap-5 px-1 snap-x snap-mandatory scrollbar-hide"}>
+        <AnimatePresence mode="popLayout">
           {filteredItems.map((item, i) => (
             <motion.div
               key={item.id}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ delay: i * 0.04 }}
-              className="relative min-w-[280px] w-[280px] snap-center pt-8"
+              layout
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ delay: i * 0.05 }}
+              className={isListView ? "w-full" : "relative min-w-[280px] w-[280px] snap-center pt-8"}
             >
-              {/* Asset Header Circle */}
-              <div className="absolute top-0 right-4 z-20 w-24 h-24 pointer-events-none group-hover:scale-105 transition-transform duration-300">
-                <div className="relative w-full h-full rounded-[2rem] overflow-hidden border-[3px] border-white shadow-xl bg-white">
-                   <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
-                   {item.rating && (
-                     <div className="absolute bottom-1 right-1 bg-white/90 backdrop-blur-md px-1.5 py-0.5 rounded-lg shadow-sm flex items-center gap-0.5 border border-black/5">
-                        <Star className="w-2.5 h-2.5 text-amber-500 fill-amber-500" />
-                        <span className="text-[9px] font-black">{item.rating}</span>
-                     </div>
-                   )}
+              {isListView ? (
+                /* PREMIUM VERTICAL CARD (HIGH IMAGE AREA) */
+                <div className="group rounded-[2.5rem] bg-white border border-[#E5E5E7] overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 flex flex-col h-full transform hover:-translate-y-1">
+                   {/* Large Image Area */}
+                   <div className="relative h-64 overflow-hidden">
+                      <img src={item.image} alt={item.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                      
+                      {/* Floating Badges */}
+                      <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-2xl shadow-lg flex items-center gap-1.5 border border-white/40">
+                         <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
+                         <span className="text-[13px] font-black text-[#1D1D1F]">{item.rating}</span>
+                      </div>
+                      <div className="absolute bottom-4 left-4 bg-[#1D1D1F]/80 backdrop-blur-md px-4 py-2 rounded-2xl shadow-lg border border-white/10">
+                         <span className="text-[16px] font-black text-white">₹{item.price}</span>
+                      </div>
+                   </div>
+
+                   {/* Content Area */}
+                   <div className="p-6 flex flex-col flex-grow">
+                      <div className="flex items-center gap-2 mb-2">
+                         <div className="w-2 h-2 rounded-full bg-[#34C759]" />
+                         <span className="text-[11px] font-black uppercase tracking-[0.1em] text-[#8E8E93]">{item.shop || item.shopName}</span>
+                      </div>
+                      <h4 className="text-xl font-bold text-[#1D1D1F] leading-tight mb-4">{item.name}</h4>
+                      
+                      <button
+                        onClick={() => handleAdd(item)}
+                        className={`mt-auto h-12 w-full rounded-[1.2rem] text-[13px] font-black uppercase tracking-widest transition-all duration-300 flex items-center justify-center gap-2 ${
+                           addedIds.has(String(item.id)) 
+                           ? "bg-[#34C759] text-white shadow-lg" 
+                           : "bg-[#1D1D1F] text-white hover:bg-black ios-shadow active:scale-95"
+                        }`}
+                      >
+                        {addedIds.has(String(item.id)) ? (
+                          <><CheckCircle2 className="w-5 h-5" /> Added</>
+                        ) : (
+                          <><Plus className="w-5 h-5" /> Add to Order</>
+                        )}
+                      </button>
+                   </div>
                 </div>
-              </div>
-
-              {/* Card Body (Swiggy/Zomato style) */}
-              <div className="rounded-[2.2rem] bg-white border border-[#E5E5E7] p-5 pt-6 flex flex-col justify-between shadow-sm min-h-[150px] relative overflow-hidden group">
-                 <div className="absolute top-0 left-0 w-1.5 h-full bg-[#34C759]/20" />
-                 
-                 <div className="max-w-[170px]">
-                    <div className="flex items-center gap-1.5 mb-1.5">
-                       <div className="w-1.5 h-1.5 rounded-full bg-[#34C759]" />
-                       <p className="text-[10px] font-black uppercase tracking-widest text-[#8E8E93] truncate">
-                          {item.shop || item.shopName}
-                       </p>
+              ) : (
+                /* STANDARD HORIZONTAL DISCOVERY CARD */
+                <>
+                  <div className="absolute top-0 right-4 z-20 w-24 h-24 pointer-events-none group-hover:scale-105 transition-transform duration-300">
+                    <div className="relative w-full h-full rounded-[2rem] overflow-hidden border-[3px] border-white shadow-xl bg-white">
+                       <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                       {item.rating && (
+                         <div className="absolute bottom-1 right-1 bg-white/90 backdrop-blur-md px-1.5 py-0.5 rounded-lg shadow-sm flex items-center gap-0.5 border border-black/5">
+                            <Star className="w-2.5 h-2.5 text-amber-500 fill-amber-500" />
+                            <span className="text-[9px] font-black">{item.rating}</span>
+                         </div>
+                       )}
                     </div>
-                    <h4 className="text-[15px] font-black text-[#1D1D1F] leading-tight line-clamp-2 mb-2">{item.name}</h4>
-                 </div>
+                  </div>
 
-                 <div className="flex items-center justify-between mt-auto">
-                    <div className="flex flex-col">
-                       <span className="text-[16px] font-black text-[#1D1D1F]">₹{item.price}</span>
-                    </div>
-                    
-                    <button
-                      onClick={() => handleAdd(item)}
-                      className={`h-9 px-6 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all duration-300 flex items-center justify-center gap-2 ${
-                         addedIds.has(String(item.id)) 
-                         ? "bg-green-500 text-white shadow-lg" 
-                         : "bg-[#1D1D1F] text-white hover:bg-black active:scale-95"
-                      }`}
-                    >
-                      {addedIds.has(String(item.id)) ? (
-                        <CheckCircle2 className="w-4 h-4" />
-                      ) : (
-                        "Add"
-                      )}
-                    </button>
-                 </div>
-              </div>
+                  <div className="rounded-[2.2rem] bg-white border border-[#E5E5E7] p-5 pt-6 flex flex-col justify-between shadow-sm min-h-[150px] relative overflow-hidden group">
+                     <div className="absolute top-0 left-0 w-1.5 h-full bg-[#34C759]/20" />
+                     <div className="max-w-[170px]">
+                        <div className="flex items-center gap-1.5 mb-1.5">
+                           <div className="w-1.5 h-1.5 rounded-full bg-[#34C759]" />
+                           <p className="text-[10px] font-black uppercase tracking-widest text-[#8E8E93] truncate">{item.shop || item.shopName}</p>
+                        </div>
+                        <h4 className="text-[15px] font-black text-[#1D1D1F] leading-tight line-clamp-2 mb-2">{item.name}</h4>
+                     </div>
+                     <div className="flex items-center justify-between mt-auto">
+                        <div className="flex flex-col">
+                           <span className="text-[16px] font-black text-[#1D1D1F]">₹{item.price}</span>
+                        </div>
+                        <button
+                          onClick={() => handleAdd(item)}
+                          className={`h-9 px-6 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all duration-300 flex items-center justify-center gap-2 ${
+                             addedIds.has(String(item.id)) 
+                             ? "bg-green-500 text-white shadow-lg" 
+                             : "bg-[#1D1D1F] text-white hover:bg-black active:scale-95"
+                          }`}
+                        >
+                          {addedIds.has(String(item.id)) ? <CheckCircle2 className="w-4 h-4" /> : "Add"}
+                        </button>
+                     </div>
+                  </div>
+                </>
+              )}
             </motion.div>
           ))}
         </AnimatePresence>

@@ -155,6 +155,7 @@ export default function Home() {
   const [productsLoading, setProductsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
+  const [activeFoodCat, setActiveFoodCat] = useState("all");
 
   useEffect(() => {
     async function fetchProducts() {
@@ -222,10 +223,20 @@ export default function Home() {
         <div className="w-full">
 
           {/* ─── Popular Food Sections ─── */}
-          <HomeSpecialSections />
+          <HomeSpecialSections activeCat={activeFoodCat} onCatChange={setActiveFoodCat} />
 
-          {/* ─── Digital Vending Machine Section ─── */}
-          <VendingMachine />
+          {activeFoodCat === 'all' && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.5 }}
+            >
+              <div className="w-full">
+                {/* ─── Digital Vending Machine Section ─── */}
+                <VendingMachine />
+
+                {/* ─── EXPLORE / BROWSE SECTION ─── */}
 
           {/* ─── EXPLORE / BROWSE SECTION ─── */}
           <section className="mb-10 sm:mb-16 mt-8">
@@ -368,9 +379,11 @@ export default function Home() {
               </div>
             </motion.div>
           </section>
-
         </div>
-      </div>
+      </motion.div>
+    )}
+  </div>
+</div>
     </div>
   );
 }

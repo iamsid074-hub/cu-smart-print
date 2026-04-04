@@ -10,7 +10,7 @@ const comboItems = [
     name: "Pasta & Burger Feast",
     description: "White Sauce Pasta + Veg Burger + 2 Mountain Dew",
     price: 199,
-    image: "/banners/combo_1.png",
+    image: "/banners/combo_1.webp",
     theme: "from-orange-500/20 to-red-500/10",
   },
   {
@@ -18,7 +18,7 @@ const comboItems = [
     name: "Vada Pav Delight",
     description: "2 Mumbai Vada Pav + Mountain Dew",
     price: 110,
-    image: "/banners/combo_2.png",
+    image: "/banners/combo_2.webp",
     theme: "from-amber-400/20 to-orange-600/10",
   },
   {
@@ -26,7 +26,7 @@ const comboItems = [
     name: "Street Style Snack",
     description: "Pani Puri (6 Pieces)",
     price: 90,
-    image: "/banners/combo_3.png",
+    image: "/banners/combo_3.webp",
     theme: "from-emerald-400/20 to-teal-600/10",
   },
 ];
