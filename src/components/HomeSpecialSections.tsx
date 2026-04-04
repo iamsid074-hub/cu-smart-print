@@ -250,19 +250,19 @@ export default function HomeSpecialSections({ activeCat, onCatChange }: FoodSect
                       </div>
                    </div>
 
-                   {/* Content Area - ZOMATO TYPE INFO */}
+                   {/* Content Area - Dish-First Info */}
                    <div className="p-4 flex flex-col flex-grow">
-                      {/* Brand Row: Name + Rating */}
-                      <div className="flex items-center justify-between gap-2 mb-1">
-                         <h4 className="text-[17px] font-black text-[#1D1D1F] truncate group-hover:text-[#007AFF] transition-colors">{item.shop || item.shopName}</h4>
-                         <div className="flex items-center gap-1 bg-[#267E3E] px-1.5 py-0.5 rounded-md shadow-sm border border-black/5">
+                      {/* Product Row: Name + Rating */}
+                      <div className="flex items-center justify-between gap-2 mb-0.5">
+                         <h4 className="text-[17px] font-black text-[#1D1D1F] truncate group-hover:text-[#007AFF] transition-colors">{item.name}</h4>
+                         <div className="flex items-center gap-1 bg-[#267E3E] px-1.5 py-0.5 rounded-md shadow-sm border border-black/5 flex-shrink-0">
                             <span className="text-[11px] font-black text-white">{item.rating}</span>
                             <Star className="w-2.5 h-2.5 text-white fill-white" />
                          </div>
                       </div>
 
-                      {/* Product Row */}
-                      <p className="text-[13px] font-bold text-[#8E8E93] truncate mb-2">{item.name}</p>
+                      {/* Brand Row */}
+                      <p className="text-[13px] font-bold text-[#8E8E93] truncate mb-2.5">{item.shop || item.shopName}</p>
 
                       {/* Delivery Row: Time | Distance - CAMPUS SCALE */}
                       <div className="flex items-center gap-2 text-[12px] font-bold text-[#48484A] opacity-70 mb-3 pb-3 border-b border-[#E5E5E7]">
@@ -316,11 +316,11 @@ export default function HomeSpecialSections({ activeCat, onCatChange }: FoodSect
                   <div className="rounded-[2.2rem] bg-white border border-[#E5E5E7] p-5 pt-6 flex flex-col justify-between shadow-sm min-h-[150px] relative overflow-hidden group">
                      <div className="absolute top-0 left-0 w-1.5 h-full bg-[#34C759]/20" />
                      <div className="max-w-[170px]">
-                        <div className="flex items-center gap-1.5 mb-1.5">
+                        <h4 className="text-[15px] font-black text-[#1D1D1F] leading-tight line-clamp-2 mb-1">{item.name}</h4>
+                        <div className="flex items-center gap-1.5">
                            <div className="w-1.5 h-1.5 rounded-full bg-[#34C759]" />
                            <p className="text-[10px] font-black uppercase tracking-widest text-[#8E8E93] truncate">{item.shop || item.shopName}</p>
                         </div>
-                        <h4 className="text-[15px] font-black text-[#1D1D1F] leading-tight line-clamp-2 mb-2">{item.name}</h4>
                      </div>
                      <div className="flex items-center justify-between mt-auto">
                         <div className="flex flex-col">
