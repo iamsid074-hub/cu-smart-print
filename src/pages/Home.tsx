@@ -40,10 +40,12 @@ const LiquidGlassScreen = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
-import FlavourFactoryBanner from "@/components/FlavourFactoryBanner";
+// import FlavourFactoryBanner from "@/components/FlavourFactoryBanner";
 
 const heroSlides = [
-  <FlavourFactoryBanner key="1" />,
+  { img: "/banners/promo_subscription.png", link: "/membership", label: "Subscription" },
+  { img: "/banners/promo_wallet.png", link: "/food", label: "Wallet Rewards" },
+  { img: "/banners/promo_combos.png", link: "/food", label: "Featured Combos" },
 ];
 
 function HeroCarousel() {
@@ -96,7 +98,9 @@ function HeroCarousel() {
             className="absolute inset-0"
             style={{ zIndex: i === current ? 1 : 0 }}
           >
-            {slide}
+            <Link to={slide.link} className="block w-full h-full">
+              <img src={slide.img} alt={slide.label} className="w-full h-full object-cover" />
+            </Link>
           </motion.div>
         ))}
 
