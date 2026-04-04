@@ -113,6 +113,10 @@ export default function HomeSpecialSections({ activeCat, onCatChange }: FoodSect
     if (activeFilters.has("under-250")) {
       items = items.filter(i => i.price <= 250);
     }
+    
+    if (activeFilters.has("pure-veg")) {
+      items = items.filter(i => i.shop === "Punjabi Rasoi" || i.shopName === "Punjabi Rasoi");
+    }
 
     return items;
   }, [activeCat, activeFilters]);
@@ -260,12 +264,12 @@ export default function HomeSpecialSections({ activeCat, onCatChange }: FoodSect
                       {/* Product Row */}
                       <p className="text-[13px] font-bold text-[#8E8E93] truncate mb-2">{item.name}</p>
 
-                      {/* Delivery Row: Time | Distance */}
+                      {/* Delivery Row: Time | Distance - CAMPUS SCALE */}
                       <div className="flex items-center gap-2 text-[12px] font-bold text-[#48484A] opacity-70 mb-3 pb-3 border-b border-[#E5E5E7]">
                          <Clock className="w-3.5 h-3.5" />
-                         <span>{25 + Math.floor(Math.random() * 20)}-{40 + Math.floor(Math.random() * 20)} mins</span>
+                         <span>{15 + Math.floor(Math.random() * 5)}-{25 + Math.floor(Math.random() * 5)} mins</span>
                          <span className="opacity-40">|</span>
-                         <span>{(1 + Math.random() * 5).toFixed(1)} km</span>
+                         <span>{(0.2 + Math.random() * 0.6).toFixed(1)} km</span>
                       </div>
 
                       {/* Offer Row */}
