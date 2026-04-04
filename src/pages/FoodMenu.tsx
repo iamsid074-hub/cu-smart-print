@@ -9,7 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import UpiPaymentModal from "@/components/UpiPaymentModal";
 import { shops } from "@/config/shopMenus";
 import { getFoodSuggestions, estimatePrice } from "@/utils/foodUtils";
-import ComboHighlightSection from "@/components/ComboHighlightSection";
+// import ComboHighlightSection from "@/components/ComboHighlightSection";
 import {
     Dialog,
     DialogContent,
@@ -213,12 +213,6 @@ export default function FoodMenu() {
                                             onAddItem={handleAddToCartItem}
                                         />
                                     </div>
-                                    {/* ─── Featured Combos after 2nd Shop ─── */}
-                                    {index === 1 && (
-                                        <div className="py-2">
-                                            <ComboHighlightSection />
-                                        </div>
-                                    )}
                                 </React.Fragment>
                             ))}
 
