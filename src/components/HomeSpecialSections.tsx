@@ -1,5 +1,6 @@
 import { useState, useMemo, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Link } from "react-router-dom";
 import {
   Plus,
   CheckCircle2,
@@ -331,9 +332,6 @@ export default function HomeSpecialSections({
         {/* Section Header */}
         <div className="flex items-center justify-between mb-5 px-1">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center shadow-lg shadow-orange-500/25">
-              <Flame className="w-4 h-4 text-white" />
-            </div>
             <div>
               <h2 className="text-[18px] sm:text-[22px] font-black text-[#1D1D1F] tracking-tight leading-none">
                 What's Cooking
@@ -343,9 +341,9 @@ export default function HomeSpecialSections({
               </p>
             </div>
           </div>
-          <button className="text-[12px] font-bold text-[#007AFF] flex items-center gap-1 hover:gap-2 transition-all">
+          <Link to="/browse" className="text-[12px] font-bold text-[#007AFF] flex items-center gap-1 hover:gap-2 transition-all">
             View All <ArrowRight className="w-3.5 h-3.5" />
-          </button>
+          </Link>
         </div>
 
         {/* Category Circles - Horizontal Scroll */}
@@ -564,22 +562,6 @@ export default function HomeSpecialSections({
                     </div>
                   </div>
 
-                  {/* Heart Button */}
-                  <motion.button
-                    whileTap={{ scale: 0.7 }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toggleLike(String(item.id));
-                    }}
-                    className="absolute top-3 right-3 z-20 w-8 h-8 rounded-full bg-white/90 backdrop-blur-md shadow-md flex items-center justify-center transition-all hover:scale-110 border border-black/5"
-                  >
-                    <Heart
-                      className={`w-3.5 h-3.5 transition-all duration-300 ${
-                        isLiked ? "text-red-500 fill-red-500" : "text-[#8E8E93]"
-                      }`}
-                    />
-                  </motion.button>
-
                   {/* Rating Notch Badge - sits at the diagonal cut edge */}
                   {item.rating && (
                     <div className="absolute -bottom-0 right-4 z-20 translate-y-1/2">
@@ -618,34 +600,22 @@ export default function HomeSpecialSections({
                     </div>
                   </div>
 
-                  {/* Offer Strip */}
-                  <div
-                    className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl ${ac.light} ${ac.border} border mb-3.5`}
-                  >
-                    <Zap className={`w-3 h-3 ${ac.text} fill-current`} />
-                    <span
-                      className={`text-[10px] font-black ${ac.text} uppercase tracking-wider`}
-                    >
-                      FLAT {"\u20B9"}50 OFF
+                  {/* ── PRICE ── */}
+                  <div className="mb-3.5">
+                    <span className="text-[22px] sm:text-[24px] font-black text-[#1D1D1F] tracking-tight">
+                      {"\u20B9"} {item.price}
                     </span>
                   </div>
 
-                  {/* ── PRICE + ACTION ROW ── */}
-                  <div className="flex items-end justify-between">
-                    <div className="flex flex-col leading-none">
-                      <span className="text-[22px] sm:text-[24px] font-black text-[#1D1D1F] tracking-tight">
-                        {"\u20B9"}
-                        {item.price}
-                      </span>
-                    </div>
-
+                  {/* ── ACTION ROW ── */}
+                  <div className="w-full">
                     <motion.button
                       whileTap={{ scale: 0.85 }}
                       onClick={() => handleAdd(item)}
-                      className={`relative h-10 sm:h-11 rounded-[0.9rem] text-[11px] font-black uppercase tracking-[0.06em] transition-all duration-500 overflow-hidden flex items-center justify-center gap-1.5 ${
+                      className={`relative w-full h-10 sm:h-11 rounded-[0.9rem] text-[12px] font-black uppercase tracking-[0.06em] transition-all duration-500 overflow-hidden flex items-center justify-center gap-1.5 ${
                         isAdded
-                          ? "bg-[#34C759] text-white shadow-lg shadow-[#34C759]/25 px-4 sm:px-5"
-                          : `bg-[#1D1D1F] text-white hover:bg-[#007AFF] shadow-md hover:shadow-lg active:scale-95 px-4 sm:px-5`
+                          ? "bg-[#34C759] text-white shadow-lg shadow-[#34C759]/25"
+                          : "bg-[#1D1D1F] text-white hover:bg-[#007AFF] shadow-md hover:shadow-lg active:scale-95"
                       }`}
                     >
                       <AnimatePresence mode="wait">
