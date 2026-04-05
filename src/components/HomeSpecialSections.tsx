@@ -193,37 +193,68 @@ export default function HomeSpecialSections({ activeCat, onCatChange }: FoodSect
 
   return (
     <section className="mt-6 mb-12">
-      {/* 1. Food Bubbles Row */}
-      <div className="flex items-start gap-5 overflow-x-auto pb-4 scrollbar-hide px-1">
-        <div className="flex-shrink-0 flex flex-col items-center">
-           <div className="w-[72px] h-[72px] rounded-2xl overflow-hidden shadow-[0_4px_12px_rgba(0,0,0,0.12)] border border-black/5 active:scale-95 transition-transform hover:shadow-xl">
-              <img src="/banners/promo_meals_under_250.webp" alt="Promo" className="w-full h-full object-cover" />
-           </div>
-        </div>
+      {/* 1. Premium Food Categories Shelf */}
+      <div className="relative mb-8 mt-2 px-1">
+        {/* Luxury Background Shelf */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#F2F2F7]/80 to-white/40 rounded-[2.5rem] border border-white/60 shadow-[0_8px_32px_rgba(0,0,0,0.04)] backdrop-blur-xl -z-10" />
+        
+        <div className="flex items-start gap-6 overflow-x-auto py-5 px-5 scrollbar-hide">
+          {/* Promo Item */}
+          <div className="flex-shrink-0 flex flex-col items-center group">
+             <div className="w-[72px] h-[72px] rounded-2xl overflow-hidden shadow-[0_10px_25px_-5px_rgba(0,0,0,0.15)] border-2 border-white active:scale-95 transition-all duration-500 hover:shadow-2xl hover:-translate-y-1">
+                <img src="/banners/promo_meals_under_250.webp" alt="Promo" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+             </div>
+             <span className="text-[10px] font-black text-[#8E8E93] uppercase tracking-widest mt-2 bg-white/80 px-2 py-0.5 rounded-full border border-black/5">HOT</span>
+          </div>
 
-        {categories.map((cat) => {
-          const isActive = activeCat === cat.id;
-          return (
-            <button
-              key={cat.id}
-              onClick={() => onCatChange(cat.id)}
-              className="flex-shrink-0 flex flex-col items-center gap-2.5 group"
-            >
-              <div className={`w-[72px] h-[72px] rounded-full overflow-hidden transition-all duration-300 relative ${
-                isActive ? "p-[2px] bg-[#34C759]" : "p-0"
-              }`}>
-                 <div className="w-full h-full rounded-full bg-[#F5F5F7] overflow-hidden border border-black/5 shadow-sm active:scale-95 transition-transform">
-                    <img src={cat.img} alt={cat.label} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                 </div>
-              </div>
-              <span className={`text-[12px] font-bold tracking-tight ${
-                 isActive ? "text-[#1D1D1F]" : "text-[#48484A]"
-              }`}>
-                {cat.label}
-              </span>
-            </button>
-          );
-        })}
+          {categories.map((cat) => {
+            const isActive = activeCat === cat.id;
+            return (
+              <button
+                key={cat.id}
+                onClick={() => onCatChange(cat.id)}
+                className="flex-shrink-0 flex flex-col items-center gap-3 group relative"
+              >
+                <div className={`w-[72px] h-[72px] rounded-full transition-all duration-500 relative ${
+                   isActive ? "scale-105" : "scale-100"
+                }`}>
+                   {/* Active Glow */}
+                   <AnimatePresence>
+                     {isActive && (
+                       <motion.div 
+                          layoutId="activeGlow"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          className="absolute inset-[-4px] rounded-full bg-[#34C759]/20 blur-md" 
+                       />
+                     )}
+                   </AnimatePresence>
+                   
+                   <div className={`w-full h-full rounded-full bg-white overflow-hidden border-2 transition-all duration-500 shadow-[0_8px_20px_-6px_rgba(0,0,0,0.12)] group-hover:shadow-2xl group-hover:-translate-y-1 ${
+                      isActive ? "border-[#34C759]" : "border-white/80"
+                   }`}>
+                      <img src={cat.img} alt={cat.label} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                   </div>
+
+                   {/* Active Indicator Dot */}
+                   {isActive && (
+                     <motion.div 
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-[#34C759] shadow-[0_0_8px_#34C759]" 
+                     />
+                   )}
+                </div>
+                <span className={`text-[12px] font-black tracking-tight transition-colors duration-300 ${
+                   isActive ? "text-[#1D1D1F]" : "text-[#8E8E93] group-hover:text-[#1D1D1F]"
+                }`}>
+                  {cat.label}
+                </span>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       <div className="h-[1px] w-full bg-[#E5E5E7] mt-2 mb-6" />
