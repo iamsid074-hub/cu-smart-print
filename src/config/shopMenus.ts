@@ -266,7 +266,7 @@ export const shops: Shop[] = [
     {
         id: "insta-food",
         name: "Insta Food",
-        tag: "Multi-cuisine Ã¢â‚¬Â¢ Juice Ã¢â‚¬Â¢ Shakes",
+        tag: "Multi-cuisine • Juice • Shakes",
         veg: false,
         categories: [
             {
@@ -544,7 +544,7 @@ export const shops: Shop[] = [
     {
         id: "parantha-house",
         name: "Parantha House",
-        tag: "Paranthas Ã¢â‚¬Â¢ Snacks Ã¢â‚¬Â¢ Rolls",
+        tag: "Paranthas • Snacks • Rolls",
         veg: false,
         categories: [
             {
@@ -709,7 +709,7 @@ export const shops: Shop[] = [
     {
         id: "punjabi-rasoi",
         name: "Punjabi Rasoi",
-        tag: "100% Veg Ã¢â‚¬Â¢ North Indian Ã¢â‚¬Â¢ Pizza",
+        tag: "100% Veg • North Indian • Pizza",
         veg: true,
         categories: [
             {
@@ -969,7 +969,7 @@ export const shops: Shop[] = [
     {
         id: "catch-up-cafe",
         name: "Catch Up Cafe",
-        tag: "Cafe Ã¢â‚¬Â¢ Non-Veg Ã¢â‚¬Â¢ Dessert",
+        tag: "Cafe • Non-Veg • Dessert",
         veg: false,
         categories: [
             {
@@ -1176,7 +1176,7 @@ export const shops: Shop[] = [
     {
         id: "flavour-factory",
         name: "Flavour Factory",
-        tag: "Sandwiches Ã¢â‚¬Â¢ Pasta Ã¢â‚¬Â¢ Shakes Ã¢â‚¬Â¢ Healthy Meals",
+        tag: "Sandwiches • Pasta • Shakes • Healthy Meals",
         veg: false,
         categories: [
             {
@@ -1392,7 +1392,7 @@ export const shops: Shop[] = [
     {
         id: "vasano-fast-food",
         name: "Vasano Fast Food",
-        tag: "100% Veg Ã¢â‚¬Â¢ Pizza Ã¢â‚¬Â¢ Indian Ã¢â‚¬Â¢ Bakery",
+        tag: "100% Veg • Pizza • Indian • Bakery",
         veg: true,
         categories: [
             {
@@ -1612,7 +1612,7 @@ export const shops: Shop[] = [
     {
         id: "chatori-chaat",
         name: "Chatori Chaat & Kulcha Corner",
-        tag: "Chaat Ã¢â‚¬Â¢ Street Food Ã¢â‚¬Â¢ Kulcha Ã¢â‚¬Â¢ Combos",
+        tag: "Chaat • Street Food • Kulcha • Combos",
         veg: false,
         categories: [
             {
@@ -1851,7 +1851,7 @@ export const shops: Shop[] = [
     {
         id: "rock-in-roll",
         name: "Rock in Roll (NC-3)",
-        tag: "Ã°Å¸â€œÅ¾ 9888391974 Ã¢â‚¬Â¢ Rolls Ã¢â‚¬Â¢ Noodles Ã¢â‚¬Â¢ Rice",
+        tag: "Ã°Å¸â€œÅ¾ 9888391974 • Rolls • Noodles • Rice",
         veg: false,
         categories: [
             {
@@ -1899,7 +1899,7 @@ export const shops: Shop[] = [
     {
         id: "food-castle",
         name: "Food Castle (NC-5)",
-        tag: "Ã°Å¸â€œÅ¾ 9988619177 Ã¢â‚¬Â¢ Pizza Ã¢â‚¬Â¢ Bakery Ã¢â‚¬Â¢ Sandwiches",
+        tag: "Ã°Å¸â€œÅ¾ 9988619177 • Pizza • Bakery • Sandwiches",
         veg: false,
         categories: [
             {
@@ -2072,7 +2072,7 @@ export const shops: Shop[] = [
     {
         id: "eat-and-smile",
         name: "Eat and Smile (NC-6)",
-        tag: "Ã°Å¸â€œÅ¾ 7988511867 Ã¢â‚¬Â¢ Breakfast Ã¢â‚¬Â¢ Chinese Ã¢â‚¬Â¢ Rolls",
+        tag: "Ã°Å¸â€œÅ¾ 7988511867 • Breakfast • Chinese • Rolls",
         veg: false,
         categories: [
             {
@@ -2179,7 +2179,7 @@ export const shops: Shop[] = [
     {
         id: "zaika",
         name: "Zaika (NC-4)",
-        tag: "Ã°Å¸â€œÅ¾ 8360292356 Ã¢â‚¬Â¢ Indian Ã¢â‚¬Â¢ Thali Ã¢â‚¬Â¢ Biryani",
+        tag: "Ã°Å¸â€œÅ¾ 8360292356 • Indian • Thali • Biryani",
         veg: false,
         categories: [
             {
@@ -2268,7 +2268,7 @@ export const shops: Shop[] = [
     {
         id: "bakerz-hub",
         name: "Bakerz Hub (NC-2)",
-        tag: "Ã°Å¸â€œÅ¾ 8947000006 Ã¢â‚¬Â¢ Pizza Ã¢â‚¬Â¢ Cafe Ã¢â‚¬Â¢ Bakery",
+        tag: "Ã°Å¸â€œÅ¾ 8947000006 • Pizza • Cafe • Bakery",
         veg: false,
         categories: [
             {
@@ -2398,7 +2398,7 @@ export const shops: Shop[] = [
     {
         id: "food-junction",
         name: "Food Junction (Zakir A)",
-        tag: "Multi-cuisine Ã¢â‚¬Â¢ Main Course Ã¢â‚¬Â¢ Thali",
+        tag: "Multi-cuisine • Main Course • Thali",
         veg: false,
         categories: [
             {
@@ -2527,7 +2527,7 @@ export const shops: Shop[] = [
     {
         id: "king-cafe",
         name: "King Cafe (Zakir B)",
-        tag: "Ã°Å¸â€œÅ¾ 8877263548 Ã¢â‚¬Â¢ Full Menu Ã¢â‚¬Â¢ Tandoori Ã¢â‚¬Â¢ Main Course",
+        tag: "Ã°Å¸â€œÅ¾ 8877263548 • Full Menu • Tandoori • Main Course",
         veg: false,
         categories: [
             {
@@ -2672,7 +2672,7 @@ export const shops: Shop[] = [
     {
         id: "handi-biryani",
         name: "Handi Biryani (Zakir D)",
-        tag: "Biryani Ã¢â‚¬Â¢ Indian Main Course Ã¢â‚¬Â¢ Chinese",
+        tag: "Biryani • Indian Main Course • Chinese",
         veg: false,
         categories: [
             {
@@ -2775,7 +2775,7 @@ export const shops: Shop[] = [
     {
         id: "barkat-food",
         name: "Barkat Food (Zakir C)",
-        tag: "Ã°Å¸â€œÅ¾ 7056853177 Ã¢â‚¬Â¢ Main Course Ã¢â‚¬Â¢ Biryani Ã¢â‚¬Â¢ Chinese",
+        tag: "Ã°Å¸â€œÅ¾ 7056853177 • Main Course • Biryani • Chinese",
         veg: false,
         categories: [
             {

@@ -82,6 +82,9 @@ const PREMIUM_ASSETS: Record<string, string> = {
   "brownie": "/food_premium/chocolate_brownie_premium_1775370523761_1775371010375.png",
   "biryani": "/food_premium/veg_dum_biryani_premium_1775370523747_1775370582150.png",
   "chilli paneer": "/food_premium/chilli_paneer_dry_premium_1775370523751_1775370790498.png",
+  "red sauce pasta": "/banners/red_sauce_pasta.webp",
+  "white sauce pasta": "/food_premium/white_sauce_pasta_premium_1775370523752_1775370810885.png",
+  "mixed sauce pasta": "/banners/mixed_sauce_pasta.webp",
 };
 
 const getPremiumImage = (name: string, category: string) => {
