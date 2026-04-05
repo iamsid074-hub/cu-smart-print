@@ -1,6 +1,6 @@
 import { useState, useMemo, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, CheckCircle2, Star, ListFilter, ChevronDown, Clock, Leaf } from "lucide-react";
+import { Plus, CheckCircle2, Star, ListFilter, ChevronDown, Clock, Leaf, Flame, TrendingUp, Sparkles, ArrowRight, Heart, Zap } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { toast } from "sonner";
 import { shops } from "@/config/shopMenus";
@@ -20,17 +20,17 @@ interface FilterOption {
 }
 
 const categories = [
-  { id: "all", label: "All", img: "/banners/cat_all.webp" },
-  { id: "pizza", label: "Pizza", img: "/banners/cat_pizza.webp" },
-  { id: "burgers", label: "Burger", img: "/banners/cat_burger.webp" },
-  { id: "biryani", label: "Biryani", img: "/banners/cat_biryani.webp" },
-  { id: "pasta", label: "Pasta", img: "/banners/mixed_sauce_pasta.webp" },
-  { id: "combos", label: "Combos", img: "/banners/combo_feast.webp" },
+  { id: "all", label: "All", img: "/banners/cat_all.webp", emoji: "\u2728", gradient: "from-violet-500 to-fuchsia-500" },
+  { id: "pizza", label: "Pizza", img: "/banners/cat_pizza.webp", emoji: "\uD83C\uDF55", gradient: "from-orange-500 to-red-500" },
+  { id: "burgers", label: "Burger", img: "/banners/cat_burger.webp", emoji: "\uD83C\uDF54", gradient: "from-amber-500 to-orange-600" },
+  { id: "biryani", label: "Biryani", img: "/banners/cat_biryani.webp", emoji: "\uD83C\uDF5A", gradient: "from-yellow-500 to-amber-600" },
+  { id: "pasta", label: "Pasta", img: "/banners/mixed_sauce_pasta.webp", emoji: "\uD83C\uDF5D", gradient: "from-rose-500 to-pink-600" },
+  { id: "combos", label: "Combos", img: "/banners/combo_feast.webp", emoji: "\uD83C\uDF7D\uFE0F", gradient: "from-emerald-500 to-teal-600" },
 ];
 
 const filters: FilterOption[] = [
   { id: "filter", label: "Filters", icon: ListFilter },
-  { id: "under-250", label: "Under ₹250" },
+  { id: "under-250", label: "Under \u20B9250" },
   { id: "schedule", label: "Schedule", icon: ChevronDown, hasDropdown: true },
   { id: "pure-veg", label: "Pure Veg", icon: Leaf },
 ];
@@ -98,13 +98,27 @@ const getPremiumImage = (name: string, category: string) => {
   if (category === "biryani") return PREMIUM_ASSETS["biryani"];
   if (category === "pasta") return PREMIUM_ASSETS["pasta"];
   
-  return PREMIUM_ASSETS["chole bhature"]; // Default premium placeholder
+  return PREMIUM_ASSETS["chole bhature"];
 };
+
+// Card accent colors for visual variety
+const CARD_ACCENTS = [
+  { bg: "from-orange-500/90 via-red-500/80 to-rose-600/90", pill: "bg-orange-500", glow: "shadow-orange-500/20" },
+  { bg: "from-violet-500/90 via-purple-500/80 to-fuchsia-600/90", pill: "bg-violet-500", glow: "shadow-violet-500/20" },
+  { bg: "from-emerald-500/90 via-teal-500/80 to-cyan-600/90", pill: "bg-emerald-500", glow: "shadow-emerald-500/20" },
+  { bg: "from-amber-500/90 via-orange-500/80 to-red-500/90", pill: "bg-amber-500", glow: "shadow-amber-500/20" },
+  { bg: "from-pink-500/90 via-rose-500/80 to-red-600/90", pill: "bg-pink-500", glow: "shadow-pink-500/20" },
+  { bg: "from-sky-500/90 via-blue-500/80 to-indigo-600/90", pill: "bg-sky-500", glow: "shadow-sky-500/20" },
+  { bg: "from-lime-500/90 via-green-500/80 to-emerald-600/90", pill: "bg-lime-500", glow: "shadow-lime-500/20" },
+  { bg: "from-fuchsia-500/90 via-pink-500/80 to-rose-600/90", pill: "bg-fuchsia-500", glow: "shadow-fuchsia-500/20" },
+];
 
 export default function HomeSpecialSections({ activeCat, onCatChange }: FoodSectionsProps) {
   const { addItem } = useCart();
   const [addedIds, setAddedIds] = useState<Set<string>>(new Set());
   const [activeFilters, setActiveFilters] = useState<Set<string>>(new Set());
+  const [likedIds, setLikedIds] = useState<Set<string>>(new Set());
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   // 1. Dynamic Extraction Logic
   const filteredItems = useMemo(() => {
@@ -191,195 +205,346 @@ export default function HomeSpecialSections({ activeCat, onCatChange }: FoodSect
     });
   };
 
+  const toggleLike = (id: string) => {
+    setLikedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
   return (
     <section className="mt-6 mb-12">
-      {/* 1. Premium Food Categories Shelf */}
-      <div className="relative mb-8 mt-2 px-1">
-        {/* Luxury Background Shelf */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#F2F2F7]/80 to-white/40 rounded-[2.5rem] border border-white/60 shadow-[0_8px_32px_rgba(0,0,0,0.04)] backdrop-blur-xl -z-10" />
-        
-        <div className="flex items-start gap-6 overflow-x-auto py-5 px-5 scrollbar-hide">
-          {/* Promo Item */}
-          <div className="flex-shrink-0 flex flex-col items-center group">
-             <div className="w-[72px] h-[72px] rounded-2xl overflow-hidden shadow-[0_10px_25px_-5px_rgba(0,0,0,0.15)] border-2 border-white active:scale-95 transition-all duration-500 hover:shadow-2xl hover:-translate-y-1">
-                <img src="/banners/promo_meals_under_250.webp" alt="Promo" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-             </div>
-             <span className="text-[10px] font-black text-[#8E8E93] uppercase tracking-widest mt-2 bg-white/80 px-2 py-0.5 rounded-full border border-black/5">HOT</span>
-          </div>
 
-          {categories.map((cat) => {
+      {/* ═══ 1. IMMERSIVE CATEGORY SELECTOR ═══ */}
+      <div className="relative mb-8 mt-2">
+        {/* Section Header */}
+        <div className="flex items-center justify-between mb-5 px-1">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center shadow-lg shadow-orange-500/25">
+              <Flame className="w-4 h-4 text-white" />
+            </div>
+            <div>
+              <h2 className="text-[18px] sm:text-[22px] font-black text-[#1D1D1F] tracking-tight leading-none">What's Cooking</h2>
+              <p className="text-[11px] font-bold text-[#8E8E93] mt-0.5 tracking-wide">EXPLORE BY CATEGORY</p>
+            </div>
+          </div>
+          <button className="text-[12px] font-bold text-[#007AFF] flex items-center gap-1 hover:gap-2 transition-all">
+            View All <ArrowRight className="w-3.5 h-3.5" />
+          </button>
+        </div>
+
+        {/* Category Cards - Horizontal Scroll */}
+        <div ref={scrollRef} className="flex gap-3 overflow-x-auto pb-4 scrollbar-hide px-1 snap-x snap-mandatory">
+          {categories.map((cat, i) => {
             const isActive = activeCat === cat.id;
             return (
-              <button
+              <motion.button
                 key={cat.id}
                 onClick={() => onCatChange(cat.id)}
-                className="flex-shrink-0 flex flex-col items-center gap-3 group relative"
+                whileTap={{ scale: 0.95 }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.06, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                className={`relative flex-shrink-0 snap-start overflow-hidden transition-all duration-500 ${
+                  isActive ? "w-[140px] sm:w-[160px]" : "w-[100px] sm:w-[110px]"
+                }`}
               >
-                <div className={`w-[72px] h-[72px] rounded-full transition-all duration-500 relative ${
-                   isActive ? "scale-105" : "scale-100"
+                {/* Card Container */}
+                <div className={`relative h-[120px] sm:h-[130px] rounded-[1.4rem] overflow-hidden transition-all duration-500 ${
+                  isActive 
+                    ? "ring-2 ring-white/80 shadow-xl " + (categories.find(c => c.id === cat.id)?.gradient ? `shadow-lg` : '')
+                    : "shadow-md hover:shadow-lg"
                 }`}>
-                   {/* Active Glow */}
-                   <AnimatePresence>
-                     {isActive && (
-                       <motion.div 
-                          layoutId="activeGlow"
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          exit={{ opacity: 0 }}
-                          className="absolute inset-[-4px] rounded-full bg-[#34C759]/20 blur-md" 
-                       />
-                     )}
-                   </AnimatePresence>
-                   
-                   <div className={`w-full h-full rounded-full bg-white overflow-hidden border-2 transition-all duration-500 shadow-[0_8px_20px_-6px_rgba(0,0,0,0.12)] group-hover:shadow-2xl group-hover:-translate-y-1 ${
-                      isActive ? "border-[#34C759]" : "border-white/80"
-                   }`}>
-                      <img src={cat.img} alt={cat.label} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                   </div>
+                  {/* Background Image */}
+                  <img 
+                    src={cat.img} 
+                    alt={cat.label}
+                    className={`w-full h-full object-cover transition-all duration-700 ${
+                      isActive ? "scale-110 brightness-[0.55]" : "scale-100 brightness-[0.7] hover:scale-105"
+                    }`}
+                  />
+                  
+                  {/* Gradient Overlay */}
+                  <div className={`absolute inset-0 bg-gradient-to-t ${
+                    isActive ? "from-black/80 via-black/30 to-transparent" : "from-black/70 via-black/20 to-transparent"
+                  }`} />
 
-                   {/* Active Indicator Dot */}
-                   {isActive && (
-                     <motion.div 
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-[#34C759] shadow-[0_0_8px_#34C759]" 
-                     />
-                   )}
+                  {/* Content */}
+                  <div className="absolute inset-0 flex flex-col justify-end p-3">
+                    {/* Active Badge */}
+                    <AnimatePresence>
+                      {isActive && (
+                        <motion.div
+                          initial={{ opacity: 0, scale: 0.5, y: -8 }}
+                          animate={{ opacity: 1, scale: 1, y: 0 }}
+                          exit={{ opacity: 0, scale: 0.5 }}
+                          className="absolute top-2.5 right-2.5"
+                        >
+                          <div className="w-2 h-2 rounded-full bg-[#34C759] shadow-[0_0_10px_#34C759,0_0_20px_rgba(52,199,89,0.3)]" />
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+
+                    {/* Emoji Icon */}
+                    <span className={`text-[22px] sm:text-[26px] mb-1 transition-all duration-500 ${
+                      isActive ? "drop-shadow-lg" : ""
+                    }`}>
+                      {cat.emoji}
+                    </span>
+                    
+                    {/* Label */}
+                    <span className={`font-black tracking-tight transition-all duration-300 leading-tight ${
+                      isActive 
+                        ? "text-[14px] sm:text-[15px] text-white" 
+                        : "text-[12px] sm:text-[13px] text-white/90"
+                    }`}>
+                      {cat.label}
+                    </span>
+                  </div>
+
+                  {/* Active Shine Effect */}
+                  {isActive && (
+                    <motion.div
+                      initial={{ x: "-100%" }}
+                      animate={{ x: "200%" }}
+                      transition={{ duration: 1.2, ease: "easeInOut", delay: 0.2 }}
+                      className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none skew-x-12"
+                    />
+                  )}
                 </div>
-                <span className={`text-[12px] font-black tracking-tight transition-colors duration-300 ${
-                   isActive ? "text-[#1D1D1F]" : "text-[#8E8E93] group-hover:text-[#1D1D1F]"
-                }`}>
-                  {cat.label}
-                </span>
-              </button>
+              </motion.button>
             );
           })}
         </div>
       </div>
 
-      <div className="h-[1px] w-full bg-[#E5E5E7] mt-2 mb-6" />
-
-      {/* 2. Filter Pills Row */}
-      <div className="flex items-center gap-3 mb-8 overflow-x-auto pb-2 scrollbar-hide px-1">
-        {filters.map((f) => {
-          const Icon = f.icon;
-          const isActive = activeFilters.has(f.id);
-          return (
-            <button
-              key={f.id}
-              onClick={() => toggleFilter(f.id)}
-              className={`flex items-center gap-1.5 px-3.5 py-2 rounded-full border text-[13px] font-bold whitespace-nowrap transition-all duration-300 ${
-                isActive 
-                ? "bg-[#1D1D1F] text-white border-[#1D1D1F]" 
-                : "bg-white text-[#1D1D1F] border-[#E5E5E7] hover:bg-[#F5F5F7]"
-              }`}
-            >
-              {f.id === 'filter' && <Icon className="w-4 h-4" />}
-              {f.label}
-              {(f.hasDropdown || f.id === 'schedule') && <ChevronDown className="w-3 h-3 opacity-60" />}
-            </button>
-          );
-        })}
+      {/* ═══ 2. FLOATING FILTER BAR ═══ */}
+      <div className="relative mb-8 px-1">
+        <div className="flex items-center gap-2.5 overflow-x-auto pb-1 scrollbar-hide">
+          {filters.map((f, i) => {
+            const Icon = f.icon;
+            const isActive = activeFilters.has(f.id);
+            return (
+              <motion.button
+                key={f.id}
+                onClick={() => toggleFilter(f.id)}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 + i * 0.05 }}
+                className={`flex items-center gap-1.5 px-4 py-2.5 rounded-2xl text-[12px] font-bold whitespace-nowrap transition-all duration-400 border ${
+                  isActive 
+                  ? "bg-[#1D1D1F] text-white border-[#1D1D1F] shadow-lg shadow-black/10 scale-[1.02]" 
+                  : "bg-white/80 backdrop-blur-xl text-[#3A3A3C] border-[#E5E5E7]/80 hover:bg-white hover:border-[#D1D1D6] hover:shadow-md"
+                }`}
+              >
+                {f.id === 'filter' && <Icon className="w-3.5 h-3.5" />}
+                {f.id === 'pure-veg' && <div className="w-3 h-3 rounded-sm border-2 border-[#34C759] flex items-center justify-center"><div className="w-1.5 h-1.5 rounded-full bg-[#34C759]" /></div>}
+                {f.label}
+                {(f.hasDropdown || f.id === 'schedule') && <ChevronDown className="w-3 h-3 opacity-50" />}
+              </motion.button>
+            );
+          })}
+        </div>
       </div>
 
+      {/* ═══ Handpicked Header ═══ */}
       {activeCat === 'all' && (
-        <h3 className="text-sm font-black text-[#1D1D1F]/40 uppercase tracking-[0.15em] mb-6 px-1">
-          Handpicked For You
-        </h3>
+        <motion.div 
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="flex items-center gap-3 mb-8 px-1"
+        >
+          <div className="flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-amber-500" />
+            <h3 className="text-[15px] font-black text-[#1D1D1F] tracking-tight">
+              Handpicked For You
+            </h3>
+          </div>
+          <div className="flex-1 h-[1px] bg-gradient-to-r from-[#E5E5E7] to-transparent" />
+        </motion.div>
       )}
 
-      {/* 3. Luxury Showroom Discovery Catalog */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-16 px-1 mt-12">
+      {/* ═══ 3. EDITORIAL FOOD CARDS GRID ═══ */}
+      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-6 px-1">
         <AnimatePresence mode="popLayout">
-          {filteredItems.map((item, i) => (
-            <motion.div
-              key={item.id}
-              layout
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              transition={{ delay: i * 0.05, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-              className="relative"
-            >
-              <div className="group rounded-[2.5rem] bg-white border border-[#E5E5E7] shadow-[0_10px_30px_-10px_rgba(0,0,0,0.08)] hover:shadow-[0_20px_50px_-15px_rgba(0,0,0,0.12)] transition-all duration-700 flex flex-col h-full pt-20 pb-6 px-6">
-                 
-                 {/* Floating Plate Image - The LUXURY HERO */}
-                 <div className="absolute -top-14 left-1/2 -translate-x-1/2 w-48 h-48 z-20 pointer-events-none">
-                    <div className="relative w-full h-full">
-                       {/* Layered Shadows for Depth */}
-                       <div className="absolute inset-4 rounded-full bg-black/30 blur-2xl translate-y-8" />
-                       <img 
-                          src={item.image} 
-                          alt={item.name} 
-                          className="w-full h-full object-cover rounded-full border-4 border-white shadow-2xl transition-transform duration-700 group-hover:scale-110 group-hover:-rotate-3" 
-                       />
-                       
-                       {item.rating && (
-                         <div className="absolute bottom-2 right-2 bg-white/90 backdrop-blur-md px-2 py-1 rounded-xl shadow-lg border border-black/5 flex items-center gap-1">
-                            <Star className="w-3 h-3 text-amber-500 fill-amber-500" />
-                            <span className="text-[11px] font-black">{item.rating}</span>
-                         </div>
-                       )}
-                    </div>
-                 </div>
+          {filteredItems.map((item, i) => {
+            const accent = CARD_ACCENTS[i % CARD_ACCENTS.length];
+            const isAdded = addedIds.has(String(item.id));
+            const isLiked = likedIds.has(String(item.id));
+            const deliveryTime = `${15 + Math.floor(Math.random() * 5)}-${25 + Math.floor(Math.random() * 5)}`;
+            const distance = (0.2 + Math.random() * 0.6).toFixed(1);
+            const accentColors = [
+              { strip: "bg-gradient-to-b from-orange-400 to-red-500", badge: "bg-orange-500", text: "text-orange-600", light: "bg-orange-50", border: "border-orange-200" },
+              { strip: "bg-gradient-to-b from-violet-400 to-purple-600", badge: "bg-violet-500", text: "text-violet-600", light: "bg-violet-50", border: "border-violet-200" },
+              { strip: "bg-gradient-to-b from-emerald-400 to-teal-600", badge: "bg-emerald-500", text: "text-emerald-600", light: "bg-emerald-50", border: "border-emerald-200" },
+              { strip: "bg-gradient-to-b from-sky-400 to-blue-600", badge: "bg-sky-500", text: "text-sky-600", light: "bg-sky-50", border: "border-sky-200" },
+              { strip: "bg-gradient-to-b from-pink-400 to-rose-600", badge: "bg-pink-500", text: "text-pink-600", light: "bg-pink-50", border: "border-pink-200" },
+              { strip: "bg-gradient-to-b from-amber-400 to-orange-600", badge: "bg-amber-500", text: "text-amber-600", light: "bg-amber-50", border: "border-amber-200" },
+              { strip: "bg-gradient-to-b from-cyan-400 to-teal-600", badge: "bg-cyan-500", text: "text-cyan-600", light: "bg-cyan-50", border: "border-cyan-200" },
+              { strip: "bg-gradient-to-b from-fuchsia-400 to-pink-600", badge: "bg-fuchsia-500", text: "text-fuchsia-600", light: "bg-fuchsia-50", border: "border-fuchsia-200" },
+            ];
+            const ac = accentColors[i % accentColors.length];
 
-                 {/* Premium Card Content */}
-                 <div className="flex flex-col flex-grow text-center mt-4">
-                    {/* Brand/Shop Name */}
-                    <div className="flex items-center justify-center gap-1.5 mb-2">
-                       <div className="w-1.5 h-1.5 rounded-full bg-[#34C759]" />
-                       <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#8E8E93] truncate">{item.shop || item.shopName}</p>
+            return (
+              <motion.div
+                key={item.id}
+                layout
+                initial={{ opacity: 0, y: 40, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                transition={{ delay: i * 0.06, duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+                className="group relative"
+              >
+                {/* ════ UNIQUE "GOURMET PASS" CARD ════ */}
+                <div className="relative rounded-[1.4rem] sm:rounded-[1.6rem] overflow-hidden bg-white shadow-[0_4px_24px_-4px_rgba(0,0,0,0.08)] hover:shadow-[0_16px_48px_-12px_rgba(0,0,0,0.15)] transition-all duration-600 hover:-translate-y-1.5 border border-black/[0.04]">
+                  
+                  {/* Left Accent Color Strip */}
+                  <div className={`absolute top-0 left-0 w-[4px] h-full ${ac.strip} z-20 rounded-l-[1.4rem]`} />
+
+                  {/* ── IMAGE HERO ── */}
+                  <div className="relative overflow-hidden">
+                    {/* Food Image with clip-path diagonal cut */}
+                    <div className="relative h-[140px] sm:h-[160px] overflow-hidden" style={{ clipPath: "polygon(0 0, 100% 0, 100% 85%, 0 100%)" }}>
+                      <img 
+                        src={item.image} 
+                        alt={item.name}
+                        className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110 group-hover:brightness-105"
+                      />
+                      {/* Dark vignette */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/10" />
+                    </div>
+                    
+                    {/* Shop Name Banner - Prominently on Image */}
+                    <div className="absolute top-3 left-4 z-20">
+                      <div className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl ${ac.badge} shadow-lg`}>
+                        <div className="w-1.5 h-1.5 rounded-full bg-white/80 animate-pulse" />
+                        <span className="text-[9px] sm:text-[10px] font-extrabold text-white uppercase tracking-[0.12em] truncate max-w-[100px] sm:max-w-[120px]">
+                          {item.shop || item.shopName}
+                        </span>
+                      </div>
                     </div>
 
-                    {/* Dish Name */}
-                    <h4 className="text-[19px] font-black text-[#1D1D1F] leading-[1.2] mb-3 group-hover:text-[#007AFF] transition-colors line-clamp-2 min-h-[46px] flex items-center justify-center">
-                       {item.name}
+                    {/* Heart Button */}
+                    <motion.button
+                      whileTap={{ scale: 0.7 }}
+                      onClick={(e) => { e.stopPropagation(); toggleLike(String(item.id)); }}
+                      className="absolute top-3 right-3 z-20 w-8 h-8 rounded-full bg-white/90 backdrop-blur-md shadow-md flex items-center justify-center transition-all hover:scale-110 border border-black/5"
+                    >
+                      <Heart className={`w-3.5 h-3.5 transition-all duration-300 ${
+                        isLiked ? "text-red-500 fill-red-500" : "text-[#8E8E93]"
+                      }`} />
+                    </motion.button>
+
+                    {/* Rating Notch Badge - sits at the diagonal cut edge */}
+                    {item.rating && (
+                      <div className="absolute -bottom-0 right-4 z-20 translate-y-1/2">
+                        <div className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-white shadow-lg border border-black/5">
+                          <Star className="w-3 h-3 text-amber-500 fill-amber-500" />
+                          <span className="text-[12px] font-black text-[#1D1D1F]">{item.rating}</span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* ── CONTENT SECTION ── */}
+                  <div className="px-4 pt-4 pb-3.5 sm:px-5 sm:pt-5 sm:pb-4">
+                    
+                    {/* Dish Name - LARGE & PROMINENT */}
+                    <h4 className="text-[15px] sm:text-[17px] font-black text-[#1D1D1F] leading-tight mb-2 line-clamp-2 group-hover:text-[#007AFF] transition-colors duration-300 tracking-[-0.01em]" style={{ minHeight: '38px' }}>
+                      {item.name}
                     </h4>
 
-                    {/* Meta Info Row */}
-                    <div className="flex items-center justify-center gap-4 text-[12px] font-bold text-[#8E8E93] mb-4 pb-4 border-b border-[#F2F2F7]">
-                       <div className="flex items-center gap-1">
-                          <Clock className="w-3.5 h-3.5" />
-                          <span>{15 + Math.floor(Math.random() * 5)}-{25 + Math.floor(Math.random() * 5)}m</span>
-                       </div>
-                       <div className="flex items-center gap-1">
-                          <span className="opacity-40">•</span>
-                          <span>{(0.2 + Math.random() * 0.6).toFixed(1)} km</span>
-                       </div>
+                    {/* Info Pills Row */}
+                    <div className="flex items-center gap-2 mb-3 flex-wrap">
+                      <div className="flex items-center gap-1 px-2 py-0.5 rounded-lg bg-[#F2F2F7]">
+                        <Clock className="w-3 h-3 text-[#8E8E93]" />
+                        <span className="text-[10px] font-bold text-[#6E6E73]">{deliveryTime}m</span>
+                      </div>
+                      <div className="flex items-center gap-1 px-2 py-0.5 rounded-lg bg-[#F2F2F7]">
+                        <span className="text-[10px] font-bold text-[#6E6E73]">{distance} km</span>
+                      </div>
                     </div>
 
-                    {/* Special Offer Badge */}
-                    <div className="flex items-center justify-center gap-1.5 mb-6 px-3 py-1.5 bg-[#007AFF]/5 rounded-full w-fit mx-auto border border-[#007AFF]/10">
-                       <CheckCircle2 className="w-3.5 h-3.5 text-[#007AFF]" />
-                       <span className="text-[10px] font-black text-[#007AFF] uppercase tracking-wider">Flat ₹50 OFF</span>
+                    {/* Offer Strip */}
+                    <div className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl ${ac.light} ${ac.border} border mb-3.5`}>
+                      <Zap className={`w-3 h-3 ${ac.text} fill-current`} />
+                      <span className={`text-[10px] font-black ${ac.text} uppercase tracking-wider`}>
+                        FLAT {"\u20B9"}50 OFF
+                      </span>
                     </div>
 
-                    {/* Action Row */}
-                    <div className="flex items-center justify-between mt-auto pt-2">
-                       <div className="flex flex-col items-start leading-none">
-                          <span className="text-[10px] font-bold text-[#8E8E93] uppercase tracking-wider mb-1">Price</span>
-                          <span className="text-[20px] font-black text-[#1D1D1F]">₹{item.price}</span>
-                       </div>
-                       <button
-                         onClick={() => handleAdd(item)}
-                         className={`h-11 px-8 rounded-2xl text-[12px] font-black uppercase tracking-[0.1em] transition-all duration-500 overflow-hidden relative ${
-                            addedIds.has(String(item.id)) 
-                            ? "bg-[#34C759] text-white shadow-lg scale-95" 
-                            : "bg-[#1D1D1F] text-white hover:bg-black ios-shadow active:scale-95 group-hover:translate-x-1"
-                         }`}
-                       >
-                         {addedIds.has(String(item.id)) ? "Added" : "Add +"}
-                       </button>
+                    {/* ── PRICE + ACTION ROW ── */}
+                    <div className="flex items-end justify-between">
+                      <div className="flex flex-col leading-none">
+                        <span className="text-[22px] sm:text-[24px] font-black text-[#1D1D1F] tracking-tight">
+                          {"\u20B9"}{item.price}
+                        </span>
+                      </div>
+                      
+                      <motion.button
+                        whileTap={{ scale: 0.85 }}
+                        onClick={() => handleAdd(item)}
+                        className={`relative h-10 sm:h-11 rounded-[0.9rem] text-[11px] font-black uppercase tracking-[0.06em] transition-all duration-500 overflow-hidden flex items-center justify-center gap-1.5 ${
+                          isAdded 
+                          ? "bg-[#34C759] text-white shadow-lg shadow-[#34C759]/25 px-4 sm:px-5" 
+                          : `bg-[#1D1D1F] text-white hover:bg-[#007AFF] shadow-md hover:shadow-lg active:scale-95 px-4 sm:px-5`
+                        }`}
+                      >
+                        <AnimatePresence mode="wait">
+                          {isAdded ? (
+                            <motion.div
+                              key="added"
+                              initial={{ opacity: 0, y: 8 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0, y: -8 }}
+                              className="flex items-center gap-1.5"
+                            >
+                              <CheckCircle2 className="w-3.5 h-3.5" />
+                              <span>Done</span>
+                            </motion.div>
+                          ) : (
+                            <motion.div
+                              key="add"
+                              initial={{ opacity: 0, y: 8 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0, y: -8 }}
+                              className="flex items-center gap-1.5"
+                            >
+                              <Plus className="w-3.5 h-3.5 stroke-[3]" />
+                              <span>ADD</span>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </motion.button>
                     </div>
-                 </div>
+                  </div>
 
-                 {/* Premium Glass Shine Effect */}
-                 <div className="absolute inset-0 rounded-[2.5rem] bg-gradient-to-br from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
-              </div>
-            </motion.div>
-          ))}
+                  {/* Hover Glow Border */}
+                  <div className="absolute inset-0 rounded-[1.4rem] sm:rounded-[1.6rem] ring-1 ring-inset ring-black/[0.03] group-hover:ring-[#007AFF]/20 transition-all duration-500 pointer-events-none" />
+                </div>
+              </motion.div>
+            );
+          })}
         </AnimatePresence>
       </div>
+
+      {/* ═══ "See More" CTA ═══ */}
+      {filteredItems.length > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+          className="flex justify-center mt-10"
+        >
+          <button className="group flex items-center gap-2.5 px-6 py-3.5 rounded-2xl bg-[#F5F5F7] hover:bg-[#E5E5E7] text-[13px] font-bold text-[#3A3A3C] transition-all duration-300 hover:shadow-md border border-[#E5E5E7]/60">
+            <TrendingUp className="w-4 h-4 text-[#007AFF]" />
+            Explore More Dishes
+            <ArrowRight className="w-3.5 h-3.5 text-[#8E8E93] group-hover:text-[#007AFF] group-hover:translate-x-1 transition-all" />
+          </button>
+        </motion.div>
+      )}
     </section>
   );
 }
