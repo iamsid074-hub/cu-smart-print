@@ -12,13 +12,13 @@ import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
 
 /*
-  SiteGate â€” wraps the app to show:
+  SiteGate — wraps the app to show:
   1. "Under Maintenance" screen when admin toggles maintenance ON
   2. "We're Closed" screen outside operating hours
   
   Operating hours (IST):
-    Items:  6:00 AM â€“ 10:00 PM
-    Food:   6:00 PM â€“ 12:30 AM
+    Items:  6:00 AM – 10:00 PM
+    Food:   6:00 PM – 12:30 AM
 
   Admins bypass both gates.
 */
@@ -33,12 +33,12 @@ function getIST() {
 }
 
 function isItemsOpen(): boolean {
-  // Always open â€” no closing hours
+  // Always open — no closing hours
   return true;
 }
 
 function isFoodOpen(): boolean {
-  // Always open â€” no closing hours
+  // Always open — no closing hours
   return true;
 }
 
@@ -128,7 +128,7 @@ function ClosedScreen() {
             </div>
             <div className="text-left flex-1">
               <p className="text-sm font-bold text-slate-900">Item Orders</p>
-              <p className="text-xs text-slate-500">6:00 AM â€“ 10:00 PM</p>
+              <p className="text-xs text-slate-500">6:00 AM – 10:00 PM</p>
             </div>
             <span
               className={`text-xs font-bold px-3 py-1 rounded-full ${
@@ -161,7 +161,7 @@ function ClosedScreen() {
             </div>
             <div className="text-left flex-1">
               <p className="text-sm font-bold text-slate-900">Food Orders</p>
-              <p className="text-xs text-slate-500">6:00 PM â€“ 12:30 AM</p>
+              <p className="text-xs text-slate-500">6:00 PM – 12:30 AM</p>
             </div>
             <span
               className={`text-xs font-bold px-3 py-1 rounded-full ${
@@ -291,7 +291,7 @@ export function useSiteGate() {
         setMaintenance(isMaint);
         localStorage.setItem(cacheKey, String(isMaint));
       } catch {
-        // Table might not exist yet â€” assume not in maintenance
+        // Table might not exist yet — assume not in maintenance
         setMaintenance(false);
       }
       setLoaded(true);

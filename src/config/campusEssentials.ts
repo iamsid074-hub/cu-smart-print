@@ -1,8 +1,8 @@
-﻿// â”€â”€â”€ Campus Essentials â€” Static Product Config â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+﻿// â”€â”€â”€ Campus Essentials — Static Product Config â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // These products are admin-controlled and not user-uploaded.
 // When ordered, seller_id is set to ADMIN_SELLER_ID so orders appear in the Admin panel.
 
-// âš ï¸ IMPORTANT: Replace this with your actual Supabase admin user UUID
+// ⚠️ IMPORTANT: Replace this with your actual Supabase admin user UUID
 // Find it in: Supabase Dashboard â†’ Authentication â†’ Users â†’ copy your admin UUID
 export const ADMIN_SELLER_ID = "7450c873-f51d-469e-a33d-c44ca80beb0c"; // â† REPLACE THIS
 

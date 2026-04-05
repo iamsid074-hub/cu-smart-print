@@ -131,7 +131,7 @@ export default function SellModal({ isOpen, onClose }: SellModalProps) {
         return;
       }
       if (Number(formData.price) < 1) {
-        toast.error("Price must be at least â‚¹1.");
+        toast.error("Price must be at least ₹1.");
         return;
       }
 
@@ -368,7 +368,7 @@ export default function SellModal({ isOpen, onClose }: SellModalProps) {
                     margin: 0,
                   }}
                 >
-                  ðŸ“¦ Sell / List Item
+                  📦 Sell / List Item
                 </p>
                 <p
                   style={{
@@ -378,7 +378,7 @@ export default function SellModal({ isOpen, onClose }: SellModalProps) {
                     marginTop: 2,
                   }}
                 >
-                  Step {step} of {steps.length} Â· {steps[step - 1].label}
+                  Step {step} of {steps.length} · {steps[step - 1].label}
                 </p>
               </div>
               <button
@@ -541,7 +541,7 @@ export default function SellModal({ isOpen, onClose }: SellModalProps) {
                         onChange={(e) =>
                           setFormData({ ...formData, title: e.target.value })
                         }
-                        placeholder="e.g. MacBook Air M2 â€“ 8GB/256GB"
+                        placeholder="e.g. MacBook Air M2 – 8GB/256GB"
                         style={{
                           width: "100%",
                           background: "#f8fafc",
@@ -678,7 +678,7 @@ export default function SellModal({ isOpen, onClose }: SellModalProps) {
                             description: e.target.value,
                           })
                         }
-                        placeholder="Describe your item â€” condition, specs, any defects..."
+                        placeholder="Describe your item — condition, specs, any defects..."
                         style={{
                           width: "100%",
                           background: "#f8fafc",
@@ -775,7 +775,7 @@ export default function SellModal({ isOpen, onClose }: SellModalProps) {
                             cursor: "pointer",
                           }}
                         >
-                          âœ• Remove
+                          ✕ Remove
                         </button>
                         <div
                           style={{
@@ -790,7 +790,7 @@ export default function SellModal({ isOpen, onClose }: SellModalProps) {
                             fontWeight: 700,
                           }}
                         >
-                          âœ“ Preview
+                          ✓ Preview
                         </div>
                       </motion.div>
                     )}
@@ -873,7 +873,7 @@ export default function SellModal({ isOpen, onClose }: SellModalProps) {
                         <p
                           style={{ fontSize: 12, color: "#94a3b8", margin: 0 }}
                         >
-                          JPG Â· PNG Â· WEBP Â· Max 5 MB
+                          JPG · PNG · WEBP · Max 5 MB
                         </p>
                         <input
                           type="file"
@@ -944,7 +944,7 @@ export default function SellModal({ isOpen, onClose }: SellModalProps) {
                             marginBottom: 6,
                           }}
                         >
-                          Your Price (â‚¹) *
+                          Your Price (₹) *
                         </label>
                         <div style={{ position: "relative" }}>
                           <span
@@ -958,7 +958,7 @@ export default function SellModal({ isOpen, onClose }: SellModalProps) {
                               fontSize: 16,
                             }}
                           >
-                            â‚¹
+                            ₹
                           </span>
                           <input
                             type="number"
@@ -997,7 +997,7 @@ export default function SellModal({ isOpen, onClose }: SellModalProps) {
                             marginBottom: 6,
                           }}
                         >
-                          Original Price (â‚¹)
+                          Original Price (₹)
                         </label>
                         <div style={{ position: "relative" }}>
                           <span
@@ -1011,7 +1011,7 @@ export default function SellModal({ isOpen, onClose }: SellModalProps) {
                               fontSize: 16,
                             }}
                           >
-                            â‚¹
+                            ₹
                           </span>
                           <input
                             type="number"
@@ -1088,7 +1088,7 @@ export default function SellModal({ isOpen, onClose }: SellModalProps) {
                               margin: "4px 0 0",
                             }}
                           >
-                            Buyers save â‚¹
+                            Buyers save ₹
                             {(
                               Number(formData.originalPrice) -
                               Number(formData.price)
@@ -1449,7 +1449,7 @@ export default function SellModal({ isOpen, onClose }: SellModalProps) {
                       transition={{ duration: 0.65 }}
                       style={{ fontSize: 64, marginBottom: 16 }}
                     >
-                      ðŸŽ‰
+                      🎉
                     </motion.div>
 
                     <h2
@@ -1528,7 +1528,7 @@ export default function SellModal({ isOpen, onClose }: SellModalProps) {
                             margin: 0,
                           }}
                         >
-                          â‚¹{formData.price || "0"}
+                          ₹{formData.price || "0"}
                         </p>
                       </div>
                     </div>

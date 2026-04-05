@@ -1,4 +1,4 @@
-﻿// Cashfree helpers â€” create order + verify payment + load SDK
+﻿// Cashfree helpers — create order + verify payment + load SDK
 
 const API_BASE = ""; // same origin (Vercel serverless)
 

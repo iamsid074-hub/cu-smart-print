@@ -1,7 +1,7 @@
 ﻿/**
  * Smart Risk Detection Utility
  * Identifies high-risk orders based on:
- * 1. Order amount vs User history (New user + > â‚¹500)
+ * 1. Order amount vs User history (New user + > ₹500)
  * 2. Abusive or random naming patterns
  * 3. Rapid item addition (Spam behavior)
  */
@@ -69,7 +69,7 @@ export const evaluateOrderRisk = (
   }
 
   // 2. Medium Risk: High value order from a brand new user
-  // Threshold: â‚¹500 for users with 0 previous orders
+  // Threshold: ₹500 for users with 0 previous orders
   if (totalOrders === 0 && totalPrice > 500) {
     return {
       isBlocked: false,

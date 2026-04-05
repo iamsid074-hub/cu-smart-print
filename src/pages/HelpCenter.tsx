@@ -45,7 +45,7 @@ const faqSections = [
       },
       {
         q: "What is the delivery charge?",
-        a: "Delivery is charged at a flat â‚¹29 per order inside campus.",
+        a: "Delivery is charged at a flat ₹29 per order inside campus.",
       },
     ],
   },

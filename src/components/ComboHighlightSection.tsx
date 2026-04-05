@@ -140,7 +140,7 @@ export default function ComboHighlightSection() {
 
                 <div className="flex items-center gap-3">
                   <div className="px-3 py-1.5 rounded-xl bg-[#D4AF37] text-black font-black text-xs">
-                    â‚¹{item.price}
+                    ₹{item.price}
                   </div>
 
                   <button

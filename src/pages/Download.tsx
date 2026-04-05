@@ -269,7 +269,7 @@ export default function Download() {
             <AlertCircle className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
             <p className="text-white/50 text-xs font-medium leading-relaxed">
               Android may show a warning saying this app is from an unknown
-              source â€” this is normal for apps not on the Play Store. Tap{" "}
+              source — this is normal for apps not on the Play Store. Tap{" "}
               <strong className="text-white/70">Install Anyway</strong> to
               continue.
             </p>

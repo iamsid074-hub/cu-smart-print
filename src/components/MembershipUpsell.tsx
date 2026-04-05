@@ -43,7 +43,7 @@ export default function MembershipUpsell({
             <p className="text-xs text-slate-400 font-medium leading-tight">
               Subscribe to{" "}
               <span className="text-white font-bold">CB PRIME</span> and save
-              â‚¹{currentDeliveryFee > 0 ? currentDeliveryFee : 29} right now,
+              ₹{currentDeliveryFee > 0 ? currentDeliveryFee : 29} right now,
               plus free deliveries all week!
             </p>
           </div>

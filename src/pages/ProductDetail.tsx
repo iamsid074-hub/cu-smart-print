@@ -86,7 +86,7 @@ export default function ProductDetail() {
 
   const handleShare = async () => {
     const url = window.location.href;
-    const text = `Check out "${product?.title}" for â‚¹${product?.price} on CU Bazzar!`;
+    const text = `Check out "${product?.title}" for ₹${product?.price} on CU Bazzar!`;
     if (navigator.share) {
       try {
         await navigator.share({ title: product?.title, text, url });
@@ -321,7 +321,7 @@ export default function ProductDetail() {
                 }`}
               >
                 {copied ? (
-                  <span className="text-xs font-bold">âœ“</span>
+                  <span className="text-xs font-bold">✓</span>
                 ) : (
                   <Share2 className="w-5 h-5" />
                 )}
@@ -357,11 +357,11 @@ export default function ProductDetail() {
 
             <div className="flex items-center gap-4 mb-6">
               <p className="text-4xl font-extrabold text-slate-900 tracking-tight">
-                â‚¹{product.price.toLocaleString()}
+                ₹{product.price.toLocaleString()}
               </p>
               {product.original_price && (
                 <p className="text-lg text-slate-400 line-through font-medium mt-2">
-                  â‚¹{product.original_price.toLocaleString()}
+                  ₹{product.original_price.toLocaleString()}
                 </p>
               )}
               {product.original_price &&
@@ -465,7 +465,7 @@ export default function ProductDetail() {
                                 Base Price
                               </p>
                               <p className="font-semibold text-slate-900">
-                                â‚¹{product.price.toLocaleString()}
+                                ₹{product.price.toLocaleString()}
                               </p>
                             </div>
                             <div className="flex items-center justify-between mt-1">
@@ -473,7 +473,7 @@ export default function ProductDetail() {
                                 <Clock className="w-3 h-3" /> Delivery
                               </div>
                               <p className="font-semibold text-brand">
-                                + â‚¹{deliveryFee}
+                                + ₹{deliveryFee}
                               </p>
                             </div>
                             <div className="w-full h-[1px] bg-slate-200 my-2.5" />
@@ -482,7 +482,7 @@ export default function ProductDetail() {
                                 Total
                               </p>
                               <p className="font-black text-brand text-lg">
-                                â‚¹{totalAmount.toLocaleString()}
+                                ₹{totalAmount.toLocaleString()}
                               </p>
                             </div>
                           </div>
@@ -568,7 +568,7 @@ export default function ProductDetail() {
                             {isSubmitting ? (
                               <Loader2 className="w-5 h-5 animate-spin" />
                             ) : (
-                              `Pay â‚¹${totalAmount.toLocaleString()} Online`
+                              `Pay ₹${totalAmount.toLocaleString()} Online`
                             )}
                           </button>
                         </form>
@@ -612,7 +612,7 @@ export default function ProductDetail() {
                 <span>
                   Listed on {new Date(product.created_at).toLocaleDateString()}
                 </span>
-                <span>â€¢</span>
+                <span>•</span>
                 <span>ID: {product.id.slice(0, 8)}...</span>
               </div>
             </div>

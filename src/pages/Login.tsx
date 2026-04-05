@@ -245,7 +245,7 @@ export default function Login() {
         )}
       </AnimatePresence>
 
-      {/* â”€â”€â”€ Left â€” Branding & Visual â”€â”€â”€ */}
+      {/* â”€â”€â”€ Left — Branding & Visual â”€â”€â”€ */}
       <div
         className="hidden lg:flex lg:w-[52%] relative items-center justify-center p-12 overflow-hidden"
         style={{ backgroundColor: "#1D1D1F" }}
@@ -384,7 +384,7 @@ export default function Login() {
         </motion.div>
       </div>
 
-      {/* â”€â”€â”€ Right â€” Login Form â”€â”€â”€ */}
+      {/* â”€â”€â”€ Right — Login Form â”€â”€â”€ */}
       <div className="flex-1 flex items-center justify-center px-5 py-10 sm:px-8 lg:px-14 relative min-h-screen lg:min-h-0 bg-[#F5F5F7]">
         {/* Mobile glow */}
         <div
@@ -765,12 +765,12 @@ export default function Login() {
                         className="text-[11px] mt-1 ml-0.5"
                         style={{ color: "#64748B" }}
                       >
-                        At least 6 characters â€” make it count!
+                        At least 6 characters — make it count!
                       </p>
                     )}
                   </div>
 
-                  {/* T&C Accept Checkbox â€” signup only */}
+                  {/* T&C Accept Checkbox — signup only */}
                   {!isLogin && (
                     <div className="flex items-start gap-3 px-1">
                       <button
@@ -824,7 +824,7 @@ export default function Login() {
                     </div>
                   )}
 
-                  {/* Forgot password link â€” login only */}
+                  {/* Forgot password link — login only */}
                   {isLogin && (
                     <div className="flex justify-end -mt-1">
                       <button

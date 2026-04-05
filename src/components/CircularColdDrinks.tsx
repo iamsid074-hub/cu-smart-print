@@ -55,7 +55,7 @@ export default function CircularColdDrinks() {
     <section className="mb-14 py-6 relative w-full overflow-hidden flex flex-col items-center">
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-cyan-200/15 blur-[90px] rounded-full pointer-events-none" />
 
-      {/* Orbit Container â€“ uses measured radius for reliable positioning */}
+      {/* Orbit Container – uses measured radius for reliable positioning */}
       <div
         ref={containerRef}
         className="relative w-full max-w-3xl mx-auto"
@@ -133,7 +133,7 @@ export default function CircularColdDrinks() {
                   </h3>
                   <div className="flex items-center justify-between w-full">
                     <span className="text-[9px] sm:text-[10px] font-black text-slate-900 bg-slate-50 border border-slate-100 px-1 py-0.5 rounded leading-none">
-                      â‚¹{item.price}
+                      ₹{item.price}
                     </span>
                     <button
                       onClick={(e) => handleAddToCart(item, e)}

@@ -158,7 +158,7 @@ function parseOrderDetails(order: any) {
     const roomPart = room.match(/\[ROOM:(.+?)\]/)?.[1] || room;
     const itemsPart = room.match(/\[ITEMS:([\s\S]*)\]\s*$/)?.[1] || "";
 
-    // Extract first item title. e.g. "1x Amul Taaza [IMG:...] (Toned Milk) (Milk) (â‚¹27)"
+    // Extract first item title. e.g. "1x Amul Taaza [IMG:...] (Toned Milk) (Milk) (₹27)"
     const firstLine = itemsPart.split("\n")[0] || "";
     const firstItemTitle =
       firstLine.match(/\d+x\s+(.+?)\s+\[IMG:/)?.[1] ||
@@ -211,7 +211,7 @@ function getDeliveryInfo(
     return { text: `~${remaining} min`, subtext: "On the way to you" };
   }
 
-  // Before "Out for Delivery" â€” don't show estimated time
+  // Before "Out for Delivery" — don't show estimated time
   if (
     order.status === "confirmed" ||
     order.status === "picked" ||
@@ -490,8 +490,8 @@ export default function Tracking() {
                       {type === "food"
                         ? "ðŸ• Food"
                         : type === "vending"
-                        ? "ðŸ¤– Vending"
-                        : "ðŸ“¦ Item"}
+                        ? "🤖 Vending"
+                        : "📦 Item"}
                     </span>
                   </div>
                   <p className="font-bold text-slate-900 line-clamp-2 text-sm sm:text-base">
@@ -509,7 +509,7 @@ export default function Tracking() {
                 {order.total_price > 0 && (
                   <div className="text-right flex-shrink-0">
                     <p className="text-brand font-black text-lg sm:text-xl">
-                      â‚¹{order.total_price?.toLocaleString()}
+                      ₹{order.total_price?.toLocaleString()}
                     </p>
                     <p
                       className={`text-[10px] font-bold mt-1 ${
@@ -521,10 +521,10 @@ export default function Tracking() {
                       }`}
                     >
                       {order.payment_status === "verifying"
-                        ? "ðŸŸ¡ Verifying Payment..."
+                        ? "🟡 Verifying Payment..."
                         : order.payment_status === "paid"
-                        ? "ðŸ’³ Paid Online âœ“"
-                        : "ðŸ’µ Pay on Delivery"}
+                        ? "💳 Paid Online ✓"
+                        : "💵 Pay on Delivery"}
                     </p>
                   </div>
                 )}
@@ -595,9 +595,9 @@ export default function Tracking() {
                       )
                       .map((line: string, i: number) => {
                         let price = "";
-                        const priceMatch = line.match(/\(â‚¹([\d,]+)\)/);
+                        const priceMatch = line.match(/\(₹([\d,]+)\)/);
                         if (priceMatch) {
-                          price = `â‚¹${priceMatch[1]}`;
+                          price = `₹${priceMatch[1]}`;
                         }
 
                         let name = line;
@@ -625,7 +625,7 @@ export default function Tracking() {
                                     : "text-emerald-500"
                                 } mt-0.5`}
                               >
-                                â€¢
+                                •
                               </span>
                               <span className="truncate whitespace-normal leading-snug">
                                 {name}
@@ -863,7 +863,7 @@ export default function Tracking() {
                         transition={{ delay: 0.5 }}
                         className="text-4xl mb-2"
                       >
-                        ðŸŽ‰
+                        🎉
                       </motion.div>
 
                       {/* Title */}

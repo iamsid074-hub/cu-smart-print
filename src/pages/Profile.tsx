@@ -156,7 +156,7 @@ export default function Profile() {
         },
         () => {
           fetchIncomingOrders();
-          toast.success("ðŸ“¦ New order received!");
+          toast.success("📦 New order received!");
         }
       )
       .subscribe();
@@ -663,7 +663,7 @@ export default function Profile() {
                             </h4>
                             <div className="flex items-center gap-2.5">
                               <span className="text-[17px] font-black tracking-tight text-[#1D1D1F]">
-                                â‚¹{item.price}
+                                ₹{item.price}
                               </span>
                               <span
                                 className={`text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-widest ${
@@ -754,7 +754,7 @@ export default function Profile() {
                               </h4>
                               <div className="flex items-center gap-3 mt-1">
                                 <span className="text-[18px] font-black text-[#1D1D1F]">
-                                  â‚¹{order.total_price}
+                                  ₹{order.total_price}
                                 </span>
                                 <span
                                   className={`text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-widest shadow-sm ${

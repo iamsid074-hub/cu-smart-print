@@ -56,7 +56,7 @@ export default function GroceryProductCard({
           </p>
           <div className="flex items-center justify-between">
             <span className="text-[15px] font-black text-slate-900">
-              â‚¹{item.price}
+              ₹{item.price}
             </span>
             <button
               onClick={() => onAdd(item)}

@@ -194,7 +194,7 @@ export const CustomOrderForm = memo(
                   type="number"
                   value={price}
                   onChange={(e) => setPrice(e.target.value)}
-                  placeholder="Expected Price (â‚¹)"
+                  placeholder="Expected Price (₹)"
                   className="w-full h-14 px-5 rounded-[1.2rem] bg-white/60 border border-white/60 font-bold text-[#1D1D1F] placeholder:text-[#8E8E93] shadow-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#007AFF]/20 transition-all"
                 />
               </div>

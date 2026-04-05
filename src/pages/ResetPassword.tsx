@@ -48,7 +48,7 @@ export default function ResetPassword() {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event) => {
       if (event === "PASSWORD_RECOVERY") {
-        // User is in password recovery mode â€” form is shown
+        // User is in password recovery mode — form is shown
       }
     });
     return () => subscription.unsubscribe();
@@ -69,7 +69,7 @@ export default function ResetPassword() {
       const { error } = await supabase.auth.updateUser({ password });
       if (error) throw error;
       setDone(true);
-      toast.success("Password updated! You're all set ðŸŽ‰");
+      toast.success("Password updated! You're all set 🎉");
       setTimeout(() => navigate("/login"), 2500);
     } catch (err: any) {
       toast.error(err.message || "Could not update password. Try again.");

@@ -212,7 +212,7 @@ export default function Grocery() {
 
                   <div className="mt-auto flex items-center justify-between pt-2 border-t border-slate-50">
                     <span className="text-lg font-black text-slate-900">
-                      â‚¹{item.price}
+                      ₹{item.price}
                     </span>
                     <button
                       onClick={() => handleAddToCart(item)}

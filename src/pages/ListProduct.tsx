@@ -90,7 +90,7 @@ export default function ListProduct() {
       }
 
       if (Number(formData.price) < 1) {
-        toast.error("Price must be at least â‚¹1.");
+        toast.error("Price must be at least ₹1.");
         return;
       }
 
@@ -206,10 +206,10 @@ export default function ListProduct() {
 
         if (!insertedData || insertedData.length === 0) {
           console.error(
-            "[ListProduct] Insert returned no data â€” likely blocked by RLS policy"
+            "[ListProduct] Insert returned no data — likely blocked by RLS policy"
           );
           alert(
-            "Permission denied â€” RLS blocked. Your account may not have permission to list items."
+            "Permission denied — RLS blocked. Your account may not have permission to list items."
           );
           setLoading(false);
           return;
@@ -343,7 +343,7 @@ export default function ListProduct() {
             />
           </div>
           <p className="text-xs text-slate-500 mt-3 font-semibold text-center sm:text-left">
-            Step {step} of {steps.length} Â· {steps[step - 1].label}
+            Step {step} of {steps.length} · {steps[step - 1].label}
           </p>
         </div>
 
@@ -372,7 +372,7 @@ export default function ListProduct() {
                     onChange={(e) =>
                       setFormData({ ...formData, title: e.target.value })
                     }
-                    placeholder="e.g. MacBook Air M2 â€“ 8GB/256GB"
+                    placeholder="e.g. MacBook Air M2 – 8GB/256GB"
                     className="w-full bg-slate-50 rounded-2xl px-5 py-3.5 text-sm text-slate-900 placeholder:text-slate-400 outline-none border border-slate-200 focus:border-brand-accent focus:ring-4 focus:ring-brand-50 transition-all font-medium"
                   />
                 </div>
@@ -430,7 +430,7 @@ export default function ListProduct() {
                     onChange={(e) =>
                       setFormData({ ...formData, description: e.target.value })
                     }
-                    placeholder="Describe your item â€” condition, specs, any defects..."
+                    placeholder="Describe your item — condition, specs, any defects..."
                     className="w-full bg-slate-50 rounded-2xl px-5 py-3.5 text-sm text-slate-900 placeholder:text-slate-400 outline-none border border-slate-200 focus:border-brand-accent focus:ring-4 focus:ring-brand-50 transition-all font-medium resize-none"
                   />
                 </div>
@@ -478,11 +478,11 @@ export default function ListProduct() {
                         onClick={removeImage}
                         className="text-xs font-bold text-rose-100 bg-rose-500/80 hover:bg-rose-500 px-3 py-1.5 rounded-full backdrop-blur-md transition-colors shadow-sm"
                       >
-                        âœ• Remove
+                        ✕ Remove
                       </button>
                     </div>
                     <div className="absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/90 backdrop-blur-md text-white shadow-sm">
-                      âœ“ Preview
+                      ✓ Preview
                     </div>
                   </motion.div>
                 )}
@@ -533,7 +533,7 @@ export default function ListProduct() {
                     Drop photo here to upload
                   </p>
                   <p className="text-sm text-slate-500">
-                    JPG Â· PNG Â· WEBP &nbsp;Â·&nbsp; Max 5 MB
+                    JPG · PNG · WEBP &nbsp;·&nbsp; Max 5 MB
                   </p>
                   <input
                     type="file"
@@ -570,11 +570,11 @@ export default function ListProduct() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <div>
                     <label className="text-sm font-bold text-slate-600 mb-2 block">
-                      Your Price (â‚¹) *
+                      Your Price (₹) *
                     </label>
                     <div className="relative">
                       <span className="absolute left-4 top-1/2 -translate-y-1/2 text-brand font-extrabold text-lg">
-                        â‚¹
+                        ₹
                       </span>
                       <input
                         type="number"
@@ -590,11 +590,11 @@ export default function ListProduct() {
                   </div>
                   <div>
                     <label className="text-sm font-bold text-slate-600 mb-2 block">
-                      Original Price (â‚¹)
+                      Original Price (₹)
                     </label>
                     <div className="relative">
                       <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-lg">
-                        â‚¹
+                        ₹
                       </span>
                       <input
                         type="number"
@@ -634,7 +634,7 @@ export default function ListProduct() {
                         % OFF
                       </p>
                       <p className="text-sm font-medium text-emerald-700">
-                        Buyers save â‚¹
+                        Buyers save ₹
                         {(
                           Number(formData.originalPrice) -
                           Number(formData.price)
@@ -802,7 +802,7 @@ export default function ListProduct() {
                   transition={{ duration: 0.6 }}
                   className="text-6xl mb-6"
                 >
-                  ðŸŽ‰
+                  🎉
                 </motion.div>
                 <h2 className="font-black text-3xl mb-3 text-slate-900">
                   Listing Live!
@@ -820,7 +820,7 @@ export default function ListProduct() {
                         {formData.title || "Your Item"}
                       </p>
                       <p className="text-emerald-600 font-black text-xl">
-                        â‚¹{formData.price || "0"}
+                        ₹{formData.price || "0"}
                       </p>
                     </div>
                   </div>

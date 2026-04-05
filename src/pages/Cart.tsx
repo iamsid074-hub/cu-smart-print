@@ -270,7 +270,7 @@ export default function Cart() {
     const itemsSummary = items
       .map(
         (i) =>
-          `${i.quantity}x ${i.title} [IMG:${i.image}] (${i.category}) (â‚¹${i.price})`
+          `${i.quantity}x ${i.title} [IMG:${i.image}] (${i.category}) (₹${i.price})`
       )
       .join("\n");
 
@@ -404,7 +404,7 @@ export default function Cart() {
         setSubmitting(true);
         await createOrder();
         toast({
-          title: "Order placed! ðŸŽ‰",
+          title: "Order placed! 🎉",
           description: "First money, then order. Collect at gate.",
         });
       } catch (err: any) {
@@ -478,7 +478,7 @@ export default function Cart() {
                 consumption.
               </p>
               <p className="bg-amber-50 border border-amber-200 rounded-xl p-2.5 text-amber-800 font-medium text-[11px]">
-                âš ï¸ Customers are advised to{" "}
+                ⚠️ Customers are advised to{" "}
                 <strong>check ingredients</strong> carefully and consume food at
                 their own discretion.
               </p>
@@ -521,7 +521,7 @@ export default function Cart() {
                     : "bg-slate-100 text-slate-400 cursor-not-allowed"
                 }`}
               >
-                I Accept â€” Continue to Payment
+                I Accept — Continue to Payment
               </button>
               <button
                 onClick={() => setShowDisclaimer(false)}
@@ -675,7 +675,7 @@ export default function Cart() {
                         )}
                       </div>
                       <p className="text-brand font-bold text-sm">
-                        â‚¹{item.price}
+                        ₹{item.price}
                       </p>
                       {item.notes && (
                         <p className="text-[10px] text-slate-400 font-medium italic mt-0.5 flex items-center gap-1">
@@ -707,7 +707,7 @@ export default function Cart() {
                     </div>
                     <div className="flex flex-col items-end flex-shrink-0">
                       <p className="text-sm font-bold text-slate-900">
-                        â‚¹{item.price * item.quantity}
+                        ₹{item.price * item.quantity}
                       </p>
                       <button
                         onClick={() => removeItem(item.id)}
@@ -733,7 +733,7 @@ export default function Cart() {
               <div className="flex justify-between items-center text-sm text-slate-600 mb-3">
                 <span>Subtotal ({totalItems} items)</span>
                 <span className="font-medium text-slate-900">
-                  â‚¹{totalPrice}
+                  ₹{totalPrice}
                 </span>
               </div>
               <div className="flex justify-between items-center text-sm text-slate-600 mb-3">
@@ -742,7 +742,7 @@ export default function Cart() {
                   {hasVending ? `Floor ${floor} Delivery` : "Delivery Fee"}
                 </span>
                 <span className="font-medium text-slate-900">
-                  + â‚¹{displayedDeliveryFee}
+                  + ₹{displayedDeliveryFee}
                 </span>
               </div>
 
@@ -755,7 +755,7 @@ export default function Cart() {
                     </span>
                   </span>
                   <span className="font-medium text-slate-900">
-                    -â‚¹{displayedDeliveryFee}
+                    -₹{displayedDeliveryFee}
                   </span>
                 </div>
               )}
@@ -766,7 +766,7 @@ export default function Cart() {
                   <div className="flex justify-between items-center text-sm text-slate-600 mb-3">
                     <span>Flavour Factory Offer</span>
                     <span className="font-medium text-slate-900">
-                      -â‚¹{originalDeliveryFee - specialDeliveryFee}
+                      -₹{originalDeliveryFee - specialDeliveryFee}
                     </span>
                   </div>
                 )}
@@ -777,7 +777,7 @@ export default function Cart() {
                   <div className="flex justify-between items-center text-sm text-slate-600 mb-3">
                     <span>Floor {floor} Special</span>
                     <span className="font-medium text-slate-900">
-                      -â‚¹{originalDeliveryFee - specialDeliveryFee}
+                      -₹{originalDeliveryFee - specialDeliveryFee}
                     </span>
                   </div>
                 )}
@@ -796,14 +796,14 @@ export default function Cart() {
                         <p className="text-[11px] text-slate-500 font-medium tracking-tight">
                           {usableWalletBalance > 0 ? (
                             <>
-                              Available today: â‚¹{usableWalletBalance}{" "}
+                              Available today: ₹{usableWalletBalance}{" "}
                               <span className="text-slate-400 font-normal opacity-70">
-                                (Max â‚¹50/day)
+                                (Max ₹50/day)
                               </span>
                             </>
                           ) : (
                             <span className="text-red-400 font-bold">
-                              Daily limit of â‚¹50 reached
+                              Daily limit of ₹50 reached
                             </span>
                           )}
                         </p>
@@ -851,7 +851,7 @@ export default function Cart() {
                       >
                         <div className="flex justify-between items-center text-sm text-emerald-600 font-bold mt-4 bg-emerald-50 px-3 py-2 rounded-xl">
                           <span>Wallet Applied</span>
-                          <span>- â‚¹{walletDiscount}</span>
+                          <span>- ₹{walletDiscount}</span>
                         </div>
                       </motion.div>
                     )}
@@ -862,7 +862,7 @@ export default function Cart() {
               <div className="border-t border-slate-100 pt-4 flex justify-between items-center mt-2">
                 <span className="font-bold text-slate-900">Total details</span>
                 <span className="text-xl sm:text-2xl font-black text-brand">
-                  â‚¹{orderTotal}
+                  ₹{orderTotal}
                 </span>
               </div>
             </div>
@@ -1033,7 +1033,7 @@ export default function Cart() {
                   {submitting ? (
                     <Loader2 className="w-5 h-5 animate-spin" />
                   ) : (
-                    `Pay Securely Â· â‚¹${orderTotal}`
+                    `Pay Securely · ₹${orderTotal}`
                   )}
                 </button>
               </motion.div>
@@ -1056,7 +1056,7 @@ export default function Cart() {
             // Consolidate all logic inside createOrder to avoid dual navigation/shadowing
             await createOrder(utr);
             toast({
-              title: "Order submitted! ðŸŽ‰",
+              title: "Order submitted! 🎉",
               description: `Your order has been placed and is being tracked.`,
             });
           } catch (err: any) {

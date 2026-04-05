@@ -128,7 +128,7 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
 
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
 
-    // "explore", "tracking", "grocery", "sell", "wallet" states persist â€” no auto-dismiss
+    // "explore", "tracking", "grocery", "sell", "wallet" states persist — no auto-dismiss
     if (
       newState !== "explore" &&
       newState !== "tracking" &&
@@ -396,7 +396,7 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
             </div>
           </div>
           <div className="font-mono text-sm font-bold text-white flex-shrink-0">
-            â‚¹{latestAddedItem?.price || 0}
+            ₹{latestAddedItem?.price || 0}
           </div>
         </div>
       );
@@ -455,7 +455,7 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
               </AnimatePresence>
               {trackingOrder.total_price > 0 && (
                 <span className="text-[10px] font-medium text-white/40 leading-tight">
-                  â‚¹{trackingOrder.total_price}
+                  ₹{trackingOrder.total_price}
                 </span>
               )}
             </div>

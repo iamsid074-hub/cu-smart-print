@@ -131,7 +131,7 @@ export default function MembershipPlansModal({
                 <p className="text-sm text-slate-400 font-medium leading-relaxed mb-8">
                   Your payment of{" "}
                   <span className="text-white font-bold">
-                    â‚¹{selectedPlan?.price}
+                    ₹{selectedPlan?.price}
                   </span>{" "}
                   for{" "}
                   <span className="text-purple-400 font-bold">
@@ -206,7 +206,7 @@ export default function MembershipPlansModal({
                           </div>
                           <div className="text-right">
                             <span className="text-xl font-black text-white">
-                              â‚¹{plan.price}
+                              ₹{plan.price}
                             </span>
                             <span className="text-[#8E8E93] text-[10px] font-medium block">
                               / week

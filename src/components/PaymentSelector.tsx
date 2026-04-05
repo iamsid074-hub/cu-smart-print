@@ -60,7 +60,7 @@ export default function PaymentSelector({
               selected === "online" ? "text-brand" : "text-slate-500"
             }`}
           >
-            GPay Â· PhonePe Â· Paytm
+            GPay · PhonePe · Paytm
           </p>
         </div>
         <div className="flex items-center gap-1.5 flex-shrink-0">

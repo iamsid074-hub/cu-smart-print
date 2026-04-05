@@ -49,7 +49,7 @@ export default function UpiPaymentModal({
       await onPaymentVerify(mockUtr);
 
       setStep("success");
-      toast.success("Payment Confirmed! Order placed ðŸŽ‰");
+      toast.success("Payment Confirmed! Order placed 🎉");
       setTimeout(() => onClose(), 1500);
     } catch (err: any) {
       setStep("qr");
@@ -101,7 +101,7 @@ export default function UpiPaymentModal({
                     <QrCode className="w-7 h-7 text-brand" />
                   </div>
                   <h3 className="text-2xl font-black text-slate-900 mb-1">
-                    Pay â‚¹{amount.toLocaleString()}
+                    Pay ₹{amount.toLocaleString()}
                   </h3>
                   <p className="text-sm text-slate-500 mb-6 text-center leading-relaxed">
                     Scan the QR code below using any UPI app (GPay, PhonePe,
@@ -121,7 +121,7 @@ export default function UpiPaymentModal({
                     onClick={handleDone}
                     className="w-full py-4 rounded-xl text-white font-bold text-[15px] transition-all hover:scale-[1.02] active:scale-[0.98] shadow-md bg-brand hover:bg-brand flex items-center justify-center gap-2 tracking-wide"
                   >
-                    I have paid â‚¹{amount.toLocaleString()}
+                    I have paid ₹{amount.toLocaleString()}
                   </button>
                 </motion.div>
               )}
@@ -160,10 +160,10 @@ export default function UpiPaymentModal({
                     <CheckCircle className="w-20 h-20 text-brand" />
                   </motion.div>
                   <p className="text-2xl font-black text-slate-900">
-                    Confirmed! ðŸŽ‰
+                    Confirmed! 🎉
                   </p>
                   <p className="text-sm text-brand font-bold bg-brand-50 px-4 py-2 rounded-full">
-                    Order placed â€” redirecting...
+                    Order placed — redirecting...
                   </p>
                 </motion.div>
               )}

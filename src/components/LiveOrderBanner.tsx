@@ -30,7 +30,7 @@ const STATUS_CONFIG: Record<
     icon: CheckCircle,
   },
   confirmed: {
-    label: "Accepted â€” On Hold",
+    label: "Accepted — On Hold",
     color: "text-purple-600",
     bg: "bg-purple-50 border-purple-200",
     pulse: "bg-purple-400",
@@ -51,7 +51,7 @@ const STATUS_CONFIG: Record<
     icon: Truck,
   },
   completed: {
-    label: "Delivered! ðŸŽ‰",
+    label: "Delivered! 🎉",
     color: "text-emerald-600",
     bg: "bg-emerald-50 border-emerald-200",
     pulse: "bg-emerald-400",
@@ -208,7 +208,7 @@ export default function LiveOrderBanner() {
               </p>
               <p className="text-slate-600 text-[11px] font-medium truncate">
                 {isFood ? "Food Order" : order.products?.title || "Your Order"}
-                {order.total_price ? ` Â· â‚¹${order.total_price}` : ""}
+                {order.total_price ? ` · ₹${order.total_price}` : ""}
               </p>
             </div>
 

@@ -20,7 +20,7 @@ interface VersionData {
   releaseNotes: string;
 }
 
-// Session flag â€” persists only while the app is open
+// Session flag — persists only while the app is open
 const SESSION_KEY = "cu_update_dismissed_version";
 
 export default function AppUpdater() {

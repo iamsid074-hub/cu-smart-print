@@ -150,7 +150,7 @@ export default function Wallet() {
             </span>
             <div className="flex items-start justify-center gap-0">
               <span className="text-4xl font-bold text-[#8E8E93] mt-3">
-                â‚¹
+                ₹
               </span>
               <motion.span
                 className="text-[90px] leading-[0.85] font-black tracking-tighter text-[#1D1D1F]"
@@ -194,10 +194,10 @@ export default function Wallet() {
               </div>
               <div>
                 <h3 className="font-bold text-[#1D1D1F] text-[16px] tracking-tight">
-                  Unlock â‚¹30 Reward
+                  Unlock ₹30 Reward
                 </h3>
                 <p className="text-[12px] font-medium text-[#8E8E93]">
-                  Complete 3 orders in a week to get â‚¹30 in your wallet.
+                  Complete 3 orders in a week to get ₹30 in your wallet.
                 </p>
               </div>
             </div>
@@ -224,7 +224,7 @@ export default function Wallet() {
                           : "text-[#FF3B30] bg-[#FF3B30]/10"
                       }`}
                     >
-                      â‚¹30!
+                      ₹30!
                     </span>
                   </>
                 );
@@ -291,9 +291,9 @@ export default function Wallet() {
               </h3>
               <p className="text-[13px] font-medium text-white/90 leading-relaxed mb-4">
                 Order worth{" "}
-                <strong className="text-white text-[14px]">â‚¹499</strong> or
+                <strong className="text-white text-[14px]">₹499</strong> or
                 more from Flavour Factory to get{" "}
-                <strong className="text-white text-[14px]">â‚¹30</strong>{" "}
+                <strong className="text-white text-[14px]">₹30</strong>{" "}
                 instantly in your wallet!
               </p>
               <Link
@@ -369,7 +369,7 @@ export default function Wallet() {
                         tx.amount > 0 ? "text-[#34C759]" : "text-[#1D1D1F]"
                       }`}
                     >
-                      {tx.amount > 0 ? "+" : ""}â‚¹{Math.abs(tx.amount)}
+                      {tx.amount > 0 ? "+" : ""}₹{Math.abs(tx.amount)}
                     </span>
                   </div>
                 ))}

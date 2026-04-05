@@ -64,7 +64,7 @@ export default function FlavourFactoryBanner() {
           </span>
         </motion.div>
 
-        {/* Center â€” pasta images stacked */}
+        {/* Center — pasta images stacked */}
         <div className="flex items-center justify-center gap-[-1rem] my-2 sm:my-4 relative">
           {pastaItems.map((p, i) => (
             <motion.div

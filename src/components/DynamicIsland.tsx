@@ -81,7 +81,7 @@ export default function DynamicIsland({
     if (p === "/sell" || p === "/list")
       return {
         id: "sell",
-        title: "ðŸ“¦ Sell Your Item",
+        title: "📦 Sell Your Item",
         subtitle: "List in 30 seconds, earn cash",
         icon: Package,
         actions: [
@@ -144,7 +144,7 @@ export default function DynamicIsland({
           desc: `Your ${title} is being prepared`,
         };
       case "picked":
-        return { title: "Order Picked Up ðŸ“¦", desc: `Your order is ready` };
+        return { title: "Order Picked Up 📦", desc: `Your order is ready` };
       case "delivering":
         return {
           title: "Out For Delivery ðŸ›µ",
@@ -203,7 +203,7 @@ export default function DynamicIsland({
         if (activeOrder) {
           // Global Auto-Redirect on Delivery!
           setJustDelivered(true);
-          toast.success("Order Delivered! ðŸŽ‰", {
+          toast.success("Order Delivered! 🎉", {
             description: "Your order has safely arrived.",
             duration: 6000,
           });
@@ -277,7 +277,7 @@ export default function DynamicIsland({
                 ðŸ›’ New {isFood ? "Food" : "Item"} Order Received!
               </span>
               <span className="text-xs text-slate-500">
-                ID: #{newOrder.id.slice(0, 8).toUpperCase()} â€¢ â‚¹
+                ID: #{newOrder.id.slice(0, 8).toUpperCase()} • ₹
                 {newOrder.total_price}
               </span>
             </div>,
@@ -367,8 +367,8 @@ export default function DynamicIsland({
       rapid.timer = setTimeout(() => {
         const label =
           rapid.count > 1
-            ? `ðŸ›’ ${rapid.count} Items Added Â· â‚¹${rapid.totalPrice}`
-            : `ðŸ›’ ${lastAction.itemTitle || "Item"} Added Â· â‚¹${
+            ? `ðŸ›’ ${rapid.count} Items Added · ₹${rapid.totalPrice}`
+            : `ðŸ›’ ${lastAction.itemTitle || "Item"} Added · ₹${
                 lastAction.itemPrice || 0
               }`;
 
@@ -419,7 +419,7 @@ export default function DynamicIsland({
         type: "cart-add" as any,
         label: `ðŸ›’ ${cartCount} item${
           cartCount !== 1 ? "s" : ""
-        } in cart Â· â‚¹${cartTotal}`,
+        } in cart · ₹${cartTotal}`,
         icon: "cart",
         color: "#FF6B6B",
         expiresAt: 0,
@@ -434,16 +434,16 @@ export default function DynamicIsland({
   useEffect(() => {
     if (activeOrder) {
       const statusText: Record<string, string> = {
-        pending: "ðŸ“¦ Order Placed",
+        pending: "📦 Order Placed",
         seller_accepted: "âœ… Order Confirmed",
         confirmed: "ðŸ‘¨â€ðŸ³ Preparingâ€¦",
-        picked: "ðŸ“¦ Picked Up",
+        picked: "📦 Picked Up",
         delivering: "ðŸšš On the way!",
       };
       pushNotification({
         priority: 1,
         type: "delivery",
-        label: statusText[activeOrder.status] || "ðŸ“¦ Processingâ€¦",
+        label: statusText[activeOrder.status] || "📦 Processingâ€¦",
         icon: "truck",
         color: "#30D158",
         expiresAt: 0,
@@ -539,10 +539,10 @@ export default function DynamicIsland({
     delivering: "On the way!",
   };
   const statusEmoji: Record<string, string> = {
-    pending: "ðŸ“¦",
+    pending: "📦",
     seller_accepted: "âœ…",
     confirmed: "ðŸ‘¨â€ðŸ³",
-    picked: "ðŸ“¦",
+    picked: "📦",
     delivering: "ðŸšš",
   };
 
@@ -1064,7 +1064,7 @@ export default function DynamicIsland({
                             color: "#fff",
                           }}
                         >
-                          Cart Â· â‚¹{cartTotal}
+                          Cart · ₹{cartTotal}
                         </span>
                       </div>
                       <button
@@ -1124,7 +1124,7 @@ export default function DynamicIsland({
                             }}
                           >
                             {item.title}{" "}
-                            {item.quantity > 1 ? `Ã—${item.quantity}` : ""}
+                            {item.quantity > 1 ? `×${item.quantity}` : ""}
                           </span>
                           <span
                             style={{
@@ -1135,7 +1135,7 @@ export default function DynamicIsland({
                               flexShrink: 0,
                             }}
                           >
-                            â‚¹{item.price * item.quantity}
+                            ₹{item.price * item.quantity}
                           </span>
                           <button
                             onClick={(e) => {
@@ -1344,7 +1344,7 @@ export default function DynamicIsland({
                                   color: "#fff",
                                 }}
                               >
-                                {done ? "âœ“" : ""}
+                                {done ? "✓" : ""}
                               </div>
                               {i < 3 && (
                                 <div

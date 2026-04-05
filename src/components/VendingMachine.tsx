@@ -150,7 +150,7 @@ const MemoizedVendingCard = memo(
     return (
       <div className="relative group flex flex-col items-center justify-end h-24 sm:h-36">
         <div className="relative w-full h-full flex items-center justify-center">
-          {/* Simple top coil line â€” replaces heavy SVG per card */}
+          {/* Simple top coil line — replaces heavy SVG per card */}
           <div
             className="absolute bottom-[-2px] w-[90%] h-[3px] rounded-full pointer-events-none z-0 opacity-30"
             style={{
@@ -159,7 +159,7 @@ const MemoizedVendingCard = memo(
             }}
           />
 
-          {/* Single depth shadow behind the product â€” replaces 4 stacked images */}
+          {/* Single depth shadow behind the product — replaces 4 stacked images */}
           <div
             className="absolute pointer-events-none"
             style={{
@@ -239,7 +239,7 @@ const MemoizedVendingCard = memo(
             {item.name}
           </span>
           <span className="text-[7px] sm:text-[8px] font-black text-emerald-400">
-            â‚¹{item.price}
+            ₹{item.price}
           </span>
         </div>
       </div>
@@ -281,7 +281,7 @@ export default function VendingMachine() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showUpiModal, setShowUpiModal] = useState(false);
 
-  // Removed inventory polling â€” was causing full re-renders every 5 seconds
+  // Removed inventory polling — was causing full re-renders every 5 seconds
 
   const vendingCartItems = items.filter(
     (i) => i.category === "Vending Machine"
@@ -353,7 +353,7 @@ export default function VendingMachine() {
 
       const itemsSummary = vendingCartItems
         .map(
-          (i) => `${i.quantity}x ${i.title} [IMG:${i.image}] (â‚¹${i.price})`
+          (i) => `${i.quantity}x ${i.title} [IMG:${i.image}] (₹${i.price})`
         )
         .join("\n");
       const { data, error } = await supabase.from("orders").insert({
@@ -377,7 +377,7 @@ export default function VendingMachine() {
       if (error) throw error;
 
       toast({
-        title: "Order Successful! ðŸŽ‰",
+        title: "Order Successful! 🎉",
         description: "Your items are on the way to your floor.",
       });
       vendingCartItems.forEach((item) => removeItem(item.id));
@@ -412,7 +412,7 @@ export default function VendingMachine() {
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-emerald-500 to-purple-500 opacity-50 blur-sm" />
 
             <div className="relative rounded-2xl sm:rounded-3xl bg-slate-900/40 p-3 sm:p-4 border border-white/5 flex flex-col justify-between overflow-hidden">
-              {/* Simple glass highlight â€” no blur */}
+              {/* Simple glass highlight — no blur */}
               <div className="absolute inset-0 pointer-events-none rounded-3xl z-40 overflow-hidden">
                 <div className="absolute top-[-50%] left-[-20%] w-[150%] h-[200%] bg-gradient-to-tr from-transparent via-white/[0.07] to-transparent rotate-[25deg]" />
               </div>
@@ -602,7 +602,7 @@ export default function VendingMachine() {
                               {item.title}
                             </p>
                             <p className="text-[10px] text-brand font-bold mt-1">
-                              â‚¹{item.price} Ã— {item.quantity}
+                              ₹{item.price} × {item.quantity}
                             </p>
                           </div>
                         </div>
@@ -728,7 +728,7 @@ export default function VendingMachine() {
                         Subtotal ({vendingCartItems.length})
                       </span>
                       <span className="text-slate-900 font-black">
-                        â‚¹{vendingSubtotal}
+                        ₹{vendingSubtotal}
                       </span>
                     </div>
                     <div className="flex justify-between items-center text-[10px]">
@@ -736,7 +736,7 @@ export default function VendingMachine() {
                         Floor Delivery
                       </span>
                       <span className="text-emerald-600 font-black">
-                        + â‚¹{deliveryCharge}
+                        + ₹{deliveryCharge}
                       </span>
                     </div>
                     <div className="pt-1.5 mt-1 border-t border-slate-200 flex justify-between items-center">
@@ -744,7 +744,7 @@ export default function VendingMachine() {
                         Total
                       </span>
                       <span className="text-lg font-black text-brand">
-                        â‚¹{totalAmount}
+                        ₹{totalAmount}
                       </span>
                     </div>
                   </div>
@@ -772,7 +772,7 @@ export default function VendingMachine() {
                       ? `Need Room ${floor}xx`
                       : phone.length !== 10
                       ? "Enter Phone"
-                      : `Pay â‚¹${totalAmount}`}
+                      : `Pay ₹${totalAmount}`}
                     <Zap className="w-4 h-4 text-emerald-400" />
                   </button>
                 </div>

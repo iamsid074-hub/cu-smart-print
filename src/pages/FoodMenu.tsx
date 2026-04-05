@@ -176,7 +176,7 @@ export default function FoodMenu() {
       if (error) throw error;
 
       toast({
-        title: "Order placed! ðŸŽ‰",
+        title: "Order placed! 🎉",
         description: "Payment verified. Admin will process your order shortly.",
       });
       setShowUpiModal(false);

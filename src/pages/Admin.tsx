@@ -368,7 +368,7 @@ function DashboardSection({
     },
     {
       id: "accepted",
-      label: "ðŸŸ¡ Accepted",
+      label: "🟡 Accepted",
       count: allOrders.filter((o) =>
         ["seller_accepted", "confirmed", "picked"].includes(o.status)
       ).length,
@@ -447,7 +447,7 @@ function DashboardSection({
       timestamps: { accepted_at: new Date().toISOString() },
     },
     confirmed: {
-      label: "Picked âœ“",
+      label: "Picked ✓",
       status: "picked",
       icon: Package,
       color:
@@ -494,7 +494,7 @@ function DashboardSection({
           <Activity className="w-6 h-6 text-neon-orange" /> Delivery Dashboard
         </h2>
         <p className="text-slate-900/70 text-sm">
-          Real-time order management â€¢{" "}
+          Real-time order management •{" "}
           {
             allOrders.filter(
               (o) =>
@@ -512,21 +512,21 @@ function DashboardSection({
         <StatCard
           icon={ShoppingCart}
           label="Active Orders"
-          value={loading ? "â€”" : stats.activeOrders}
+          value={loading ? "—" : stats.activeOrders}
           gradient="from-red-500 to-orange-500"
           delay={0}
         />
         <StatCard
           icon={Package}
           label="Products"
-          value={loading ? "â€”" : stats.totalProducts}
+          value={loading ? "—" : stats.totalProducts}
           gradient="from-neon-cyan to-neon-blue"
           delay={0.05}
         />
         <StatCard
           icon={Users}
           label="Users"
-          value={loading ? "â€”" : stats.totalUsers}
+          value={loading ? "—" : stats.totalUsers}
           gradient="from-neon-blue to-neon-pink"
           delay={0.1}
         />
@@ -535,7 +535,7 @@ function DashboardSection({
           label="Completed Today"
           value={
             loading
-              ? "â€”"
+              ? "—"
               : allOrders.filter((o) => {
                   const t = new Date();
                   t.setHours(0, 0, 0, 0);
@@ -682,13 +682,13 @@ function DashboardSection({
                                 key={idx}
                                 className="text-xs text-slate-900/60"
                               >
-                                â€¢ {line.trim()}
+                                • {line.trim()}
                               </p>
                             ))}
                         </div>
                       )}
                       <p className="text-lg font-black text-neon-fire mt-1">
-                        â‚¹{order.total_price.toLocaleString()}
+                        ₹{order.total_price.toLocaleString()}
                       </p>
                     </div>
                   </div>
@@ -749,10 +749,10 @@ function DashboardSection({
                       }`}
                     >
                       {order.payment_status === "verifying"
-                        ? "ðŸŸ¡ Verify UTR"
+                        ? "🟡 Verify UTR"
                         : order.payment_status === "paid"
-                        ? "ðŸ’³ Paid"
-                        : "ðŸ’µ Cash on Gate"}
+                        ? "💳 Paid"
+                        : "💵 Cash on Gate"}
                     </span>
                     {order.payment_status === "verifying" && (
                       <button
@@ -784,7 +784,7 @@ function DashboardSection({
                           onClick={() => onUpdateStatus(order.id, "cancelled")}
                           className="px-4 py-2.5 rounded-xl border border-red-500/30 bg-red-500/10 text-red-400 text-sm font-bold hover:bg-red-500/20 transition-all"
                         >
-                          âœ•
+                          ✕
                         </button>
                       )}
                     </div>
@@ -860,7 +860,7 @@ function ProductsSection({
                 </div>
                 <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between">
                   <p className="text-white font-black text-lg">
-                    â‚¹{product.price.toLocaleString()}
+                    ₹{product.price.toLocaleString()}
                   </p>
                   {product.condition && (
                     <span className="px-2 py-0.5 rounded bg-white/20 text-xs text-white font-medium">
@@ -1026,9 +1026,9 @@ function parseOrderDetails(order: Order): {
     .filter((line) => !!line && !line.includes("[SAFETY:Disclaimer"))
     .map((line) => {
       let price = "";
-      const priceMatch = line.match(/\(â‚¹([\d,]+)\)/);
+      const priceMatch = line.match(/\(₹([\d,]+)\)/);
       if (priceMatch) {
-        price = `â‚¹${priceMatch[1]}`;
+        price = `₹${priceMatch[1]}`;
       }
 
       let name = line;
@@ -1163,7 +1163,7 @@ function ItemOrdersSection({
       timestamps: { accepted_at: new Date().toISOString() },
     },
     confirmed: {
-      label: "Picked from Seller âœ“",
+      label: "Picked from Seller ✓",
       status: "picked",
       icon: Package,
       color:
@@ -1210,7 +1210,7 @@ function ItemOrdersSection({
             <ShoppingCart className="w-6 h-6 text-neon-cyan" /> Item Orders
           </h2>
           <p className="text-slate-900/70 text-sm">
-            {itemOrders.length} total â€¢{" "}
+            {itemOrders.length} total •{" "}
             {
               itemOrders.filter(
                 (o) =>
@@ -1283,7 +1283,7 @@ function ItemOrdersSection({
                         {order.products?.title || "Product Removed"}
                       </p>
                       <p className="text-neon-fire font-bold text-lg">
-                        â‚¹{order.total_price.toLocaleString()}
+                        ₹{order.total_price.toLocaleString()}
                       </p>
                       <div className="flex flex-wrap items-center gap-2 mt-1">
                         {order.products?.category && (
@@ -1301,12 +1301,12 @@ function ItemOrdersSection({
                           }`}
                         >
                           {order.payment_status === "verifying"
-                            ? `ðŸŸ¡ Verify UTR: ${
+                            ? `🟡 Verify UTR: ${
                                 order.razorpay_payment_id || "N/A"
                               }`
                             : order.payment_status === "paid"
-                            ? "ðŸ’³ Paid Online"
-                            : "ðŸ’µ Cash on Gate"}
+                            ? "💳 Paid Online"
+                            : "💵 Cash on Gate"}
                         </span>
                       </div>
                       {order.payment_status === "verifying" && (
@@ -1536,7 +1536,7 @@ function FoodOrdersSection({
             <UtensilsCrossed className="w-6 h-6 text-orange-400" /> Food Orders
           </h2>
           <p className="text-slate-500 text-sm">
-            {foodOrders.length} total â€¢{" "}
+            {foodOrders.length} total •{" "}
             {
               foodOrders.filter(
                 (o) => !["completed", "cancelled"].includes(o.status)
@@ -1622,7 +1622,7 @@ function FoodOrdersSection({
                               className="text-sm text-slate-900 flex items-start gap-2"
                             >
                               <span className="text-orange-400 mt-0.5 font-bold">
-                                â€¢
+                                •
                               </span>
                               <span>{cleanLine.trim()}</span>
                             </p>
@@ -1643,7 +1643,7 @@ function FoodOrdersSection({
                       <div className="mt-2 pt-2 border-t border-orange-500/10 flex items-center justify-between">
                         <span className="text-xs text-slate-500">Total</span>
                         <span className="text-base font-black text-orange-400">
-                          â‚¹{order.total_price.toLocaleString()}
+                          ₹{order.total_price.toLocaleString()}
                         </span>
                       </div>
                     )}
@@ -1658,12 +1658,12 @@ function FoodOrdersSection({
                         }`}
                       >
                         {order.payment_status === "verifying"
-                          ? `ðŸŸ¡ Verify UTR: ${
+                          ? `🟡 Verify UTR: ${
                               order.razorpay_payment_id || "N/A"
                             }`
                           : order.payment_status === "paid"
-                          ? "ðŸ’³ Paid Online"
-                          : "ðŸ’µ Cash on Gate"}
+                          ? "💳 Paid Online"
+                          : "💵 Cash on Gate"}
                       </span>
                       {order.payment_status === "verifying" && (
                         <button
@@ -1850,8 +1850,8 @@ function NotificationsSection({
                           {payload.title || "New Product"}
                         </p>
                         <p className="text-xs text-slate-500">
-                          â‚¹{(payload.price || 0).toLocaleString()} Â·{" "}
-                          {payload.category} Â· {payload.condition}
+                          ₹{(payload.price || 0).toLocaleString()} ·{" "}
+                          {payload.category} · {payload.condition}
                         </p>
                       </div>
                     ) : (
@@ -1860,8 +1860,8 @@ function NotificationsSection({
                           Order #{(payload.id || "").slice(0, 8).toUpperCase()}
                         </p>
                         <p className="text-xs text-slate-500">
-                          Total: â‚¹
-                          {(payload.total_price || 0).toLocaleString()} Â·
+                          Total: ₹
+                          {(payload.total_price || 0).toLocaleString()} ·
                           Deliver to: {payload.delivery_location || "N/A"}
                         </p>
                       </div>
@@ -2343,7 +2343,7 @@ export default function Admin() {
             const newTotalOrders = (profileData.total_orders || 0) + 1;
             let newBalance = profileData.wallet_balance || 0;
 
-            // Reward â‚¹30 exactly on the 3rd completed order this week (limit once per week)
+            // Reward ₹30 exactly on the 3rd completed order this week (limit once per week)
             if (currentWeeklyCount === 3) {
               newBalance += 30;
               await supabase.from("wallet_transactions").insert({
@@ -2354,7 +2354,7 @@ export default function Admin() {
               });
             }
 
-            // Flavour Factory High Value Reward (â‚¹499+)
+            // Flavour Factory High Value Reward (₹499+)
             // Using base_price instead of total_price so discounts don't void the reward
             const isFlavourFactory =
               orderData.delivery_room
@@ -2377,7 +2377,7 @@ export default function Admin() {
                 user_id: buyerId,
                 amount: 30,
                 type: "reward",
-                description: "Flavour Factory Special Reward (â‚¹499+ Order)",
+                description: "Flavour Factory Special Reward (₹499+ Order)",
               });
             }
 
@@ -2697,8 +2697,8 @@ export default function Admin() {
             disabled={togglingMaintenance}
             title={
               maintenanceMode
-                ? "Maintenance ON â€” click to disable"
-                : "Site is live â€” click to enable maintenance"
+                ? "Maintenance ON — click to disable"
+                : "Site is live — click to enable maintenance"
             }
             className={`relative p-2.5 rounded-full border transition-all ${
               maintenanceMode
