@@ -16,7 +16,7 @@ import {
   Star,
 } from "lucide-react";
 
-// â”€â”€â”€ Animated counter â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Animated counter ────────────────────────────────────────────────────────────
 function Counter({ target, suffix = "" }: { target: number; suffix?: string }) {
   const [count, setCount] = useState(0);
   const ref = useRef<HTMLSpanElement>(null);
@@ -42,7 +42,7 @@ function Counter({ target, suffix = "" }: { target: number; suffix?: string }) {
   );
 }
 
-// â”€â”€â”€ Premium letter-by-letter reveal component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Premium letter-by-letter reveal component ──────────────────────────────────
 function RevealText({
   text,
   delay = 0,
@@ -215,7 +215,7 @@ export default function Index() {
             </motion.div>
           )}
 
-          {/* â”€â”€â”€ MAIN HEADING â”€â”€â”€ */}
+          {/* ─── MAIN HEADING ─── */}
           {showContent && (
             <h1 className="font-bold leading-[1.05] tracking-tighter mb-6 select-none text-white text-5xl sm:text-[7rem] whitespace-nowrap drop-shadow-lg">
               <RevealText text="CU Bazzar" delay={0.4} />

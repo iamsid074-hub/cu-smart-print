@@ -121,7 +121,7 @@ export default function ResetPassword() {
               Password updated!
             </p>
             <p className="text-sm" style={{ color: "rgba(232,222,212,0.4)" }}>
-              Redirecting you to loginâ€¦
+              Redirecting you to login…
             </p>
           </div>
         ) : (

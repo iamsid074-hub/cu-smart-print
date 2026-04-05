@@ -63,7 +63,7 @@ export default function Browse() {
   return (
     <div className="min-h-screen pt-24 pb-32 px-4 sm:px-6 relative text-[#1D1D1F]">
       <div className="max-w-[1600px] mx-auto relative z-10">
-        {/* â”€â”€ Hero Header â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+        {/* ── Hero Header ─────────────────────────────────────── */}
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -93,7 +93,7 @@ export default function Browse() {
             </div>
           </div>
 
-          {/* â”€â”€ Category Pills â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+          {/* ── Category Pills ────────────────────────────────── */}
           <div
             className="flex gap-2 overflow-x-auto pb-6 scrollbar-hide -mx-2 px-2"
             style={{ WebkitOverflowScrolling: "touch" }}
@@ -117,7 +117,7 @@ export default function Browse() {
           </div>
         </motion.div>
 
-        {/* â”€â”€ Content â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+        {/* ── Content ──────────────────────────────────────────── */}
         {loading ? (
           <div className="flex flex-col items-center justify-center py-32 gap-3">
             <Loader2 className="w-8 h-8 animate-spin text-[#007AFF]" />

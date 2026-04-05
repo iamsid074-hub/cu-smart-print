@@ -49,7 +49,7 @@ function getNextOpenTime(): string {
   return "6:00 AM";
 }
 
-// â”€â”€â”€ Closed Screen â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Closed Screen ─────────────────────────────────────────────────────────────
 function ClosedScreen() {
   const itemsOpen = isItemsOpen();
   const foodOpen = isFoodOpen();
@@ -199,7 +199,7 @@ function ClosedScreen() {
   );
 }
 
-// â”€â”€â”€ Maintenance Screen â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Maintenance Screen ─────────────────────────────────────────────────────────
 function MaintenanceScreen() {
   return (
     <div className="min-h-screen flex items-center justify-center p-6 bg-slate-50">
@@ -265,7 +265,7 @@ function MaintenanceScreen() {
   );
 }
 
-// â”€â”€â”€ SiteGate Hook â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── SiteGate Hook ──────────────────────────────────────────────────────────────
 export function useSiteGate() {
   const { isAdmin } = useAuth();
   const [maintenance, setMaintenance] = useState(false);

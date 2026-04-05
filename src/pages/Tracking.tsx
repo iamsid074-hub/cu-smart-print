@@ -22,7 +22,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
 
-// â”€â”€â”€ Detect order type â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Detect order type ──────────────────────────────────────────────────────────
 function getOrderType(order: any): "food" | "item" | "vending" | "cart" {
   const loc = order.delivery_location || "";
   const room = order.delivery_room || "";
@@ -35,7 +35,7 @@ function getOrderType(order: any): "food" | "item" | "vending" | "cart" {
   return "item";
 }
 
-// â”€â”€â”€ Status Steps for Item Orders â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Status Steps for Item Orders ───────────────────────────────────────────────
 const ITEM_STEPS = [
   {
     key: "pending",
@@ -69,7 +69,7 @@ const ITEM_STEPS = [
   },
   {
     key: "completed",
-    label: "Delivered âœ…",
+    label: "Delivered ✅",
     icon: HomeIcon,
     desc: "Your order has been delivered. Enjoy!",
   },
@@ -85,7 +85,7 @@ const ITEM_ORDER: Record<string, number> = {
   cancelled: -1,
 };
 
-// â”€â”€â”€ Status Steps for Food Orders â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Status Steps for Food Orders ───────────────────────────────────────────────
 const FOOD_STEPS = [
   {
     key: "pending",
@@ -107,7 +107,7 @@ const FOOD_STEPS = [
   },
   {
     key: "completed",
-    label: "Delivered âœ…",
+    label: "Delivered ✅",
     icon: HomeIcon,
     desc: "Delivered! Enjoy your food!",
   },
@@ -123,7 +123,7 @@ const FOOD_ORDER: Record<string, number> = {
   cancelled: -1,
 };
 
-// â”€â”€â”€ Parse clean order details â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Parse clean order details ──────────────────────────────────────────────────
 function parseOrderDetails(order: any) {
   const type = getOrderType(order);
   const loc = order.delivery_location || "";
@@ -192,7 +192,7 @@ function parseOrderDetails(order: any) {
   };
 }
 
-// â”€â”€â”€ Delivery Time Logic â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Delivery Time Logic ────────────────────────────────────────────────────────
 function getDeliveryInfo(
   order: any,
   type: "food" | "item"
@@ -406,7 +406,7 @@ export default function Tracking() {
           </motion.div>
         ) : (
           <>
-            {/* â”€â”€ Delivery Status Banner â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+            {/* ── Delivery Status Banner ─────────────────────────────── */}
             {!isCompleted && (
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
@@ -456,7 +456,7 @@ export default function Tracking() {
               </motion.div>
             )}
 
-            {/* â”€â”€ Order Summary Card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+            {/* ── Order Summary Card ───────────────────────────────────── */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -655,7 +655,7 @@ export default function Tracking() {
                 )}
             </motion.div>
 
-            {/* â”€â”€ Progress Timeline â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+            {/* ── Progress Timeline ─────────────────────────────────────── */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -772,7 +772,7 @@ export default function Tracking() {
               </div>
             </motion.div>
 
-            {/* â”€â”€ Cancel Order Action â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+            {/* ── Cancel Order Action ────────────────────────────────────────── */}
             {order &&
               !isCompleted &&
               !isRejected &&
@@ -792,7 +792,7 @@ export default function Tracking() {
                 </motion.div>
               )}
 
-            {/* â”€â”€ Thank You Overlay Panel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+            {/* ── Thank You Overlay Panel ──────────────────────────────── */}
             <AnimatePresence>
               {showThankYou && (
                 <motion.div

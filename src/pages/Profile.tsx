@@ -312,7 +312,7 @@ export default function Profile() {
 
   return (
     <div className="min-h-screen bg-[#F5F5F7] pb-32">
-      {/* â”€â”€ IMMERSIVE HEADER â”€â”€ */}
+      {/* ── IMMERSIVE HEADER ── */}
       <div className="relative h-48 sm:h-64 bg-[#1D1D1F] overflow-hidden">
         {/* Animated Background Gradient */}
         <div className="absolute inset-0 bg-gradient-to-br from-[#007AFF] via-[#5856D6] to-[#AF52DE] opacity-80" />
@@ -355,7 +355,7 @@ export default function Profile() {
       </div>
 
       <div className="max-w-3xl mx-auto px-4 -mt-24 relative z-10">
-        {/* â”€â”€ IDENTITY CARD â”€â”€ */}
+        {/* ── IDENTITY CARD ── */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -567,7 +567,7 @@ export default function Profile() {
           </div>
         </motion.div>
 
-        {/* â”€â”€ TABS â”€â”€ */}
+        {/* ── TABS ── */}
         <div className="mt-12">
           <div className="flex gap-8 border-b border-black/5 px-2 overflow-x-auto hide-scroll">
             {tabs.map((tab) => (

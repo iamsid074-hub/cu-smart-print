@@ -435,15 +435,15 @@ export default function DynamicIsland({
     if (activeOrder) {
       const statusText: Record<string, string> = {
         pending: "📦 Order Placed",
-        seller_accepted: "âœ… Order Confirmed",
-        confirmed: "ðŸ‘¨â€ðŸ³ Preparingâ€¦",
+        seller_accepted: "✅ Order Confirmed",
+        confirmed: "ðŸ‘¨â€ðŸ³ Preparing…",
         picked: "📦 Picked Up",
         delivering: "ðŸšš On the way!",
       };
       pushNotification({
         priority: 1,
         type: "delivery",
-        label: statusText[activeOrder.status] || "📦 Processingâ€¦",
+        label: statusText[activeOrder.status] || "📦 Processing…",
         icon: "truck",
         color: "#30D158",
         expiresAt: 0,
@@ -452,7 +452,7 @@ export default function DynamicIsland({
       pushNotification({
         priority: 1,
         type: "delivery",
-        label: "âœ… Order Delivered!",
+        label: "✅ Order Delivered!",
         icon: "check",
         color: "#30D158",
         expiresAt: Date.now() + 10000,
@@ -540,7 +540,7 @@ export default function DynamicIsland({
   };
   const statusEmoji: Record<string, string> = {
     pending: "📦",
-    seller_accepted: "âœ…",
+    seller_accepted: "✅",
     confirmed: "ðŸ‘¨â€ðŸ³",
     picked: "📦",
     delivering: "ðŸšš",

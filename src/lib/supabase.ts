@@ -1,8 +1,11 @@
-﻿import { createClient } from "@supabase/supabase-js";
+import { createClient } from "@supabase/supabase-js";
 
 const supabaseUrl =
-  import.meta.env.VITE_SUPABASE_URL || "https://placeholder.supabase.co";
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || "placeholder";
+  import.meta.env.VITE_SUPABASE_URL ||
+  "https://xzzjmhfsmdnpzegfzrvo.supabase.co";
+const supabaseAnonKey =
+  import.meta.env.VITE_SUPABASE_ANON_KEY ||
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh6emptaGZzbWRucHplZ2Z6cnZvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE2MDg3MTcsImV4cCI6MjA4NzE4NDcxN30.qLCqiu2x2r9_qvPzMNhpiM4SSpN5ZpENxgbytjUiOUE";
 
 // In production, intercept all Supabase HTTP requests and route them
 // through our Vercel serverless function at /api/sb.

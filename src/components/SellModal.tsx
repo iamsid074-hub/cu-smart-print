@@ -215,7 +215,7 @@ export default function SellModal({ isOpen, onClose }: SellModalProps) {
   const back = () => setStep((s) => Math.max(s - 1, 1));
   const progress = ((step - 1) / (steps.length - 1)) * 100;
 
-  // â”€â”€ Image helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Image helpers ────────────────────────────────────────────────────────────
   const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
   const MAX_SIZE_MB = 5;
 
@@ -283,7 +283,7 @@ export default function SellModal({ isOpen, onClose }: SellModalProps) {
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* â”€â”€ Backdrop â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+          {/* ── Backdrop ──────────────────────────────────────────────────── */}
           <motion.div
             key="sell-backdrop"
             initial={{ opacity: 0 }}
@@ -301,7 +301,7 @@ export default function SellModal({ isOpen, onClose }: SellModalProps) {
             }}
           />
 
-          {/* â”€â”€ Sheet â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+          {/* ── Sheet ─────────────────────────────────────────────────────── */}
           <motion.div
             key="sell-sheet"
             initial={{ y: "100%", opacity: 0 }}
@@ -499,7 +499,7 @@ export default function SellModal({ isOpen, onClose }: SellModalProps) {
             {/* Scrollable content */}
             <div style={{ flex: 1, overflowY: "auto", padding: "20px 20px 0" }}>
               <AnimatePresence mode="wait">
-                {/* â”€â”€ Step 1: Details â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+                {/* ── Step 1: Details ──────────────────────────────────────── */}
                 {step === 1 && (
                   <motion.div
                     key="step1"
@@ -697,7 +697,7 @@ export default function SellModal({ isOpen, onClose }: SellModalProps) {
                   </motion.div>
                 )}
 
-                {/* â”€â”€ Step 2: Photos â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+                {/* ── Step 2: Photos ───────────────────────────────────────── */}
                 {step === 2 && (
                   <motion.div
                     key="step2"
@@ -902,7 +902,7 @@ export default function SellModal({ isOpen, onClose }: SellModalProps) {
                   </motion.div>
                 )}
 
-                {/* â”€â”€ Step 3: Pricing â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+                {/* ── Step 3: Pricing ──────────────────────────────────────── */}
                 {step === 3 && (
                   <motion.div
                     key="step3"
@@ -1151,7 +1151,7 @@ export default function SellModal({ isOpen, onClose }: SellModalProps) {
                   </motion.div>
                 )}
 
-                {/* â”€â”€ Step 4: Location / Seller Details â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+                {/* ── Step 4: Location / Seller Details ────────────────────── */}
                 {step === 4 && (
                   <motion.div
                     key="step4"
@@ -1432,7 +1432,7 @@ export default function SellModal({ isOpen, onClose }: SellModalProps) {
                   </motion.div>
                 )}
 
-                {/* â”€â”€ Step 5: Success â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+                {/* ── Step 5: Success ───────────────────────────────────────── */}
                 {step === 5 && (
                   <motion.div
                     key="step5"
@@ -1476,7 +1476,7 @@ export default function SellModal({ isOpen, onClose }: SellModalProps) {
                         maxWidth: 320,
                       }}
                     >
-                      âœ… Your item has been listed successfully on CU Bazzar.
+                      ✅ Your item has been listed successfully on CU Bazzar.
                     </p>
 
                     <div
@@ -1580,7 +1580,7 @@ export default function SellModal({ isOpen, onClose }: SellModalProps) {
               </AnimatePresence>
             </div>
 
-            {/* â”€â”€ Navigation footer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+            {/* ── Navigation footer ─────────────────────────────────────────── */}
             {step < 5 && (
               <div
                 style={{

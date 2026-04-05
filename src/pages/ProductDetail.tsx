@@ -64,7 +64,7 @@ export default function ProductDetail() {
   );
   const [showUpiModal, setShowUpiModal] = useState(false);
   const [copied, setCopied] = useState(false);
-  // â”€â”€ Favourites (localStorage) â”€â”€
+  // ── Favourites (localStorage) ──
   const favKey = `cubazzar_fav_${id}`;
   const [isFav, setIsFav] = useState(
     () => localStorage.getItem(favKey) === "1"

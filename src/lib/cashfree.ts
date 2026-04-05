@@ -2,7 +2,7 @@
 
 const API_BASE = ""; // same origin (Vercel serverless)
 
-// â”€â”€â”€ Create Cashfree Order â”€â”€â”€
+// ─── Create Cashfree Order ───
 export async function createCashfreeOrder(params: {
   amount: number;
   customer_id: string;
@@ -25,7 +25,7 @@ export async function createCashfreeOrder(params: {
   return data;
 }
 
-// â”€â”€â”€ Verify Payment â”€â”€â”€
+// ─── Verify Payment ───
 export async function verifyCashfreePayment(orderId: string): Promise<{
   verified: boolean;
   order_status: string;
@@ -41,7 +41,7 @@ export async function verifyCashfreePayment(orderId: string): Promise<{
   return data;
 }
 
-// â”€â”€â”€ Load Cashfree JS SDK â”€â”€â”€
+// ─── Load Cashfree JS SDK ───
 let sdkPromise: Promise<any> | null = null;
 
 export function loadCashfreeSDK(): Promise<any> {

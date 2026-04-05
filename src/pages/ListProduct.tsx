@@ -231,7 +231,7 @@ export default function ListProduct() {
   const back = () => setStep((s) => Math.max(s - 1, 1));
   const progress = ((step - 1) / (steps.length - 1)) * 100;
 
-  // â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Helpers ────────────────────────────────────────────────────────────────
   const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
   const MAX_SIZE_MB = 5;
 

@@ -234,7 +234,7 @@ export default function Home() {
     <div className="min-h-screen pt-[8rem] sm:pt-[6.5rem] lg:pt-[10rem] pb-32 relative text-[#1D1D1F]">
       <div className="max-w-[1600px] mx-auto relative px-4"></div>
 
-      {/* â”€â”€â”€ Hero Section â”€â”€â”€ */}
+      {/* ─── Hero Section ─── */}
       <div className="relative px-4 pt-4 pb-8 sm:px-8 sm:pt-8 sm:pb-12 mb-8 mx-2 sm:mx-0 rounded-[2.2rem] sm:rounded-[2.8rem] overflow-hidden">
         <div className="max-w-[1600px] mx-auto relative z-10">
           <motion.div

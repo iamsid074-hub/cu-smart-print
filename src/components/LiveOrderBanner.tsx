@@ -216,7 +216,7 @@ export default function LiveOrderBanner() {
               <span
                 className={`text-[10px] font-black px-2 py-0.5 rounded-full ${config.color} bg-white/60`}
               >
-                Track â†’
+                Track ←’
               </span>
               <button
                 onClick={(e) => {

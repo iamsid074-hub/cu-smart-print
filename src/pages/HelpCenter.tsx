@@ -24,7 +24,7 @@ const fontH: React.CSSProperties = {
   fontFamily: "'Space Grotesk', sans-serif",
 };
 
-/* â”€â”€â”€ FAQ Data â”€â”€â”€ */
+/* ─── FAQ Data ─── */
 const faqSections = [
   {
     title: "Ordering & Delivery",
@@ -155,7 +155,7 @@ export default function HelpCenter() {
           </p>
         </motion.div>
 
-        {/* â”€â”€â”€ Safety Commitment Banner â”€â”€â”€ */}
+        {/* ─── Safety Commitment Banner ─── */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
@@ -188,7 +188,7 @@ export default function HelpCenter() {
           </div>
         </motion.div>
 
-        {/* â”€â”€â”€ Contact Cards â”€â”€â”€ */}
+        {/* ─── Contact Cards ─── */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
@@ -263,7 +263,7 @@ export default function HelpCenter() {
           ))}
         </motion.div>
 
-        {/* â”€â”€â”€ FAQ Section â”€â”€â”€ */}
+        {/* ─── FAQ Section ─── */}
         <div className="mb-10">
           <h2
             className="text-lg sm:text-xl font-bold mb-5 text-slate-900"
@@ -371,7 +371,7 @@ export default function HelpCenter() {
           </AnimatePresence>
         </div>
 
-        {/* â”€â”€â”€ Prohibited Items Notice â”€â”€â”€ */}
+        {/* ─── Prohibited Items Notice ─── */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -412,7 +412,7 @@ export default function HelpCenter() {
           </p>
         </motion.div>
 
-        {/* â”€â”€â”€ Still need help? â”€â”€â”€ */}
+        {/* ─── Still need help? ─── */}
         <div className="text-center py-8">
           <p className="text-sm mb-3 text-slate-500">Still need help?</p>
           <a

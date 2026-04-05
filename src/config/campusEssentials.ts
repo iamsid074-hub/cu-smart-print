@@ -1,10 +1,10 @@
-﻿// â”€â”€â”€ Campus Essentials — Static Product Config â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+﻿// ─── Campus Essentials — Static Product Config ─────────────────────────────────
 // These products are admin-controlled and not user-uploaded.
 // When ordered, seller_id is set to ADMIN_SELLER_ID so orders appear in the Admin panel.
 
 // ⚠️ IMPORTANT: Replace this with your actual Supabase admin user UUID
-// Find it in: Supabase Dashboard â†’ Authentication â†’ Users â†’ copy your admin UUID
-export const ADMIN_SELLER_ID = "7450c873-f51d-469e-a33d-c44ca80beb0c"; // â† REPLACE THIS
+// Find it in: Supabase Dashboard ←’ Authentication ←’ Users ←’ copy your admin UUID
+export const ADMIN_SELLER_ID = "7450c873-f51d-469e-a33d-c44ca80beb0c"; // ← REPLACE THIS
 
 export interface CampusEssentialItem {
   id: string;
@@ -16,7 +16,7 @@ export interface CampusEssentialItem {
 }
 
 export const campusEssentials: CampusEssentialItem[] = [
-  // â”€â”€â”€ Oral Care â”€â”€â”€
+  // ─── Oral Care ───
   {
     id: "ce-toothbrush-electric",
     title: "Oral-B Electric Toothbrush",
@@ -43,7 +43,7 @@ export const campusEssentials: CampusEssentialItem[] = [
     category: "oral care",
   },
 
-  // â”€â”€â”€ Bath & Skin Care â”€â”€â”€
+  // ─── Bath & Skin Care ───
   {
     id: "ce-bodywash",
     title: "Dove Deep Moisture Body Wash",
@@ -78,7 +78,7 @@ export const campusEssentials: CampusEssentialItem[] = [
     category: "skin care",
   },
 
-  // â”€â”€â”€ Hair Care & Grooming â”€â”€â”€
+  // ─── Hair Care & Grooming ───
   {
     id: "ce-shampoo",
     title: "Head & Shoulders Shampoo (340ml)",
@@ -105,7 +105,7 @@ export const campusEssentials: CampusEssentialItem[] = [
     badge: "Premium",
   },
 
-  // â”€â”€â”€ Hygiene & Freshness â”€â”€â”€
+  // ─── Hygiene & Freshness ───
   {
     id: "ce-deodorant",
     title: "Nivea Fresh Active Deodorant",

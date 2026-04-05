@@ -128,7 +128,7 @@ export default function Login() {
             full_name: parts[0],
           });
         }
-        toast.success("Account created successfully! âœ¨");
+        toast.success("Account created successfully! ✨");
       }
       navigate("/home");
     } catch (err: any) {
@@ -153,7 +153,7 @@ export default function Login() {
       className="min-h-screen flex flex-col lg:flex-row overflow-hidden"
       style={{ backgroundColor: "#F8FAFC" }}
     >
-      {/* â”€â”€â”€ Intro Splash â”€â”€â”€ */}
+      {/* ─── Intro Splash ─── */}
       <AnimatePresence>
         {showIntro && (
           <motion.div
@@ -245,7 +245,7 @@ export default function Login() {
         )}
       </AnimatePresence>
 
-      {/* â”€â”€â”€ Left — Branding & Visual â”€â”€â”€ */}
+      {/* ─── Left — Branding & Visual ─── */}
       <div
         className="hidden lg:flex lg:w-[52%] relative items-center justify-center p-12 overflow-hidden"
         style={{ backgroundColor: "#1D1D1F" }}
@@ -384,7 +384,7 @@ export default function Login() {
         </motion.div>
       </div>
 
-      {/* â”€â”€â”€ Right — Login Form â”€â”€â”€ */}
+      {/* ─── Right — Login Form ─── */}
       <div className="flex-1 flex items-center justify-center px-5 py-10 sm:px-8 lg:px-14 relative min-h-screen lg:min-h-0 bg-[#F5F5F7]">
         {/* Mobile glow */}
         <div
@@ -491,7 +491,7 @@ export default function Login() {
             </AnimatePresence>
           </div>
 
-          {/* â”€â”€ FLOW CONTROL â”€â”€ */}
+          {/* ── FLOW CONTROL ── */}
           <AnimatePresence mode="wait">
             {forgotPassword ? (
               <motion.div
@@ -528,7 +528,7 @@ export default function Login() {
                       className="text-sm font-semibold mt-2"
                       style={{ color: "#231942" }}
                     >
-                      â† Back to login
+                      ← Back to login
                     </button>
                   </div>
                 ) : (
@@ -603,7 +603,7 @@ export default function Login() {
                       className="w-full text-sm"
                       style={{ color: "#64748B" }}
                     >
-                      â† Back to login
+                      ← Back to login
                     </button>
                   </form>
                 )}
@@ -616,7 +616,7 @@ export default function Login() {
                 exit={{ opacity: 0, y: -8 }}
                 transition={{ duration: 0.2 }}
               >
-                {/* â”€â”€ Google OAuth Button â”€â”€ */}
+                {/* ── Google OAuth Button ── */}
                 <motion.button
                   type="button"
                   onClick={signInWithGoogle}
@@ -659,7 +659,7 @@ export default function Login() {
                   </span>
                 </motion.button>
 
-                {/* â”€â”€ Separator â”€â”€ */}
+                {/* ── Separator ── */}
                 <div className="relative flex items-center justify-center mb-6">
                   <div className="absolute inset-0 flex items-center">
                     <div className="w-full border-t border-slate-200"></div>

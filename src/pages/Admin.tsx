@@ -41,7 +41,7 @@ import {
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
 
-// â”€â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Types ────────────────────────────────────────────────────────────────────
 type AdminSection =
   | "dashboard"
   | "products"
@@ -115,7 +115,7 @@ interface Stats {
   totalUsers: number;
 }
 
-// â”€â”€â”€ Status Config â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Status Config ─────────────────────────────────────────────────────────────
 const STATUS_CONFIG: Record<
   string,
   { label: string; color: string; bg: string; border: string }
@@ -157,7 +157,7 @@ const STATUS_CONFIG: Record<
     border: "border-orange-400/30",
   },
   completed: {
-    label: "Delivered âœ…",
+    label: "Delivered ✅",
     color: "text-green-400",
     bg: "bg-green-400/15",
     border: "border-green-400/30",
@@ -170,7 +170,7 @@ const STATUS_CONFIG: Record<
   },
 };
 
-// â”€â”€â”€ Stat Card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Stat Card ─────────────────────────────────────────────────────────────────
 function StatCard({
   icon: Icon,
   label,
@@ -205,7 +205,7 @@ function StatCard({
   );
 }
 
-// â”€â”€â”€ Status Badge â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Status Badge ──────────────────────────────────────────────────────────────
 function StatusBadge({ status }: { status: string }) {
   const cfg = STATUS_CONFIG[status] || {
     label: status,
@@ -228,7 +228,7 @@ function StatusBadge({ status }: { status: string }) {
   );
 }
 
-// â”€â”€â”€ Confirm Dialog â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Confirm Dialog ────────────────────────────────────────────────────────────
 function ConfirmDialog({
   message,
   onConfirm,
@@ -279,7 +279,7 @@ function ConfirmDialog({
   );
 }
 
-// â”€â”€â”€ Priority color helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Priority color helpers ─────────────────────────────────────────────────────
 function getPriorityColor(status: string): {
   border: string;
   bg: string;
@@ -335,7 +335,7 @@ function getPriorityColor(status: string): {
   }
 }
 
-// â”€â”€â”€ Dashboard Section (Fast Delivery Dashboard) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Dashboard Section (Fast Delivery Dashboard) ───────────────────────────────
 function DashboardSection({
   stats,
   recentProducts,
@@ -380,7 +380,7 @@ function DashboardSection({
     },
     {
       id: "completed",
-      label: "âœ… Completed",
+      label: "✅ Completed",
       count: allOrders.filter((o) => o.status === "completed").length,
     },
     { id: "all", label: "All", count: allOrders.length },
@@ -463,7 +463,7 @@ function DashboardSection({
       timestamps: { out_for_delivery_at: new Date().toISOString() },
     },
     delivering: {
-      label: "Mark Delivered âœ…",
+      label: "Mark Delivered ✅",
       status: "completed",
       icon: HomeIcon,
       color:
@@ -799,7 +799,7 @@ function DashboardSection({
   );
 }
 
-// â”€â”€â”€ Products Section â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Products Section ──────────────────────────────────────────────────────────
 function ProductsSection({
   products,
   loading,
@@ -918,7 +918,7 @@ function ProductsSection({
   );
 }
 
-// â”€â”€â”€ Helper: detect food order â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Helper: detect food order ─────────────────────────────────────────────────
 const NON_FOOD_KEYWORDS = [
   "practical file",
   "notebook",
@@ -968,7 +968,7 @@ function isFoodOrder(order: Order): boolean {
   return true;
 }
 
-// â”€â”€â”€ Helper: parse order location/room cleanly â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Helper: parse order location/room cleanly ─────────────────────────────────
 function parseOrderDetails(order: Order): {
   hostel: string;
   room: string;
@@ -1051,7 +1051,7 @@ function parseOrderDetails(order: Order): {
   return { hostel, room, items, notes };
 }
 
-// â”€â”€â”€ Filter Bar Component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Filter Bar Component ──────────────────────────────────────────────────────
 function FilterBar({
   active,
   onChange,
@@ -1112,7 +1112,7 @@ function applyFilter(orders: Order[], filter: string): Order[] {
   }
 }
 
-// â”€â”€â”€ Item Orders Section â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Item Orders Section ────────────────────────────────────────────────────────
 function ItemOrdersSection({
   orders,
   loading,
@@ -1179,7 +1179,7 @@ function ItemOrdersSection({
       timestamps: { out_for_delivery_at: new Date().toISOString() },
     },
     delivering: {
-      label: "Mark Delivered âœ…",
+      label: "Mark Delivered ✅",
       status: "completed",
       icon: HomeIcon,
       color:
@@ -1447,7 +1447,7 @@ function ItemOrdersSection({
   );
 }
 
-// â”€â”€â”€ Food Orders Section â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Food Orders Section ────────────────────────────────────────────────────────
 function FoodOrdersSection({
   orders,
   loading,
@@ -1494,7 +1494,7 @@ function FoodOrdersSection({
       timestamps: { out_for_delivery_at: new Date().toISOString() },
     },
     delivering: {
-      label: "Mark Delivered âœ…",
+      label: "Mark Delivered ✅",
       status: "completed",
       icon: HomeIcon,
       color:
@@ -1751,7 +1751,7 @@ function FoodOrdersSection({
   );
 }
 
-// â”€â”€â”€ Notifications Section â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Notifications Section ─────────────────────────────────────────────────────
 function NotificationsSection({
   notifications,
   loading,
@@ -1892,7 +1892,7 @@ function NotificationsSection({
   );
 }
 
-// â”€â”€â”€ Subscriptions Section â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Subscriptions Section ────────────────────────────────────────────────────────
 function SubscriptionsSection({
   orders,
   loading,
@@ -2035,7 +2035,7 @@ function SubscriptionsSection({
   );
 }
 
-// â”€â”€â”€ Main Admin Page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Main Admin Page ───────────────────────────────────────────────────────────
 export default function Admin() {
   const { user, profile, isAdmin, signOut } = useAuth();
   const navigate = useNavigate();
@@ -2074,7 +2074,7 @@ export default function Admin() {
 
   const unreadCount = notifications.filter((n) => !n.is_read).length;
 
-  // â”€â”€ Maintenance mode â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Maintenance mode ──────────────────────────────────────────────────────────
   const [maintenanceMode, setMaintenanceMode] = useState(false);
   const [togglingMaintenance, setTogglingMaintenance] = useState(false);
 
@@ -2102,7 +2102,7 @@ export default function Admin() {
     setTogglingMaintenance(false);
   };
 
-  // â”€â”€ Fetch Stats â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Fetch Stats ──────────────────────────────────────────────────────────────
   const fetchStats = useCallback(async () => {
     setLoadingStats(true);
     const [
@@ -2131,7 +2131,7 @@ export default function Admin() {
     setLoadingStats(false);
   }, []);
 
-  // â”€â”€ Fetch Products â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Fetch Products ───────────────────────────────────────────────────────────
   const fetchProducts = useCallback(async () => {
     setLoadingProducts(true);
     const { data } = await supabase
@@ -2143,7 +2143,7 @@ export default function Admin() {
     setLoadingProducts(false);
   }, []);
 
-  // â”€â”€ Fetch Orders â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Fetch Orders ─────────────────────────────────────────────────────────────
   const fetchOrders = useCallback(async () => {
     setLoadingOrders(true);
     const { data } = await supabase
@@ -2167,7 +2167,7 @@ export default function Admin() {
     setLoadingOrders(false);
   }, []);
 
-  // â”€â”€ Fetch Notifications â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Fetch Notifications ──────────────────────────────────────────────────────
   const fetchNotifications = useCallback(async () => {
     setLoadingNotifs(true);
     const { data } = await supabase
@@ -2179,7 +2179,7 @@ export default function Admin() {
     setLoadingNotifs(false);
   }, []);
 
-  // â”€â”€ Initial Load â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Initial Load ─────────────────────────────────────────────────────────────
   useEffect(() => {
     if (!isAdmin) return;
     fetchStats();
@@ -2189,7 +2189,7 @@ export default function Admin() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAdmin]);
 
-  // â”€â”€ Real-time subscriptions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Real-time subscriptions ──────────────────────────────────────────────────
   useEffect(() => {
     if (!isAdmin) return;
 
@@ -2235,7 +2235,7 @@ export default function Admin() {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAdmin]);
-  // â”€â”€ Audio alert for new orders â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Audio alert for new orders ────────────────────────────────────────────────
   const prevPendingCountRef = useRef<number | null>(null);
   useEffect(() => {
     const pendingCount = orders.filter((o) => o.status === "pending").length;
@@ -2268,7 +2268,7 @@ export default function Admin() {
     prevPendingCountRef.current = pendingCount;
   }, [orders]);
 
-  // â”€â”€ Handlers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Handlers ─────────────────────────────────────────────────────────────────
   const handleDeleteProduct = async (id: string) => {
     setDeletingId(id);
     setConfirmDialog(null);
@@ -2525,7 +2525,7 @@ export default function Admin() {
     setNotifications((prev) => prev.map((n) => ({ ...n, is_read: true })));
   };
 
-  // â”€â”€ Sidebar navigation config â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Sidebar navigation config ────────────────────────────────────────────────
   const navItems: {
     id: AdminSection;
     label: string;
@@ -2607,7 +2607,7 @@ export default function Admin() {
 
   return (
     <div className="min-h-screen bg-slate-50 flex">
-      {/* â”€â”€ Sidebar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── Sidebar ──────────────────────────────────────────────────────────── */}
       {/* Overlay for mobile */}
       <AnimatePresence>
         {sidebarOpen && (
@@ -2657,7 +2657,7 @@ export default function Admin() {
         />
       </aside>
 
-      {/* â”€â”€ Main Content â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── Main Content ─────────────────────────────────────────────────────── */}
       <main className="flex-1 lg:ml-64 min-h-screen w-full max-w-[100vw] overflow-x-hidden">
         {/* Top Bar */}
         <div className="sticky top-0 z-20 bg-white  border-b border-slate-200 px-4 sm:px-6 h-16 flex items-center gap-4">
@@ -2798,7 +2798,7 @@ export default function Admin() {
         </div>
       </main>
 
-      {/* â”€â”€ Confirm Dialog â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── Confirm Dialog ─────────────────────────────────────────────────────── */}
       <AnimatePresence>
         {confirmDialog && (
           <ConfirmDialog
@@ -2812,7 +2812,7 @@ export default function Admin() {
   );
 }
 
-// â”€â”€â”€ Sidebar Content Component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Sidebar Content Component ─────────────────────────────────────────────────
 function SidebarContent({
   navItems,
   section,

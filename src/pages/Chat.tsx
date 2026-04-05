@@ -306,7 +306,7 @@ export default function Chat() {
                   @{activeContact.username || "unknown"}
                 </p>
                 <p className="text-xs text-emerald-500">
-                  {activeContact.online ? "â— Online" : ""}
+                  {activeContact.online ? "● Online" : ""}
                 </p>
               </div>
             </div>

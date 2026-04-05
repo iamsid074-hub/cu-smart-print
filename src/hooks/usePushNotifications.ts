@@ -2,7 +2,7 @@
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
 
-// â”€â”€ VAPID Public Key â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── VAPID Public Key ─────────────────────────────────────────────────────────
 // This is the public key used to subscribe to push notifications.
 // The matching private key must be used in the server-side send function.
 // Generate a new pair at: https://vapidkeys.com
