@@ -65,6 +65,39 @@ const comboItems = [
   },
 ];
 
+const PREMIUM_ASSETS: Record<string, string> = {
+  "margherita": "/food_premium/margherita_pizza_premium_1775370523745.png",
+  "farmhouse": "/food_premium/farmhouse_pizza_premium_1775370523746_1775370547170.png",
+  "peppy paneer": "/food_premium/peppy_paneer_pizza_premium_1775370523749_1775370716628.png",
+  "pizza": "/food_premium/farmhouse_pizza_premium_1775370523746_1775370547170.png",
+  "burger": "/food_premium/aloo_tikki_burger_premium_1775370523748_1775370605814.png",
+  "noodles": "/food_premium/veg_hakka_noodles_premium_1775370523750_1775370740442.png",
+  "pasta": "/food_premium/white_sauce_pasta_premium_1775370523752_1775370810885.png",
+  "vada pav": "/food_premium/mumbai_vada_pav_premium_1775370523753_1775370832865.png",
+  "chole bhature": "/food_premium/chole_bhature_premium_1775370523754_1775370853979.png",
+  "paneer butter": "/food_premium/paneer_butter_masala_premium_1775370523755_1775370876646.png",
+  "dal makhani": "/food_premium/dal_makhani_premium_1775370523756_1775370900599.png",
+  "pav bhaji": "/food_premium/pav_bhaji_premium_1775370523759_1775370968391.png",
+  "shake": "/food_premium/oreo_shake_premium_1775370523760_1775370986248.png",
+  "brownie": "/food_premium/chocolate_brownie_premium_1775370523761_1775371010375.png",
+  "biryani": "/food_premium/veg_dum_biryani_premium_1775370523747_1775370582150.png",
+  "chilli paneer": "/food_premium/chilli_paneer_dry_premium_1775370523751_1775370790498.png",
+};
+
+const getPremiumImage = (name: string, category: string) => {
+  const lowercaseName = name.toLowerCase();
+  for (const [key, value] of Object.entries(PREMIUM_ASSETS)) {
+    if (lowercaseName.includes(key)) return value;
+  }
+  
+  if (category === "pizza") return PREMIUM_ASSETS["pizza"];
+  if (category === "burgers") return PREMIUM_ASSETS["burger"];
+  if (category === "biryani") return PREMIUM_ASSETS["biryani"];
+  if (category === "pasta") return PREMIUM_ASSETS["pasta"];
+  
+  return PREMIUM_ASSETS["chole bhature"]; // Default premium placeholder
+};
+
 export default function HomeSpecialSections({ activeCat, onCatChange }: FoodSectionsProps) {
   const { addItem } = useCart();
   const [addedIds, setAddedIds] = useState<Set<string>>(new Set());
@@ -87,7 +120,7 @@ export default function HomeSpecialSections({ activeCat, onCatChange }: FoodSect
                  id: `all-${shop.id}-${item.name}`, 
                  shopName: shop.name, 
                  rating: (4.1 + Math.random() * 0.8).toFixed(1), 
-                 image: item.image || (item.name.includes("Burger") ? "/banners/burger_special.webp" : item.name.includes("Pizza") ? "/banners/today_special.webp" : "/banners/combo_feast.webp") 
+                 image: getPremiumImage(item.name, "all") 
                });
              }
            });
@@ -109,7 +142,7 @@ export default function HomeSpecialSections({ activeCat, onCatChange }: FoodSect
                 id: `${activeCat}-${shop.id}-${item.name}`,
                 shopName: shop.name,
                 rating: (4.2 + Math.random() * 0.7).toFixed(1),
-                image: item.image || (activeCat === "burgers" ? "/banners/burger_special.webp" : activeCat === "pizza" ? "/banners/cat_pizza.webp" : "/banners/today_special.webp")
+                image: getPremiumImage(item.name, activeCat)
               });
             });
         }
@@ -154,8 +187,6 @@ export default function HomeSpecialSections({ activeCat, onCatChange }: FoodSect
       return next;
     });
   };
-
-  const isListView = activeCat !== "all";
 
   return (
     <section className="mt-6 mb-12">
@@ -219,133 +250,98 @@ export default function HomeSpecialSections({ activeCat, onCatChange }: FoodSect
 
       {activeCat === 'all' && (
         <h3 className="text-sm font-black text-[#1D1D1F]/40 uppercase tracking-[0.15em] mb-6 px-1">
-          Recommended For You
+          Handpicked For You
         </h3>
       )}
 
-      {/* 3. Items View: Horizontal for 'all', Grid for Specific */}
-      <div className={isListView ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500" : "flex overflow-x-auto pb-8 gap-5 px-1 snap-x snap-mandatory scrollbar-hide"}>
+      {/* 3. Luxury Showroom Discovery Catalog */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-16 px-1 mt-12">
         <AnimatePresence mode="popLayout">
           {filteredItems.map((item, i) => (
             <motion.div
               key={item.id}
               layout
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ delay: i * 0.05 }}
-              className={isListView ? "w-full" : "relative min-w-[280px] w-[280px] snap-center pt-8"}
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ delay: i * 0.05, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+              className="relative"
             >
-              {isListView ? (
-                /* ZOMATO/SWIGGY STYLE PREMIUM CARD */
-                <div className="group rounded-[2rem] bg-white border border-[#E5E5E7] overflow-hidden shadow-sm hover:shadow-lg transition-all duration-500 flex flex-col h-full transform hover:-translate-y-1">
-                   {/* Large Image Area */}
-                   <div className="relative h-60 overflow-hidden">
-                      <img src={item.image} alt={item.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
-                      
-                      {/* Top-Left Promo Tag */}
-                      <div className="absolute top-3 left-3 bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-lg border border-white/10 shadow-lg">
-                         <span className="text-[10px] font-black text-white uppercase tracking-wider">{item.name.split(' ')[0]} Special • ₹{item.price}</span>
-                      </div>
-
-                      {/* Bottom-Center Pagination Dots (Visual Only) */}
-                      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1 z-10">
-                         {[1, 2, 3, 4, 5].map((d) => (
-                           <div key={d} className={`w-1 h-1 rounded-full ${d === 1 ? 'bg-white' : 'bg-white/40'}`} />
-                         ))}
-                      </div>
-                   </div>
-
-                   {/* Content Area - Dish-First Info */}
-                   <div className="p-4 flex flex-col flex-grow">
-                      {/* Product Row: Name + Rating */}
-                      <div className="flex items-center justify-between gap-2 mb-0.5">
-                         <h4 className="text-[17px] font-black text-[#1D1D1F] truncate group-hover:text-[#007AFF] transition-colors">{item.name}</h4>
-                         <div className="flex items-center gap-1 bg-[#267E3E] px-1.5 py-0.5 rounded-md shadow-sm border border-black/5 flex-shrink-0">
-                            <span className="text-[11px] font-black text-white">{item.rating}</span>
-                            <Star className="w-2.5 h-2.5 text-white fill-white" />
-                         </div>
-                      </div>
-
-                      {/* Brand Row */}
-                      <p className="text-[13px] font-bold text-[#8E8E93] truncate mb-2.5">{item.shop || item.shopName}</p>
-
-                      {/* Delivery Row: Time | Distance - CAMPUS SCALE */}
-                      <div className="flex items-center gap-2 text-[12px] font-bold text-[#48484A] opacity-70 mb-3 pb-3 border-b border-[#E5E5E7]">
-                         <Clock className="w-3.5 h-3.5" />
-                         <span>{15 + Math.floor(Math.random() * 5)}-{25 + Math.floor(Math.random() * 5)} mins</span>
-                         <span className="opacity-40">|</span>
-                         <span>{(0.2 + Math.random() * 0.6).toFixed(1)} km</span>
-                      </div>
-
-                      {/* Offer Row */}
-                      <div className="flex items-center gap-1.5 mb-3">
-                         <CheckCircle2 className="w-3.5 h-3.5 text-[#007AFF]" />
-                         <span className="text-[11px] font-black text-[#007AFF] uppercase tracking-wider">Flat ₹50 OFF above ₹199</span>
-                      </div>
-
-                      {/* Veg Indicator Badge - ONLY FOR PUNJABI RASOI */}
-                      {(item.shop === "Punjabi Rasoi" || item.shopName === "Punjabi Rasoi") && (
-                        <div className="flex items-center gap-1.5 mb-4 px-2 py-1 bg-[#F2FBF4] rounded-lg border border-[#34C759]/10 w-fit">
-                           <Leaf className="w-3 h-3 text-[#34C759]" />
-                           <span className="text-[9px] font-black uppercase text-[#34C759] tracking-widest">Pure Veg restaurant</span>
-                        </div>
-                      )}
-                      
-                      <button
-                        onClick={() => handleAdd(item)}
-                        className={`mt-auto h-11 w-full rounded-[1rem] text-[12px] font-black uppercase tracking-widest transition-all duration-300 flex items-center justify-center gap-2 ${
-                           addedIds.has(String(item.id)) 
-                           ? "bg-[#34C759] text-white shadow-lg scale-95" 
-                           : "bg-[#1D1D1F] text-white hover:bg-black ios-shadow active:scale-95"
-                        }`}
-                      >
-                        {addedIds.has(String(item.id)) ? "Done" : "Add to Order"}
-                      </button>
-                   </div>
-                </div>
-              ) : (
-                /* STANDARD HORIZONTAL DISCOVERY CARD */
-                <>
-                  <div className="absolute top-0 right-4 z-20 w-24 h-24 pointer-events-none group-hover:scale-105 transition-transform duration-300">
-                    <div className="relative w-full h-full rounded-[2rem] overflow-hidden border-[3px] border-white shadow-xl bg-white">
-                       <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+              <div className="group rounded-[2.5rem] bg-white border border-[#E5E5E7] shadow-[0_10px_30px_-10px_rgba(0,0,0,0.08)] hover:shadow-[0_20px_50px_-15px_rgba(0,0,0,0.12)] transition-all duration-700 flex flex-col h-full pt-20 pb-6 px-6">
+                 
+                 {/* Floating Plate Image - The LUXURY HERO */}
+                 <div className="absolute -top-14 left-1/2 -translate-x-1/2 w-48 h-48 z-20 pointer-events-none">
+                    <div className="relative w-full h-full">
+                       {/* Layered Shadows for Depth */}
+                       <div className="absolute inset-4 rounded-full bg-black/30 blur-2xl translate-y-8" />
+                       <img 
+                          src={item.image} 
+                          alt={item.name} 
+                          className="w-full h-full object-cover rounded-full border-4 border-white shadow-2xl transition-transform duration-700 group-hover:scale-110 group-hover:-rotate-3" 
+                       />
+                       
                        {item.rating && (
-                         <div className="absolute bottom-1 right-1 bg-white/90 backdrop-blur-md px-1.5 py-0.5 rounded-lg shadow-sm flex items-center gap-0.5 border border-black/5">
-                            <Star className="w-2.5 h-2.5 text-amber-500 fill-amber-500" />
-                            <span className="text-[9px] font-black">{item.rating}</span>
+                         <div className="absolute bottom-2 right-2 bg-white/90 backdrop-blur-md px-2 py-1 rounded-xl shadow-lg border border-black/5 flex items-center gap-1">
+                            <Star className="w-3 h-3 text-amber-500 fill-amber-500" />
+                            <span className="text-[11px] font-black">{item.rating}</span>
                          </div>
                        )}
                     </div>
-                  </div>
+                 </div>
 
-                  <div className="rounded-[2.2rem] bg-white border border-[#E5E5E7] p-5 pt-6 flex flex-col justify-between shadow-sm min-h-[150px] relative overflow-hidden group">
-                     <div className="absolute top-0 left-0 w-1.5 h-full bg-[#34C759]/20" />
-                     <div className="max-w-[170px]">
-                        <h4 className="text-[15px] font-black text-[#1D1D1F] leading-tight line-clamp-2 mb-1">{item.name}</h4>
-                        <div className="flex items-center gap-1.5">
-                           <div className="w-1.5 h-1.5 rounded-full bg-[#34C759]" />
-                           <p className="text-[10px] font-black uppercase tracking-widest text-[#8E8E93] truncate">{item.shop || item.shopName}</p>
-                        </div>
-                     </div>
-                     <div className="flex items-center justify-between mt-auto">
-                        <div className="flex flex-col">
-                           <span className="text-[16px] font-black text-[#1D1D1F]">₹{item.price}</span>
-                        </div>
-                        <button
-                          onClick={() => handleAdd(item)}
-                          className={`h-9 px-6 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all duration-300 flex items-center justify-center gap-2 ${
-                             addedIds.has(String(item.id)) 
-                             ? "bg-green-500 text-white shadow-lg" 
-                             : "bg-[#1D1D1F] text-white hover:bg-black active:scale-95"
-                          }`}
-                        >
-                          {addedIds.has(String(item.id)) ? <CheckCircle2 className="w-4 h-4" /> : "Add"}
-                        </button>
-                     </div>
-                  </div>
-                </>
-              )}
+                 {/* Premium Card Content */}
+                 <div className="flex flex-col flex-grow text-center mt-4">
+                    {/* Brand/Shop Name */}
+                    <div className="flex items-center justify-center gap-1.5 mb-2">
+                       <div className="w-1.5 h-1.5 rounded-full bg-[#34C759]" />
+                       <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#8E8E93] truncate">{item.shop || item.shopName}</p>
+                    </div>
+
+                    {/* Dish Name */}
+                    <h4 className="text-[19px] font-black text-[#1D1D1F] leading-[1.2] mb-3 group-hover:text-[#007AFF] transition-colors line-clamp-2 min-h-[46px] flex items-center justify-center">
+                       {item.name}
+                    </h4>
+
+                    {/* Meta Info Row */}
+                    <div className="flex items-center justify-center gap-4 text-[12px] font-bold text-[#8E8E93] mb-4 pb-4 border-b border-[#F2F2F7]">
+                       <div className="flex items-center gap-1">
+                          <Clock className="w-3.5 h-3.5" />
+                          <span>{15 + Math.floor(Math.random() * 5)}-{25 + Math.floor(Math.random() * 5)}m</span>
+                       </div>
+                       <div className="flex items-center gap-1">
+                          <span className="opacity-40">•</span>
+                          <span>{(0.2 + Math.random() * 0.6).toFixed(1)} km</span>
+                       </div>
+                    </div>
+
+                    {/* Special Offer Badge */}
+                    <div className="flex items-center justify-center gap-1.5 mb-6 px-3 py-1.5 bg-[#007AFF]/5 rounded-full w-fit mx-auto border border-[#007AFF]/10">
+                       <CheckCircle2 className="w-3.5 h-3.5 text-[#007AFF]" />
+                       <span className="text-[10px] font-black text-[#007AFF] uppercase tracking-wider">Flat ₹50 OFF</span>
+                    </div>
+
+                    {/* Action Row */}
+                    <div className="flex items-center justify-between mt-auto pt-2">
+                       <div className="flex flex-col items-start leading-none">
+                          <span className="text-[10px] font-bold text-[#8E8E93] uppercase tracking-wider mb-1">Price</span>
+                          <span className="text-[20px] font-black text-[#1D1D1F]">₹{item.price}</span>
+                       </div>
+                       <button
+                         onClick={() => handleAdd(item)}
+                         className={`h-11 px-8 rounded-2xl text-[12px] font-black uppercase tracking-[0.1em] transition-all duration-500 overflow-hidden relative ${
+                            addedIds.has(String(item.id)) 
+                            ? "bg-[#34C759] text-white shadow-lg scale-95" 
+                            : "bg-[#1D1D1F] text-white hover:bg-black ios-shadow active:scale-95 group-hover:translate-x-1"
+                         }`}
+                       >
+                         {addedIds.has(String(item.id)) ? "Added" : "Add +"}
+                       </button>
+                    </div>
+                 </div>
+
+                 {/* Premium Glass Shine Effect */}
+                 <div className="absolute inset-0 rounded-[2.5rem] bg-gradient-to-br from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+              </div>
             </motion.div>
           ))}
         </AnimatePresence>
