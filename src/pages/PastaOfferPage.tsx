@@ -1,6 +1,13 @@
 ﻿import { useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, Plus, CheckCircle2, Flame, Store, ShoppingCart } from "lucide-react";
+import {
+  ArrowLeft,
+  Plus,
+  CheckCircle2,
+  Flame,
+  Store,
+  ShoppingCart,
+} from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
@@ -42,7 +49,7 @@ export default function PastaOfferPage() {
   const navigate = useNavigate();
   const [addedIds, setAddedIds] = useState<Set<string>>(new Set());
 
-  const handleAdd = (item: typeof pastaItems[0]) => {
+  const handleAdd = (item: (typeof pastaItems)[0]) => {
     if (!user) {
       toast.error("Please login first");
       navigate("/login");
@@ -59,9 +66,9 @@ export default function PastaOfferPage() {
       description: "Go to cart to place your order",
       action: { label: "View Cart", onClick: () => navigate("/cart") },
     });
-    setAddedIds(prev => new Set(prev).add(item.id));
+    setAddedIds((prev) => new Set(prev).add(item.id));
     setTimeout(() => {
-      setAddedIds(prev => {
+      setAddedIds((prev) => {
         const next = new Set(prev);
         next.delete(item.id);
         return next;
@@ -70,24 +77,47 @@ export default function PastaOfferPage() {
   };
 
   return (
-    <div className="min-h-screen relative overflow-hidden"
-      style={{ background: "linear-gradient(170deg, #0d0503 0%, #1a0c06 25%, #231108 50%, #1a0a04 100%)" }}
+    <div
+      className="min-h-screen relative overflow-hidden"
+      style={{
+        background:
+          "linear-gradient(170deg, #0d0503 0%, #1a0c06 25%, #231108 50%, #1a0a04 100%)",
+      }}
     >
       {/* Background Grain */}
-      <div className="absolute inset-0 pointer-events-none opacity-[0.03]"
-        style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'n\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.85\' numOctaves=\'4\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23n)\'/%3E%3C/svg%3E")' }} />
+      <div
+        className="absolute inset-0 pointer-events-none opacity-[0.03]"
+        style={{
+          backgroundImage:
+            "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")",
+        }}
+      />
 
       {/* Warm ambient glows */}
-      <div className="absolute top-0 left-1/4 w-96 h-96 rounded-full pointer-events-none"
-        style={{ background: "radial-gradient(circle, rgba(255,120,30,0.12) 0%, transparent 70%)" }} />
-      <div className="absolute top-1/3 right-0 w-80 h-80 rounded-full pointer-events-none"
-        style={{ background: "radial-gradient(circle, rgba(255,60,30,0.08) 0%, transparent 70%)" }} />
-      <div className="absolute bottom-0 left-0 w-72 h-72 rounded-full pointer-events-none"
-        style={{ background: "radial-gradient(circle, rgba(255,180,50,0.06) 0%, transparent 70%)" }} />
+      <div
+        className="absolute top-0 left-1/4 w-96 h-96 rounded-full pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(circle, rgba(255,120,30,0.12) 0%, transparent 70%)",
+        }}
+      />
+      <div
+        className="absolute top-1/3 right-0 w-80 h-80 rounded-full pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(circle, rgba(255,60,30,0.08) 0%, transparent 70%)",
+        }}
+      />
+      <div
+        className="absolute bottom-0 left-0 w-72 h-72 rounded-full pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(circle, rgba(255,180,50,0.06) 0%, transparent 70%)",
+        }}
+      />
 
       <div className="relative z-10 pt-[5.5rem] pb-32 px-4 sm:px-6">
         <div className="max-w-3xl mx-auto">
-
           {/* Back Navigation */}
           <motion.div
             initial={{ opacity: 0, x: -10 }}
@@ -119,14 +149,18 @@ export default function PastaOfferPage() {
             >
               <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-orange-400/20 bg-orange-500/5 backdrop-blur-sm">
                 <Store className="w-3.5 h-3.5 text-orange-400" />
-                <span className="text-xs font-bold text-orange-300/80 uppercase tracking-wider">Flavour Factory</span>
+                <span className="text-xs font-bold text-orange-300/80 uppercase tracking-wider">
+                  Flavour Factory
+                </span>
               </div>
             </motion.div>
 
             {/* Headline */}
-            <h1 className="text-3xl sm:text-5xl md:text-6xl font-black tracking-tight mb-3 sm:mb-4"
+            <h1
+              className="text-3xl sm:text-5xl md:text-6xl font-black tracking-tight mb-3 sm:mb-4"
               style={{
-                backgroundImage: "linear-gradient(135deg, #FFD700, #FF8C00, #FFB347, #FFD700)",
+                backgroundImage:
+                  "linear-gradient(135deg, #FFD700, #FF8C00, #FFB347, #FFD700)",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
               }}
@@ -134,12 +168,18 @@ export default function PastaOfferPage() {
               Pasta @ {"₹"}99
             </h1>
             <p className="text-sm sm:text-base text-orange-200/50 font-medium max-w-md mx-auto leading-relaxed">
-              Indulge in our signature pasta collection. Handcrafted with love, served with passion.
+              Indulge in our signature pasta collection. Handcrafted with love,
+              served with passion.
             </p>
 
             {/* Decorative line */}
-            <div className="w-20 h-px mx-auto mt-5 rounded-full"
-              style={{ background: "linear-gradient(90deg, transparent, rgba(255,140,0,0.5), transparent)" }} />
+            <div
+              className="w-20 h-px mx-auto mt-5 rounded-full"
+              style={{
+                background:
+                  "linear-gradient(90deg, transparent, rgba(255,140,0,0.5), transparent)",
+              }}
+            />
           </motion.div>
 
           {/* Pasta Images Fan */}
@@ -162,7 +202,11 @@ export default function PastaOfferPage() {
                   zIndex: i === 1 ? 5 : 2,
                 }}
               >
-                <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                <img
+                  src={item.image}
+                  alt={item.name}
+                  className="w-full h-full object-cover"
+                />
               </motion.div>
             ))}
           </motion.div>
@@ -175,7 +219,9 @@ export default function PastaOfferPage() {
             className="flex items-center gap-3 mb-6"
           >
             <Flame className="w-5 h-5 text-orange-500" />
-            <h2 className="text-lg sm:text-xl font-black text-white">Choose Your Flavour</h2>
+            <h2 className="text-lg sm:text-xl font-black text-white">
+              Choose Your Flavour
+            </h2>
           </motion.div>
 
           {/* Pasta Cards */}
@@ -201,8 +247,10 @@ export default function PastaOfferPage() {
 
                     {/* Badge */}
                     <div className="absolute top-3 left-3">
-                      <span className="px-2.5 py-1 rounded-full text-[10px] font-black text-white uppercase tracking-wider"
-                        style={{ background: `${item.accent}cc` }}>
+                      <span
+                        className="px-2.5 py-1 rounded-full text-[10px] font-black text-white uppercase tracking-wider"
+                        style={{ background: `${item.accent}cc` }}
+                      >
                         {item.badge}
                       </span>
                     </div>
@@ -211,13 +259,24 @@ export default function PastaOfferPage() {
                   {/* Content */}
                   <div className="flex-1 p-5 sm:p-6 flex flex-col justify-between">
                     <div>
-                      <h3 className="text-lg sm:text-xl font-black text-white mb-1.5">{item.name}</h3>
-                      <p className="text-xs sm:text-sm text-white/40 leading-relaxed mb-4">{item.desc}</p>
+                      <h3 className="text-lg sm:text-xl font-black text-white mb-1.5">
+                        {item.name}
+                      </h3>
+                      <p className="text-xs sm:text-sm text-white/40 leading-relaxed mb-4">
+                        {item.desc}
+                      </p>
                     </div>
                     <div className="flex items-center justify-between gap-4">
                       <div className="flex items-baseline gap-1.5">
-                        <span className="text-2xl sm:text-3xl font-black" style={{ color: item.accent }}>{"₹"}99</span>
-                        <span className="text-sm text-white/25 line-through font-bold">{"₹"}110</span>
+                        <span
+                          className="text-2xl sm:text-3xl font-black"
+                          style={{ color: item.accent }}
+                        >
+                          {"₹"}99
+                        </span>
+                        <span className="text-sm text-white/25 line-through font-bold">
+                          {"₹"}110
+                        </span>
                       </div>
                       <motion.button
                         whileTap={{ scale: 0.93 }}
@@ -234,9 +293,13 @@ export default function PastaOfferPage() {
                         }}
                       >
                         {addedIds.has(item.id) ? (
-                          <><CheckCircle2 className="w-4 h-4" /> Added!</>
+                          <>
+                            <CheckCircle2 className="w-4 h-4" /> Added!
+                          </>
                         ) : (
-                          <><Plus className="w-4 h-4" /> Add to Cart</>
+                          <>
+                            <Plus className="w-4 h-4" /> Add to Cart
+                          </>
                         )}
                       </motion.button>
                     </div>
@@ -264,7 +327,8 @@ export default function PastaOfferPage() {
               <ShoppingCart className="w-4 h-4" /> Go to Cart
             </Link>
             <p className="text-[10px] text-orange-300/30 mt-3 font-medium">
-              Free delivery on orders above {"₹"}200 {"•"} Delivery in 25-35 mins
+              Free delivery on orders above {"₹"}200 {"•"} Delivery in 25-35
+              mins
             </p>
           </motion.div>
         </div>

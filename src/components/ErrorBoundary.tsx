@@ -45,16 +45,16 @@ export class ErrorBoundary extends Component<Props, State> {
           <div className="w-20 h-20 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-6 shadow-2xl">
             <AlertTriangle className="w-10 h-10 text-[#FF6B6B]" />
           </div>
-          
+
           <h1 className="text-2xl font-bold text-white mb-3">
             Oops! Something went wrong
           </h1>
-          
+
           <p className="text-white/60 text-sm max-w-sm mb-10 leading-relaxed">
-            We encountered an unexpected error while loading this page. 
-            This usually happens due to a network glitch.
+            We encountered an unexpected error while loading this page. This
+            usually happens due to a network glitch.
           </p>
-          
+
           <button
             onClick={this.handleReset}
             className="flex items-center gap-2 px-6 py-3.5 bg-white/10 hover:bg-white/15 active:scale-95 transition-all rounded-xl border border-white/20 text-white font-medium shadow-lg"

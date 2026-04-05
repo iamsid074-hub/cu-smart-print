@@ -3,7 +3,11 @@
 /**
  * Normalizes a string by converting to lowercase and removing special characters.
  */
-const normalize = (str: string) => str.toLowerCase().replace(/[^a-z0-9 ]/g, "").trim();
+const normalize = (str: string) =>
+  str
+    .toLowerCase()
+    .replace(/[^a-z0-9 ]/g, "")
+    .trim();
 
 /**
  * Simple Levenshtein distance algorithm for fuzzy matching.
@@ -44,7 +48,9 @@ function getLevenshteinDistance(a: string, b: string): number {
 /**
  * Get suggestions for food items based on user input.
  */
-export function getFoodSuggestions(input: string): { name: string; price: number; shop: string }[] {
+export function getFoodSuggestions(
+  input: string
+): { name: string; price: number; shop: string }[] {
   if (!input.trim()) return [];
 
   const search = normalize(input);
@@ -90,7 +96,7 @@ export function estimatePrice(input: string): number {
     // Return average of top 3 suggestions or just the first one
     return suggestions[0].price;
   }
-  
+
   // Default fallback prices based on keywords
   const normalized = normalize(input);
   if (normalized.includes("burger")) return 60;
@@ -102,15 +108,24 @@ export function estimatePrice(input: string): number {
   if (normalized.includes("pasta")) return 80;
   if (normalized.includes("roll")) return 70;
   if (normalized.includes("fried rice")) return 80;
-  
+
   return 80; // Generic fallback
 }
 
-export const QUICK_TAGS = ["Maggi", "Burger", "Sandwich", "Cold Coffee", "Momos", "Fries", "Pasta", "Roll"];
+export const QUICK_TAGS = [
+  "Maggi",
+  "Burger",
+  "Sandwich",
+  "Cold Coffee",
+  "Momos",
+  "Fries",
+  "Pasta",
+  "Roll",
+];
 
 export const POPULAR_FOODS = [
   { name: "Masala Maggi", price: 30, shop: "Insta Food" },
   { name: "Veg Burger", price: 50, shop: "Punjabi Rasoi" },
   { name: "Cold Coffee", price: 50, shop: "Insta Food" },
-  { name: "Chicken Overloaded Pizza", price: 180, shop: "Parantha House" }
+  { name: "Chicken Overloaded Pizza", price: 180, shop: "Parantha House" },
 ];

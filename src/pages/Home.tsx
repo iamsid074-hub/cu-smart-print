@@ -278,7 +278,6 @@ export default function Home() {
                 width: "calc(50% - 9px)",
               }}
             />
-            {/* Meal Tab */}
             <button
               id="home-mode-meal"
               onClick={() => setHomeMode("meal")}
@@ -286,10 +285,8 @@ export default function Home() {
                 homeMode === "meal" ? "text-[#1D1D1F]" : "text-[#8E8E93]"
               }`}
             >
-              <span className="text-[16px]">🍽️</span>
               Meal
             </button>
-            {/* Vending Tab */}
             <button
               id="home-mode-vending"
               onClick={() => setHomeMode("vending")}
@@ -297,7 +294,6 @@ export default function Home() {
                 homeMode === "vending" ? "text-[#1D1D1F]" : "text-[#8E8E93]"
               }`}
             >
-              <span className="text-[16px]">🤖</span>
               Vending
             </button>
           </div>

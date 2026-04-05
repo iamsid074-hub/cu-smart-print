@@ -4,7 +4,18 @@ import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
-import { CheckCircle2, ShoppingBag, Tag, Package, Truck, CheckCircle, Clock, Home as HomeIcon, XCircle, Wallet } from "lucide-react";
+import {
+  CheckCircle2,
+  ShoppingBag,
+  Tag,
+  Package,
+  Truck,
+  CheckCircle,
+  Clock,
+  Home as HomeIcon,
+  XCircle,
+  Wallet,
+} from "lucide-react";
 
 // Fluid, bouncy spring animation mimicking Apple's Dynamic Island
 const springTransition = {
@@ -14,18 +25,67 @@ const springTransition = {
   mass: 1.2,
 };
 
-type IslandState = "default" | "browsing" | "explore" | "cart" | "profile" | "wallet" | "added" | "updated" | "grocery" | "sell" | "tracking";
+type IslandState =
+  | "default"
+  | "browsing"
+  | "explore"
+  | "cart"
+  | "profile"
+  | "wallet"
+  | "added"
+  | "updated"
+  | "grocery"
+  | "sell"
+  | "tracking";
 
 // â”€â”€ Tracking status configuration â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-const TRACKING_STATUSES: Record<string, { label: string; icon: typeof Package; color: string; stepIndex: number }> = {
-  pending:          { label: "Order Placed",       icon: Package,     color: "#F59E0B", stepIndex: 0 },
-  seller_accepted:  { label: "Confirmed",          icon: CheckCircle, color: "#10B981", stepIndex: 1 },
-  confirmed:        { label: "Preparing",          icon: Clock,       color: "#3B82F6", stepIndex: 2 },
-  picked:           { label: "Picked Up",          icon: Package,     color: "#8B5CF6", stepIndex: 3 },
-  delivering:       { label: "Out for Delivery",   icon: Truck,       color: "#10B981", stepIndex: 4 },
-  completed:        { label: "Delivered!",          icon: HomeIcon,    color: "#10B981", stepIndex: 5 },
-  cancelled:        { label: "Cancelled",           icon: XCircle,     color: "#EF4444", stepIndex: -1 },
-  seller_rejected:  { label: "Rejected",            icon: XCircle,     color: "#EF4444", stepIndex: -1 },
+const TRACKING_STATUSES: Record<
+  string,
+  { label: string; icon: typeof Package; color: string; stepIndex: number }
+> = {
+  pending: {
+    label: "Order Placed",
+    icon: Package,
+    color: "#F59E0B",
+    stepIndex: 0,
+  },
+  seller_accepted: {
+    label: "Confirmed",
+    icon: CheckCircle,
+    color: "#10B981",
+    stepIndex: 1,
+  },
+  confirmed: {
+    label: "Preparing",
+    icon: Clock,
+    color: "#3B82F6",
+    stepIndex: 2,
+  },
+  picked: { label: "Picked Up", icon: Package, color: "#8B5CF6", stepIndex: 3 },
+  delivering: {
+    label: "Out for Delivery",
+    icon: Truck,
+    color: "#10B981",
+    stepIndex: 4,
+  },
+  completed: {
+    label: "Delivered!",
+    icon: HomeIcon,
+    color: "#10B981",
+    stepIndex: 5,
+  },
+  cancelled: {
+    label: "Cancelled",
+    icon: XCircle,
+    color: "#EF4444",
+    stepIndex: -1,
+  },
+  seller_rejected: {
+    label: "Rejected",
+    icon: XCircle,
+    color: "#EF4444",
+    stepIndex: -1,
+  },
 };
 
 const STEP_KEYS = ["pending", "confirmed", "picked", "delivering", "completed"];
@@ -41,25 +101,41 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
   const { user } = useAuth();
 
   const [islandState, setIslandState] = useState<IslandState>("default");
-  const [prevItemsCount, setPrevItemsCount] = useState(items.reduce((acc, item) => acc + item.quantity, 0));
-  const [latestAddedItem, setLatestAddedItem] = useState<{ name: string, price: number } | null>(null);
+  const [prevItemsCount, setPrevItemsCount] = useState(
+    items.reduce((acc, item) => acc + item.quantity, 0)
+  );
+  const [latestAddedItem, setLatestAddedItem] = useState<{
+    name: string;
+    price: number;
+  } | null>(null);
 
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // â”€â”€ Tracking state â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const [trackingOrder, setTrackingOrder] = useState<any>(null);
-  const [prevTrackingStatus, setPrevTrackingStatus] = useState<string | null>(null);
+  const [prevTrackingStatus, setPrevTrackingStatus] = useState<string | null>(
+    null
+  );
   const [statusAnimating, setStatusAnimating] = useState(false);
 
   // Helper to set state and auto-dismiss after 2 seconds
-  const triggerState = (newState: IslandState, data?: { name: string, price: number }) => {
+  const triggerState = (
+    newState: IslandState,
+    data?: { name: string; price: number }
+  ) => {
     if (data) setLatestAddedItem(data);
     setIslandState(newState);
 
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
 
     // "explore", "tracking", "grocery", "sell", "wallet" states persist â€” no auto-dismiss
-    if (newState !== "explore" && newState !== "tracking" && newState !== "grocery" && newState !== "sell" && newState !== "wallet") {
+    if (
+      newState !== "explore" &&
+      newState !== "tracking" &&
+      newState !== "grocery" &&
+      newState !== "sell" &&
+      newState !== "wallet"
+    ) {
       timeoutRef.current = setTimeout(() => {
         if (location.pathname.startsWith("/browse")) {
           setIslandState("explore");
@@ -67,7 +143,10 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
           setIslandState("tracking");
         } else if (location.pathname.startsWith("/grocery")) {
           setIslandState("grocery");
-        } else if (location.pathname.startsWith("/sell") || location.pathname.startsWith("/list")) {
+        } else if (
+          location.pathname.startsWith("/sell") ||
+          location.pathname.startsWith("/list")
+        ) {
           setIslandState("sell");
         } else if (location.pathname.startsWith("/wallet")) {
           setIslandState("wallet");
@@ -115,12 +194,17 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
 
     let query = supabase
       .from("orders")
-      .select("id, status, delivery_location, delivery_room, total_price, created_at, products(title, image_url)")
+      .select(
+        "id, status, delivery_location, delivery_room, total_price, created_at, products(title, image_url)"
+      );
 
     if (orderId) {
       query = query.eq("id", orderId);
     } else {
-      query = query.eq("buyer_id", user.id).order("created_at", { ascending: false }).limit(1);
+      query = query
+        .eq("buyer_id", user.id)
+        .order("created_at", { ascending: false })
+        .limit(1);
     }
 
     const { data } = await query.single();
@@ -136,15 +220,23 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
 
   // Real-time subscription for tracking order
   useEffect(() => {
-    if (!trackingOrder?.id || !location.pathname.startsWith("/tracking")) return;
+    if (!trackingOrder?.id || !location.pathname.startsWith("/tracking"))
+      return;
 
-    const channel = supabase.channel(`top_di_tracking_${trackingOrder.id}`)
-      .on("postgres_changes", {
-        event: "UPDATE", schema: "public", table: "orders",
-        filter: `id=eq.${trackingOrder.id}`
-      }, (payload) => {
-        setTrackingOrder((prev: any) => ({ ...prev, ...payload.new }));
-      })
+    const channel = supabase
+      .channel(`top_di_tracking_${trackingOrder.id}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "orders",
+          filter: `id=eq.${trackingOrder.id}`,
+        },
+        (payload) => {
+          setTrackingOrder((prev: any) => ({ ...prev, ...payload.new }));
+        }
+      )
       .subscribe();
 
     // Polling fallback every 15s
@@ -165,8 +257,6 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
     }
     setPrevTrackingStatus(trackingOrder.status);
   }, [trackingOrder?.status]);
-
-
 
   // â”€â”€ Cart item tracking â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   useEffect(() => {
@@ -192,7 +282,11 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
   }, []);
 
   const handleIslandClick = () => {
-    if (islandState === "added" || islandState === "updated" || islandState === "cart") {
+    if (
+      islandState === "added" ||
+      islandState === "updated" ||
+      islandState === "cart"
+    ) {
       navigate("/cart");
     } else if (islandState === "tracking") {
       navigate("/tracking");
@@ -200,8 +294,13 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
   };
 
   // â”€â”€ Tracking status helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-  const trackingStatus = trackingOrder ? (TRACKING_STATUSES[trackingOrder.status] || TRACKING_STATUSES.pending) : null;
-  const isTrackingFailed = trackingOrder && (trackingOrder.status === "cancelled" || trackingOrder.status === "seller_rejected");
+  const trackingStatus = trackingOrder
+    ? TRACKING_STATUSES[trackingOrder.status] || TRACKING_STATUSES.pending
+    : null;
+  const isTrackingFailed =
+    trackingOrder &&
+    (trackingOrder.status === "cancelled" ||
+      trackingOrder.status === "seller_rejected");
   const isTrackingDone = trackingOrder?.status === "completed";
 
   let width: number | string = 160;
@@ -211,14 +310,20 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
   switch (islandState) {
     case "browsing":
       width = 220;
-      content = <span className="text-sm font-medium tracking-wide">Browsing Food Shops</span>;
+      content = (
+        <span className="text-sm font-medium tracking-wide">
+          Browsing Food Shops
+        </span>
+      );
       break;
 
     case "explore":
       width = 160;
       content = (
         <div className="flex items-center gap-2">
-          <span className="text-sm font-semibold tracking-wide text-white/90">Browsing Items</span>
+          <span className="text-sm font-semibold tracking-wide text-white/90">
+            Browsing Items
+          </span>
         </div>
       );
       break;
@@ -228,7 +333,9 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
       content = (
         <div className="flex items-center gap-2">
           <ShoppingBag className="w-4 h-4 text-emerald-400" />
-          <span className="text-sm font-semibold tracking-wide text-white/90">Grocery</span>
+          <span className="text-sm font-semibold tracking-wide text-white/90">
+            Grocery
+          </span>
         </div>
       );
       break;
@@ -238,25 +345,35 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
       content = (
         <div className="flex items-center gap-2">
           <Tag className="w-4 h-4 text-emerald-400" />
-          <span className="text-sm font-semibold tracking-wide text-white/90">Sell Item</span>
+          <span className="text-sm font-semibold tracking-wide text-white/90">
+            Sell Item
+          </span>
         </div>
       );
       break;
 
     case "cart":
       width = 160;
-      content = <span className="text-sm font-medium tracking-wide">Opening Cart</span>;
+      content = (
+        <span className="text-sm font-medium tracking-wide">Opening Cart</span>
+      );
       break;
     case "profile":
       width = 170;
-      content = <span className="text-sm font-medium tracking-wide">Viewing Profile</span>;
+      content = (
+        <span className="text-sm font-medium tracking-wide">
+          Viewing Profile
+        </span>
+      );
       break;
     case "wallet":
       width = 140;
       content = (
         <div className="flex items-center justify-center gap-2">
           <Wallet className="w-4 h-4 text-blue-400" />
-          <span className="text-sm font-semibold tracking-wide text-white/90">Wallet</span>
+          <span className="text-sm font-semibold tracking-wide text-white/90">
+            Wallet
+          </span>
         </div>
       );
       break;
@@ -270,7 +387,9 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
               <CheckCircle2 className="w-5 h-5 text-emerald-400" />
             </div>
             <div className="flex flex-col items-start overflow-hidden">
-              <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider">Added to Cart</span>
+              <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider">
+                Added to Cart
+              </span>
               <span className="text-xs font-semibold text-white whitespace-nowrap overflow-hidden text-ellipsis max-w-[140px]">
                 {latestAddedItem?.name || "Item"}
               </span>
@@ -287,7 +406,9 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
       content = (
         <div className="flex items-center gap-2">
           <ShoppingBag className="w-4 h-4 text-emerald-400" />
-          <span className="text-sm font-medium tracking-wide">Cart Updated</span>
+          <span className="text-sm font-medium tracking-wide">
+            Cart Updated
+          </span>
         </div>
       );
       break;
@@ -307,11 +428,14 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
               transition={{ type: "spring", stiffness: 500, damping: 25 }}
               className="flex-shrink-0"
             >
-              <div 
+              <div
                 className="w-7 h-7 rounded-full flex items-center justify-center"
                 style={{ background: `${trackingStatus.color}25` }}
               >
-                <StatusIcon className="w-4 h-4" style={{ color: trackingStatus.color }} />
+                <StatusIcon
+                  className="w-4 h-4"
+                  style={{ color: trackingStatus.color }}
+                />
               </div>
             </motion.div>
 
@@ -347,7 +471,11 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
                     key={key}
                     animate={{
                       scale: isActive ? 1.3 : 1,
-                      backgroundColor: isDone ? trackingStatus.color : isActive ? trackingStatus.color : "rgba(255,255,255,0.15)",
+                      backgroundColor: isDone
+                        ? trackingStatus.color
+                        : isActive
+                        ? trackingStatus.color
+                        : "rgba(255,255,255,0.15)",
                     }}
                     transition={{ duration: 0.3 }}
                     style={{
@@ -362,13 +490,21 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
           </div>
         );
       } else {
-        content = <span className="text-[15px] font-bold tracking-widest text-white uppercase">CU Bazzar</span>;
+        content = (
+          <span className="text-[15px] font-bold tracking-widest text-white uppercase">
+            CU Bazzar
+          </span>
+        );
       }
       break;
 
     default:
       width = 160;
-      content = <span className="text-[15px] font-bold tracking-widest text-white uppercase">CU Bazzar</span>;
+      content = (
+        <span className="text-[15px] font-bold tracking-widest text-white uppercase">
+          CU Bazzar
+        </span>
+      );
       break;
   }
 
@@ -376,7 +512,8 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
   const getAnimation = () => {
     if (islandState === "tracking" && trackingOrder) {
       if (statusAnimating) return "diTrackingPulse 0.8s ease-out 1";
-      if (trackingOrder.status === "delivering") return "diTrackingDelivery 2s ease-in-out infinite";
+      if (trackingOrder.status === "delivering")
+        return "diTrackingDelivery 2s ease-in-out infinite";
       return "diTrackingGlow 3s ease-in-out infinite";
     }
     return "diGlow 4s ease-in-out infinite";
@@ -402,15 +539,17 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
       `}</style>
 
       {/* Apple-style gradient glass blur background for the top header */}
-      <div 
+      <div
         className="fixed top-0 left-0 right-0 h-[4.5rem] sm:h-20 z-[9998] pointer-events-none"
-        style={{ 
-          background: 'linear-gradient(to bottom, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 100%)',
+        style={{
+          background:
+            "linear-gradient(to bottom, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 100%)",
           backdropFilter: "blur(20px)",
           WebkitBackdropFilter: "blur(20px)",
-          maskImage: 'linear-gradient(to bottom, black 50%, transparent 100%)',
-          WebkitMaskImage: 'linear-gradient(to bottom, black 50%, transparent 100%)'
-        }} 
+          maskImage: "linear-gradient(to bottom, black 50%, transparent 100%)",
+          WebkitMaskImage:
+            "linear-gradient(to bottom, black 50%, transparent 100%)",
+        }}
       />
 
       <div
@@ -420,69 +559,86 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
         <div className="flex items-center gap-3 max-w-md w-full justify-center">
           {/* Relative wrapper for pill + dropdown alignment */}
           <div className="relative">
-          <AnimatePresence mode="popLayout">
-            {/* â”€â”€ Main Pill â”€â”€ */}
-            <motion.div
-              layout
-              initial={false}
-              animate={{ width, height }}
-              transition={springTransition}
-              onClick={handleIslandClick}
-              className={`pointer-events-auto flex items-center justify-center overflow-hidden flex-shrink-0 ${
-                (islandState === "added" || islandState === "updated" || islandState === "cart" || islandState === "tracking") 
-                  ? "cursor-pointer hover:bg-zinc-900 transition-colors" 
-                  : ""
-              }`}
-              style={{
-                background: "#000",
-                borderRadius: 50,
-                animation: getAnimation(),
-                position: "relative",
-                zIndex: 100,
-                willChange: "transform, width",
-              }}
-            >
-              {/* Green camera indicator dot */}
+            <AnimatePresence mode="popLayout">
+              {/* â”€â”€ Main Pill â”€â”€ */}
               <motion.div
-                animate={{ 
-                  opacity: [0.55, 1, 0.55],
-                  background: islandState === "tracking" && trackingOrder 
-                    ? (trackingStatus?.color || "#30D158") 
-                    : "#30D158",
-                  boxShadow: islandState === "tracking" && trackingOrder 
-                    ? `0 0 8px ${trackingStatus?.color || "#30D158"}` 
-                    : "0 0 8px rgba(48,209,88,0.9)",
-                }}
-                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                layout
+                initial={false}
+                animate={{ width, height }}
+                transition={springTransition}
+                onClick={handleIslandClick}
+                className={`pointer-events-auto flex items-center justify-center overflow-hidden flex-shrink-0 ${
+                  islandState === "added" ||
+                  islandState === "updated" ||
+                  islandState === "cart" ||
+                  islandState === "tracking"
+                    ? "cursor-pointer hover:bg-zinc-900 transition-colors"
+                    : ""
+                }`}
                 style={{
-                  position: "absolute", left: 12, top: "50%",
-                  transform: "translateY(-50%)",
-                  width: 6, height: 6, borderRadius: "50%",
-                  zIndex: 10,
+                  background: "#000",
+                  borderRadius: 50,
+                  animation: getAnimation(),
+                  position: "relative",
+                  zIndex: 100,
+                  willChange: "transform, width",
                 }}
-              />
-
-              <AnimatePresence mode="wait">
+              >
+                {/* Green camera indicator dot */}
                 <motion.div
-                  key={islandState + (trackingOrder?.status || "")}
-                  initial={{ opacity: 0, y: 4, scale: 0.93 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -4, scale: 0.93 }}
-                  transition={{ duration: 0.16, ease: "easeInOut" }}
-                  style={{
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    width: "100%", height: "100%",
-                    paddingLeft: 28,
-                    paddingRight: 16,
-                    color: "#fff",
+                  animate={{
+                    opacity: [0.55, 1, 0.55],
+                    background:
+                      islandState === "tracking" && trackingOrder
+                        ? trackingStatus?.color || "#30D158"
+                        : "#30D158",
+                    boxShadow:
+                      islandState === "tracking" && trackingOrder
+                        ? `0 0 8px ${trackingStatus?.color || "#30D158"}`
+                        : "0 0 8px rgba(48,209,88,0.9)",
                   }}
-                >
-                  {content}
-                </motion.div>
-              </AnimatePresence>
-            </motion.div>
-          </AnimatePresence>
-          </div>{/* close relative wrapper */}
+                  transition={{
+                    duration: 3,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  }}
+                  style={{
+                    position: "absolute",
+                    left: 12,
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    width: 6,
+                    height: 6,
+                    borderRadius: "50%",
+                    zIndex: 10,
+                  }}
+                />
+
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={islandState + (trackingOrder?.status || "")}
+                    initial={{ opacity: 0, y: 4, scale: 0.93 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -4, scale: 0.93 }}
+                    transition={{ duration: 0.16, ease: "easeInOut" }}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      width: "100%",
+                      height: "100%",
+                      paddingLeft: 28,
+                      paddingRight: 16,
+                      color: "#fff",
+                    }}
+                  >
+                    {content}
+                  </motion.div>
+                </AnimatePresence>
+              </motion.div>
+            </AnimatePresence>
+          </div>
+          {/* close relative wrapper */}
         </div>
       </div>
     </>

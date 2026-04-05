@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useCallback } from 'react';
+﻿import { useState, useEffect, useCallback } from "react";
 
 export interface LocationData {
   hostel: string;
@@ -6,7 +6,7 @@ export interface LocationData {
   phone: string;
 }
 
-const STORAGE_KEY = 'cubazzar_user_location';
+const STORAGE_KEY = "cubazzar_user_location";
 
 export function useUserLocation() {
   const [data, setData] = useState<LocationData | null>(null);
@@ -27,8 +27,9 @@ export function useUserLocation() {
     load();
 
     const handleUpdate = () => load();
-    window.addEventListener('cubazzar_location_updated', handleUpdate);
-    return () => window.removeEventListener('cubazzar_location_updated', handleUpdate);
+    window.addEventListener("cubazzar_location_updated", handleUpdate);
+    return () =>
+      window.removeEventListener("cubazzar_location_updated", handleUpdate);
   }, []);
 
   const saveLocation = useCallback((newData: LocationData) => {
@@ -37,12 +38,12 @@ export function useUserLocation() {
       room: newData.room.trim(),
       phone: newData.phone.replace(/\D/g, "").slice(0, 10),
     };
-    
+
     // Only save if data is valid (i.e. not completely empty)
     if (cleanedData.hostel || cleanedData.room || cleanedData.phone) {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(cleanedData));
-        setData(cleanedData);
-        window.dispatchEvent(new Event('cubazzar_location_updated'));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(cleanedData));
+      setData(cleanedData);
+      window.dispatchEvent(new Event("cubazzar_location_updated"));
     }
   }, []);
 

@@ -1,151 +1,151 @@
 ﻿export interface GroceryItem {
-    id: string;
-    name: string;
-    quantity: string;
-    price: number;
-    image: string;
-    category: string;
-    isFresh?: boolean;
+  id: string;
+  name: string;
+  quantity: string;
+  price: number;
+  image: string;
+  category: string;
+  isFresh?: boolean;
 }
 
 export const groceryItems: GroceryItem[] = [
-    {
-        id: "grocery-amul-taaza",
-        name: "Amul Taaza (Toned Milk)",
-        quantity: "500ml",
-        price: 27,
-        image: "/grocery/amul-taaza.webp",
-        category: "Milk",
-        isFresh: true
-    },
-    {
-        id: "grocery-amul-gold",
-        name: "Amul Gold (Full Cream Milk)",
-        quantity: "500ml",
-        price: 35,
-        image: "/grocery/amul-gold.webp",
-        category: "Milk",
-        isFresh: true
-    },
-    {
-        id: "grocery-amul-shakti",
-        name: "Amul Shakti (Standardized Milk)",
-        quantity: "500ml",
-        price: 30,
-        image: "/grocery/amul-shakti.webp",
-        category: "Milk",
-        isFresh: true
-    },
-    {
-        id: "grocery-coke",
-        name: "Coca-Cola",
-        quantity: "400ml",
-        price: 20,
-        image: "/grocery/coca-cola.webp",
-        category: "Cold Drinks"
-    },
-    {
-        id: "grocery-sprite",
-        name: "Sprite",
-        quantity: "400ml",
-        price: 20,
-        image: "/grocery/sprite.webp",
-        category: "Cold Drinks"
-    },
-    {
-        id: "grocery-fanta",
-        name: "Fanta",
-        quantity: "400ml",
-        price: 20,
-        image: "/grocery/fanta.webp",
-        category: "Cold Drinks"
-    },
-    {
-        id: "grocery-mountain-dew",
-        name: "Mountain Dew",
-        quantity: "400ml",
-        price: 20,
-        image: "/grocery/mountain-dew.webp",
-        category: "Cold Drinks"
-    },
-    {
-        id: "grocery-maggi-single",
-        name: "Maggi Instant Noodles",
-        quantity: "Single Pack",
-        price: 10,
-        image: "/grocery/maggi.webp",
-        category: "Instant Food"
-    },
-    {
-        id: "grocery-lays-blue",
-        name: "Lay's India's Magic Masala",
-        quantity: "Standard Pack",
-        price: 25,
-        image: "/grocery/lays-blue.webp",
-        category: "Snacks"
-    },
-    {
-        id: "grocery-kurkure",
-        name: "Kurkure Masala Munch",
-        quantity: "Standard Pack",
-        price: 25,
-        image: "/grocery/kurkure.webp",
-        category: "Snacks"
-    },
-    {
-        id: "grocery-donut",
-        name: "Ziggy Donut Cake",
-        quantity: "1 Piece",
-        price: 20,
-        image: "/grocery/donut.webp",
-        category: "Bakery Snack"
-    },
-    {
-        id: "grocery-coke-750",
-        name: "Coca-Cola",
-        quantity: "750ml Bottle",
-        price: 40,
-        image: "/grocery/coke-750.webp",
-        category: "Cold Drinks"
-    },
-    {
-        id: "grocery-sprite-750",
-        name: "Sprite",
-        quantity: "750ml Bottle",
-        price: 40,
-        image: "/grocery/sprite-750.webp",
-        category: "Cold Drinks"
-    },
-    {
-        id: "grocery-frooti",
-        name: "Frooti",
-        quantity: "Standard Pack",
-        price: 18,
-        image: "/grocery/frooti.webp",
-        category: "Juice / Beverage"
-    },
-    {
-        id: "grocery-campa-cola",
-        name: "Campa Cola",
-        quantity: "Standard Bottle",
-        price: 20,
-        image: "/grocery/campa-cola.webp",
-        category: "Cold Drinks"
-    },
-    {
-        id: "grocery-thums-up",
-        name: "Thums Up",
-        quantity: "Standard Bottle",
-        price: 20,
-        image: "/grocery/thums-up.webp",
-        category: "Cold Drinks"
-    },
-    {
-        id: "grocery-appy-fizz",
-        name: "Appy Fizz",
-        quantity: "Standard Bottle",
-        price: 20,
-        image: "/grocery/appy-fizz.webp",
-        category: "Beverage"
-    }
+  {
+    id: "grocery-amul-taaza",
+    name: "Amul Taaza (Toned Milk)",
+    quantity: "500ml",
+    price: 27,
+    image: "/grocery/amul-taaza.webp",
+    category: "Milk",
+    isFresh: true,
+  },
+  {
+    id: "grocery-amul-gold",
+    name: "Amul Gold (Full Cream Milk)",
+    quantity: "500ml",
+    price: 35,
+    image: "/grocery/amul-gold.webp",
+    category: "Milk",
+    isFresh: true,
+  },
+  {
+    id: "grocery-amul-shakti",
+    name: "Amul Shakti (Standardized Milk)",
+    quantity: "500ml",
+    price: 30,
+    image: "/grocery/amul-shakti.webp",
+    category: "Milk",
+    isFresh: true,
+  },
+  {
+    id: "grocery-coke",
+    name: "Coca-Cola",
+    quantity: "400ml",
+    price: 20,
+    image: "/grocery/coca-cola.webp",
+    category: "Cold Drinks",
+  },
+  {
+    id: "grocery-sprite",
+    name: "Sprite",
+    quantity: "400ml",
+    price: 20,
+    image: "/grocery/sprite.webp",
+    category: "Cold Drinks",
+  },
+  {
+    id: "grocery-fanta",
+    name: "Fanta",
+    quantity: "400ml",
+    price: 20,
+    image: "/grocery/fanta.webp",
+    category: "Cold Drinks",
+  },
+  {
+    id: "grocery-mountain-dew",
+    name: "Mountain Dew",
+    quantity: "400ml",
+    price: 20,
+    image: "/grocery/mountain-dew.webp",
+    category: "Cold Drinks",
+  },
+  {
+    id: "grocery-maggi-single",
+    name: "Maggi Instant Noodles",
+    quantity: "Single Pack",
+    price: 10,
+    image: "/grocery/maggi.webp",
+    category: "Instant Food",
+  },
+  {
+    id: "grocery-lays-blue",
+    name: "Lay's India's Magic Masala",
+    quantity: "Standard Pack",
+    price: 25,
+    image: "/grocery/lays-blue.webp",
+    category: "Snacks",
+  },
+  {
+    id: "grocery-kurkure",
+    name: "Kurkure Masala Munch",
+    quantity: "Standard Pack",
+    price: 25,
+    image: "/grocery/kurkure.webp",
+    category: "Snacks",
+  },
+  {
+    id: "grocery-donut",
+    name: "Ziggy Donut Cake",
+    quantity: "1 Piece",
+    price: 20,
+    image: "/grocery/donut.webp",
+    category: "Bakery Snack",
+  },
+  {
+    id: "grocery-coke-750",
+    name: "Coca-Cola",
+    quantity: "750ml Bottle",
+    price: 40,
+    image: "/grocery/coke-750.webp",
+    category: "Cold Drinks",
+  },
+  {
+    id: "grocery-sprite-750",
+    name: "Sprite",
+    quantity: "750ml Bottle",
+    price: 40,
+    image: "/grocery/sprite-750.webp",
+    category: "Cold Drinks",
+  },
+  {
+    id: "grocery-frooti",
+    name: "Frooti",
+    quantity: "Standard Pack",
+    price: 18,
+    image: "/grocery/frooti.webp",
+    category: "Juice / Beverage",
+  },
+  {
+    id: "grocery-campa-cola",
+    name: "Campa Cola",
+    quantity: "Standard Bottle",
+    price: 20,
+    image: "/grocery/campa-cola.webp",
+    category: "Cold Drinks",
+  },
+  {
+    id: "grocery-thums-up",
+    name: "Thums Up",
+    quantity: "Standard Bottle",
+    price: 20,
+    image: "/grocery/thums-up.webp",
+    category: "Cold Drinks",
+  },
+  {
+    id: "grocery-appy-fizz",
+    name: "Appy Fizz",
+    quantity: "Standard Bottle",
+    price: 20,
+    image: "/grocery/appy-fizz.webp",
+    category: "Beverage",
+  },
 ];
