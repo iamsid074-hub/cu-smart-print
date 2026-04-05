@@ -1,7 +1,36 @@
-﻿import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronRight, ChevronLeft, Loader2, ShoppingBag, ShoppingCart, X, MapPin, Phone, Home as HomeIcon, Zap, UtensilsCrossed, Package, Rocket, ShieldCheck, BadgePercent, Users, Plus, Shield, Ban, Headset, ExternalLink, Search, Download, ArrowRight, Store, Clock, Compass, Sparkles } from "lucide-react";
+import {
+  ChevronRight,
+  ChevronLeft,
+  Loader2,
+  ShoppingBag,
+  ShoppingCart,
+  X,
+  MapPin,
+  Phone,
+  Home as HomeIcon,
+  Zap,
+  UtensilsCrossed,
+  Package,
+  Rocket,
+  ShieldCheck,
+  BadgePercent,
+  Users,
+  Plus,
+  Shield,
+  Ban,
+  Headset,
+  ExternalLink,
+  Search,
+  Download,
+  ArrowRight,
+  Store,
+  Clock,
+  Compass,
+  Sparkles,
+} from "lucide-react";
 import ProductCard from "@/components/ProductCard";
 import VendingMachine from "@/components/VendingMachine";
 import { supabase } from "@/lib/supabase";
@@ -16,20 +45,22 @@ import MembershipBanner from "@/components/MembershipBanner";
 import HomeSpecialSections from "@/components/HomeSpecialSections";
 
 const categories = [
-    { id: "All", label: "All" },
-    { id: "Electronics", label: "Electronics" },
-    { id: "Books", label: "Books" },
-    { id: "Fashion", label: "Fashion" },
-    { id: "Sports", label: "Sports" },
-    { id: "Audio", label: "Audio" },
-    { id: "Camera", label: "Camera" },
-    { id: "Furniture", label: "Furniture" },
-    { id: "Kitchen", label: "Kitchen" },
+  { id: "All", label: "All" },
+  { id: "Electronics", label: "Electronics" },
+  { id: "Books", label: "Books" },
+  { id: "Fashion", label: "Fashion" },
+  { id: "Sports", label: "Sports" },
+  { id: "Audio", label: "Audio" },
+  { id: "Camera", label: "Camera" },
+  { id: "Furniture", label: "Furniture" },
+  { id: "Kitchen", label: "Kitchen" },
 ];
 
 type Product = Database["public"]["Tables"]["products"]["Row"];
 
-const fontH: React.CSSProperties = { fontFamily: "-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" };
+const fontH: React.CSSProperties = {
+  fontFamily: "-apple-system, BlinkMacSystemFont, 'Inter', sans-serif",
+};
 
 const LiquidGlassScreen = ({ children }: { children: React.ReactNode }) => (
   <div className="relative p-2 sm:p-4 bg-white/40 backdrop-blur-3xl rounded-[2.2rem] sm:rounded-[3.2rem] shadow-[0_20px_40px_rgba(0,0,0,0.06),inset_0_1px_0_rgba(255,255,255,0.8)] border border-white/60">
@@ -71,12 +102,17 @@ function HeroCarousel() {
     return () => clearInterval(timer);
   }, [current, count]);
 
-  const goTo = (idx: number) => { setCurrent(idx); setProgress(0); };
+  const goTo = (idx: number) => {
+    setCurrent(idx);
+    setProgress(0);
+  };
   const prev = () => goTo((current - 1 + count) % count);
   const next = () => goTo((current + 1) % count);
 
   const touchRef = useRef<number>(0);
-  const handleTouchStart = (e: React.TouchEvent) => { touchRef.current = e.touches[0].clientX; };
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchRef.current = e.touches[0].clientX;
+  };
   const handleTouchEnd = (e: React.TouchEvent) => {
     if (count <= 1) return;
     const diff = touchRef.current - e.changedTouches[0].clientX;
@@ -94,13 +130,20 @@ function HeroCarousel() {
           <motion.div
             key={i}
             initial={false}
-            animate={{ opacity: i === current ? 1 : 0, scale: i === current ? 1 : 1.05 }}
+            animate={{
+              opacity: i === current ? 1 : 0,
+              scale: i === current ? 1 : 1.05,
+            }}
             transition={{ duration: 0.8, ease: "easeInOut" }}
             className="absolute inset-0"
             style={{ zIndex: i === current ? 1 : 0 }}
           >
             <Link to={slide.link} className="block w-full h-full">
-              <img src={slide.img} alt={slide.label} className="w-full h-full object-cover" />
+              <img
+                src={slide.img}
+                alt={slide.label}
+                className="w-full h-full object-cover"
+              />
             </Link>
           </motion.div>
         ))}
@@ -130,7 +173,10 @@ function HeroCarousel() {
                   className="relative h-1.5 rounded-full overflow-hidden transition-all duration-300"
                   style={{
                     width: i === current ? 32 : 8,
-                    backgroundColor: i === current ? 'rgba(255,255,255,0.8)' : 'rgba(255,255,255,0.4)',
+                    backgroundColor:
+                      i === current
+                        ? "rgba(255,255,255,0.8)"
+                        : "rgba(255,255,255,0.4)",
                   }}
                 >
                   {i === current && (
@@ -156,36 +202,37 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
   const [activeFoodCat, setActiveFoodCat] = useState("all");
+  const [homeMode, setHomeMode] = useState<"meal" | "vending">("meal");
 
   useEffect(() => {
     async function fetchProducts() {
-        setProductsLoading(true);
-        let query = supabase
-            .from("products")
-            .select(`*, profiles(full_name)`)
-            .eq("status", "available")
-            .order("created_at", { ascending: false });
+      setProductsLoading(true);
+      let query = supabase
+        .from("products")
+        .select(`*, profiles(full_name)`)
+        .eq("status", "available")
+        .order("created_at", { ascending: false });
 
-        if (activeCategory !== "All") {
-            query = query.eq("category", activeCategory);
-        }
+      if (activeCategory !== "All") {
+        query = query.eq("category", activeCategory);
+      }
 
-        const { data } = await query;
-        setProducts(data || []);
-        setProductsLoading(false);
+      const { data } = await query;
+      setProducts(data || []);
+      setProductsLoading(false);
     }
     fetchProducts();
   }, [activeCategory]);
 
-  const filteredProducts = products.filter(p =>
-    p.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    p.category?.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredProducts = products.filter(
+    (p) =>
+      p.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      p.category?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
     <div className="min-h-screen pt-[8rem] sm:pt-[6.5rem] lg:pt-[10rem] pb-32 relative text-[#1D1D1F]">
-      <div className="max-w-[1600px] mx-auto relative px-4">
-      </div>
+      <div className="max-w-[1600px] mx-auto relative px-4"></div>
 
       {/* â”€â”€â”€ Hero Section â”€â”€â”€ */}
       <div className="relative px-4 pt-4 pb-8 sm:px-8 sm:pt-8 sm:pb-12 mb-8 mx-2 sm:mx-0 rounded-[2.2rem] sm:rounded-[2.8rem] overflow-hidden">
@@ -196,15 +243,12 @@ export default function Home() {
             transition={{ duration: 0.55 }}
             className="text-center mb-6 sm:mb-8"
           >
-
-
-            <h1 className="font-extrabold tracking-tight text-[#1D1D1F] leading-[1.05] mb-0" style={{ ...fontH, fontSize: 'clamp(2rem, 6vw, 4.5rem)' }}>
-              Everything{' '}
-              <span style={{ color: '#007AFF' }}>
-                Delivered
-              </span>
-              <br className="sm:hidden" />
-              {' '}To Your Room
+            <h1
+              className="font-extrabold tracking-tight text-[#1D1D1F] leading-[1.05] mb-0"
+              style={{ ...fontH, fontSize: "clamp(2rem, 6vw, 4.5rem)" }}
+            >
+              Everything <span style={{ color: "#007AFF" }}>Delivered</span>
+              <br className="sm:hidden" /> To Your Room
             </h1>
           </motion.div>
 
@@ -219,171 +263,239 @@ export default function Home() {
       </div>
 
       <div className="max-w-[1600px] mx-auto px-3 sm:px-6 lg:px-10 mt-[-1rem]">
-          <MembershipBanner />
-        <div className="w-full">
+        <MembershipBanner />
 
-          {/* â”€â”€â”€ Popular Food Sections â”€â”€â”€ */}
-          <HomeSpecialSections activeCat={activeFoodCat} onCatChange={setActiveFoodCat} />
-
-          {activeFoodCat === 'all' && (
+        {/* ═══ MODE SWITCHER: Meal vs Vending ═══ */}
+        <div className="flex items-center justify-center mb-6 mt-2">
+          <div className="relative flex items-center p-1.5 rounded-[1.2rem] bg-[#F2F2F7] border border-black/[0.06] shadow-inner">
+            {/* Sliding pill indicator */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.5 }}
+              layout
+              transition={{ type: "spring", stiffness: 500, damping: 40 }}
+              className="absolute top-1.5 bottom-1.5 rounded-[0.9rem] bg-white shadow-[0_2px_12px_rgba(0,0,0,0.12)] border border-black/[0.04]"
+              style={{
+                left: homeMode === "meal" ? "6px" : "calc(50% + 3px)",
+                width: "calc(50% - 9px)",
+              }}
+            />
+            {/* Meal Tab */}
+            <button
+              id="home-mode-meal"
+              onClick={() => setHomeMode("meal")}
+              className={`relative z-10 flex items-center gap-2 px-6 py-2.5 rounded-[0.9rem] text-[13px] font-bold transition-colors duration-300 min-w-[130px] justify-center ${
+                homeMode === "meal" ? "text-[#1D1D1F]" : "text-[#8E8E93]"
+              }`}
             >
-              <div className="w-full">
-                {/* â”€â”€â”€ Digital Vending Machine Section â”€â”€â”€ */}
-                <VendingMachine />
-
-                {/* â”€â”€â”€ EXPLORE / BROWSE SECTION â”€â”€â”€ */}
-
-          {/* â”€â”€â”€ EXPLORE / BROWSE SECTION â”€â”€â”€ */}
-          <section className="mb-10 sm:mb-16 mt-8">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-              <div className="flex items-center gap-2">
-                <Compass className="w-5 h-5 text-[#007AFF]" />
-                <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-[#1D1D1F]">
-                  Explore Products
-                </h2>
-              </div>
-
-              <Link to="/browse" className="flex items-center gap-1 text-[13px] sm:text-[15px] text-[#007AFF] font-semibold hover:underline mr-auto sm:mr-0 sm:ml-auto pr-4">
-                See all <ChevronRight className="w-4 h-4" />
-              </Link>
-            </div>
-
-            {/* Category Pills */}
-            <div className="flex gap-2 overflow-x-auto pb-6 scrollbar-hide -mx-1 px-1">
-              {categories.map((cat) => {
-                const isActive = activeCategory === cat.id;
-                return (
-                  <button
-                    key={cat.id}
-                    onClick={() => setActiveCategory(cat.id)}
-                    className={`flex items-center gap-1.5 px-4 py-2 rounded-full font-semibold transition-all duration-200 flex-shrink-0 text-[13px] sm:text-[15px] whitespace-nowrap shadow-sm ${
-                      isActive
-                        ? 'bg-[#1D1D1F] text-white ios-shadow scale-105'
-                        : 'ios-glass text-[#8E8E93] hover:text-[#1D1D1F] hover:bg-white/80'
-                    }`}
-                  >
-                    {cat.label}
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Product Grid */}
-            {productsLoading ? (
-              <div className="flex flex-col items-center justify-center py-16 gap-3">
-                <Loader2 className="w-8 h-8 animate-spin text-[#007AFF]" />
-                <p className="text-[12px] font-bold text-[#8E8E93] uppercase tracking-widest">Finding Items...</p>
-              </div>
-            ) : filteredProducts.length === 0 ? (
-              <div className="text-center py-20 ios-glass rounded-[2rem]">
-                <Package className="w-12 h-12 text-[#8E8E93] mx-auto mb-4" />
-                <p className="text-lg font-semibold text-[#1D1D1F]">No products found</p>
-                <button 
-                  onClick={() => { setSearchQuery(""); setActiveCategory("All"); }}
-                  className="mt-4 text-[13px] font-bold uppercase tracking-widest text-[#007AFF]"
-                >
-                  Reset Filters
-                </button>
-              </div>
-            ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-5 lg:gap-6">
-                {filteredProducts.slice(0, 3).map((p, i) => (
-                  <ProductCard
-                    key={p.id}
-                    id={p.id}
-                    image={p.image_url || ''}
-                    title={p.title}
-                    price={p.price}
-                    originalPrice={p.original_price || undefined}
-                    condition={p.condition as any}
-                    category={p.category}
-                    rating={4.5}
-                    seller={p.profiles?.full_name || "Student"}
-                    delay={i * 0.05}
-                  />
-                ))}
-              </div>
-            )}
-          </section>
-
-          {/* â”€â”€â”€ TRUST & SAFETY â”€â”€â”€ */}
-          <section className="mb-6">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="rounded-3xl sm:rounded-[2.5rem] overflow-hidden ios-glass shadow-sm"
+              <span className="text-[16px]">🍽️</span>
+              Meal
+            </button>
+            {/* Vending Tab */}
+            <button
+              id="home-mode-vending"
+              onClick={() => setHomeMode("vending")}
+              className={`relative z-10 flex items-center gap-2 px-6 py-2.5 rounded-[0.9rem] text-[13px] font-bold transition-colors duration-300 min-w-[130px] justify-center ${
+                homeMode === "vending" ? "text-[#1D1D1F]" : "text-[#8E8E93]"
+              }`}
             >
-              {/* Header */}
-              <div className="px-5 pt-8 pb-3 sm:px-8 sm:pt-10 sm:pb-6 text-center">
-                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-4 bg-[#34C759]/10 border border-[#34C759]/20">
-                  <Shield className="w-4 h-4 text-[#34C759]" />
-                  <span className="text-[11px] sm:text-xs font-bold uppercase tracking-widest text-[#34C759]">Safe & Trusted</span>
-                </div>
-                <h2 className="text-2xl sm:text-3xl font-bold mb-3 text-[#1D1D1F] tracking-tight">Your Safety is Our Priority</h2>
-                <p className="text-[15px] max-w-lg mx-auto text-[#8E8E93] font-medium leading-relaxed">CU Bazzar is run with full transparency. Every delivery is handled personally with zero tolerance for prohibited items.</p>
-              </div>
-
-              {/* Trust Pillars */}
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 px-5 pb-6 sm:px-8 pb-8">
-                {[
-                  {
-                    icon: Package,
-                    title: "Personal Delivery",
-                    desc: "Platform owner personally handles every single delivery. No third parties.",
-                    color: "#34C759",
-                  },
-                  {
-                    icon: Ban,
-                    title: "No Illegal Items",
-                    desc: "Strict zero-tolerance policy. No drugs, alcohol, weapons, or prohibited goods.",
-                    color: "#FF3B30",
-                  },
-                  {
-                    icon: ShieldCheck,
-                    title: "Direct Accountability",
-                    desc: "Real person, real responsibility. We stand behind every order and transaction.",
-                    color: "#007AFF",
-                  },
-                  {
-                    icon: Headset,
-                    title: "24/7 Help Center",
-                    desc: "Need help? Our support is available round the clock. Instant response guaranteed.",
-                    color: "#FF9500",
-                  },
-                ].map((item, i) => (
-                  <Link to="/help" key={item.title} className="block group">
-                    <motion.div
-                      initial={{ opacity: 0, y: 16 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: i * 0.08 }}
-                      className="rounded-2xl sm:rounded-3xl p-5 sm:p-6 flex flex-col transition-all duration-300 bg-white/50 border border-white/60 shadow-sm hover:shadow-md hover:bg-white h-full"
-                    >
-                      <div className="flex items-start justify-between mb-4">
-                        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center bg-white shadow-sm border border-black/5 group-hover:scale-110 transition-transform duration-300">
-                          <item.icon className="w-5 h-5 sm:w-6 sm:h-6" style={{ color: item.color }} />
-                        </div>
-                        <ExternalLink className="w-4 h-4 sm:w-5 sm:h-5 text-black/10 group-hover:text-[#007AFF] transition-colors opacity-0 group-hover:opacity-100" />
-                      </div>
-                      <h3 className="text-[15px] sm:text-base font-bold mb-1.5 text-[#1D1D1F] tracking-tight group-hover:text-[#007AFF] transition-colors">{item.title}</h3>
-                      <p className="text-[13px] leading-relaxed text-[#8E8E93] font-medium">{item.desc}</p>
-                    </motion.div>
-                  </Link>
-                ))}
-              </div>
-            </motion.div>
-          </section>
+              <span className="text-[16px]">🤖</span>
+              Vending
+            </button>
+          </div>
         </div>
-      </motion.div>
-    )}
-  </div>
-</div>
+
+        <AnimatePresence mode="wait">
+          {/* ═══ MEAL MODE ═══ */}
+          {homeMode === "meal" && (
+            <motion.div
+              key="meal"
+              initial={{ opacity: 0, x: -24 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -24 }}
+              transition={{ duration: 0.38, ease: [0.16, 1, 0.3, 1] }}
+            >
+              {/* Food Category Sections */}
+              <HomeSpecialSections
+                activeCat={activeFoodCat}
+                onCatChange={setActiveFoodCat}
+              />
+
+              {/* Explore Products — only when no food category filter active */}
+              {activeFoodCat === "all" && (
+                <section className="mb-10 sm:mb-16 mt-8">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                    <div className="flex items-center gap-2">
+                      <Compass className="w-5 h-5 text-[#007AFF]" />
+                      <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-[#1D1D1F]">
+                        Explore Products
+                      </h2>
+                    </div>
+                    <Link
+                      to="/browse"
+                      className="flex items-center gap-1 text-[13px] sm:text-[15px] text-[#007AFF] font-semibold hover:underline mr-auto sm:mr-0 sm:ml-auto pr-4"
+                    >
+                      See all <ChevronRight className="w-4 h-4" />
+                    </Link>
+                  </div>
+                  <div className="flex gap-2 overflow-x-auto pb-6 scrollbar-hide -mx-1 px-1">
+                    {categories.map((cat) => {
+                      const isActive = activeCategory === cat.id;
+                      return (
+                        <button
+                          key={cat.id}
+                          onClick={() => setActiveCategory(cat.id)}
+                          className={`flex items-center gap-1.5 px-4 py-2 rounded-full font-semibold transition-all duration-200 flex-shrink-0 text-[13px] sm:text-[15px] whitespace-nowrap shadow-sm ${
+                            isActive
+                              ? "bg-[#1D1D1F] text-white ios-shadow scale-105"
+                              : "ios-glass text-[#8E8E93] hover:text-[#1D1D1F] hover:bg-white/80"
+                          }`}
+                        >
+                          {cat.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  {productsLoading ? (
+                    <div className="flex flex-col items-center justify-center py-16 gap-3">
+                      <Loader2 className="w-8 h-8 animate-spin text-[#007AFF]" />
+                      <p className="text-[12px] font-bold text-[#8E8E93] uppercase tracking-widest">
+                        Finding Items...
+                      </p>
+                    </div>
+                  ) : filteredProducts.length === 0 ? (
+                    <div className="text-center py-20 ios-glass rounded-[2rem]">
+                      <Package className="w-12 h-12 text-[#8E8E93] mx-auto mb-4" />
+                      <p className="text-lg font-semibold text-[#1D1D1F]">
+                        No products found
+                      </p>
+                      <button
+                        onClick={() => {
+                          setSearchQuery("");
+                          setActiveCategory("All");
+                        }}
+                        className="mt-4 text-[13px] font-bold uppercase tracking-widest text-[#007AFF]"
+                      >
+                        Reset Filters
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-5 lg:gap-6">
+                      {filteredProducts.slice(0, 3).map((p, i) => (
+                        <ProductCard
+                          key={p.id}
+                          id={p.id}
+                          image={p.image_url || ""}
+                          title={p.title}
+                          price={p.price}
+                          originalPrice={p.original_price || undefined}
+                          condition={p.condition as any}
+                          category={p.category}
+                          rating={4.5}
+                          seller={p.profiles?.full_name || "Student"}
+                          delay={i * 0.05}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </section>
+              )}
+            </motion.div>
+          )}
+
+          {/* ═══ VENDING MODE ═══ */}
+          {homeMode === "vending" && (
+            <motion.div
+              key="vending"
+              initial={{ opacity: 0, x: 24 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 24 }}
+              transition={{ duration: 0.38, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <VendingMachine />
+
+              {/* Help / Safety section */}
+              <section className="mb-6 mt-8">
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  className="rounded-3xl sm:rounded-[2.5rem] overflow-hidden ios-glass shadow-sm"
+                >
+                  <div className="px-5 pt-8 pb-3 sm:px-8 sm:pt-10 sm:pb-6 text-center">
+                    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-4 bg-[#34C759]/10 border border-[#34C759]/20">
+                      <Shield className="w-4 h-4 text-[#34C759]" />
+                      <span className="text-[11px] sm:text-xs font-bold uppercase tracking-widest text-[#34C759]">
+                        Safe & Trusted
+                      </span>
+                    </div>
+                    <h2 className="text-2xl sm:text-3xl font-bold mb-3 text-[#1D1D1F] tracking-tight">
+                      Your Safety is Our Priority
+                    </h2>
+                    <p className="text-[15px] max-w-lg mx-auto text-[#8E8E93] font-medium leading-relaxed">
+                      CU Bazzar is run with full transparency. Every delivery is
+                      handled personally with zero tolerance for prohibited
+                      items.
+                    </p>
+                  </div>
+                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 px-5 pb-8 sm:px-8">
+                    {[
+                      {
+                        icon: Package,
+                        title: "Personal Delivery",
+                        desc: "Platform owner personally handles every single delivery. No third parties.",
+                        color: "#34C759",
+                      },
+                      {
+                        icon: Ban,
+                        title: "No Illegal Items",
+                        desc: "Strict zero-tolerance policy. No drugs, alcohol, weapons, or prohibited goods.",
+                        color: "#FF3B30",
+                      },
+                      {
+                        icon: ShieldCheck,
+                        title: "Direct Accountability",
+                        desc: "Real person, real responsibility. We stand behind every order and transaction.",
+                        color: "#007AFF",
+                      },
+                      {
+                        icon: Headset,
+                        title: "24/7 Help Center",
+                        desc: "Need help? Our support is available round the clock. Instant response guaranteed.",
+                        color: "#FF9500",
+                      },
+                    ].map((item, i) => (
+                      <Link to="/help" key={item.title} className="block group">
+                        <motion.div
+                          initial={{ opacity: 0, y: 16 }}
+                          whileInView={{ opacity: 1, y: 0 }}
+                          viewport={{ once: true }}
+                          transition={{ delay: i * 0.08 }}
+                          className="rounded-2xl sm:rounded-3xl p-5 sm:p-6 flex flex-col transition-all duration-300 bg-white/50 border border-white/60 shadow-sm hover:shadow-md hover:bg-white h-full"
+                        >
+                          <div className="flex items-start justify-between mb-4">
+                            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center bg-white shadow-sm border border-black/5 group-hover:scale-110 transition-transform duration-300">
+                              <item.icon
+                                className="w-5 h-5 sm:w-6 sm:h-6"
+                                style={{ color: item.color }}
+                              />
+                            </div>
+                            <ExternalLink className="w-4 h-4 sm:w-5 sm:h-5 text-black/10 group-hover:text-[#007AFF] transition-colors opacity-0 group-hover:opacity-100" />
+                          </div>
+                          <h3 className="text-[15px] sm:text-base font-bold mb-1.5 text-[#1D1D1F] tracking-tight group-hover:text-[#007AFF] transition-colors">
+                            {item.title}
+                          </h3>
+                          <p className="text-[13px] leading-relaxed text-[#8E8E93] font-medium">
+                            {item.desc}
+                          </p>
+                        </motion.div>
+                      </Link>
+                    ))}
+                  </div>
+                </motion.div>
+              </section>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
     </div>
   );
 }
