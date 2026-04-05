@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+﻿import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/lib/supabase";
 import { useNavigate, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
@@ -89,7 +89,7 @@ export default function Login() {
                     setLoading(false);
                     return;
                 }
-                toast.success("Welcome back! 🚀");
+                toast.success("Welcome back! ðŸš€");
             } else {
                 const { error }: any = await signUp(email, password);
                 if (error) {
@@ -110,7 +110,7 @@ export default function Login() {
                         full_name: parts[0]
                     });
                 }
-                toast.success("Account created successfully! ✨");
+                toast.success("Account created successfully! âœ¨");
             }
             navigate("/home");
         } catch (err: any) {
@@ -128,7 +128,7 @@ export default function Login() {
 
     return (
         <div className="min-h-screen flex flex-col lg:flex-row overflow-hidden" style={{ backgroundColor: "#F8FAFC" }}>
-            {/* ─── Intro Splash ─── */}
+            {/* â”€â”€â”€ Intro Splash â”€â”€â”€ */}
             <AnimatePresence>
                 {showIntro && (
                     <motion.div
@@ -206,7 +206,7 @@ export default function Login() {
                 )}
             </AnimatePresence>
 
-            {/* ─── Left — Branding & Visual ─── */}
+            {/* â”€â”€â”€ Left â€” Branding & Visual â”€â”€â”€ */}
             <div className="hidden lg:flex lg:w-[52%] relative items-center justify-center p-12 overflow-hidden" style={{ backgroundColor: "#1D1D1F" }}>
                 {/* Soft gradient orbs */}
                 <div className="absolute top-[-8%] left-[-5%] w-[450px] h-[450px] rounded-full blur-[100px] animate-pulse pointer-events-none" style={{ background: "rgba(255,255,255,0.05)", animationDuration: "7s" }} />
@@ -283,7 +283,7 @@ export default function Login() {
                 </motion.div>
             </div>
 
-            {/* ─── Right — Login Form ─── */}
+            {/* â”€â”€â”€ Right â€” Login Form â”€â”€â”€ */}
             <div className="flex-1 flex items-center justify-center px-5 py-10 sm:px-8 lg:px-14 relative min-h-screen lg:min-h-0 bg-[#F5F5F7]">
                 {/* Mobile glow */}
                 <div className="lg:hidden absolute top-0 right-0 w-52 h-52 rounded-full blur-[80px] pointer-events-none" style={{ background: "rgba(0,122,255,0.08)" }} />
@@ -347,7 +347,7 @@ export default function Login() {
                         </AnimatePresence>
                     </div>
 
-                    {/* ── FLOW CONTROL ── */}
+                    {/* â”€â”€ FLOW CONTROL â”€â”€ */}
                     <AnimatePresence mode="wait">
                         {forgotPassword ? (
                             <motion.div key="forgot" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.2 }}>
@@ -358,7 +358,7 @@ export default function Login() {
                                         </div>
                                         <p className="font-semibold" style={{ color: '#0F172A' }}>Check your inbox!</p>
                                         <p className="text-sm" style={{ color: '#64748B' }}>We sent a password reset link to <strong style={{ color: '#0F172A' }}>{email}</strong>.</p>
-                                        <button type="button" onClick={() => { setForgotPassword(false); setResetSent(false); }} className="text-sm font-semibold mt-2" style={{ color: '#231942' }}>← Back to login</button>
+                                        <button type="button" onClick={() => { setForgotPassword(false); setResetSent(false); }} className="text-sm font-semibold mt-2" style={{ color: '#231942' }}>â† Back to login</button>
                                     </div>
                                 ) : (
                                     <form onSubmit={handleForgotPassword} className="space-y-4">
@@ -383,14 +383,14 @@ export default function Login() {
                                             style={{ ...fontH, background: '#1D1D1F' }}>
                                             {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <><Mail className="w-4 h-4" /> Send Reset Link</>}
                                         </motion.button>
-                                        <button type="button" onClick={() => setForgotPassword(false)} className="w-full text-sm" style={{ color: '#64748B' }}>← Back to login</button>
+                                        <button type="button" onClick={() => setForgotPassword(false)} className="w-full text-sm" style={{ color: '#64748B' }}>â† Back to login</button>
                                     </form>
                                 )}
                             </motion.div>
                         ) : (
                             <motion.div key="main" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.2 }}>
                                 
-                                {/* ── Google OAuth Button ── */}
+                                {/* â”€â”€ Google OAuth Button â”€â”€ */}
                                 <motion.button
                                     type="button"
                                     onClick={signInWithGoogle}
@@ -409,7 +409,7 @@ export default function Login() {
                                     </span>
                                 </motion.button>
 
-                                {/* ── Separator ── */}
+                                {/* â”€â”€ Separator â”€â”€ */}
                                 <div className="relative flex items-center justify-center mb-6">
                                     <div className="absolute inset-0 flex items-center">
                                         <div className="w-full border-t border-slate-200"></div>
@@ -466,10 +466,10 @@ export default function Login() {
                                                 minLength={6}
                                             />
                                         </div>
-                                        {!isLogin && <p className="text-[11px] mt-1 ml-0.5" style={{ color: "#64748B" }}>At least 6 characters — make it count!</p>}
+                                        {!isLogin && <p className="text-[11px] mt-1 ml-0.5" style={{ color: "#64748B" }}>At least 6 characters â€” make it count!</p>}
                                     </div>
 
-                                    {/* T&C Accept Checkbox — signup only */}
+                                    {/* T&C Accept Checkbox â€” signup only */}
                                     {!isLogin && (
                                         <div className="flex items-start gap-3 px-1">
                                             <button
@@ -499,7 +499,7 @@ export default function Login() {
                                         </div>
                                     )}
 
-                                    {/* Forgot password link — login only */}
+                                    {/* Forgot password link â€” login only */}
                                     {isLogin && (
                                         <div className="flex justify-end -mt-1">
                                             <button type="button" onClick={() => { setForgotPassword(true); setResetSent(false); }}
@@ -563,7 +563,7 @@ export default function Login() {
 
                         By continuing, you agree to our{" "}
                         <Link to="/terms" className="underline underline-offset-2 hover:opacity-60 transition-opacity" style={{ color: "#1D1D1F" }}>Terms &amp; Conditions</Link>
-                        {" "}and to be a good campus citizen. 🤝
+                        {" "}and to be a good campus citizen. ðŸ¤
                     </p>
                 </motion.div>
             </div>

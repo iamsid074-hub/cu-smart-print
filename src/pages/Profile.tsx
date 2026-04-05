@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+﻿import { useEffect, useState, useRef } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
 import { LogOut, User, MapPin, Phone, Package, Heart, Edit2, Check, Loader2, Camera, ShoppingCart, CheckCircle, XCircle, Clock, Bell, Plus, Trash2, Tag, X, Mail, Globe, Shield, ArrowLeft, Crown } from "lucide-react";
@@ -96,7 +96,7 @@ export default function Profile() {
         if (!user) return;
         const channel = supabase.channel("seller_orders_rt")
             .on("postgres_changes", { event: "INSERT", schema: "public", table: "orders", filter: `seller_id=eq.${user.id}` },
-                () => { fetchIncomingOrders(); toast.success("📦 New order received!"); })
+                () => { fetchIncomingOrders(); toast.success("ðŸ“¦ New order received!"); })
             .subscribe();
         return () => { supabase.removeChannel(channel); };
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -194,7 +194,7 @@ export default function Profile() {
 
     return (
         <div className="min-h-screen bg-[#F5F5F7] pb-32">
-            {/* ── IMMERSIVE HEADER ── */}
+            {/* â”€â”€ IMMERSIVE HEADER â”€â”€ */}
             <div className="relative h-48 sm:h-64 bg-[#1D1D1F] overflow-hidden">
                 {/* Animated Background Gradient */}
                 <div className="absolute inset-0 bg-gradient-to-br from-[#007AFF] via-[#5856D6] to-[#AF52DE] opacity-80" />
@@ -232,7 +232,7 @@ export default function Profile() {
             </div>
 
             <div className="max-w-3xl mx-auto px-4 -mt-24 relative z-10">
-                {/* ── IDENTITY CARD ── */}
+                {/* â”€â”€ IDENTITY CARD â”€â”€ */}
                 <motion.div 
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -395,7 +395,7 @@ export default function Profile() {
                     </div>
                 </motion.div>
 
-                {/* ── TABS ── */}
+                {/* â”€â”€ TABS â”€â”€ */}
                 <div className="mt-12">
                     <div className="flex gap-8 border-b border-black/5 px-2 overflow-x-auto hide-scroll">
                         {tabs.map(tab => (
@@ -461,7 +461,7 @@ export default function Profile() {
                                                     <div className="flex-1 min-w-0">
                                                         <h4 className="text-[15px] font-bold text-[#1D1D1F] truncate mb-1 tracking-tight">{item.title}</h4>
                                                         <div className="flex items-center gap-2.5">
-                                                            <span className="text-[17px] font-black tracking-tight text-[#1D1D1F]">₹{item.price}</span>
+                                                            <span className="text-[17px] font-black tracking-tight text-[#1D1D1F]">â‚¹{item.price}</span>
                                                             <span className={`text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-widest ${
                                                                 item.status === 'sold' ? 'bg-black/5 text-[#8E8E93]' : 'bg-[#34C759]/10 text-[#34C759]'
                                                             }`}>
@@ -523,7 +523,7 @@ export default function Profile() {
                                                             <p className="text-[10px] font-black uppercase tracking-widest text-[#8E8E93] mb-1">Incoming Order</p>
                                                             <h4 className="text-[16px] font-bold text-[#1D1D1F] truncate tracking-tight">{order.products?.title || "Product"}</h4>
                                                             <div className="flex items-center gap-3 mt-1">
-                                                                <span className="text-[18px] font-black text-[#1D1D1F]">₹{order.total_price}</span>
+                                                                <span className="text-[18px] font-black text-[#1D1D1F]">â‚¹{order.total_price}</span>
                                                                 <span className={`text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-widest shadow-sm ${
                                                                     order.status === "pending" ? 'bg-[#FF9500]/10 text-[#FF9500]' :
                                                                     order.status === "seller_accepted" ? 'bg-[#34C759]/10 text-[#34C759]' : 'bg-[#FF3B30]/10 text-[#FF3B30]'

@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+﻿import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Package, Truck, Home as HomeIcon, CheckCircle, Clock, Loader2, ArrowLeft, Phone, MapPin, User, Star, AlertCircle, UtensilsCrossed, ShoppingBag, X, PartyPopper } from "lucide-react";
 import { Link, useSearchParams } from "react-router-dom";
@@ -6,7 +6,7 @@ import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
 
 
-// ─── Detect order type ──────────────────────────────────────────────────────────
+// â”€â”€â”€ Detect order type â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function getOrderType(order: any): "food" | "item" | "vending" | "cart" {
   const loc = order.delivery_location || "";
   const room = order.delivery_room || "";
@@ -20,27 +20,27 @@ function getOrderType(order: any): "food" | "item" | "vending" | "cart" {
   return "item";
 }
 
-// ─── Status Steps for Item Orders ───────────────────────────────────────────────
+// â”€â”€â”€ Status Steps for Item Orders â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const ITEM_STEPS = [
   { key: "pending", label: "Order Placed", icon: Package, desc: "Your order has been placed and is being processed." },
   { key: "seller_accepted", label: "Seller Confirmed", icon: CheckCircle, desc: "The seller has accepted and is preparing your order." },
   { key: "confirmed", label: "Accepted", icon: User, desc: "Your order has been confirmed for delivery." },
   { key: "picked", label: "Picked Up", icon: Package, desc: "Item has been collected from the seller." },
   { key: "delivering", label: "Out for Delivery", icon: Truck, desc: "Your item is on its way to you!" },
-  { key: "completed", label: "Delivered ✅", icon: HomeIcon, desc: "Your order has been delivered. Enjoy!" },
+  { key: "completed", label: "Delivered âœ…", icon: HomeIcon, desc: "Your order has been delivered. Enjoy!" },
 ];
 const ITEM_ORDER: Record<string, number> = { pending: 0, seller_accepted: 1, confirmed: 2, picked: 3, delivering: 4, completed: 5, seller_rejected: -1, cancelled: -1 };
 
-// ─── Status Steps for Food Orders ───────────────────────────────────────────────
+// â”€â”€â”€ Status Steps for Food Orders â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const FOOD_STEPS = [
   { key: "pending", label: "Order Received", icon: ShoppingBag, desc: "Your food order has been submitted." },
   { key: "confirmed", label: "Preparing", icon: CheckCircle, desc: "Your order has been accepted and is being prepared." },
   { key: "delivering", label: "Out for Delivery", icon: Truck, desc: "Your food is on its way!" },
-  { key: "completed", label: "Delivered ✅", icon: HomeIcon, desc: "Delivered! Enjoy your food!" },
+  { key: "completed", label: "Delivered âœ…", icon: HomeIcon, desc: "Delivered! Enjoy your food!" },
 ];
 const FOOD_ORDER: Record<string, number> = { pending: 0, seller_accepted: 0, confirmed: 1, picked: 2, delivering: 2, completed: 3, seller_rejected: -1, cancelled: -1 };
 
-// ─── Parse clean order details ──────────────────────────────────────────────────
+// â”€â”€â”€ Parse clean order details â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function parseOrderDetails(order: any) {
   const type = getOrderType(order);
   const loc = order.delivery_location || "";
@@ -67,7 +67,7 @@ function parseOrderDetails(order: any) {
     const roomPart = room.match(/\[ROOM:(.+?)\]/)?.[1] || room;
     const itemsPart = room.match(/\[ITEMS:([\s\S]*)\]\s*$/)?.[1] || "";
     
-    // Extract first item title. e.g. "1x Amul Taaza [IMG:...] (Toned Milk) (Milk) (₹27)"
+    // Extract first item title. e.g. "1x Amul Taaza [IMG:...] (Toned Milk) (Milk) (â‚¹27)"
     const firstLine = itemsPart.split("\n")[0] || "";
     const firstItemTitle = firstLine.match(/\d+x\s+(.+?)\s+\[IMG:/)?.[1] || 
                           firstLine.match(/\d+x\s+(.+?)\s+\(/)?.[1] || 
@@ -92,7 +92,7 @@ function parseOrderDetails(order: any) {
   return { type, hostel: loc, items: "", notes: "", title: order.products?.title || "Product", image: order.products?.image_url || "/logo.webp" };
 }
 
-// ─── Delivery Time Logic ────────────────────────────────────────────────────────
+// â”€â”€â”€ Delivery Time Logic â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function getDeliveryInfo(order: any, type: "food" | "item"): { text: string; subtext: string } {
   if (!order) return { text: "", subtext: "" };
   if (order.status === "completed") return { text: "Delivered!", subtext: "Your order has arrived" };
@@ -104,7 +104,7 @@ function getDeliveryInfo(order: any, type: "food" | "item"): { text: string; sub
     return { text: `~${remaining} min`, subtext: "On the way to you" };
   }
 
-  // Before "Out for Delivery" — don't show estimated time
+  // Before "Out for Delivery" â€” don't show estimated time
   if (order.status === "confirmed" || order.status === "picked" || order.status === "seller_accepted") {
     return { text: type === "food" ? "Preparing..." : "Processing...", subtext: "Estimated time will appear once dispatched" };
   }
@@ -241,7 +241,7 @@ export default function Tracking() {
           </motion.div>
         ) : (
           <>
-            {/* ── Delivery Status Banner ─────────────────────────────── */}
+            {/* â”€â”€ Delivery Status Banner â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
             {!isCompleted && (
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
                 className={`w-full border rounded-2xl p-4 mb-6 flex justify-between items-center ${displayType === "food"
@@ -269,7 +269,7 @@ export default function Tracking() {
               </motion.div>
             )}
 
-            {/* ── Order Summary Card ───────────────────────────────────── */}
+            {/* â”€â”€ Order Summary Card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
               className="bg-white rounded-3xl p-5 sm:p-6 mb-6 border border-slate-200 shadow-sm">
               <div className="flex items-start gap-4 mb-4">
@@ -286,7 +286,7 @@ export default function Tracking() {
                       ? "bg-orange-50 text-orange-600"
                       : "bg-brand-50 text-brand"
                       }`}>
-                      {type === "food" ? "🍕 Food" : type === "vending" ? "🤖 Vending" : "📦 Item"}
+                      {type === "food" ? "ðŸ• Food" : type === "vending" ? "ðŸ¤– Vending" : "ðŸ“¦ Item"}
                     </span>
                   </div>
                   <p className="font-bold text-slate-900 line-clamp-2 text-sm sm:text-base">{details?.title}</p>
@@ -296,9 +296,9 @@ export default function Tracking() {
                 </div>
                 {order.total_price > 0 && (
                   <div className="text-right flex-shrink-0">
-                    <p className="text-brand font-black text-lg sm:text-xl">₹{order.total_price?.toLocaleString()}</p>
+                    <p className="text-brand font-black text-lg sm:text-xl">â‚¹{order.total_price?.toLocaleString()}</p>
                     <p className={`text-[10px] font-bold mt-1 ${order.payment_status === 'verifying' ? 'text-orange-500' : order.payment_status === 'paid' ? 'text-emerald-500' : 'text-slate-500'}`}>
-                      {order.payment_status === 'verifying' ? '🟡 Verifying Payment...' : order.payment_status === 'paid' ? '💳 Paid Online ✓' : '💵 Pay on Delivery'}
+                      {order.payment_status === 'verifying' ? 'ðŸŸ¡ Verifying Payment...' : order.payment_status === 'paid' ? 'ðŸ’³ Paid Online âœ“' : 'ðŸ’µ Pay on Delivery'}
                     </p>
                   </div>
                 )}
@@ -334,9 +334,9 @@ export default function Tracking() {
                     .filter((line: string) => !!line && !line.includes("[SAFETY:Disclaimer"))
                     .map((line: string, i: number) => {
                       let price = '';
-                      const priceMatch = line.match(/\(₹([\d,]+)\)/);
+                      const priceMatch = line.match(/\(â‚¹([\d,]+)\)/);
                       if (priceMatch) {
-                        price = `₹${priceMatch[1]}`;
+                        price = `â‚¹${priceMatch[1]}`;
                       }
                       
                       let name = line;
@@ -351,7 +351,7 @@ export default function Tracking() {
                       return (
                         <div key={i} className="flex justify-between items-start gap-3 mb-2 last:mb-0">
                           <p className="text-sm text-slate-800 font-medium flex items-start gap-2 flex-1 min-w-0">
-                            <span className={`${displayType === "food" ? "text-orange-400" : "text-emerald-500"} mt-0.5`}>•</span> 
+                            <span className={`${displayType === "food" ? "text-orange-400" : "text-emerald-500"} mt-0.5`}>â€¢</span> 
                             <span className="truncate whitespace-normal leading-snug">{name}</span>
                           </p>
                           {price && (
@@ -369,7 +369,7 @@ export default function Tracking() {
               )}
             </motion.div>
 
-            {/* ── Progress Timeline ─────────────────────────────────────── */}
+            {/* â”€â”€ Progress Timeline â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
               data-section="timeline"
               className="bg-white rounded-3xl p-5 sm:p-6 mb-6 border border-slate-200 shadow-sm">
@@ -434,7 +434,7 @@ export default function Tracking() {
               </div>
             </motion.div>
 
-            {/* ── Cancel Order Action ────────────────────────────────────────── */}
+            {/* â”€â”€ Cancel Order Action â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
             {order && !isCompleted && !isRejected && order.status === "pending" && (
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
                 className="mt-6 flex justify-center">
@@ -447,7 +447,7 @@ export default function Tracking() {
               </motion.div>
             )}
 
-            {/* ── Thank You Overlay Panel ──────────────────────────────── */}
+            {/* â”€â”€ Thank You Overlay Panel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
             <AnimatePresence>
               {showThankYou && (
                 <motion.div
@@ -503,7 +503,7 @@ export default function Tracking() {
                         transition={{ delay: 0.5 }}
                         className="text-4xl mb-2"
                       >
-                        🎉
+                        ðŸŽ‰
                       </motion.div>
 
                       {/* Title */}

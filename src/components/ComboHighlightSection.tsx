@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+﻿import { motion } from "framer-motion";
 import { Plus, CheckCircle2, Trophy } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { toast } from "sonner";
@@ -125,7 +125,7 @@ export default function ComboHighlightSection() {
 
                  <div className="flex items-center gap-3">
                     <div className="px-3 py-1.5 rounded-xl bg-[#D4AF37] text-black font-black text-xs">
-                       ₹{item.price}
+                       â‚¹{item.price}
                     </div>
                     
                     <button

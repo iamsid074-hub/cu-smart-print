@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { Sparkles, ArrowRight, Zap, Crown } from 'lucide-react';
 import { useMembership } from '@/hooks/useMembership';
 import MembershipPlansModal from './MembershipPlansModal';
@@ -33,13 +33,13 @@ export default function MembershipBanner() {
                             </p>
                             
                             <div className="flex gap-2 mt-4 sm:hidden">
-                                <span className="text-xs font-bold bg-white/10 text-white px-3 py-1.5 rounded-full backdrop-blur-md">Starts at ₹49/wk</span>
+                                <span className="text-xs font-bold bg-white/10 text-white px-3 py-1.5 rounded-full backdrop-blur-md">Starts at â‚¹49/wk</span>
                             </div>
                         </div>
 
                         <div className="relative z-10 flex items-center gap-4 w-full sm:w-auto mt-2 sm:mt-0">
                             <div className="hidden sm:flex items-center">
-                                <span className="text-sm font-bold text-[#8E8E93] mr-4">Plans from ₹49/wk</span>
+                                <span className="text-sm font-bold text-[#8E8E93] mr-4">Plans from â‚¹49/wk</span>
                             </div>
                             <button className="w-full sm:w-auto flex items-center justify-center gap-2 bg-white text-black font-black text-sm px-6 py-3.5 rounded-xl transition-colors hover:bg-slate-200">
                                 Explore Plans

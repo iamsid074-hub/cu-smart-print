@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
 import { motion, AnimatePresence } from "framer-motion";
@@ -100,7 +100,7 @@ export default function UsernameSetup({ onComplete }: { onComplete: () => void }
                 <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-neon-pink/20 rounded-full blur-3xl" />
 
                 <div className="relative z-10">
-                    <h2 className="text-3xl font-bold mb-2">Claim Your Handle 🎯</h2>
+                    <h2 className="text-3xl font-bold mb-2">Claim Your Handle ðŸŽ¯</h2>
                     <p className="text-muted-foreground mb-8 text-sm">
                         Before diving into the marketplace, pick a unique username for others to find and chat with you.
                     </p>

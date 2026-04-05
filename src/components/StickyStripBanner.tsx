@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -29,11 +29,11 @@ export default function StickyStripBanner() {
               {[...Array(6)].map((_, i) => (
                 <span key={i} className="text-[11px] sm:text-xs font-black text-white tracking-wider flex items-center gap-2">
                   <span className="text-sm">{"\uD83D\uDD25"}</span>
-                  Pasta @ {"\u20B9"}99 {"\u2013"} Limited Time Offer!
+                  Pasta @ {"₹"}99 {"–"} Limited Time Offer!
                   <span className="w-1 h-1 rounded-full bg-white/40" />
                   Flavour Factory Special
                   <span className="w-1 h-1 rounded-full bg-white/40" />
-                  Red {"\u2022"} White {"\u2022"} Mixed Sauce
+                  Red {"•"} White {"•"} Mixed Sauce
                 </span>
               ))}
             </motion.div>

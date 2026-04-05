@@ -1,4 +1,4 @@
-import React, { useState, memo, useCallback } from 'react';
+﻿import React, { useState, memo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Mic, Sparkles, X, TrendingUp, Store, Plus, History } from 'lucide-react';
 import { QUICK_TAGS, POPULAR_FOODS } from "@/utils/foodUtils";
@@ -116,7 +116,7 @@ export const CustomOrderForm = memo(({
                               </p>
                             </div>
                           </div>
-                          <span className="text-[12px] font-black text-[#007AFF] bg-[#007AFF]/10 px-3 py-1.5 rounded-full">{"\u20B9"}{item.price}</span>
+                          <span className="text-[12px] font-black text-[#007AFF] bg-[#007AFF]/10 px-3 py-1.5 rounded-full">{"₹"}{item.price}</span>
                         </button>
                       ))}
                     </div>
@@ -152,7 +152,7 @@ export const CustomOrderForm = memo(({
                 type="number"
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
-                placeholder="Expected Price (₹)"
+                placeholder="Expected Price (â‚¹)"
                 className="w-full h-14 px-5 rounded-[1.2rem] bg-white/60 border border-white/60 font-bold text-[#1D1D1F] placeholder:text-[#8E8E93] shadow-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#007AFF]/20 transition-all"
               />
             </div>
@@ -181,7 +181,7 @@ export const CustomOrderForm = memo(({
                 <div key={item.id} className="flex items-center justify-between p-4.5 rounded-[1.2rem] bg-white border border-black/5 shadow-sm">
                   <div>
                     <p className="text-[15px] font-bold text-[#1D1D1F] tracking-tight">{item.name}</p>
-                    <p className="text-[12px] font-bold text-[#007AFF] mt-0.5">{"\u20B9"}{item.price} x {item.quantity}</p>
+                    <p className="text-[12px] font-bold text-[#007AFF] mt-0.5">{"₹"}{item.price} x {item.quantity}</p>
                   </div>
                   <button 
                     onClick={() => onRemoveFromList(item.id)}

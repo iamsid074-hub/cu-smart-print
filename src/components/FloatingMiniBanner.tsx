@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ArrowRight } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
@@ -49,7 +49,7 @@ export default function FloatingMiniBanner() {
               </div>
               <div className="flex flex-col min-w-0 pr-2">
                 <span className="text-[10px] font-bold text-[#FF3B30] uppercase tracking-wider mb-0.5">Limited Offer</span>
-                <span className="text-[15px] font-bold text-[#1D1D1F] leading-tight tracking-tight">Pasta @ {"\u20B9"}99</span>
+                <span className="text-[15px] font-bold text-[#1D1D1F] leading-tight tracking-tight">Pasta @ {"₹"}99</span>
                 <span className="text-[11px] font-semibold text-[#007AFF] flex items-center gap-1 mt-0.5">
                   Order Now <ArrowRight className="w-3 h-3" />
                 </span>

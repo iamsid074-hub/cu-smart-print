@@ -1,4 +1,4 @@
-import { Smartphone, Banknote } from "lucide-react";
+﻿import { Smartphone, Banknote } from "lucide-react";
 
 interface PaymentSelectorProps {
     selected: "online" | "cod";
@@ -32,7 +32,7 @@ export default function PaymentSelector({ selected, onChange, totalAmount, disab
                 </div>
                 <div className="flex-1 min-w-0 text-left">
                     <p className={`text-sm font-bold ${selected === "online" ? 'text-brand' : 'text-slate-900'}`}>Pay via UPI</p>
-                    <p className={`text-[11px] font-medium mt-0.5 ${selected === "online" ? 'text-brand' : 'text-slate-500'}`}>GPay · PhonePe · Paytm</p>
+                    <p className={`text-[11px] font-medium mt-0.5 ${selected === "online" ? 'text-brand' : 'text-slate-500'}`}>GPay Â· PhonePe Â· Paytm</p>
                 </div>
                 <div className="flex items-center gap-1.5 flex-shrink-0">
                     <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${selected === "online" ? 'border-brand bg-white' : 'border-slate-300'}`}>

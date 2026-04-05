@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { Crown, Zap, ArrowRight, ShieldCheck } from 'lucide-react';
 import { useMembership } from '@/hooks/useMembership';
 import MembershipPlansModal from './MembershipPlansModal';
@@ -39,7 +39,7 @@ export default function MembershipUpsell({ currentDeliveryFee }: MembershipUpsel
                             </h4>
                         </div>
                         <p className="text-xs text-slate-400 font-medium leading-tight">
-                            Subscribe to <span className="text-white font-bold">CB PRIME</span> and save ₹{currentDeliveryFee > 0 ? currentDeliveryFee : 29} right now, plus free deliveries all week!
+                            Subscribe to <span className="text-white font-bold">CB PRIME</span> and save â‚¹{currentDeliveryFee > 0 ? currentDeliveryFee : 29} right now, plus free deliveries all week!
                         </p>
                     </div>
 

@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from "framer-motion";
+﻿import { motion, AnimatePresence } from "framer-motion";
 import { AlertTriangle, ShieldAlert, CheckCircle2, XCircle, Info } from "lucide-react";
 
 interface RiskAlertProps {

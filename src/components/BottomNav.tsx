@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+﻿import React, { memo } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Home, ShoppingCart, Utensils, ShoppingBag, Wallet } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";

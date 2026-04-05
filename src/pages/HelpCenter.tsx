@@ -1,10 +1,10 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Shield, ShieldCheck, Ban, Package, Headset, ChevronDown, Mail, Phone, MessageCircle, Clock, AlertTriangle, HelpCircle, ShoppingCart, Truck, CreditCard, Users, ExternalLink } from "lucide-react";
 
 const fontH: React.CSSProperties = { fontFamily: "'Space Grotesk', sans-serif" };
 
-/* ─── FAQ Data ─── */
+/* â”€â”€â”€ FAQ Data â”€â”€â”€ */
 const faqSections = [
     {
         title: "Ordering & Delivery",
@@ -25,7 +25,7 @@ const faqSections = [
             },
             {
                 q: "What is the delivery charge?",
-                a: "Delivery is charged at a flat ₹29 per order inside campus.",
+                a: "Delivery is charged at a flat â‚¹29 per order inside campus.",
             },
         ],
     },
@@ -124,7 +124,7 @@ export default function HelpCenter() {
                     </p>
                 </motion.div>
 
-                {/* ─── Safety Commitment Banner ─── */}
+                {/* â”€â”€â”€ Safety Commitment Banner â”€â”€â”€ */}
                 <motion.div
                     initial={{ opacity: 0, y: 16 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -138,7 +138,7 @@ export default function HelpCenter() {
                         <div>
                             <h2 className="text-base sm:text-lg font-bold mb-1.5 text-slate-900">Our Safety Commitment</h2>
                             <p className="text-xs sm:text-sm leading-relaxed text-slate-600">
-                                CU Bazzar is run by a <strong className="text-emerald-600">real person with real accountability</strong>. Every delivery is handled personally by the platform owner \u2014 no anonymous drivers, no middlemen.
+                                CU Bazzar is run by a <strong className="text-emerald-600">real person with real accountability</strong>. Every delivery is handled personally by the platform owner — no anonymous drivers, no middlemen.
                                 We maintain a <strong className="text-rose-600">strict zero-tolerance policy</strong> against drugs, alcohol, weapons, and any prohibited items. Violations are reported to Chandigarh University authorities immediately.
                                 Your safety and trust are our foundation.
                             </p>
@@ -146,7 +146,7 @@ export default function HelpCenter() {
                     </div>
                 </motion.div>
 
-                {/* ─── Contact Cards ─── */}
+                {/* â”€â”€â”€ Contact Cards â”€â”€â”€ */}
                 <motion.div
                     initial={{ opacity: 0, y: 16 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -204,7 +204,7 @@ export default function HelpCenter() {
                     ))}
                 </motion.div>
 
-                {/* ─── FAQ Section ─── */}
+                {/* â”€â”€â”€ FAQ Section â”€â”€â”€ */}
                 <div className="mb-10">
                     <h2 className="text-lg sm:text-xl font-bold mb-5 text-slate-900" style={fontH}>
                         <HelpCircle className="w-5 h-5 inline-block mr-2 text-emerald-500" style={{ verticalAlign: '-2px' }} />
@@ -278,7 +278,7 @@ export default function HelpCenter() {
                     </AnimatePresence>
                 </div>
 
-                {/* ─── Prohibited Items Notice ─── */}
+                {/* â”€â”€â”€ Prohibited Items Notice â”€â”€â”€ */}
                 <motion.div
                     initial={{ opacity: 0, y: 16 }}
                     whileInView={{ opacity: 1, y: 0 }}
@@ -287,19 +287,19 @@ export default function HelpCenter() {
                 >
                     <div className="flex items-center gap-2 mb-4">
                         <AlertTriangle className="w-5 h-5 text-rose-500" />
-                        <h3 className="text-sm sm:text-base font-bold text-rose-700">Prohibited Items \u2014 Zero Tolerance</h3>
+                        <h3 className="text-sm sm:text-base font-bold text-rose-700">Prohibited Items — Zero Tolerance</h3>
                     </div>
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                         {[
-                            "🚫 Drugs & Narcotics",
-                            "🚫 Alcohol & Tobacco",
-                            "🚫 Weapons of any kind",
-                            "🚫 Counterfeit/Pirated goods",
-                            "🚫 Stolen property",
-                            "🚫 Prescription medicines",
-                            "🚫 Hazardous materials",
-                            "🚫 University-prohibited items",
-                            "🚫 Exam cheating material",
+                            "ðŸš« Drugs & Narcotics",
+                            "ðŸš« Alcohol & Tobacco",
+                            "ðŸš« Weapons of any kind",
+                            "ðŸš« Counterfeit/Pirated goods",
+                            "ðŸš« Stolen property",
+                            "ðŸš« Prescription medicines",
+                            "ðŸš« Hazardous materials",
+                            "ðŸš« University-prohibited items",
+                            "ðŸš« Exam cheating material",
                         ].map(item => (
                             <div key={item} className="px-3 py-2 rounded-lg text-[11px] sm:text-xs font-medium bg-white border border-rose-100 text-rose-600 shadow-sm">
                                 {item}
@@ -311,7 +311,7 @@ export default function HelpCenter() {
                     </p>
                 </motion.div>
 
-                {/* ─── Still need help? ─── */}
+                {/* â”€â”€â”€ Still need help? â”€â”€â”€ */}
                 <div className="text-center py-8">
                     <p className="text-sm mb-3 text-slate-500">Still need help?</p>
                     <a

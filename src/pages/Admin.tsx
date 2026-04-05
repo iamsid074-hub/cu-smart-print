@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useRef } from "react";
+﻿import { useEffect, useState, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import {
@@ -11,7 +11,7 @@ import {
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 type AdminSection = "dashboard" | "products" | "item_orders" | "food_orders" | "subscriptions" | "notifications";
 
 interface Product {
@@ -61,7 +61,7 @@ interface Stats {
     totalUsers: number;
 }
 
-// ─── Status Config ─────────────────────────────────────────────────────────────
+// â”€â”€â”€ Status Config â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; border: string }> = {
     pending: { label: "Awaiting Seller", color: "text-yellow-400", bg: "bg-yellow-400/15", border: "border-yellow-400/30" },
     seller_accepted: { label: "Seller Confirmed", color: "text-neon-cyan", bg: "bg-cyan-400/15", border: "border-cyan-400/30" },
@@ -69,11 +69,11 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; 
     confirmed: { label: "Admin Accepted", color: "text-neon-blue", bg: "bg-blue-400/15", border: "border-blue-400/30" },
     picked: { label: "Picked Up", color: "text-purple-400", bg: "bg-purple-400/15", border: "border-purple-400/30" },
     delivering: { label: "Out for Delivery", color: "text-neon-orange", bg: "bg-orange-400/15", border: "border-orange-400/30" },
-    completed: { label: "Delivered ✅", color: "text-green-400", bg: "bg-green-400/15", border: "border-green-400/30" },
+    completed: { label: "Delivered âœ…", color: "text-green-400", bg: "bg-green-400/15", border: "border-green-400/30" },
     cancelled: { label: "Cancelled", color: "text-red-400", bg: "bg-red-400/15", border: "border-red-400/30" },
 };
 
-// ─── Stat Card ─────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Stat Card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function StatCard({ icon: Icon, label, value, gradient, delay = 0 }: {
     icon: any; label: string; value: number | string; gradient: string; delay?: number;
 }) {
@@ -94,7 +94,7 @@ function StatCard({ icon: Icon, label, value, gradient, delay = 0 }: {
     );
 }
 
-// ─── Status Badge ──────────────────────────────────────────────────────────────
+// â”€â”€â”€ Status Badge â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function StatusBadge({ status }: { status: string }) {
     const cfg = STATUS_CONFIG[status] || { label: status, color: "text-slate-600", bg: "bg-slate-100", border: "border-slate-200" };
     return (
@@ -105,7 +105,7 @@ function StatusBadge({ status }: { status: string }) {
     );
 }
 
-// ─── Confirm Dialog ────────────────────────────────────────────────────────────
+// â”€â”€â”€ Confirm Dialog â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function ConfirmDialog({ message, onConfirm, onCancel }: {
     message: string; onConfirm: () => void; onCancel: () => void;
 }) {
@@ -150,7 +150,7 @@ function ConfirmDialog({ message, onConfirm, onCancel }: {
     );
 }
 
-// ─── Priority color helpers ─────────────────────────────────────────────────────
+// â”€â”€â”€ Priority color helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function getPriorityColor(status: string): { border: string; bg: string; dot: string; label: string } {
     switch (status) {
         case "pending":
@@ -171,7 +171,7 @@ function getPriorityColor(status: string): { border: string; bg: string; dot: st
     }
 }
 
-// ─── Dashboard Section (Fast Delivery Dashboard) ───────────────────────────────
+// â”€â”€â”€ Dashboard Section (Fast Delivery Dashboard) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function DashboardSection({ stats, recentProducts, recentOrders, loading, allOrders, onUpdateStatus, onVerifyUpi }: {
     stats: Stats; recentProducts: Product[]; recentOrders: Order[]; loading: boolean;
     allOrders: Order[]; onUpdateStatus: (id: string, status: string, timestamps?: Record<string, string>) => void; onVerifyUpi: (id: string) => void;
@@ -180,10 +180,10 @@ function DashboardSection({ stats, recentProducts, recentOrders, loading, allOrd
     const [searchQuery, setSearchQuery] = useState("");
 
     const dashFilters = [
-        { id: "pending", label: "🔴 Pending", count: allOrders.filter(o => o.status === "pending").length },
-        { id: "accepted", label: "🟡 Accepted", count: allOrders.filter(o => ["seller_accepted", "confirmed", "picked"].includes(o.status)).length },
-        { id: "delivering", label: "🚀 Delivering", count: allOrders.filter(o => o.status === "delivering").length },
-        { id: "completed", label: "✅ Completed", count: allOrders.filter(o => o.status === "completed").length },
+        { id: "pending", label: "ðŸ”´ Pending", count: allOrders.filter(o => o.status === "pending").length },
+        { id: "accepted", label: "ðŸŸ¡ Accepted", count: allOrders.filter(o => ["seller_accepted", "confirmed", "picked"].includes(o.status)).length },
+        { id: "delivering", label: "ðŸš€ Delivering", count: allOrders.filter(o => o.status === "delivering").length },
+        { id: "completed", label: "âœ… Completed", count: allOrders.filter(o => o.status === "completed").length },
         { id: "all", label: "All", count: allOrders.length },
     ];
 
@@ -213,9 +213,9 @@ function DashboardSection({ stats, recentProducts, recentOrders, loading, allOrd
     const nextAction: Record<string, { label: string; status: string; icon: any; color: string; timestamps?: object } | null> = {
         pending: { label: "Accept Order", status: "confirmed", icon: CheckCircle, color: "bg-blue-500/20 border-blue-500/40 text-blue-400 hover:bg-blue-500/30", timestamps: { accepted_at: new Date().toISOString() } },
         seller_accepted: { label: "Accept & Process", status: "confirmed", icon: CheckCircle, color: "bg-cyan-500/20 border-cyan-500/40 text-cyan-400 hover:bg-cyan-500/30", timestamps: { accepted_at: new Date().toISOString() } },
-        confirmed: { label: "Picked ✓", status: "picked", icon: Package, color: "bg-purple-500/20 border-purple-500/40 text-purple-400 hover:bg-purple-500/30", timestamps: { picked_at: new Date().toISOString() } },
-        picked: { label: "Out for Delivery 🚀", status: "delivering", icon: Truck, color: "bg-orange-500/20 border-orange-500/40 text-orange-400 hover:bg-orange-500/30", timestamps: { out_for_delivery_at: new Date().toISOString() } },
-        delivering: { label: "Mark Delivered ✅", status: "completed", icon: HomeIcon, color: "bg-green-500/20 border-green-500/40 text-green-400 hover:bg-green-500/30", timestamps: { delivered_at: new Date().toISOString() } },
+        confirmed: { label: "Picked âœ“", status: "picked", icon: Package, color: "bg-purple-500/20 border-purple-500/40 text-purple-400 hover:bg-purple-500/30", timestamps: { picked_at: new Date().toISOString() } },
+        picked: { label: "Out for Delivery ðŸš€", status: "delivering", icon: Truck, color: "bg-orange-500/20 border-orange-500/40 text-orange-400 hover:bg-orange-500/30", timestamps: { out_for_delivery_at: new Date().toISOString() } },
+        delivering: { label: "Mark Delivered âœ…", status: "completed", icon: HomeIcon, color: "bg-green-500/20 border-green-500/40 text-green-400 hover:bg-green-500/30", timestamps: { delivered_at: new Date().toISOString() } },
         completed: null,
         cancelled: null,
         seller_rejected: { label: "Override & Accept", status: "confirmed", icon: CheckCircle, color: "bg-cyan-500/20 border-cyan-500/40 text-cyan-400 hover:bg-cyan-500/30", timestamps: { accepted_at: new Date().toISOString() } },
@@ -230,15 +230,15 @@ function DashboardSection({ stats, recentProducts, recentOrders, loading, allOrd
                 <h2 className="text-2xl font-black mb-1 text-slate-900 flex items-center gap-2">
                     <Activity className="w-6 h-6 text-neon-orange" /> Delivery Dashboard
                 </h2>
-                <p className="text-slate-900/70 text-sm">Real-time order management • {allOrders.filter(o => !["completed", "cancelled", "seller_rejected"].includes(o.status)).length} active orders</p>
+                <p className="text-slate-900/70 text-sm">Real-time order management â€¢ {allOrders.filter(o => !["completed", "cancelled", "seller_rejected"].includes(o.status)).length} active orders</p>
             </div>
 
             {/* Stats Row */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                <StatCard icon={ShoppingCart} label="Active Orders" value={loading ? "—" : stats.activeOrders} gradient="from-red-500 to-orange-500" delay={0} />
-                <StatCard icon={Package} label="Products" value={loading ? "—" : stats.totalProducts} gradient="from-neon-cyan to-neon-blue" delay={0.05} />
-                <StatCard icon={Users} label="Users" value={loading ? "—" : stats.totalUsers} gradient="from-neon-blue to-neon-pink" delay={0.1} />
-                <StatCard icon={TrendingUp} label="Completed Today" value={loading ? "—" : allOrders.filter(o => { const t = new Date(); t.setHours(0, 0, 0, 0); return o.status === "completed" && new Date(o.created_at) >= t; }).length} gradient="from-green-500 to-emerald-500" delay={0.15} />
+                <StatCard icon={ShoppingCart} label="Active Orders" value={loading ? "â€”" : stats.activeOrders} gradient="from-red-500 to-orange-500" delay={0} />
+                <StatCard icon={Package} label="Products" value={loading ? "â€”" : stats.totalProducts} gradient="from-neon-cyan to-neon-blue" delay={0.05} />
+                <StatCard icon={Users} label="Users" value={loading ? "â€”" : stats.totalUsers} gradient="from-neon-blue to-neon-pink" delay={0.1} />
+                <StatCard icon={TrendingUp} label="Completed Today" value={loading ? "â€”" : allOrders.filter(o => { const t = new Date(); t.setHours(0, 0, 0, 0); return o.status === "completed" && new Date(o.created_at) >= t; }).length} gradient="from-green-500 to-emerald-500" delay={0.15} />
             </div>
 
             {/* Search + Filters */}
@@ -322,11 +322,11 @@ function DashboardSection({ stats, recentProducts, recentOrders, loading, allOrd
                                             {details.items && (
                                                 <div className="mt-1 space-y-0.5">
                                                     {details.items.split("\n").filter(Boolean).map((line, idx) => (
-                                                        <p key={idx} className="text-xs text-slate-900/60">• {line.trim()}</p>
+                                                        <p key={idx} className="text-xs text-slate-900/60">â€¢ {line.trim()}</p>
                                                     ))}
                                                 </div>
                                             )}
-                                            <p className="text-lg font-black text-neon-fire mt-1">₹{order.total_price.toLocaleString()}</p>
+                                            <p className="text-lg font-black text-neon-fire mt-1">â‚¹{order.total_price.toLocaleString()}</p>
                                         </div>
                                     </div>
 
@@ -348,7 +348,7 @@ function DashboardSection({ stats, recentProducts, recentOrders, loading, allOrd
                                             <span className="text-xs text-slate-900/60 break-words">{details.hostel}</span>
                                         </div>
                                         <div className="flex items-start gap-2">
-                                            <span className="w-3 h-3 flex items-center justify-center flex-shrink-0 mt-0.5 text-slate-900/40 text-[10px]">🚪</span>
+                                            <span className="w-3 h-3 flex items-center justify-center flex-shrink-0 mt-0.5 text-slate-900/40 text-[10px]">ðŸšª</span>
                                             <span className="text-xs text-brand font-black break-words uppercase">Room: {details.room || "N/A"}</span>
                                         </div>
                                     </div>
@@ -356,7 +356,7 @@ function DashboardSection({ stats, recentProducts, recentOrders, loading, allOrd
                                     {/* Payment */}
                                     <div className="flex items-center gap-2 flex-wrap">
                                         <span className={`inline-flex items-center px-2 py-1 rounded-lg text-[11px] font-bold ${order.payment_status === "verifying" ? "bg-orange-500/15 text-orange-400" : order.payment_status === "paid" ? "bg-green-500/15 text-green-400" : "bg-yellow-500/15 text-yellow-400"}`}>
-                                            {order.payment_status === "verifying" ? "🟡 Verify UTR" : order.payment_status === "paid" ? "💳 Paid" : "💵 Cash on Gate"}
+                                            {order.payment_status === "verifying" ? "ðŸŸ¡ Verify UTR" : order.payment_status === "paid" ? "ðŸ’³ Paid" : "ðŸ’µ Cash on Gate"}
                                         </span>
                                         {order.payment_status === "verifying" && (
                                             <button onClick={() => onVerifyUpi(order.id)} className="px-2.5 py-1 bg-green-500/20 border border-green-500/30 text-green-400 hover:bg-green-500/30 rounded-lg text-[11px] font-bold flex items-center gap-1 transition-all">
@@ -377,7 +377,7 @@ function DashboardSection({ stats, recentProducts, recentOrders, loading, allOrd
                                             {order.status === "pending" && (
                                                 <button onClick={() => onUpdateStatus(order.id, "cancelled")}
                                                     className="px-4 py-2.5 rounded-xl border border-red-500/30 bg-red-500/10 text-red-400 text-sm font-bold hover:bg-red-500/20 transition-all">
-                                                    ✕
+                                                    âœ•
                                                 </button>
                                             )}
                                         </div>
@@ -392,7 +392,7 @@ function DashboardSection({ stats, recentProducts, recentOrders, loading, allOrd
     );
 }
 
-// ─── Products Section ──────────────────────────────────────────────────────────
+// â”€â”€â”€ Products Section â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function ProductsSection({ products, loading, onDelete }: {
     products: Product[]; loading: boolean; onDelete: (id: string, title: string) => void;
 }) {
@@ -439,7 +439,7 @@ function ProductsSection({ products, loading, onDelete }: {
                                     </span>
                                 </div>
                                 <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between">
-                                    <p className="text-white font-black text-lg">₹{product.price.toLocaleString()}</p>
+                                    <p className="text-white font-black text-lg">â‚¹{product.price.toLocaleString()}</p>
                                     {product.condition && (
                                         <span className="px-2 py-0.5 rounded bg-white/20 text-xs text-white font-medium">{product.condition}</span>
                                     )}
@@ -482,7 +482,7 @@ function ProductsSection({ products, loading, onDelete }: {
     );
 }
 
-// ─── Helper: detect food order ─────────────────────────────────────────────────
+// â”€â”€â”€ Helper: detect food order â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const NON_FOOD_KEYWORDS = ['practical file', 'notebook', 'register', 'pen', 'pencil', 'eraser', 'stapler', 'folder', 'chart', 'paper', 'assignment', 'lab manual', 'journal', 'project', 'file', 'subscription', 'cb prime'];
 
 function isSubscriptionOrder(order: Order): boolean {
@@ -510,7 +510,7 @@ function isFoodOrder(order: Order): boolean {
     return true;
 }
 
-// ─── Helper: parse order location/room cleanly ─────────────────────────────────
+// â”€â”€â”€ Helper: parse order location/room cleanly â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function parseOrderDetails(order: Order): { hostel: string; room: string; items: string; notes: string } {
     let hostel = (order.delivery_location || '').split(' - Floor')[0]; // Clean hostel block
     let room = '';
@@ -558,9 +558,9 @@ function parseOrderDetails(order: Order): { hostel: string; room: string; items:
         .filter(line => !!line && !line.includes('[SAFETY:Disclaimer'))
         .map(line => {
             let price = '';
-            const priceMatch = line.match(/\(₹([\d,]+)\)/);
+            const priceMatch = line.match(/\(â‚¹([\d,]+)\)/);
             if (priceMatch) {
-                price = `₹${priceMatch[1]}`;
+                price = `â‚¹${priceMatch[1]}`;
             }
 
             let name = line;
@@ -580,7 +580,7 @@ function parseOrderDetails(order: Order): { hostel: string; room: string; items:
     return { hostel, room, items, notes };
 }
 
-// ─── Filter Bar Component ──────────────────────────────────────────────────────
+// â”€â”€â”€ Filter Bar Component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function FilterBar({ active, onChange }: { active: string; onChange: (f: string) => void }) {
     const filters = [
         { id: 'all', label: 'All' },
@@ -615,7 +615,7 @@ function applyFilter(orders: Order[], filter: string): Order[] {
     }
 }
 
-// ─── Item Orders Section ────────────────────────────────────────────────────────
+// â”€â”€â”€ Item Orders Section â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function ItemOrdersSection({ orders, loading, onUpdateStatus, onVerifyUpi, onApproveSubscription }: {
     orders: Order[]; loading: boolean; onUpdateStatus: (id: string, status: string, timestamps?: Record<string, string>) => void; onVerifyUpi: (id: string) => void; onApproveSubscription: (order: Order) => void;
 }) {
@@ -626,9 +626,9 @@ function ItemOrdersSection({ orders, loading, onUpdateStatus, onVerifyUpi, onApp
     const nextStatus: Record<string, { label: string; status: string; icon: any; color: string; timestamps?: object } | null> = {
         pending: { label: "Accept Order", status: "confirmed", icon: CheckCircle, color: "bg-blue-500/20 border-blue-500/40 text-blue-400 hover:bg-blue-500/30", timestamps: { accepted_at: new Date().toISOString() } },
         seller_accepted: { label: "Accept & Pickup", status: "confirmed", icon: CheckCircle, color: "bg-cyan-500/20 border-cyan-500/40 text-cyan-400 hover:bg-cyan-500/30", timestamps: { accepted_at: new Date().toISOString() } },
-        confirmed: { label: "Picked from Seller ✓", status: "picked", icon: Package, color: "bg-purple-500/20 border-purple-500/40 text-purple-400 hover:bg-purple-500/30", timestamps: { picked_at: new Date().toISOString() } },
-        picked: { label: "Out for Delivery 🚀", status: "delivering", icon: Truck, color: "bg-orange-500/20 border-orange-500/40 text-orange-400 hover:bg-orange-500/30", timestamps: { out_for_delivery_at: new Date().toISOString() } },
-        delivering: { label: "Mark Delivered ✅", status: "completed", icon: HomeIcon, color: "bg-green-500/20 border-green-500/40 text-green-400 hover:bg-green-500/30", timestamps: { delivered_at: new Date().toISOString() } },
+        confirmed: { label: "Picked from Seller âœ“", status: "picked", icon: Package, color: "bg-purple-500/20 border-purple-500/40 text-purple-400 hover:bg-purple-500/30", timestamps: { picked_at: new Date().toISOString() } },
+        picked: { label: "Out for Delivery ðŸš€", status: "delivering", icon: Truck, color: "bg-orange-500/20 border-orange-500/40 text-orange-400 hover:bg-orange-500/30", timestamps: { out_for_delivery_at: new Date().toISOString() } },
+        delivering: { label: "Mark Delivered âœ…", status: "completed", icon: HomeIcon, color: "bg-green-500/20 border-green-500/40 text-green-400 hover:bg-green-500/30", timestamps: { delivered_at: new Date().toISOString() } },
         completed: null, cancelled: null,
         seller_rejected: { label: "Override & Accept", status: "confirmed", icon: CheckCircle, color: "bg-cyan-500/20 border-cyan-500/40 text-cyan-400 hover:bg-cyan-500/30", timestamps: { accepted_at: new Date().toISOString() } },
     };
@@ -640,7 +640,7 @@ function ItemOrdersSection({ orders, loading, onUpdateStatus, onVerifyUpi, onApp
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-slate-900">
                 <div>
                     <h2 className="text-2xl font-black mb-1 flex items-center gap-2"><ShoppingCart className="w-6 h-6 text-neon-cyan" /> Item Orders</h2>
-                    <p className="text-slate-900/70 text-sm">{itemOrders.length} total • {itemOrders.filter(o => !['completed', 'cancelled', 'seller_rejected'].includes(o.status)).length} active</p>
+                    <p className="text-slate-900/70 text-sm">{itemOrders.length} total â€¢ {itemOrders.filter(o => !['completed', 'cancelled', 'seller_rejected'].includes(o.status)).length} active</p>
                 </div>
                 <FilterBar active={filter} onChange={setFilter} />
             </div>
@@ -678,11 +678,11 @@ function ItemOrdersSection({ orders, loading, onUpdateStatus, onVerifyUpi, onApp
                                         </div>
                                         <div className="flex-1 min-w-0">
                                             <p className="font-bold text-sm text-slate-900 truncate">{order.products?.title || "Product Removed"}</p>
-                                            <p className="text-neon-fire font-bold text-lg">₹{order.total_price.toLocaleString()}</p>
+                                            <p className="text-neon-fire font-bold text-lg">â‚¹{order.total_price.toLocaleString()}</p>
                                             <div className="flex flex-wrap items-center gap-2 mt-1">
                                                 {order.products?.category && <span className="inline-block px-2 py-0.5 rounded-lg bg-white/10 text-xs text-slate-900/70 font-mono truncate max-w-full">{order.products.category}</span>}
                                                 <span className={`inline-block px-2 py-0.5 rounded-lg text-xs font-bold truncate max-w-full ${order.payment_status === 'verifying' ? 'bg-orange-500/15 text-orange-400' : order.payment_status === 'paid' ? 'bg-green-500/15 text-green-400' : 'bg-yellow-500/15 text-yellow-400'}`}>
-                                                    {order.payment_status === 'verifying' ? `🟡 Verify UTR: ${order.razorpay_payment_id || 'N/A'}` : order.payment_status === 'paid' ? '💳 Paid Online' : '💵 Cash on Gate'}
+                                                    {order.payment_status === 'verifying' ? `ðŸŸ¡ Verify UTR: ${order.razorpay_payment_id || 'N/A'}` : order.payment_status === 'paid' ? 'ðŸ’³ Paid Online' : 'ðŸ’µ Cash on Gate'}
                                                 </span>
                                             </div>
                                             {order.payment_status === 'verifying' && (
@@ -707,7 +707,7 @@ function ItemOrdersSection({ orders, loading, onUpdateStatus, onVerifyUpi, onApp
                                             <span className="text-xs text-slate-900/70 break-words flex-1 min-w-0">{details.hostel}</span>
                                         </div>
                                         <div className="flex items-start gap-2 mt-1">
-                                            <span className="w-3 h-3 flex items-center justify-center flex-shrink-0 mt-0.5 text-slate-900/40 text-[10px]">🚪</span>
+                                            <span className="w-3 h-3 flex items-center justify-center flex-shrink-0 mt-0.5 text-slate-900/40 text-[10px]">ðŸšª</span>
                                             <span className="text-xs text-brand font-black break-words uppercase flex-1 min-w-0">Room: {details.room || "N/A"}</span>
                                         </div>
                                     </div>
@@ -762,7 +762,7 @@ function ItemOrdersSection({ orders, loading, onUpdateStatus, onVerifyUpi, onApp
     );
 }
 
-// ─── Food Orders Section ────────────────────────────────────────────────────────
+// â”€â”€â”€ Food Orders Section â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function FoodOrdersSection({ orders, loading, onUpdateStatus, onVerifyUpi }: {
     orders: Order[]; loading: boolean; onUpdateStatus: (id: string, status: string, timestamps?: Record<string, string>) => void; onVerifyUpi: (id: string) => void;
 }) {
@@ -772,8 +772,8 @@ function FoodOrdersSection({ orders, loading, onUpdateStatus, onVerifyUpi }: {
 
     const nextStatus: Record<string, { label: string; status: string; icon: any; color: string; timestamps?: object } | null> = {
         pending: { label: "Accept Order", status: "confirmed", icon: CheckCircle, color: "bg-green-500/20 border-green-500/40 text-green-400 hover:bg-green-500/30", timestamps: { accepted_at: new Date().toISOString() } },
-        confirmed: { label: "Out for Delivery 🚀", status: "delivering", icon: Truck, color: "bg-orange-500/20 border-orange-500/40 text-orange-400 hover:bg-orange-500/30", timestamps: { out_for_delivery_at: new Date().toISOString() } },
-        delivering: { label: "Mark Delivered ✅", status: "completed", icon: HomeIcon, color: "bg-green-500/20 border-green-500/40 text-green-400 hover:bg-green-500/30", timestamps: { delivered_at: new Date().toISOString() } },
+        confirmed: { label: "Out for Delivery ðŸš€", status: "delivering", icon: Truck, color: "bg-orange-500/20 border-orange-500/40 text-orange-400 hover:bg-orange-500/30", timestamps: { out_for_delivery_at: new Date().toISOString() } },
+        delivering: { label: "Mark Delivered âœ…", status: "completed", icon: HomeIcon, color: "bg-green-500/20 border-green-500/40 text-green-400 hover:bg-green-500/30", timestamps: { delivered_at: new Date().toISOString() } },
         completed: null, cancelled: null,
         seller_accepted: { label: "Accept", status: "confirmed", icon: CheckCircle, color: "bg-green-500/20 border-green-500/40 text-green-400 hover:bg-green-500/30", timestamps: { accepted_at: new Date().toISOString() } },
         picked: { label: "Out for Delivery", status: "delivering", icon: Truck, color: "bg-orange-500/20 border-orange-500/40 text-orange-400 hover:bg-orange-500/30", timestamps: { out_for_delivery_at: new Date().toISOString() } },
@@ -789,7 +789,7 @@ function FoodOrdersSection({ orders, loading, onUpdateStatus, onVerifyUpi }: {
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
                     <h2 className="text-2xl font-black mb-1 flex items-center gap-2"><UtensilsCrossed className="w-6 h-6 text-orange-400" /> Food Orders</h2>
-                    <p className="text-slate-500 text-sm">{foodOrders.length} total • {foodOrders.filter(o => !['completed', 'cancelled'].includes(o.status)).length} active</p>
+                    <p className="text-slate-500 text-sm">{foodOrders.length} total â€¢ {foodOrders.filter(o => !['completed', 'cancelled'].includes(o.status)).length} active</p>
                 </div>
                 <FilterBar active={filter} onChange={setFilter} />
             </div>
@@ -835,7 +835,7 @@ function FoodOrdersSection({ orders, loading, onUpdateStatus, onVerifyUpi }: {
                                                 const cleanLine = line.replace(/\s*\[IMG:[^\]]*\]/g, "");
                                                 return (
                                                     <p key={idx} className="text-sm text-slate-900 flex items-start gap-2">
-                                                        <span className="text-orange-400 mt-0.5 font-bold">•</span>
+                                                        <span className="text-orange-400 mt-0.5 font-bold">â€¢</span>
                                                         <span>{cleanLine.trim()}</span>
                                                     </p>
                                                 );
@@ -850,12 +850,12 @@ function FoodOrdersSection({ orders, loading, onUpdateStatus, onVerifyUpi }: {
                                         {order.total_price > 0 && (
                                             <div className="mt-2 pt-2 border-t border-orange-500/10 flex items-center justify-between">
                                                 <span className="text-xs text-slate-500">Total</span>
-                                                <span className="text-base font-black text-orange-400">₹{order.total_price.toLocaleString()}</span>
+                                                <span className="text-base font-black text-orange-400">â‚¹{order.total_price.toLocaleString()}</span>
                                             </div>
                                         )}
                                         <div className="mt-2 flex flex-col items-start gap-2">
                                             <span className={`inline-block w-full sm:w-auto truncate px-2 py-1 rounded-lg text-xs font-bold ${order.payment_status === 'verifying' ? 'bg-orange-500/15 text-orange-400' : order.payment_status === 'paid' ? 'bg-green-500/15 text-green-400' : 'bg-yellow-500/15 text-yellow-400'}`}>
-                                                {order.payment_status === 'verifying' ? `🟡 Verify UTR: ${order.razorpay_payment_id || 'N/A'}` : order.payment_status === 'paid' ? '💳 Paid Online' : '💵 Cash on Gate'}
+                                                {order.payment_status === 'verifying' ? `ðŸŸ¡ Verify UTR: ${order.razorpay_payment_id || 'N/A'}` : order.payment_status === 'paid' ? 'ðŸ’³ Paid Online' : 'ðŸ’µ Cash on Gate'}
                                             </span>
                                             {order.payment_status === 'verifying' && (
                                                 <button onClick={() => onVerifyUpi(order.id)} className="px-3 py-1.5 bg-green-500/20 border border-green-500/30 text-green-400 hover:bg-green-500/30 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 transition-all">
@@ -881,7 +881,7 @@ function FoodOrdersSection({ orders, loading, onUpdateStatus, onVerifyUpi }: {
                                             <span className="text-xs text-slate-500 break-words flex-1 min-w-0">{details.hostel}</span>
                                         </div>
                                         <div className="flex items-start gap-2 mt-1">
-                                            <span className="w-3 h-3 flex items-center justify-center flex-shrink-0 mt-0.5 text-slate-500 text-[10px]">🚪</span>
+                                            <span className="w-3 h-3 flex items-center justify-center flex-shrink-0 mt-0.5 text-slate-500 text-[10px]">ðŸšª</span>
                                             <span className="text-xs text-brand font-black break-words uppercase flex-1 min-w-0">Room: {details.room || "N/A"}</span>
                                         </div>
                                     </div>
@@ -911,7 +911,7 @@ function FoodOrdersSection({ orders, loading, onUpdateStatus, onVerifyUpi }: {
     );
 }
 
-// ─── Notifications Section ─────────────────────────────────────────────────────
+// â”€â”€â”€ Notifications Section â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function NotificationsSection({ notifications, loading, onMarkRead, onMarkAllRead }: {
     notifications: AdminNotification[]; loading: boolean;
     onMarkRead: (id: string) => void; onMarkAllRead: () => void;
@@ -971,14 +971,14 @@ function NotificationsSection({ notifications, loading, onMarkRead, onMarkAllRea
                                             <div>
                                                 <p className="text-sm font-semibold text-slate-900 truncate">{payload.title || "New Product"}</p>
                                                 <p className="text-xs text-slate-500">
-                                                    ₹{(payload.price || 0).toLocaleString()} · {payload.category} · {payload.condition}
+                                                    â‚¹{(payload.price || 0).toLocaleString()} Â· {payload.category} Â· {payload.condition}
                                                 </p>
                                             </div>
                                         ) : (
                                             <div>
                                                 <p className="text-sm font-semibold text-slate-900">Order #{(payload.id || "").slice(0, 8).toUpperCase()}</p>
                                                 <p className="text-xs text-slate-500">
-                                                    Total: ₹{(payload.total_price || 0).toLocaleString()} · Deliver to: {payload.delivery_location || "N/A"}
+                                                    Total: â‚¹{(payload.total_price || 0).toLocaleString()} Â· Deliver to: {payload.delivery_location || "N/A"}
                                                 </p>
                                             </div>
                                         )}
@@ -1003,7 +1003,7 @@ function NotificationsSection({ notifications, loading, onMarkRead, onMarkAllRea
     );
 }
 
-// ─── Subscriptions Section ────────────────────────────────────────────────────────
+// â”€â”€â”€ Subscriptions Section â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function SubscriptionsSection({ orders, loading, onApproveSubscription, onDeclineSubscription }: {
     orders: Order[]; loading: boolean; onApproveSubscription: (order: Order) => void; onDeclineSubscription: (order: Order) => void;
 }) {
@@ -1098,7 +1098,7 @@ function SubscriptionsSection({ orders, loading, onApproveSubscription, onDeclin
     );
 }
 
-// ─── Main Admin Page ───────────────────────────────────────────────────────────
+// â”€â”€â”€ Main Admin Page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export default function Admin() {
     const { user, profile, isAdmin, signOut } = useAuth();
     const navigate = useNavigate();
@@ -1128,7 +1128,7 @@ export default function Admin() {
 
     const unreadCount = notifications.filter(n => !n.is_read).length;
 
-    // ── Maintenance mode ──────────────────────────────────────────────────────────
+    // â”€â”€ Maintenance mode â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const [maintenanceMode, setMaintenanceMode] = useState(false);
     const [togglingMaintenance, setTogglingMaintenance] = useState(false);
 
@@ -1145,7 +1145,7 @@ export default function Admin() {
         setTogglingMaintenance(false);
     };
 
-    // ── Fetch Stats ──────────────────────────────────────────────────────────────
+    // â”€â”€ Fetch Stats â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const fetchStats = useCallback(async () => {
         setLoadingStats(true);
         const [{ count: productCount }, { count: orderCount }, { count: userCount }] = await Promise.all([
@@ -1161,7 +1161,7 @@ export default function Admin() {
         setLoadingStats(false);
     }, []);
 
-    // ── Fetch Products ───────────────────────────────────────────────────────────
+    // â”€â”€ Fetch Products â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const fetchProducts = useCallback(async () => {
         setLoadingProducts(true);
         const { data } = await supabase
@@ -1173,7 +1173,7 @@ export default function Admin() {
         setLoadingProducts(false);
     }, []);
 
-    // ── Fetch Orders ─────────────────────────────────────────────────────────────
+    // â”€â”€ Fetch Orders â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const fetchOrders = useCallback(async () => {
         setLoadingOrders(true);
         const { data } = await supabase
@@ -1195,7 +1195,7 @@ export default function Admin() {
         setLoadingOrders(false);
     }, []);
 
-    // ── Fetch Notifications ──────────────────────────────────────────────────────
+    // â”€â”€ Fetch Notifications â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const fetchNotifications = useCallback(async () => {
         setLoadingNotifs(true);
         const { data } = await supabase
@@ -1207,7 +1207,7 @@ export default function Admin() {
         setLoadingNotifs(false);
     }, []);
 
-    // ── Initial Load ─────────────────────────────────────────────────────────────
+    // â”€â”€ Initial Load â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     useEffect(() => {
         if (!isAdmin) return;
         fetchStats();
@@ -1217,7 +1217,7 @@ export default function Admin() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isAdmin]);
 
-    // ── Real-time subscriptions ──────────────────────────────────────────────────
+    // â”€â”€ Real-time subscriptions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     useEffect(() => {
         if (!isAdmin) return;
 
@@ -1243,7 +1243,7 @@ export default function Admin() {
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isAdmin]);
-    // ── Audio alert for new orders ────────────────────────────────────────────────
+    // â”€â”€ Audio alert for new orders â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const prevPendingCountRef = useRef<number | null>(null);
     useEffect(() => {
         const pendingCount = orders.filter(o => o.status === "pending").length;
@@ -1269,7 +1269,7 @@ export default function Admin() {
         prevPendingCountRef.current = pendingCount;
     }, [orders]);
 
-    // ── Handlers ─────────────────────────────────────────────────────────────────
+    // â”€â”€ Handlers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const handleDeleteProduct = async (id: string) => {
         setDeletingId(id);
         setConfirmDialog(null);
@@ -1324,7 +1324,7 @@ export default function Admin() {
                         const newTotalOrders = (profileData.total_orders || 0) + 1;
                         let newBalance = profileData.wallet_balance || 0;
 
-                        // Reward ₹30 exactly on the 3rd completed order this week (limit once per week)
+                        // Reward â‚¹30 exactly on the 3rd completed order this week (limit once per week)
                         if (currentWeeklyCount === 3) {
                             newBalance += 30;
                             await supabase.from("wallet_transactions").insert({
@@ -1335,7 +1335,7 @@ export default function Admin() {
                             });
                         }
 
-                        // Flavour Factory High Value Reward (₹499+)
+                        // Flavour Factory High Value Reward (â‚¹499+)
                         // Using base_price instead of total_price so discounts don't void the reward
                         const isFlavourFactory = orderData.delivery_room?.toLowerCase().includes("flavour factory") ||
                             orderData.delivery_location?.toLowerCase().includes("flavour factory");
@@ -1348,7 +1348,7 @@ export default function Admin() {
                                 user_id: buyerId,
                                 amount: 30,
                                 type: 'reward',
-                                description: 'Flavour Factory Special Reward (₹499+ Order)'
+                                description: 'Flavour Factory Special Reward (â‚¹499+ Order)'
                             });
                         }
 
@@ -1467,7 +1467,7 @@ export default function Admin() {
         setNotifications(prev => prev.map(n => ({ ...n, is_read: true })));
     };
 
-    // ── Sidebar navigation config ────────────────────────────────────────────────
+    // â”€â”€ Sidebar navigation config â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const navItems: { id: AdminSection; label: string; icon: any; badge?: number }[] = [
         { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
         { id: "products", label: "Products", icon: Package, badge: products.length },
@@ -1500,7 +1500,7 @@ export default function Admin() {
 
     return (
         <div className="min-h-screen bg-slate-50 flex">
-            {/* ── Sidebar ──────────────────────────────────────────────────────────── */}
+            {/* â”€â”€ Sidebar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
             {/* Overlay for mobile */}
             <AnimatePresence>
                 {sidebarOpen && (
@@ -1541,7 +1541,7 @@ export default function Admin() {
                 />
             </aside>
 
-            {/* ── Main Content ─────────────────────────────────────────────────────── */}
+            {/* â”€â”€ Main Content â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
             <main className="flex-1 lg:ml-64 min-h-screen w-full max-w-[100vw] overflow-x-hidden">
                 {/* Top Bar */}
                 <div className="sticky top-0 z-20 bg-white  border-b border-slate-200 px-4 sm:px-6 h-16 flex items-center gap-4">
@@ -1575,7 +1575,7 @@ export default function Admin() {
                     <button
                         onClick={toggleMaintenance}
                         disabled={togglingMaintenance}
-                        title={maintenanceMode ? "Maintenance ON — click to disable" : "Site is live — click to enable maintenance"}
+                        title={maintenanceMode ? "Maintenance ON â€” click to disable" : "Site is live â€” click to enable maintenance"}
                         className={`relative p-2.5 rounded-full border transition-all ${maintenanceMode
                             ? 'bg-amber-500/20 border-amber-500/40 hover:bg-amber-500/30'
                             : 'bg-slate-50  border-slate-200 hover:border-slate-300'
@@ -1661,7 +1661,7 @@ export default function Admin() {
                 </div>
             </main>
 
-            {/* ── Confirm Dialog ─────────────────────────────────────────────────────── */}
+            {/* â”€â”€ Confirm Dialog â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
             <AnimatePresence>
                 {confirmDialog && (
                     <ConfirmDialog
@@ -1675,7 +1675,7 @@ export default function Admin() {
     );
 }
 
-// ─── Sidebar Content Component ─────────────────────────────────────────────────
+// â”€â”€â”€ Sidebar Content Component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function SidebarContent({
     navItems, section, setSection, profile, onSignOut
 }: {

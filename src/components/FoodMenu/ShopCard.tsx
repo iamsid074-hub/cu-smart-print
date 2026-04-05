@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+﻿import React, { memo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Store, ChevronDown, BadgeCheck, Plus } from 'lucide-react';
 
@@ -106,7 +106,7 @@ export const ShopCard = memo(({
                         >
                           <div className="flex-1 min-w-0 pr-3">
                             <span className="text-[15px] font-bold text-[#1D1D1F] block truncate tracking-tight">{item.name}</span>
-                            <span className="text-[13px] font-bold text-[#007AFF] mt-0.5 block">{"\u20B9"}{item.price}</span>
+                            <span className="text-[13px] font-bold text-[#007AFF] mt-0.5 block">{"₹"}{item.price}</span>
                           </div>
                           <button
                             onClick={() => onAddItem({

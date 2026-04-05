@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+﻿import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, X, ShoppingCart, Truck, Zap, ChevronRight, CheckCircle, Package, Utensils, MapPin, ShoppingBag } from "lucide-react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
@@ -39,11 +39,11 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
 
     const getPageContext = () => {
         const p = location.pathname;
-        if (p === '/food') return { id: 'food', title: '🍔 CU Food Menu', subtitle: 'Order from campus restaurants', icon: Utensils, actions: [{ label: 'Browse Menu', link: '/food' }, { label: 'View Cart', link: '/cart' }] };
-        if (p === '/sell' || p === '/list') return { id: 'sell', title: '📦 Sell Your Item', subtitle: 'List in 30 seconds, earn cash', icon: Package, actions: [{ label: 'Quick Sell', link: '/list' }, { label: 'My Listings', link: '/profile' }] };
-        if (p === '/tracking') return { id: 'tracking', title: '📍 Track Orders', subtitle: 'See all your orders', icon: MapPin, actions: [{ label: 'Active Orders', link: '/tracking' }, { label: 'Past Orders', link: '/profile' }] };
-        if (p === '/browse') return { id: 'browse', title: '🛍️ Browse Products', subtitle: 'Find what you need', icon: Search, actions: [{ label: 'Filters', link: '/browse' }, { label: 'Sort', link: '/browse' }] };
-        if (p === '/cart') return { id: 'cart_page', title: '🛒 Shopping Cart', subtitle: 'Ready to checkout', icon: ShoppingCart, actions: [{ label: 'Checkout', link: '/cart' }, { label: 'Continue Shopping', link: '/browse' }] };
+        if (p === '/food') return { id: 'food', title: 'ðŸ” CU Food Menu', subtitle: 'Order from campus restaurants', icon: Utensils, actions: [{ label: 'Browse Menu', link: '/food' }, { label: 'View Cart', link: '/cart' }] };
+        if (p === '/sell' || p === '/list') return { id: 'sell', title: 'ðŸ“¦ Sell Your Item', subtitle: 'List in 30 seconds, earn cash', icon: Package, actions: [{ label: 'Quick Sell', link: '/list' }, { label: 'My Listings', link: '/profile' }] };
+        if (p === '/tracking') return { id: 'tracking', title: 'ðŸ“ Track Orders', subtitle: 'See all your orders', icon: MapPin, actions: [{ label: 'Active Orders', link: '/tracking' }, { label: 'Past Orders', link: '/profile' }] };
+        if (p === '/browse') return { id: 'browse', title: 'ðŸ›ï¸ Browse Products', subtitle: 'Find what you need', icon: Search, actions: [{ label: 'Filters', link: '/browse' }, { label: 'Sort', link: '/browse' }] };
+        if (p === '/cart') return { id: 'cart_page', title: 'ðŸ›’ Shopping Cart', subtitle: 'Ready to checkout', icon: ShoppingCart, actions: [{ label: 'Checkout', link: '/cart' }, { label: 'Continue Shopping', link: '/browse' }] };
         return null;
     };
     const pageContext = getPageContext();
@@ -56,10 +56,10 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
     // Helper to get status descriptions
     const getStatusMessage = (status: string, title: string) => {
         switch (status) {
-            case 'seller_accepted': return { title: 'Order Accepted! 👨‍🍳', desc: `Seller has accepted ${title}` };
-            case 'confirmed': return { title: 'Preparing Order 🍳', desc: `Your ${title} is being prepared` };
-            case 'picked': return { title: 'Order Picked Up 📦', desc: `Your order is ready` };
-            case 'delivering': return { title: 'Out For Delivery 🛵', desc: `Your ${title} is arriving right now!` };
+            case 'seller_accepted': return { title: 'Order Accepted! ðŸ‘¨â€ðŸ³', desc: `Seller has accepted ${title}` };
+            case 'confirmed': return { title: 'Preparing Order ðŸ³', desc: `Your ${title} is being prepared` };
+            case 'picked': return { title: 'Order Picked Up ðŸ“¦', desc: `Your order is ready` };
+            case 'delivering': return { title: 'Out For Delivery ðŸ›µ', desc: `Your ${title} is arriving right now!` };
             default: return null;
         }
     };
@@ -98,7 +98,7 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
                 if (activeOrder) {
                     // Global Auto-Redirect on Delivery!
                     setJustDelivered(true);
-                    toast.success("Order Delivered! 🎉", { description: "Your order has safely arrived.", duration: 6000 });
+                    toast.success("Order Delivered! ðŸŽ‰", { description: "Your order has safely arrived.", duration: 6000 });
                     navigate(`/tracking?order=${activeOrder.id}`);
                     setTimeout(() => setJustDelivered(false), 10000);
                 }
@@ -144,10 +144,10 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
                 toast.success(
                     <div className="flex flex-col gap-1">
                         <span className="font-bold text-sm text-slate-900">
-                            🛒 New {isFood ? 'Food' : 'Item'} Order Received!
+                            ðŸ›’ New {isFood ? 'Food' : 'Item'} Order Received!
                         </span>
                         <span className="text-xs text-slate-500">
-                            ID: #{newOrder.id.slice(0, 8).toUpperCase()} • ₹{newOrder.total_price}
+                            ID: #{newOrder.id.slice(0, 8).toUpperCase()} â€¢ â‚¹{newOrder.total_price}
                         </span>
                     </div>,
                     {
@@ -224,8 +224,8 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
 
             rapid.timer = setTimeout(() => {
                 const label = rapid.count > 1
-                    ? `🛒 ${rapid.count} Items Added · ₹${rapid.totalPrice}`
-                    : `🛒 ${lastAction.itemTitle || "Item"} Added · ₹${lastAction.itemPrice || 0}`;
+                    ? `ðŸ›’ ${rapid.count} Items Added Â· â‚¹${rapid.totalPrice}`
+                    : `ðŸ›’ ${lastAction.itemTitle || "Item"} Added Â· â‚¹${lastAction.itemPrice || 0}`;
 
                 pushNotification({
                     priority: 1,
@@ -245,7 +245,7 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
             pushNotification({
                 priority: 1,
                 type: "cart-remove",
-                label: `🛒 ${lastAction.itemTitle || "Item"} Removed`,
+                label: `ðŸ›’ ${lastAction.itemTitle || "Item"} Removed`,
                 icon: "cart",
                 color: "#FF6B6B",
                 expiresAt: Date.now() + 3000,
@@ -254,7 +254,7 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
             pushNotification({
                 priority: 1,
                 type: "cart-remove",
-                label: "🛒 Cart Cleared",
+                label: "ðŸ›’ Cart Cleared",
                 icon: "cart",
                 color: "#FF6B6B",
                 expiresAt: Date.now() + 3000,
@@ -270,7 +270,7 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
             pushNotification({
                 priority: 2,
                 type: "cart-add" as any,
-                label: `🛒 ${cartCount} item${cartCount !== 1 ? "s" : ""} in cart · ₹${cartTotal}`,
+                label: `ðŸ›’ ${cartCount} item${cartCount !== 1 ? "s" : ""} in cart Â· â‚¹${cartTotal}`,
                 icon: "cart",
                 color: "#FF6B6B",
                 expiresAt: 0,
@@ -285,13 +285,13 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
     useEffect(() => {
         if (activeOrder) {
             const statusText: Record<string, string> = {
-                pending: "📦 Order Placed", seller_accepted: "✅ Order Confirmed",
-                confirmed: "👨‍🍳 Preparing…", picked: "📦 Picked Up", delivering: "🚚 On the way!",
+                pending: "ðŸ“¦ Order Placed", seller_accepted: "âœ… Order Confirmed",
+                confirmed: "ðŸ‘¨â€ðŸ³ Preparingâ€¦", picked: "ðŸ“¦ Picked Up", delivering: "ðŸšš On the way!",
             };
             pushNotification({
                 priority: 1,
                 type: "delivery",
-                label: statusText[activeOrder.status] || "📦 Processing…",
+                label: statusText[activeOrder.status] || "ðŸ“¦ Processingâ€¦",
                 icon: "truck",
                 color: "#30D158",
                 expiresAt: 0,
@@ -300,7 +300,7 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
             pushNotification({
                 priority: 1,
                 type: "delivery",
-                label: "✅ Order Delivered!",
+                label: "âœ… Order Delivered!",
                 icon: "check",
                 color: "#30D158",
                 expiresAt: Date.now() + 10000,
@@ -350,7 +350,7 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
         confirmed: "Preparing", picked: "Picked Up", delivering: "On the way!",
     };
     const statusEmoji: Record<string, string> = {
-        pending: "📦", seller_accepted: "✅", confirmed: "👨‍🍳", picked: "📦", delivering: "🚚",
+        pending: "ðŸ“¦", seller_accepted: "âœ…", confirmed: "ðŸ‘¨â€ðŸ³", picked: "ðŸ“¦", delivering: "ðŸšš",
     };
 
 
@@ -564,7 +564,7 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
                                         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                                             <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                                                 <ShoppingCart style={{ width: 14, height: 14, color: "#FF6B6B" }} />
-                                                <span style={{ fontSize: 14, fontWeight: 700, color: "#fff" }}>Cart · ₹{cartTotal}</span>
+                                                <span style={{ fontSize: 14, fontWeight: 700, color: "#fff" }}>Cart Â· â‚¹{cartTotal}</span>
                                             </div>
                                             <button onClick={(e) => { e.stopPropagation(); close(); }}
                                                 style={{ background: "rgba(255,255,255,0.06)", border: "none", borderRadius: "50%", width: 26, height: 26, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
@@ -578,9 +578,9 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
                                                     padding: "8px 0", borderBottom: "1px solid rgba(255,255,255,0.05)",
                                                 }}>
                                                     <span style={{ fontSize: 13, color: "rgba(255,255,255,0.85)", flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                                                        {item.title} {item.quantity > 1 ? `×${item.quantity}` : ""}
+                                                        {item.title} {item.quantity > 1 ? `Ã—${item.quantity}` : ""}
                                                     </span>
-                                                    <span style={{ fontSize: 13, fontWeight: 600, color: "#fff", marginLeft: 10, flexShrink: 0 }}>₹{item.price * item.quantity}</span>
+                                                    <span style={{ fontSize: 13, fontWeight: 600, color: "#fff", marginLeft: 10, flexShrink: 0 }}>â‚¹{item.price * item.quantity}</span>
                                                     <button onClick={(e) => { e.stopPropagation(); removeItem(item.id); }}
                                                         style={{ background: "none", border: "none", cursor: "pointer", marginLeft: 8, padding: 2, flexShrink: 0 }}>
                                                         <X style={{ width: 11, height: 11, color: "rgba(255,255,255,0.3)" }} />
@@ -643,14 +643,14 @@ export default function DynamicIsland({ onExpandChange }: { onExpandChange?: (ex
                                                             background: done ? "#30D158" : "rgba(255,255,255,0.1)",
                                                             display: "flex", alignItems: "center", justifyContent: "center",
                                                             fontSize: 9, color: "#fff",
-                                                        }}>{done ? "✓" : ""}</div>
+                                                        }}>{done ? "âœ“" : ""}</div>
                                                         {i < 3 && <div style={{ flex: 1, height: 2, borderRadius: 1, background: done ? "#30D158" : "rgba(255,255,255,0.1)" }} />}
                                                     </div>
                                                 );
                                             })}
                                         </div>
                                         <div style={{ fontSize: 12, color: "rgba(255,255,255,0.5)" }}>
-                                            📍 {activeOrder.delivery_location?.replace(/\[.*?\]/g, "").trim()}{activeOrder.delivery_room && !activeOrder.delivery_room.includes("[") ? `, Room ${activeOrder.delivery_room}` : ""}
+                                            ðŸ“ {activeOrder.delivery_location?.replace(/\[.*?\]/g, "").trim()}{activeOrder.delivery_room && !activeOrder.delivery_room.includes("[") ? `, Room ${activeOrder.delivery_room}` : ""}
                                         </div>
                                         <Link to={`/tracking?order=${activeOrder.id}`} onClick={() => close()}
                                             style={{ padding: "9px 12px", borderRadius: 12, background: "rgba(48,209,88,0.15)", border: "1px solid rgba(48,209,88,0.3)", color: "#30D158", fontSize: 13, fontWeight: 600, textAlign: "center", textDecoration: "none" }}>

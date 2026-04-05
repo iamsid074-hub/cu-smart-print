@@ -1,17 +1,17 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Moon, Sun, Wrench, Clock, ShoppingBag, UtensilsCrossed } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
 
 /*
-  SiteGate — wraps the app to show:
+  SiteGate â€” wraps the app to show:
   1. "Under Maintenance" screen when admin toggles maintenance ON
   2. "We're Closed" screen outside operating hours
   
   Operating hours (IST):
-    Items:  6:00 AM – 10:00 PM
-    Food:   6:00 PM – 12:30 AM
+    Items:  6:00 AM â€“ 10:00 PM
+    Food:   6:00 PM â€“ 12:30 AM
 
   Admins bypass both gates.
 */
@@ -26,12 +26,12 @@ function getIST() {
 }
 
 function isItemsOpen(): boolean {
-    // Always open — no closing hours
+    // Always open â€” no closing hours
     return true;
 }
 
 function isFoodOpen(): boolean {
-    // Always open — no closing hours
+    // Always open â€” no closing hours
     return true;
 }
 
@@ -42,7 +42,7 @@ function getNextOpenTime(): string {
     return "6:00 AM";
 }
 
-// ─── Closed Screen ─────────────────────────────────────────────────────────────
+// â”€â”€â”€ Closed Screen â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function ClosedScreen() {
     const itemsOpen = isItemsOpen();
     const foodOpen = isFoodOpen();
@@ -98,7 +98,7 @@ function ClosedScreen() {
                         </div>
                         <div className="text-left flex-1">
                             <p className="text-sm font-bold text-slate-900">Item Orders</p>
-                            <p className="text-xs text-slate-500">6:00 AM – 10:00 PM</p>
+                            <p className="text-xs text-slate-500">6:00 AM â€“ 10:00 PM</p>
                         </div>
                         <span className={`text-xs font-bold px-3 py-1 rounded-full ${itemsOpen ? "bg-emerald-100 text-emerald-700" : "bg-red-50 text-red-500"}`}>
                             {itemsOpen ? "OPEN" : "CLOSED"}
@@ -111,7 +111,7 @@ function ClosedScreen() {
                         </div>
                         <div className="text-left flex-1">
                             <p className="text-sm font-bold text-slate-900">Food Orders</p>
-                            <p className="text-xs text-slate-500">6:00 PM – 12:30 AM</p>
+                            <p className="text-xs text-slate-500">6:00 PM â€“ 12:30 AM</p>
                         </div>
                         <span className={`text-xs font-bold px-3 py-1 rounded-full ${foodOpen ? "bg-emerald-100 text-emerald-700" : "bg-red-50 text-red-500"}`}>
                             {foodOpen ? "OPEN" : "CLOSED"}
@@ -135,7 +135,7 @@ function ClosedScreen() {
     );
 }
 
-// ─── Maintenance Screen ─────────────────────────────────────────────────────────
+// â”€â”€â”€ Maintenance Screen â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function MaintenanceScreen() {
     return (
         <div className="min-h-screen flex items-center justify-center p-6 bg-slate-50">
@@ -191,7 +191,7 @@ function MaintenanceScreen() {
     );
 }
 
-// ─── SiteGate Hook ──────────────────────────────────────────────────────────────
+// â”€â”€â”€ SiteGate Hook â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export function useSiteGate() {
     const { isAdmin } = useAuth();
     const [maintenance, setMaintenance] = useState(false);
@@ -217,7 +217,7 @@ export function useSiteGate() {
                 setMaintenance(isMaint);
                 localStorage.setItem(cacheKey, String(isMaint));
             } catch {
-                // Table might not exist yet — assume not in maintenance
+                // Table might not exist yet â€” assume not in maintenance
                 setMaintenance(false);
             }
             setLoaded(true);

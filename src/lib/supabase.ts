@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js'
+﻿import { createClient } from '@supabase/supabase-js'
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://placeholder.supabase.co'
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'placeholder'
@@ -6,7 +6,7 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'placeholder'
 // In production, intercept all Supabase HTTP requests and route them
 // through our Vercel serverless function at /api/sb.
 // This means the browser only contacts cubazzar.shop (trusted SSL cert)
-// instead of supabase.co directly — bypassing college WiFi SSL interception.
+// instead of supabase.co directly â€” bypassing college WiFi SSL interception.
 const proxyFetch: typeof fetch = async (input, init?) => {
     const url =
         typeof input === 'string' ? input

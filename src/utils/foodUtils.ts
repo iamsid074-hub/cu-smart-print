@@ -1,4 +1,4 @@
-import { shops, type MenuItem } from "@/config/shopMenus";
+﻿import { shops, type MenuItem } from "@/config/shopMenus";
 
 /**
  * Normalizes a string by converting to lowercase and removing special characters.

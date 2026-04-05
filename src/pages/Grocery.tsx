@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ShoppingCart, Plus, ShoppingBag, ArrowLeft, Search, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -153,7 +153,7 @@ export default function Grocery() {
                                     <p className="text-[10px] font-bold text-slate-400 mb-3">{item.quantity}</p>
                                     
                                     <div className="mt-auto flex items-center justify-between pt-2 border-t border-slate-50">
-                                        <span className="text-lg font-black text-slate-900">₹{item.price}</span>
+                                        <span className="text-lg font-black text-slate-900">â‚¹{item.price}</span>
                                         <button 
                                             onClick={() => handleAddToCart(item)}
                                             className="h-10 px-4 rounded-xl bg-brand text-white text-xs font-black shadow-lg shadow-brand/20 hover:bg-brand-dark active:scale-95 transition-all flex items-center gap-2"

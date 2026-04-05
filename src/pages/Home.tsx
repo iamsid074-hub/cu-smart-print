@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useCallback } from "react";
+﻿import { useEffect, useState, useRef, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronRight, ChevronLeft, Loader2, ShoppingBag, ShoppingCart, X, MapPin, Phone, Home as HomeIcon, Zap, UtensilsCrossed, Package, Rocket, ShieldCheck, BadgePercent, Users, Plus, Shield, Ban, Headset, ExternalLink, Search, Download, ArrowRight, Store, Clock, Compass, Sparkles } from "lucide-react";
@@ -187,7 +187,7 @@ export default function Home() {
       <div className="max-w-[1600px] mx-auto relative px-4">
       </div>
 
-      {/* ─── Hero Section ─── */}
+      {/* â”€â”€â”€ Hero Section â”€â”€â”€ */}
       <div className="relative px-4 pt-4 pb-8 sm:px-8 sm:pt-8 sm:pb-12 mb-8 mx-2 sm:mx-0 rounded-[2.2rem] sm:rounded-[2.8rem] overflow-hidden">
         <div className="max-w-[1600px] mx-auto relative z-10">
           <motion.div
@@ -222,7 +222,7 @@ export default function Home() {
           <MembershipBanner />
         <div className="w-full">
 
-          {/* ─── Popular Food Sections ─── */}
+          {/* â”€â”€â”€ Popular Food Sections â”€â”€â”€ */}
           <HomeSpecialSections activeCat={activeFoodCat} onCatChange={setActiveFoodCat} />
 
           {activeFoodCat === 'all' && (
@@ -233,12 +233,12 @@ export default function Home() {
               transition={{ duration: 0.5 }}
             >
               <div className="w-full">
-                {/* ─── Digital Vending Machine Section ─── */}
+                {/* â”€â”€â”€ Digital Vending Machine Section â”€â”€â”€ */}
                 <VendingMachine />
 
-                {/* ─── EXPLORE / BROWSE SECTION ─── */}
+                {/* â”€â”€â”€ EXPLORE / BROWSE SECTION â”€â”€â”€ */}
 
-          {/* ─── EXPLORE / BROWSE SECTION ─── */}
+          {/* â”€â”€â”€ EXPLORE / BROWSE SECTION â”€â”€â”€ */}
           <section className="mb-10 sm:mb-16 mt-8">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
               <div className="flex items-center gap-2">
@@ -311,7 +311,7 @@ export default function Home() {
             )}
           </section>
 
-          {/* ─── TRUST & SAFETY ─── */}
+          {/* â”€â”€â”€ TRUST & SAFETY â”€â”€â”€ */}
           <section className="mb-6">
             <motion.div
               initial={{ opacity: 0, y: 20 }}

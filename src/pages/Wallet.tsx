@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Gift, ArrowRight, Wallet as WalletIcon, CreditCard, Clock, RotateCcw, Copy, Award, ShoppingBag } from 'lucide-react';
@@ -131,7 +131,7 @@ export default function Wallet() {
                     <div className="flex flex-col items-center justify-center z-10 mb-8 mx-auto w-full text-center mt-4">
                         <span className="text-[#8E8E93] text-[11px] font-bold uppercase tracking-[0.15em] mb-1">Available Balance</span>
                         <div className="flex items-start justify-center gap-0">
-                            <span className="text-4xl font-bold text-[#8E8E93] mt-3">₹</span>
+                            <span className="text-4xl font-bold text-[#8E8E93] mt-3">â‚¹</span>
                             <motion.span 
                                 className="text-[90px] leading-[0.85] font-black tracking-tighter text-[#1D1D1F]"
                                 initial={{ y: 20 }}
@@ -166,8 +166,8 @@ export default function Wallet() {
                                 <Gift className="w-5 h-5 text-white" />
                             </div>
                             <div>
-                                <h3 className="font-bold text-[#1D1D1F] text-[16px] tracking-tight">Unlock ₹30 Reward</h3>
-                                <p className="text-[12px] font-medium text-[#8E8E93]">Complete 3 orders in a week to get ₹30 in your wallet.</p>
+                                <h3 className="font-bold text-[#1D1D1F] text-[16px] tracking-tight">Unlock â‚¹30 Reward</h3>
+                                <p className="text-[12px] font-medium text-[#8E8E93]">Complete 3 orders in a week to get â‚¹30 in your wallet.</p>
                             </div>
                         </div>
                     </div>
@@ -182,7 +182,7 @@ export default function Wallet() {
                                         <span>0</span>
                                         <span className={displayCount >= 1 ? "text-[#1D1D1F]" : ""}>1</span>
                                         <span className={displayCount >= 2 ? "text-[#1D1D1F]" : ""}>2</span>
-                                        <span className={`px-2 rounded-full py-0.5 relative -top-0.5 transition-all shadow-sm ${displayCount === 3 ? "text-white bg-[#FF3B30] scale-[1.15]" : "text-[#FF3B30] bg-[#FF3B30]/10"}`}>₹30!</span>
+                                        <span className={`px-2 rounded-full py-0.5 relative -top-0.5 transition-all shadow-sm ${displayCount === 3 ? "text-white bg-[#FF3B30] scale-[1.15]" : "text-[#FF3B30] bg-[#FF3B30]/10"}`}>â‚¹30!</span>
                                     </>
                                 );
                             })()}
@@ -222,14 +222,14 @@ export default function Wallet() {
                     
                     <div className="relative z-10 flex items-start flex-col sm:flex-row gap-4">
                         <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center flex-shrink-0 shadow-sm border border-white/30">
-                            <span className="text-xl">🍝</span>
+                            <span className="text-xl">ðŸ</span>
                         </div>
                         <div>
                             <h3 className="font-bold text-white text-[17px] leading-tight mb-1.5 flex items-center gap-2">
                                 Flavour Factory Special <span className="px-2 py-0.5 bg-white/30 rounded-full text-[9px] uppercase tracking-widest font-black shadow-sm">Hot Offer</span>
                             </h3>
                             <p className="text-[13px] font-medium text-white/90 leading-relaxed mb-4">
-                                Order worth <strong className="text-white text-[14px]">₹499</strong> or more from Flavour Factory to get <strong className="text-white text-[14px]">₹30</strong> instantly in your wallet!
+                                Order worth <strong className="text-white text-[14px]">â‚¹499</strong> or more from Flavour Factory to get <strong className="text-white text-[14px]">â‚¹30</strong> instantly in your wallet!
                             </p>
                             <Link to="/food" className="inline-flex items-center gap-1.5 px-4 py-2 bg-white text-[#FF3B30] text-[13px] font-black rounded-full hover:scale-105 active:scale-95 transition-transform shadow-md">
                                 Order Now <ArrowRight className="w-3.5 h-3.5" />
@@ -263,7 +263,7 @@ export default function Wallet() {
                                             </div>
                                         </div>
                                         <span className={`font-black tracking-tight text-[16px] ${tx.amount > 0 ? 'text-[#34C759]' : 'text-[#1D1D1F]'}`}>
-                                            {tx.amount > 0 ? '+' : ''}₹{Math.abs(tx.amount)}
+                                            {tx.amount > 0 ? '+' : ''}â‚¹{Math.abs(tx.amount)}
                                         </span>
                                     </div>
                                 ))}

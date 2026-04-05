@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Check, Zap, Sparkles, Crown, Clock } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
@@ -122,7 +122,7 @@ export default function MembershipPlansModal({ isOpen, onClose }: MembershipPlan
                                 </div>
                                 <h3 className="text-lg font-black text-white mb-2">Verification Pending</h3>
                                 <p className="text-sm text-slate-400 font-medium leading-relaxed mb-8">
-                                    Your payment of <span className="text-white font-bold">₹{selectedPlan?.price}</span> for <span className="text-purple-400 font-bold">{selectedPlan?.name}</span> has been received! Our admin will verify your payment details and activate your membership shortly.
+                                    Your payment of <span className="text-white font-bold">â‚¹{selectedPlan?.price}</span> for <span className="text-purple-400 font-bold">{selectedPlan?.name}</span> has been received! Our admin will verify your payment details and activate your membership shortly.
                                 </p>
                                 <button 
                                     onClick={() => { setIsPendingApproval(false); onClose(); window.location.reload(); }} 
@@ -168,7 +168,7 @@ export default function MembershipPlansModal({ isOpen, onClose }: MembershipPlan
                                                         </div>
                                                     </div>
                                                     <div className="text-right">
-                                                        <span className="text-xl font-black text-white">₹{plan.price}</span>
+                                                        <span className="text-xl font-black text-white">â‚¹{plan.price}</span>
                                                         <span className="text-[#8E8E93] text-[10px] font-medium block">/ week</span>
                                                     </div>
                                                 </div>

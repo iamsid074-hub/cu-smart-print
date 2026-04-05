@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Download as DownloadIcon, Shield, Smartphone, CheckCircle, AlertCircle, ArrowLeft, Loader2, Star, Zap } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -90,7 +90,7 @@ export default function Download() {
                                 <span className="px-3 py-1 rounded-full bg-white/20 text-xs font-black uppercase tracking-wider">
                                     v{versionData.versionName}
                                 </span>
-                                <span className="text-white/60 text-xs">{"\u2022"}</span>
+                                <span className="text-white/60 text-xs">{"•"}</span>
                                 <span className="text-white/60 text-xs font-bold">Build {versionData.versionCode}</span>
                             </div>
                         ) : null}
@@ -193,7 +193,7 @@ export default function Download() {
                     <div className="mt-6 pt-5 border-t border-white/10 flex items-start gap-3">
                         <AlertCircle className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
                         <p className="text-white/50 text-xs font-medium leading-relaxed">
-                            Android may show a warning saying this app is from an unknown source — this is normal for apps
+                            Android may show a warning saying this app is from an unknown source â€” this is normal for apps
                             not on the Play Store. Tap <strong className="text-white/70">Install Anyway</strong> to continue.
                         </p>
                     </div>

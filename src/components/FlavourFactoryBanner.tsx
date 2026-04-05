@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+﻿import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ArrowRight, Flame } from "lucide-react";
 
@@ -38,7 +38,7 @@ export default function FlavourFactoryBanner() {
           <span className="text-[9px] sm:text-[11px] font-black text-orange-300 uppercase tracking-[0.2em]">Limited Time Offer</span>
         </motion.div>
 
-        {/* Center — pasta images stacked */}
+        {/* Center â€” pasta images stacked */}
         <div className="flex items-center justify-center gap-[-1rem] my-2 sm:my-4 relative">
           {pastaItems.map((p, i) => (
             <motion.div
@@ -63,7 +63,7 @@ export default function FlavourFactoryBanner() {
             className="text-lg sm:text-3xl md:text-4xl font-black text-transparent bg-clip-text tracking-tight"
             style={{ backgroundImage: "linear-gradient(135deg, #FFD700, #FF8C00, #FFB347)" }}
           >
-            Pasta @ {"\u20B9"}99 Only
+            Pasta @ {"₹"}99 Only
           </motion.h2>
           <motion.p
             initial={{ opacity: 0 }}
@@ -71,7 +71,7 @@ export default function FlavourFactoryBanner() {
             transition={{ delay: 0.6 }}
             className="text-[10px] sm:text-sm text-orange-200/80 font-semibold tracking-wide"
           >
-            Flavour Factory {"\u2022"} Your Daily Dose of Flavours
+            Flavour Factory {"•"} Your Daily Dose of Flavours
           </motion.p>
           <motion.div
             initial={{ opacity: 0, y: 10 }}

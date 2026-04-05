@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback, memo } from "react";
+﻿import { useState, useEffect, useRef, useCallback, memo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
@@ -16,7 +16,7 @@ const springTransition = {
 
 type IslandState = "default" | "browsing" | "explore" | "cart" | "profile" | "wallet" | "added" | "updated" | "grocery" | "sell" | "tracking";
 
-// ── Tracking status configuration ───────────────────────────────────────────
+// â”€â”€ Tracking status configuration â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const TRACKING_STATUSES: Record<string, { label: string; icon: typeof Package; color: string; stepIndex: number }> = {
   pending:          { label: "Order Placed",       icon: Package,     color: "#F59E0B", stepIndex: 0 },
   seller_accepted:  { label: "Confirmed",          icon: CheckCircle, color: "#10B981", stepIndex: 1 },
@@ -46,7 +46,7 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
 
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // ── Tracking state ──────────────────────────────────────────────────────
+  // â”€â”€ Tracking state â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const [trackingOrder, setTrackingOrder] = useState<any>(null);
   const [prevTrackingStatus, setPrevTrackingStatus] = useState<string | null>(null);
   const [statusAnimating, setStatusAnimating] = useState(false);
@@ -58,7 +58,7 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
 
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
 
-    // "explore", "tracking", "grocery", "sell", "wallet" states persist — no auto-dismiss
+    // "explore", "tracking", "grocery", "sell", "wallet" states persist â€” no auto-dismiss
     if (newState !== "explore" && newState !== "tracking" && newState !== "grocery" && newState !== "sell" && newState !== "wallet") {
       timeoutRef.current = setTimeout(() => {
         if (location.pathname.startsWith("/browse")) {
@@ -78,7 +78,7 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
     }
   };
 
-  // ── Route-based state switching ─────────────────────────────────────────
+  // â”€â”€ Route-based state switching â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   useEffect(() => {
     if (location.pathname.startsWith("/tracking")) {
       setIslandState("tracking");
@@ -107,7 +107,7 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
     }
   }, [location.pathname]);
 
-  // ── Fetch tracking order & subscribe to real-time updates ───────────────
+  // â”€â”€ Fetch tracking order & subscribe to real-time updates â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const fetchTrackingOrder = useCallback(async () => {
     if (!user) return;
     const params = new URLSearchParams(location.search);
@@ -168,7 +168,7 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
 
 
 
-  // ── Cart item tracking ──────────────────────────────────────────────────
+  // â”€â”€ Cart item tracking â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   useEffect(() => {
     const currentCount = items.reduce((acc, item) => acc + item.quantity, 0);
 
@@ -199,7 +199,7 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
     }
   };
 
-  // ── Tracking status helpers ─────────────────────────────────────────────
+  // â”€â”€ Tracking status helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const trackingStatus = trackingOrder ? (TRACKING_STATUSES[trackingOrder.status] || TRACKING_STATUSES.pending) : null;
   const isTrackingFailed = trackingOrder && (trackingOrder.status === "cancelled" || trackingOrder.status === "seller_rejected");
   const isTrackingDone = trackingOrder?.status === "completed";
@@ -277,7 +277,7 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
             </div>
           </div>
           <div className="font-mono text-sm font-bold text-white flex-shrink-0">
-            ₹{latestAddedItem?.price || 0}
+            â‚¹{latestAddedItem?.price || 0}
           </div>
         </div>
       );
@@ -331,7 +331,7 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
               </AnimatePresence>
               {trackingOrder.total_price > 0 && (
                 <span className="text-[10px] font-medium text-white/40 leading-tight">
-                  ₹{trackingOrder.total_price}
+                  â‚¹{trackingOrder.total_price}
                 </span>
               )}
             </div>
@@ -372,7 +372,7 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
       break;
   }
 
-  // ── Determine glow animation ────────────────────────────────────────────
+  // â”€â”€ Determine glow animation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const getAnimation = () => {
     if (islandState === "tracking" && trackingOrder) {
       if (statusAnimating) return "diTrackingPulse 0.8s ease-out 1";
@@ -421,7 +421,7 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
           {/* Relative wrapper for pill + dropdown alignment */}
           <div className="relative">
           <AnimatePresence mode="popLayout">
-            {/* ── Main Pill ── */}
+            {/* â”€â”€ Main Pill â”€â”€ */}
             <motion.div
               layout
               initial={false}

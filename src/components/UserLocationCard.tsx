@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { MapPin, ChevronDown, User } from 'lucide-react';
 import { useLocation, Link } from 'react-router-dom';
@@ -81,7 +81,7 @@ export default function UserLocationCard() {
                     whileTap={{ scale: 0.95 }}
                     className="text-[10px] sm:text-[11px] font-black uppercase tracking-widest bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-400 text-purple-900 px-3.5 py-1.5 rounded-full shadow-[0_4px_16px_rgba(251,191,36,0.4),inset_0_1px_0_rgba(255,255,255,0.5)] border border-amber-300/50"
                   >
-                    ✦ MEMBER
+                    âœ¦ MEMBER
                   </motion.button>
                 )}
                 <Link 

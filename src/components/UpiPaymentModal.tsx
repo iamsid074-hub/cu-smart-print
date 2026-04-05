@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Loader2, CheckCircle, QrCode } from "lucide-react";
@@ -49,7 +49,7 @@ export default function UpiPaymentModal({
             await onPaymentVerify(mockUtr);
 
             setStep("success");
-            toast.success("Payment Confirmed! Order placed 🎉");
+            toast.success("Payment Confirmed! Order placed ðŸŽ‰");
             setTimeout(() => onClose(), 1500);
         } catch (err: any) {
             setStep("qr");
@@ -97,7 +97,7 @@ export default function UpiPaymentModal({
                                     <div className="w-14 h-14 bg-brand-50 rounded-full flex items-center justify-center mb-4">
                                         <QrCode className="w-7 h-7 text-brand" />
                                     </div>
-                                    <h3 className="text-2xl font-black text-slate-900 mb-1">Pay ₹{amount.toLocaleString()}</h3>
+                                    <h3 className="text-2xl font-black text-slate-900 mb-1">Pay â‚¹{amount.toLocaleString()}</h3>
                                     <p className="text-sm text-slate-500 mb-6 text-center leading-relaxed">
                                         Scan the QR code below using any UPI app (GPay, PhonePe, Paytm) to complete your payment.
                                     </p>
@@ -110,7 +110,7 @@ export default function UpiPaymentModal({
                                         onClick={handleDone}
                                         className="w-full py-4 rounded-xl text-white font-bold text-[15px] transition-all hover:scale-[1.02] active:scale-[0.98] shadow-md bg-brand hover:bg-brand flex items-center justify-center gap-2 tracking-wide"
                                     >
-                                        I have paid ₹{amount.toLocaleString()}
+                                        I have paid â‚¹{amount.toLocaleString()}
                                     </button>
                                 </motion.div>
                             )}
@@ -144,8 +144,8 @@ export default function UpiPaymentModal({
                                     >
                                         <CheckCircle className="w-20 h-20 text-brand" />
                                     </motion.div>
-                                    <p className="text-2xl font-black text-slate-900">Confirmed! 🎉</p>
-                                    <p className="text-sm text-brand font-bold bg-brand-50 px-4 py-2 rounded-full">Order placed — redirecting...</p>
+                                    <p className="text-2xl font-black text-slate-900">Confirmed! ðŸŽ‰</p>
+                                    <p className="text-sm text-brand font-bold bg-brand-50 px-4 py-2 rounded-full">Order placed â€” redirecting...</p>
                                 </motion.div>
                             )}
                         </AnimatePresence>

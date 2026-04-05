@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+﻿import { motion } from "framer-motion";
 import { useState, useRef, useEffect } from "react";
 import { Plus } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
@@ -53,7 +53,7 @@ export default function CircularColdDrinks() {
         <section className="mb-14 py-6 relative w-full overflow-hidden flex flex-col items-center">
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-cyan-200/15 blur-[90px] rounded-full pointer-events-none" />
 
-            {/* Orbit Container – uses measured radius for reliable positioning */}
+            {/* Orbit Container â€“ uses measured radius for reliable positioning */}
             <div
                 ref={containerRef}
                 className="relative w-full max-w-3xl mx-auto"
@@ -116,7 +116,7 @@ export default function CircularColdDrinks() {
                                 <div className="mt-7 sm:mt-10 flex flex-col items-center w-full gap-1.5">
                                     <h3 className="text-[8px] sm:text-[10px] font-bold text-slate-800 text-center leading-[1.2] line-clamp-2 tracking-tight w-full">{item.name}</h3>
                                     <div className="flex items-center justify-between w-full">
-                                        <span className="text-[9px] sm:text-[10px] font-black text-slate-900 bg-slate-50 border border-slate-100 px-1 py-0.5 rounded leading-none">₹{item.price}</span>
+                                        <span className="text-[9px] sm:text-[10px] font-black text-slate-900 bg-slate-50 border border-slate-100 px-1 py-0.5 rounded leading-none">â‚¹{item.price}</span>
                                         <button
                                             onClick={(e) => handleAddToCart(item, e)}
                                             className="w-4 h-4 sm:w-5 sm:h-5 bg-cyan-500 rounded-full flex items-center justify-center text-white hover:bg-cyan-600 active:scale-90 shadow-sm shadow-cyan-300 transition-all"

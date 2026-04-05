@@ -1,12 +1,12 @@
-import { useEffect, useState, useCallback } from "react";
+﻿import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
 
-// ── VAPID Public Key ─────────────────────────────────────────────────────────
+// â”€â”€ VAPID Public Key â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // This is the public key used to subscribe to push notifications.
 // The matching private key must be used in the server-side send function.
 // Generate a new pair at: https://vapidkeys.com
-// For now we use a placeholder — replace with your real key
+// For now we use a placeholder â€” replace with your real key
 const VAPID_PUBLIC_KEY = "BEl62iUYgUivxIkv69yViEuiBIa-Ib9-SkvMeAtA3LFgDkBWine6t5j5H6qB7kKOGWZzOkqFOEMl6FhMiOq_w";
 
 function urlBase64ToUint8Array(base64String: string) {

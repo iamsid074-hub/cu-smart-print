@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+﻿import { useEffect, useState, useMemo } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Loader2, ShoppingBag, SlidersHorizontal, Package, Sparkles, PlusCircle } from "lucide-react";
@@ -57,7 +57,7 @@ export default function Browse() {
         <div className="min-h-screen pt-24 pb-32 px-4 sm:px-6 relative text-[#1D1D1F]">
             <div className="max-w-[1600px] mx-auto relative z-10">
 
-                {/* ── Hero Header ─────────────────────────────────────── */}
+                {/* â”€â”€ Hero Header â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
                 <motion.div
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -81,7 +81,7 @@ export default function Browse() {
                         </div>
                     </div>
 
-                    {/* ── Category Pills ────────────────────────────────── */}
+                    {/* â”€â”€ Category Pills â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
                     <div className="flex gap-2 overflow-x-auto pb-6 scrollbar-hide -mx-2 px-2" style={{ WebkitOverflowScrolling: 'touch' }}>
                         {categories.map((cat) => {
                             const isActive = activeCategory === cat.id;
@@ -101,7 +101,7 @@ export default function Browse() {
                     </div>
                 </motion.div>
 
-                {/* ── Content ──────────────────────────────────────────── */}
+                {/* â”€â”€ Content â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
                 {
                     loading ? (
                         <div className="flex flex-col items-center justify-center py-32 gap-3">

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Heart, Share2, MapPin, Clock, BadgeCheck, Loader2, ArrowLeft, ShoppingBag, ShoppingCart, CheckCircle } from "lucide-react";
@@ -47,7 +47,7 @@ export default function ProductDetail() {
     const [paymentMethod, setPaymentMethod] = useState<"online" | "cod">("online");
     const [showUpiModal, setShowUpiModal] = useState(false);
     const [copied, setCopied] = useState(false);
-    // ── Favourites (localStorage) ──
+    // â”€â”€ Favourites (localStorage) â”€â”€
     const favKey = `cubazzar_fav_${id}`;
     const [isFav, setIsFav] = useState(() => localStorage.getItem(favKey) === '1');
 
@@ -67,7 +67,7 @@ export default function ProductDetail() {
 
     const handleShare = async () => {
         const url = window.location.href;
-        const text = `Check out "${product?.title}" for ₹${product?.price} on CU Bazzar!`;
+        const text = `Check out "${product?.title}" for â‚¹${product?.price} on CU Bazzar!`;
         if (navigator.share) {
             try {
                 await navigator.share({ title: product?.title, text, url });
@@ -242,7 +242,7 @@ export default function ProductDetail() {
                                     }`}
                             >
                                 {copied
-                                    ? <span className="text-xs font-bold">✓</span>
+                                    ? <span className="text-xs font-bold">âœ“</span>
                                     : <Share2 className="w-5 h-5" />}
                             </button>
                         </div>
@@ -273,9 +273,9 @@ export default function ProductDetail() {
                         </div>
 
                         <div className="flex items-center gap-4 mb-6">
-                            <p className="text-4xl font-extrabold text-slate-900 tracking-tight">₹{product.price.toLocaleString()}</p>
+                            <p className="text-4xl font-extrabold text-slate-900 tracking-tight">â‚¹{product.price.toLocaleString()}</p>
                             {product.original_price && (
-                                <p className="text-lg text-slate-400 line-through font-medium mt-2">₹{product.original_price.toLocaleString()}</p>
+                                <p className="text-lg text-slate-400 line-through font-medium mt-2">â‚¹{product.original_price.toLocaleString()}</p>
                             )}
                             {product.original_price && product.original_price > product.price && (
                                 <span className="bg-green-100 text-green-700 font-bold px-3 py-1 rounded-full text-sm mt-2">
@@ -344,18 +344,18 @@ export default function ProductDetail() {
                                                         <p className="font-bold line-clamp-1 text-slate-900">{product.title}</p>
                                                         <div className="flex items-center justify-between mt-1">
                                                             <p className="text-sm text-slate-500">Base Price</p>
-                                                            <p className="font-semibold text-slate-900">₹{product.price.toLocaleString()}</p>
+                                                            <p className="font-semibold text-slate-900">â‚¹{product.price.toLocaleString()}</p>
                                                         </div>
                                                         <div className="flex items-center justify-between mt-1">
                                                             <div className="flex items-center gap-1 text-sm text-brand">
                                                                 <Clock className="w-3 h-3" /> Delivery
                                                             </div>
-                                                            <p className="font-semibold text-brand">+ ₹{deliveryFee}</p>
+                                                            <p className="font-semibold text-brand">+ â‚¹{deliveryFee}</p>
                                                         </div>
                                                         <div className="w-full h-[1px] bg-slate-200 my-2.5" />
                                                         <div className="flex items-center justify-between">
                                                             <p className="text-sm font-bold text-slate-900">Total</p>
-                                                            <p className="font-black text-brand text-lg">₹{totalAmount.toLocaleString()}</p>
+                                                            <p className="font-black text-brand text-lg">â‚¹{totalAmount.toLocaleString()}</p>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -414,7 +414,7 @@ export default function ProductDetail() {
                                                         disabled={isSubmitting || !deliveryLocation.trim() || !deliveryRoom.trim() || phone.length !== 10}
                                                         className="w-full py-4 mt-4 rounded-full bg-brand text-white font-bold tracking-wide hover:bg-brand hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                                                     >
-                                                        {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : `Pay ₹${totalAmount.toLocaleString()} Online`}
+                                                        {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : `Pay â‚¹${totalAmount.toLocaleString()} Online`}
                                                     </button>
                                                 </form>
                                             </div>
@@ -452,7 +452,7 @@ export default function ProductDetail() {
 
                             <div className="text-xs text-slate-400 font-medium flex items-center gap-2 mt-8 pt-4 border-t border-slate-100">
                                 <span>Listed on {new Date(product.created_at).toLocaleDateString()}</span>
-                                <span>•</span>
+                                <span>â€¢</span>
                                 <span>ID: {product.id.slice(0, 8)}...</span>
                             </div>
                         </div>

@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+﻿import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Upload, Tag, DollarSign, MapPin, CheckCircle, ChevronRight,
@@ -87,7 +87,7 @@ export default function SellModal({ isOpen, onClose }: SellModalProps) {
       if (!formData.title || !formData.category || !formData.condition || !formData.price) {
         toast.error("Please fill in all required fields."); return;
       }
-      if (Number(formData.price) < 1) { toast.error("Price must be at least ₹1."); return; }
+      if (Number(formData.price) < 1) { toast.error("Price must be at least â‚¹1."); return; }
 
       const newErrors: Record<string, string> = {};
       if (!formData.sellerPhone.trim() || formData.sellerPhone.replace(/\D/g, "").length < 10)
@@ -155,7 +155,7 @@ export default function SellModal({ isOpen, onClose }: SellModalProps) {
   const back = () => setStep(s => Math.max(s - 1, 1));
   const progress = ((step - 1) / (steps.length - 1)) * 100;
 
-  // ── Image helpers ────────────────────────────────────────────────────────────
+  // â”€â”€ Image helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
   const MAX_SIZE_MB = 5;
 
@@ -200,7 +200,7 @@ export default function SellModal({ isOpen, onClose }: SellModalProps) {
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* ── Backdrop ──────────────────────────────────────────────────── */}
+          {/* â”€â”€ Backdrop â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
           <motion.div
             key="sell-backdrop"
             initial={{ opacity: 0 }}
@@ -216,7 +216,7 @@ export default function SellModal({ isOpen, onClose }: SellModalProps) {
             }}
           />
 
-          {/* ── Sheet ─────────────────────────────────────────────────────── */}
+          {/* â”€â”€ Sheet â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
           <motion.div
             key="sell-sheet"
             initial={{ y: "100%", opacity: 0 }}
@@ -249,10 +249,10 @@ export default function SellModal({ isOpen, onClose }: SellModalProps) {
             }}>
               <div>
                 <p style={{ fontSize: 18, fontWeight: 800, color: "#0f172a", margin: 0 }}>
-                  📦 Sell / List Item
+                  ðŸ“¦ Sell / List Item
                 </p>
                 <p style={{ fontSize: 12, color: "#94a3b8", margin: 0, marginTop: 2 }}>
-                  Step {step} of {steps.length} · {steps[step - 1].label}
+                  Step {step} of {steps.length} Â· {steps[step - 1].label}
                 </p>
               </div>
               <button
@@ -318,7 +318,7 @@ export default function SellModal({ isOpen, onClose }: SellModalProps) {
 
               <AnimatePresence mode="wait">
 
-                {/* ── Step 1: Details ──────────────────────────────────────── */}
+                {/* â”€â”€ Step 1: Details â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
                 {step === 1 && (
                   <motion.div
                     key="step1"
@@ -333,7 +333,7 @@ export default function SellModal({ isOpen, onClose }: SellModalProps) {
                       <input
                         value={formData.title}
                         onChange={e => setFormData({ ...formData, title: e.target.value })}
-                        placeholder="e.g. MacBook Air M2 – 8GB/256GB"
+                        placeholder="e.g. MacBook Air M2 â€“ 8GB/256GB"
                         style={{
                           width: "100%", background: "#f8fafc", borderRadius: 14, padding: "12px 16px",
                           fontSize: 14, color: "#0f172a", border: "1.5px solid #e2e8f0",
@@ -386,7 +386,7 @@ export default function SellModal({ isOpen, onClose }: SellModalProps) {
                         rows={3}
                         value={formData.description}
                         onChange={e => setFormData({ ...formData, description: e.target.value })}
-                        placeholder="Describe your item — condition, specs, any defects..."
+                        placeholder="Describe your item â€” condition, specs, any defects..."
                         style={{
                           width: "100%", background: "#f8fafc", borderRadius: 14, padding: "12px 16px",
                           fontSize: 14, color: "#0f172a", border: "1.5px solid #e2e8f0",
@@ -397,7 +397,7 @@ export default function SellModal({ isOpen, onClose }: SellModalProps) {
                   </motion.div>
                 )}
 
-                {/* ── Step 2: Photos ───────────────────────────────────────── */}
+                {/* â”€â”€ Step 2: Photos â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
                 {step === 2 && (
                   <motion.div
                     key="step2"
@@ -419,12 +419,12 @@ export default function SellModal({ isOpen, onClose }: SellModalProps) {
                             position: "absolute", bottom: 10, right: 10,
                             background: "rgba(239,68,68,0.9)", color: "#fff", border: "none",
                             borderRadius: 20, padding: "5px 12px", fontSize: 12, fontWeight: 700, cursor: "pointer",
-                          }}>✕ Remove</button>
+                          }}>âœ• Remove</button>
                         <div style={{
                           position: "absolute", top: 10, left: 10,
                           background: "rgba(16,185,129,0.9)", color: "#fff", borderRadius: 20,
                           padding: "4px 10px", fontSize: 11, fontWeight: 700,
-                        }}>✓ Preview</div>
+                        }}>âœ“ Preview</div>
                       </motion.div>
                     )}
 
@@ -450,7 +450,7 @@ export default function SellModal({ isOpen, onClose }: SellModalProps) {
                       >
                         <Upload style={{ width: 36, height: 36, margin: "0 auto 12px", color: dragOver ? "#231942" : "#94a3b8" }} />
                         <p style={{ fontWeight: 700, color: "#374151", margin: "0 0 4px" }}>Drop photo here</p>
-                        <p style={{ fontSize: 12, color: "#94a3b8", margin: 0 }}>JPG · PNG · WEBP · Max 5 MB</p>
+                        <p style={{ fontSize: 12, color: "#94a3b8", margin: 0 }}>JPG Â· PNG Â· WEBP Â· Max 5 MB</p>
                         <input type="file" accept="image/jpeg,image/png,image/webp,image/gif"
                           style={{ display: "none" }} ref={fileInputRef}
                           onChange={e => { if (e.target.files?.[0]) handleImageSelect(e.target.files[0]); }} />
@@ -458,12 +458,12 @@ export default function SellModal({ isOpen, onClose }: SellModalProps) {
                     )}
 
                     <p style={{ fontSize: 11, color: "#94a3b8", marginTop: 10, textAlign: "center" }}>
-                      💡 Check the preview above to confirm it's the right photo.
+                      ðŸ’¡ Check the preview above to confirm it's the right photo.
                     </p>
                   </motion.div>
                 )}
 
-                {/* ── Step 3: Pricing ──────────────────────────────────────── */}
+                {/* â”€â”€ Step 3: Pricing â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
                 {step === 3 && (
                   <motion.div
                     key="step3"
@@ -475,9 +475,9 @@ export default function SellModal({ isOpen, onClose }: SellModalProps) {
 
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
                       <div>
-                        <label style={{ fontSize: 13, fontWeight: 700, color: "#475569", display: "block", marginBottom: 6 }}>Your Price (₹) *</label>
+                        <label style={{ fontSize: 13, fontWeight: 700, color: "#475569", display: "block", marginBottom: 6 }}>Your Price (â‚¹) *</label>
                         <div style={{ position: "relative" }}>
-                          <span style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)", fontWeight: 800, color: "#231942", fontSize: 16 }}>₹</span>
+                          <span style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)", fontWeight: 800, color: "#231942", fontSize: 16 }}>â‚¹</span>
                           <input
                             type="number" value={formData.price} min="1"
                             onChange={e => setFormData({ ...formData, price: e.target.value })}
@@ -492,9 +492,9 @@ export default function SellModal({ isOpen, onClose }: SellModalProps) {
                         </div>
                       </div>
                       <div>
-                        <label style={{ fontSize: 13, fontWeight: 700, color: "#475569", display: "block", marginBottom: 6 }}>Original Price (₹)</label>
+                        <label style={{ fontSize: 13, fontWeight: 700, color: "#475569", display: "block", marginBottom: 6 }}>Original Price (â‚¹)</label>
                         <div style={{ position: "relative" }}>
-                          <span style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)", fontWeight: 700, color: "#94a3b8", fontSize: 16 }}>₹</span>
+                          <span style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)", fontWeight: 700, color: "#94a3b8", fontSize: 16 }}>â‚¹</span>
                           <input
                             type="number" value={formData.originalPrice}
                             onChange={e => setFormData({ ...formData, originalPrice: e.target.value })}
@@ -518,7 +518,7 @@ export default function SellModal({ isOpen, onClose }: SellModalProps) {
                           {Math.round((1 - Number(formData.price) / Number(formData.originalPrice)) * 100)}% OFF
                         </p>
                         <p style={{ fontSize: 12, color: "#15803d", margin: "4px 0 0" }}>
-                          Buyers save ₹{(Number(formData.originalPrice) - Number(formData.price)).toLocaleString()}
+                          Buyers save â‚¹{(Number(formData.originalPrice) - Number(formData.price)).toLocaleString()}
                         </p>
                       </motion.div>
                     )}
@@ -543,7 +543,7 @@ export default function SellModal({ isOpen, onClose }: SellModalProps) {
                   </motion.div>
                 )}
 
-                {/* ── Step 4: Location / Seller Details ────────────────────── */}
+                {/* â”€â”€ Step 4: Location / Seller Details â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
                 {step === 4 && (
                   <motion.div
                     key="step4"
@@ -622,7 +622,7 @@ export default function SellModal({ isOpen, onClose }: SellModalProps) {
                               color: formData.meetup === spot ? "#fff" : "#64748b",
                               cursor: "pointer", transition: "all 0.18s",
                             }}
-                          >📍 {spot}</button>
+                          >ðŸ“ {spot}</button>
                         ))}
                       </div>
                     </div>
@@ -637,7 +637,7 @@ export default function SellModal({ isOpen, onClose }: SellModalProps) {
                   </motion.div>
                 )}
 
-                {/* ── Step 5: Success ───────────────────────────────────────── */}
+                {/* â”€â”€ Step 5: Success â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
                 {step === 5 && (
                   <motion.div
                     key="step5"
@@ -650,7 +650,7 @@ export default function SellModal({ isOpen, onClose }: SellModalProps) {
                       animate={{ rotate: [0, 12, -12, 0], scale: [1, 1.15, 1.15, 1] }}
                       transition={{ duration: 0.65 }}
                       style={{ fontSize: 64, marginBottom: 16 }}
-                    >🎉</motion.div>
+                    >ðŸŽ‰</motion.div>
 
                     <h2 style={{ fontSize: 24, fontWeight: 900, color: "#0f172a", margin: "0 0 8px" }}>Listing Live!</h2>
 
@@ -660,7 +660,7 @@ export default function SellModal({ isOpen, onClose }: SellModalProps) {
                       borderRadius: 14, padding: "10px 16px", margin: "0 auto 20px",
                       maxWidth: 320,
                     }}>
-                      ✅ Your item has been listed successfully on CU Bazzar.
+                      âœ… Your item has been listed successfully on CU Bazzar.
                     </p>
 
                     <div style={{
@@ -677,7 +677,7 @@ export default function SellModal({ isOpen, onClose }: SellModalProps) {
                       </div>
                       <div>
                         <p style={{ fontWeight: 800, color: "#0f172a", fontSize: 15, margin: "0 0 2px" }}>{formData.title || "Your Item"}</p>
-                        <p style={{ fontWeight: 900, color: "#16a34a", fontSize: 18, margin: 0 }}>₹{formData.price || "0"}</p>
+                        <p style={{ fontWeight: 900, color: "#16a34a", fontSize: 18, margin: 0 }}>â‚¹{formData.price || "0"}</p>
                       </div>
                     </div>
 
@@ -704,7 +704,7 @@ export default function SellModal({ isOpen, onClose }: SellModalProps) {
               </AnimatePresence>
             </div>
 
-            {/* ── Navigation footer ─────────────────────────────────────────── */}
+            {/* â”€â”€ Navigation footer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
             {step < 5 && (
               <div style={{
                 padding: "14px 20px 24px",

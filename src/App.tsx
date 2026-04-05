@@ -1,4 +1,4 @@
-import { Toaster } from "@/components/ui/toaster";
+﻿import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -93,7 +93,7 @@ function AdminRoute({ children }: { children: React.ReactNode }) {
   // Show spinner while auth OR profile is still loading
   if (loading) return <BrandedLoading />;
   if (!user) return <Navigate to="/login" replace />;
-  // If user exists but profile hasn't arrived yet — wait briefly with a visual indicator
+  // If user exists but profile hasn't arrived yet â€” wait briefly with a visual indicator
   if (!profile) return (
     <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-[#231942]">
       <div className="font-bold text-2xl text-white">Loading admin profile...</div>

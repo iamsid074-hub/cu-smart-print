@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, memo } from "react";
+﻿import React, { useState, useEffect, useCallback, memo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ShoppingBag, X, CheckCircle, ArrowRight, Zap } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
@@ -74,10 +74,10 @@ const MemoizedVendingCard = memo(
       >
         <div className="relative w-full h-full flex items-center justify-center">
 
-          {/* Simple top coil line — replaces heavy SVG per card */}
+          {/* Simple top coil line â€” replaces heavy SVG per card */}
           <div className="absolute bottom-[-2px] w-[90%] h-[3px] rounded-full pointer-events-none z-0 opacity-30" style={{ background: 'linear-gradient(to right, #334155, #94a3b8, #334155)' }} />
 
-          {/* Single depth shadow behind the product — replaces 4 stacked images */}
+          {/* Single depth shadow behind the product â€” replaces 4 stacked images */}
           <div
             className="absolute pointer-events-none"
             style={{
@@ -131,7 +131,7 @@ const MemoizedVendingCard = memo(
             {item.name}
           </span>
           <span className="text-[7px] sm:text-[8px] font-black text-emerald-400">
-            ₹{item.price}
+            â‚¹{item.price}
           </span>
         </div>
       </div>
@@ -164,7 +164,7 @@ export default function VendingMachine() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showUpiModal, setShowUpiModal] = useState(false);
 
-  // Removed inventory polling — was causing full re-renders every 5 seconds
+  // Removed inventory polling â€” was causing full re-renders every 5 seconds
 
   const vendingCartItems = items.filter(i => i.category === "Vending Machine");
 
@@ -219,7 +219,7 @@ export default function VendingMachine() {
           hostel_block: hostel
       }, { onConflict: 'id' });
 
-      const itemsSummary = vendingCartItems.map(i => `${i.quantity}x ${i.title} [IMG:${i.image}] (₹${i.price})`).join("\n");
+      const itemsSummary = vendingCartItems.map(i => `${i.quantity}x ${i.title} [IMG:${i.image}] (â‚¹${i.price})`).join("\n");
       const { data, error } = await supabase.from("orders").insert({
         product_id: null,
         buyer_id: user.id,
@@ -240,7 +240,7 @@ export default function VendingMachine() {
 
       if (error) throw error;
 
-      toast({ title: "Order Successful! 🎉", description: "Your items are on the way to your floor." });
+      toast({ title: "Order Successful! ðŸŽ‰", description: "Your items are on the way to your floor." });
       vendingCartItems.forEach(item => removeItem(item.id));
       setShowUpiModal(false);
       setShowCheckout(false);
@@ -268,7 +268,7 @@ export default function VendingMachine() {
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-emerald-500 to-purple-500 opacity-50 blur-sm" />
 
             <div className="relative rounded-2xl sm:rounded-3xl bg-slate-900/40 p-3 sm:p-4 border border-white/5 flex flex-col justify-between overflow-hidden">
-              {/* Simple glass highlight — no blur */}
+              {/* Simple glass highlight â€” no blur */}
               <div className="absolute inset-0 pointer-events-none rounded-3xl z-40 overflow-hidden">
                 <div className="absolute top-[-50%] left-[-20%] w-[150%] h-[200%] bg-gradient-to-tr from-transparent via-white/[0.07] to-transparent rotate-[25deg]" />
               </div>
@@ -402,7 +402,7 @@ export default function VendingMachine() {
                           </div>
                           <div>
                             <p className="text-[11px] font-black text-slate-900 leading-none">{item.title}</p>
-                            <p className="text-[10px] text-brand font-bold mt-1">₹{item.price} × {item.quantity}</p>
+                            <p className="text-[10px] text-brand font-bold mt-1">â‚¹{item.price} Ã— {item.quantity}</p>
                           </div>
                         </div>
                         <button
@@ -457,15 +457,15 @@ export default function VendingMachine() {
                   <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 space-y-1.5">
                     <div className="flex justify-between items-center text-[10px]">
                       <span className="text-slate-500 font-bold">Subtotal ({vendingCartItems.length})</span>
-                      <span className="text-slate-900 font-black">₹{vendingSubtotal}</span>
+                      <span className="text-slate-900 font-black">â‚¹{vendingSubtotal}</span>
                     </div>
                     <div className="flex justify-between items-center text-[10px]">
                       <span className="text-slate-500 font-bold">Floor Delivery</span>
-                      <span className="text-emerald-600 font-black">+ ₹{deliveryCharge}</span>
+                      <span className="text-emerald-600 font-black">+ â‚¹{deliveryCharge}</span>
                     </div>
                     <div className="pt-1.5 mt-1 border-t border-slate-200 flex justify-between items-center">
                       <span className="text-xs font-black text-slate-600">Total</span>
-                      <span className="text-lg font-black text-brand">₹{totalAmount}</span>
+                      <span className="text-lg font-black text-brand">â‚¹{totalAmount}</span>
                     </div>
                   </div>
 
@@ -475,7 +475,7 @@ export default function VendingMachine() {
                     className="w-full h-14 rounded-2xl bg-slate-900 text-white font-black text-[15px] shadow-xl transition-all hover:bg-black active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2 group will-change-transform"
                     style={{ transform: 'translateZ(0)' }}
                   >
-                    {vendingCartItems.length === 0 ? 'Add items first' : !room ? 'Enter Room No.' : !room.startsWith(floor.toString()) ? `Need Room ${floor}xx` : phone.length !== 10 ? 'Enter Phone' : `Pay ₹${totalAmount}`}
+                    {vendingCartItems.length === 0 ? 'Add items first' : !room ? 'Enter Room No.' : !room.startsWith(floor.toString()) ? `Need Room ${floor}xx` : phone.length !== 10 ? 'Enter Phone' : `Pay â‚¹${totalAmount}`}
                     <Zap className="w-4 h-4 text-emerald-400" />
                   </button>
                 </div>

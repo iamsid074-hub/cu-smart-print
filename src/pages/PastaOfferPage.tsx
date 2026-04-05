@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowLeft, Plus, CheckCircle2, Flame, Store, ShoppingCart } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
@@ -28,7 +28,7 @@ const pastaItems = [
   {
     id: "flavour-factory-Pasta-mixed",
     name: "Mixed Sauce Pasta",
-    desc: "The best of both worlds \u2014 a delicious blend of red and white sauces.",
+    desc: "The best of both worlds — a delicious blend of red and white sauces.",
     price: 99,
     image: "/banners/mixed_sauce_pasta.png",
     accent: "#EA580C",
@@ -131,7 +131,7 @@ export default function PastaOfferPage() {
                 WebkitTextFillColor: "transparent",
               }}
             >
-              Pasta @ {"\u20B9"}99
+              Pasta @ {"₹"}99
             </h1>
             <p className="text-sm sm:text-base text-orange-200/50 font-medium max-w-md mx-auto leading-relaxed">
               Indulge in our signature pasta collection. Handcrafted with love, served with passion.
@@ -216,8 +216,8 @@ export default function PastaOfferPage() {
                     </div>
                     <div className="flex items-center justify-between gap-4">
                       <div className="flex items-baseline gap-1.5">
-                        <span className="text-2xl sm:text-3xl font-black" style={{ color: item.accent }}>{"\u20B9"}99</span>
-                        <span className="text-sm text-white/25 line-through font-bold">{"\u20B9"}110</span>
+                        <span className="text-2xl sm:text-3xl font-black" style={{ color: item.accent }}>{"₹"}99</span>
+                        <span className="text-sm text-white/25 line-through font-bold">{"₹"}110</span>
                       </div>
                       <motion.button
                         whileTap={{ scale: 0.93 }}
@@ -264,7 +264,7 @@ export default function PastaOfferPage() {
               <ShoppingCart className="w-4 h-4" /> Go to Cart
             </Link>
             <p className="text-[10px] text-orange-300/30 mt-3 font-medium">
-              Free delivery on orders above {"\u20B9"}200 {"\u2022"} Delivery in 25-35 mins
+              Free delivery on orders above {"₹"}200 {"•"} Delivery in 25-35 mins
             </p>
           </motion.div>
         </div>

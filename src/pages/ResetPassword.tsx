@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -37,7 +37,7 @@ export default function ResetPassword() {
 
         const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
             if (event === "PASSWORD_RECOVERY") {
-                // User is in password recovery mode — form is shown
+                // User is in password recovery mode â€” form is shown
             }
         });
         return () => subscription.unsubscribe();
@@ -52,7 +52,7 @@ export default function ResetPassword() {
             const { error } = await supabase.auth.updateUser({ password });
             if (error) throw error;
             setDone(true);
-            toast.success("Password updated! You're all set 🎉");
+            toast.success("Password updated! You're all set ðŸŽ‰");
             setTimeout(() => navigate("/login"), 2500);
         } catch (err: any) {
             toast.error(err.message || "Could not update password. Try again.");
@@ -82,7 +82,7 @@ export default function ResetPassword() {
                     <div className="text-center space-y-4">
                         <CheckCircle className="w-12 h-12 mx-auto" style={{ color: "#4DB8AC" }} />
                         <p className="font-semibold" style={{ color: "#E8DED4" }}>Password updated!</p>
-                        <p className="text-sm" style={{ color: "rgba(232,222,212,0.4)" }}>Redirecting you to login…</p>
+                        <p className="text-sm" style={{ color: "rgba(232,222,212,0.4)" }}>Redirecting you to loginâ€¦</p>
                     </div>
                 ) : (
                     <form onSubmit={handleSubmit} className="space-y-4">

@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+﻿import { motion } from "framer-motion";
 import { Plus } from "lucide-react";
 import type { GroceryItem } from "@/config/groceryItems";
 
@@ -45,7 +45,7 @@ export default function GroceryProductCard({ item, idx, bgFrom, bgTo, btnColor, 
                     <p className="text-[11px] font-black text-slate-800 leading-snug line-clamp-2 mb-0.5">{item.name}</p>
                     <p className="text-[10px] text-slate-400 font-medium mb-3">{item.quantity}</p>
                     <div className="flex items-center justify-between">
-                        <span className="text-[15px] font-black text-slate-900">₹{item.price}</span>
+                        <span className="text-[15px] font-black text-slate-900">â‚¹{item.price}</span>
                         <button
                             onClick={() => onAdd(item)}
                             className="w-8 h-8 rounded-xl flex items-center justify-center text-white font-black active:scale-90 transition-transform shadow-md"

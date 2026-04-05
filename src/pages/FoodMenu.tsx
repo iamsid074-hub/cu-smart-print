@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+﻿import React, { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ShoppingBag, Loader2, BadgeCheck, Sparkles, Store, ShoppingCart, MessageSquare } from "lucide-react";
@@ -141,7 +141,7 @@ export default function FoodMenu() {
 
             if (error) throw error;
 
-            toast({ title: "Order placed! 🎉", description: "Payment verified. Admin will process your order shortly." });
+            toast({ title: "Order placed! ðŸŽ‰", description: "Payment verified. Admin will process your order shortly." });
             setShowUpiModal(false);
             setUpiSnapshot(null);
             
@@ -247,7 +247,7 @@ export default function FoodMenu() {
                                         <div className="flex justify-between items-start mb-3">
                                             <div className="flex-1 min-w-0">
                                                 <p className="text-[15px] sm:text-base font-bold text-[#1D1D1F] truncate">{item.name}</p>
-                                                <p className="text-[13px] font-bold text-[#007AFF]">{"\u20B9"}{item.price} x {item.quantity}</p>
+                                                <p className="text-[13px] font-bold text-[#007AFF]">{"₹"}{item.price} x {item.quantity}</p>
                                             </div>
                                         </div>
                                         {item.notes && (

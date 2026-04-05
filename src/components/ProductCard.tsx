@@ -1,4 +1,4 @@
-import { useState, memo, useCallback } from "react";
+﻿import { useState, memo, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Heart, Star, BadgeCheck, ShoppingCart, Share2 } from "lucide-react";
@@ -79,7 +79,7 @@ const ProductCard = memo(({
     e.preventDefault();
     e.stopPropagation();
     const url = `${window.location.origin}/product/${id}`;
-    const text = `Check out "${title}" for ₹${price} on CU Bazzar!`;
+    const text = `Check out "${title}" for â‚¹${price} on CU Bazzar!`;
     if (navigator.share) {
       try { await navigator.share({ title, text, url }); } catch {/* cancelled */ }
     } else {
@@ -160,7 +160,7 @@ const ProductCard = memo(({
           </div>
           
           <div className="flex items-center justify-between mt-auto pt-2">
-            <span className="font-bold text-xl tracking-tight text-[#1D1D1F] truncate pr-2">₹{price.toLocaleString()}</span>
+            <span className="font-bold text-xl tracking-tight text-[#1D1D1F] truncate pr-2">â‚¹{price.toLocaleString()}</span>
             
             <motion.button
               onClick={handleAddToCart}
