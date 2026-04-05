@@ -1,7 +1,10 @@
-// ─── Campus Food Shop Menus ────────────────────────────────────────────────────
+﻿// â”€â”€â”€ Campus Food Shop Menus â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // Transcribed from real shop menus on campus.
 
 export interface MenuItem {
+    name: string;
+    price: number; // lowest price if range
+    image?: string;
     name: string;
     price: number; // lowest price if range
 }
@@ -20,9 +23,9 @@ export interface Shop {
 }
 
 export const shops: Shop[] = [
-    // ═══════════════════════════════════════════════════════════════════════════════
-    // 0. CHATORI CHAI & KULCHA CORNER  ⭐ FEATURED LIVE SALE SHOP
-    // ═══════════════════════════════════════════════════════════════════════════════
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    // 0. CHATORI CHAI & KULCHA CORNER  â­ FEATURED LIVE SALE SHOP
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     {
         id: "chatori-chai-kulcha",
         name: "Chatori Chaat & Kulcha Corner",
@@ -70,16 +73,16 @@ export const shops: Shop[] = [
             {
                 category: "Burgers",
                 items: [
-                    { name: "Aloo Tikki Burger", price: 50 },
-                    { name: "Veg Burger", price: 50 },
+                    { name: "Aloo Tikki Burger", price: 50, image: "/banners/burger_aloo_tikki.webp" },
+                    { name: "Veg Burger", price: 50, image: "/banners/burger_aloo_tikki.webp" },
                     { name: "Noodle Tikki Burger", price: 60 },
                     { name: "Cheese Burger", price: 60 },
                     { name: "Cheese Slice Veg Burger", price: 70 },
                     { name: "Double Tikki Burger", price: 70 },
                     { name: "Paneer Tikki Burger", price: 80 },
                     { name: "Special Makni Burger", price: 100 },
-                    { name: "Chicken Burger", price: 80 },
-                    { name: "Chicken Burger with Cheese", price: 90 }
+                    { name: "Chicken Burger", price: 80, image: "/banners/burger_chicken_crispy.webp" },
+                    { name: "Chicken Burger with Cheese", price: 90, image: "/banners/burger_chicken_crispy.webp" }
                 ]
             },
             {
@@ -222,7 +225,7 @@ export const shops: Shop[] = [
                     { name: "Paneer Fried Rice", price: 90 },
                     { name: "Egg Fried Rice", price: 80 },
                     { name: "Chicken Fried Rice", price: 120 },
-                    { name: "Chicken Biryani", price: 160 },
+                    { name: "Chicken Biryani", price: 160, image: "/banners/biryani_chicken.webp" },
                     { name: "Chicken Gravy with Rice", price: 130 },
                     { name: "Egg Wrap", price: 50 },
                     { name: "Aloo Tikki Wrap", price: 60 },
@@ -234,8 +237,8 @@ export const shops: Shop[] = [
             {
                 category: "Pasta",
                 items: [
-                    { name: "Red Sauce Pasta", price: 90 },
-                    { name: "White Sauce Pasta", price: 90 },
+                    { name: "Red Sauce Pasta", price: 90, image: "/banners/red_sauce_pasta.webp" },
+                    { name: "White Sauce Pasta", price: 90, image: "/banners/pasta_white_sauce.webp" },
                     { name: "Makhni Sauce Pasta", price: 110 },
                     { name: "Schezwan Sauce Pasta", price: 100 },
                     { name: "Mix Sauce Pasta", price: 110 },
@@ -259,13 +262,13 @@ export const shops: Shop[] = [
         ]
     },
 
-    // ═══════════════════════════════════════════════════════════════════════════════
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     // 1. INSTA FOOD
-    // ═══════════════════════════════════════════════════════════════════════════════
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     {
         id: "insta-food",
         name: "Insta Food",
-        tag: "Multi-cuisine • Juice • Shakes",
+        tag: "Multi-cuisine â€¢ Juice â€¢ Shakes",
         veg: false,
         categories: [
             {
@@ -349,7 +352,7 @@ export const shops: Shop[] = [
                 category: "Burger",
                 items: [
                     { name: "Aloo Tikki Burger", price: 40 },
-                    { name: "Veg Burger", price: 50 },
+                    { name: "Veg Burger", price: 50, image: "/banners/burger_aloo_tikki.webp" },
                     { name: "Veg Cheese Burger", price: 60 },
                     { name: "Paneer Tikka Burger", price: 60 },
                     { name: "Noodles Burger", price: 50 },
@@ -537,13 +540,13 @@ export const shops: Shop[] = [
         ],
     },
 
-    // ═══════════════════════════════════════════════════════════════════════════════
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     // 2. PARANTHA HOUSE
-    // ═══════════════════════════════════════════════════════════════════════════════
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     {
         id: "parantha-house",
         name: "Parantha House",
-        tag: "Paranthas • Snacks • Rolls",
+        tag: "Paranthas â€¢ Snacks â€¢ Rolls",
         veg: false,
         categories: [
             {
@@ -702,19 +705,19 @@ export const shops: Shop[] = [
         ],
     },
 
-    // ═══════════════════════════════════════════════════════════════════════════════
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     // 3. PUNJABI RASOI (100% Vegetarian)
-    // ═══════════════════════════════════════════════════════════════════════════════
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     {
         id: "punjabi-rasoi",
         name: "Punjabi Rasoi",
-        tag: "100% Veg • North Indian • Pizza",
+        tag: "100% Veg â€¢ North Indian â€¢ Pizza",
         veg: true,
         categories: [
             {
                 category: "Burger",
                 items: [
-                    { name: "Veg Burger", price: 50 },
+                    { name: "Veg Burger", price: 50, image: "/banners/burger_aloo_tikki.webp" },
                     { name: "Delight Burger", price: 60 },
                     { name: "Spicy Paneer Burger", price: 70 },
                     { name: "Noodle Burger", price: 60 },
@@ -962,13 +965,13 @@ export const shops: Shop[] = [
         ],
     },
 
-    // ═══════════════════════════════════════════════════════════════════════════════
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     // 4. CATCH UP CAFE
-    // ═══════════════════════════════════════════════════════════════════════════════
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     {
         id: "catch-up-cafe",
         name: "Catch Up Cafe",
-        tag: "Cafe • Non-Veg • Dessert",
+        tag: "Cafe â€¢ Non-Veg â€¢ Dessert",
         veg: false,
         categories: [
             {
@@ -986,7 +989,7 @@ export const shops: Shop[] = [
                 category: "Burger",
                 items: [
                     { name: "Aloo Tikki Burger", price: 40 },
-                    { name: "Veg Burger", price: 50 },
+                    { name: "Veg Burger", price: 50, image: "/banners/burger_aloo_tikki.webp" },
                     { name: "Veg Cheese Burger", price: 60 },
                     { name: "Paneer Burger", price: 80 },
                     { name: "Makhani Burger", price: 70 },
@@ -1007,7 +1010,7 @@ export const shops: Shop[] = [
             {
                 category: "Pasta",
                 items: [
-                    { name: "White Sauce Pasta", price: 90 },
+                    { name: "White Sauce Pasta", price: 90, image: "/banners/pasta_white_sauce.webp" },
                     { name: "Makhani Pasta", price: 90 },
                     { name: "Red Sauce Pasta", price: 90 },
                     { name: "Spicy Lava Pasta", price: 90 },
@@ -1169,13 +1172,13 @@ export const shops: Shop[] = [
         ],
     },
 
-    // ═══════════════════════════════════════════════════════════════════════════════
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     // 5. AMBEY FOOD & CATERING
-    // ═══════════════════════════════════════════════════════════════════════════════
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     {
         id: "flavour-factory",
         name: "Flavour Factory",
-        tag: "Sandwiches • Pasta • Shakes • Healthy Meals",
+        tag: "Sandwiches â€¢ Pasta â€¢ Shakes â€¢ Healthy Meals",
         veg: false,
         categories: [
             {
@@ -1294,7 +1297,7 @@ export const shops: Shop[] = [
                 items: [
                     { name: "Crispy Veggie Burger", price: 60 },
                     { name: "Paneer Burger", price: 80 },
-                    { name: "Chicken Burger", price: 80 },
+                    { name: "Chicken Burger", price: 80, image: "/banners/burger_chicken_crispy.webp" },
                     { name: "Cheesy Paneer Burger", price: 90 },
                     { name: "Smoked Chicken Burger", price: 100 },
                     { name: "Cheesy Veggy Burger", price: 70 },
@@ -1385,13 +1388,13 @@ export const shops: Shop[] = [
         ],
     },
 
-    // ═══════════════════════════════════════════════════════════════════════════════
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     // 6. VASANO FAST FOOD (100% Pure Vegetarian)
-    // ═══════════════════════════════════════════════════════════════════════════════
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     {
         id: "vasano-fast-food",
         name: "Vasano Fast Food",
-        tag: "100% Veg • Pizza • Indian • Bakery",
+        tag: "100% Veg â€¢ Pizza â€¢ Indian â€¢ Bakery",
         veg: true,
         categories: [
             {
@@ -1522,9 +1525,9 @@ export const shops: Shop[] = [
             {
                 category: "Pizza",
                 items: [
-                    { name: "Cheese Pizza", price: 100 },
-                    { name: "Onion Pizza", price: 100 },
-                    { name: "Paneer Tikka Pizza", price: 120 },
+                    { name: "Cheese Pizza", price: 100, image: "/banners/pizza_margherita.webp" },
+                    { name: "Onion Pizza", price: 100, image: "/banners/pizza_onion_corn.webp" },
+                    { name: "Paneer Tikka Pizza", price: 120, image: "/banners/pizza_paneer_tikka.webp" },
                     { name: "Paneer Makhani Pizza", price: 130 },
                 ],
             },
@@ -1605,13 +1608,13 @@ export const shops: Shop[] = [
         ],
     },
 
-    // ═══════════════════════════════════════════════════════════════════════════════
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     // 7. CHATORI CHAAT & KULCHA CORNER
-    // ═══════════════════════════════════════════════════════════════════════════════
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     {
         id: "chatori-chaat",
         name: "Chatori Chaat & Kulcha Corner",
-        tag: "Chaat • Street Food • Kulcha • Combos",
+        tag: "Chaat â€¢ Street Food â€¢ Kulcha â€¢ Combos",
         veg: false,
         categories: [
             {
@@ -1655,15 +1658,15 @@ export const shops: Shop[] = [
             {
                 category: "Burgers",
                 items: [
-                    { name: "Aloo Tikki Burger", price: 50 },
-                    { name: "Veg Burger", price: 50 },
+                    { name: "Aloo Tikki Burger", price: 50, image: "/banners/burger_aloo_tikki.webp" },
+                    { name: "Veg Burger", price: 50, image: "/banners/burger_aloo_tikki.webp" },
                     { name: "Noodle Tikki Burger", price: 60 },
                     { name: "Cheese Burger", price: 60 },
                     { name: "Cheese Slice Veg Burger", price: 70 },
                     { name: "Double Tikki Burger", price: 70 },
                     { name: "Paneer Tikki Burger", price: 80 },
                     { name: "Special Makni Burger", price: 100 },
-                    { name: "Chicken Burger", price: 80 },
+                    { name: "Chicken Burger", price: 80, image: "/banners/burger_chicken_crispy.webp" },
                     { name: "Chicken Burger with Cheese", price: 90 }
                 ]
             },
@@ -1807,7 +1810,7 @@ export const shops: Shop[] = [
                     { name: "Paneer Fried Rice", price: 90 },
                     { name: "Egg Fried Rice", price: 80 },
                     { name: "Chicken Fried Rice", price: 120 },
-                    { name: "Chicken Biryani", price: 160 },
+                    { name: "Chicken Biryani", price: 160, image: "/banners/biryani_chicken.webp" },
                     { name: "Chicken Gravy with Rice", price: 130 },
                     { name: "Egg Wrap", price: 50 },
                     { name: "Aloo Tikki Wrap", price: 60 },
@@ -1820,7 +1823,7 @@ export const shops: Shop[] = [
                 category: "Pasta",
                 items: [
                     { name: "Red Sauce Pasta", price: 90 },
-                    { name: "White Sauce Pasta", price: 90 },
+                    { name: "White Sauce Pasta", price: 90, image: "/banners/pasta_white_sauce.webp" },
                     { name: "Makhni Sauce Pasta", price: 110 },
                     { name: "Schezwan Sauce Pasta", price: 100 },
                     { name: "Mix Sauce Pasta", price: 110 },
@@ -1844,13 +1847,13 @@ export const shops: Shop[] = [
         ]
     },
 
-    // ═══════════════════════════════════════════════════════════════════════════════
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     // DIRECTORY-ONLY SHOPS (menu coming soon)
-    // ═══════════════════════════════════════════════════════════════════════════════
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     {
         id: "rock-in-roll",
         name: "Rock in Roll (NC-3)",
-        tag: "📞 9888391974 • Rolls • Noodles • Rice",
+        tag: "ðŸ“ž 9888391974 â€¢ Rolls â€¢ Noodles â€¢ Rice",
         veg: false,
         categories: [
             {
@@ -1898,7 +1901,7 @@ export const shops: Shop[] = [
     {
         id: "food-castle",
         name: "Food Castle (NC-5)",
-        tag: "📞 9988619177 • Pizza • Bakery • Sandwiches",
+        tag: "ðŸ“ž 9988619177 â€¢ Pizza â€¢ Bakery â€¢ Sandwiches",
         veg: false,
         categories: [
             {
@@ -2029,7 +2032,7 @@ export const shops: Shop[] = [
             },
             {
                 category: "Pizza", items: [
-                    { name: "Cheese Pizza", price: 100 }, { name: "Paneer Makhani Pizza", price: 140 },
+                    { name: "Cheese Pizza", price: 100, image: "/banners/pizza_margherita.webp" }, { name: "Paneer Makhani Pizza", price: 140 },
                     { name: "Farm House Pizza", price: 130 }, { name: "Cheese Corn Pizza", price: 130 },
                     { name: "Veggie Penta Pizza", price: 130 }, { name: "Mexican Wave Pizza", price: 140 },
                     { name: "Special Pizza", price: 150 },
@@ -2071,7 +2074,7 @@ export const shops: Shop[] = [
     {
         id: "eat-and-smile",
         name: "Eat and Smile (NC-6)",
-        tag: "📞 7988511867 • Breakfast • Chinese • Rolls",
+        tag: "ðŸ“ž 7988511867 â€¢ Breakfast â€¢ Chinese â€¢ Rolls",
         veg: false,
         categories: [
             {
@@ -2178,7 +2181,7 @@ export const shops: Shop[] = [
     {
         id: "zaika",
         name: "Zaika (NC-4)",
-        tag: "📞 8360292356 • Indian • Thali • Biryani",
+        tag: "ðŸ“ž 8360292356 â€¢ Indian â€¢ Thali â€¢ Biryani",
         veg: false,
         categories: [
             {
@@ -2250,7 +2253,7 @@ export const shops: Shop[] = [
             },
             {
                 category: "Biryani", items: [
-                    { name: "Veg Biryani", price: 130 }, { name: "Chicken Biryani", price: 160 },
+                    { name: "Veg Biryani", price: 130 }, { name: "Chicken Biryani", price: 160, image: "/banners/biryani_chicken.webp" },
                 ]
             },
             {
@@ -2267,7 +2270,7 @@ export const shops: Shop[] = [
     {
         id: "bakerz-hub",
         name: "Bakerz Hub (NC-2)",
-        tag: "📞 8947000006 • Pizza • Cafe • Bakery",
+        tag: "ðŸ“ž 8947000006 â€¢ Pizza â€¢ Cafe â€¢ Bakery",
         veg: false,
         categories: [
             {
@@ -2300,7 +2303,7 @@ export const shops: Shop[] = [
                 category: "Burger", items: [
                     { name: "Veggie Burger", price: 50 }, { name: "Punjabi Masala Burger", price: 60 },
                     { name: "Mexican Cheese Burger", price: 90 }, { name: "Crispy Chaap Burger", price: 80 },
-                    { name: "Chicken Burger", price: 80 }, { name: "Hot & Crispy Chicken Burger", price: 130 },
+                    { name: "Chicken Burger", price: 80, image: "/banners/burger_chicken_crispy.webp" }, { name: "Hot & Crispy Chicken Burger", price: 130 },
                 ]
             },
             {
@@ -2397,7 +2400,7 @@ export const shops: Shop[] = [
     {
         id: "food-junction",
         name: "Food Junction (Zakir A)",
-        tag: "Multi-cuisine • Main Course • Thali",
+        tag: "Multi-cuisine â€¢ Main Course â€¢ Thali",
         veg: false,
         categories: [
             {
@@ -2472,7 +2475,7 @@ export const shops: Shop[] = [
             },
             {
                 category: "Burger", items: [
-                    { name: "Aloo Tikki Burger", price: 50 }, { name: "Cheese Burger", price: 60 },
+                    { name: "Aloo Tikki Burger", price: 50, image: "/banners/burger_aloo_tikki.webp" }, { name: "Cheese Burger", price: 60 },
                     { name: "Paneer Burger", price: 60 }, { name: "King Burger", price: 80 },
                     { name: "Mexican Burger", price: 80 },
                 ]
@@ -2526,7 +2529,7 @@ export const shops: Shop[] = [
     {
         id: "king-cafe",
         name: "King Cafe (Zakir B)",
-        tag: "📞 8877263548 • Full Menu • Tandoori • Main Course",
+        tag: "ðŸ“ž 8877263548 â€¢ Full Menu â€¢ Tandoori â€¢ Main Course",
         veg: false,
         categories: [
             {
@@ -2584,9 +2587,9 @@ export const shops: Shop[] = [
             },
             {
                 category: "Burger", items: [
-                    { name: "Aloo Tikki Burger", price: 50 }, { name: "Cheese Burger", price: 60 },
+                    { name: "Aloo Tikki Burger", price: 50, image: "/banners/burger_aloo_tikki.webp" }, { name: "Cheese Burger", price: 60 },
                     { name: "Paneer Burger", price: 80 }, { name: "Mexican Burger", price: 100 },
-                    { name: "King Burger", price: 100 }, { name: "Chicken Burger", price: 80 },
+                    { name: "King Burger", price: 100 }, { name: "Chicken Burger", price: 80, image: "/banners/burger_chicken_crispy.webp" },
                     { name: "Chicken Cheese Burger", price: 90 },
                 ]
             },
@@ -2671,7 +2674,7 @@ export const shops: Shop[] = [
     {
         id: "handi-biryani",
         name: "Handi Biryani (Zakir D)",
-        tag: "Biryani • Indian Main Course • Chinese",
+        tag: "Biryani â€¢ Indian Main Course â€¢ Chinese",
         veg: false,
         categories: [
             {
@@ -2708,7 +2711,7 @@ export const shops: Shop[] = [
             },
             {
                 category: "Burger & Patties", items: [
-                    { name: "Aloo Tikki Burger", price: 50 }, { name: "Aloo Tikki Cheese Burger", price: 60 },
+                    { name: "Aloo Tikki Burger", price: 50, image: "/banners/burger_aloo_tikki.webp" }, { name: "Aloo Tikki Cheese Burger", price: 60 },
                     { name: "Chicken Burger", price: 70 }, { name: "Chicken Cheese Burger", price: 80 },
                     { name: "Cheese Corn Sandwich", price: 80 }, { name: "Paneer Tikka Sandwich", price: 90 },
                     { name: "Aloo Patty", price: 25 }, { name: "Cheese Corn Patty", price: 35 },
@@ -2774,7 +2777,7 @@ export const shops: Shop[] = [
     {
         id: "barkat-food",
         name: "Barkat Food (Zakir C)",
-        tag: "📞 7056853177 • Main Course • Biryani • Chinese",
+        tag: "ðŸ“ž 7056853177 â€¢ Main Course â€¢ Biryani â€¢ Chinese",
         veg: false,
         categories: [
             {
@@ -2794,7 +2797,7 @@ export const shops: Shop[] = [
             },
             {
                 category: "Burger", items: [
-                    { name: "Aloo Tikki Burger", price: 50 }, { name: "Cheese Burger", price: 60 },
+                    { name: "Aloo Tikki Burger", price: 50, image: "/banners/burger_aloo_tikki.webp" }, { name: "Cheese Burger", price: 60 },
                     { name: "Paneer Burger", price: 70 }, { name: "Chicken Burger", price: 70 },
                     { name: "Mexican Burger", price: 80 }, { name: "Egg Burger", price: 70 },
                 ]

@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef } from "react";
+﻿import { useState, useMemo, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, CheckCircle2, Star, ListFilter, ChevronDown, Clock, Leaf } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
@@ -30,7 +30,7 @@ const categories = [
 
 const filters: FilterOption[] = [
   { id: "filter", label: "Filters", icon: ListFilter },
-  { id: "under-250", label: "Under ₹250" },
+  { id: "under-250", label: "Under â‚¹250" },
   { id: "schedule", label: "Schedule", icon: ChevronDown, hasDropdown: true },
   { id: "pure-veg", label: "Pure Veg", icon: Leaf },
 ];
@@ -82,7 +82,13 @@ export default function HomeSpecialSections({ activeCat, onCatChange }: FoodSect
          shop.categories.forEach(cat => {
            cat.items.forEach(item => {
              if (favorites.some(f => item.name.includes(f))) {
-               items.push({ ...item, id: `all-${shop.id}-${item.name}`, shopName: shop.name, rating: (4.1 + Math.random() * 0.8).toFixed(1), image: item.name.includes("Burger") ? "/banners/burger_special.webp" : item.name.includes("Pizza") ? "/banners/today_special.webp" : "/banners/combo_feast.webp" });
+               items.push({
+                  ...item,
+                  id: \ll-${\.id\}-${\.name\},
+                  shopName: shop.name,
+                  rating: (4.1 + Math.random() * 0.8).toFixed(1),
+                  image: item.image || (item.name.includes('Burger') ? '/banners/burger_special.webp' : item.name.includes('Pizza') ? '/banners/today_special.webp' : '/banners/combo_feast.webp')
+                });
              }
            });
          });
@@ -97,15 +103,15 @@ export default function HomeSpecialSections({ activeCat, onCatChange }: FoodSect
           (activeCat === "burgers" && cat.category.toLowerCase().includes("burger"));
 
         if (isMatch) {
-          cat.items.forEach(item => {
-            items.push({
-              ...item,
-              id: `${activeCat}-${shop.id}-${item.name}`,
-              shopName: shop.name,
-              rating: (4.2 + Math.random() * 0.7).toFixed(1),
-              image: activeCat === "burgers" ? "/banners/burger_special.webp" : activeCat === "pizza" ? "/banners/cat_pizza.webp" : "/banners/today_special.webp"
+            cat.items.forEach(item => {
+              items.push({
+                ...item,
+                id: `${activeCat}-${shop.id}-${item.name}`,
+                shopName: shop.name,
+                rating: (4.2 + Math.random() * 0.7).toFixed(1),
+                image: item.image || (activeCat === "burgers" ? "/banners/burger_special.webp" : activeCat === "pizza" ? "/banners/cat_pizza.webp" : "/banners/today_special.webp")
+              });
             });
-          });
         }
       });
     });
@@ -239,7 +245,7 @@ export default function HomeSpecialSections({ activeCat, onCatChange }: FoodSect
                       
                       {/* Top-Left Promo Tag */}
                       <div className="absolute top-3 left-3 bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-lg border border-white/10 shadow-lg">
-                         <span className="text-[10px] font-black text-white uppercase tracking-wider">{item.name.split(' ')[0]} Special • ₹{item.price}</span>
+                         <span className="text-[10px] font-black text-white uppercase tracking-wider">{item.name.split(' ')[0]} Special â€¢ â‚¹{item.price}</span>
                       </div>
 
                       {/* Bottom-Center Pagination Dots (Visual Only) */}
@@ -275,7 +281,7 @@ export default function HomeSpecialSections({ activeCat, onCatChange }: FoodSect
                       {/* Offer Row */}
                       <div className="flex items-center gap-1.5 mb-3">
                          <CheckCircle2 className="w-3.5 h-3.5 text-[#007AFF]" />
-                         <span className="text-[11px] font-black text-[#007AFF] uppercase tracking-wider">Flat ₹50 OFF above ₹199</span>
+                         <span className="text-[11px] font-black text-[#007AFF] uppercase tracking-wider">Flat â‚¹50 OFF above â‚¹199</span>
                       </div>
 
                       {/* Veg Indicator Badge - ONLY FOR PUNJABI RASOI */}
@@ -324,7 +330,7 @@ export default function HomeSpecialSections({ activeCat, onCatChange }: FoodSect
                      </div>
                      <div className="flex items-center justify-between mt-auto">
                         <div className="flex flex-col">
-                           <span className="text-[16px] font-black text-[#1D1D1F]">₹{item.price}</span>
+                           <span className="text-[16px] font-black text-[#1D1D1F]">â‚¹{item.price}</span>
                         </div>
                         <button
                           onClick={() => handleAdd(item)}

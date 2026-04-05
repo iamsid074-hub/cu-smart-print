@@ -1,0 +1,20 @@
+﻿// â”€â”€â”€ Campus Food Shop Menus â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// Transcribed from real shop menus on campus.
+
+export interface MenuItem {
+    name: string;
+    price: number; // lowest price if range
+}
+
+export interface MenuCategory {
+    category: string;
+    items: MenuItem[];
+}
+
+export interface Shop {
+    id: string;
+    name: string;
+    tag: string; // short description
+    veg: boolean; // pure-veg flag
+    categories: MenuCategory[];
+}
