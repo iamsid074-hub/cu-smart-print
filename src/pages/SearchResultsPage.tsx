@@ -15,6 +15,11 @@ export default function SearchResultsPage() {
   const { addItem } = useCart();
   const allFoods = useMemo(() => getAllFoodItems(), []);
   const [activeTab, setActiveTab] = useState(q);
+  const [activeFilters, setActiveFilters] = useState<string[]>([]);
+
+  const toggleFilter = (filter: string) => {
+     setActiveFilters(prev => prev.includes(filter) ? prev.filter(f => f !== filter) : [...prev, filter]);
+  };
 
   // Derive relevant tabs based on the query (e.g. if q is Burger, tabs could be Veg, Aloo Tikki...)
   const subTabs = useMemo(() => {
@@ -101,10 +106,15 @@ export default function SearchResultsPage() {
          {/* FILTERS */}
          <div className="flex overflow-x-auto no-scrollbar px-4 py-3 gap-2 shrink-0">
              <FilterChip icon={<SlidersHorizontal className="w-3.5 h-3.5" />} label="Filters" hasDropdown />
-             <FilterChip label="Under ₹150" />
-             <FilterChip label="Schedule" hasDropdown />
-             <FilterChip label="Pure Veg" />
-             <FilterChip label="Rating 4.0+" />
+             {["Under ₹150", "Schedule", "Pure Veg", "Rating 4.0+"].map(filter => (
+                <FilterChip 
+                   key={filter} 
+                   label={filter}
+                   isActive={activeFilters.includes(filter)}
+                   onClick={() => toggleFilter(filter)}
+                   hasDropdown={filter === "Schedule"}
+                />
+             ))}
          </div>
       </div>
 
@@ -203,9 +213,14 @@ export default function SearchResultsPage() {
   );
 }
 
-function FilterChip({ label, icon, hasDropdown }: { label: string, icon?: React.ReactNode, hasDropdown?: boolean }) {
+function FilterChip({ label, icon, hasDropdown, isActive, onClick }: { label: string, icon?: React.ReactNode, hasDropdown?: boolean, isActive?: boolean, onClick?: () => void }) {
    return (
-      <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-[10px] border border-gray-200 bg-white text-gray-700 active:bg-gray-50 transition-colors shrink-0">
+      <button 
+         onClick={onClick}
+         className={`flex items-center gap-1.5 px-3 py-1.5 rounded-[10px] border transition-colors shrink-0 ${
+            isActive ? "border-gray-800 bg-gray-50 text-gray-900" : "border-gray-200 bg-white text-gray-700 active:bg-gray-50"
+         }`}
+      >
          {icon && icon}
          <span className="text-[13px] font-bold">{label}</span>
          {hasDropdown && <ChevronDown className="w-3.5 h-3.5 text-gray-400" />}

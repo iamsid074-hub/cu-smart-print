@@ -94,24 +94,9 @@ export default function RestaurantPage() {
          </div>
 
          {/* Packaging chip */}
-         <div className="inline-flex items-center gap-1.5 bg-green-50 border border-green-100 text-green-700 px-3 py-1.5 rounded-lg text-[13px] font-bold mb-5">
+         <div className="inline-flex items-center gap-1.5 bg-green-50 border border-green-100 text-green-700 px-3 py-1.5 rounded-lg text-[13px] font-bold mb-1">
             <CheckCircle2 className="w-4 h-4 fill-green-100 text-green-600" />
             No packaging charges
-         </div>
-         
-         <hr className="border-gray-200" />
-
-         <div className="flex items-center gap-4 py-4 text-[13px] font-bold text-gray-600">
-            <span className="flex items-center gap-2"><span className="text-xl">🤑</span> 10% OFF up to ₹40</span>
-         </div>
-         
-         <hr className="border-gray-200" />
-         
-         {/* Filters Row */}
-         <div className="flex overflow-x-auto no-scrollbar gap-2 pt-4">
-             <FilterChip label="Filters (1)" />
-             <FilterChip label="Hide non-veg" />
-             <FilterChip label="Bestseller" />
          </div>
       </div>
 
@@ -199,19 +184,6 @@ export default function RestaurantPage() {
             </div>
          ))}
       </div>
-      
-      {/* Floating Menu Button (Swiggy style bottom-right pill) */}
-      <div className="fixed bottom-24 right-5 z-40 bg-[#3d4152] text-white px-5 py-3 rounded-full font-bold shadow-xl flex items-center gap-2 cursor-pointer hover:bg-[#282c3f] active:scale-95 transition-all">
-         <span className="text-lg">🍽️</span> Menu
-      </div>
     </div>
   );
-}
-
-function FilterChip({ label }: { label: string }) {
-   return (
-      <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-[10px] border border-gray-300 bg-white text-gray-700 active:bg-gray-50 transition-colors shrink-0">
-         <span className="text-[13px] font-bold">{label}</span>
-      </button>
-   );
 }

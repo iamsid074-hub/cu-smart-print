@@ -430,33 +430,27 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
       );
       break;
     case "active_cart":
-      width = 220;
-      height = 52;
+      width = 280;
+      height = 46;
       const totalAmount = items.reduce((acc, item) => acc + item.price * item.quantity, 0);
       content = (
-        <div className="flex items-center justify-between w-full px-1.5">
-          <div className="flex items-center gap-3.5">
-             <div className="relative isolate pl-1">
-                <div className="w-[36px] h-[36px] rounded-full bg-[#10b981]/15 border border-[#10b981]/30 flex items-center justify-center">
-                   <ShoppingBag className="w-[18px] h-[18px] text-[#10b981]" />
-                </div>
-                <div className="absolute -top-1 -right-1.5 min-w-[20px] h-[20px] px-1 rounded-full bg-white flex items-center justify-center text-[11px] font-black text-black shadow-[0_2px_8px_rgba(0,0,0,0.5)] z-10">
-                  {currentCount}
-                </div>
+        <div className="flex items-center justify-between w-full px-2">
+          <div className="flex items-center gap-2">
+             <div className="w-[30px] h-[30px] rounded-full bg-emerald-500 flex items-center justify-center text-white">
+                <ShoppingBag className="w-4 h-4" />
              </div>
-             
-             <div className="flex flex-col gap-1 justify-center translate-y-px">
-                <span className="text-[10px] font-bold text-[#10b981] uppercase tracking-[0.2em] leading-none">
-                   Live Cart
-                </span>
-                <span className="text-[17px] font-black text-white leading-none tracking-tight">
-                   ₹{totalAmount}
-                </span>
-             </div>
+             <span className="text-[14px] font-bold text-white ml-2 tracking-wide">
+                {currentCount} item{currentCount > 1 ? 's' : ''}
+             </span>
           </div>
           
-          <div className="flex bg-white px-4 py-2.5 rounded-full active:scale-95 transition-transform shadow-[0_2px_10px_rgba(255,255,255,0.15)] mr-0.5">
-             <span className="text-[11px] font-black text-black uppercase tracking-widest leading-none pt-0.5">VIEW</span>
+          <div className="flex items-center gap-4">
+             <span className="text-[15px] font-black text-white">
+                ₹{totalAmount}
+             </span>
+             <div className="bg-white px-3.5 py-1.5 rounded-full flex items-center justify-center active:scale-95 transition-transform">
+                <span className="text-[11px] font-black text-black uppercase tracking-wider pt-0.5">VIEW</span>
+             </div>
           </div>
         </div>
       );
