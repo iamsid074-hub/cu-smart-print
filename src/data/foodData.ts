@@ -81,8 +81,10 @@ export const getPremiumImage = (name: string, category: string) => {
   return PREMIUM_ASSETS["chole bhature"];
 };
 
-// Generate a flat list of all menu items from all shops (plus combos)
-export const getAllFoodItems = () => {
+// Module-level cache: computed once, reused forever
+let _cachedAllFoodItems: ReturnType<typeof _buildAllFoodItems> | null = null;
+
+function _buildAllFoodItems() {
   let items: any[] = [];
 
   // Add shop items
@@ -111,4 +113,12 @@ export const getAllFoodItems = () => {
   });
 
   return items;
+}
+
+// Generate a flat list of all menu items from all shops (plus combos)
+export const getAllFoodItems = () => {
+  if (!_cachedAllFoodItems) {
+    _cachedAllFoodItems = _buildAllFoodItems();
+  }
+  return _cachedAllFoodItems;
 };

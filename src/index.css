@@ -58,12 +58,12 @@
     min-height: 100vh;
     min-height: 100dvh;
     min-height: -webkit-fill-available;
-    /* Soft mesh ambient background setup */
+    /* Soft mesh ambient background — using fixed background-image only (no attachment:fixed to avoid full repaints) */
     background-image: 
       radial-gradient(circle at 15% 50%, rgba(0, 122, 255, 0.04) 0%, transparent 50%),
       radial-gradient(circle at 85% 30%, rgba(85, 200, 250, 0.04) 0%, transparent 50%),
       radial-gradient(circle at 50% 80%, rgba(175, 82, 222, 0.03) 0%, transparent 50%);
-    background-attachment: fixed;
+    /* Removed background-attachment: fixed — was causing full-page repaints on every scroll frame */
   }
 
   html {
@@ -140,9 +140,11 @@
   /* iOS card float on hover */
   .card-hover {
     transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+    will-change: transform;
+    transform: translateZ(0); /* Promote to GPU layer */
   }
   .card-hover:hover {
-    transform: translateY(-2px) scale(1.005);
+    transform: translateY(-2px) scale(1.005) translateZ(0);
     box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.03);
   }
 }
@@ -219,15 +221,18 @@
 
 .animate-float {
   animation: float 4s ease-in-out infinite;
+  will-change: transform;
 }
 
 .animate-glow-pulse {
   animation: glow-pulse 3s ease-in-out infinite;
+  will-change: box-shadow;
 }
 
 .animate-aurora {
   background-size: 200% 200%;
   animation: aurora-shift 4s ease infinite;
+  will-change: background-position;
 }
 
 @keyframes bell-ring {

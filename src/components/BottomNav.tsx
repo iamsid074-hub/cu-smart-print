@@ -81,12 +81,16 @@ const BottomNav = () => {
   );
 
   return (
-    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] w-[92%] max-w-[400px] pointer-events-none">
+    <div
+      className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] w-[92%] max-w-[400px] pointer-events-none"
+      style={{ willChange: "transform", transform: "translateZ(0)" }}
+    >
       <motion.div
         initial={{ y: 50, opacity: 0, scale: 0.95 }}
         animate={{ y: 0, opacity: 1, scale: 1 }}
         transition={{ type: "spring", stiffness: 350, damping: 30 }}
         className="pointer-events-auto h-[56px] rounded-full bg-white/80 backdrop-blur-xl border border-white/60 shadow-[0_8px_32px_rgba(0,0,0,0.08)] flex items-center justify-between px-2"
+        style={{ willChange: "transform" }}
       >
         {navItems.map((item, index) => (
           <NavItem
@@ -95,7 +99,6 @@ const BottomNav = () => {
             icon={item.icon}
             label={item.label}
             isActive={index === activeIndex}
-            isCart={item.isCart}
             cartCount={cartCount}
           />
         ))}

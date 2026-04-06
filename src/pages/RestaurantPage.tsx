@@ -157,7 +157,7 @@ export default function RestaurantPage() {
                                  {/* Image Right Side */}
                                  <div className="w-[156px] flex flex-col items-center">
                                     <div className="w-full h-[144px] rounded-[18px] overflow-hidden bg-gray-50 shadow-md relative group">
-                                       <img src={item.image} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                       <img src={item.image} alt={item.name} loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                                        
                                        {/* Swiggy Bottom Center ADD Button overlaid on image */}
                                        <button

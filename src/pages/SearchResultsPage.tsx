@@ -129,7 +129,7 @@ export default function SearchResultsPage() {
                   {recommendedItems.map(item => (
                      <div key={item.id} className="min-w-[150px] w-[150px] flex flex-col gap-2 shrink-0 relative cursor-pointer" onClick={() => navigate(`/shop/${encodeURIComponent(item.shopName)}`)}>
                         <div className="w-[150px] h-[140px] rounded-[18px] overflow-hidden relative shadow-sm">
-                           <img src={item.image} className="w-full h-full object-cover" />
+                           <img src={item.image} loading="lazy" decoding="async" className="w-full h-full object-cover" />
                            {/* Discount Badge */}
                            <div className="absolute top-0 left-0 bg-black/70 backdrop-blur-md text-white text-[10px] font-bold px-2 py-1 rounded-br-lg">
                               Buy 1 Get 1 FREE
@@ -162,7 +162,7 @@ export default function SearchResultsPage() {
                   <div key={item.id} onClick={() => navigate(`/shop/${encodeURIComponent(item.shopName)}`)} className="bg-white rounded-[24px] shadow-[0_2px_15px_rgba(0,0,0,0.04)] overflow-hidden cursor-pointer active:scale-[0.98] transition-transform">
                      {/* Giant Image Area */}
                      <div className="w-full aspect-[4/3] bg-gray-100 relative">
-                        <img src={item.image} className="w-full h-full object-cover" />
+                        <img src={item.image} loading="lazy" decoding="async" className="w-full h-full object-cover" />
                         
                         {/* Overlay gradient for text readability */}
                         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/60 pointer-events-none" />
@@ -180,7 +180,7 @@ export default function SearchResultsPage() {
                         <div className="absolute bottom-4 left-4 right-4 z-10 bg-white rounded-[16px] p-2 flex items-center justify-between shadow-lg">
                            <div className="flex items-center gap-3">
                               <div className="w-10 h-10 rounded-full overflow-hidden border border-gray-100 flex-shrink-0">
-                                 <img src={`https://api.dicebear.com/7.x/initials/svg?seed=${item.shopName}`} className="w-full h-full object-cover" />
+                                 <img src={`https://api.dicebear.com/7.x/initials/svg?seed=${item.shopName}`} loading="lazy" decoding="async" className="w-full h-full object-cover" />
                               </div>
                               <div className="flex flex-col">
                                  <span className="font-extrabold text-[15px] text-gray-900 leading-tight">{item.shopName}</span>

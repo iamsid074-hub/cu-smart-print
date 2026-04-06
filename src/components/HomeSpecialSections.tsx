@@ -291,6 +291,8 @@ export default function HomeSpecialSections({
                     <img
                       src={cat.img}
                       alt={cat.label}
+                      loading="lazy"
+                      decoding="async"
                       className="w-full h-full object-cover rounded-full mix-blend-multiply"
                     />
                   </div>
@@ -445,6 +447,8 @@ export default function HomeSpecialSections({
                   <img
                     src={item.image}
                     alt={item.name}
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                   

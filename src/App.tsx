@@ -3,7 +3,6 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
-import { motion } from "framer-motion";
 import { Capacitor } from "@capacitor/core";
 import { lazy, Suspense, useEffect } from "react";
 import { Navigate } from "react-router-dom";
@@ -12,12 +11,6 @@ import { Navigate } from "react-router-dom";
 const Index = lazy(() => import("./pages/Index"));
 const Home = lazy(() => import("./pages/Home"));
 const Browse = lazy(() => import("./pages/Browse"));
-
-// Prefetch critical routes
-const prefetchRoutes = () => {
-  import("./pages/Home");
-  import("./pages/Browse");
-};
 
 const ListProduct = lazy(() => import("./pages/ListProduct"));
 const Tracking = lazy(() => import("./pages/Tracking"));
@@ -28,7 +21,7 @@ const Wallet = lazy(() => import("./pages/Wallet"));
 const Grocery = lazy(() => import("./pages/Grocery"));
 const ProductDetail = lazy(() => import("./pages/ProductDetail"));
 const FoodMenu = lazy(() => import("./pages/FoodMenu"));
-const FoodSearch = lazy(() => import("./pages/FoodSearch"));
+// FoodSearch replaced by new /search flow
 const SearchPage = lazy(() => import("./pages/SearchPage"));
 const SearchResultsPage = lazy(() => import("./pages/SearchResultsPage"));
 const RestaurantPage = lazy(() => import("./pages/RestaurantPage"));
@@ -58,7 +51,16 @@ import {
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { CartProvider } from "./contexts/CartContext";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 60_000,      // 1 min before refetch
+      gcTime: 5 * 60_000,    // 5 min cache retention
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 const BrandedLoading = () => {
   return (
@@ -288,11 +290,7 @@ function AppLayout() {
             />
             <Route
               path="/food-search"
-              element={
-                <ProtectedRoute>
-                  <FoodSearch />
-                </ProtectedRoute>
-              }
+              element={<Navigate to="/search" replace />}
             />
             <Route
               path="/pasta-offer"
