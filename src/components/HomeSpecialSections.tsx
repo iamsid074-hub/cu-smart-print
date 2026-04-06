@@ -261,12 +261,6 @@ export default function HomeSpecialSections({
               </p>
             </div>
           </div>
-          <Link
-            to="/food-search"
-            className="text-[12px] font-bold text-[#007AFF] flex items-center gap-1 hover:gap-2 transition-all"
-          >
-            View All <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
         </div>
 
         {/* Category Circles - Horizontal Scroll */}
