@@ -15,6 +15,8 @@ import {
   Home as HomeIcon,
   XCircle,
   Wallet,
+  Search,
+  User,
 } from "lucide-react";
 import { Haptics, ImpactStyle } from "@capacitor/haptics";
 
@@ -751,6 +753,34 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
                       }}
                     />
                   )}
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* ── Liquid Splitting Secondary Pill when Cart takes over Main Display ── */}
+            <AnimatePresence>
+              {!trackingOrder && currentCount > 0 && ["explore", "grocery", "sell", "wallet", "profile"].includes(islandState) && (
+                <motion.div
+                  layout
+                  initial={{ width: 0, opacity: 0, scale: 0.5, marginLeft: -16 }}
+                  animate={{ width: 40, opacity: 1, scale: 1, marginLeft: 0 }}
+                  exit={{ width: 0, opacity: 0, scale: 0.5, marginLeft: -16 }}
+                  transition={springTransition}
+                  className="pointer-events-auto flex items-center justify-center overflow-hidden flex-shrink-0"
+                  style={{
+                    background: "#000",
+                    height: 40,
+                    borderRadius: "50%",
+                    border: "1px solid rgba(255,255,255,0.06)",
+                    boxShadow: "0 2px 10px rgba(0,0,0,0.5)",
+                    zIndex: 100,
+                  }}
+                >
+                  {islandState === "explore" ? <Search size={16} color="#3b82f6" /> :
+                   islandState === "sell" ? <Tag size={16} color="#8b5cf6" /> :
+                   islandState === "grocery" ? <ShoppingBag size={16} color="#10b981" /> :
+                   islandState === "wallet" ? <Wallet size={16} color="#f59e0b" /> :
+                   islandState === "profile" ? <User size={16} color="#ec4899" /> : null}
                 </motion.div>
               )}
             </AnimatePresence>
