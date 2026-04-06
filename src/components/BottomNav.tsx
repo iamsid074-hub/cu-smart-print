@@ -1,4 +1,4 @@
-﻿import React, { memo } from "react";
+import React, { memo } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   Home,
@@ -10,83 +10,49 @@ import {
 import { useCart } from "@/contexts/CartContext";
 import { motion, AnimatePresence } from "framer-motion";
 
-const NavItem = memo(
-  ({ to, icon: Icon, label, isActive, isCart = false, cartCount = 0 }: any) => {
-    const isGro = label === "GRO";
-    const isWallet = label === "Wallet";
-
-    return (
-      <Link
-        to={to}
-        className="relative flex-1 flex items-center justify-center py-2.5 z-10 no-underline pointer-events-auto"
-      >
-        <div
-          className="absolute inset-y-1.5 z-0 pointer-events-none"
-          style={{
-            left: isGro ? "-6%" : isWallet ? "-10%" : "2%",
-            width: isGro ? "112%" : isWallet ? "120%" : "96%",
-          }}
-        >
-          {isActive && (
-            <motion.div
-              layoutId="nav-pill"
-              className="w-full h-full bg-[#1D1D1F] rounded-full shadow-sm"
-              transition={{
-                type: "spring",
-                stiffness: 500,
-                damping: 38,
-                mass: 0.8,
-              }}
-              style={{ willChange: "transform" }}
-            />
-          )}
-        </div>
-
+const NavItem = memo(({ to, icon: Icon, label, isActive, isCart = false, cartCount = 0 }: any) => {
+  return (
+    <Link
+      to={to}
+      className={`relative flex items-center justify-center h-full px-4 rounded-full transition-all duration-300 ${
+        isActive ? "text-white" : "text-[#8E8E93] hover:text-[#1D1D1F]"
+      }`}
+      style={{ flex: isActive ? "0 0 auto" : "1 1 0" }} // Active item takes its content width, others share remaining space
+    >
+      {isActive && (
         <motion.div
-          animate={{
-            scale: isActive ? 1.05 : 1,
-            y: isActive ? -1 : 0,
-          }}
-          transition={{ type: "spring", stiffness: 450, damping: 35 }}
-          className={`flex items-center gap-1.5 px-2 py-1.5 rounded-full relative z-10 transition-colors duration-200 ${
-            isActive ? "text-white" : "text-[#8E8E93] hover:text-[#1D1D1F]"
-          }`}
-        >
-          <Icon
-            strokeWidth={isActive ? 2.5 : 2.5}
-            className="w-5 h-5 flex-shrink-0"
-          />
+          layoutId="bottom-nav-active"
+          className="absolute inset-0 bg-[#1D1D1F] rounded-full shadow-[0_4px_12px_rgba(0,0,0,0.1)]"
+          transition={{ type: "spring", stiffness: 400, damping: 30 }}
+        />
+      )}
 
-          <AnimatePresence mode="popLayout" initial={false}>
-            {isActive && (
-              <motion.span
-                initial={{ opacity: 0, x: -8 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -8 }}
-                transition={{ type: "spring", stiffness: 500, damping: 38 }}
-                className="text-[11px] font-bold tracking-tight whitespace-nowrap pt-0.5"
-              >
-                {label}
-              </motion.span>
-            )}
-          </AnimatePresence>
-
-          {isCart && cartCount > 0 && (
-            <div
-              className={`absolute -top-1 -right-1 bg-[#FF3B30] text-white text-[10px] font-bold min-w-[17px] h-[17px] px-1 rounded-full flex items-center justify-center shadow-sm transition-all duration-300 ${
-                isActive
-                  ? "ring-2 ring-[#1D1D1F] scale-110"
-                  : "ring-2 ring-transparent scale-100"
-              }`}
+      <div className="relative z-10 flex items-center gap-1.5 h-full">
+        <Icon strokeWidth={isActive ? 2.5 : 2} className="w-[1.3rem] h-[1.3rem]" />
+        
+        <AnimatePresence>
+          {isActive && (
+            <motion.span
+              initial={{ width: 0, opacity: 0, paddingLeft: 0 }}
+              animate={{ width: "auto", opacity: 1, paddingLeft: 2 }}
+              exit={{ width: 0, opacity: 0, paddingLeft: 0 }}
+              transition={{ type: "spring", stiffness: 450, damping: 35 }}
+              className="text-[13px] font-bold tracking-tight whitespace-nowrap overflow-hidden"
             >
-              {cartCount > 9 ? "9+" : cartCount}
-            </div>
+              {label === "Grocery" ? "Gro" : label}
+            </motion.span>
           )}
-        </motion.div>
-      </Link>
-    );
-  }
-);
+        </AnimatePresence>
+
+        {isCart && cartCount > 0 && (
+          <div className="absolute -top-1 -right-2 bg-orange-500 text-white text-[10px] font-black min-w-[16px] h-[16px] px-1 rounded-full flex items-center justify-center shadow-md">
+            {cartCount > 9 ? "9+" : cartCount}
+          </div>
+        )}
+      </div>
+    </Link>
+  );
+});
 
 NavItem.displayName = "NavItem";
 
@@ -118,30 +84,28 @@ const BottomNav = () => {
   );
 
   return (
-    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-full flex flex-col items-center pointer-events-none px-4">
+    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] w-[92%] max-w-[400px] pointer-events-none">
       <motion.div
-        initial={{ y: 80, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ type: "spring", stiffness: 300, damping: 35 }}
-        className="w-full max-w-[420px] pointer-events-auto relative p-1.5 ios-glass-heavy ios-shadow"
-        style={{ borderRadius: "32px" }}
+        initial={{ y: 50, opacity: 0, scale: 0.95 }}
+        animate={{ y: 0, opacity: 1, scale: 1 }}
+        transition={{ type: "spring", stiffness: 350, damping: 30 }}
+        className="pointer-events-auto h-[56px] rounded-full bg-white/80 backdrop-blur-xl border border-white/60 shadow-[0_8px_32px_rgba(0,0,0,0.08)] flex items-center justify-between px-2"
       >
-        <div className="flex items-center relative h-[48px]">
-          {navItems.map((item, index) => (
-            <NavItem
-              key={item.to}
-              to={item.to}
-              icon={item.icon}
-              label={item.label === "Grocery" ? "GRO" : item.label}
-              isActive={index === activeIndex}
-              isCart={item.isCart}
-              cartCount={cartCount}
-            />
-          ))}
-        </div>
+        {navItems.map((item, index) => (
+          <NavItem
+            key={item.to}
+            to={item.to}
+            icon={item.icon}
+            label={item.label}
+            isActive={index === activeIndex}
+            isCart={item.isCart}
+            cartCount={cartCount}
+          />
+        ))}
       </motion.div>
     </div>
   );
 };
 
 export default memo(BottomNav);
+

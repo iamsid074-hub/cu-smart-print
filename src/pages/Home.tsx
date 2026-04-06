@@ -253,24 +253,30 @@ export default function Home() {
             </Link>
           </div>
 
-          {/* Search Bar */}
-          <div className="relative group cursor-text">
-            <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
-              <Search className="h-5 w-5 text-gray-400 group-focus-within:text-orange-500 transition-colors" />
+          {/* Animated Premium Search Bar */}
+          <motion.button
+            whileTap={{ scale: 0.97 }}
+            onClick={() => setIsFoodSearchOpen(true)}
+            className="w-full relative flex items-center bg-white rounded-2xl p-1.5 pr-2 shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-black/[0.03] overflow-hidden group"
+          >
+            {/* Glossy sheen effect overlay */}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent -translate-x-[150%] animate-[shimmer_2s_infinite] pointer-events-none" />
+            
+            <div className="flex items-center justify-center w-10 h-10 ml-1 rounded-full bg-gray-50 text-gray-400 group-hover:text-orange-500 transition-colors">
+              <Search className="w-5 h-5" />
             </div>
-            <input
-              type="text"
-              readOnly
-              onClick={() => setIsFoodSearchOpen(true)}
-              className="block w-full pl-11 pr-12 py-3.5 bg-white border border-gray-100 rounded-2xl text-base placeholder-gray-400 shadow-[0_2px_12px_rgba(0,0,0,0.04)] focus:outline-none focus:ring-2 focus:ring-orange-500/20 font-medium transition-all"
-              placeholder="Search 'Pizza' or 'Burger'..."
-            />
-            <div className="absolute inset-y-0 right-2 flex items-center">
-              <div className="bg-orange-50 p-1.5 rounded-xl border border-orange-100">
-                <Leaf className="h-4 w-4 text-orange-500" />
+            
+            <div className="flex-1 text-left px-3 border-r border-gray-100/50">
+              <div className="text-[14.5px] font-bold text-[#1D1D1F]">Search 'Pizza'</div>
+              <div className="text-[12px] text-gray-500 font-medium">Or 'Burger', 'Biryani'...</div>
+            </div>
+            
+            <div className="pl-3 pr-1 py-1">
+              <div className="bg-orange-50 p-2 rounded-xl border border-orange-100">
+                <Leaf className="w-4 h-4 text-orange-500" />
               </div>
             </div>
-          </div>
+          </motion.button>
         </div>
       </div>
 
@@ -558,123 +564,161 @@ function FoodSearchOverlay({ isOpen, onClose }: { isOpen: boolean; onClose: () =
   return (
     <AnimatePresence>
       {isOpen && (
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 30 }}
-          transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-          className="fixed inset-0 z-[9999] bg-white flex flex-col"
-        >
-          {/* Header & Search Input */}
-          <div className="pt-12 px-4 pb-3 border-b border-gray-100 shadow-sm flex items-center gap-3 bg-white">
-            <button onClick={onClose} className="p-2 -ml-2 text-gray-700 active:scale-95 transition-transform" aria-label="Close search">
-              <ArrowLeft className="w-6 h-6" />
-            </button>
-            <div className="flex-1 relative">
-              <input
-                ref={inputRef}
-                type="text"
-                value={query}
-                onChange={e => setQuery(e.target.value)}
-                placeholder="Search for dishes, restaurants..."
-                className="w-full bg-gray-100 rounded-xl py-3 pl-4 pr-10 text-[15px] font-medium text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500/30 transition-all border border-gray-200"
-              />
-              {query && (
-                <button aria-label="Clear search" onClick={() => setQuery("")} className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600">
-                  <X className="w-4 h-4" />
-                </button>
+        <>
+          {/* Dark Backdrop */}
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={onClose}
+            className="fixed inset-0 z-[9998] bg-black/40 backdrop-blur-sm"
+          />
+          
+          {/* Sliding Sheet Overlay */}
+          <motion.div
+            initial={{ y: "100%", opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: "100%", opacity: 0 }}
+            transition={{ type: "spring", damping: 32, stiffness: 300, mass: 0.8 }}
+            className="fixed inset-x-0 bottom-0 top-[8%] z-[9999] bg-[#F8F9FA] rounded-t-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.15)] flex flex-col overflow-hidden"
+          >
+            {/* Header & Sticky Search Bar inside the sheet */}
+            <div className="bg-white rounded-t-3xl px-4 pt-4 pb-4 border-b border-gray-100 shadow-sm relative z-20">
+              {/* Cute pull tab */}
+              <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-4" />
+              
+              <div className="flex flex-col gap-3">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-[20px] font-black text-gray-900 tracking-tight">Search Food</h2>
+                  <button onClick={onClose} className="p-2 bg-gray-100 rounded-full text-gray-600 active:scale-90 transition-transform">
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+                
+                <div className="relative flex items-center bg-gray-50 rounded-[14px] border border-black/5 p-1">
+                  <div className="pl-3 pr-2 text-orange-500">
+                    <Search className="w-5 h-5" />
+                  </div>
+                  <input
+                    ref={inputRef}
+                    type="text"
+                    value={query}
+                    onChange={e => setQuery(e.target.value)}
+                    placeholder="Search for dishes, shops..."
+                    className="flex-1 bg-transparent py-2.5 text-[15px] font-bold text-gray-900 placeholder-gray-400 focus:outline-none"
+                  />
+                  {query && (
+                    <button onClick={() => setQuery("")} className="mr-2 p-1.5 bg-gray-200 rounded-full text-gray-500">
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Scrolling Content Area */}
+            <div className="flex-1 overflow-y-auto w-full bg-[#F8F9FA]">
+              {!query.trim() ? (
+                <div className="p-5 pb-32">
+                  <h3 className="font-extrabold text-[16px] text-gray-900 mb-4 flex items-center gap-2">
+                    <TrendingUp className="w-5 h-5 text-orange-500" /> Popular Cuisines
+                  </h3>
+                  <div className="grid grid-cols-3 gap-3 sm:grid-cols-4">
+                    {suggestedCuisines.map((cat, i) => (
+                      <motion.button 
+                        key={i}
+                        whileTap={{ scale: 0.95 }}
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: i * 0.05, type: "spring" }}
+                        onClick={() => setQuery(cat.name)}
+                        className="flex flex-col items-center bg-white rounded-2xl p-2 pb-3 shadow-[0_2px_10px_rgba(0,0,0,0.02)] border border-gray-100"
+                      >
+                        <div className="w-[68px] h-[68px] mb-2 rounded-full overflow-hidden">
+                          <img src={cat.image} className="w-full h-full object-cover rounded-full mix-blend-multiply" alt={cat.name} />
+                        </div>
+                        <span className="text-[12px] font-bold text-gray-800">{cat.name}</span>
+                      </motion.button>
+                    ))}
+                  </div>
+
+                  <div className="mt-8">
+                    <h3 className="font-extrabold text-[16px] text-gray-900 mb-4 flex items-center gap-2">
+                      <History className="w-5 h-5 text-gray-400" /> Recent Searches
+                    </h3>
+                    <div className="flex flex-wrap gap-2">
+                      {["Paneer Butter Masala", "Oreo Shake", "Farmhouse Pizza", "Burger"].map((term, i) => (
+                        <motion.button 
+                           key={term} 
+                           initial={{ opacity: 0, x: -10 }}
+                           animate={{ opacity: 1, x: 0 }}
+                           transition={{ delay: i * 0.05 }}
+                           onClick={() => setQuery(term)}
+                           className="px-4 py-2 rounded-xl border border-gray-200 bg-white shadow-[0_2px_8px_rgba(0,0,0,0.02)] text-gray-600 text-[13px] font-bold active:bg-gray-50 active:scale-95 transition-all"
+                        >
+                           {term}
+                        </motion.button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="p-4 pb-32 min-h-full">
+                  {searchResults.length === 0 ? (
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-20">
+                       <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                          <Search className="w-8 h-8 text-gray-300" />
+                       </div>
+                       <h3 className="font-bold text-gray-900 text-lg mb-1">No matches found</h3>
+                       <p className="text-gray-500 font-medium">Try searching for Pizza, Burger, or Biryani</p>
+                    </motion.div>
+                  ) : (
+                    <div className="flex flex-col gap-3">
+                      {searchResults.map((item, index) => (
+                        <motion.div 
+                          key={`search-${item.id}`}
+                          initial={{ opacity: 0, y: 15 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: index * 0.03 }}
+                          className="flex gap-3 bg-white p-3 rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.03)] border border-gray-100"
+                        >
+                          <div className="w-[88px] h-[88px] rounded-xl overflow-hidden bg-gray-50 flex-shrink-0 relative">
+                            <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                            {parseFloat(item.rating) >= 4.5 && (
+                              <div className="absolute top-0 left-0 bg-[#FF6B00] text-white text-[9px] font-black px-1.5 py-0.5 rounded-br-lg shadow-sm">
+                                BESTSELLER
+                              </div>
+                            )}
+                          </div>
+                          <div className="flex-1 flex flex-col justify-center">
+                            <div className="flex items-center gap-1.5 mb-1">
+                               <div className="w-3 h-3 rounded-[3px] border border-emerald-500 flex items-center justify-center bg-white"><div className="w-1.5 h-1.5 rounded-full bg-emerald-500"/></div>
+                               <h4 className="font-extrabold text-[15px] text-gray-900 leading-tight">{item.name}</h4>
+                            </div>
+                            <span className="text-[12px] text-gray-500 font-bold mb-auto">{item.shopName} · ⭐ {item.rating}</span>
+                            <div className="flex items-center justify-between mt-2 max-w-full">
+                              <span className="font-black text-[16px] text-gray-900">₹{item.price}</span>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  addItem(item);
+                                  toast.success(`${item.name} added!`);
+                                }}
+                                className="px-5 py-2 rounded-xl bg-[#FF6B00]/10 text-[#FF6B00] font-black text-[12px] uppercase active:scale-95 transition-all"
+                              >
+                                ADD
+                              </button>
+                            </div>
+                          </div>
+                        </motion.div>
+                      ))}
+                    </div>
+                  )}
+                </div>
               )}
             </div>
-          </div>
-
-          {/* Scrolling Content Area */}
-          <div className="flex-1 overflow-y-auto w-full bg-gray-50/50">
-            {!query.trim() ? (
-              <div className="p-5">
-                <h3 className="font-extrabold text-[16px] text-gray-900 mb-4 flex items-center gap-2">
-                  <TrendingUp className="w-5 h-5 text-orange-500" /> Popular Cuisines
-                </h3>
-                <div className="grid grid-cols-3 sm:grid-cols-4 gap-4">
-                  {suggestedCuisines.map((cat, i) => (
-                    <motion.button 
-                      key={i}
-                      whileTap={{ scale: 0.92 }}
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: i * 0.05 }}
-                      onClick={() => setQuery(cat.name)}
-                      className="flex flex-col items-center gap-2"
-                    >
-                      <div className="w-[72px] h-[72px] rounded-full overflow-hidden border border-gray-200 shadow-sm bg-white p-1">
-                        <img src={cat.image} className="w-full h-full rounded-full object-cover" alt={cat.name} />
-                      </div>
-                      <span className="text-[12px] font-bold text-gray-700">{cat.name}</span>
-                    </motion.button>
-                  ))}
-                </div>
-
-                <div className="mt-8 border-t border-gray-200 pt-6">
-                  <h3 className="font-extrabold text-[16px] text-gray-900 mb-4 flex items-center gap-2">
-                    <History className="w-5 h-5 text-gray-500" /> Recent Searches
-                  </h3>
-                  <div className="flex flex-wrap gap-2">
-                    {["Paneer Butter Masala", "Oreo Shake", "Farmhouse Pizza"].map((term) => (
-                      <button 
-                         key={term} 
-                         onClick={() => setQuery(term)}
-                         className="px-4 py-2 rounded-full border border-gray-200 bg-white text-gray-600 text-[13px] font-medium hover:border-orange-500 transition-colors"
-                      >
-                         {term}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <div className="p-4 bg-white min-h-full">
-                {searchResults.length === 0 ? (
-                  <div className="text-center py-20">
-                     <Search className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                     <p className="text-gray-500 font-medium">No dishes found for "{query}"</p>
-                  </div>
-                ) : (
-                  <div className="flex flex-col gap-5">
-                    <h3 className="font-extrabold text-gray-900 text-[15px] pb-2 border-b border-gray-100">
-                       Searching dishes... 
-                    </h3>
-                    {searchResults.map((item) => (
-                      <div key={`search-${item.id}`} className="flex gap-4 items-center bg-white">
-                        <div className="w-[84px] h-[84px] sm:w-[100px] sm:h-[100px] rounded-2xl overflow-hidden bg-gray-100 flex-shrink-0 border border-black/5 shadow-sm">
-                          <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
-                        </div>
-                        <div className="flex-1">
-                          <div className="flex items-center gap-1.5 mb-0.5">
-                             <div className="w-2.5 h-2.5 rounded-sm border border-emerald-500 flex items-center justify-center bg-white"><div className="w-1.5 h-1.5 rounded-full bg-emerald-500"/></div>
-                             <h4 className="font-bold text-[15px] sm:text-[16px] text-gray-900 tracking-tight leading-none">{item.name}</h4>
-                          </div>
-                          <span className="text-[12px] text-gray-500 font-medium">{item.shopName || "Hostel CAFE"}</span>
-                          <div className="flex items-center justify-between mt-1">
-                            <span className="font-black text-[15px] text-gray-900">₹{item.price}</span>
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                addItem(item);
-                                toast.success(`${item.name} added!`);
-                              }}
-                              className="px-4 py-1.5 rounded-lg bg-emerald-50 text-emerald-600 font-black text-[11px] uppercase tracking-wide border border-emerald-200 active:scale-95 transition-all"
-                            >
-                              ADD
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        </motion.div>
+          </motion.div>
+        </>
       )}
     </AnimatePresence>
   );
