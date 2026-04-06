@@ -210,7 +210,7 @@ export default function FoodSearch() {
                     />
 
                     {/* Image Hero */}
-                    <div className="relative overflow-hidden shrink-0">
+                    <div className="relative shrink-0">
                       <div
                         className="relative h-[130px] sm:h-[150px] overflow-hidden"
                         style={{

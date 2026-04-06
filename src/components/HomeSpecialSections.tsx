@@ -455,8 +455,7 @@ export default function HomeSpecialSections({
                   className={`absolute top-0 left-0 w-[4px] h-full ${ac.strip} z-20 rounded-l-[1.4rem]`}
                 />
 
-                {/* ── IMAGE HERO ── */}
-                <div className="relative overflow-hidden">
+                <div className="relative">
                   {/* Food Image with clip-path diagonal cut */}
                   <div
                     className="relative h-[140px] sm:h-[160px] overflow-hidden"
@@ -487,7 +486,7 @@ export default function HomeSpecialSections({
 
                   {/* Rating Notch Badge - sits at the diagonal cut edge */}
                   {item.rating && (
-                    <div className="absolute -bottom-0 right-4 z-20 translate-y-1/2">
+                    <div className="absolute -bottom-0 right-4 z-30 translate-y-1/2">
                       <div className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-white shadow-lg border border-black/5">
                         <Star className="w-3 h-3 text-amber-500 fill-amber-500" />
                         <span className="text-[12px] font-black text-[#1D1D1F]">

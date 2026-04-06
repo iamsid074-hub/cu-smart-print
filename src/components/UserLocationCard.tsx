@@ -1,4 +1,4 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { MapPin, ChevronDown, User } from "lucide-react";
 import { useLocation, Link } from "react-router-dom";
@@ -21,7 +21,7 @@ export default function UserLocationCard() {
   return (
     <>
       <div className="absolute top-[4.5rem] sm:top-[6rem] left-0 right-0 z-[99] pointer-events-none flex justify-center">
-        <div className="w-full max-w-[1600px] px-3 lg:px-10">
+        <div className="w-full max-w-[1200px] px-4 lg:px-12">
           <motion.div
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
@@ -77,7 +77,7 @@ export default function UserLocationCard() {
             </div>
 
             {/* Content */}
-            <div className="relative z-10 flex justify-between items-center px-4 py-3">
+            <div className="relative z-10 flex justify-between items-center px-4 py-2.5">
               <div className="flex flex-col items-start gap-0.5">
                 <p className="text-[9px] font-bold text-purple-200/80 uppercase tracking-[0.15em] leading-none pl-[2px]">
                   Your location
@@ -110,16 +110,16 @@ export default function UserLocationCard() {
                     onClick={() => setIsPlansOpen(true)}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className="text-[10px] sm:text-[11px] font-black uppercase tracking-widest bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-400 text-purple-900 px-3.5 py-1.5 rounded-full shadow-[0_4px_16px_rgba(251,191,36,0.4),inset_0_1px_0_rgba(255,255,255,0.5)] border border-amber-300/50"
+                    className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-400 text-purple-900 px-3 py-1.5 rounded-full shadow-[0_4px_16px_rgba(251,191,36,0.3),inset_0_1px_0_rgba(255,255,255,0.4)] border border-amber-300/40"
                   >
                     ✦ MEMBER
                   </motion.button>
                 )}
                 <Link
                   to="/profile"
-                  className="w-9 h-9 rounded-full bg-white/20 backdrop-blur-sm border border-white/25 shadow-[0_4px_12px_rgba(0,0,0,0.15),inset_0_1px_0_rgba(255,255,255,0.2)] flex items-center justify-center text-white hover:bg-white/30 hover:scale-105 transition-all"
+                  className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm border border-white/25 shadow-[0_4px_12px_rgba(0,0,0,0.15),inset_0_1px_0_rgba(255,255,255,0.2)] flex items-center justify-center text-white hover:bg-white/30 hover:scale-105 transition-all"
                 >
-                  <User className="w-[17px] h-[17px]" strokeWidth={2.5} />
+                  <User className="w-[15px] h-[15px]" strokeWidth={2.5} />
                 </Link>
               </div>
             </div>
