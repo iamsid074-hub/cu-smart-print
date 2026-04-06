@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useRef, useCallback, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -23,6 +23,7 @@ import {
   Ban,
   Headset,
   ExternalLink,
+  ArrowLeft,
   Search,
   Download,
   ArrowRight,
@@ -32,6 +33,8 @@ import {
   Sparkles,
   ChevronDown,
   Leaf,
+  History,
+  TrendingUp,
 } from "lucide-react";
 import ProductCard from "@/components/ProductCard";
 import VendingMachine from "@/components/VendingMachine";
@@ -40,6 +43,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
 import { toast } from "sonner";
 import { Capacitor } from "@capacitor/core";
+import { getAllFoodItems } from "@/data/foodData";
 import { groceryItems } from "@/config/groceryItems";
 import { ADMIN_SELLER_ID } from "@/config/campusEssentials";
 import type { Database } from "@/types/supabase";
@@ -191,6 +195,7 @@ function HeroCarousel() {
 export default function Home() {
   const navigate = useNavigate();
   const isNativeApp = Capacitor.isNativePlatform();
+  const [isFoodSearchOpen, setIsFoodSearchOpen] = useState(false);
   const [products, setProducts] = useState<any[]>([]);
   const [productsLoading, setProductsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -256,7 +261,7 @@ export default function Home() {
             <input
               type="text"
               readOnly
-              onClick={() => navigate('/browse')}
+              onClick={() => setIsFoodSearchOpen(true)}
               className="block w-full pl-11 pr-12 py-3.5 bg-white border border-gray-100 rounded-2xl text-base placeholder-gray-400 shadow-[0_2px_12px_rgba(0,0,0,0.04)] focus:outline-none focus:ring-2 focus:ring-orange-500/20 font-medium transition-all"
               placeholder="Search 'Pizza' or 'Burger'..."
             />
@@ -506,6 +511,171 @@ export default function Home() {
           )}
         </AnimatePresence>
       </div>
+      
+      {/* Search Overlay */}
+      <FoodSearchOverlay isOpen={isFoodSearchOpen} onClose={() => setIsFoodSearchOpen(false)} />
     </div>
+  );
+}
+// ─── ZOMATO-STYLE GLOBAL FOOD SEARCH OVERLAY ───
+const suggestedCuisines = [
+  { name: "Biryani", image: "/banners/cat_biryani.webp" },
+  { name: "Pizza", image: "/banners/cat_pizza.webp" },
+  { name: "Burger", image: "/banners/cat_burger.webp" },
+  { name: "Noodles", image: "/food_premium/veg_hakka_noodles_premium_1775370523750_1775370740442.png" },
+  { name: "Pasta", image: "/food_premium/white_sauce_pasta_premium_1775370523752_1775370810885.png" },
+  { name: "Combos", image: "/banners/combo_feast.webp" },
+];
+
+function FoodSearchOverlay({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
+  const [query, setQuery] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
+  const { addItem } = useCart();
+  const allFoods = useMemo(() => getAllFoodItems(), []);
+
+  useEffect(() => {
+    if (isOpen) {
+      setTimeout(() => inputRef.current?.focus(), 100);
+      document.body.style.overflow = "hidden";
+    } else {
+      setTimeout(() => { if (inputRef.current) inputRef.current.blur(); }, 0);
+      setQuery("");
+      document.body.style.overflow = "auto";
+    }
+    return () => { document.body.style.overflow = "auto"; };
+  }, [isOpen]);
+
+  const searchResults = useMemo(() => {
+    if (!query.trim()) return [];
+    return allFoods.filter(
+      item => 
+        item.name.toLowerCase().includes(query.toLowerCase()) || 
+        item.shopName?.toLowerCase().includes(query.toLowerCase()) ||
+        item.category?.toLowerCase().includes(query.toLowerCase())
+    ).slice(0, 15);
+  }, [query, allFoods]);
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 30 }}
+          transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+          className="fixed inset-0 z-[9999] bg-white flex flex-col"
+        >
+          {/* Header & Search Input */}
+          <div className="pt-12 px-4 pb-3 border-b border-gray-100 shadow-sm flex items-center gap-3 bg-white">
+            <button onClick={onClose} className="p-2 -ml-2 text-gray-700 active:scale-95 transition-transform" aria-label="Close search">
+              <ArrowLeft className="w-6 h-6" />
+            </button>
+            <div className="flex-1 relative">
+              <input
+                ref={inputRef}
+                type="text"
+                value={query}
+                onChange={e => setQuery(e.target.value)}
+                placeholder="Search for dishes, restaurants..."
+                className="w-full bg-gray-100 rounded-xl py-3 pl-4 pr-10 text-[15px] font-medium text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500/30 transition-all border border-gray-200"
+              />
+              {query && (
+                <button aria-label="Clear search" onClick={() => setQuery("")} className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600">
+                  <X className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Scrolling Content Area */}
+          <div className="flex-1 overflow-y-auto w-full bg-gray-50/50">
+            {!query.trim() ? (
+              <div className="p-5">
+                <h3 className="font-extrabold text-[16px] text-gray-900 mb-4 flex items-center gap-2">
+                  <TrendingUp className="w-5 h-5 text-orange-500" /> Popular Cuisines
+                </h3>
+                <div className="grid grid-cols-3 sm:grid-cols-4 gap-4">
+                  {suggestedCuisines.map((cat, i) => (
+                    <motion.button 
+                      key={i}
+                      whileTap={{ scale: 0.92 }}
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: i * 0.05 }}
+                      onClick={() => setQuery(cat.name)}
+                      className="flex flex-col items-center gap-2"
+                    >
+                      <div className="w-[72px] h-[72px] rounded-full overflow-hidden border border-gray-200 shadow-sm bg-white p-1">
+                        <img src={cat.image} className="w-full h-full rounded-full object-cover" alt={cat.name} />
+                      </div>
+                      <span className="text-[12px] font-bold text-gray-700">{cat.name}</span>
+                    </motion.button>
+                  ))}
+                </div>
+
+                <div className="mt-8 border-t border-gray-200 pt-6">
+                  <h3 className="font-extrabold text-[16px] text-gray-900 mb-4 flex items-center gap-2">
+                    <History className="w-5 h-5 text-gray-500" /> Recent Searches
+                  </h3>
+                  <div className="flex flex-wrap gap-2">
+                    {["Paneer Butter Masala", "Oreo Shake", "Farmhouse Pizza"].map((term) => (
+                      <button 
+                         key={term} 
+                         onClick={() => setQuery(term)}
+                         className="px-4 py-2 rounded-full border border-gray-200 bg-white text-gray-600 text-[13px] font-medium hover:border-orange-500 transition-colors"
+                      >
+                         {term}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="p-4 bg-white min-h-full">
+                {searchResults.length === 0 ? (
+                  <div className="text-center py-20">
+                     <Search className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+                     <p className="text-gray-500 font-medium">No dishes found for "{query}"</p>
+                  </div>
+                ) : (
+                  <div className="flex flex-col gap-5">
+                    <h3 className="font-extrabold text-gray-900 text-[15px] pb-2 border-b border-gray-100">
+                       Searching dishes... 
+                    </h3>
+                    {searchResults.map((item) => (
+                      <div key={`search-${item.id}`} className="flex gap-4 items-center bg-white">
+                        <div className="w-[84px] h-[84px] sm:w-[100px] sm:h-[100px] rounded-2xl overflow-hidden bg-gray-100 flex-shrink-0 border border-black/5 shadow-sm">
+                          <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-1.5 mb-0.5">
+                             <div className="w-2.5 h-2.5 rounded-sm border border-emerald-500 flex items-center justify-center bg-white"><div className="w-1.5 h-1.5 rounded-full bg-emerald-500"/></div>
+                             <h4 className="font-bold text-[15px] sm:text-[16px] text-gray-900 tracking-tight leading-none">{item.name}</h4>
+                          </div>
+                          <span className="text-[12px] text-gray-500 font-medium">{item.shopName || "Hostel CAFE"}</span>
+                          <div className="flex items-center justify-between mt-1">
+                            <span className="font-black text-[15px] text-gray-900">₹{item.price}</span>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                addItem(item);
+                                toast.success(`${item.name} added!`);
+                              }}
+                              className="px-4 py-1.5 rounded-lg bg-emerald-50 text-emerald-600 font-black text-[11px] uppercase tracking-wide border border-emerald-200 active:scale-95 transition-all"
+                            >
+                              ADD
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }
