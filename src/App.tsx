@@ -29,6 +29,9 @@ const Grocery = lazy(() => import("./pages/Grocery"));
 const ProductDetail = lazy(() => import("./pages/ProductDetail"));
 const FoodMenu = lazy(() => import("./pages/FoodMenu"));
 const FoodSearch = lazy(() => import("./pages/FoodSearch"));
+const SearchPage = lazy(() => import("./pages/SearchPage"));
+const SearchResultsPage = lazy(() => import("./pages/SearchResultsPage"));
+const RestaurantPage = lazy(() => import("./pages/RestaurantPage"));
 const PastaOfferPage = lazy(() => import("./pages/PastaOfferPage"));
 const Cart = lazy(() => import("./pages/Cart"));
 const Admin = lazy(() => import("./pages/Admin"));
@@ -185,6 +188,30 @@ function AppLayout() {
               element={
                 <ProtectedRoute>
                   <Home />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/search"
+              element={
+                <ProtectedRoute>
+                  <SearchPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/search/results"
+              element={
+                <ProtectedRoute>
+                  <SearchResultsPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/shop/:id"
+              element={
+                <ProtectedRoute>
+                  <RestaurantPage />
                 </ProtectedRoute>
               }
             />
