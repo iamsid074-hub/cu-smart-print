@@ -30,6 +30,8 @@ import {
   Clock,
   Compass,
   Sparkles,
+  ChevronDown,
+  Leaf,
 } from "lucide-react";
 import ProductCard from "@/components/ProductCard";
 import VendingMachine from "@/components/VendingMachine";
@@ -62,15 +64,7 @@ const fontH: React.CSSProperties = {
   fontFamily: "-apple-system, BlinkMacSystemFont, 'Inter', sans-serif",
 };
 
-const LiquidGlassScreen = ({ children }: { children: React.ReactNode }) => (
-  <div className="relative p-2 sm:p-4 bg-white/40 backdrop-blur-3xl rounded-[2.2rem] sm:rounded-[3.2rem] shadow-[0_20px_40px_rgba(0,0,0,0.06),inset_0_1px_0_rgba(255,255,255,0.8)] border border-white/60">
-    <div className="absolute top-0 right-0 w-64 h-64 bg-blue-400/10 blur-[60px] rounded-full pointer-events-none" />
-    <div className="absolute bottom-0 left-0 w-64 h-64 bg-teal-400/10 blur-[60px] rounded-full pointer-events-none" />
-    <div className="relative rounded-[1.6rem] sm:rounded-[2.6rem] overflow-hidden border border-white/40 shadow-sm bg-white/20">
-      {children}
-    </div>
-  </div>
-);
+// Removed LiquidGlassScreen for a cleaner food app aesthetic
 
 // import FlavourFactoryBanner from "@/components/FlavourFactoryBanner";
 
@@ -120,82 +114,82 @@ function HeroCarousel() {
   };
 
   return (
-    <LiquidGlassScreen>
-      <div
-        className="relative w-full overflow-hidden group aspect-video max-h-[280px] sm:max-h-[450px]"
-        onTouchStart={handleTouchStart}
-        onTouchEnd={handleTouchEnd}
-      >
-        {heroSlides.map((slide, i) => (
-          <motion.div
-            key={i}
-            initial={false}
-            animate={{
-              opacity: i === current ? 1 : 0,
-              scale: i === current ? 1 : 1.05,
-            }}
-            transition={{ duration: 0.8, ease: "easeInOut" }}
-            className="absolute inset-0"
-            style={{ zIndex: i === current ? 1 : 0 }}
+    <div
+      className="relative w-full overflow-hidden rounded-[24px] sm:rounded-[32px] group aspect-video max-h-[220px] sm:max-h-[380px] shadow-sm border border-black/[0.04]"
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+    >
+      {heroSlides.map((slide, i) => (
+        <motion.div
+          key={i}
+          initial={false}
+          animate={{
+            opacity: i === current ? 1 : 0,
+            scale: i === current ? 1 : 1.05,
+          }}
+          transition={{ duration: 0.8, ease: "easeInOut" }}
+          className="absolute inset-0"
+          style={{ zIndex: i === current ? 1 : 0 }}
+        >
+          <Link to={slide.link} className="block w-full h-full">
+            <img
+              src={slide.img}
+              alt={slide.label}
+              className="w-full h-full object-cover"
+            />
+          </Link>
+        </motion.div>
+      ))}
+
+      {count > 1 && (
+        <>
+          <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-black/60 via-black/20 to-transparent z-10 pointer-events-none" />
+
+          <button
+            onClick={prev}
+            className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/70 backdrop-blur-md flex items-center justify-center text-black opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white hover:scale-105 shadow-md"
           >
-            <Link to={slide.link} className="block w-full h-full">
-              <img
-                src={slide.img}
-                alt={slide.label}
-                className="w-full h-full object-cover"
-              />
-            </Link>
-          </motion.div>
-        ))}
+            <ChevronLeft className="w-5 h-5" />
+          </button>
+          <button
+            onClick={next}
+            className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-20 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/70 backdrop-blur-md flex items-center justify-center text-black opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white hover:scale-105 shadow-md"
+          >
+            <ChevronRight className="w-5 h-5" />
+          </button>
 
-        {count > 1 && (
-          <>
-            <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-black/20 to-transparent z-10 pointer-events-none" />
-
-            <button
-              onClick={prev}
-              className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/40 backdrop-blur-md border border-white/60 flex items-center justify-center text-black opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white/60 hover:scale-110 shadow-sm"
-            >
-              <ChevronLeft className="w-5 h-5" />
-            </button>
-            <button
-              onClick={next}
-              className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/40 backdrop-blur-md border border-white/60 flex items-center justify-center text-black opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white/60 hover:scale-110 shadow-sm"
-            >
-              <ChevronRight className="w-5 h-5" />
-            </button>
-
-            <div className="absolute bottom-3 sm:bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2">
-              {heroSlides.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => goTo(i)}
-                  className="relative h-1.5 rounded-full overflow-hidden transition-all duration-300"
-                  style={{
-                    width: i === current ? 32 : 8,
-                    backgroundColor:
-                      i === current
-                        ? "rgba(255,255,255,0.8)"
-                        : "rgba(255,255,255,0.4)",
-                  }}
-                >
-                  {i === current && (
-                    <motion.div
-                      className="absolute inset-y-0 left-0 bg-white rounded-full"
-                      style={{ width: `${progress}%` }}
-                    />
-                  )}
-                </button>
-              ))}
-            </div>
-          </>
-        )}
-      </div>
-    </LiquidGlassScreen>
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1.5">
+            {heroSlides.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => goTo(i)}
+                className="relative h-1.5 rounded-full overflow-hidden transition-all duration-300"
+                style={{
+                  width: i === current ? 20 : 6,
+                  backgroundColor:
+                    i === current
+                      ? "#fff"
+                      : "rgba(255,255,255,0.5)",
+                }}
+              >
+                {i === current && (
+                  <motion.div
+                    className="absolute inset-y-0 left-0 bg-white rounded-full"
+                    style={{ width: `${progress}%` }}
+                  />
+                )}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+    </div>
   );
+
 }
 
 export default function Home() {
+  const navigate = useNavigate();
   const isNativeApp = Capacitor.isNativePlatform();
   const [products, setProducts] = useState<any[]>([]);
   const [productsLoading, setProductsLoading] = useState(true);
@@ -231,34 +225,54 @@ export default function Home() {
   );
 
   return (
-    <div className="min-h-screen pt-[8rem] sm:pt-[6.5rem] lg:pt-[10rem] pb-32 relative text-[#1D1D1F]">
-      <div className="max-w-[1600px] mx-auto relative px-4"></div>
+    <div className="min-h-screen pt-[4rem] sm:pt-[5rem] pb-32 relative bg-[#F8F9FA] text-[#1D1D1F]">
+      {/* ─── Modern Food App Top Header ─── */}
+      <div className="px-4 pt-4 sm:pt-6 mb-6">
+        <div className="max-w-[1600px] mx-auto">
+          {/* Location & Profile Header */}
+          <div className="flex items-center justify-between mb-5">
+            <div className="flex items-start gap-2">
+              <div className="mt-1 flex text-orange-500">
+                <MapPin className="w-5 h-5 fill-current" />
+              </div>
+              <div className="flex flex-col">
+                <div className="flex items-center gap-1 cursor-pointer">
+                  <span className="font-extrabold text-[#1c1c1c] text-[17px] tracking-tight">CU Campus Delivery</span>
+                  <ChevronDown className="w-4 h-4 text-[#1c1c1c]" />
+                </div>
+                <span className="text-[13px] text-gray-500 font-medium truncate max-w-[200px]">Hostel Blocks, Academic Area</span>
+              </div>
+            </div>
+            <Link to="/profile" className="w-10 h-10 rounded-full bg-gray-200 border-2 border-white shadow-sm overflow-hidden flex items-center justify-center -mt-1 active:scale-95 transition-transform">
+               <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="Profile" className="w-full h-full object-cover" />
+            </Link>
+          </div>
+
+          {/* Search Bar */}
+          <div className="relative group cursor-text">
+            <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+              <Search className="h-5 w-5 text-gray-400 group-focus-within:text-orange-500 transition-colors" />
+            </div>
+            <input
+              type="text"
+              readOnly
+              onClick={() => navigate('/browse')}
+              className="block w-full pl-11 pr-12 py-3.5 bg-white border border-gray-100 rounded-2xl text-base placeholder-gray-400 shadow-[0_2px_12px_rgba(0,0,0,0.04)] focus:outline-none focus:ring-2 focus:ring-orange-500/20 font-medium transition-all"
+              placeholder="Search 'Pizza' or 'Burger'..."
+            />
+            <div className="absolute inset-y-0 right-2 flex items-center">
+              <div className="bg-orange-50 p-1.5 rounded-xl border border-orange-100">
+                <Leaf className="h-4 w-4 text-orange-500" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* ─── Hero Section ─── */}
-      <div className="relative px-4 pt-4 pb-8 sm:px-8 sm:pt-8 sm:pb-12 mb-8 mx-2 sm:mx-0 rounded-[2.2rem] sm:rounded-[2.8rem] overflow-hidden">
-        <div className="max-w-[1600px] mx-auto relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: -18 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.55 }}
-            className="text-center mb-6 sm:mb-8"
-          >
-            <h1
-              className="font-extrabold tracking-tight text-[#1D1D1F] leading-[1.05] mb-0"
-              style={{ ...fontH, fontSize: "clamp(2rem, 6vw, 4.5rem)" }}
-            >
-              Everything <span style={{ color: "#007AFF" }}>Delivered</span>
-              <br className="sm:hidden" /> To Your Room
-            </h1>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            <HeroCarousel />
-          </motion.div>
+      <div className="px-4 mb-6">
+        <div className="max-w-[1600px] mx-auto">
+          <HeroCarousel />
         </div>
       </div>
 

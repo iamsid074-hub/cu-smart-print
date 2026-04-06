@@ -281,27 +281,23 @@ export default function HomeSpecialSections({
                 className="flex flex-col items-center gap-2 flex-shrink-0"
               >
                 <div
-                  className={`relative w-[68px] h-[68px] sm:w-[76px] sm:h-[76px] rounded-full p-[2.5px] transition-all duration-300 ${
+                  className={`relative w-[68px] h-[68px] sm:w-[80px] sm:h-[80px] rounded-full p-[2px] transition-all duration-300 ${
                     isActive
-                      ? "bg-gradient-to-tr from-[#34C759] to-[#30B04F] shadow-lg shadow-[#34C759]/20 scale-105"
-                      : "bg-[#E5E5E7] hover:bg-[#D1D1D6] hover:scale-105"
+                      ? "bg-orange-500 shadow-md shadow-orange-500/20 scale-105"
+                      : "bg-transparent hover:bg-gray-100"
                   }`}
                 >
-                  <div className="w-full h-full rounded-full bg-white overflow-hidden border-2 border-white">
+                  <div className={`w-full h-full rounded-full bg-white overflow-hidden border-2 ${isActive ? 'border-white' : 'border-gray-100 shadow-sm'}`}>
                     <img
                       src={cat.img}
                       alt={cat.label}
-                      className="w-full h-full object-cover rounded-full"
+                      className="w-full h-full object-cover rounded-full mix-blend-multiply"
                     />
                   </div>
-                  {/* Status dot for active */}
-                  {isActive && (
-                    <div className="absolute top-0 right-0 w-3 h-3 bg-[#34C759] border-[1.5px] border-white rounded-full shadow-sm" />
-                  )}
                 </div>
                 <span
                   className={`text-[12px] sm:text-[13px] font-bold tracking-tight transition-colors ${
-                    isActive ? "text-[#1D1D1F]" : "text-[#8E8E93]"
+                    isActive ? "text-gray-900" : "text-gray-500"
                   }`}
                 >
                   {cat.label}
@@ -440,131 +436,86 @@ export default function HomeSpecialSections({
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: (i % 8) * 0.05, duration: 0.3 }}
-              className="group relative"
+              className="group"
             >
-              {/* ════ UNIQUE "GOURMET PASS" CARD ════ */}
-              <div className="relative rounded-[1.4rem] sm:rounded-[1.6rem] overflow-hidden bg-white shadow-[0_4px_24px_-4px_rgba(0,0,0,0.08)] hover:shadow-[0_16px_48px_-12px_rgba(0,0,0,0.15)] transition-all duration-600 hover:-translate-y-1.5 border border-black/[0.04]">
-                {/* Left Accent Color Strip */}
-                <div
-                  className={`absolute top-0 left-0 w-[4px] h-full ${ac.strip} z-20 rounded-l-[1.4rem]`}
-                />
+              <div className="relative rounded-2xl overflow-hidden bg-white shadow-[0_2px_12px_-4px_rgba(0,0,0,0.06)] hover:shadow-lg transition-all duration-300 border border-gray-100 flex flex-col h-full">
 
-                <div className="relative">
-                  {/* Food Image with clip-path diagonal cut */}
-                  <div
-                    className="relative h-[140px] sm:h-[160px] overflow-hidden"
-                    style={{
-                      clipPath: "polygon(0 0, 100% 0, 100% 85%, 0 100%)",
-                    }}
-                  >
-                    <img
-                      src={item.image}
-                      alt={item.name}
-                      className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110 group-hover:brightness-105"
-                    />
-                    {/* Dark vignette */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/10" />
-                  </div>
+                {/* ── IMAGE SECTION ── */}
+                <div className="relative h-[150px] sm:h-[180px] w-full overflow-hidden bg-gray-50 flex-shrink-0">
+                  <img
+                    src={item.image}
+                    alt={item.name}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                  
+                  {/* Subtle Gradient Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
 
-                  {/* Shop Name Banner - Prominently on Image */}
-                  <div className="absolute top-3 left-4 z-20">
-                    <div
-                      className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl ${ac.badge} shadow-lg`}
-                    >
-                      <div className="w-1.5 h-1.5 rounded-full bg-white/80 animate-pulse" />
-                      <span className="text-[9px] sm:text-[10px] font-extrabold text-white uppercase tracking-[0.12em] truncate max-w-[100px] sm:max-w-[120px]">
-                        {item.shop || item.shopName}
+                  {/* Bestseller Badge */}
+                  {Number(item.rating) >= 4.5 && (
+                    <div className="absolute top-2 left-2 z-10">
+                      <span className="bg-orange-500 text-white text-[10px] font-bold px-2 py-1 rounded-sm uppercase tracking-wide">
+                        Bestseller
                       </span>
                     </div>
-                  </div>
-
-                  {/* Rating Notch Badge - sits at the diagonal cut edge */}
-                  {item.rating && (
-                    <div className="absolute -bottom-0 right-4 z-30 translate-y-1/2">
-                      <div className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-white shadow-lg border border-black/5">
-                        <Star className="w-3 h-3 text-amber-500 fill-amber-500" />
-                        <span className="text-[12px] font-black text-[#1D1D1F]">
-                          {item.rating}
-                        </span>
-                      </div>
-                    </div>
                   )}
+
+                  {/* Rating / Time overlay */}
+                  <div className="absolute bottom-2 left-2 right-2 flex justify-between items-end z-10 pointer-events-none">
+                    <div className="flex items-center gap-1 bg-white/95 backdrop-blur px-1.5 py-0.5 rounded-md shadow-sm">
+                       <Clock className="w-3 h-3 text-emerald-600" />
+                       <span className="text-[10px] font-bold text-gray-800">{deliveryTime} MINS</span>
+                    </div>
+                    {item.rating && (
+                      <div className="flex items-center gap-1 bg-white/95 backdrop-blur px-1.5 py-0.5 rounded-md shadow-sm">
+                        <Star className="w-3 h-3 text-orange-500 fill-orange-500" />
+                        <span className="text-[11px] font-bold text-gray-800">{item.rating}</span>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 {/* ── CONTENT SECTION ── */}
-                <div className="px-4 pt-4 pb-3.5 sm:px-5 sm:pt-5 sm:pb-4">
-                  {/* Dish Name - LARGE & PROMINENT */}
-                  <h4
-                    className="text-[15px] sm:text-[17px] font-black text-[#1D1D1F] leading-tight mb-2 line-clamp-2 group-hover:text-[#007AFF] transition-colors duration-300 tracking-[-0.01em]"
-                    style={{ minHeight: "38px" }}
-                  >
-                    {item.name}
-                  </h4>
-
-                  {/* Info Pills Row */}
-                  <div className="flex items-center gap-2 mb-3 flex-wrap">
-                    <div className="flex items-center gap-1 px-2 py-0.5 rounded-lg bg-[#F2F2F7]">
-                      <Clock className="w-3 h-3 text-[#8E8E93]" />
-                      <span className="text-[10px] font-bold text-[#6E6E73]">
-                        {deliveryTime}m
-                      </span>
+                <div className="p-3 sm:p-4 flex flex-col flex-1 pb-16">
+                  {/* Title & Veg Indicator */}
+                  <div className="flex items-start gap-1.5 mb-1">
+                    <div className="mt-1 w-3 h-3 rounded-sm border border-emerald-500 flex items-center justify-center flex-shrink-0 bg-white">
+                      <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                     </div>
-                    <div className="flex items-center gap-1 px-2 py-0.5 rounded-lg bg-[#F2F2F7]">
-                      <span className="text-[10px] font-bold text-[#6E6E73]">
-                        {distance} km
-                      </span>
-                    </div>
+                    <h4 className="text-[15px] sm:text-[16px] font-bold text-gray-900 leading-snug line-clamp-2" style={{ minHeight: "44px" }}>
+                      {item.name}
+                    </h4>
                   </div>
-
-                  {/* ── PRICE ── */}
-                  <div className="mb-3.5">
-                    <span className="text-[22px] sm:text-[24px] font-black text-[#1D1D1F] tracking-tight">
-                      {"\u20B9"} {item.price}
+                  
+                  <span className="text-[11px] text-gray-500 font-medium truncate mb-2">
+                    {item.shop || item.shopName || "Hostel Cafe"}
+                  </span>
+                  
+                  {/* Price */}
+                  <div className="mt-auto flex items-center mb-1">
+                    <span className="text-[16px] font-bold text-gray-900">
+                      ₹{item.price}
                     </span>
-                  </div>
-
-                  {/* ── ACTION ROW ── */}
-                  <div className="w-full">
-                    <motion.button
-                      whileTap={{ scale: 0.85 }}
-                      onClick={() => handleAdd(item)}
-                      className={`relative w-full h-10 sm:h-11 rounded-[0.9rem] text-[12px] font-black uppercase tracking-[0.06em] transition-all duration-500 overflow-hidden flex items-center justify-center gap-1.5 ${
-                        isAdded
-                          ? "bg-[#34C759] text-white shadow-lg shadow-[#34C759]/25"
-                          : "bg-[#1D1D1F] text-white hover:bg-[#007AFF] shadow-md hover:shadow-lg active:scale-95"
-                      }`}
-                    >
-                      <AnimatePresence mode="wait">
-                        {isAdded ? (
-                          <motion.div
-                            key="added"
-                            initial={{ opacity: 0, y: 8 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -8 }}
-                            className="flex items-center gap-1.5"
-                          >
-                            <CheckCircle2 className="w-3.5 h-3.5" />
-                            <span>Done</span>
-                          </motion.div>
-                        ) : (
-                          <motion.div
-                            key="add"
-                            initial={{ opacity: 0, y: 8 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -8 }}
-                            className="flex items-center gap-1.5"
-                          >
-                            <Plus className="w-3.5 h-3.5 stroke-[3]" />
-                            <span>ADD</span>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </motion.button>
+                    {item.originalPrice && (
+                       <span className="text-[12px] text-gray-400 line-through ml-2">₹{item.originalPrice}</span>
+                    )}
                   </div>
                 </div>
 
-                {/* Hover Glow Border */}
-                <div className="absolute inset-0 rounded-[1.4rem] sm:rounded-[1.6rem] ring-1 ring-inset ring-black/[0.03] group-hover:ring-[#007AFF]/20 transition-all duration-500 pointer-events-none" />
+                {/* ── ABSOLUTE ADD BUTTON ── */}
+                <div className="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 z-20">
+                   <button
+                     onClick={() => handleAdd(item)}
+                     className={`w-[85px] h-9 rounded-lg border flex items-center justify-center font-black text-[13px] tracking-wide transition-all shadow-sm ${
+                       isAdded
+                         ? "bg-emerald-50 border-emerald-200 text-emerald-600"
+                         : "bg-orange-50 border-orange-200 text-orange-600 hover:bg-orange-100 hover:scale-105 active:scale-95"
+                     }`}
+                   >
+                     {isAdded ? "ADDED" : "ADD"}
+                   </button>
+                </div>
+
               </div>
             </motion.div>
           );
