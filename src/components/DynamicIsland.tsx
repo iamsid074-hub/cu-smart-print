@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Search,
@@ -18,6 +18,15 @@ import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
+import { Haptics, ImpactStyle } from "@capacitor/haptics";
+
+const triggerHaptic = async (style: ImpactStyle = ImpactStyle.Light) => {
+  try {
+    await Haptics.impact({ style });
+  } catch {
+    navigator.vibrate?.(10);
+  }
+};
 
 type IslandView = "default" | "search" | "cart" | "delivery" | "context";
 type ActiveOrder = {
@@ -406,7 +415,7 @@ export default function DynamicIsland({
     }
 
     try {
-      navigator.vibrate?.(15);
+      triggerHaptic(ImpactStyle.Medium);
     } catch {
       /* ignore */
     }
@@ -468,11 +477,7 @@ export default function DynamicIsland({
   }, []);
   const open = useCallback((v: IslandView) => {
     setView(v);
-    try {
-      navigator.vibrate?.(10);
-    } catch {
-      /* ignore */
-    }
+    triggerHaptic(ImpactStyle.Light);
   }, []);
 
   useEffect(() => {
@@ -577,6 +582,37 @@ export default function DynamicIsland({
     return 150;
   };
 
+  const pointerDownTimeRef = useRef<number>(0);
+
+  const handlePointerDown = () => {
+    pointerDownTimeRef.current = Date.now();
+    triggerHaptic(ImpactStyle.Light);
+  };
+
+  const handlePointerUp = () => {
+    if (isExpanded) return;
+    const elapsed = Date.now() - pointerDownTimeRef.current;
+    if (elapsed < 300) {
+      // Tap (Navigate directly)
+      triggerHaptic(ImpactStyle.Light);
+      if (activeNotif?.type === "delivery" && activeOrder) {
+         navigate(`/tracking?order=${activeOrder.id}`);
+      } else if (activeNotif?.icon === "cart" || (!activeNotif && cartCount > 0)) {
+         navigate('/cart');
+      } else if (pageContext && pageContext.actions.length > 0 && !activeNotif) {
+         navigate(pageContext.actions[0].link);
+      } else {
+         handleCollapsedClick();
+      }
+    } else {
+      // Long press (Expand widget)
+      triggerHaptic(ImpactStyle.Medium);
+      handleCollapsedClick();
+    }
+  };
+
+  const showSecondaryPill = !isExpanded && activeOrder && activeNotif && activeNotif.type !== "delivery";
+
   return (
     <>
       <style>{`
@@ -604,32 +640,35 @@ export default function DynamicIsland({
         }
       `}</style>
 
-      <motion.div
+      <div
         ref={islandRef}
-        layout
-        transition={spring}
         style={{
           position: "relative",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          gap: 8, // liquid splitting gap
           height: 47,
-          width: getPillWidth(),
-          flexShrink: 0,
           zIndex: 100,
         }}
       >
         <motion.div
           layout
-          animate={{
-            width: isDropdownOpen
-              ? "min(360px, calc(100vw - 32px))"
-              : getPillWidth(),
-            height: isDropdownOpen ? "auto" : 47,
-            x: "-50%",
-          }}
           transition={spring}
-          onClick={() => {
-            if (!isExpanded) handleCollapsedClick();
-          }}
-          style={{
+          style={{ width: getPillWidth(), flexShrink: 0, height: 47, position: "relative" }}
+        >
+          <motion.div
+            layout
+            animate={{
+              width: isDropdownOpen
+                ? "min(360px, calc(100vw - 32px))"
+                : "100%",
+              height: isDropdownOpen ? "auto" : 47,
+            }}
+            transition={spring}
+            onPointerDown={handlePointerDown}
+            onPointerUp={handlePointerUp}
+            style={{
             borderRadius: isDropdownOpen ? 32 : 50,
             position: "absolute",
             top: 0,
@@ -1513,6 +1552,53 @@ export default function DynamicIsland({
           </AnimatePresence>
         </motion.div>
       </motion.div>
+
+        {/* ─── Liquid Splitting Secondary Pill ─── */}
+        <AnimatePresence>
+          {showSecondaryPill && (
+            <motion.div
+              layout
+              initial={{ width: 0, opacity: 0, scale: 0.5, marginLeft: -20 }}
+              animate={{ width: 47, opacity: 1, scale: 1, marginLeft: 0 }}
+              exit={{ width: 0, opacity: 0, scale: 0.5, marginLeft: -20 }}
+              transition={{ type: "spring", stiffness: 500, damping: 30 }}
+              style={{
+                height: 47,
+                borderRadius: "50%",
+                background: "#000",
+                backdropFilter: "blur(40px) saturate(180%)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                border: "0.5px solid rgba(255,255,255,0.06)",
+                boxShadow: "0 2px 10px rgba(0,0,0,0.5)",
+                flexShrink: 0,
+                cursor: "pointer",
+              }}
+              onClick={() => {
+                triggerHaptic(ImpactStyle.Light);
+                navigate('/tracking?order=' + activeOrder.id);
+              }}
+            >
+              {activeOrder.status === "delivering" ? (
+                <Truck size={18} color="#30D158" />
+              ) : activeOrder.status === "picked" ? (
+                <Package size={18} color="#30D158" />
+              ) : (
+                <div
+                  style={{
+                    width: 8,
+                    height: 8,
+                    borderRadius: "50%",
+                    background: "#30D158",
+                    animation: "greenPulse 2s infinite ease-in-out",
+                  }}
+                />
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
     </>
   );
 }
