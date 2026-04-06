@@ -33,6 +33,10 @@
             "destination": "/api/sb.js"
         },
         {
+            "source": "/api/smoothness-report",
+            "destination": "/api/smoothness-report.js"
+        },
+        {
             "source": "/cubazzar.apk",
             "destination": "/cubazzar.apk"
         },
