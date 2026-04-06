@@ -537,6 +537,7 @@ function FoodSearchOverlay({ isOpen, onClose }: { isOpen: boolean; onClose: () =
   const [query, setQuery] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
   const { addItem } = useCart();
+  const [selectedDrillDown, setSelectedDrillDown] = useState<{shop: string, category: string} | null>(null);
   const allFoods = useMemo(() => getAllFoodItems(), []);
 
   useEffect(() => {
@@ -546,6 +547,7 @@ function FoodSearchOverlay({ isOpen, onClose }: { isOpen: boolean; onClose: () =
     } else {
       setTimeout(() => { if (inputRef.current) inputRef.current.blur(); }, 0);
       setQuery("");
+      setSelectedDrillDown(null);
       document.body.style.overflow = "auto";
     }
     return () => { document.body.style.overflow = "auto"; };
@@ -560,6 +562,15 @@ function FoodSearchOverlay({ isOpen, onClose }: { isOpen: boolean; onClose: () =
         item.category?.toLowerCase().includes(query.toLowerCase())
     ).slice(0, 15);
   }, [query, allFoods]);
+
+  const drillDownResults = useMemo(() => {
+    if (!selectedDrillDown) return [];
+    return allFoods.filter(
+      item => 
+        item.shopName === selectedDrillDown.shop && 
+        (item.category === selectedDrillDown.category || item.name.toLowerCase().includes(selectedDrillDown.category.toLowerCase()))
+    );
+  }, [selectedDrillDown, allFoods]);
 
   return (
     <AnimatePresence>
@@ -617,105 +628,184 @@ function FoodSearchOverlay({ isOpen, onClose }: { isOpen: boolean; onClose: () =
             </div>
 
             {/* Scrolling Content Area */}
-            <div className="flex-1 overflow-y-auto w-full bg-[#F8F9FA]">
-              {!query.trim() ? (
-                <div className="p-5 pb-32">
-                  <h3 className="font-extrabold text-[16px] text-gray-900 mb-4 flex items-center gap-2">
-                    <TrendingUp className="w-5 h-5 text-orange-500" /> Popular Cuisines
-                  </h3>
-                  <div className="grid grid-cols-3 gap-3 sm:grid-cols-4">
-                    {suggestedCuisines.map((cat, i) => (
-                      <motion.button 
-                        key={i}
-                        whileTap={{ scale: 0.95 }}
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: i * 0.05, type: "spring" }}
-                        onClick={() => setQuery(cat.name)}
-                        className="flex flex-col items-center bg-white rounded-2xl p-2 pb-3 shadow-[0_2px_10px_rgba(0,0,0,0.02)] border border-gray-100"
+            <div className="flex-1 overflow-hidden relative w-full bg-[#F8F9FA]">
+              <AnimatePresence mode="popLayout">
+                {selectedDrillDown ? (
+                  <motion.div
+                    key="drill-down"
+                    initial={{ x: "100%", opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    exit={{ x: "100%", opacity: 0 }}
+                    transition={{ type: "spring", damping: 30, stiffness: 350 }}
+                    className="absolute inset-0 bg-[#F8F9FA] flex flex-col h-full z-30"
+                  >
+                    <div className="p-4 border-b border-gray-100 bg-white flex items-center gap-3">
+                      <button 
+                        onClick={() => setSelectedDrillDown(null)} 
+                        className="p-1.5 bg-gray-100 rounded-full text-gray-700 active:scale-95 transition-transform"
                       >
-                        <div className="w-[68px] h-[68px] mb-2 rounded-full overflow-hidden">
-                          <img src={cat.image} className="w-full h-full object-cover rounded-full mix-blend-multiply" alt={cat.name} />
-                        </div>
-                        <span className="text-[12px] font-bold text-gray-800">{cat.name}</span>
-                      </motion.button>
-                    ))}
-                  </div>
-
-                  <div className="mt-8">
-                    <h3 className="font-extrabold text-[16px] text-gray-900 mb-4 flex items-center gap-2">
-                      <History className="w-5 h-5 text-gray-400" /> Recent Searches
-                    </h3>
-                    <div className="flex flex-wrap gap-2">
-                      {["Paneer Butter Masala", "Oreo Shake", "Farmhouse Pizza", "Burger"].map((term, i) => (
-                        <motion.button 
-                           key={term} 
-                           initial={{ opacity: 0, x: -10 }}
-                           animate={{ opacity: 1, x: 0 }}
-                           transition={{ delay: i * 0.05 }}
-                           onClick={() => setQuery(term)}
-                           className="px-4 py-2 rounded-xl border border-gray-200 bg-white shadow-[0_2px_8px_rgba(0,0,0,0.02)] text-gray-600 text-[13px] font-bold active:bg-gray-50 active:scale-95 transition-all"
-                        >
-                           {term}
-                        </motion.button>
-                      ))}
+                         <ArrowLeft className="w-5 h-5" />
+                      </button>
+                      <div>
+                        <h3 className="font-extrabold text-[16px] text-gray-900 leading-tight">
+                           {selectedDrillDown.category.charAt(0).toUpperCase() + selectedDrillDown.category.slice(1)} options
+                        </h3>
+                        <p className="text-[12px] font-bold text-gray-500">from {selectedDrillDown.shop}</p>
+                      </div>
                     </div>
-                  </div>
-                </div>
-              ) : (
-                <div className="p-4 pb-32 min-h-full">
-                  {searchResults.length === 0 ? (
-                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-20">
-                       <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                          <Search className="w-8 h-8 text-gray-300" />
-                       </div>
-                       <h3 className="font-bold text-gray-900 text-lg mb-1">No matches found</h3>
-                       <p className="text-gray-500 font-medium">Try searching for Pizza, Burger, or Biryani</p>
-                    </motion.div>
-                  ) : (
-                    <div className="flex flex-col gap-3">
-                      {searchResults.map((item, index) => (
-                        <motion.div 
-                          key={`search-${item.id}`}
-                          initial={{ opacity: 0, y: 15 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: index * 0.03 }}
-                          className="flex gap-3 bg-white p-3 rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.03)] border border-gray-100"
-                        >
-                          <div className="w-[88px] h-[88px] rounded-xl overflow-hidden bg-gray-50 flex-shrink-0 relative">
-                            <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
-                            {parseFloat(item.rating) >= 4.5 && (
-                              <div className="absolute top-0 left-0 bg-[#FF6B00] text-white text-[9px] font-black px-1.5 py-0.5 rounded-br-lg shadow-sm">
-                                BESTSELLER
+                    <div className="flex-1 overflow-y-auto p-4 pb-32">
+                      <div className="flex flex-col gap-3">
+                        {drillDownResults.map((item, index) => (
+                          <motion.div 
+                            key={`drill-${item.id}`}
+                            initial={{ opacity: 0, y: 15 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: index * 0.05 }}
+                            className="flex gap-3 bg-white p-3 rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.03)] border border-gray-100"
+                          >
+                            <div className="w-[88px] h-[88px] rounded-xl overflow-hidden bg-gray-50 flex-shrink-0 relative">
+                              <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                              {parseFloat(item.rating) >= 4.5 && (
+                                <div className="absolute top-0 left-0 bg-[#FF6B00] text-white text-[9px] font-black px-1.5 py-0.5 rounded-br-lg shadow-sm">
+                                  BESTSELLER
+                                </div>
+                              )}
+                            </div>
+                            <div className="flex-1 flex flex-col justify-center">
+                              <div className="flex items-center gap-1.5 mb-1">
+                                 <div className="w-3 h-3 rounded-[3px] border border-emerald-500 flex items-center justify-center bg-white"><div className="w-1.5 h-1.5 rounded-full bg-emerald-500"/></div>
+                                 <h4 className="font-extrabold text-[15px] text-gray-900 leading-tight">{item.name}</h4>
                               </div>
-                            )}
-                          </div>
-                          <div className="flex-1 flex flex-col justify-center">
-                            <div className="flex items-center gap-1.5 mb-1">
-                               <div className="w-3 h-3 rounded-[3px] border border-emerald-500 flex items-center justify-center bg-white"><div className="w-1.5 h-1.5 rounded-full bg-emerald-500"/></div>
-                               <h4 className="font-extrabold text-[15px] text-gray-900 leading-tight">{item.name}</h4>
+                              <span className="text-[12px] text-gray-500 font-bold mb-auto">{item.shopName} · ⭐ {item.rating}</span>
+                              <div className="flex items-center justify-between mt-2 max-w-full">
+                                <span className="font-black text-[16px] text-gray-900">₹{item.price}</span>
+                                <button
+                                  onClick={() => {
+                                    addItem(item);
+                                    toast.success(`${item.name} added!`);
+                                  }}
+                                  className="px-5 py-2 rounded-xl bg-[#FF6B00]/10 text-[#FF6B00] font-black text-[12px] uppercase active:scale-95 transition-all"
+                                >
+                                  ADD
+                                </button>
+                              </div>
                             </div>
-                            <span className="text-[12px] text-gray-500 font-bold mb-auto">{item.shopName} · ⭐ {item.rating}</span>
-                            <div className="flex items-center justify-between mt-2 max-w-full">
-                              <span className="font-black text-[16px] text-gray-900">₹{item.price}</span>
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  addItem(item);
-                                  toast.success(`${item.name} added!`);
-                                }}
-                                className="px-5 py-2 rounded-xl bg-[#FF6B00]/10 text-[#FF6B00] font-black text-[12px] uppercase active:scale-95 transition-all"
-                              >
-                                ADD
-                              </button>
-                            </div>
-                          </div>
-                        </motion.div>
-                      ))}
+                          </motion.div>
+                        ))}
+                      </div>
                     </div>
-                  )}
-                </div>
-              )}
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="search-list"
+                    initial={{ x: "-50%", opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    exit={{ x: "-50%", opacity: 0 }}
+                    transition={{ type: "spring", damping: 30, stiffness: 350 }}
+                    className="absolute inset-0 overflow-y-auto"
+                  >
+                    {!query.trim() ? (
+                      <div className="p-5 pb-32">
+                        <h3 className="font-extrabold text-[16px] text-gray-900 mb-4 flex items-center gap-2">
+                          <TrendingUp className="w-5 h-5 text-orange-500" /> Popular Cuisines
+                        </h3>
+                        <div className="grid grid-cols-3 gap-3 sm:grid-cols-4">
+                          {suggestedCuisines.map((cat, i) => (
+                            <motion.button 
+                              key={i}
+                              whileTap={{ scale: 0.95 }}
+                              initial={{ opacity: 0, scale: 0.8 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              transition={{ delay: i * 0.05, type: "spring" }}
+                              onClick={() => setQuery(cat.name)}
+                              className="flex flex-col items-center bg-white rounded-2xl p-2 pb-3 shadow-[0_2px_10px_rgba(0,0,0,0.02)] border border-gray-100"
+                            >
+                              <div className="w-[68px] h-[68px] mb-2 rounded-full overflow-hidden">
+                                <img src={cat.image} className="w-full h-full object-cover rounded-full mix-blend-multiply" alt={cat.name} />
+                              </div>
+                              <span className="text-[12px] font-bold text-gray-800">{cat.name}</span>
+                            </motion.button>
+                          ))}
+                        </div>
+
+                        <div className="mt-8">
+                          <h3 className="font-extrabold text-[16px] text-gray-900 mb-4 flex items-center gap-2">
+                            <History className="w-5 h-5 text-gray-400" /> Recent Searches
+                          </h3>
+                          <div className="flex flex-wrap gap-2">
+                            {["Paneer Butter Masala", "Oreo Shake", "Farmhouse Pizza", "Burger"].map((term, i) => (
+                              <motion.button 
+                                 key={term} 
+                                 initial={{ opacity: 0, x: -10 }}
+                                 animate={{ opacity: 1, x: 0 }}
+                                 transition={{ delay: i * 0.05 }}
+                                 onClick={() => setQuery(term)}
+                                 className="px-4 py-2 rounded-xl border border-gray-200 bg-white shadow-[0_2px_8px_rgba(0,0,0,0.02)] text-gray-600 text-[13px] font-bold active:bg-gray-50 active:scale-95 transition-all"
+                              >
+                                 {term}
+                              </motion.button>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="p-4 pb-32 min-h-full">
+                        {searchResults.length === 0 ? (
+                          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-20">
+                             <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <Search className="w-8 h-8 text-gray-300" />
+                             </div>
+                             <h3 className="font-bold text-gray-900 text-lg mb-1">No matches found</h3>
+                             <p className="text-gray-500 font-medium">Try searching for Pizza, Burger, or Biryani</p>
+                          </motion.div>
+                        ) : (
+                          <div className="flex flex-col gap-3">
+                            {searchResults.map((item, index) => (
+                              <motion.div 
+                                key={`search-${item.id}`}
+                                initial={{ opacity: 0, y: 15 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: index * 0.03 }}
+                                onClick={() => setSelectedDrillDown({ shop: item.shopName, category: item.category || query })}
+                                className="flex gap-3 bg-white p-3 rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.03)] border border-gray-100 cursor-pointer hover:bg-gray-50 active:scale-[0.98] transition-transform"
+                              >
+                                <div className="w-[88px] h-[88px] rounded-xl overflow-hidden bg-gray-50 flex-shrink-0 relative">
+                                  <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                                  {parseFloat(item.rating) >= 4.5 && (
+                                    <div className="absolute top-0 left-0 bg-[#FF6B00] text-white text-[9px] font-black px-1.5 py-0.5 rounded-br-lg shadow-sm">
+                                      BESTSELLER
+                                    </div>
+                                  )}
+                                </div>
+                                <div className="flex-1 flex flex-col justify-center">
+                                  <div className="flex items-center gap-1.5 mb-1">
+                                     <div className="w-3 h-3 rounded-[3px] border border-emerald-500 flex items-center justify-center bg-white"><div className="w-1.5 h-1.5 rounded-full bg-emerald-500"/></div>
+                                     <h4 className="font-extrabold text-[15px] text-gray-900 leading-tight">{item.name}</h4>
+                                  </div>
+                                  <span className="text-[12px] text-gray-500 font-bold mb-auto">{item.shopName} · ⭐ {item.rating}</span>
+                                  <div className="flex items-center justify-between mt-2 max-w-full">
+                                    <span className="font-black text-[16px] text-gray-900">₹{item.price}</span>
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        addItem(item);
+                                        toast.success(`${item.name} added!`);
+                                      }}
+                                      className="px-5 py-2 rounded-xl bg-[#FF6B00]/10 text-[#FF6B00] font-black text-[12px] uppercase active:scale-95 transition-all"
+                                    >
+                                      ADD
+                                    </button>
+                                  </div>
+                                </div>
+                              </motion.div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </motion.div>
         </>

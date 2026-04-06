@@ -45,7 +45,8 @@ type IslandState =
   | "updated"
   | "grocery"
   | "sell"
-  | "tracking";
+  | "tracking"
+  | "active_cart";
 
 // ── Tracking status configuration ───────────────────────────────────────────
 const TRACKING_STATUSES: Record<
@@ -291,13 +292,24 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
   }, []);
 
   const handleIslandClick = () => {
+    // Determine what the current visible state is for the click handler
+    const currentCount = items.reduce((acc, item) => acc + item.quantity, 0);
+    let effectiveState = islandState;
     if (
-      islandState === "added" ||
-      islandState === "updated" ||
-      islandState === "cart"
+      currentCount > 0 &&
+      ["default", "explore", "grocery", "sell", "wallet", "profile"].includes(islandState)
+    ) {
+      effectiveState = "active_cart";
+    }
+
+    if (
+      effectiveState === "added" ||
+      effectiveState === "updated" ||
+      effectiveState === "cart" ||
+      effectiveState === "active_cart"
     ) {
       navigate("/cart");
-    } else if (islandState === "tracking") {
+    } else if (effectiveState === "tracking") {
       navigate("/tracking");
     }
   };
@@ -336,8 +348,18 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
   let width: number | string = 160;
   let height = 40;
   let content = null;
+  const currentCount = items.reduce((acc, item) => acc + item.quantity, 0);
 
-  switch (islandState) {
+  // Automatically render the cart pill if there are items and we are currently in an 'idle' navigation state. 
+  let displayState = islandState;
+  if (
+    currentCount > 0 &&
+    ["default", "explore", "grocery", "sell", "wallet", "profile"].includes(islandState)
+  ) {
+    displayState = "active_cart";
+  }
+
+  switch (displayState) {
     case "browsing":
       width = 220;
       content = (
@@ -404,6 +426,31 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
           <span className="text-sm font-semibold tracking-wide text-white/90">
             Wallet
           </span>
+        </div>
+      );
+      break;
+    case "active_cart":
+      width = 190;
+      height = 48;
+      const totalAmount = items.reduce((acc, item) => acc + item.price * item.quantity, 0);
+      content = (
+        <div className="flex items-center justify-between w-full px-1">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-full bg-[#FF6B00] shadow-[0_2px_8px_rgba(255,107,0,0.3)] flex items-center justify-center flex-shrink-0 relative">
+               <span className="text-[13px] font-black text-white">{currentCount}</span>
+            </div>
+            <div className="flex flex-col items-start justify-center">
+              <span className="text-[10px] font-black text-gray-400/80 uppercase tracking-wider mb-0.5">
+                Cart Total
+              </span>
+              <span className="text-[14px] font-bold text-white leading-none">
+                ₹{totalAmount}
+              </span>
+            </div>
+          </div>
+          <div className="flex items-center gap-1.5 text-emerald-400 bg-emerald-400/10 px-2 py-1.5 rounded-full">
+             <span className="text-[10px] font-bold tracking-widest uppercase">View</span>
+          </div>
         </div>
       );
       break;

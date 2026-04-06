@@ -72,15 +72,12 @@ const BottomNav = () => {
   const navItems = [
     { to: "/home", icon: Home, label: "Home" },
     { to: "/food", icon: Utensils, label: "Food" },
-    { to: "/cart", icon: ShoppingCart, label: "Cart", isCart: true },
     { to: "/grocery", icon: ShoppingBag, label: "Grocery" },
     { to: "/wallet", icon: Wallet, label: "Wallet" },
   ];
 
   const activeIndex = navItems.findIndex((item) =>
-    item.to === "/cart"
-      ? location.pathname === "/cart"
-      : location.pathname.startsWith(item.to)
+    location.pathname.startsWith(item.to)
   );
 
   return (
