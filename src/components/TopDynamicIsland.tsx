@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useRef, useCallback, memo } from "react";
+import { useState, useEffect, useRef, useCallback, memo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
@@ -16,6 +16,15 @@ import {
   XCircle,
   Wallet,
 } from "lucide-react";
+import { Haptics, ImpactStyle } from "@capacitor/haptics";
+
+const triggerHaptic = async (style: ImpactStyle = ImpactStyle.Light) => {
+  try {
+    await Haptics.impact({ style });
+  } catch {
+    navigator.vibrate?.(10);
+  }
+};
 
 // Fluid, bouncy spring animation mimicking Apple's Dynamic Island
 const springTransition = {
@@ -293,6 +302,27 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
     }
   };
 
+  const pointerDownTimeRef = useRef<number>(0);
+
+  const handlePointerDown = () => {
+    pointerDownTimeRef.current = Date.now();
+    triggerHaptic(ImpactStyle.Light);
+  };
+
+  const handlePointerUp = () => {
+    const elapsed = Date.now() - pointerDownTimeRef.current;
+    if (elapsed < 300) {
+      // Tap (Navigate safely)
+      triggerHaptic(ImpactStyle.Light);
+      handleIslandClick();
+    } else {
+      // Long press (Expand widget logic / Navigate to active context)
+      triggerHaptic(ImpactStyle.Medium);
+      // If we are showing something like "added" and user long presses, route deeply
+      navigate(trackingOrder && islandState !== "added" ? `/tracking?order=${trackingOrder.id}` : "/cart");
+    }
+  };
+
   // ── Tracking status helpers ─────────────────────────────────────────────
   const trackingStatus = trackingOrder
     ? TRACKING_STATUSES[trackingOrder.status] || TRACKING_STATUSES.pending
@@ -558,7 +588,7 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
       >
         <div className="flex items-center gap-3 max-w-md w-full justify-center">
           {/* Relative wrapper for pill + dropdown alignment */}
-          <div className="relative">
+          <div className="relative flex items-center justify-center gap-2">
             <AnimatePresence mode="popLayout">
               {/* ── Main Pill ── */}
               <motion.div
@@ -566,7 +596,8 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
                 initial={false}
                 animate={{ width, height }}
                 transition={springTransition}
-                onClick={handleIslandClick}
+                onPointerDown={handlePointerDown}
+                onPointerUp={handlePointerUp}
                 className={`pointer-events-auto flex items-center justify-center overflow-hidden flex-shrink-0 ${
                   islandState === "added" ||
                   islandState === "updated" ||
@@ -636,6 +667,44 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
                   </motion.div>
                 </AnimatePresence>
               </motion.div>
+            </AnimatePresence>
+
+            {/* ── Liquid Splitting Secondary Pill for Background Orders ── */}
+            <AnimatePresence>
+              {trackingOrder && islandState !== "tracking" && !isTrackingDone && !isTrackingFailed && (
+                <motion.div
+                  layout
+                  initial={{ width: 0, opacity: 0, scale: 0.5, marginLeft: -16 }}
+                  animate={{ width: 40, opacity: 1, scale: 1, marginLeft: 0 }}
+                  exit={{ width: 0, opacity: 0, scale: 0.5, marginLeft: -16 }}
+                  transition={springTransition}
+                  onPointerDown={handlePointerDown}
+                  onPointerUp={handlePointerUp}
+                  className="pointer-events-auto flex items-center justify-center overflow-hidden flex-shrink-0 cursor-pointer hover:bg-zinc-900"
+                  style={{
+                    background: "#000",
+                    height: 40, // consistent dot size
+                    borderRadius: "50%",
+                    border: "1px solid rgba(255,255,255,0.06)",
+                    boxShadow: "0 2px 10px rgba(0,0,0,0.5)",
+                    zIndex: 100,
+                  }}
+                >
+                  {trackingOrder.status === "delivering" ? (
+                    <Truck size={16} color="#10B981" />
+                  ) : trackingOrder.status === "picked" ? (
+                    <Package size={16} color="#8B5CF6" />
+                  ) : (
+                    <div
+                      className="rounded-full bg-emerald-500"
+                      style={{
+                        width: 8, height: 8,
+                        animation: "greenPulse 2s infinite ease-in-out"
+                      }}
+                    />
+                  )}
+                </motion.div>
+              )}
             </AnimatePresence>
           </div>
           {/* close relative wrapper */}
