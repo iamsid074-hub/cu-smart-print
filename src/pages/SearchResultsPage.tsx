@@ -52,8 +52,18 @@ export default function SearchResultsPage() {
      return matches;
   }, [activeTab, q, allFoods]);
 
-  const recommendedItems = matchingItems.slice(0, 3);
-  const restaurantItems = matchingItems.slice(3, 10);
+  // Deduplicate by shopName — keep only the first (best) match per unique shop
+  const uniqueShopItems = useMemo(() => {
+     const seen = new Set<string>();
+     return matchingItems.filter(item => {
+        if (seen.has(item.shopName)) return false;
+        seen.add(item.shopName);
+        return true;
+     });
+  }, [matchingItems]);
+
+  const recommendedItems = uniqueShopItems.slice(0, 3);
+  const restaurantItems = uniqueShopItems.slice(3, 12);
 
   return (
     <div className="min-h-screen bg-[#F8F9FA] pb-32">
