@@ -72,7 +72,7 @@ const queryClient = new QueryClient({
 
 const BrandedLoading = () => {
   return (
-    <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[#08051a] overflow-hidden">
+    <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[#000000] overflow-hidden">
       <div className="flex flex-col items-center justify-center gap-[36px] p-[48px_32px]">
         <div className="flex items-center justify-center leading-none">
           <span className="cb-letter-c">C</span>
@@ -144,9 +144,10 @@ function AppLayout() {
       // Small delay to ensure smooth transition out of splash
       const timer = setTimeout(() => {
         setInitialBootFinished(true);
+        (window as any).hasBooted = true;
         // Once boot is finished, preload other sections in background
         preloadCoreRoutes();
-      }, 100);
+      }, 300);
       return () => clearTimeout(timer);
     }
   }, [authLoading, gateLoaded]);

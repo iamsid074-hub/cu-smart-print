@@ -38,7 +38,7 @@ const categories = [
 function HeroSpotlight() {
   const navigate = useNavigate();
   return (
-    <div className="relative w-full h-[55vh] sm:h-[65vh] rounded-[2.5rem] overflow-hidden mb-12 group cursor-pointer shadow-2xl" onClick={() => navigate('/browse')}>
+    <div className="relative w-full h-[55vh] sm:h-[65vh] rounded-[2.5rem] overflow-hidden mb-12 group cursor-pointer" onClick={() => navigate('/browse')}>
       <motion.img 
         src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?q=80&w=2681&auto=format&fit=crop" 
         alt="Spotlight" 

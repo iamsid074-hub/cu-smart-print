@@ -218,10 +218,10 @@ export default function Wallet() {
                       2
                     </span>
                     <span
-                      className={`px-2 rounded-full py-0.5 relative -top-0.5 transition-all shadow-sm ${
+                      className={`px-2 rounded-full py-0.5 relative -top-0.5 transition-all shadow-xl font-bold ${
                         displayCount === 3
                           ? "text-black bg-white scale-[1.15]"
-                          : "text-orange-500 bg-orange-500/10 border border-orange-500/20"
+                          : "text-orange-400 bg-orange-500/10 border border-orange-500/30"
                       }`}
                     >
                       ₹30!
@@ -230,16 +230,16 @@ export default function Wallet() {
                 );
               })()}
             </div>
-            <div className="w-full h-3 bg-white/5 rounded-full overflow-hidden relative shadow-inner">
+            <div className="w-full h-2.5 bg-white/10 rounded-full overflow-hidden relative shadow-inner ring-1 ring-white/5">
               {(() => {
                 const displayCount = Math.min(weeklyOrders, 3);
                 return (
                   <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: `${(displayCount / 3) * 100}%` }}
-                    transition={{ duration: 1, type: "spring" }}
-                    className={`absolute top-0 left-0 h-full rounded-full transition-colors duration-500 ${
-                      displayCount === 3 ? "bg-[#34C759]" : "bg-[#1D1D1F]"
+                    transition={{ duration: 1.2, type: "spring" }}
+                    className={`absolute top-0 left-0 h-full rounded-full transition-colors duration-500 shadow-[0_0_12px_rgba(255,255,255,0.1)] ${
+                      displayCount === 3 ? "bg-green-500" : "bg-white"
                     }`}
                   />
                 );
@@ -250,10 +250,10 @@ export default function Wallet() {
               <strong className="text-white font-black">
                 {weeklyOrders}
               </strong>{" "}
-              orders <span className="text-gray-500 font-bold uppercase tracking-wider text-[10px]">this week</span>
+              orders <span className="text-white font-black uppercase tracking-wider text-[10px]">this week</span>
               .
               {weeklyOrders < 3 && (
-                <span className="block text-gray-600 text-[10px] mt-1 italic font-bold">
+                <span className="block text-gray-500 text-[10px] mt-1 italic font-bold">
                   Goal resets Monday at 12 AM IST
                 </span>
               )}

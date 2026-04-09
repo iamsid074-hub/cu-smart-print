@@ -230,9 +230,9 @@ const MemoizedVendingCard = memo(
         </div>
 
         <div className="mt-4 flex flex-col items-center gap-0.5 pointer-events-none z-20">
-          <div className="bg-[#f8f9fa] shadow-[0_2px_4px_rgba(0,0,0,0.2)] rounded-sm flex flex-col items-center px-2 py-0.5 shrink-0 border-b-2 border-slate-300 min-w-[45px]">
-             <span className="text-[6px] sm:text-[7px] font-bold text-slate-700 uppercase tracking-tighter truncate max-w-[50px] leading-tight">{item.name}</span>
-             <span className="text-[9px] sm:text-[10px] font-black text-black leading-tight">₹{item.price}</span>
+          <div className="bg-[#1c1c1e] shadow-[0_2px_4px_rgba(0,0,0,0.5)] rounded-sm flex flex-col items-center px-2 py-0.5 shrink-0 border-b-2 border-white/5 min-w-[45px]">
+             <span className="text-[6px] sm:text-[7px] font-bold text-gray-400 uppercase tracking-tighter truncate max-w-[50px] leading-tight">{item.name}</span>
+             <span className="text-[9px] sm:text-[10px] font-black text-white leading-tight">₹{item.price}</span>
           </div>
         </div>
       </div>
@@ -396,7 +396,7 @@ export default function VendingMachine() {
     <section className="py-12 px-4 relative overflow-hidden">
       <div className="max-w-4xl mx-auto">
         <div className="flex flex-col items-center mb-6 text-center">
-          <h2 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tighter">
+          <h2 className="text-3xl sm:text-4xl font-black text-white tracking-tighter">
             Smart Vending
           </h2>
         </div>
@@ -429,12 +429,12 @@ export default function VendingMachine() {
             </div>
 
             {/* Inner Glass Display Area (Illuminated Fridge) */}
-            <div className="relative rounded-lg bg-[#e2e8f0] p-2 sm:p-4 border-[12px] border-[#000] flex flex-col justify-between overflow-hidden shadow-[inset_0_30px_60px_rgba(0,0,0,0.4)]">
+            <div className="relative rounded-lg bg-[#0a0a0b] p-2 sm:p-4 border-[12px] border-[#000] flex flex-col justify-between overflow-hidden shadow-[inset_0_30px_60px_rgba(0,0,0,0.8)]">
               
               {/* Inner ambient light from top */}
-              <div className="absolute top-0 inset-x-0 h-40 bg-gradient-to-b from-white/90 to-transparent pointer-events-none z-0" />
+              <div className="absolute top-0 inset-x-0 h-40 bg-gradient-to-b from-white/10 to-transparent pointer-events-none z-0" />
               {/* Inner ambient light from bottom LED */}
-              <div className="absolute bottom-0 inset-x-0 h-20 bg-gradient-to-t from-white/60 to-transparent pointer-events-none z-0" />
+              <div className="absolute bottom-0 inset-x-0 h-20 bg-gradient-to-t from-white/5 to-transparent pointer-events-none z-0" />
               
               {/* Simplistic Glass Reflection */}
               <div className="absolute top-[-20%] left-[-50%] w-[200%] h-[200%] bg-gradient-to-tr from-transparent via-white/[0.15] to-transparent rotate-[30deg] pointer-events-none z-30" />
@@ -571,7 +571,7 @@ export default function VendingMachine() {
                 initial={{ scale: 0.9, opacity: 0, y: 20 }}
                 animate={{ scale: 1, opacity: 1, y: 0 }}
                 exit={{ scale: 0.9, opacity: 0, y: 20 }}
-                className="relative bg-white w-full max-w-[420px] rounded-[2.5rem] overflow-hidden shadow-2xl border border-slate-100 will-change-transform"
+                className="relative bg-[#0a0a0b] w-full max-w-[420px] rounded-[2.5rem] overflow-hidden shadow-2xl border border-white/5 will-change-transform"
                 style={{ transform: "translateZ(0)" }}
               >
                 <div className="bg-[#1a1c2c] p-6 pb-8 relative overflow-hidden">
@@ -598,7 +598,7 @@ export default function VendingMachine() {
                   </div>
                 </div>
 
-                <div className="p-6 -mt-6 bg-white rounded-t-[2.5rem] relative z-20 space-y-5">
+                <div className="p-6 -mt-6 bg-[#0a0a0b] rounded-t-[2.5rem] relative z-20 space-y-5">
                   {/* CSS Virtual Scroll applied implicitly via custom-scrollbar class natively rendered block */}
                   <div
                     className="max-h-[180px] overflow-y-auto space-y-2 pr-2 custom-scrollbar"
@@ -607,7 +607,7 @@ export default function VendingMachine() {
                     {vendingCartItems.map((item, idxx) => (
                       <div
                         key={`${item.id}-${idxx}`}
-                        className="flex items-center justify-between p-3 bg-slate-50 rounded-2xl border border-slate-100 group"
+                        className="flex items-center justify-between p-3 bg-[#1c1c1e] rounded-2xl border border-white/5 group"
                       >
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded-xl bg-white p-1 flex items-center justify-center shadow-sm">
@@ -620,25 +620,25 @@ export default function VendingMachine() {
                             />
                           </div>
                           <div>
-                            <p className="text-[11px] font-black text-slate-900 leading-none">
+                            <p className="text-[11px] font-black text-white leading-none">
                               {item.title}
                             </p>
-                            <p className="text-[10px] text-brand font-bold mt-1">
+                            <p className="text-[10px] text-orange-400 font-bold mt-1">
                               ₹{item.price} × {item.quantity}
                             </p>
                           </div>
                         </div>
                         <button
                           onClick={() => removeItem(item.id)}
-                          className="w-7 h-7 rounded-lg bg-slate-200/50 flex items-center justify-center text-slate-400 hover:bg-rose-100 hover:text-rose-500 transition-all opacity-0 group-hover:opacity-100"
+                          className="w-7 h-7 rounded-lg bg-white/5 flex items-center justify-center text-gray-500 hover:bg-rose-500/10 hover:text-rose-500 transition-all opacity-0 group-hover:opacity-100"
                         >
                           <X className="w-3.5 h-3.5" />
                         </button>
                       </div>
                     ))}
                     {vendingCartItems.length === 0 && (
-                      <div className="text-center py-4 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
-                        <p className="text-xs text-slate-400 font-bold italic">
+                      <div className="text-center py-4 bg-[#1c1c1e] rounded-2xl border border-dashed border-white/10">
+                        <p className="text-xs text-gray-500 font-bold italic">
                           Cart is empty
                         </p>
                       </div>
@@ -653,8 +653,8 @@ export default function VendingMachine() {
                           onClick={() => setHostel(h)}
                           className={`h-12 rounded-xl border-2 flex flex-col items-center justify-center transition-all ${
                             hostel === h
-                              ? "border-brand bg-brand/5"
-                              : "border-slate-100 bg-slate-50 opacity-60 hover:opacity-100"
+                              ? "border-white bg-white/5"
+                              : "border-white/5 bg-[#1c1c1e] opacity-40 hover:opacity-100"
                           }`}
                         >
                           <span
@@ -666,7 +666,7 @@ export default function VendingMachine() {
                           </span>
                           <span
                             className={`text-sm font-black ${
-                              hostel === h ? "text-slate-900" : "text-slate-500"
+                              hostel === h ? "text-white" : "text-gray-500"
                             }`}
                           >
                             {h}
@@ -675,18 +675,18 @@ export default function VendingMachine() {
                       ))}
                     </div>
 
-                    <div className="flex bg-slate-50 p-1 rounded-xl border border-slate-100 items-center justify-between">
+                    <div className="flex bg-[#1c1c1e] p-1 rounded-xl border border-white/5 items-center justify-between">
                       <button
                         onClick={() => setFloor(Math.max(1, floor - 1))}
-                        className="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-500 hover:text-brand transition-all shadow-sm"
+                        className="w-8 h-8 rounded-lg bg-[#0a0a0b] border border-white/10 flex items-center justify-center text-gray-400 hover:text-white transition-all shadow-sm"
                       >
                         <ArrowRight className="w-3.5 h-3.5 rotate-180" />
                       </button>
                       <div className="text-center flex flex-col scale-90">
-                        <span className="text-[8px] font-black text-slate-400 uppercase tracking-tighter">
+                        <span className="text-[8px] font-black text-gray-500 uppercase tracking-tighter">
                           Floor
                         </span>
-                        <span className="text-xl font-black text-slate-900">
+                        <span className="text-xl font-black text-white">
                           {floor}
                         </span>
                       </div>
@@ -696,7 +696,7 @@ export default function VendingMachine() {
                             Math.min(hostel === "NC" ? 9 : 11, floor + 1)
                           )
                         }
-                        className="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-500 hover:text-brand transition-all shadow-sm"
+                        className="w-8 h-8 rounded-lg bg-[#0a0a0b] border border-white/10 flex items-center justify-center text-gray-400 hover:text-white transition-all shadow-sm"
                       >
                         <ArrowRight className="w-3.5 h-3.5" />
                       </button>
@@ -718,10 +718,10 @@ export default function VendingMachine() {
                             setRoom(e.target.value.replace(/\D/g, ""))
                           }
                           placeholder={`Ex: ${floor}01`}
-                          className={`w-full h-11 bg-slate-50 rounded-xl px-3 border transition-all text-xs font-bold ${
+                          className={`w-full h-11 bg-[#1c1c1e] rounded-xl px-3 border transition-all text-xs font-bold text-white ${
                             room && !room.startsWith(floor.toString())
-                              ? "border-rose-500 bg-rose-50"
-                              : "border-slate-100 focus:border-brand"
+                              ? "border-rose-500 bg-rose-500/5"
+                              : "border-white/5 focus:border-white/20"
                           }`}
                         />
                       </div>
@@ -738,18 +738,18 @@ export default function VendingMachine() {
                             )
                           }
                           placeholder="Your Number"
-                          className="w-full h-11 bg-slate-50 rounded-xl px-3 border border-slate-100 focus:border-brand transition-all text-xs font-bold"
+                          className="w-full h-11 bg-[#1c1c1e] rounded-xl px-3 border border-white/5 focus:border-white/20 transition-all text-xs font-bold text-white placeholder:text-gray-600"
                         />
                       </div>
                     </div>
                   </div>
 
-                  <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 space-y-1.5">
+                  <div className="p-4 bg-[#1c1c1e] rounded-2xl border border-white/5 space-y-1.5 shadow-inner">
                     <div className="flex justify-between items-center text-[10px]">
-                      <span className="text-slate-500 font-bold">
+                      <span className="text-gray-500 font-bold">
                         Subtotal ({vendingCartItems.length})
                       </span>
-                      <span className="text-slate-900 font-black">
+                      <span className="text-white font-black">
                         ₹{vendingSubtotal}
                       </span>
                     </div>
@@ -761,11 +761,11 @@ export default function VendingMachine() {
                         + ₹{deliveryCharge}
                       </span>
                     </div>
-                    <div className="pt-1.5 mt-1 border-t border-slate-200 flex justify-between items-center">
-                      <span className="text-xs font-black text-slate-600">
+                    <div className="pt-1.5 mt-1 border-t border-white/5 flex justify-between items-center">
+                      <span className="text-xs font-black text-gray-400">
                         Total
                       </span>
-                      <span className="text-lg font-black text-brand">
+                      <span className="text-lg font-black text-white">
                         ₹{totalAmount}
                       </span>
                     </div>
@@ -783,7 +783,7 @@ export default function VendingMachine() {
                       if (!user) navigate("/login");
                       else setShowUpiModal(true);
                     }}
-                    className="w-full h-14 rounded-2xl bg-slate-900 text-white font-black text-[15px] shadow-xl transition-all hover:bg-black active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2 group will-change-transform"
+                    className="w-full h-14 rounded-2xl bg-white text-black font-black text-[15px] shadow-xl transition-all hover:bg-gray-100 active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2 group will-change-transform"
                     style={{ transform: "translateZ(0)" }}
                   >
                     {vendingCartItems.length === 0
