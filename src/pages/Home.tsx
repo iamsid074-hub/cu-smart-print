@@ -80,29 +80,19 @@ const heroSlides = [
 
 function HeroCarousel() {
   const [current, setCurrent] = useState(0);
-  const [progress, setProgress] = useState(0);
   const count = heroSlides.length;
   const INTERVAL = 5000;
 
   useEffect(() => {
     if (count <= 1) return;
-    const step = 50;
-    let elapsed = 0;
     const timer = setInterval(() => {
-      elapsed += step;
-      setProgress((elapsed / INTERVAL) * 100);
-      if (elapsed >= INTERVAL) {
-        setCurrent((p) => (p + 1) % count);
-        elapsed = 0;
-        setProgress(0);
-      }
-    }, step);
+      setCurrent((p) => (p + 1) % count);
+    }, INTERVAL);
     return () => clearInterval(timer);
   }, [current, count]);
 
   const goTo = (idx: number) => {
     setCurrent(idx);
-    setProgress(0);
   };
   const prev = () => goTo((current - 1 + count) % count);
   const next = () => goTo((current + 1) % count);
@@ -119,7 +109,7 @@ function HeroCarousel() {
 
   return (
     <div
-      className="relative w-full overflow-hidden rounded-[24px] sm:rounded-[32px] group aspect-video max-h-[220px] sm:max-h-[380px] shadow-sm border border-black/[0.04]"
+      className="relative w-full overflow-hidden rounded-[24px] sm:rounded-[32px] group aspect-video max-h-[220px] sm:max-h-[380px] shadow-[0_8px_30px_rgba(0,0,0,0.08)] border border-black/[0.04] bg-white/50 backdrop-blur-sm"
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
@@ -131,7 +121,7 @@ function HeroCarousel() {
             opacity: i === current ? 1 : 0,
             scale: i === current ? 1 : 1.05,
           }}
-          transition={{ duration: 0.8, ease: "easeInOut" }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           className="absolute inset-0"
           style={{ zIndex: i === current ? 1 : 0 }}
         >
@@ -151,13 +141,13 @@ function HeroCarousel() {
 
           <button
             onClick={prev}
-            className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/70 backdrop-blur-md flex items-center justify-center text-black opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white hover:scale-105 shadow-md"
+            className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/30 backdrop-blur-xl border border-white/40 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white hover:text-black hover:scale-105 shadow-lg"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
           <button
             onClick={next}
-            className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-20 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/70 backdrop-blur-md flex items-center justify-center text-black opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white hover:scale-105 shadow-md"
+            className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-20 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/30 backdrop-blur-xl border border-white/40 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white hover:text-black hover:scale-105 shadow-lg"
           >
             <ChevronRight className="w-5 h-5" />
           </button>
@@ -167,19 +157,22 @@ function HeroCarousel() {
               <button
                 key={i}
                 onClick={() => goTo(i)}
-                className="relative h-1.5 rounded-full overflow-hidden transition-all duration-300"
+                className="relative h-1.5 rounded-full overflow-hidden transition-all duration-300 backdrop-blur-md"
                 style={{
-                  width: i === current ? 20 : 6,
+                  width: i === current ? 24 : 6,
                   backgroundColor:
                     i === current
-                      ? "#fff"
+                      ? "rgba(255,255,255,0.3)"
                       : "rgba(255,255,255,0.5)",
                 }}
               >
                 {i === current && (
                   <motion.div
+                    key={`progress-${current}`}
                     className="absolute inset-y-0 left-0 bg-white rounded-full"
-                    style={{ width: `${progress}%` }}
+                    initial={{ width: "0%" }}
+                    animate={{ width: "100%" }}
+                    transition={{ duration: INTERVAL / 1000, ease: "linear" }}
                   />
                 )}
               </button>
@@ -189,7 +182,6 @@ function HeroCarousel() {
       )}
     </div>
   );
-
 }
 
 export default function Home() {
@@ -229,7 +221,7 @@ export default function Home() {
   );
 
   return (
-    <div className="min-h-screen pt-[4rem] sm:pt-[5rem] pb-32 relative bg-[#F8F9FA] text-[#1D1D1F]">
+    <div className="min-h-screen pt-[4rem] sm:pt-[5rem] pb-32 relative bg-[#F2F2F7] text-[#1D1D1F]">
       {/* ─── Modern Food App Top Header ─── */}
       <div className="px-4 pt-4 sm:pt-6 mb-6">
         <div className="max-w-[1600px] mx-auto">
@@ -256,7 +248,7 @@ export default function Home() {
           <motion.button
             whileTap={{ scale: 0.97 }}
             onClick={() => navigate('/search')}
-            className="w-full relative flex items-center bg-white rounded-2xl p-1.5 pr-2 shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-black/[0.03] overflow-hidden group"
+            className="w-full relative flex items-center bg-white/70 backdrop-blur-2xl rounded-2xl p-1.5 pr-2 shadow-[0_8px_32px_rgba(0,0,0,0.08)] border border-white/60 overflow-hidden group hover:bg-white/90 transition-all duration-300"
           >
             {/* Glossy sheen effect overlay */}
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent -translate-x-[150%] animate-[shimmer_2s_infinite] pointer-events-none" />
@@ -291,7 +283,7 @@ export default function Home() {
 
         {/* ═══ MODE SWITCHER: Meal vs Vending ═══ */}
         <div className="flex items-center justify-center mb-6 mt-2">
-          <div className="relative flex items-center p-1.5 rounded-[1.2rem] bg-[#F2F2F7] border border-black/[0.06] shadow-inner">
+          <div className="relative flex items-center p-1.5 rounded-[1.2rem] bg-[#E5E5EA]/50 backdrop-blur-lg border border-white/40 shadow-inner">
             {/* Sliding pill indicator */}
             <motion.div
               layout

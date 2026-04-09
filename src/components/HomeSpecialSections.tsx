@@ -287,7 +287,7 @@ export default function HomeSpecialSections({
                       : "bg-transparent hover:bg-gray-100"
                   }`}
                 >
-                  <div className={`w-full h-full rounded-full bg-white overflow-hidden border-2 ${isActive ? 'border-white' : 'border-gray-100 shadow-sm'}`}>
+                  <div className={`w-full h-full rounded-full bg-white/70 backdrop-blur-xl overflow-hidden border-2 flex items-center justify-center ${isActive ? 'border-white/50 shadow-inner' : 'border-white/40 shadow-sm'}`}>
                     <img
                       src={cat.img}
                       alt={cat.label}
@@ -323,10 +323,10 @@ export default function HomeSpecialSections({
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 + i * 0.05 }}
-                className={`flex items-center gap-1.5 px-4 py-2.5 rounded-2xl text-[12px] font-bold whitespace-nowrap transition-all duration-300 border ${
+                className={`flex items-center gap-1.5 px-4 py-2.5 rounded-[1.2rem] text-[13px] font-bold whitespace-nowrap transition-all duration-300 border ${
                   isActive
-                    ? "bg-[#1D1D1F] text-white border-[#1D1D1F] shadow-lg shadow-black/10 scale-[1.02]"
-                    : "bg-white/80 backdrop-blur-xl text-[#3A3A3C] border-[#E5E5E7]/80 hover:bg-white hover:border-[#D1D1D6] hover:shadow-md"
+                    ? "bg-[#1D1D1F] text-white border-white/20 shadow-[0_8px_24px_rgba(0,0,0,0.15)] scale-[1.02]"
+                    : "bg-white/50 backdrop-blur-2xl text-[#3A3A3C] border-white hover:bg-white/70 hover:shadow-lg shadow-sm"
                 }`}
               >
                 {f.id === "filter" && <Icon className="w-3.5 h-3.5" />}
@@ -440,10 +440,10 @@ export default function HomeSpecialSections({
               transition={{ delay: (i % 8) * 0.05, duration: 0.3 }}
               className="group"
             >
-              <div className="relative rounded-2xl overflow-hidden bg-white shadow-[0_2px_12px_-4px_rgba(0,0,0,0.06)] hover:shadow-lg transition-all duration-300 border border-gray-100 flex flex-col h-full">
+              <div className="relative rounded-3xl overflow-hidden bg-white/60 backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,0,0,0.06)] hover:shadow-[0_16px_48px_rgba(0,0,0,0.12)] transition-all duration-500 border border-white flex flex-col h-full group-hover:-translate-y-1">
 
                 {/* ── IMAGE SECTION ── */}
-                <div className="relative h-[150px] sm:h-[180px] w-full overflow-hidden bg-gray-50 flex-shrink-0">
+                <div className="relative h-[150px] sm:h-[180px] w-full overflow-hidden bg-white/40 flex-shrink-0 border-b border-white/40">
                   <img
                     src={item.image}
                     alt={item.name}
@@ -486,7 +486,7 @@ export default function HomeSpecialSections({
                     <div className="mt-1 w-3 h-3 rounded-sm border border-emerald-500 flex items-center justify-center flex-shrink-0 bg-white">
                       <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                     </div>
-                    <h4 className="text-[15px] sm:text-[16px] font-bold text-gray-900 leading-snug line-clamp-2" style={{ minHeight: "44px" }}>
+                    <h4 className="text-[15px] sm:text-[16px] font-black tracking-tight text-[#1D1D1F] leading-snug line-clamp-2" style={{ minHeight: "44px" }}>
                       {item.name}
                     </h4>
                   </div>
@@ -497,27 +497,28 @@ export default function HomeSpecialSections({
                   
                   {/* Price */}
                   <div className="mt-auto flex items-center mb-1">
-                    <span className="text-[16px] font-bold text-gray-900">
+                    <span className="text-[18px] font-black tracking-tight text-[#1D1D1F]">
                       ₹{item.price}
                     </span>
                     {item.originalPrice && (
-                       <span className="text-[12px] text-gray-400 line-through ml-2">₹{item.originalPrice}</span>
+                       <span className="text-[12px] text-gray-400 font-bold line-through ml-2">₹{item.originalPrice}</span>
                     )}
                   </div>
                 </div>
 
                 {/* ── ABSOLUTE ADD BUTTON ── */}
                 <div className="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 z-20">
-                   <button
+                   <motion.button
+                     whileTap={{ scale: 0.9 }}
                      onClick={() => handleAdd(item)}
-                     className={`w-[85px] h-9 rounded-lg border flex items-center justify-center font-black text-[13px] tracking-wide transition-all shadow-sm ${
+                     className={`w-[85px] h-9 rounded-[0.9rem] border flex items-center justify-center font-bold text-[12px] tracking-wide transition-all shadow-md ${
                        isAdded
-                         ? "bg-emerald-50 border-emerald-200 text-emerald-600"
-                         : "bg-orange-50 border-orange-200 text-orange-600 hover:bg-orange-100 hover:scale-105 active:scale-95"
+                         ? "bg-[#34C759] border-[#34C759] text-white shadow-lg shadow-[#34C759]/30"
+                         : "bg-white/90 backdrop-blur-md border-white/60 text-[#1D1D1F] hover:bg-white hover:shadow-lg"
                      }`}
                    >
                      {isAdded ? "ADDED" : "ADD"}
-                   </button>
+                   </motion.button>
                 </div>
 
               </div>
