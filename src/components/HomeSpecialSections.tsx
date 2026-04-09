@@ -185,7 +185,7 @@ export default function HomeSpecialSections({
                 decoding="async"
                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1.5s] group-hover:scale-105"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#000000]/90 via-[#000000]/40 to-transparent pointer-events-none" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#000000] via-[#000000]/75 to-transparent pointer-events-none" />
 
               {/* Top Icons */}
               <div className="absolute top-4 w-full px-4 flex justify-between items-start z-10">

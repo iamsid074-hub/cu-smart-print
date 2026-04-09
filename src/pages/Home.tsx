@@ -42,14 +42,8 @@ function DynamicIsland({ navigate }: { navigate: any }) {
         animate={{ y: 0, opacity: 1 }}
         className="bg-[#1c1c1e]/80 backdrop-blur-3xl border border-white/10 shadow-[0_16px_40px_rgba(0,0,0,0.5)] rounded-full px-5 py-3 flex items-center justify-between"
       >
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-orange-500 to-amber-500 p-[2px]">
-            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="User" className="w-full h-full rounded-full bg-[#1c1c1e]" />
-          </div>
-          <div className="flex flex-col">
-            <span className="text-[12px] text-gray-400 font-medium">Good Evening,</span>
-            <span className="text-[14px] text-white font-bold tracking-tight leading-none">Aryan</span>
-          </div>
+        <div className="flex items-center gap-3 px-4">
+          <span className="text-[14px] text-white font-black tracking-widest leading-none">CU BAZZAR</span>
         </div>
         
         <div className="flex items-center gap-2">
@@ -69,20 +63,22 @@ function HeroSpotlight() {
   const navigate = useNavigate();
   return (
     <div className="relative w-full h-[55vh] sm:h-[65vh] rounded-[2.5rem] overflow-hidden mb-12 group cursor-pointer shadow-2xl" onClick={() => navigate('/browse')}>
-      <img 
+      <motion.img 
         src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?q=80&w=2681&auto=format&fit=crop" 
         alt="Spotlight" 
-        className="w-full h-full object-cover transition-transform duration-[1.5s] group-hover:scale-105" 
+        animate={{ scale: [1.05, 1.15, 1.05] }}
+        transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+        className="w-full h-full object-cover" 
       />
       <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/40 to-[#000000]" />
       
       <div className="absolute inset-x-6 bottom-12 z-10 flex flex-col items-center text-center">
         <motion.div initial={{y: 20, opacity: 0}} animate={{y: 0, opacity: 1}} transition={{delay: 0.2}} className="px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 mb-4">
-          <span className="text-[10px] font-bold tracking-[0.2em] text-white uppercase">Exclusive Drop</span>
+          <span className="text-[10px] font-bold tracking-[0.2em] text-white uppercase">Your Campus Marketplace</span>
         </motion.div>
         
         <motion.h1 initial={{y: 20, opacity: 0}} animate={{y: 0, opacity: 1}} transition={{delay: 0.3}} className="text-5xl sm:text-7xl font-black text-white tracking-tighter leading-[0.95] mb-4">
-          Woodfire<br/>Truffle.
+          CU<br/>Bazzar.
         </motion.h1>
         
         <motion.button initial={{y: 20, opacity: 0}} animate={{y: 0, opacity: 1}} transition={{delay: 0.4}} className="mt-2 px-8 py-3.5 rounded-full bg-white text-black font-bold text-[14px] hover:scale-105 active:scale-95 transition-all duration-300 shadow-[0_0_40px_rgba(255,255,255,0.3)]">
