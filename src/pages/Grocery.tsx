@@ -48,32 +48,32 @@ export default function Grocery() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8F9FA] pb-32 overflow-x-hidden">
+    <div className="min-h-screen bg-[#000000] pb-32 overflow-x-hidden text-white">
       {/* ── Sticky Premium Header ── */}
-      <div className="sticky top-0 z-50 bg-white/80 backdrop-blur-2xl border-b border-[#1D1D1F]/5 pt-20 pb-6 px-4">
+      <div className="sticky top-0 z-50 bg-black/40 backdrop-blur-3xl border-b border-white/5 pt-20 pb-6 px-4">
         <div className="max-w-xl mx-auto">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h1 className="text-2xl font-black text-[#1D1D1F] tracking-tight uppercase" style={fontH}>
+              <h1 className="text-2xl font-black text-white tracking-tight uppercase" style={fontH}>
                 Quick Mart
               </h1>
-              <p className="text-[11px] text-[#8E8E93] font-bold uppercase tracking-widest mt-0.5">
+              <p className="text-[11px] text-gray-400 font-bold uppercase tracking-widest mt-0.5">
                 Fresh Groceries Delivered in min.
               </p>
             </div>
-            <div className="w-12 h-12 rounded-2xl bg-[#5856D6]/10 flex items-center justify-center">
-              <ShoppingBag className="w-6 h-6 text-[#5856D6]" />
+            <div className="w-12 h-12 rounded-2xl bg-orange-500/10 flex items-center justify-center border border-orange-500/20 shadow-[0_0_20px_rgba(249,115,22,0.1)]">
+              <ShoppingBag className="w-6 h-6 text-orange-500" />
             </div>
           </div>
 
           <div className="relative group">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#8E8E93] group-focus-within:text-[#1D1D1F] transition-colors" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 group-focus-within:text-orange-500 transition-colors" />
             <input
               type="text"
               placeholder="Search milk, bread, snacks..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-11 pr-4 h-12 rounded-2xl bg-[#F2F2F7] text-[13px] font-medium text-[#1D1D1F] placeholder:text-[#8E8E93] focus:outline-none focus:ring-2 focus:ring-[#1D1D1F]/5 transition-all border-none"
+              className="w-full pl-11 pr-4 h-12 rounded-2xl bg-[#1c1c1e] text-[13px] font-medium text-white placeholder:text-gray-500 focus:outline-none border border-white/5 focus:border-orange-500/30 transition-all"
             />
           </div>
         </div>
@@ -87,12 +87,12 @@ export default function Grocery() {
             <section>
               <div className="flex items-center justify-between mb-6 px-1">
                 <div className="flex items-center gap-2">
-                  <div className="w-1.5 h-6 bg-[#007AFF] rounded-full" />
-                  <h2 className="text-[17px] font-black text-[#1D1D1F] uppercase tracking-tight" style={fontH}>
+                  <div className="w-1.5 h-6 bg-orange-500 rounded-full shadow-[0_0_10px_rgba(249,115,22,0.4)]" />
+                  <h2 className="text-[17px] font-black text-white uppercase tracking-tight" style={fontH}>
                     Fresh Milk
                   </h2>
                 </div>
-                <span className="text-[10px] font-black text-[#007AFF] uppercase tracking-widest bg-[#007AFF]/10 px-3 py-1 rounded-full">
+                <span className="text-[10px] font-black text-orange-400 uppercase tracking-widest bg-orange-500/10 px-3 py-1 rounded-full border border-orange-500/20">
                   Daily Fresh
                 </span>
               </div>
@@ -117,8 +117,8 @@ export default function Grocery() {
             <section>
               <div className="flex items-center justify-between mb-6 px-1">
                 <div className="flex items-center gap-2">
-                  <div className="w-1.5 h-6 bg-[#32D74B] rounded-full" />
-                  <h2 className="text-[17px] font-black text-[#1D1D1F] uppercase tracking-tight" style={fontH}>
+                  <div className="w-1.5 h-6 bg-blue-500 rounded-full shadow-[0_0_10px_rgba(59,130,246,0.4)]" />
+                  <h2 className="text-[17px] font-black text-white uppercase tracking-tight" style={fontH}>
                     Cold Drinks
                   </h2>
                 </div>
@@ -144,8 +144,8 @@ export default function Grocery() {
             <section>
               <div className="flex items-center justify-between mb-6 px-1">
                 <div className="flex items-center gap-2">
-                  <div className="w-1.5 h-6 bg-[#FF9500] rounded-full" />
-                  <h2 className="text-[17px] font-black text-[#1D1D1F] uppercase tracking-tight" style={fontH}>
+                  <div className="w-1.5 h-6 bg-amber-500 rounded-full shadow-[0_0_10px_rgba(245,158,11,0.4)]" />
+                  <h2 className="text-[17px] font-black text-white uppercase tracking-tight" style={fontH}>
                     Snacks & Quick Bites
                   </h2>
                 </div>
@@ -171,12 +171,12 @@ export default function Grocery() {
             <section className="pb-10">
               <div className="flex items-center justify-between mb-8 px-1">
                 <div className="flex items-center gap-2">
-                  <div className="w-1.5 h-6 bg-[#1D1D1F]/20 rounded-full" />
-                  <h2 className="text-[17px] font-black text-[#1D1D1F] uppercase tracking-tight" style={fontH}>
+                  <div className="w-1.5 h-6 bg-white/20 rounded-full" />
+                  <h2 className="text-[17px] font-black text-white uppercase tracking-tight" style={fontH}>
                     Explore All
                   </h2>
                 </div>
-                <span className="text-[10px] font-black text-[#8E8E93] uppercase tracking-widest bg-[#F2F2F7] px-3 py-1 rounded-full">
+                <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest bg-white/5 px-3 py-1 rounded-full border border-white/5">
                   {groceryItems.length} Products
                 </span>
               </div>
@@ -186,9 +186,9 @@ export default function Grocery() {
                     key={item.id}
                     item={item}
                     idx={idx}
-                    bgFrom="#F8F9FA"
-                    bgTo="#F2F2F7"
-                    btnColor="#1D1D1F"
+                    bgFrom="#1c1c1e"
+                    bgTo="#0a0a0a"
+                    btnColor="#fb923c"
                     onAdd={handleAddToCart}
                   />
                 ))}
@@ -199,8 +199,8 @@ export default function Grocery() {
           /* Search Results Grid */
           <div className="pb-10">
             <div className="flex items-center gap-2 mb-8 px-1">
-              <div className="w-1.5 h-6 bg-[#1D1D1F] rounded-full" />
-              <h2 className="text-[17px] font-black text-[#1D1D1F] uppercase tracking-tight" style={fontH}>
+              <div className="w-1.5 h-6 bg-orange-500 rounded-full shadow-[0_0_10px_rgba(249,115,22,0.4)]" />
+              <h2 className="text-[17px] font-black text-white uppercase tracking-tight" style={fontH}>
                 Found {filteredItems.length} items
               </h2>
             </div>
@@ -212,9 +212,9 @@ export default function Grocery() {
                     key={item.id}
                     item={item}
                     idx={idx}
-                    bgFrom="#F8F9FA"
-                    bgTo="#F2F2F7"
-                    btnColor="#1D1D1F"
+                    bgFrom="#1c1c1e"
+                    bgTo="#0a0a0a"
+                    btnColor="#fb923c"
                     onAdd={handleAddToCart}
                   />
                 ))}
@@ -225,11 +225,11 @@ export default function Grocery() {
                 animate={{ opacity: 1, scale: 1 }}
                 className="py-20 text-center"
               >
-                <div className="w-20 h-20 bg-[#F2F2F7] rounded-3xl flex items-center justify-center mx-auto mb-6">
-                  <Search className="w-8 h-8 text-[#8E8E93]" />
+                <div className="w-20 h-20 bg-[#1c1c1e] rounded-3xl flex items-center justify-center mx-auto mb-6 border border-white/5">
+                  <Search className="w-8 h-8 text-gray-500" />
                 </div>
-                <h3 className="text-lg font-black text-[#1D1D1F]">No items match</h3>
-                <p className="text-xs text-[#8E8E93] font-bold mt-2 uppercase tracking-widest">
+                <h3 className="text-lg font-black text-white">No items match</h3>
+                <p className="text-xs text-gray-500 font-bold mt-2 uppercase tracking-widest">
                   Try another item name or category
                 </p>
               </motion.div>

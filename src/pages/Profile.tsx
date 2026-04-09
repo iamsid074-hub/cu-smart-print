@@ -1,4 +1,4 @@
-﻿import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
 import {
@@ -311,7 +311,7 @@ export default function Profile() {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-[#F5F5F7] pb-32">
+    <div className="min-h-screen bg-[#000000] pb-32 text-white">
       {/* ── IMMERSIVE HEADER ── */}
       <div className="relative h-48 sm:h-64 bg-[#1D1D1F] overflow-hidden">
         {/* Animated Background Gradient */}
@@ -360,14 +360,14 @@ export default function Profile() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ type: "spring", damping: 25, stiffness: 300 }}
-          className="ios-glass bg-white/40 backdrop-blur-3xl rounded-[2.5rem] p-6 sm:p-8 shadow-sm border border-white/60"
+          className="bg-[#1c1c1e] backdrop-blur-3xl rounded-[2.5rem] p-6 sm:p-8 shadow-2xl border border-white/5"
         >
           <div className="flex flex-col sm:flex-row items-center sm:items-end gap-6 sm:gap-8">
             {/* Avatar */}
             <div className="relative group -mt-16 sm:-mt-20">
-              <div className="w-32 h-32 sm:w-40 sm:h-40 rounded-[2.5rem] p-1.5 bg-white/80 backdrop-blur-md shadow-lg border border-white/60 relative z-10">
+              <div className="w-32 h-32 sm:w-40 sm:h-40 rounded-[2.5rem] p-1.5 bg-[#1c1c1e] backdrop-blur-md shadow-lg border border-white/10 relative z-10">
                 <div
-                  className="w-full h-full rounded-[2.2rem] overflow-hidden bg-[#F5F5F7] cursor-pointer relative"
+                  className="w-full h-full rounded-[2.2rem] overflow-hidden bg-[#0a0a0a] cursor-pointer relative"
                   onClick={() => {
                     if (isEditing) fileInputRef.current?.click();
                   }}
@@ -409,11 +409,11 @@ export default function Profile() {
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     placeholder="Full Name"
-                    className="text-2xl font-black w-full rounded-2xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#007AFF]/20 bg-white/60 border border-white/60 shadow-sm text-[#1D1D1F]"
+                    className="text-2xl font-black w-full rounded-2xl px-4 py-3 focus:outline-none bg-white/5 border border-white/10 shadow-sm text-white placeholder:text-gray-500"
                   />
                   <div className="flex gap-3">
-                    <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl flex-1 bg-white/60 border border-white/60 shadow-sm">
-                      <span className="text-[#8E8E93] font-bold">@</span>
+                    <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl flex-1 bg-white/5 border border-white/10 shadow-sm">
+                      <span className="text-gray-500 font-bold">@</span>
                       <input
                         value={profile?.username || ""}
                         onChange={(e) =>
@@ -432,7 +432,7 @@ export default function Profile() {
               ) : (
                 <div className="pt-2">
                   <div className="flex items-center justify-center sm:justify-start gap-2 mb-1">
-                    <h1 className="text-[28px] tracking-tight font-black text-[#1D1D1F]">
+                    <h1 className="text-[28px] tracking-tight font-black text-white">
                       {profile?.full_name || "Student"}
                     </h1>
                     <CheckCircle className="w-5 h-5 text-[#007AFF] fill-[#007AFF]/10" />
@@ -447,9 +447,8 @@ export default function Profile() {
                       </button>
                     )}
                   </div>
-                  <p className="text-[#8E8E93] font-bold text-sm tracking-wide">
-                    @{profile?.username || "user"}{" "}
-                    <span className="mx-1.5 opacity-30">|</span> {user.email}
+                  <p className="text-gray-400 font-bold text-sm tracking-wide">
+                    @{profile?.username || "user"} <span className="mx-1.5 opacity-30">|</span> {user.email}
                   </p>
                 </div>
               )}
@@ -485,20 +484,20 @@ export default function Profile() {
           </div>
 
           {/* Stats & Detailed Info */}
-          <div className="mt-10 pt-8 border-t border-black/5 grid grid-cols-2 sm:grid-cols-4 gap-6">
+          <div className="mt-10 pt-8 border-t border-white/5 grid grid-cols-2 sm:grid-cols-4 gap-6">
             <div className="text-center sm:text-left">
-              <p className="text-[11px] font-black uppercase tracking-widest text-[#8E8E93] mb-1">
+              <p className="text-[11px] font-black uppercase tracking-widest text-gray-500 mb-1">
                 Listings
               </p>
-              <p className="text-[22px] font-black tracking-tight text-[#1D1D1F]">
+              <p className="text-[22px] font-black tracking-tight text-white">
                 {myProducts.length}
               </p>
             </div>
             <div className="text-center sm:text-left">
-              <p className="text-[11px] font-black uppercase tracking-widest text-[#8E8E93] mb-1">
+              <p className="text-[11px] font-black uppercase tracking-widest text-gray-500 mb-1">
                 Sold
               </p>
-              <p className="text-[22px] font-black tracking-tight text-[#34C759]">
+              <p className="text-[22px] font-black tracking-tight text-orange-500">
                 {myProducts.filter((p) => p.status === "sold").length}
               </p>
             </div>
@@ -525,8 +524,8 @@ export default function Profile() {
                                 onClick={() => setHostelBlock(opt)}
                                 className={`py-1.5 px-3 rounded-full text-[12px] font-bold transition-all border ${
                                   hostelBlock === opt
-                                    ? "bg-[#1D1D1F] text-white border-[#1D1D1F] shadow-md scale-[1.02]"
-                                    : "bg-white/80 text-[#8E8E93] border-white/60 hover:text-[#1D1D1F] hover:bg-white"
+                                    ? "bg-white text-black border-white shadow-md scale-[1.02]"
+                                    : "bg-white/5 text-gray-400 border-white/10 hover:text-white hover:bg-white/10"
                                 }`}
                               >
                                 {opt}
@@ -537,26 +536,26 @@ export default function Profile() {
                       ))}
                     </div>
                   </div>
-                  <div className="flex items-center gap-2 px-4 py-3 rounded-[1.2rem] bg-white/60 border border-white/60 shadow-sm">
-                    <Phone className="w-4 h-4 text-[#8E8E93]" />
+                  <div className="flex items-center gap-2 px-4 py-3 rounded-[1.2rem] bg-white/5 border border-white/10 shadow-sm">
+                    <Phone className="w-4 h-4 text-gray-500" />
                     <input
                       value={phoneNumber}
                       onChange={(e) => setPhoneNumber(e.target.value)}
                       placeholder="Phone Number"
-                      className="bg-transparent text-[14px] font-bold outline-none w-full text-[#1D1D1F] placeholder:font-medium placeholder:text-[#8E8E93]"
+                      className="bg-transparent text-[14px] font-bold outline-none w-full text-white placeholder:font-medium placeholder:text-gray-500"
                     />
                   </div>
                 </div>
               ) : (
                 <div className="flex flex-col gap-2.5">
-                  <div className="flex items-center justify-center sm:justify-start gap-2.5 text-[#1D1D1F]">
-                    <MapPin className="w-4 h-4 text-[#007AFF]" />
+                  <div className="flex items-center justify-center sm:justify-start gap-2.5 text-white">
+                    <MapPin className="w-4 h-4 text-orange-500" />
                     <span className="text-[14px] font-bold">
                       {profile?.hostel_block || "Location not set"}
                     </span>
                   </div>
-                  <div className="flex items-center justify-center sm:justify-start gap-2.5 text-[#1D1D1F]">
-                    <Phone className="w-4 h-4 text-[#007AFF]" />
+                  <div className="flex items-center justify-center sm:justify-start gap-2.5 text-white">
+                    <Phone className="w-4 h-4 text-orange-500" />
                     <span className="text-[14px] font-bold">
                       {profile?.phone_number || "Contact not set"}
                     </span>
@@ -569,15 +568,15 @@ export default function Profile() {
 
         {/* ── TABS ── */}
         <div className="mt-12">
-          <div className="flex gap-8 border-b border-black/5 px-2 overflow-x-auto hide-scroll">
+          <div className="flex gap-8 border-b border-white/5 px-2 overflow-x-auto hide-scroll">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 className={`relative pb-4 text-[15px] sm:text-[16px] font-bold tracking-tight transition-all flex items-center gap-2.5 whitespace-nowrap ${
                   activeTab === tab.id
-                    ? "text-[#1D1D1F]"
-                    : "text-[#8E8E93] hover:text-[#505055]"
+                    ? "text-white"
+                    : "text-gray-500 hover:text-gray-400"
                 }`}
               >
                 {tab.id === "listings" && <Package className="w-4 h-4" />}
@@ -599,7 +598,7 @@ export default function Profile() {
                 {activeTab === tab.id && (
                   <motion.div
                     layoutId="active-tab"
-                    className="absolute bottom-0 left-0 right-0 h-1 bg-[#1D1D1F] rounded-t-full shadow-sm"
+                    className="absolute bottom-0 left-0 right-0 h-1 bg-white rounded-t-full shadow-[0_0_10px_rgba(255,255,255,0.3)]"
                   />
                 )}
               </button>
@@ -622,19 +621,19 @@ export default function Profile() {
                       <Loader2 className="w-8 h-8 animate-spin text-[#8E8E93]" />
                     </div>
                   ) : myProducts.length === 0 ? (
-                    <div className="py-20 text-center bg-white/40 ios-glass rounded-[2.5rem] border border-white/60 border-dashed shadow-sm">
-                      <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mx-auto mb-4 xl-shadow shadow-sm">
-                        <Package className="w-8 h-8 text-[#8E8E93]" />
+                    <div className="py-20 text-center bg-[#1c1c1e] rounded-[2.5rem] border border-white/5 border-dashed shadow-sm">
+                      <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-white/5">
+                        <Package className="w-8 h-8 text-gray-500" />
                       </div>
-                      <h3 className="text-[18px] font-bold text-[#1D1D1F] tracking-tight">
+                      <h3 className="text-[18px] font-bold text-white tracking-tight">
                         No active listings
                       </h3>
-                      <p className="text-[14px] text-[#8E8E93] mt-1 mb-8 font-medium">
+                      <p className="text-[14px] text-gray-400 mt-1 mb-8 font-medium">
                         Ready to turn your stuff into cash?
                       </p>
                       <button
                         onClick={() => navigate("/list")}
-                        className="px-6 py-3 rounded-full bg-[#1D1D1F] text-white text-[15px] font-bold shadow-lg shadow-black/20 hover:scale-105 active:scale-95 transition-all"
+                        className="px-6 py-3 rounded-full bg-white text-black text-[15px] font-bold shadow-lg shadow-white/10 hover:scale-105 active:scale-95 transition-all"
                       >
                         Start Selling
                       </button>
@@ -645,9 +644,9 @@ export default function Profile() {
                         <motion.div
                           layout
                           key={item.id}
-                          className="group ios-glass bg-white/50 p-4 rounded-3xl border border-white/60 shadow-sm hover:shadow-md transition-all flex items-center gap-4"
+                          className="group bg-[#1c1c1e] p-4 rounded-3xl border border-white/5 shadow-xl hover:shadow-2xl transition-all flex items-center gap-4"
                         >
-                          <div className="w-20 h-20 rounded-[1.2rem] overflow-hidden bg-[#F5F5F7] shadow-inner flex-shrink-0">
+                          <div className="w-20 h-20 rounded-[1.2rem] overflow-hidden bg-black shadow-inner flex-shrink-0">
                             <img
                               src={
                                 item.image_url ||
@@ -658,11 +657,11 @@ export default function Profile() {
                             />
                           </div>
                           <div className="flex-1 min-w-0">
-                            <h4 className="text-[15px] font-bold text-[#1D1D1F] truncate mb-1 tracking-tight">
+                            <h4 className="text-[15px] font-bold text-white truncate mb-1 tracking-tight">
                               {item.title}
                             </h4>
                             <div className="flex items-center gap-2.5">
-                              <span className="text-[17px] font-black tracking-tight text-[#1D1D1F]">
+                              <span className="text-[17px] font-black tracking-tight text-white">
                                 ₹{item.price}
                               </span>
                               <span
@@ -680,7 +679,7 @@ export default function Profile() {
                             {item.status !== "sold" && (
                               <button
                                 onClick={() => handleMarkSold(item.id)}
-                                className="w-10 h-10 rounded-full flex items-center justify-center bg-white border border-white/60 text-[#8E8E93] hover:bg-[#34C759] hover:text-white transition-all shadow-sm"
+                                className="w-10 h-10 rounded-full flex items-center justify-center bg-white/5 border border-white/10 text-gray-400 hover:bg-green-500 hover:text-white transition-all shadow-sm"
                                 title="Mark Sold"
                               >
                                 <Check className="w-4 h-4" />
@@ -688,7 +687,7 @@ export default function Profile() {
                             )}
                             <button
                               onClick={() => handleDeleteListing(item.id)}
-                              className="w-10 h-10 rounded-full flex items-center justify-center bg-white border border-white/60 text-[#8E8E93] hover:bg-[#FF3B30] hover:text-white transition-all shadow-sm"
+                              className="w-10 h-10 rounded-full flex items-center justify-center bg-white/5 border border-white/10 text-gray-400 hover:bg-red-500 hover:text-white transition-all shadow-sm"
                               title="Delete"
                             >
                               <Trash2 className="w-4 h-4" />
@@ -715,14 +714,14 @@ export default function Profile() {
                       <Loader2 className="w-8 h-8 animate-spin text-[#8E8E93]" />
                     </div>
                   ) : incomingOrders.length === 0 ? (
-                    <div className="py-20 text-center bg-white/40 ios-glass rounded-[2.5rem] border border-white/60 border-dashed shadow-sm">
-                      <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm">
-                        <ShoppingCart className="w-8 h-8 text-[#8E8E93]" />
+                    <div className="py-20 text-center bg-[#1c1c1e] rounded-[2.5rem] border border-white/5 border-dashed shadow-sm">
+                      <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm border border-white/5">
+                        <ShoppingCart className="w-8 h-8 text-gray-500" />
                       </div>
-                      <h3 className="text-[18px] font-bold text-[#1D1D1F] tracking-tight">
+                      <h3 className="text-[18px] font-bold text-white tracking-tight">
                         No incoming orders
                       </h3>
-                      <p className="text-[14px] text-[#8E8E93] font-medium mt-1">
+                      <p className="text-[14px] text-gray-400 font-medium mt-1">
                         Orders from buyers will appear here.
                       </p>
                     </div>
@@ -732,10 +731,10 @@ export default function Profile() {
                         <motion.div
                           layout
                           key={order.id}
-                          className="ios-glass bg-white/50 backdrop-blur-3xl rounded-[2rem] p-6 border border-white/60 shadow-sm hover:shadow-md transition-shadow"
+                          className="bg-[#1c1c1e] backdrop-blur-3xl rounded-[2rem] p-6 border border-white/5 shadow-xl hover:shadow-2xl transition-all"
                         >
                           <div className="flex items-start gap-4 mb-6">
-                            <div className="w-16 h-16 rounded-[1.2rem] overflow-hidden bg-[#F5F5F7] shadow-inner flex-shrink-0">
+                            <div className="w-16 h-16 rounded-[1.2rem] overflow-hidden bg-black shadow-inner flex-shrink-0">
                               <img
                                 src={
                                   order.products?.image_url ||
@@ -746,14 +745,14 @@ export default function Profile() {
                               />
                             </div>
                             <div className="flex-1 min-w-0">
-                              <p className="text-[10px] font-black uppercase tracking-widest text-[#8E8E93] mb-1">
+                              <p className="text-[10px] font-black uppercase tracking-widest text-gray-500 mb-1">
                                 Incoming Order
                               </p>
-                              <h4 className="text-[16px] font-bold text-[#1D1D1F] truncate tracking-tight">
+                              <h4 className="text-[16px] font-bold text-white truncate tracking-tight">
                                 {order.products?.title || "Product"}
                               </h4>
                               <div className="flex items-center gap-3 mt-1">
-                                <span className="text-[18px] font-black text-[#1D1D1F]">
+                                <span className="text-[18px] font-black text-white">
                                   ₹{order.total_price}
                                 </span>
                                 <span
@@ -781,42 +780,42 @@ export default function Profile() {
                             </div>
                           </div>
 
-                          <div className="bg-white/60 border border-white/60 rounded-[1.2rem] p-4 flex flex-col sm:flex-row gap-4 mb-6 shadow-[inset_0_2px_10px_rgba(0,0,0,0.02)]">
+                          <div className="bg-white/5 border border-white/5 rounded-[1.2rem] p-4 flex flex-col sm:flex-row gap-4 mb-6 shadow-[inset_0_2px_10px_rgba(0,0,0,0.2)]">
                             <div className="flex-1 flex items-center gap-3">
-                              <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-[#8E8E93] shadow-sm">
+                              <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-400 border border-white/5 shadow-sm">
                                 <User className="w-4 h-4" />
                               </div>
                               <div>
-                                <p className="text-[10px] font-black text-[#8E8E93] uppercase tracking-widest">
+                                <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest">
                                   Buyer
                                 </p>
-                                <p className="text-[13px] font-bold text-[#1D1D1F]">
+                                <p className="text-[13px] font-bold text-white">
                                   {order.buyer?.full_name}
                                 </p>
                               </div>
                             </div>
                             <div className="flex-1 flex items-center gap-3">
-                              <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-[#8E8E93] shadow-sm">
+                              <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-400 border border-white/5 shadow-sm">
                                 <Phone className="w-4 h-4" />
                               </div>
                               <div>
-                                <p className="text-[10px] font-black text-[#8E8E93] uppercase tracking-widest">
+                                <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest">
                                   Contact
                                 </p>
-                                <p className="text-[13px] font-bold text-[#1D1D1F]">
+                                <p className="text-[13px] font-bold text-white">
                                   {order.buyer_phone}
                                 </p>
                               </div>
                             </div>
                             <div className="flex-1 flex items-center gap-3">
-                              <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-[#8E8E93] shadow-sm">
+                              <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-400 border border-white/5 shadow-sm">
                                 <MapPin className="w-4 h-4" />
                               </div>
                               <div>
-                                <p className="text-[10px] font-black text-[#8E8E93] uppercase tracking-widest">
+                                <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest">
                                   Location
                                 </p>
-                                <p className="text-[13px] font-bold text-[#1D1D1F]">
+                                <p className="text-[13px] font-bold text-white">
                                   {order.delivery_location}
                                 </p>
                               </div>
@@ -855,27 +854,26 @@ export default function Profile() {
                 </motion.div>
               )}
 
-              {/* SAVED */}
               {activeTab === "saved" && (
                 <motion.div
                   key="saved"
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 10 }}
-                  className="py-20 text-center bg-white/40 ios-glass rounded-[2.5rem] border border-white/60 border-dashed shadow-sm"
+                  className="py-20 text-center bg-[#1c1c1e] rounded-[2.5rem] border border-white/5 border-dashed shadow-sm"
                 >
-                  <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm">
-                    <Heart className="w-8 h-8 text-[#FF3B30]/40" />
+                  <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-white/5">
+                    <Heart className="w-8 h-8 text-red-500/40" />
                   </div>
-                  <h3 className="text-[18px] font-bold text-[#1D1D1F] tracking-tight">
+                  <h3 className="text-[18px] font-bold text-white tracking-tight">
                     Your wishlist is empty
                   </h3>
-                  <p className="text-[14px] text-[#8E8E93] mt-1 mb-8 font-medium">
+                  <p className="text-[14px] text-gray-400 mt-1 mb-8 font-medium">
                     Save items you like for later!
                   </p>
                   <button
                     onClick={() => navigate("/browse")}
-                    className="px-6 py-3 rounded-full ios-action-button text-[15px] font-bold flex items-center gap-2 mx-auto"
+                    className="px-6 py-3 rounded-full bg-white text-black text-[15px] font-bold shadow-lg shadow-white/10 hover:scale-105 active:scale-95 transition-all flex items-center gap-2 mx-auto"
                   >
                     Explore Items
                   </button>
@@ -892,82 +890,82 @@ export default function Profile() {
                   className="space-y-4"
                 >
                   {membership.isPendingApproval ? (
-                    <div className="py-20 text-center bg-white/40 ios-glass rounded-[2.5rem] border border-orange-500/30 shadow-[0_4px_24px_rgba(249,115,22,0.1)] relative overflow-hidden">
+                    <div className="py-20 text-center bg-[#1c1c1e] rounded-[2.5rem] border border-orange-500/30 shadow-[0_4px_24px_rgba(249,115,22,0.1)] relative overflow-hidden">
                       <div className="w-16 h-16 bg-gradient-to-br from-orange-400 to-amber-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm animate-pulse border border-orange-500/20">
                         <Clock className="w-8 h-8 text-white" />
                       </div>
-                      <h3 className="text-[18px] font-bold text-[#1D1D1F] tracking-tight mb-2">
+                      <h3 className="text-[18px] font-bold text-white tracking-tight mb-2">
                         Verification Pending
                       </h3>
-                      <p className="text-[14px] text-[#8E8E93] font-medium px-4">
+                      <p className="text-[14px] text-gray-400 font-medium px-4">
                         Your payment for{" "}
                         <span className="text-orange-500 font-bold">
                           {membership.pendingPlan || "CB Membership"}
                         </span>{" "}
                         is verifying.
                       </p>
-                      <p className="text-[12px] text-[#8E8E93] font-medium px-4 mt-1">
+                      <p className="text-[12px] text-gray-500 font-medium px-4 mt-2">
                         Our admin will approve it shortly!
                       </p>
                     </div>
                   ) : !membership.isActive ? (
-                    <div className="py-20 text-center bg-white/40 ios-glass rounded-[2.5rem] border border-white/60 border-dashed shadow-sm">
+                    <div className="py-20 text-center bg-[#1c1c1e] rounded-[2.5rem] border border-white/5 border-dashed shadow-sm">
                       <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-indigo-500 rounded-2xl flex items-center justify-center mx-auto mb-4 xl-shadow shadow-sm">
                         <Crown className="w-8 h-8 text-white" />
                       </div>
-                      <h3 className="text-[18px] font-bold text-[#1D1D1F] tracking-tight">
+                      <h3 className="text-[18px] font-bold text-white tracking-tight">
                         Unlock free deliveries
                       </h3>
-                      <p className="text-[14px] text-[#8E8E93] mt-1 mb-8 font-medium">
+                      <p className="text-[14px] text-gray-400 mt-1 mb-8 font-medium">
                         Get CB Membership for exclusive perks.
                       </p>
                       <button
                         onClick={() => setIsPlansOpen(true)}
-                        className="px-6 py-3 rounded-full bg-gradient-to-r from-purple-500 to-indigo-500 text-white text-[15px] font-bold shadow-lg shadow-purple-500/30 hover:scale-105 active:scale-95 transition-all"
+                        className="px-6 py-3 rounded-full bg-white text-black text-[15px] font-bold shadow-lg shadow-white/10 hover:scale-105 active:scale-95 transition-all"
                       >
                         Explore Plans
                       </button>
                     </div>
                   ) : (
-                    <div className="ios-glass bg-white/50 backdrop-blur-3xl rounded-[2rem] p-6 sm:p-8 border border-white/60 shadow-sm relative overflow-hidden">
-                      <div className="absolute top-0 right-0 w-48 h-48 bg-purple-500/10 blur-[50px] rounded-full pointer-events-none" />
-                      <div className="absolute bottom-0 left-0 w-32 h-32 bg-indigo-500/10 blur-[50px] rounded-full pointer-events-none" />
+                    <div className="bg-[#1c1c1e] backdrop-blur-3xl rounded-[2rem] p-6 sm:p-8 border border-white/5 shadow-2xl relative overflow-hidden">
+                      <div className="absolute top-0 right-0 w-48 h-48 bg-purple-500/5 blur-[50px] rounded-full pointer-events-none" />
+                      <div className="absolute bottom-0 left-0 w-32 h-32 bg-indigo-500/5 blur-[50px] rounded-full pointer-events-none" />
 
                       <div className="flex items-center gap-4 mb-6 relative z-10">
-                        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center shadow-lg shadow-purple-500/30">
+                        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center shadow-lg shadow-purple-500/20">
                           <Crown className="w-8 h-8 text-white" />
                         </div>
                         <div>
-                          <p className="text-[11px] font-black uppercase tracking-widest text-[#8E8E93] mb-1">
+                          <p className="text-[11px] font-black uppercase tracking-widest text-gray-500 mb-1">
                             Active Plan
                           </p>
-                          <h3 className="text-[24px] font-black text-[#1D1D1F] tracking-tight">
+                          <h3 className="text-[24px] font-black text-white tracking-tight">
                             CB{" "}
                             {membership.plan?.replace("_", " ").toUpperCase()}
                           </h3>
                         </div>
                       </div>
 
-                      <div className="bg-white/60 border border-white/60 rounded-[1.5rem] p-5 mb-6 shadow-sm relative z-10">
+                      <div className="bg-white/5 border border-white/5 rounded-[1.5rem] p-5 mb-6 shadow-sm relative z-10">
                         <div className="flex justify-between items-end mb-3">
                           <div>
-                            <p className="text-[13px] font-bold text-[#8E8E93] tracking-tight mb-1">
+                            <p className="text-[13px] font-bold text-gray-400 tracking-tight mb-1">
                               Free Deliveries This Week
                             </p>
-                            <p className="text-[16px] font-black text-[#1D1D1F]">
+                            <p className="text-[16px] font-black text-white">
                               {membership.remainingDeliveries}{" "}
-                              <span className="text-[#8E8E93]">
+                              <span className="text-gray-500">
                                 / {membership.totalDeliveriesLimit}
                               </span>
                             </p>
                           </div>
                           <div className="text-right">
-                            <span className="text-[12px] font-bold text-[#007AFF] bg-[#007AFF]/10 px-3 py-1.5 rounded-full">
+                            <span className="text-[12px] font-bold text-orange-400 bg-orange-500/10 px-3 py-1.5 rounded-full border border-orange-500/20">
                               {membership.usedDeliveries} Used
                             </span>
                           </div>
                         </div>
-                        <div className="h-3 w-full bg-[#1D1D1F]/5 rounded-full overflow-hidden">
+                        <div className="h-3 w-full bg-white/5 rounded-full overflow-hidden">
                           <motion.div
                             initial={{ width: 0 }}
                             animate={{

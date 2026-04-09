@@ -6,41 +6,40 @@
 
 @layer base {
   :root {
-    /* ─── iOS 26 System Colors ─── */
-    --background: 240 5% 96%; /* #F5F5F7 System Grouped Background */
-    --foreground: 240 10% 11%; /* #1D1D1F Primary Text */
+    /* ─── Luxury Dark System Colors ─── */
+    --background: 0 0% 0%; /* #000000 Pure Black */
+    --foreground: 0 0% 100%; /* #FFFFFF Primary Text */
     
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 11%;
+    --card: 240 10% 4%; /* #0a0a0a Secondary Dark */
+    --card-foreground: 0 0% 100%;
     
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 11%;
+    --popover: 240 10% 4%;
+    --popover-foreground: 0 0% 100%;
     
-    --primary: 211 100% 50%; /* #007AFF iOS Blue */
-    --primary-foreground: 0 0% 100%;
+    --primary: 33 100% 50%; /* #FF9500 Market Orange */
+    --primary-foreground: 0 0% 0%;
     
-    --secondary: 240 5% 84%; /* #D1D1D6 iOS Gray 4 */
-    --secondary-foreground: 240 10% 11%;
+    --secondary: 240 10% 11%; /* #1D1D1F Tertiary Dark */
+    --secondary-foreground: 0 0% 100%;
     
-    --accent: 135 59% 49%; /* #34C759 iOS Green */
+    --accent: 251 91% 65%; /* #6366f1 Indigo Accent */
     --accent-foreground: 0 0% 100%;
     
-    --destructive: 0 100% 59%; /* #FF3B30 iOS Red */
+    --destructive: 0 100% 59%; /* #FF3B30 */
     --destructive-foreground: 0 0% 100%;
     
-    --muted: 240 5% 90%; /* #E5E5EA iOS Gray 5 */
-    --muted-foreground: 240 4% 56%; /* #8E8E93 iOS Gray 1 */
+    --muted: 240 10% 11%;
+    --muted-foreground: 240 4% 56%; /* #8E8E93 */
     
-    --border: 240 5% 84%;
-    --input: 240 5% 90%;
-    --ring: 211 100% 50%;
+    --border: 0 0% 100% / 0.05;
+    --input: 0 0% 100% / 0.05;
+    --ring: 33 100% 50%;
     
-    --radius: 1.5rem; /* 24px default radius for modern iOS cards */
+    --radius: 1.5rem;
     
-    /* Extra iOS Accents */
-    --ios-orange: 33 100% 50%; /* #FF9500 */
-    --ios-purple: 275 100% 59%; /* #AF52DE */
-    --ios-teal: 190 100% 42%; /* #5AC8FA */
+    /* Luxury Gradients */
+    --luxury-orange: linear-gradient(135deg, #fb923c 0%, #f97316 100%);
+    --luxury-indigo: linear-gradient(135deg, #818cf8 0%, #6366f1 100%);
   }
 }
 
@@ -52,17 +51,17 @@
 
   body {
     @apply text-foreground;
-    background-color: hsl(var(--background));
+    background-color: #000000;
     font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'SF Pro Text', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     overflow-x: hidden;
     min-height: 100vh;
     min-height: 100dvh;
     min-height: -webkit-fill-available;
-    /* Soft mesh ambient background — using fixed background-image only (no attachment:fixed to avoid full repaints) */
+    /* Immersive dark mesh */
     background-image: 
-      radial-gradient(circle at 15% 50%, rgba(0, 122, 255, 0.04) 0%, transparent 50%),
-      radial-gradient(circle at 85% 30%, rgba(85, 200, 250, 0.04) 0%, transparent 50%),
-      radial-gradient(circle at 50% 80%, rgba(175, 82, 222, 0.03) 0%, transparent 50%);
+      radial-gradient(circle at 15% 50%, rgba(251, 146, 60, 0.05) 0%, transparent 50%),
+      radial-gradient(circle at 85% 30%, rgba(99, 102, 241, 0.05) 0%, transparent 50%),
+      radial-gradient(circle at 50% 80%, rgba(255, 255, 255, 0.02) 0%, transparent 50%);
     /* Removed background-attachment: fixed — was causing full-page repaints on every scroll frame */
   }
 
@@ -96,12 +95,24 @@
   }
 
   .ios-glass-dark {
-    background: rgba(28, 28, 30, 0.65);
-    backdrop-filter: blur(28px) saturate(180%);
-    -webkit-backdrop-filter: blur(28px) saturate(180%);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    background: rgba(28, 28, 30, 0.7);
+    backdrop-filter: blur(32px) saturate(180%);
+    -webkit-backdrop-filter: blur(32px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
     color: #ffffff;
+  }
+
+  .luxury-card {
+    background: #1c1c1e;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 1.5rem;
+    @apply transition-all duration-300;
+  }
+
+  .luxury-card:hover {
+    border-color: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
   }
 
   /* ─── iOS Inner Shadow effects (Action Buttons) ─── */

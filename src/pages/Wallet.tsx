@@ -85,14 +85,14 @@ export default function Wallet() {
   };
 
   return (
-    <div className="relative min-h-screen pb-32 overflow-hidden bg-[#F5F5F7] text-[#1D1D1F]">
+    <div className="relative min-h-screen pb-32 overflow-hidden bg-[#000000] text-white">
       {/* Background & Studio Ambience Layer */}
       <div className="absolute inset-0 pointer-events-none z-0">
-        <div className="absolute top-0 right-1/4 w-[400px] h-[400px] bg-[#007AFF]/5 rounded-full blur-[100px] opacity-80" />
-        <div className="absolute top-[20%] left-1/4 w-[500px] h-[500px] bg-[#34C759]/5 rounded-full blur-[120px] opacity-80" />
+        <div className="absolute top-0 right-1/4 w-[400px] h-[400px] bg-[#007AFF]/10 rounded-full blur-[100px] opacity-40" />
+        <div className="absolute top-[20%] left-1/4 w-[500px] h-[500px] bg-[#FF9500]/5 rounded-full blur-[120px] opacity-30" />
 
         {/* Deep Ambient Shadow at the bottom representing the "desk" gap */}
-        <div className="absolute bottom-0 w-full h-[30vh] bg-gradient-to-t from-black/5 to-transparent opacity-50" />
+        <div className="absolute bottom-0 w-full h-[30vh] bg-gradient-to-t from-black to-transparent opacity-80" />
       </div>
 
       {/* Content Layer */}
@@ -100,15 +100,15 @@ export default function Wallet() {
         {/* Header: Title + Profile Access */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-[28px] leading-tight font-black tracking-tighter text-[#1D1D1F] flex items-center gap-3">
+            <h1 className="text-[28px] leading-tight font-black tracking-tighter text-white flex items-center gap-3">
               Your{" "}
-              <span className="text-[#8E8E93] font-medium font-serif italic lowercase tracking-tight">
+              <span className="text-gray-500 font-medium font-serif italic lowercase tracking-tight">
                 Wallet
               </span>
               <motion.button
                 whileTap={{ rotate: 180 }}
                 onClick={() => fetchWalletData()}
-                className="p-2 rounded-full ios-glass border border-white/60 text-[#8E8E93] hover:text-[#1D1D1F] transition-colors shadow-sm bg-white/60"
+                className="p-2 rounded-full bg-white/5 border border-white/10 text-gray-400 hover:text-white transition-colors shadow-sm"
               >
                 <RotateCcw className="w-4 h-4" />
               </motion.button>
@@ -119,7 +119,7 @@ export default function Wallet() {
           <Link to="/profile">
             <motion.div
               whileTap={{ scale: 0.9 }}
-              className="w-10 h-10 rounded-full bg-white shadow-sm border border-black/5 flex items-center justify-center overflow-hidden"
+              className="w-10 h-10 rounded-full bg-[#1c1c1e] shadow-sm border border-white/10 flex items-center justify-center overflow-hidden"
             >
               <img
                 src={`https://api.dicebear.com/7.x/notionists/svg?seed=${
@@ -137,7 +137,7 @@ export default function Wallet() {
           initial={{ scale: 0.95, opacity: 0, y: 10 }}
           animate={{ scale: 1, opacity: 1, y: 0 }}
           transition={{ type: "spring", damping: 20, stiffness: 300 }}
-          className="relative w-full ios-glass bg-white/40 backdrop-blur-3xl rounded-[2.5rem] p-8 pb-10 shadow-lg border border-white/60 flex flex-col items-center justify-center min-h-[300px] overflow-hidden group mb-8"
+          className="relative w-full bg-[#1c1c1e] backdrop-blur-3xl rounded-[2.5rem] p-8 pb-10 shadow-2xl border border-white/5 flex flex-col items-center justify-center min-h-[300px] overflow-hidden group mb-8"
         >
           {/* Beautiful background decorative mesh/gradient */}
           <div className="absolute top-0 right-0 w-64 h-64 bg-white rounded-full blur-[60px] opacity-60 translate-x-1/2 -translate-y-1/2 pointer-events-none" />
@@ -145,15 +145,15 @@ export default function Wallet() {
 
           {/* Giant Balance Centerpiece */}
           <div className="flex flex-col items-center justify-center z-10 mb-8 mx-auto w-full text-center mt-4">
-            <span className="text-[#8E8E93] text-[11px] font-bold uppercase tracking-[0.15em] mb-1">
+            <span className="text-gray-500 text-[11px] font-black uppercase tracking-[0.15em] mb-1">
               Available Balance
             </span>
             <div className="flex items-start justify-center gap-0">
-              <span className="text-4xl font-bold text-[#8E8E93] mt-3">
+              <span className="text-4xl font-black text-gray-500 mt-3">
                 ₹
               </span>
               <motion.span
-                className="text-[90px] leading-[0.85] font-black tracking-tighter text-[#1D1D1F]"
+                className="text-[90px] leading-[0.85] font-black tracking-tighter text-white"
                 initial={{ y: 20 }}
                 animate={{ y: 0 }}
                 transition={{ type: "spring", stiffness: 400, damping: 20 }}
@@ -164,10 +164,10 @@ export default function Wallet() {
           </div>
 
           {/* Bottom subtle text */}
-          <div className="text-center z-10 max-w-[220px] mx-auto mt-2 bg-white/50 backdrop-blur-md px-4 py-2.5 rounded-full border border-white/60 shadow-sm">
-            <p className="text-[12px] text-[#8E8E93] font-medium leading-tight">
+          <div className="text-center z-10 max-w-[220px] mx-auto mt-2 bg-white/5 backdrop-blur-md px-4 py-2.5 rounded-full border border-white/10 shadow-sm">
+            <p className="text-[12px] text-gray-400 font-medium leading-tight">
               Use this strictly at checkout for{" "}
-              <span className="text-[#1D1D1F] font-bold">CU Bazzar</span>{" "}
+              <span className="text-white font-bold">CU Bazzar</span>{" "}
               orders.
             </p>
           </div>
@@ -183,20 +183,20 @@ export default function Wallet() {
             damping: 25,
             delay: 0.1,
           }}
-          className="ios-glass bg-white/40 backdrop-blur-3xl rounded-[2rem] p-6 shadow-sm border border-white/60 mb-8 relative overflow-hidden"
+          className="bg-[#1c1c1e] backdrop-blur-3xl rounded-[2rem] p-6 shadow-2xl border border-white/5 mb-8 relative overflow-hidden"
         >
           <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-white/40 to-transparent rounded-bl-full -z-0 pointer-events-none" />
 
           <div className="relative z-10 flex items-start justify-between mb-5">
             <div className="flex items-center gap-3.5">
-              <div className="w-10 h-10 rounded-full bg-[#1D1D1F] flex items-center justify-center shadow-lg">
-                <Gift className="w-5 h-5 text-white" />
+              <div className="w-10 h-10 rounded-full bg-white text-black flex items-center justify-center shadow-lg">
+                <Gift className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="font-bold text-[#1D1D1F] text-[16px] tracking-tight">
+                <h3 className="font-black text-white text-[16px] tracking-tight">
                   Unlock ₹30 Reward
                 </h3>
-                <p className="text-[12px] font-medium text-[#8E8E93]">
+                <p className="text-[12px] font-medium text-gray-400">
                   Complete 3 orders in a week to get ₹30 in your wallet.
                 </p>
               </div>
@@ -205,23 +205,23 @@ export default function Wallet() {
 
           {/* Progress Bar Container */}
           <div className="relative">
-            <div className="flex justify-between text-[11px] font-black text-[#8E8E93] mb-2 px-1">
+            <div className="flex justify-between text-[11px] font-black text-gray-500 mb-2 px-1">
               {(() => {
                 const displayCount = Math.min(weeklyOrders, 3);
                 return (
                   <>
                     <span>0</span>
-                    <span className={displayCount >= 1 ? "text-[#1D1D1F]" : ""}>
+                    <span className={displayCount >= 1 ? "text-white" : ""}>
                       1
                     </span>
-                    <span className={displayCount >= 2 ? "text-[#1D1D1F]" : ""}>
+                    <span className={displayCount >= 2 ? "text-white" : ""}>
                       2
                     </span>
                     <span
                       className={`px-2 rounded-full py-0.5 relative -top-0.5 transition-all shadow-sm ${
                         displayCount === 3
-                          ? "text-white bg-[#FF3B30] scale-[1.15]"
-                          : "text-[#FF3B30] bg-[#FF3B30]/10"
+                          ? "text-black bg-white scale-[1.15]"
+                          : "text-orange-500 bg-orange-500/10 border border-orange-500/20"
                       }`}
                     >
                       ₹30!
@@ -230,7 +230,7 @@ export default function Wallet() {
                 );
               })()}
             </div>
-            <div className="w-full h-3 bg-black/5 rounded-full overflow-hidden relative shadow-inner">
+            <div className="w-full h-3 bg-white/5 rounded-full overflow-hidden relative shadow-inner">
               {(() => {
                 const displayCount = Math.min(weeklyOrders, 3);
                 return (
@@ -245,15 +245,15 @@ export default function Wallet() {
                 );
               })()}
             </div>
-            <p className="mt-4 text-center text-[13px] font-medium text-[#8E8E93]">
+            <p className="mt-4 text-center text-[13px] font-medium text-gray-400">
               You have completed{" "}
-              <strong className="text-[#1D1D1F] font-bold">
+              <strong className="text-white font-black">
                 {weeklyOrders}
               </strong>{" "}
-              orders <span className="text-[#8E8E93] font-bold">THIS WEEK</span>
+              orders <span className="text-gray-500 font-bold uppercase tracking-wider text-[10px]">this week</span>
               .
               {weeklyOrders < 3 && (
-                <span className="block text-[#8E8E93]/60 text-[10px] mt-1 italic font-bold">
+                <span className="block text-gray-600 text-[10px] mt-1 italic font-bold">
                   Goal resets Monday at 12 AM IST
                 </span>
               )}
@@ -272,11 +272,11 @@ export default function Wallet() {
             delay: 0.2,
           }}
         >
-          <h3 className="text-[12px] font-bold uppercase tracking-widest text-[#8E8E93] mb-4 px-3">
+          <h3 className="text-[12px] font-black uppercase tracking-widest text-gray-500 mb-4 px-3">
             Recent Activity
           </h3>
 
-          <div className="ios-glass bg-white/50 backdrop-blur-3xl rounded-[2rem] p-3 shadow-sm border border-white/60">
+          <div className="bg-[#1c1c1e] backdrop-blur-3xl rounded-[2rem] p-3 shadow-2xl border border-white/5">
             {transactions.length > 0 ? (
               <div className="flex flex-col">
                 {transactions.map((tx: any, idx: number) => (
@@ -284,7 +284,7 @@ export default function Wallet() {
                     key={tx.id}
                     className={`flex items-center justify-between p-3.5 ${
                       idx !== transactions.length - 1
-                        ? "border-b border-black/5"
+                        ? "border-b border-white/5"
                         : ""
                     }`}
                   >
@@ -292,8 +292,8 @@ export default function Wallet() {
                       <div
                         className={`w-10 h-10 rounded-[12px] flex items-center justify-center shadow-sm ${
                           tx.amount > 0
-                            ? "bg-[#34C759]/10 text-[#34C759] border border-[#34C759]/20"
-                            : "bg-white text-[#8E8E93] border border-black/5"
+                            ? "bg-green-500/10 text-green-400 border border-green-500/20"
+                            : "bg-white/5 text-gray-500 border border-white/5"
                         }`}
                       >
                         {tx.amount > 0 ? (
@@ -303,7 +303,7 @@ export default function Wallet() {
                         )}
                       </div>
                       <div>
-                        <p className="font-bold text-[#1D1D1F] text-[15px]">
+                        <p className="font-bold text-white text-[15px]">
                           {tx.description}
                         </p>
                         <p className="text-[11px] font-semibold text-[#8E8E93] mt-[1px]">
@@ -321,7 +321,7 @@ export default function Wallet() {
                     </div>
                     <span
                       className={`font-black tracking-tight text-[16px] ${
-                        tx.amount > 0 ? "text-[#34C759]" : "text-[#1D1D1F]"
+                        tx.amount > 0 ? "text-green-400" : "text-white"
                       }`}
                     >
                       {tx.amount > 0 ? "+" : ""}₹{Math.abs(tx.amount)}

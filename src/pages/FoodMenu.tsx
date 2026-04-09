@@ -196,20 +196,20 @@ export default function FoodMenu() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F5F5F7] pb-28 overflow-x-hidden font-sans text-[#1D1D1F]">
+    <div className="min-h-screen bg-[#000000] pb-28 overflow-x-hidden font-sans text-white">
       <div className="max-w-xl mx-auto relative z-10">
 
         {/* ── Sticky Header ── */}
-        <div className="sticky top-0 z-50 bg-white/90 backdrop-blur-xl border-b border-black/5 pt-24 pb-4 px-4">
+        <div className="sticky top-0 z-50 bg-black/40 backdrop-blur-3xl border-b border-white/5 pt-24 pb-4 px-4">
           {/* Tab row */}
           <div className="flex gap-2 mb-4">
             <button
               onMouseDown={(e) => e.preventDefault()}
               onClick={() => setActiveTab("shops")}
-              className={`flex-1 py-3 rounded-2xl text-[13px] font-bold transition-all ${
+              className={`flex-1 py-3 rounded-2xl text-[13px] font-bold transition-all border ${
                 activeTab === "shops"
-                  ? "bg-[#1D1D1F] text-white shadow-md"
-                  : "bg-[#F2F2F7] text-[#8E8E93]"
+                  ? "bg-white text-black border-white shadow-lg"
+                  : "bg-[#1c1c1e] text-gray-400 border-white/5"
               }`}
             >
               Hostel Shops
@@ -217,10 +217,10 @@ export default function FoodMenu() {
             <button
               onMouseDown={(e) => e.preventDefault()}
               onClick={() => setActiveTab("custom")}
-              className={`flex-1 py-3 rounded-2xl text-[13px] font-bold transition-all ${
+              className={`flex-1 py-3 rounded-2xl text-[13px] font-bold transition-all border ${
                 activeTab === "custom"
-                  ? "bg-[#1D1D1F] text-white shadow-md"
-                  : "bg-[#F2F2F7] text-[#8E8E93]"
+                  ? "bg-white text-black border-white shadow-lg"
+                  : "bg-[#1c1c1e] text-gray-400 border-white/5"
               }`}
             >
               Custom Order
@@ -230,13 +230,13 @@ export default function FoodMenu() {
           {/* Search (only on shops tab) */}
           {activeTab === "shops" && (
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#8E8E93]" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
               <input
                 type="text"
                 value={shopSearch}
                 onChange={(e) => setShopSearch(e.target.value)}
                 placeholder="Search any dish or shop…"
-                className="w-full pl-9 pr-9 py-2.5 rounded-2xl bg-[#F2F2F7] text-[13px] font-medium text-[#1D1D1F] placeholder:text-[#8E8E93] focus:outline-none"
+                className="w-full pl-9 pr-9 py-2.5 rounded-2xl bg-[#1c1c1e] text-[13px] font-medium text-white placeholder:text-gray-500 focus:outline-none border border-white/5 focus:border-white/20 transition-all"
               />
               {shopSearch && (
                 <button
@@ -244,7 +244,7 @@ export default function FoodMenu() {
                   onClick={() => setShopSearch("")}
                   className="absolute right-3 top-1/2 -translate-y-1/2"
                 >
-                  <X className="w-4 h-4 text-[#8E8E93]" />
+                  <X className="w-4 h-4 text-gray-500" />
                 </button>
               )}
             </div>

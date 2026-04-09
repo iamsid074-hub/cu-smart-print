@@ -40,11 +40,11 @@ const BottomNav = () => {
           maxWidth: "480px",
           margin: "0 12px 10px",
           borderRadius: "24px",
-          background: "rgba(255,255,255,0.92)",
-          backdropFilter: "blur(20px)",
-          WebkitBackdropFilter: "blur(20px)",
-          border: "1px solid rgba(0,0,0,0.06)",
-          boxShadow: "0 -2px 0 rgba(0,0,0,0.04), 0 8px 32px rgba(0,0,0,0.1)",
+          background: "rgba(28,28,30,0.8)",
+          backdropFilter: "blur(32px)",
+          WebkitBackdropFilter: "blur(32px)",
+          border: "1px solid rgba(255,255,255,0.05)",
+          boxShadow: "0 -4px 32px rgba(0,0,0,0.5), 0 8px 32px rgba(0,0,0,0.5)",
           display: "flex",
           alignItems: "center",
           height: "62px",
@@ -62,7 +62,7 @@ const BottomNav = () => {
               left: `calc(${activeIndex * 25}% + 8px)`,
               width: "calc(25% - 16px)",
               borderRadius: "16px",
-              background: GLOBAL_ACTIVE_COLOR + "14",
+              background: GLOBAL_ACTIVE_COLOR + "20",
               transition: "left 0.28s cubic-bezier(0.34,1.4,0.64,1)",
               willChange: "left",
               pointerEvents: "none",
@@ -102,11 +102,11 @@ const BottomNav = () => {
               {/* Icon wrapper */}
               <div style={{ position: "relative" }}>
                 <Icon
-                  strokeWidth={isActive ? 2.5 : 1.8}
+                  strokeWidth={isActive ? 2.5 : 2}
                   style={{
                     width: isActive ? "1.3rem" : "1.2rem",
                     height: isActive ? "1.3rem" : "1.2rem",
-                    color: isActive ? GLOBAL_ACTIVE_COLOR : "#9ca3af",
+                    color: isActive ? GLOBAL_ACTIVE_COLOR : "#6b7280",
                     transition: "color 0.2s ease, width 0.2s ease, height 0.2s ease",
                     display: "block",
                   }}
@@ -127,8 +127,8 @@ const BottomNav = () => {
               {/* Label */}
               <span style={{
                 fontSize: "10px",
-                fontWeight: isActive ? 700 : 500,
-                color: isActive ? GLOBAL_ACTIVE_COLOR : "#9ca3af",
+                fontWeight: isActive ? 800 : 600,
+                color: isActive ? GLOBAL_ACTIVE_COLOR : "#4b5563",
                 transition: "color 0.2s ease, font-weight 0.2s ease",
                 lineHeight: 1,
                 userSelect: "none",

@@ -27,15 +27,15 @@ export default function GroceryProductCard({
       className="flex-shrink-0 w-[150px] sm:w-[172px] group cursor-pointer"
     >
       <div 
-        className="rounded-[2.5rem] overflow-hidden bg-white border border-white shadow-[0_8px_32px_rgba(0,0,0,0.06)] hover:shadow-[0_12px_48px_rgba(0,0,0,0.12)] transition-all duration-500 hover:-translate-y-1"
+        className="rounded-[2.5rem] overflow-hidden bg-[#1c1c1e] border border-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.3)] hover:shadow-[0_12px_48px_rgba(0,0,0,0.5)] transition-all duration-500 hover:-translate-y-1"
       >
         {/* Blurred background image area */}
         <div
           className="relative h-[130px] flex items-center justify-center overflow-hidden"
-          style={{ background: `linear-gradient(145deg, ${bgFrom}, ${bgTo})` }}
+          style={{ background: `linear-gradient(145deg, ${bgFrom}22, ${bgTo}22)` }}
         >
           {/* Subtle light streak */}
-          <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/20 to-transparent skew-x-12 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+          <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent skew-x-12 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
           
           <motion.img
             whileHover={{ scale: 1.12, rotate: 2 }}
@@ -44,14 +44,13 @@ export default function GroceryProductCard({
             alt={item.name}
             loading="lazy"
             decoding="async"
-            className="h-[105px] w-auto object-contain drop-shadow-[0_12px_24px_rgba(0,0,0,0.15)] z-10"
-            style={{ mixBlendMode: "multiply" }}
+            className="h-[105px] w-auto object-contain drop-shadow-[0_12px_24px_rgba(0,0,0,0.3)] z-10"
           />
           
           {/* Item Category Badge on image */}
           {item.isFresh && (
             <div className="absolute top-4 left-4 z-20">
-              <span className="bg-white/90 backdrop-blur-md px-2.5 py-1 rounded-full text-[9px] font-black text-[#1D1D1F] uppercase tracking-wider shadow-sm border border-white/50">
+              <span className="bg-orange-500/90 backdrop-blur-md px-2.5 py-1 rounded-full text-[9px] font-black text-white uppercase tracking-wider shadow-sm border border-white/20">
                 Fresh
               </span>
             </div>
@@ -59,16 +58,16 @@ export default function GroceryProductCard({
         </div>
 
         {/* Details Section - Premium Glass Look */}
-        <div className="p-4 bg-white/40 backdrop-blur-md border-t border-white/60">
-          <p className="text-[12px] font-black text-[#1D1D1F] leading-tight line-clamp-2 min-h-[32px] mb-1">
+        <div className="p-4 bg-white/5 backdrop-blur-md border-t border-white/5">
+          <p className="text-[12px] font-black text-white leading-tight line-clamp-2 min-h-[32px] mb-1">
             {item.name}
           </p>
-          <p className="text-[10px] text-[#8E8E93] font-bold mb-3 uppercase tracking-tight">
+          <p className="text-[10px] text-gray-400 font-bold mb-3 uppercase tracking-tight">
             {item.quantity}
           </p>
           
           <div className="flex items-center justify-between mt-auto">
-            <span className="text-[16px] font-black text-[#1D1D1F] tracking-tight">
+            <span className="text-[16px] font-black text-white tracking-tight">
               ₹{item.price}
             </span>
             <motion.button
@@ -77,7 +76,7 @@ export default function GroceryProductCard({
                 e.stopPropagation();
                 onAdd(item);
               }}
-              className="w-10 h-10 rounded-2xl flex items-center justify-center text-white font-bold transition-all"
+              className="w-10 h-10 rounded-2xl flex items-center justify-center text-white font-bold transition-all shadow-lg"
               style={{
                 backgroundColor: btnColor,
                 boxShadow: `0 8px 20px ${btnColor}44`,

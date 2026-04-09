@@ -29,15 +29,15 @@ const SHOP_IMAGES: Record<string, string> = {
 
 // ── Per-shop accent palette ────────────────────────────────────────────────
 const ACCENTS: Record<string, { grad: string; light: string; dot: string; text: string }> = {
-  "chatori-chai-kulcha": { grad: "linear-gradient(135deg,#f97316,#ef4444)", light: "#fff7ed", dot: "#f97316", text: "#c2410c" },
-  "insta-food":          { grad: "linear-gradient(135deg,#6366f1,#8b5cf6)", light: "#f5f3ff", dot: "#6366f1", text: "#4338ca" },
-  "parantha-house":      { grad: "linear-gradient(135deg,#10b981,#059669)", light: "#f0fdf4", dot: "#10b981", text: "#065f46" },
-  "punjabi-rasoi":       { grad: "linear-gradient(135deg,#ec4899,#db2777)", light: "#fdf2f8", dot: "#ec4899", text: "#9d174d" },
-  "flavour-factory":     { grad: "linear-gradient(135deg,#f59e0b,#d97706)", light: "#fffbeb", dot: "#f59e0b", text: "#92400e" },
-  "catch-up-cafe":       { grad: "linear-gradient(135deg,#14b8a6,#0d9488)", light: "#f0fdfa", dot: "#14b8a6", text: "#134e4a" },
+  "chatori-chai-kulcha": { grad: "linear-gradient(135deg,#f97316,#ef4444)", light: "rgba(249,115,22,0.1)", dot: "#f97316", text: "#fb923c" },
+  "insta-food":          { grad: "linear-gradient(135deg,#6366f1,#8b5cf6)", light: "rgba(99,102,241,0.1)", dot: "#6366f1", text: "#818cf8" },
+  "parantha-house":      { grad: "linear-gradient(135deg,#10b981,#059669)", light: "rgba(16,185,129,0.1)", dot: "#10b981", text: "#34d399" },
+  "punjabi-rasoi":       { grad: "linear-gradient(135deg,#ec4899,#db2777)", light: "rgba(236,72,153,0.1)", dot: "#ec4899", text: "#f472b6" },
+  "flavour-factory":     { grad: "linear-gradient(135deg,#f59e0b,#d97706)", light: "rgba(245,158,11,0.1)", dot: "#f59e0b", text: "#fbbf24" },
+  "catch-up-cafe":       { grad: "linear-gradient(135deg,#14b8a6,#0d9488)", light: "rgba(20,184,166,0.1)", dot: "#14b8a6", text: "#2dd4bf" },
 };
 const getAccent = (id: string) =>
-  ACCENTS[id] ?? { grad: "linear-gradient(135deg,#64748b,#475569)", light: "#f8fafc", dot: "#64748b", text: "#334155" };
+  ACCENTS[id] ?? { grad: "linear-gradient(135deg,#64748b,#475569)", light: "rgba(100,116,139,0.1)", dot: "#64748b", text: "#94a3b8" };
 
 interface ShopItem     { name: string; price: number; image?: string }
 interface MenuCategory { category: string; items: ShopItem[] }
@@ -69,8 +69,8 @@ export const ShopCard = memo(({
 
   return (
     <div
-      className="rounded-3xl overflow-hidden bg-white border border-black/[0.05]"
-      style={{ boxShadow: "0 4px 24px rgba(0,0,0,0.07)" }}
+      className="rounded-3xl overflow-hidden bg-[#1c1c1e] border border-white/5"
+      style={{ boxShadow: "0 8px 32px rgba(0,0,0,0.5)" }}
     >
       {/* ── Hero tap area ── */}
       <button
@@ -116,14 +116,14 @@ export const ShopCard = memo(({
         </div>
 
         {/* Stats strip */}
-        <div className="flex items-center gap-3 px-4 py-2.5 border-b border-black/[0.05]">
+        <div className="flex items-center gap-3 px-4 py-2.5 border-b border-white/5 bg-white/5">
           <div className="flex items-center gap-1">
             <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
-            <span className="text-[12px] font-bold text-[#1D1D1F]">{rating}</span>
+            <span className="text-[12px] font-bold text-white">{rating}</span>
           </div>
           <div className="flex items-center gap-1">
-            <Clock className="w-3 h-3 text-[#8E8E93]" />
-            <span className="text-[11px] text-[#8E8E93] font-medium">15–25 min</span>
+            <Clock className="w-3 h-3 text-gray-400" />
+            <span className="text-[11px] text-gray-400 font-medium">15–25 min</span>
           </div>
           <div className="ml-auto">
             <span
@@ -156,7 +156,7 @@ export const ShopCard = memo(({
                 style={
                   !expandedMenuCat
                     ? { background: accent.dot, color: "#fff", borderColor: accent.dot }
-                    : { background: "#f5f5f7", color: "#8E8E93", borderColor: "transparent" }
+                    : { background: "#2c2c2e", color: "#8E8E93", borderColor: "transparent" }
                 }
               >
                 All
@@ -172,7 +172,7 @@ export const ShopCard = memo(({
                     style={
                       active
                         ? { background: accent.dot, color: "#fff", borderColor: accent.dot }
-                        : { background: "#f5f5f7", color: "#8E8E93", borderColor: "transparent" }
+                        : { background: "#2c2c2e", color: "#8E8E93", borderColor: "transparent" }
                     }
                   >
                     {cat.category}
@@ -203,17 +203,17 @@ export const ShopCard = memo(({
                       return (
                         <div
                           key={idx}
-                          className="flex items-center gap-3 py-2.5 border-b border-black/[0.04] last:border-0"
+                          className="flex items-center gap-3 py-2.5 border-b border-white/5 last:border-0"
                         >
                           {/* Thumbnail */}
-                          <div className="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 bg-gray-100">
+                          <div className="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 bg-[#0a0a0a]">
                             <img src={img} alt={item.name} className="w-full h-full object-cover" loading="lazy" />
                           </div>
 
                           {/* Name + price */}
                           <div className="flex-1 min-w-0">
-                            <p className="text-[13px] font-semibold text-[#1D1D1F] leading-tight truncate">{item.name}</p>
-                            <p className="text-[14px] font-black text-[#1D1D1F] mt-0.5">₹{item.price}</p>
+                            <p className="text-[13px] font-semibold text-white leading-tight truncate">{item.name}</p>
+                            <p className="text-[14px] font-black text-white mt-0.5">₹{item.price}</p>
                           </div>
 
                           {/* Add btn */}

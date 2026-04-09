@@ -616,17 +616,11 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
         }
       `}</style>
 
-      {/* Apple-style gradient glass blur background for the top header */}
+      {/* Top Header Layer - Clean and shadow-free */}
       <div
-        className="fixed top-0 left-0 right-0 h-[4.5rem] sm:h-20 z-[9998] pointer-events-none"
+        className="fixed top-0 left-0 right-0 h-16 sm:h-20 z-[9998] pointer-events-none"
         style={{
-          background:
-            "linear-gradient(to bottom, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 100%)",
-          backdropFilter: "blur(20px)",
-          WebkitBackdropFilter: "blur(20px)",
-          maskImage: "linear-gradient(to bottom, black 50%, transparent 100%)",
-          WebkitMaskImage:
-            "linear-gradient(to bottom, black 50%, transparent 100%)",
+          background: "transparent",
         }}
       />
 
@@ -655,11 +649,10 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
                     : ""
                 }`}
                 style={{
-                  background: "rgba(5, 5, 5, 0.8)",
-                  backdropFilter: "blur(25px)",
-                  WebkitBackdropFilter: "blur(25px)",
-                  border: "1px solid rgba(255, 255, 255, 0.12)",
-                  boxShadow: "inset 0 1px 1px rgba(255,255,255,0.1)",
+                  background: "rgba(10, 10, 10, 0.9)",
+                  backdropFilter: "blur(32px)",
+                  WebkitBackdropFilter: "blur(32px)",
+                  border: "1px solid rgba(255, 255, 255, 0.08)",
                   borderRadius: 50,
                   animation: getAnimation(),
                   position: "relative",
