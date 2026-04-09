@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
@@ -258,51 +258,6 @@ export default function Wallet() {
                 </span>
               )}
             </p>
-          </div>
-        </motion.div>
-
-        {/* Flavour Factory Offer */}
-        <motion.div
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{
-            type: "spring",
-            stiffness: 300,
-            damping: 25,
-            delay: 0.15,
-          }}
-          className="ios-glass relative overflow-hidden rounded-[2.5rem] p-6 mb-8 border border-white/60 shadow-lg"
-          style={{
-            background: "linear-gradient(135deg, #FF9500 0%, #FF3B30 100%)",
-          }}
-        >
-          <div className="absolute top-0 right-0 w-32 h-32 bg-white/20 blur-xl rounded-full pointer-events-none" />
-
-          <div className="relative z-10 flex items-start flex-col sm:flex-row gap-4">
-            <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center flex-shrink-0 shadow-sm border border-white/30">
-              <span className="text-xl">ðŸ</span>
-            </div>
-            <div>
-              <h3 className="font-bold text-white text-[17px] leading-tight mb-1.5 flex items-center gap-2">
-                Flavour Factory Special{" "}
-                <span className="px-2 py-0.5 bg-white/30 rounded-full text-[9px] uppercase tracking-widest font-black shadow-sm">
-                  Hot Offer
-                </span>
-              </h3>
-              <p className="text-[13px] font-medium text-white/90 leading-relaxed mb-4">
-                Order worth{" "}
-                <strong className="text-white text-[14px]">₹499</strong> or
-                more from Flavour Factory to get{" "}
-                <strong className="text-white text-[14px]">₹30</strong>{" "}
-                instantly in your wallet!
-              </p>
-              <Link
-                to="/food"
-                className="inline-flex items-center gap-1.5 px-4 py-2 bg-white text-[#FF3B30] text-[13px] font-black rounded-full hover:scale-105 active:scale-95 transition-transform shadow-md"
-              >
-                Order Now <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
-            </div>
           </div>
         </motion.div>
 

@@ -4,7 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { Capacitor } from "@capacitor/core";
-import { lazy, Suspense, useEffect } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 
 // Lazy-loaded pages for performance
@@ -21,6 +21,14 @@ const Wallet = lazy(() => import("./pages/Wallet"));
 const Grocery = lazy(() => import("./pages/Grocery"));
 const ProductDetail = lazy(() => import("./pages/ProductDetail"));
 const FoodMenu = lazy(() => import("./pages/FoodMenu"));
+
+// Core pages to preload for flawless switching
+const preloadCoreRoutes = () => {
+  import("./pages/Home");
+  import("./pages/FoodMenu");
+  import("./pages/Grocery");
+  import("./pages/Wallet");
+};
 // FoodSearch replaced by new /search flow
 const SearchPage = lazy(() => import("./pages/SearchPage"));
 const SearchResultsPage = lazy(() => import("./pages/SearchResultsPage"));
@@ -125,31 +133,39 @@ function AdminRoute({ children }: { children: React.ReactNode }) {
 
 function AppLayout() {
   const location = useLocation();
+  const { user, loading: authLoading } = useAuth();
+  const { gate, loaded: gateLoaded } = useSiteGate();
+  
+  // Track if we've successfully finished the initial "boot" sequence
+  const [initialBootFinished, setInitialBootFinished] = useState(false);
+
+  useEffect(() => {
+    if (!authLoading && gateLoaded) {
+      // Small delay to ensure smooth transition out of splash
+      const timer = setTimeout(() => {
+        setInitialBootFinished(true);
+        // Once boot is finished, preload other sections in background
+        preloadCoreRoutes();
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [authLoading, gateLoaded]);
+
   const isLanding = location.pathname === "/";
   const isLogin = location.pathname === "/login";
   const isResetPassword = location.pathname === "/reset-password";
-  const isAdmin = location.pathname.startsWith("/admin");
-  const { user } = useAuth();
-  const { gate, loaded } = useSiteGate();
-
+  const isAdminPath = location.pathname.startsWith("/admin");
   const isDownload = location.pathname === "/download";
 
-  // If site gate logic is still loading, show branded loading to avoid layout shifts or white flashes
-  if (
-    !loaded &&
-    !isLanding &&
-    !isLogin &&
-    !isAdmin &&
-    !isDownload &&
-    !isResetPassword
-  ) {
+  // Show branded loading ONLY during initial boot
+  if (!initialBootFinished && !isLanding && !isLogin && !isAdminPath && !isDownload && !isResetPassword) {
     return <BrandedLoading />;
   }
 
   // Show gate screens for non-admin, non-login, non-landing pages
   if (
     gate &&
-    !isAdmin &&
+    !isAdminPath &&
     !isLogin &&
     !isLanding &&
     !isResetPassword &&
@@ -162,14 +178,14 @@ function AppLayout() {
   return (
     <>
       <AppUpdater />
-      {!isLanding && !isLogin && !isAdmin && !isDownload && (
+      {!isLanding && !isLogin && !isAdminPath && !isDownload && (
         <>
           {location.pathname !== "/pasta-offer" && <Navbar />}
           {location.pathname !== "/pasta-offer" && <BottomNav />}
         </>
       )}
       <ErrorBoundary>
-        <Suspense fallback={<BrandedLoading />}>
+        <Suspense fallback={initialBootFinished ? null : <BrandedLoading />}>
           <Routes>
             <Route
               path="/"

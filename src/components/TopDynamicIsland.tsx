@@ -602,17 +602,17 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
       {/* Tracking glow keyframes */}
       <style>{`
         @keyframes diTrackingGlow {
-          0%, 100% { box-shadow: 0 0 0 0.5px rgba(16,185,129,0.15), 0 2px 12px rgba(0,0,0,0.5), 0 0 20px rgba(16,185,129,0.08); }
-          50% { box-shadow: 0 0 0 1px rgba(16,185,129,0.3), 0 2px 16px rgba(0,0,0,0.4), 0 0 30px rgba(16,185,129,0.15); }
+          0%, 100% { box-shadow: 0 0 0 0.5px rgba(16,185,129,0.15), 0 0 20px rgba(16,185,129,0.08); }
+          50% { box-shadow: 0 0 0 1px rgba(16,185,129,0.3), 0 0 30px rgba(16,185,129,0.15); }
         }
         @keyframes diTrackingDelivery {
-          0%, 100% { box-shadow: 0 0 0 1px rgba(16,185,129,0.2), 0 2px 12px rgba(0,0,0,0.5), 0 0 25px rgba(16,185,129,0.12); }
-          50% { box-shadow: 0 0 0 2px rgba(16,185,129,0.4), 0 2px 20px rgba(0,0,0,0.35), 0 0 40px rgba(16,185,129,0.22); }
+          0%, 100% { box-shadow: 0 0 0 1px rgba(16,185,129,0.2), 0 0 25px rgba(16,185,129,0.12); }
+          50% { box-shadow: 0 0 0 2px rgba(16,185,129,0.4), 0 0 40px rgba(16,185,129,0.22); }
         }
         @keyframes diTrackingPulse {
-          0% { box-shadow: 0 0 0 0.5px rgba(16,185,129,0.2), 0 2px 12px rgba(0,0,0,0.5); transform: scale(1); }
-          30% { box-shadow: 0 0 0 3px rgba(16,185,129,0.5), 0 2px 20px rgba(0,0,0,0.35), 0 0 40px rgba(16,185,129,0.3); transform: scale(1.03); }
-          100% { box-shadow: 0 0 0 0.5px rgba(16,185,129,0.15), 0 2px 12px rgba(0,0,0,0.5); transform: scale(1); }
+          0% { box-shadow: 0 0 0 0.5px rgba(16,185,129,0.2); transform: scale(1); }
+          30% { box-shadow: 0 0 0 3px rgba(16,185,129,0.5), 0 0 40px rgba(16,185,129,0.3); transform: scale(1.03); }
+          100% { box-shadow: 0 0 0 0.5px rgba(16,185,129,0.15); transform: scale(1); }
         }
       `}</style>
 
@@ -659,7 +659,7 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
                   backdropFilter: "blur(25px)",
                   WebkitBackdropFilter: "blur(25px)",
                   border: "1px solid rgba(255, 255, 255, 0.12)",
-                  boxShadow: "0 15px 35px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,255,255,0.1)",
+                  boxShadow: "inset 0 1px 1px rgba(255,255,255,0.1)",
                   borderRadius: 50,
                   animation: getAnimation(),
                   position: "relative",
@@ -740,7 +740,7 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
                     height: 40, // consistent dot size
                     borderRadius: "50%",
                     border: "1px solid rgba(255, 255, 255, 0.12)",
-                    boxShadow: "0 5px 15px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.1)",
+                    boxShadow: "inset 0 1px 1px rgba(255,255,255,0.1)",
                     zIndex: 100,
                   }}
                 >
@@ -778,7 +778,7 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
                     height: 40,
                     borderRadius: "50%",
                     border: "1px solid rgba(255, 255, 255, 0.12)",
-                    boxShadow: "0 5px 15px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.1)",
+                    boxShadow: "inset 0 1px 1px rgba(255,255,255,0.1)",
                     zIndex: 100,
                   }}
                 >

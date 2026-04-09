@@ -3,11 +3,13 @@ import { Link, useLocation } from "react-router-dom";
 import { Home, Utensils, ShoppingBag, Wallet } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 
+const GLOBAL_ACTIVE_COLOR = "#6366f1";
+
 const NAV_ITEMS = [
-  { to: "/home",    icon: Home,        label: "Home",    color: "#6366f1" },
-  { to: "/food",    icon: Utensils,    label: "Food",    color: "#f97316" },
-  { to: "/grocery", icon: ShoppingBag, label: "Grocery", color: "#10b981" },
-  { to: "/wallet",  icon: Wallet,      label: "Wallet",  color: "#8b5cf6" },
+  { to: "/home",    icon: Home,        label: "Home" },
+  { to: "/food",    icon: Utensils,    label: "Food" },
+  { to: "/grocery", icon: ShoppingBag, label: "Grocery" },
+  { to: "/wallet",  icon: Wallet,      label: "Wallet" },
 ];
 
 const BottomNav = () => {
@@ -60,7 +62,7 @@ const BottomNav = () => {
               left: `calc(${activeIndex * 25}% + 8px)`,
               width: "calc(25% - 16px)",
               borderRadius: "16px",
-              background: NAV_ITEMS[activeIndex].color + "14",
+              background: GLOBAL_ACTIVE_COLOR + "14",
               transition: "left 0.28s cubic-bezier(0.34,1.4,0.64,1)",
               willChange: "left",
               pointerEvents: "none",
@@ -104,7 +106,7 @@ const BottomNav = () => {
                   style={{
                     width: isActive ? "1.3rem" : "1.2rem",
                     height: isActive ? "1.3rem" : "1.2rem",
-                    color: isActive ? item.color : "#9ca3af",
+                    color: isActive ? GLOBAL_ACTIVE_COLOR : "#9ca3af",
                     transition: "color 0.2s ease, width 0.2s ease, height 0.2s ease",
                     display: "block",
                   }}
@@ -126,7 +128,7 @@ const BottomNav = () => {
               <span style={{
                 fontSize: "10px",
                 fontWeight: isActive ? 700 : 500,
-                color: isActive ? item.color : "#9ca3af",
+                color: isActive ? GLOBAL_ACTIVE_COLOR : "#9ca3af",
                 transition: "color 0.2s ease, font-weight 0.2s ease",
                 lineHeight: 1,
                 userSelect: "none",
@@ -142,7 +144,7 @@ const BottomNav = () => {
                 width: "4px",
                 height: "4px",
                 borderRadius: "50%",
-                background: item.color,
+                background: GLOBAL_ACTIVE_COLOR,
                 opacity: isActive ? 1 : 0,
                 transform: `scale(${isActive ? 1 : 0})`,
                 transition: "opacity 0.2s ease, transform 0.2s cubic-bezier(0.34,1.6,0.64,1)",

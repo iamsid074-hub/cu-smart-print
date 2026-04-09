@@ -288,34 +288,7 @@ export default function FoodSearch() {
             <span className="text-[#1D1D1F] text-lg leading-none mb-0.5">‹</span>
           </button>
 
-          <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#8E8E93]" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search any dish or shop…"
-              className="w-full pl-9 pr-9 py-2.5 rounded-2xl bg-[#F2F2F7] text-[14px] font-medium text-[#1D1D1F] placeholder:text-[#8E8E93] focus:outline-none focus:ring-2 focus:ring-black/10 transition-all"
-            />
-            {searchQuery && (
-              <button
-                onMouseDown={(e) => e.preventDefault()}
-                onClick={() => setSearchQuery("")}
-                className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-[#8E8E93] flex items-center justify-center"
-              >
-                <X className="w-2.5 h-2.5 text-white" />
-              </button>
-            )}
-          </div>
-        </div>
-
-        {/* Sub-line */}
-        <div className="max-w-xl mx-auto mt-2 px-1">
-          <p className="text-[12px] text-[#8E8E93] font-medium">
-            {debouncedQuery
-              ? `Searching across all campus shops…`
-              : `${shops.length} hostel shops · Tap a shop to browse menu`}
-          </p>
+          <div className="flex-1" />
         </div>
       </div>
 
