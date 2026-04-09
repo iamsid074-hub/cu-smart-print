@@ -1,14 +1,14 @@
-﻿import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  ShoppingBag,
   Loader2,
   BadgeCheck,
   Sparkles,
-  Store,
-  ShoppingCart,
+  ShoppingBag,
   MessageSquare,
+  Search,
+  X,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
@@ -50,6 +50,7 @@ export default function FoodMenu() {
   const [isBuyModalOpen, setIsBuyModalOpen] = useState(false);
   const [expandedShop, setExpandedShop] = useState<string | null>(null);
   const [expandedMenuCat, setExpandedMenuCat] = useState<string | null>(null);
+  const [shopSearch, setShopSearch] = useState("");
 
   // Form State for direct buy (backward compatibility)
   const [location, setLocation] = useState("");
@@ -195,69 +196,88 @@ export default function FoodMenu() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F5F5F7] pt-[5.5rem] pb-16 px-4 sm:px-6 overflow-x-hidden relative font-sans text-[#1D1D1F]">
-      {/* Ambient Meshes */}
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#007AFF]/5 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute top-1/3 right-1/4 w-96 h-96 bg-[#34C759]/5 rounded-full blur-[120px] pointer-events-none" />
+    <div className="min-h-screen bg-[#F5F5F7] pb-28 overflow-x-hidden font-sans text-[#1D1D1F]">
+      <div className="max-w-xl mx-auto relative z-10">
 
-      <div className="max-w-[1600px] mx-auto relative z-10">
-        <div className="flex ios-glass p-1.5 rounded-full mb-6 shadow-sm border border-white/60 max-w-md mx-auto">
-          <button
-            onClick={() => setActiveTab("shops")}
-            className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-full text-[14px] font-bold transition-all duration-300 ${
-              activeTab === "shops"
-                ? "bg-[#1D1D1F] text-white ios-shadow scale-[1.02]"
-                : "text-[#8E8E93] hover:text-[#1D1D1F]"
-            }`}
-          >
-            <Store className="w-4 h-4" />
-            Hostel Shops
-          </button>
-          <button
-            onClick={() => setActiveTab("custom")}
-            className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-full text-[14px] font-bold transition-all duration-300 ${
-              activeTab === "custom"
-                ? "bg-[#1D1D1F] text-white ios-shadow scale-[1.02]"
-                : "text-[#8E8E93] hover:text-[#1D1D1F]"
-            }`}
-          >
-            <Sparkles className="w-4 h-4" />
-            Custom Order
-          </button>
+        {/* ── Sticky Header ── */}
+        <div className="sticky top-0 z-50 bg-white/90 backdrop-blur-xl border-b border-black/5 pt-24 pb-4 px-4">
+          {/* Tab row */}
+          <div className="flex gap-2 mb-4">
+            <button
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={() => setActiveTab("shops")}
+              className={`flex-1 py-3 rounded-2xl text-[13px] font-bold transition-all ${
+                activeTab === "shops"
+                  ? "bg-[#1D1D1F] text-white shadow-md"
+                  : "bg-[#F2F2F7] text-[#8E8E93]"
+              }`}
+            >
+              Hostel Shops
+            </button>
+            <button
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={() => setActiveTab("custom")}
+              className={`flex-1 py-3 rounded-2xl text-[13px] font-bold transition-all ${
+                activeTab === "custom"
+                  ? "bg-[#1D1D1F] text-white shadow-md"
+                  : "bg-[#F2F2F7] text-[#8E8E93]"
+              }`}
+            >
+              Custom Order
+            </button>
+          </div>
+
+          {/* Search (only on shops tab) */}
+          {activeTab === "shops" && (
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#8E8E93]" />
+              <input
+                type="text"
+                value={shopSearch}
+                onChange={(e) => setShopSearch(e.target.value)}
+                placeholder="Search any dish or shop…"
+                className="w-full pl-9 pr-9 py-2.5 rounded-2xl bg-[#F2F2F7] text-[13px] font-medium text-[#1D1D1F] placeholder:text-[#8E8E93] focus:outline-none"
+              />
+              {shopSearch && (
+                <button
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={() => setShopSearch("")}
+                  className="absolute right-3 top-1/2 -translate-y-1/2"
+                >
+                  <X className="w-4 h-4 text-[#8E8E93]" />
+                </button>
+              )}
+            </div>
+          )}
         </div>
 
         <AnimatePresence mode="wait">
           {activeTab === "shops" ? (
             <motion.div
               key="shops-tab"
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 20 }}
-              className="space-y-4"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="px-4 pt-4 pb-2 flex flex-col gap-4"
             >
-              <div className="flex items-center justify-between mb-2 px-1">
-                <p className="text-[13px] text-[#8E8E93] flex items-center gap-1.5 font-semibold">
-                  <BadgeCheck className="w-4 h-4 text-[#34C759]" />
-                  <span className="text-[#1D1D1F] font-bold">
-                    {shops.length}
-                  </span>{" "}
-                  verified campus shops
-                </p>
-              </div>
+              {/* Shop count */}
+              <p className="text-[12px] text-[#8E8E93] flex items-center gap-1.5 font-semibold px-1">
+                <BadgeCheck className="w-3.5 h-3.5 text-[#34C759]" />
+                <span className="text-[#1D1D1F] font-bold">{shops.length}</span>{" "}
+                verified campus shops
+              </p>
 
-              {sortedShops.map((shop, index) => (
-                <React.Fragment key={shop.id}>
-                  <div id={`${shop.id}-card`}>
-                    <ShopCard
-                      shop={shop}
-                      isExpanded={expandedShop === shop.id}
-                      onToggle={handleUpdateActiveShop}
-                      expandedMenuCat={expandedMenuCat}
-                      onToggleCategory={handleUpdateMenuCat}
-                      onAddItem={handleAddToCartItem}
-                    />
-                  </div>
-                </React.Fragment>
+              {sortedShops.map((shop) => (
+                <div key={shop.id} id={`${shop.id}-card`}>
+                  <ShopCard
+                    shop={shop}
+                    isExpanded={expandedShop === shop.id}
+                    onToggle={handleUpdateActiveShop}
+                    expandedMenuCat={expandedMenuCat}
+                    onToggleCategory={handleUpdateMenuCat}
+                    onAddItem={handleAddToCartItem}
+                  />
+                </div>
               ))}
             </motion.div>
           ) : (
