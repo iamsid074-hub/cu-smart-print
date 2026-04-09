@@ -34,19 +34,6 @@ const categories = [
   { id: "Furniture", label: "Furniture" },
 ];
 
-function DynamicIsland({ navigate }: { navigate: any }) {
-  return (
-    <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex justify-center w-auto">
-      <motion.div 
-        initial={{ y: -50, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        className="bg-[#1c1c1e]/80 backdrop-blur-3xl border border-white/10 shadow-[0_16px_40px_rgba(0,0,0,0.5)] rounded-full px-8 py-3 flex items-center justify-center"
-      >
-        <span className="text-[13px] sm:text-[14px] text-white font-black tracking-widest leading-none">CU BAZZAR</span>
-      </motion.div>
-    </div>
-  );
-}
 
 function HeroSpotlight() {
   const navigate = useNavigate();
@@ -116,7 +103,6 @@ export default function Home() {
 
   return (
     <div className="min-h-screen pb-32 relative bg-[#000000] text-white selection:bg-orange-500 selection:text-white">
-      <DynamicIsland navigate={navigate} />
 
       {/* Main Content Padding for Island */}
       <div className="pt-24 px-4 sm:px-6">

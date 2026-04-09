@@ -373,6 +373,7 @@ export default function VendingMachine() {
         title: "Order Successful! 🎉",
         description: "Your items are on the way to your floor.",
       });
+
       vendingCartItems.forEach((item) => removeItem(item.id));
       setShowUpiModal(false);
       setShowCheckout(false);

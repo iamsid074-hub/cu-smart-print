@@ -337,9 +337,12 @@
 }
 
 /* ─── Accessibility ─── */
-:focus-visible {
-  outline: 3px solid #FF6B6B;
-  outline-offset: 2px;
+*:focus,
+*:focus-visible,
+*:focus-within {
+  outline: none !important;
+  box-shadow: none !important;
+  -webkit-tap-highlight-color: transparent !important;
 }
 
 @media (prefers-reduced-motion: reduce) {

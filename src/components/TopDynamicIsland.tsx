@@ -409,13 +409,13 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
     case "cart":
       width = 160;
       content = (
-        <span className="text-sm font-medium tracking-wide">Opening Cart</span>
+        <span className="text-[13px] font-bold tracking-wider text-white/90 uppercase">Opening Cart</span>
       );
       break;
     case "profile":
       width = 170;
       content = (
-        <span className="text-sm font-medium tracking-wide">
+        <span className="text-[13px] font-bold tracking-wider text-white/90 uppercase">
           Viewing Profile
         </span>
       );
@@ -432,26 +432,24 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
       );
       break;
     case "active_cart":
-      width = 280;
-      height = 46;
+      width = 300;
+      height = 48;
       const totalAmount = items.reduce((acc, item) => acc + item.price * item.quantity, 0);
       content = (
-        <div className="flex items-center justify-between w-full px-2">
+        <div className="flex items-center justify-between w-full h-full pr-1">
           <div className="flex items-center gap-2">
-             <div className="w-[30px] h-[30px] rounded-full bg-emerald-500 flex items-center justify-center text-white">
-                <ShoppingBag className="w-4 h-4" />
-             </div>
-             <span className="text-[14px] font-bold text-white ml-2 tracking-wide">
-                {currentCount} item{currentCount > 1 ? 's' : ''}
+             <ShoppingBag className="w-4 h-4 text-emerald-400" />
+             <span className="text-[14px] font-bold text-white tracking-wide">
+                {currentCount} item{currentCount !== 1 ? 's' : ''}
              </span>
           </div>
           
-          <div className="flex items-center gap-4">
-             <span className="text-[15px] font-black text-white">
+          <div className="flex items-center gap-3">
+             <span className="text-[14px] font-black text-white/90">
                 ₹{totalAmount}
              </span>
-             <div className="bg-white px-3.5 py-1.5 rounded-full flex items-center justify-center active:scale-95 transition-transform">
-                <span className="text-[11px] font-black text-black uppercase tracking-wider pt-0.5">VIEW</span>
+             <div className="bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-full flex items-center justify-center active:scale-95 transition-all cursor-pointer">
+                <span className="text-[11px] font-bold text-white uppercase tracking-wider pt-0.5">VIEW</span>
              </div>
           </div>
         </div>
@@ -459,23 +457,23 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
       break;
     case "added":
       width = 300;
-      height = 64;
+      height = 60;
       content = (
         <div className="flex items-center justify-between w-full px-2">
           <div className="flex items-center gap-3 overflow-hidden">
-            <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center flex-shrink-0">
-              <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+            <div className="w-9 h-9 rounded-full bg-emerald-500 flex items-center justify-center flex-shrink-0 shadow-[0_0_15px_rgba(16,185,129,0.3)]">
+              <CheckCircle2 className="w-5 h-5 text-white" />
             </div>
-            <div className="flex flex-col items-start overflow-hidden">
-              <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider">
-                Added to Cart
+            <div className="flex flex-col items-start overflow-hidden pt-0.5">
+              <span className="text-[10px] font-black text-emerald-400 uppercase tracking-widest">
+                Added
               </span>
-              <span className="text-xs font-semibold text-white whitespace-nowrap overflow-hidden text-ellipsis max-w-[140px]">
+              <span className="text-[13px] font-bold text-white whitespace-nowrap overflow-hidden text-ellipsis max-w-[140px] leading-tight mt-0.5">
                 {latestAddedItem?.name || "Item"}
               </span>
             </div>
           </div>
-          <div className="font-mono text-sm font-bold text-white flex-shrink-0">
+          <div className="font-black text-[15px] text-white flex-shrink-0 tracking-tight">
             ₹{latestAddedItem?.price || 0}
           </div>
         </div>
@@ -571,8 +569,8 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
         );
       } else {
         content = (
-          <span className="text-[15px] font-bold tracking-widest text-white uppercase">
-            CU Bazzar
+          <span className="text-[13px] font-black tracking-widest text-white/90 uppercase z-10 drop-shadow-md">
+            CU BAZZAR
           </span>
         );
       }
@@ -581,8 +579,8 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
     default:
       width = 160;
       content = (
-        <span className="text-[15px] font-bold tracking-widest text-white uppercase">
-          CU Bazzar
+        <span className="text-[13px] font-black tracking-widest text-white/90 uppercase z-10 drop-shadow-md">
+          CU BAZZAR
         </span>
       );
       break;
@@ -657,7 +655,11 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
                     : ""
                 }`}
                 style={{
-                  background: "#000",
+                  background: "rgba(5, 5, 5, 0.8)",
+                  backdropFilter: "blur(25px)",
+                  WebkitBackdropFilter: "blur(25px)",
+                  border: "1px solid rgba(255, 255, 255, 0.12)",
+                  boxShadow: "0 15px 35px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,255,255,0.1)",
                   borderRadius: 50,
                   animation: getAnimation(),
                   position: "relative",
@@ -708,8 +710,8 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
                       justifyContent: "center",
                       width: "100%",
                       height: "100%",
-                      paddingLeft: 28,
-                      paddingRight: 16,
+                      paddingLeft: 24,
+                      paddingRight: 10,
                       color: "#fff",
                     }}
                   >
@@ -732,11 +734,13 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
                   onPointerUp={handlePointerUp}
                   className="pointer-events-auto flex items-center justify-center overflow-hidden flex-shrink-0 cursor-pointer hover:bg-zinc-900"
                   style={{
-                    background: "#000",
+                    background: "rgba(5, 5, 5, 0.8)",
+                    backdropFilter: "blur(25px)",
+                    WebkitBackdropFilter: "blur(25px)",
                     height: 40, // consistent dot size
                     borderRadius: "50%",
-                    border: "1px solid rgba(255,255,255,0.06)",
-                    boxShadow: "0 2px 10px rgba(0,0,0,0.5)",
+                    border: "1px solid rgba(255, 255, 255, 0.12)",
+                    boxShadow: "0 5px 15px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.1)",
                     zIndex: 100,
                   }}
                 >
@@ -768,11 +772,13 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
                   transition={springTransition}
                   className="pointer-events-auto flex items-center justify-center overflow-hidden flex-shrink-0"
                   style={{
-                    background: "#000",
+                    background: "rgba(5, 5, 5, 0.8)",
+                    backdropFilter: "blur(25px)",
+                    WebkitBackdropFilter: "blur(25px)",
                     height: 40,
                     borderRadius: "50%",
-                    border: "1px solid rgba(255,255,255,0.06)",
-                    boxShadow: "0 2px 10px rgba(0,0,0,0.5)",
+                    border: "1px solid rgba(255, 255, 255, 0.12)",
+                    boxShadow: "0 5px 15px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.1)",
                     zIndex: 100,
                   }}
                 >
