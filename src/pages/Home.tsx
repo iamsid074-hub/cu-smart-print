@@ -40,20 +40,16 @@ function DynamicIsland({ navigate }: { navigate: any }) {
       <motion.div 
         initial={{ y: -50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className="bg-[#1c1c1e]/80 backdrop-blur-3xl border border-white/10 shadow-[0_16px_40px_rgba(0,0,0,0.5)] rounded-full px-5 py-3 flex items-center justify-between"
+        className="bg-[#1c1c1e]/80 backdrop-blur-3xl border border-white/10 shadow-[0_16px_40px_rgba(0,0,0,0.5)] rounded-full pl-6 pr-2.5 py-2 flex items-center justify-between gap-4"
       >
-        <div className="flex items-center gap-3 px-4">
-          <span className="text-[14px] text-white font-black tracking-widest leading-none">CU BAZZAR</span>
-        </div>
+        <span className="text-[13px] sm:text-[14px] text-white font-black tracking-widest leading-none truncate">CU BAZZAR</span>
         
-        <div className="flex items-center gap-2">
-           <button 
-             onClick={() => navigate('/search')}
-             className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors border border-white/5"
-           >
-             <Search className="w-4 h-4 text-white" />
-           </button>
-        </div>
+        <button 
+          onClick={() => navigate('/search')}
+          className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors border border-white/5 shrink-0"
+        >
+          <Search className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
+        </button>
       </motion.div>
     </div>
   );
@@ -77,13 +73,9 @@ function HeroSpotlight() {
           <span className="text-[10px] font-bold tracking-[0.2em] text-white uppercase">Your Campus Marketplace</span>
         </motion.div>
         
-        <motion.h1 initial={{y: 20, opacity: 0}} animate={{y: 0, opacity: 1}} transition={{delay: 0.3}} className="text-5xl sm:text-7xl font-black text-white tracking-tighter leading-[0.95] mb-4">
+        <motion.h1 initial={{y: 20, opacity: 0}} animate={{y: 0, opacity: 1}} transition={{delay: 0.3}} className="text-5xl sm:text-7xl font-black text-white tracking-tighter leading-[0.95] text-center">
           CU<br/>Bazzar.
         </motion.h1>
-        
-        <motion.button initial={{y: 20, opacity: 0}} animate={{y: 0, opacity: 1}} transition={{delay: 0.4}} className="mt-2 px-8 py-3.5 rounded-full bg-white text-black font-bold text-[14px] hover:scale-105 active:scale-95 transition-all duration-300 shadow-[0_0_40px_rgba(255,255,255,0.3)]">
-          Taste the luxury
-        </motion.button>
       </div>
     </div>
   );
@@ -145,7 +137,7 @@ export default function Home() {
               />
               <button
                 onClick={() => setHomeMode("meal")}
-                className={`relative z-10 px-8 py-2.5 rounded-[0.9rem] text-[13px] font-bold transition-colors min-w-[140px] ${
+                className={`relative z-10 px-5 sm:px-8 py-2 sm:py-2.5 rounded-[0.9rem] text-[12px] sm:text-[13px] font-bold transition-colors min-w-[120px] sm:min-w-[140px] flex-1 sm:flex-none ${
                   homeMode === "meal" ? "text-black" : "text-gray-400 hover:text-white"
                 }`}
               >
@@ -153,7 +145,7 @@ export default function Home() {
               </button>
               <button
                 onClick={() => setHomeMode("vending")}
-                className={`relative z-10 px-8 py-2.5 rounded-[0.9rem] text-[13px] font-bold transition-colors min-w-[140px] ${
+                className={`relative z-10 px-5 sm:px-8 py-2 sm:py-2.5 rounded-[0.9rem] text-[12px] sm:text-[13px] font-bold transition-colors min-w-[120px] sm:min-w-[140px] flex-1 sm:flex-none ${
                   homeMode === "vending" ? "text-black" : "text-gray-400 hover:text-white"
                 }`}
               >

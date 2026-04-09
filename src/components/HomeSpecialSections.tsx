@@ -130,7 +130,7 @@ export default function HomeSpecialSections({
                   <button
                     key={cat.id}
                     onClick={() => onCatChange(cat.id)}
-                    className={`relative px-4 sm:px-5 py-2.5 rounded-[0.9rem] text-[12px] sm:text-[13px] font-bold whitespace-nowrap transition-all duration-300 ${
+                    className={`relative px-3 sm:px-5 py-2 sm:py-2.5 rounded-[0.9rem] text-[11px] sm:text-[13px] font-bold whitespace-nowrap transition-all duration-300 ${
                       isActive ? "text-black" : "text-gray-400 hover:text-white"
                     }`}
                   >
