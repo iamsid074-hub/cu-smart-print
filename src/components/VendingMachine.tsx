@@ -1,6 +1,6 @@
-﻿import React, { useState, useEffect, useCallback, memo } from "react";
+import React, { useState, useEffect, useCallback, memo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ShoppingBag, X, CheckCircle, ArrowRight, Zap } from "lucide-react";
+import { ShoppingBag, X, CheckCircle, ArrowRight, Zap, ScanFace, Cpu, Activity, Fingerprint, Crosshair, ChevronRight } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -181,10 +181,11 @@ const MemoizedVendingCard = memo(
             animate={
               isAnimating
                 ? {
-                    y: [0, 20, 500],
+                    y: [0, 10, 400],
+                    x: [0, 0, 0],
+                    scale: [1, 1, 0.9],
                     opacity: [1, 1, 0],
-                    scale: [1, 1.05, 0.9],
-                    rotate: [0, 2, 15],
+                    rotate: [0, 0, 0],
                   }
                 : {}
             }
@@ -193,16 +194,12 @@ const MemoizedVendingCard = memo(
               isAnimating
                 ? {
                     y: {
-                      type: "spring",
-                      stiffness: 100,
-                      damping: 20,
-                      bounce: 0.1,
-                      duration: 1.5,
+                      duration: 0.5,
+                      ease: [0.32, 0, 0.67, 0], // Quick drop acceleration
                     },
-                    opacity: { duration: 1.5 },
-                    scale: { duration: 0.2 },
+                    opacity: { duration: 0.5, ease: "easeIn" },
                   }
-                : { duration: 1.5, ease: "easeIn" }
+                : { duration: 0.2 }
             }
             className={`relative cursor-pointer z-10 will-change-transform ${
               !isVending && "group-hover:scale-105 active:scale-95"
@@ -224,23 +221,19 @@ const MemoizedVendingCard = memo(
             <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none rounded-lg" />
           </motion.div>
 
-          {/* Simple bottom coil line */}
+          {/* Realistic metal coil */}
           <div
-            className="absolute bottom-[-2px] w-[90%] h-[3px] rounded-full pointer-events-none z-20 opacity-50"
-            style={{
-              background:
-                "linear-gradient(to right, #64748b, #e2e8f0, #94a3b8, #e2e8f0, #64748b)",
-            }}
-          />
+            className="absolute bottom-[-10px] w-full h-[14px] pointer-events-none z-20 overflow-hidden"
+          >
+             <div className="w-full h-full border-b-[3px] border-slate-400 rounded-[100%] opacity-80 shadow-[0_2px_4px_rgba(0,0,0,0.4)]" />
+          </div>
         </div>
 
-        <div className="mt-2 flex flex-col items-center gap-0.5 pointer-events-none">
-          <span className="text-[7px] sm:text-[9px] font-black text-white/90 bg-slate-950/60 px-1.5 py-0.5 rounded shadow-sm border border-white/10 truncate max-w-[55px] sm:max-w-none">
-            {item.name}
-          </span>
-          <span className="text-[7px] sm:text-[8px] font-black text-emerald-400">
-            ₹{item.price}
-          </span>
+        <div className="mt-4 flex flex-col items-center gap-0.5 pointer-events-none z-20">
+          <div className="bg-[#f8f9fa] shadow-[0_2px_4px_rgba(0,0,0,0.2)] rounded-sm flex flex-col items-center px-2 py-0.5 shrink-0 border-b-2 border-slate-300 min-w-[45px]">
+             <span className="text-[6px] sm:text-[7px] font-bold text-slate-700 uppercase tracking-tighter truncate max-w-[50px] leading-tight">{item.name}</span>
+             <span className="text-[9px] sm:text-[10px] font-black text-black leading-tight">₹{item.price}</span>
+          </div>
         </div>
       </div>
     );
@@ -327,8 +320,8 @@ export default function VendingMachine() {
         setTimeout(() => {
           setVendedItemEffect(null);
           setAnimatingItem(null);
-        }, 2000);
-      }, 1500);
+        }, 1500);
+      }, 500);
     },
     [addItem, isVending]
   );
@@ -401,21 +394,49 @@ export default function VendingMachine() {
   return (
     <section className="py-12 px-4 relative overflow-hidden">
       <div className="max-w-4xl mx-auto">
-        <div className="flex flex-col items-center mb-10 text-center">
-          <h2 className="text-3xl sm:text-4xl font-black text-slate-900 mb-2">
-            Hostel Smart Vending Machine
+        <div className="flex flex-col items-center mb-6 text-center">
+          <h2 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tighter">
+            Smart Vending
           </h2>
         </div>
 
-        <div className="relative mx-auto w-full max-w-[420px]">
-          <div className="relative rounded-[28px] sm:rounded-[40px] bg-[#1a1c2c] p-4 sm:p-6 shadow-[0_20px_60px_rgba(0,0,0,0.4),inset_0_2px_10px_rgba(255,255,255,0.1)] border-t-4 sm:border-t-[6px] border-x-4 sm:border-x-[6px] border-slate-800 overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-emerald-500 to-purple-500 opacity-50 blur-sm" />
+        <div className="relative mx-auto w-full max-w-[480px]">
+          
+          {/* Machine Outer Body (Dark Metal) */}
+          <div className="relative rounded-t-[20px] rounded-b-[10px] bg-gradient-to-b from-[#1c1d21] to-[#121316] p-3 sm:p-5 shadow-[0_40px_80px_rgba(0,0,0,0.6),inset_0_2px_0_rgba(255,255,255,0.1),inset_0_0_15px_rgba(0,0,0,0.8)] border-[3px] border-[#292a30]">
+            
+            {/* Top Payment / Control Panel */}
+            <div className="w-full h-16 sm:h-20 bg-gradient-to-b from-[#0f1013] to-[#1a1b1f] rounded-lg mb-4 flex items-center justify-between px-6 border-b-4 border-[#000] shadow-[inset_0_2px_15px_rgba(0,0,0,0.8)] relative">
+               <div className="flex flex-col">
+                  <span className="text-[8px] sm:text-[10px] text-slate-500 font-bold tracking-widest uppercase mb-1">Insert Payment</span>
+                  <div className="flex gap-2">
+                     {/* Card slot */}
+                     <div className="w-10 h-6 rounded bg-gradient-to-b from-[#2a2b30] to-[#1a1b1f] border border-black flex items-center justify-center shadow-[inset_0_1px_5px_rgba(0,0,0,0.5)]">
+                        <div className="w-6 h-[3px] bg-black rounded-full" />
+                     </div>
+                     {/* Coin slot */}
+                     <div className="w-6 h-6 rounded bg-gradient-to-b from-[#2a2b30] to-[#1a1b1f] border border-black flex items-center justify-center shadow-[inset_0_1px_5px_rgba(0,0,0,0.5)]">
+                        <div className="w-1.5 h-3 bg-black rounded-full" />
+                     </div>
+                  </div>
+               </div>
+               
+               {/* Digital LCD Display */}
+               <div className="w-24 sm:w-32 h-10 bg-[#000] border-t-2 border-l-2 border-[#09090a] border-b border-r border-[#303030] rounded flex items-center justify-center shadow-[inset_0_0_15px_rgba(0,0,0,0.8)]">
+                 <span className="text-[12px] sm:text-[16px] text-[#22c55e] font-mono tracking-widest font-black" style={{ textShadow: "0 0 10px rgba(34,197,94,0.5)" }}>READY</span>
+               </div>
+            </div>
 
-            <div className="relative rounded-2xl sm:rounded-3xl bg-slate-900/40 p-3 sm:p-4 border border-white/5 flex flex-col justify-between overflow-hidden">
-              {/* Simple glass highlight — no blur */}
-              <div className="absolute inset-0 pointer-events-none rounded-3xl z-40 overflow-hidden">
-                <div className="absolute top-[-50%] left-[-20%] w-[150%] h-[200%] bg-gradient-to-tr from-transparent via-white/[0.07] to-transparent rotate-[25deg]" />
-              </div>
+            {/* Inner Glass Display Area (Illuminated Fridge) */}
+            <div className="relative rounded-lg bg-[#e2e8f0] p-2 sm:p-4 border-[12px] border-[#000] flex flex-col justify-between overflow-hidden shadow-[inset_0_30px_60px_rgba(0,0,0,0.4)]">
+              
+              {/* Inner ambient light from top */}
+              <div className="absolute top-0 inset-x-0 h-40 bg-gradient-to-b from-white/90 to-transparent pointer-events-none z-0" />
+              {/* Inner ambient light from bottom LED */}
+              <div className="absolute bottom-0 inset-x-0 h-20 bg-gradient-to-t from-white/60 to-transparent pointer-events-none z-0" />
+              
+              {/* Simplistic Glass Reflection */}
+              <div className="absolute top-[-20%] left-[-50%] w-[200%] h-[200%] bg-gradient-to-tr from-transparent via-white/[0.15] to-transparent rotate-[30deg] pointer-events-none z-30" />
 
               <div className="space-y-4">
                 {ROWS.map((row, ri) => (
@@ -432,36 +453,34 @@ export default function VendingMachine() {
                       ))}
                     </div>
                     {/* Metal Rack Line */}
-                    <div className="absolute bottom-4 sm:bottom-6 left-0 right-0 h-1.5 sm:h-2 bg-gradient-to-b from-slate-500 via-slate-600 to-slate-800 rounded-full z-0 opacity-60" />
+                    <div className="absolute bottom-4 sm:bottom-6 left-0 right-0 h-[6px] sm:h-[8px] bg-gradient-to-b from-[#cad3dd] via-[#94a3b8] to-[#475569] rounded-sm z-0 shadow-[0_5px_15px_rgba(0,0,0,0.2)] border-b border-[#334155]" />
                   </div>
                 ))}
               </div>
 
-              {/* Bottom Dispenser Bin */}
-              <div className="mt-4 border-t-[5px] border-slate-800 pt-6 pb-4 relative">
+              {/* Bottom Real Dispenser Bin */}
+              <div className="mt-4 pt-4 pb-2 relative z-20">
                 <div
-                  className="h-20 sm:h-32 bg-slate-950 rounded-xl sm:rounded-2xl flex items-center justify-center relative overflow-hidden shadow-[inset_0_4px_12px_rgba(0,0,0,0.8)] cursor-pointer group/bin"
+                  className="h-24 sm:h-28 bg-[#111] rounded-b-lg flex items-center justify-center relative overflow-hidden shadow-[inset_0_15px_25px_rgba(0,0,0,1)] border-t-[8px] border-black border-x-4 border-b-4 border-[#1c1d21] cursor-pointer group/bin transition-all active:scale-[0.98]"
                   onClick={() =>
                     vendingCartItems.length > 0 && setShowCheckout(true)
                   }
                 >
-                  <div className="absolute inset-0 bg-gradient-to-b from-black/90 to-transparent opacity-80" />
+                  {/* Push Flap Illusion */}
+                  <div className="absolute top-0 inset-x-0 h-10 bg-gradient-to-b from-[#1a1a1a] to-transparent opacity-80 z-10 border-b border-[#222]" />
 
                   <AnimatePresence>
                     {vendedItemEffect && (
                       <motion.div
                         initial={{
-                          y: -150,
+                          y: -60,
                           opacity: 0,
-                          scale: 0.6,
-                          rotate: -10,
+                          scale: 0.8
                         }}
-                        animate={{ y: 10, opacity: 1, scale: 1, rotate: 2 }}
+                        animate={{ y: 10, opacity: 1, scale: 1 }}
                         transition={{
-                          type: "spring",
-                          stiffness: 150,
-                          damping: 12,
-                          bounce: 0.05,
+                          duration: 0.2, // quick fast fall like real
+                          ease: "easeOut"
                         }}
                         exit={{ opacity: 0 }}
                         className="relative z-10 flex flex-col items-center will-change-transform"
@@ -470,8 +489,9 @@ export default function VendingMachine() {
                           src={vendedItemEffect.image}
                           loading="lazy"
                           decoding="async"
-                          className="w-16 h-16 object-contain drop-shadow-[0_15px_30px_rgba(0,0,0,0.8)]"
+                          className="w-16 h-16 object-contain drop-shadow-[0_15px_15px_rgba(0,0,0,0.6)]"
                           alt="Dropped"
+                          style={{ filter: "brightness(0.9)" }}
                         />
                       </motion.div>
                     )}
@@ -485,10 +505,11 @@ export default function VendingMachine() {
                         animate={{ opacity: 1, y: 0 }}
                         className="relative z-20 flex flex-col items-center gap-2 will-change-transform"
                       >
-                        <ShoppingBag className="w-8 h-8 text-emerald-400 animate-bounce" />
-                        <div className="px-4 py-1.5 rounded-full bg-emerald-500 text-white text-[10px] font-black uppercase tracking-widest shadow-2xl border border-white/20">
-                          Check Out {vendingCartItems.length} Item
-                          {vendingCartItems.length > 1 ? "s" : ""}
+                        <div className="relative">
+                          <ShoppingBag className="w-8 h-8 text-[#cbd5e1] drop-shadow-md" />
+                        </div>
+                        <div className="px-5 py-1.5 rounded-full bg-white text-black text-[10px] font-black tracking-widest shadow-xl border border-[#e2e8f0]">
+                          {"Grab items"}
                         </div>
                       </motion.div>
                     )}
@@ -502,7 +523,7 @@ export default function VendingMachine() {
                   initial={{ opacity: 0, scale: 0.5, y: -20 }}
                   animate={{ opacity: 1, scale: 1, y: -60 }}
                   exit={{ opacity: 0, scale: 0.8 }}
-                  className="fixed z-[99999] pointer-events-none px-4 py-2 rounded-2xl bg-slate-900 border border-emerald-500/30 text-emerald-400 font-black text-xs shadow-2xl backdrop-blur-md will-change-transform"
+                  className="fixed z-[99999] pointer-events-none px-4 py-2 rounded-lg bg-white border border-slate-200 text-black font-bold text-xs shadow-xl will-change-transform"
                   style={{
                     left: addedPopup.x - 40,
                     top: addedPopup.y,
@@ -510,16 +531,16 @@ export default function VendingMachine() {
                   }}
                 >
                   <div className="flex items-center gap-2">
-                    <CheckCircle className="w-3 h-3" /> Added {addedPopup.name}
+                     + {addedPopup.name}
                   </div>
                 </motion.div>
               )}
             </AnimatePresence>
           </div>
 
-          <div className="flex justify-between px-12 -mt-4 relative z-0">
-            <div className="w-14 h-8 bg-slate-900 rounded-b-2xl shadow-xl" />
-            <div className="w-14 h-8 bg-slate-900 rounded-b-2xl shadow-xl" />
+          <div className="flex justify-between px-10 -mt-1 relative z-0">
+            <div className="w-10 h-16 bg-gradient-to-b from-[#111115] to-[#050508] shadow-2xl border-x-[2px] border-b-[2px] border-[#000]" />
+            <div className="w-10 h-16 bg-gradient-to-b from-[#111115] to-[#050508] shadow-2xl border-x-[2px] border-b-[2px] border-[#000]" />
           </div>
         </div>
       </div>

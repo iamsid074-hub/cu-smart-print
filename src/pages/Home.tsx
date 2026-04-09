@@ -36,20 +36,13 @@ const categories = [
 
 function DynamicIsland({ navigate }: { navigate: any }) {
   return (
-    <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[92%] sm:w-auto sm:min-w-[400px]">
+    <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex justify-center w-auto">
       <motion.div 
         initial={{ y: -50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className="bg-[#1c1c1e]/80 backdrop-blur-3xl border border-white/10 shadow-[0_16px_40px_rgba(0,0,0,0.5)] rounded-full pl-6 pr-2.5 py-2 flex items-center justify-between gap-4"
+        className="bg-[#1c1c1e]/80 backdrop-blur-3xl border border-white/10 shadow-[0_16px_40px_rgba(0,0,0,0.5)] rounded-full px-8 py-3 flex items-center justify-center"
       >
-        <span className="text-[13px] sm:text-[14px] text-white font-black tracking-widest leading-none truncate">CU BAZZAR</span>
-        
-        <button 
-          onClick={() => navigate('/search')}
-          className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors border border-white/5 shrink-0"
-        >
-          <Search className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
-        </button>
+        <span className="text-[13px] sm:text-[14px] text-white font-black tracking-widest leading-none">CU BAZZAR</span>
       </motion.div>
     </div>
   );
@@ -69,13 +62,25 @@ function HeroSpotlight() {
       <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/40 to-[#000000]" />
       
       <div className="absolute inset-x-6 bottom-12 z-10 flex flex-col items-center text-center">
-        <motion.div initial={{y: 20, opacity: 0}} animate={{y: 0, opacity: 1}} transition={{delay: 0.2}} className="px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 mb-4">
-          <span className="text-[10px] font-bold tracking-[0.2em] text-white uppercase">Your Campus Marketplace</span>
-        </motion.div>
-        
-        <motion.h1 initial={{y: 20, opacity: 0}} animate={{y: 0, opacity: 1}} transition={{delay: 0.3}} className="text-5xl sm:text-7xl font-black text-white tracking-tighter leading-[0.95] text-center">
-          CU<br/>Bazzar.
-        </motion.h1>
+        <div className="relative flex flex-col items-center mt-4">
+          <motion.span
+            initial={{y: 20, opacity: 0, rotate: -6}}
+            animate={{y: 0, opacity: 1, rotate: -6}}
+            transition={{delay: 0.4, type: "spring"}}
+            className="absolute -top-10 sm:-top-16 text-[3rem] sm:text-[4.5rem] text-orange-400 font-medium whitespace-nowrap z-20 select-none"
+            style={{ fontFamily: "'Brush Script MT', 'Great Vibes', cursive", textShadow: "0px 10px 20px rgba(0,0,0,0.8)" }}
+          >
+            The Campus
+          </motion.span>
+          <motion.h1 
+            initial={{y: 20, opacity: 0}} 
+            animate={{y: 0, opacity: 1}} 
+            transition={{delay: 0.3}} 
+            className="text-[4.5rem] sm:text-[7.5rem] font-black text-white tracking-tighter leading-[0.8] text-center uppercase relative z-10 drop-shadow-2xl mb-4"
+          >
+            Bazzar
+          </motion.h1>
+        </div>
       </div>
     </div>
   );

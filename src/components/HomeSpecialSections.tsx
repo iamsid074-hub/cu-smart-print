@@ -1,5 +1,6 @@
 import { useState, useMemo, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Link } from "react-router-dom";
 import {
   Plus,
   CheckCircle2,
@@ -8,7 +9,14 @@ import {
   Sparkles,
   Heart,
   TrendingUp,
+  Search,
+  Store,
+  Truck
 } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+} from "@/components/ui/dialog";
 import { useCart } from "@/contexts/CartContext";
 import { toast } from "sonner";
 import { shops } from "@/config/shopMenus";
@@ -35,6 +43,7 @@ export default function HomeSpecialSections({
   const { addItem } = useCart();
   const [addedIds, setAddedIds] = useState<Set<string>>(new Set());
   const [likedIds, setLikedIds] = useState<Set<string>>(new Set());
+  const [selectedItem, setSelectedItem] = useState<any>(null);
 
   const filteredItems = useMemo(() => {
     if (activeCat === "combos") return comboItems;
@@ -151,11 +160,19 @@ export default function HomeSpecialSections({
       </div>
 
       {activeCat === "all" && (
-        <div className="flex items-center gap-3 mb-6 px-1">
-          <div className="w-1.5 h-6 rounded-full bg-orange-500" />
-          <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tighter">
-            Curated Editorial
-          </h2>
+        <div className="flex items-center justify-between mb-6 px-2">
+          <div className="flex items-center gap-3">
+            <div className="w-1.5 h-7 rounded-full bg-orange-500" />
+            <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tighter">
+              Curated Editorial
+            </h2>
+          </div>
+          <Link 
+            to="/search"
+            className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors border border-white/5 shrink-0"
+          >
+            <Search className="w-4 h-4 text-white" />
+          </Link>
         </div>
       )}
 
@@ -171,10 +188,11 @@ export default function HomeSpecialSections({
           return (
             <motion.div
               key={item.id}
+              onClick={() => setSelectedItem(item)}
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: (i % 8) * 0.05, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-              className={`group relative overflow-hidden rounded-[2rem] bg-[#1c1c1e] border border-white/10 hover:border-white/20 transition-all duration-500 shadow-xl ${
+              className={`group relative overflow-hidden rounded-[2rem] bg-[#1c1c1e] border border-white/10 hover:border-white/20 transition-all duration-500 shadow-xl cursor-pointer ${
                 isLarge ? "col-span-2 row-span-2 md:col-span-2 md:row-span-2" : "col-span-1 row-span-1"
               }`}
             >
@@ -222,23 +240,10 @@ export default function HomeSpecialSections({
 
                 <div className="flex items-center justify-between mt-auto">
                   <div className="flex flex-col">
-                    <span className="text-[11px] text-gray-400 font-bold tracking-wider uppercase">
-                      {item.shop || item.shopName || "Hostel Cafe"}
-                    </span>
                     <span className={`${isLarge ? 'text-2xl' : 'text-lg'} font-black text-white tracking-tight`}>
                       ₹{item.price}
                     </span>
                   </div>
-                  
-                  <motion.button
-                     whileTap={{ scale: 0.9 }}
-                     onClick={() => handleAdd(item)}
-                     className={`rounded-2xl flex items-center justify-center font-bold text-[12px] tracking-wide transition-all shadow-xl backdrop-blur-lg ${
-                       isLarge ? 'w-14 h-14 bg-white/20 hover:bg-white text-white hover:text-black border border-white/30' : 'w-10 h-10 bg-white/20 hover:bg-white text-white hover:text-black border border-white/30'
-                     }`}
-                   >
-                     {isAdded ? <CheckCircle2 className={isLarge ? "w-6 h-6" : "w-5 h-5"} /> : <Plus className={isLarge ? "w-6 h-6 stroke-[2.5]" : "w-5 h-5 stroke-[2.5]"} />}
-                  </motion.button>
                 </div>
               </div>
 
@@ -246,6 +251,50 @@ export default function HomeSpecialSections({
           );
         })}
       </div>
+      
+      <Dialog open={!!selectedItem} onOpenChange={(open) => !open && setSelectedItem(null)}>
+        <DialogContent className="max-w-[90%] w-full sm:max-w-md bg-[#1c1c1e] text-white border-white/10 p-0 rounded-3xl overflow-hidden shadow-2xl">
+          {selectedItem && (
+            <div className="flex flex-col relative">
+              <div className="w-full h-48 sm:h-56 relative bg-black">
+                <img src={selectedItem.image} alt={selectedItem.name} className="w-full h-full object-cover opacity-80" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#1c1c1e] to-transparent pointer-events-none" />
+              </div>
+              <div className="px-6 pb-6 -mt-8 relative z-10 flex flex-col">
+                <h3 className="text-3xl font-black text-white leading-tight mb-2">{selectedItem.name}</h3>
+                
+                <div className="grid grid-cols-2 gap-4 mt-6">
+                  <div className="flex flex-col p-4 bg-white/5 rounded-2xl border border-white/10">
+                    <span className="text-gray-400 text-xs font-bold uppercase tracking-wider mb-1 flex items-center gap-1.5"><Store className="w-3.5 h-3.5" /> Outlet</span>
+                    <span className="font-bold text-sm text-white truncate">{selectedItem.shop || selectedItem.shopName || "Hostel Cafe"}</span>
+                  </div>
+                  <div className="flex flex-col p-4 bg-white/5 rounded-2xl border border-white/10">
+                    <span className="text-gray-400 text-xs font-bold uppercase tracking-wider mb-1 flex items-center gap-1.5"><Truck className="w-3.5 h-3.5" /> Delivery</span>
+                    <span className="font-bold text-sm text-white truncate">15-20 Mins</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between mt-8 mb-4">
+                   <div className="flex flex-col">
+                      <span className="text-gray-400 text-xs font-bold uppercase tracking-wider">Total Price</span>
+                      <span className="text-3xl font-black text-white tracking-tight">₹{selectedItem.price}</span>
+                   </div>
+                </div>
+
+                <button 
+                  onClick={() => {
+                    handleAdd(selectedItem);
+                    setSelectedItem(null);
+                  }}
+                  className="w-full mt-2 bg-white text-[#1c1c1e] font-black text-[15px] py-4 rounded-full hover:scale-105 active:scale-95 transition-all shadow-[0_0_20px_rgba(255,255,255,0.2)]"
+                >
+                  ADD TO CART
+                </button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </section>
   );
 }
