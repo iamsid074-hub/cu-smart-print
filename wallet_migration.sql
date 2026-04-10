@@ -21,9 +21,9 @@ ALTER TABLE public.wallet_transactions ENABLE ROW LEVEL SECURITY;
 -- Policy: Users can only view their own wallet transactions
 CREATE POLICY "Users can view own wallet transactions"
     ON public.wallet_transactions FOR SELECT
-    USING (auth.uid() = user_id);
+    USING ((select auth.uid()) = user_id);
 
 -- Policy: Authenticated users can log their own transactions
 CREATE POLICY "Users can insert own wallet transactions"
     ON public.wallet_transactions FOR INSERT
-    WITH CHECK (auth.uid() = user_id);
+    WITH CHECK ((select auth.uid()) = user_id);

@@ -176,14 +176,11 @@ export default function HomeSpecialSections({
         </div>
       )}
 
-      {/* ═══ 2. ASYMMETRICAL BENTO GRID ═══ */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 auto-rows-[160px] sm:auto-rows-[200px] gap-4 sm:gap-5 px-1">
+      {/* ═══ 2. UNIFORM CARD GRID ═══ */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-5 px-1">
         {filteredItems.map((item, i) => {
           const isAdded = addedIds.has(String(item.id));
           const isLiked = likedIds.has(String(item.id));
-          
-          // Bento logic: Make every 1st and 6th item large
-          const isLarge = (i % 5 === 0);
           
           return (
             <motion.div
@@ -192,61 +189,59 @@ export default function HomeSpecialSections({
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: (i % 8) * 0.05, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-              className={`group relative overflow-hidden rounded-[2rem] bg-[#1c1c1e] border border-white/10 hover:border-white/20 transition-all duration-500 shadow-xl cursor-pointer ${
-                isLarge ? "col-span-2 row-span-2 md:col-span-2 md:row-span-2" : "col-span-1 row-span-1"
-              }`}
+              className="group relative overflow-hidden rounded-[1.5rem] bg-[#1c1c1e] border border-white/5 hover:border-white/20 transition-all duration-300 cursor-pointer flex flex-col shadow-lg"
             >
-              <img
-                src={item.image}
-                alt={item.name}
-                loading="lazy"
-                decoding="async"
-                className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1.5s] group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#000000] via-[#000000]/75 to-transparent pointer-events-none" />
+              {/* Image Container */}
+              <div className="relative aspect-[4/3] w-full overflow-hidden bg-black/20">
+                <img
+                  src={item.image}
+                  alt={item.name}
+                  loading="lazy"
+                  decoding="async"
+                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+                
+                {/* Top Actions */}
+                <div className="absolute top-3 right-3 flex items-center gap-2 z-10">
+                  <button 
+                    onClick={(e) => toggleLike(String(item.id), e)}
+                    className={`w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-md border border-white/10 transition-all ${
+                      isLiked ? "bg-red-500/90 border-red-500" : "bg-black/40 hover:bg-black/60"
+                    }`}
+                  >
+                    <Heart className={`w-3.5 h-3.5 ${isLiked ? 'fill-white text-white' : 'text-white'}`} />
+                  </button>
+                </div>
 
-              {/* Top Icons */}
-              <div className="absolute top-4 w-full px-4 flex justify-between items-start z-10">
-                {Number(item.rating) >= 4.5 && isLarge ? (
-                  <div className="px-3 py-1.5 rounded-full bg-orange-500 border border-orange-400/50 backdrop-blur-md">
-                     <span className="text-[10px] font-black text-white uppercase tracking-widest flex items-center gap-1">
-                       <TrendingUp className="w-3 h-3" /> Editor's Pick
-                     </span>
+                {Number(item.rating) >= 4.5 && (
+                  <div className="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-orange-500/90 backdrop-blur-md border border-orange-400/50 z-10">
+                    <span className="text-[9px] font-black text-white uppercase tracking-wider flex items-center gap-1">
+                      <TrendingUp className="w-2.5 h-2.5" /> Pick
+                    </span>
                   </div>
-                ) : <div/>}
-
-                <button 
-                  onClick={(e) => toggleLike(String(item.id), e)}
-                  className={`w-9 h-9 rounded-full flex items-center justify-center backdrop-blur-md border border-white/20 transition-all ${
-                    isLiked ? "bg-red-500/90 border-red-500" : "bg-black/40 hover:bg-black/60"
-                  }`}
-                >
-                  <Heart className={`w-4 h-4 ${isLiked ? 'fill-white text-white' : 'text-white'}`} />
-                </button>
+                )}
               </div>
 
-              {/* Bottom Content */}
-              <div className="absolute bottom-0 w-full p-4 sm:p-5 flex flex-col justify-end z-10 h-1/2">
-                
-                <h4 className={`font-black text-white leading-tight ${isLarge ? 'text-2xl sm:text-4xl mb-2' : 'text-[15px] sm:text-lg mb-1'} drop-shadow-md`}>
+              {/* Content */}
+              <div className="p-3 sm:p-4 flex flex-col flex-1">
+                <h4 className="font-bold text-[14px] sm:text-[15px] text-white leading-tight mb-0.5 sm:mb-1 truncate">
                   {item.name}
                 </h4>
-                
-                {isLarge && (
-                  <p className="text-gray-300 text-[13px] font-medium mb-3 max-w-[80%] hidden sm:block">
-                    A culinary masterpiece from {item.shop || item.shopName}. Hand-crafted to absolute perfection for your cravings.
-                  </p>
-                )}
+                <p className="text-gray-400 text-[11px] sm:text-[12px] mb-3 truncate">
+                  {item.shop || item.shopName}
+                </p>
 
                 <div className="flex items-center justify-between mt-auto">
-                  <div className="flex flex-col">
-                    <span className={`${isLarge ? 'text-2xl' : 'text-lg'} font-black text-white tracking-tight`}>
-                      ₹{item.price}
-                    </span>
+                  <span className="text-[15px] sm:text-[17px] font-black text-white tracking-tight">
+                    ₹{item.price}
+                  </span>
+                  
+                  <div className="flex items-center gap-1 text-[11px] font-bold text-gray-300">
+                    <Star className="w-3 h-3 text-amber-400 fill-amber-400" />
+                    {item.rating}
                   </div>
                 </div>
               </div>
-
             </motion.div>
           );
         })}

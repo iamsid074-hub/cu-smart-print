@@ -4,7 +4,7 @@
 -- =====================================================
 
 -- This fixes the issue where only the Admin can place orders.
--- The current policies likely require auth.uid() = seller_id or are completely missing for buyers.
+-- The current policies likely require (select auth.uid()) = seller_id or are completely missing for buyers.
 
 -- 1. Drop the restrictive or broken policies (if they exist)
 DROP POLICY IF EXISTS "Users can insert their own orders" ON public.orders;
@@ -18,13 +18,13 @@ CREATE POLICY "Users can insert their own orders"
 ON public.orders 
 FOR INSERT 
 TO authenticated 
-WITH CHECK (auth.uid() = buyer_id);
+WITH CHECK ((select auth.uid()) = buyer_id);
 
 -- 3. (Optional but recommended) Ensure buyers and sellers can view their own orders
 DROP POLICY IF EXISTS "Users and admins can view orders" ON public.orders;
 CREATE POLICY "Users and admins can view orders" ON public.orders FOR SELECT
   USING (
-    auth.uid() = buyer_id
-    OR auth.uid() = seller_id
-    OR EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND is_admin = true)
+    (select auth.uid()) = buyer_id
+    OR (select auth.uid()) = seller_id
+    OR EXISTS (SELECT 1 FROM public.profiles WHERE id = (select auth.uid()) AND is_admin = true)
   );

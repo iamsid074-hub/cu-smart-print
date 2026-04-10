@@ -22,12 +22,12 @@ ALTER TABLE public.admin_notifications ENABLE ROW LEVEL SECURITY;
 -- Only admins can read / update notifications
 CREATE POLICY "Admin can view notifications" ON public.admin_notifications FOR SELECT
   USING (
-    EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND is_admin = true)
+    EXISTS (SELECT 1 FROM public.profiles WHERE id = (select auth.uid()) AND is_admin = true)
   );
 
 CREATE POLICY "Admin can update notifications" ON public.admin_notifications FOR UPDATE
   USING (
-    EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND is_admin = true)
+    EXISTS (SELECT 1 FROM public.profiles WHERE id = (select auth.uid()) AND is_admin = true)
   );
 
 -- Functions (SECURITY DEFINER) need to insert without auth check
@@ -41,7 +41,7 @@ CREATE POLICY "System can insert notifications" ON public.admin_notifications FO
 DROP POLICY IF EXISTS "Admin can delete any product" ON public.products;
 CREATE POLICY "Admin can delete any product" ON public.products FOR DELETE
   USING (
-    EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND is_admin = true)
+    EXISTS (SELECT 1 FROM public.profiles WHERE id = (select auth.uid()) AND is_admin = true)
   );
 
 -- =====================================================
@@ -51,18 +51,18 @@ CREATE POLICY "Admin can delete any product" ON public.products FOR DELETE
 DROP POLICY IF EXISTS "Users can view orders they bought or sold." ON public.orders;
 CREATE POLICY "Users and admins can view orders" ON public.orders FOR SELECT
   USING (
-    auth.uid() = buyer_id
-    OR auth.uid() = seller_id
-    OR EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND is_admin = true)
+    (select auth.uid()) = buyer_id
+    OR (select auth.uid()) = seller_id
+    OR EXISTS (SELECT 1 FROM public.profiles WHERE id = (select auth.uid()) AND is_admin = true)
   );
 
 -- Allow admin to UPDATE any order (status changes)
 DROP POLICY IF EXISTS "Admin can update any order" ON public.orders;
 CREATE POLICY "Admin can update any order" ON public.orders FOR UPDATE
   USING (
-    auth.uid() = buyer_id
-    OR auth.uid() = seller_id
-    OR EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND is_admin = true)
+    (select auth.uid()) = buyer_id
+    OR (select auth.uid()) = seller_id
+    OR EXISTS (SELECT 1 FROM public.profiles WHERE id = (select auth.uid()) AND is_admin = true)
   );
 
 -- =====================================================

@@ -1,4 +1,4 @@
-﻿import { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import {
@@ -779,10 +779,11 @@ function DashboardSection({
                       >
                         <action.icon className="w-4 h-4" /> {action.label}
                       </button>
-                      {order.status === "pending" && (
+                      {!["completed", "cancelled", "seller_rejected"].includes(order.status) && (
                         <button
                           onClick={() => onUpdateStatus(order.id, "cancelled")}
                           className="px-4 py-2.5 rounded-xl border border-red-500/30 bg-red-500/10 text-red-400 text-sm font-bold hover:bg-red-500/20 transition-all"
+                          title="Cancel Order"
                         >
                           ✕
                         </button>

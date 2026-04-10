@@ -16,8 +16,8 @@ CREATE INDEX idx_profiles_username ON public.profiles(username);
 -- Turn on Row Level Security
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Public profiles are viewable by everyone." ON public.profiles FOR SELECT USING (true);
-CREATE POLICY "Users can insert their own profile." ON public.profiles FOR INSERT WITH CHECK (auth.uid() = id);
-CREATE POLICY "Users can update own profile." ON public.profiles FOR UPDATE USING (auth.uid() = id);
+CREATE POLICY "Users can insert their own profile." ON public.profiles FOR INSERT WITH CHECK ((select auth.uid()) = id);
+CREATE POLICY "Users can update own profile." ON public.profiles FOR UPDATE USING ((select auth.uid()) = id);
 
 -- 2. Products Table
 CREATE TABLE public.products (
@@ -38,9 +38,9 @@ CREATE TABLE public.products (
 
 ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Products are viewable by everyone." ON public.products FOR SELECT USING (true);
-CREATE POLICY "Authenticated users can create products." ON public.products FOR INSERT WITH CHECK (auth.role() = 'authenticated');
-CREATE POLICY "Sellers can update their own products." ON public.products FOR UPDATE USING (auth.uid() = seller_id);
-CREATE POLICY "Sellers can delete their own products." ON public.products FOR DELETE USING (auth.uid() = seller_id);
+CREATE POLICY "Authenticated users can create products." ON public.products FOR INSERT WITH CHECK ((select auth.role()) = 'authenticated');
+CREATE POLICY "Sellers can update their own products." ON public.products FOR UPDATE USING ((select auth.uid()) = seller_id);
+CREATE POLICY "Sellers can delete their own products." ON public.products FOR DELETE USING ((select auth.uid()) = seller_id);
 
 -- 3. Messages Table (For Secure In-App Chat)
 CREATE TABLE public.messages (
@@ -54,8 +54,8 @@ CREATE TABLE public.messages (
 
 ALTER TABLE public.messages ENABLE ROW LEVEL SECURITY;
 -- Users can only see messages they sent or received
-CREATE POLICY "Users can view their own messages." ON public.messages FOR SELECT USING (auth.uid() = sender_id OR auth.uid() = receiver_id);
-CREATE POLICY "Authenticated users can insert messages." ON public.messages FOR INSERT WITH CHECK (auth.role() = 'authenticated' AND auth.uid() = sender_id);
+CREATE POLICY "Users can view their own messages." ON public.messages FOR SELECT USING ((select auth.uid()) = sender_id OR (select auth.uid()) = receiver_id);
+CREATE POLICY "Authenticated users can insert messages." ON public.messages FOR INSERT WITH CHECK ((select auth.role()) = 'authenticated' AND (select auth.uid()) = sender_id);
 
 -- 4. Orders Table
 CREATE TABLE public.orders (
@@ -74,14 +74,14 @@ CREATE TABLE public.orders (
 );
 
 ALTER TABLE public.orders ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Users can view orders they bought or sold." ON public.orders FOR SELECT USING (auth.uid() = buyer_id OR auth.uid() = seller_id);
-CREATE POLICY "Buyers can create orders." ON public.orders FOR INSERT WITH CHECK (auth.role() = 'authenticated' AND auth.uid() = buyer_id);
+CREATE POLICY "Users can view orders they bought or sold." ON public.orders FOR SELECT USING ((select auth.uid()) = buyer_id OR (select auth.uid()) = seller_id);
+CREATE POLICY "Buyers can create orders." ON public.orders FOR INSERT WITH CHECK ((select auth.role()) = 'authenticated' AND (select auth.uid()) = buyer_id);
 -- Sellers update to 'confirmed', 'delivering', etc. Admin/System can also update.
-CREATE POLICY "Involved parties can update order status." ON public.orders FOR UPDATE USING (auth.uid() = buyer_id OR auth.uid() = seller_id);
+CREATE POLICY "Involved parties can update order status." ON public.orders FOR UPDATE USING ((select auth.uid()) = buyer_id OR (select auth.uid()) = seller_id);
 
 -- 5. Storage Bucket for Products
 INSERT INTO storage.buckets (id, name, public) VALUES ('product-images', 'product-images', true) ON CONFLICT (id) DO NOTHING;
 
 CREATE POLICY "Public Access" ON storage.objects FOR SELECT USING (bucket_id = 'product-images');
-CREATE POLICY "Authenticated users can upload images" ON storage.objects FOR INSERT WITH CHECK (bucket_id = 'product-images' AND auth.role() = 'authenticated');
+CREATE POLICY "Authenticated users can upload images" ON storage.objects FOR INSERT WITH CHECK (bucket_id = 'product-images' AND (select auth.role()) = 'authenticated');
 

@@ -6,22 +6,22 @@ CREATE POLICY "Users can insert own products"
 ON products
 FOR INSERT
 TO authenticated
-WITH CHECK (auth.uid() = seller_id);
+WITH CHECK ((select auth.uid()) = seller_id);
 
 -- 2. Allow any logged-in user to update their own products
 CREATE POLICY "Users can update own products"
 ON products
 FOR UPDATE
 TO authenticated
-USING (auth.uid() = seller_id)
-WITH CHECK (auth.uid() = seller_id);
+USING ((select auth.uid()) = seller_id)
+WITH CHECK ((select auth.uid()) = seller_id);
 
 -- 3. Allow any logged-in user to delete their own products
 CREATE POLICY "Users can delete own products"
 ON products
 FOR DELETE
 TO authenticated
-USING (auth.uid() = seller_id);
+USING ((select auth.uid()) = seller_id);
 
 -- 4. Allow everyone to read all products (already likely exists, but just in case)
 CREATE POLICY "Anyone can view products"
@@ -36,6 +36,6 @@ VALUES (
   'Allow authenticated uploads',
   'product-images',
   'INSERT',
-  '(auth.role() = ''authenticated'')'
+  '((select auth.role()) = ''authenticated'')'
 )
 ON CONFLICT DO NOTHING;

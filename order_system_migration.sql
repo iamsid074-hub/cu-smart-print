@@ -31,16 +31,16 @@ ALTER TABLE public.orders ADD CONSTRAINT orders_status_check CHECK (
 -- 4. Allow sellers to view orders for THEIR products
 DROP POLICY IF EXISTS "Sellers can view their sale orders" ON public.orders;
 CREATE POLICY "Sellers can view their sale orders" ON public.orders FOR SELECT
-  USING (auth.uid() = seller_id OR auth.uid() = buyer_id
-    OR EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND is_admin = true));
+  USING ((select auth.uid()) = seller_id OR (select auth.uid()) = buyer_id
+    OR EXISTS (SELECT 1 FROM public.profiles WHERE id = (select auth.uid()) AND is_admin = true));
 
 -- 5. Allow sellers to update status on their orders (accept / reject)
 DROP POLICY IF EXISTS "Sellers can update their sale orders" ON public.orders;
 CREATE POLICY "Sellers can update their sale orders" ON public.orders FOR UPDATE
-  USING (auth.uid() = seller_id OR auth.uid() = buyer_id
-    OR EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND is_admin = true));
+  USING ((select auth.uid()) = seller_id OR (select auth.uid()) = buyer_id
+    OR EXISTS (SELECT 1 FROM public.profiles WHERE id = (select auth.uid()) AND is_admin = true));
 
 -- 6. Allow buyers to insert orders (existing policy may already cover this)
 DROP POLICY IF EXISTS "Buyers can create orders." ON public.orders;
 CREATE POLICY "Buyers can create orders." ON public.orders FOR INSERT
-  WITH CHECK (auth.role() = 'authenticated' AND auth.uid() = buyer_id);
+  WITH CHECK ((select auth.role()) = 'authenticated' AND (select auth.uid()) = buyer_id);
