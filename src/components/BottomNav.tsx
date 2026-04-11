@@ -1,5 +1,6 @@
 import { memo, useMemo } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { motion } from "framer-motion";
 import { Home, Utensils, ShoppingBag, Wallet } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 
@@ -21,6 +22,8 @@ const BottomNav = () => {
     [location.pathname]
   );
 
+  const isCart = location.pathname === "/cart";
+
   if (
     location.pathname === "/" ||
     location.pathname === "/login" ||
@@ -29,7 +32,10 @@ const BottomNav = () => {
   ) return null;
 
   return (
-    <div
+    <motion.div
+      initial={{ y: 0 }}
+      animate={{ y: isCart ? 120 : 0 }}
+      transition={{ type: "spring", stiffness: 260, damping: 30 }}
       className="fixed bottom-0 left-0 right-0 z-[100] flex justify-center"
       style={{ paddingBottom: "env(safe-area-inset-bottom, 12px)" }}
     >
@@ -153,7 +159,7 @@ const BottomNav = () => {
           );
         })}
       </div>
-    </div>
+    </motion.div>
   );
 };
 
