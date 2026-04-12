@@ -47,7 +47,7 @@ export default function BlinkitAnnounceModal({ onCheck }: BlinkitAnnounceModalPr
             className="relative w-full max-w-[400px] bg-[#1c1c1e] border border-white/10 rounded-[2.5rem] overflow-hidden shadow-2xl"
           >
             {/* Branded Header */}
-            <div className="relative h-48 bg-[#FFD210] flex items-center justify-center overflow-hidden">
+            <div className="relative h-48 bg-[#FFD210] flex items-center justify-center overflow-hidden text-black">
                 <motion.div 
                     animate={{ scale: [1, 1.2, 1], rotate: [0, 5, 0] }}
                     transition={{ duration: 4, repeat: Infinity }}
@@ -58,7 +58,7 @@ export default function BlinkitAnnounceModal({ onCheck }: BlinkitAnnounceModalPr
                         <Zap className="w-8 h-8 text-[#FFD210] fill-[#FFD210]" />
                     </div>
                     <div className="text-black font-black text-2xl uppercase tracking-tighter italic">
-                        Quick Delivery
+                        BLINKIT & ZWIGATO
                     </div>
                 </div>
             </div>
@@ -66,7 +66,7 @@ export default function BlinkitAnnounceModal({ onCheck }: BlinkitAnnounceModalPr
             {/* Content */}
             <div className="p-8 text-center">
                 <h3 className="text-2xl font-black text-white mb-2 leading-tight">
-                    Blinkit & Zwigato <br /> Now Live!
+                    Order Acceptor <br /> Now Live!
                 </h3>
                 <p className="text-gray-400 text-sm leading-relaxed mb-8">
                     Need snacks or essentials? Get them delivered to your hostel room in under 15 minutes. High speed, low cost.
