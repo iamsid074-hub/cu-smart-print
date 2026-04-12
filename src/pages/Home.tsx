@@ -122,8 +122,8 @@ export default function Home() {
             <MembershipBanner />
           </div>
 
-          <div className="flex items-center justify-center mb-10 -mt-2 relative z-20 w-full px-2">
-            <div className="bg-[#1c1c1e] border border-white/10 p-1.5 rounded-[1.5rem] flex items-center shadow-2xl relative overflow-x-auto scrollbar-hide max-w-full">
+          <div className="flex items-center justify-center mb-10 -mt-2 relative z-20 w-[100vw] sm:w-full -ml-4 sm:ml-0 px-2 sm:px-0">
+            <div className="bg-[#1c1c1e] border border-white/10 p-1 sm:p-1.5 rounded-[1.5rem] flex items-center shadow-2xl relative overflow-x-auto scrollbar-hide max-w-full">
               {[
                 { id: "meal", label: "Hot Meals" },
                 { id: "vending", label: "Campus Vending" },
@@ -138,7 +138,7 @@ export default function Home() {
                       setHomeMode(mode.id as any);
                     }
                   }}
-                  className={`relative z-10 px-4 sm:px-8 py-2.5 sm:py-3 rounded-[1.2rem] text-[11px] sm:text-[13px] font-bold transition-all duration-300 whitespace-nowrap flex items-center justify-center flex-shrink-0 ${
+                  className={`relative z-10 px-3 sm:px-8 py-2 sm:py-3 rounded-[1.2rem] text-[10.5px] sm:text-[13px] font-bold transition-all duration-300 whitespace-nowrap flex items-center justify-center flex-shrink-0 ${
                     homeMode === mode.id ? "text-black" : "text-gray-400 hover:text-white"
                   }`}
                 >
