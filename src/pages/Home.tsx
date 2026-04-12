@@ -23,6 +23,7 @@ import MembershipBanner from "@/components/MembershipBanner";
 import HomeSpecialSections from "@/components/HomeSpecialSections";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import BlinkitZomatoTransition from "@/components/BlinkitZomatoTransition";
+import BlinkitAnnounceModal from "@/components/BlinkitAnnounceModal";
 import type { Database } from "@/types/supabase";
 
 const categories = [
@@ -104,6 +105,10 @@ export default function Home() {
 
   return (
     <div className="min-h-screen pb-32 relative bg-[#000000] text-white selection:bg-orange-500 selection:text-white">
+      <BlinkitAnnounceModal onCheck={() => {
+        setShowQuickTransition(true); 
+        setHomeMode("quick" as any);
+      }} />
 
       {/* Main Content Padding for Island */}
       <div className="pt-24 px-4 sm:px-6">
