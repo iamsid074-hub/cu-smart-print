@@ -6,137 +6,94 @@ interface BlinkitZomatoTransitionProps {
 }
 
 export default function BlinkitZomatoTransition({ onComplete }: BlinkitZomatoTransitionProps) {
-  const [phase, setPhase] = useState<"ready" | "warp" | "exit">("ready");
+  const [phase, setPhase] = useState<"masking" | "active" | "exit">("masking");
 
   useEffect(() => {
-    const warpTimer = setTimeout(() => setPhase("warp"), 100);
-    const exitTimer = setTimeout(() => setPhase("exit"), 1800);
-    const completeTimer = setTimeout(() => onComplete(), 2400);
+    // Stage 1: Ultra Fast Entrance
+    const activeTimer = setTimeout(() => setPhase("active"), 40);
+    // Stage 2: Sharp Swish (Very brief hold)
+    const exitTimer = setTimeout(() => setPhase("exit"), 500); 
+    // Final: Navigation (Total 800ms for that "Swish" feel)
+    const completeTimer = setTimeout(() => onComplete(), 800);
 
     return () => {
-      clearTimeout(warpTimer);
+      clearTimeout(activeTimer);
       clearTimeout(exitTimer);
       clearTimeout(completeTimer);
     };
   }, [onComplete]);
 
   return (
-    <div className="fixed inset-0 z-[99999] flex items-center justify-center overflow-hidden bg-black font-sans">
+    <div className="fixed inset-0 z-[10000] flex items-center justify-center overflow-hidden bg-black pointer-events-auto">
+      {/* 100% Solid Mask - Zero Gradient */}
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.15 }}
+        className="absolute inset-0 bg-black z-0"
+      />
+
       <AnimatePresence mode="wait">
         {phase !== "exit" && (
           <motion.div 
-            key="warp-container"
+            key="swish-content"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            exit={{ opacity: 0, scale: 1.5, filter: "brightness(2)" }}
-            transition={{ duration: 0.5 }}
+            exit={{ 
+              opacity: 0, 
+              scale: 0.95,
+              transition: { duration: 0.2, ease: "easeIn" } 
+            }}
             className="absolute inset-0 flex items-center justify-center"
           >
-            {/* Speed Line Particles (Performance Optimized) */}
-            <div className="absolute inset-0 z-0 opacity-40">
-              {[...Array(24)].map((_, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, scaleY: 0 }}
-                  animate={{ 
-                    opacity: [0, 1, 0], 
-                    scaleY: [0, 4, 0],
-                    y: ["-50%", "150%"]
-                  }}
-                  transition={{ 
-                    duration: 0.8, 
-                    repeat: Infinity, 
-                    delay: i * 0.05,
-                    ease: "linear"
-                  }}
-                  className="absolute top-0 w-[1px] h-32 bg-white/30"
-                  style={{ left: `${(i / 24) * 100}%` }}
-                />
-              ))}
-            </div>
-
-            {/* Radial Velocity Rings */}
+            {/* Blinkit Yellow - SOLID */}
             <motion.div
-              initial={{ scale: 0, opacity: 0 }}
-              animate={{ scale: [1, 2], opacity: [0.5, 0] }}
-              transition={{ duration: 1, repeat: Infinity, ease: "easeOut" }}
-              className="absolute w-[80vw] h-[80vw] rounded-full border border-yellow-400/20"
-            />
-            <motion.div
-              initial={{ scale: 0, opacity: 0 }}
-              animate={{ scale: [1, 2], opacity: [0.5, 0] }}
-              transition={{ duration: 1, repeat: Infinity, delay: 0.5, ease: "easeOut" }}
-              className="absolute w-[80vw] h-[80vw] rounded-full border border-red-500/20"
+              initial={{ x: "-100%", skewX: -15 }}
+              animate={phase === "active" ? { x: "-5%", skewX: -15 } : {}}
+              transition={{ duration: 0.35, ease: [0.19, 1, 0.22, 1] }}
+              className="absolute inset-0 w-[110%] h-full bg-[#FFD210] origin-left z-10"
             />
 
-            {/* Branded "Velocity" Panels */}
+            {/* Zomato Red - SOLID */}
             <motion.div
-              initial={{ scaleX: 0 }}
-              animate={phase === "warp" ? { scaleX: 1 } : { scaleX: 0 }}
-              transition={{ type: "spring", stiffness: 40, damping: 15 }}
-              className="absolute inset-0 bg-gradient-to-r from-[#FFD210] to-[#E23744] z-10"
+              initial={{ x: "100%", skewX: -15 }}
+              animate={phase === "active" ? { x: "5%", skewX: -15 } : {}}
+              transition={{ duration: 0.35, ease: [0.19, 1, 0.22, 1] }}
+              className="absolute inset-0 w-[110%] h-full bg-[#E23744] origin-right z-10"
             />
 
-            {/* Center Content - Redesigned for Mobile (Vertical Stack) */}
-            <motion.div 
-              initial={{ y: 40, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.6, type: "spring", stiffness: 100 }}
-              className="relative z-20 flex flex-col items-center justify-center gap-4 sm:gap-8 px-6 text-center"
+            {/* Typography Overlay */}
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={phase === "active" ? { scale: 1, opacity: 1 } : {}}
+              transition={{ delay: 0.25, duration: 0.15 }}
+              className="relative z-20 flex flex-col items-center gap-2 sm:gap-6 px-4"
             >
-              {/* Luxury Typography Stack */}
-              <div className="flex flex-col sm:flex-row items-center gap-0 sm:gap-6">
-                <motion.span 
-                  className="text-6xl sm:text-9xl font-black text-black tracking-tighter uppercase italic drop-shadow-sm leading-none"
-                >
+              <div className="flex flex-col sm:flex-row items-center gap-1 sm:gap-8">
+                <span className="text-[50px] sm:text-[100px] font-black text-black tracking-tighter uppercase italic leading-none select-none">
                   BLINKIT
-                </motion.span>
+                </span>
                 
-                <div className="relative h-12 w-12 sm:h-20 sm:w-20 my-2 sm:my-0">
-                  <motion.div 
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-                    className="absolute inset-0 border-2 border-dashed border-black rounded-full"
-                  />
-                  <div className="absolute inset-0 flex items-center justify-center font-serif italic text-3xl sm:text-5xl font-black text-white">
-                    &
-                  </div>
+                <div className="flex items-center justify-center w-14 h-14 sm:w-24 sm:h-24 rounded-full bg-white border-4 sm:border-8 border-black shadow-2xl skew-x-[-15deg]">
+                    <span className="text-2xl sm:text-5xl font-black text-red-600">&</span>
                 </div>
 
-                <motion.span 
-                  className="text-6xl sm:text-9xl font-black text-white tracking-tighter uppercase italic drop-shadow-xl leading-none"
-                >
+                <span className="text-[50px] sm:text-[100px] font-black text-white tracking-tighter uppercase italic leading-none select-none">
                   ZOMATO
-                </motion.span>
+                </span>
               </div>
 
-              {/* Unique Status Indicator */}
-              <div className="flex flex-col items-center gap-3 mt-4 sm:mt-10">
-                <div className="h-0.5 w-48 sm:w-96 bg-black/10 rounded-full overflow-hidden">
-                  <motion.div 
-                    initial={{ scaleX: 0, originX: 0 }}
-                    animate={{ scaleX: 1 }}
-                    transition={{ duration: 1.5, ease: "easeInOut" }}
-                    className="h-full bg-white shadow-[0_0_20px_white]"
-                  />
-                </div>
-                
-                <div className="flex items-center gap-3">
-                    <span className="w-2 h-2 rounded-full bg-black animate-pulse" />
-                    <p className="font-serif italic text-lg sm:text-2xl text-black/90 tracking-wide">
-                        Warping to Quick Store
-                    </p>
-                    <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
-                </div>
-                
-                <p className="text-[10px] sm:text-xs font-black uppercase tracking-[0.4em] text-white/60 mt-2">
-                  Extreme Velocity Delivery Mode
-                </p>
+              {/* Minimal "Line of Speed" - Desktop Only */}
+              <div className="hidden sm:block w-96 h-1 bg-black/20 rounded-full overflow-hidden mt-8">
+                <motion.div 
+                  initial={{ scaleX: 0, originX: 0 }}
+                  animate={phase === "active" ? { scaleX: 1 } : {}}
+                  transition={{ duration: 0.6, ease: "linear" }}
+                  className="h-full bg-white"
+                />
               </div>
             </motion.div>
-
-            {/* Vignette for Depth */}
-            <div className="absolute inset-0 bg-radial-gradient from-transparent to-black/40 pointer-events-none z-30" />
           </motion.div>
         )}
       </AnimatePresence>
