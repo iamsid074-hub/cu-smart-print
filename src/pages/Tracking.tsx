@@ -431,8 +431,6 @@ export default function Tracking() {
                       <Truck className={`w-6 h-6 animate-pulse`} />
                     ) : (
                       <Clock className={`w-6 h-6`} />
-                    )}
-                  </div>
                   </div>
                   <div>
                     <div className="flex items-center gap-1.5">
@@ -449,7 +447,7 @@ export default function Tracking() {
                       </p>
                       {order.is_quick && (
                         <span className="flex items-center gap-0.5 px-1.5 py-0.5 bg-orange-500 text-black text-[9px] font-black rounded uppercase tracking-tighter shadow-sm">
-                           Quick Delivery
+                           Blinkit / Zwigato
                         </span>
                       )}
                     </div>
