@@ -48,15 +48,15 @@ export default function BlinkitAnnounceModal({ onCheck }: BlinkitAnnounceModalPr
             <div className="max-w-[1400px] mx-auto px-5 py-4 sm:py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
               
               {/* Content */}
-              <div className="flex items-center gap-5">
-                <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center shadow-lg transform rotate-2">
-                  <Zap className="w-8 h-8 text-[#FFD210] fill-[#FFD210]" />
+              <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-5 text-center sm:text-left">
+                <div className="w-12 h-12 sm:w-14 sm:h-14 bg-white rounded-xl flex items-center justify-center shadow-lg transform rotate-2 shrink-0">
+                  <Zap className="w-6 h-6 sm:w-8 sm:h-8 text-[#FFD210] fill-[#FFD210]" />
                 </div>
                 <div className="flex flex-col text-black">
-                  <h3 className="text-xl sm:text-2xl font-black uppercase tracking-tighter leading-none mb-1">
+                  <h3 className="text-lg sm:text-2xl font-black uppercase tracking-tighter leading-tight mb-0.5">
                     Blinkit & Zwigato Live
                   </h3>
-                  <p className="text-black/80 text-[13px] sm:text-[15px] font-bold">
+                  <p className="text-black/80 text-[11px] sm:text-[15px] font-bold leading-tight max-w-[280px] sm:max-w-none mx-auto sm:mx-0">
                     Hostel snacks & essentials delivered in 15 mins.
                   </p>
                 </div>
