@@ -71,15 +71,15 @@ export default function BlinkitZomatoTransition({ onComplete }: BlinkitZomatoTra
               className="relative z-20 flex flex-col items-center gap-2 sm:gap-6 px-4"
             >
               <div className="flex flex-col sm:flex-row items-center gap-1 sm:gap-8">
-                <span className="text-[50px] sm:text-[100px] font-black text-black tracking-tighter uppercase italic leading-none select-none">
+                <span className="text-xl sm:text-2xl font-bold text-black tracking-[0.2em] uppercase leading-none select-none">
                   BLINKIT
                 </span>
                 
-                <div className="flex items-center justify-center w-14 h-14 sm:w-24 sm:h-24 rounded-full bg-white border-4 sm:border-8 border-black shadow-2xl skew-x-[-15deg]">
-                    <span className="text-2xl sm:text-5xl font-black text-red-600">&</span>
+                <div className="flex items-center justify-center w-8 h-8 sm:w-12 sm:h-12 rounded-full bg-white border-2 border-black shadow-lg skew-x-[-15deg]">
+                    <span className="text-sm sm:text-lg font-black text-red-600">&</span>
                 </div>
 
-                <span className="text-[50px] sm:text-[100px] font-black text-white tracking-tighter uppercase italic leading-none select-none">
+                <span className="text-xl sm:text-2xl font-bold text-white tracking-[0.2em] uppercase leading-none select-none">
                   ZOMATO
                 </span>
               </div>
