@@ -21,8 +21,8 @@ import VendingMachine from "@/components/VendingMachine";
 import { supabase } from "@/lib/supabase";
 import MembershipBanner from "@/components/MembershipBanner";
 import HomeSpecialSections from "@/components/HomeSpecialSections";
-import { useAuth } from "@/contexts/AuthContext";
-import { Capacitor } from "@capacitor/core";
+import { AuthProvider, useAuth } from "@/contexts/AuthContext";
+import BlinkitZomatoTransition from "@/components/BlinkitZomatoTransition";
 import type { Database } from "@/types/supabase";
 
 const categories = [
@@ -80,6 +80,7 @@ export default function Home() {
   const [activeCategory, setActiveCategory] = useState("All");
   const [activeFoodCat, setActiveFoodCat] = useState("all");
   const [homeMode, setHomeMode] = useState<"meal" | "vending" | "quick">("meal");
+  const [showQuickTransition, setShowQuickTransition] = useState(false);
 
   useEffect(() => {
     async function fetchProducts() {
@@ -126,8 +127,7 @@ export default function Home() {
                   key={mode.id}
                   onClick={() => {
                     if (mode.id === "quick") {
-                      setHomeMode("quick" as any);
-                      setTimeout(() => navigate("/quick-store"), 200);
+                      setShowQuickTransition(true);
                     } else {
                       setHomeMode(mode.id as any);
                     }
@@ -239,6 +239,11 @@ export default function Home() {
           </AnimatePresence>
         </div>
       </div>
+      <AnimatePresence>
+        {showQuickTransition && (
+          <BlinkitZomatoTransition onComplete={() => navigate("/quick-store")} />
+        )}
+      </AnimatePresence>
     </div>
   );
 }
