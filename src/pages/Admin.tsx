@@ -37,6 +37,7 @@ import {
   Filter,
   Wrench,
   Crown,
+  Zap,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
