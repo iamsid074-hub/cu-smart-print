@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -65,29 +65,43 @@ export const useMembership = () => {
 
       if (profile && profile.membership_plan) {
         used = profile.free_deliveries_used || 0;
-        lastReset =
-          profile.membership_last_reset || profile.membership_start_date;
+        const totalLimit = getDeliveriesLimit(profile.membership_plan as MembershipPlan);
+        let shouldExpire = false;
 
-        // Automatic 7-day reset logic
-        if (lastReset) {
-          const resetDate = new Date(lastReset);
+        // Determine if exactly 7 days have passed since subscription started
+        const startDate = profile.membership_start_date;
+        if (startDate) {
+          const sDate = new Date(startDate);
           const now = new Date();
-          const daysSinceReset =
-            (now.getTime() - resetDate.getTime()) / (1000 * 60 * 60 * 24);
+          const daysSinceStart = (now.getTime() - sDate.getTime()) / (1000 * 60 * 60 * 24);
 
-          if (daysSinceReset >= 7) {
-            // Reset the used count and update last_reset
-            used = 0;
-            lastReset = now.toISOString();
-
-            await supabase
-              .from("profiles")
-              .update({
-                free_deliveries_used: 0,
-                membership_last_reset: lastReset,
-              })
-              .eq("id", user.id);
+          if (daysSinceStart >= 7) {
+            shouldExpire = true;
           }
+        }
+
+        // Determine if delivery limit has been reached
+        if (used >= totalLimit) {
+          shouldExpire = true;
+        }
+
+        // Expire subscription logic
+        if (shouldExpire) {
+          await supabase
+            .from("profiles")
+            .update({
+              membership_plan: null,
+              membership_start_date: null,
+              membership_last_reset: null,
+              free_deliveries_used: 0,
+            })
+            .eq("id", user.id);
+
+          profile.membership_plan = null;
+          used = 0;
+          lastReset = null;
+        } else {
+          lastReset = profile.membership_last_reset || profile.membership_start_date;
         }
       }
 

@@ -689,7 +689,7 @@ function DashboardSection({
                         </div>
                       )}
                       <p className="text-lg font-black text-neon-fire mt-1">
-                        ₹{order.total_price.toLocaleString()}
+                        ₹{(order.total_price || 0).toLocaleString()}
                       </p>
                     </div>
                   </div>
@@ -1285,7 +1285,7 @@ function ItemOrdersSection({
                         {order.products?.title || "Product Removed"}
                       </p>
                       <p className="text-neon-fire font-bold text-lg">
-                        ₹{order.total_price.toLocaleString()}
+                        ₹{(order.total_price || 0).toLocaleString()}
                       </p>
                       <div className="flex flex-wrap items-center gap-2 mt-1">
                         {order.products?.category && (
@@ -1736,7 +1736,7 @@ function FoodOrdersSection({
                       <div className="mt-2 pt-2 border-t border-orange-500/10 flex items-center justify-between">
                         <span className="text-xs text-slate-500">Total</span>
                         <span className="text-base font-black text-orange-400">
-                          ₹{order.total_price.toLocaleString()}
+                          ₹{(order.total_price || 0).toLocaleString()}
                         </span>
                       </div>
                     )}
@@ -1892,7 +1892,7 @@ function NotificationsSection({
         <div className="space-y-3">
           {notifications.map((n, i) => {
             const isProduct = n.type === "new_product";
-            const payload = n.payload;
+            const payload = n.payload || {};
             return (
               <motion.div
                 key={n.id}

@@ -74,13 +74,13 @@ export default function QuickStore() {
       const hour = now.getHours();
       // Store open from 10 PM to 2 AM
       setIsOpen(hour >= 22 || hour < 2);
-      // Squad only from 12 AM to 2 AM (or always for Admin)
-      setIsSquadTime(isAdmin || (hour >= 0 && hour < 2));
+      // Squad always visible
+      setIsSquadTime(true);
     };
     checkTime();
     const timer = setInterval(checkTime, 60000);
     return () => clearInterval(timer);
-  }, [isAdmin]);
+  }, []);
 
   useEffect(() => {
     async function fetchProducts() {
