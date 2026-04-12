@@ -20,7 +20,8 @@ export default function UserLocationCard() {
 
   return (
     <>
-      <div className="absolute top-[4.5rem] sm:top-[6rem] left-0 right-0 z-[99] pointer-events-none flex justify-center">
+      <div className="h-28" />
+      <div className="absolute top-[6.5rem] sm:top-[7.5rem] left-0 right-0 z-[99] pointer-events-none flex justify-center">
         <div className="w-full max-w-[1200px] px-4 lg:px-12">
           <motion.div
             initial={{ opacity: 0, y: -8 }}

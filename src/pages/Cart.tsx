@@ -441,7 +441,8 @@ export default function Cart() {
   };
 
     return (
-    <div className="min-h-screen bg-[#FAFAFA] text-slate-900 pt-[5.5rem] pb-32 px-4 sm:px-6 font-sans">
+    <div className="min-h-screen bg-[#FAFAFA] text-slate-900 pb-32 px-4 sm:px-6 font-sans">
+      <div className="h-28" /> {/* Safe area for Dynamic Island */}
       {/* Risk Detection Alert */}
       <RiskAlert
         isOpen={showRiskAlert}

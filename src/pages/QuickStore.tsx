@@ -129,10 +129,9 @@ export default function QuickStore() {
 
   return (
     <div className="min-h-screen bg-[#000000] pb-32 overflow-x-hidden text-white selection:bg-orange-500">
-      
-
       {/* ── Sticky Header ── */}
-      <div className="sticky top-0 z-50 bg-black/80 backdrop-blur-2xl border-b border-white/5 pt-12 pb-6 px-4">
+      <div className="sticky top-0 z-50 bg-black/90 backdrop-blur-2xl border-b border-white/5 pb-6 px-4">
+        <div className="h-28" /> {/* Safe area for Dynamic Island */}
         <div className="max-w-xl mx-auto space-y-5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
