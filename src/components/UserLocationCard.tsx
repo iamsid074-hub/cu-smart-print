@@ -20,13 +20,13 @@ export default function UserLocationCard() {
 
   return (
     <>
-      <div className="absolute top-[6.5rem] sm:top-[7.5rem] left-0 right-0 z-[99] pointer-events-none flex justify-center">
-        <div className="w-full max-w-[1200px] px-4 lg:px-12">
+      <div className="absolute top-[5rem] sm:top-[6rem] left-0 right-0 z-[99] pointer-events-none flex justify-center">
+        <div className="w-full max-w-[1240px] px-8 sm:px-12 lg:px-16">
           <motion.div
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, ease: "easeOut" }}
-            className="relative w-full rounded-2xl overflow-hidden pointer-events-auto"
+            className="relative w-full rounded-3xl overflow-hidden pointer-events-auto"
             style={{
               background:
                 "linear-gradient(135deg, #7c3aed 0%, #a855f7 30%, #6d28d9 60%, #8b5cf6 100%)",
@@ -35,7 +35,7 @@ export default function UserLocationCard() {
             }}
           >
             {/* Animated glow orbs */}
-            <div className="absolute inset-0 overflow-hidden rounded-2xl">
+            <div className="absolute inset-0 overflow-hidden rounded-3xl">
               <motion.div
                 animate={{ x: [0, 30, 0], y: [0, -10, 0], scale: [1, 1.2, 1] }}
                 transition={{
