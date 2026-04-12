@@ -431,6 +431,7 @@ export default function Tracking() {
                       <Truck className={`w-6 h-6 animate-pulse`} />
                     ) : (
                       <Clock className={`w-6 h-6`} />
+                    )}
                   </div>
                   <div>
                     <div className="flex items-center gap-1.5">
