@@ -97,7 +97,7 @@ export default function QuickStore() {
         setProducts(data || []);
       } catch (err) {
         console.error("Error fetching quick store products:", err);
-        toast.error("Failed to load products");
+        // Silent fail for non-critical query
       } finally {
         setLoading(false);
       }
@@ -188,6 +188,7 @@ export default function QuickStore() {
                         <img 
                           src={partner.image} 
                           alt={partner.name} 
+                          loading="lazy"
                           className={`w-full h-full object-cover ${partner.available ? "grayscale-0" : "grayscale"} transition-all duration-500`} 
                         />
                       </div>

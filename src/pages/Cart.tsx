@@ -326,6 +326,7 @@ export default function Cart() {
       payment_method: paymentMethod === "online" ? "cashfree" : "cod",
       payment_status: paymentMethod === "online" ? "paid" : "pending",
       razorpay_payment_id: paymentId || null,
+      is_quick: hasQuickItem,
       seller_notified_at: new Date().toISOString(),
     });
 
@@ -566,18 +567,18 @@ export default function Cart() {
           >
             <div className="flex justify-between items-start mb-4">
               <h2 className="text-3xl font-bold text-[#8B5CF6]">
-                 #ORD {activeOrder.id.toString().replace(/[^0-9]/g, '').slice(-4) || '9241'}
+                 #ORD {activeOrder?.id?.toString().replace(/[^0-9]/g, '').slice(-4) || '9241'}
               </h2>
               <span className="px-3 py-1.5 bg-[#FFF7ED] text-[#EA580C] text-[11px] font-bold rounded-md capitalize">
-                 {activeOrder.status.replace('_', ' ')}
+                 {activeOrder?.status?.replace('_', ' ') || 'Pending'}
               </span>
             </div>
             <p className="text-sm font-medium text-slate-500 mb-0.5">Estimated Arrival</p>
             <p className="text-base font-bold text-slate-900 mb-5">
-               {activeOrder.status === 'pending' ? 'Payment Pending' : 'Preparing Order'}
+               {activeOrder?.status === 'pending' ? 'Payment Pending' : 'Preparing Order'}
             </p>
             <Link
-              to={`/tracking?order=${activeOrder.id}`}
+              to={`/tracking?order=${activeOrder?.id}`}
               className="w-full bg-[#FAFAFA] hover:bg-slate-100 text-slate-800 py-3 rounded-2xl font-bold transition-all flex items-center justify-center gap-2 text-sm border border-slate-100"
             >
               Track Order <ArrowRight className="w-4 h-4 text-slate-400" />

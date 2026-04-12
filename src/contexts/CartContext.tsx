@@ -1,4 +1,4 @@
-﻿import {
+import {
   createContext,
   useContext,
   useState,
@@ -68,7 +68,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   }, [additionHistory]);
 
-  const addItem = (
+  const addItem = useCallback((
     item: Omit<CartItem, "quantity"> & { quantity?: number }
   ) => {
     const now = Date.now();
@@ -89,19 +89,21 @@ export function CartProvider({ children }: { children: ReactNode }) {
       timestamp: now,
     });
     setAdditionHistory((prev) => [...prev.slice(-15), now]);
-  };
+  }, []);
 
-  const removeItem = (id: string) => {
-    const found = items.find((i) => i.id === id);
-    setItems((prev) => prev.filter((i) => i.id !== id));
-    setLastAction({
-      type: "remove",
-      itemTitle: found?.title,
-      timestamp: Date.now(),
+  const removeItem = useCallback((id: string) => {
+    setItems((prev) => {
+      const found = prev.find((i) => i.id === id);
+      setLastAction({
+        type: "remove",
+        itemTitle: found?.title,
+        timestamp: Date.now(),
+      });
+      return prev.filter((i) => i.id !== id);
     });
-  };
+  }, []);
 
-  const updateQuantity = (id: string, qty: number) => {
+  const updateQuantity = useCallback((id: string, qty: number) => {
     if (qty <= 0) {
       removeItem(id);
       return;
@@ -109,12 +111,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setItems((prev) =>
       prev.map((i) => (i.id === id ? { ...i, quantity: qty } : i))
     );
-  };
+  }, [removeItem]);
 
-  const clearCart = () => {
+  const clearCart = useCallback(() => {
     setItems([]);
     setLastAction({ type: "clear", timestamp: Date.now() });
-  };
+  }, []);
 
   const totalItems = useMemo(
     () => items.reduce((sum, i) => sum + i.quantity, 0),
