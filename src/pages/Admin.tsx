@@ -47,6 +47,7 @@ type AdminSection =
   | "products"
   | "item_orders"
   | "food_orders"
+  | "quick_store"
   | "subscriptions"
   | "notifications";
 
@@ -1448,6 +1449,97 @@ function ItemOrdersSection({
   );
 }
 
+// ─── Blinkit / Zwigato Section ────────────────────────────────────────────────────────
+function QuickStoreSection({
+  products,
+  loading,
+  onToggleQuick,
+}: {
+  products: Product[];
+  loading: boolean;
+  onToggleQuick: (id: string, isQuick: boolean) => void;
+}) {
+  const [searchTerm, setSearchTerm] = useState("");
+  const filtered = products.filter(
+    (p) =>
+      p.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      p.category.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  return (
+    <div className="space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 className="text-2xl font-black mb-1 flex items-center gap-2">
+            <Zap className="w-6 h-6 text-orange-500" /> Blinkit / Zwigato ⚡
+          </h2>
+          <p className="text-slate-500 text-sm">
+            Manage high-speed delivery inventory (15 min delivery)
+          </p>
+        </div>
+        <div className="relative">
+          <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+          <input
+            type="text"
+            placeholder="Search products..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-orange-500 transition-all w-full sm:w-64"
+          />
+        </div>
+      </div>
+
+      {loading ? (
+        <div className="flex justify-center py-20">
+          <Loader2 className="w-8 h-8 animate-spin text-orange-500" />
+        </div>
+      ) : (
+        <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="bg-slate-50 border-b border-slate-200">
+                  <th className="px-6 py-4 text-xs font-black uppercase text-slate-500 tracking-wider">Product</th>
+                  <th className="px-6 py-4 text-xs font-black uppercase text-slate-500 tracking-wider">Category</th>
+                  <th className="px-6 py-4 text-xs font-black uppercase text-slate-500 tracking-wider">Price</th>
+                  <th className="px-6 py-4 text-xs font-black uppercase text-slate-500 tracking-wider">Quick Status</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {filtered.map((product) => (
+                  <tr key={product.id} className="hover:bg-slate-50/50 transition-colors">
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        <img src={product.image_url || "/logo.webp"} className="w-10 h-10 rounded-lg object-cover border border-slate-200" alt="" />
+                        <span className="font-bold text-slate-900 text-sm">{product.title}</span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 text-sm text-slate-500 font-medium">{product.category}</td>
+                    <td className="px-6 py-4 text-sm font-black text-slate-900">₹{product.price}</td>
+                    <td className="px-6 py-4">
+                      <button
+                        onClick={() => onToggleQuick(product.id, !(product as any).is_quick)}
+                        className={`flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
+                          (product as any).is_quick
+                            ? "bg-orange-500 text-white shadow-lg shadow-orange-500/20"
+                            : "bg-slate-100 text-slate-400 border border-slate-200"
+                        }`}
+                      >
+                        <Zap className={`w-3.5 h-3.5 ${(product as any).is_quick ? "fill-white" : ""}`} />
+                        {(product as any).is_quick ? "QUICK ENABLED" : "MARK QUICK"}
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── Food Orders Section ────────────────────────────────────────────────────────
 function FoodOrdersSection({
   orders,
@@ -2559,6 +2651,12 @@ export default function Admin() {
         undefined,
     },
     {
+      id: "quick_store",
+      label: "Blinkit / Zwigato ⚡",
+      icon: Zap,
+      badge: products.filter(p => (p as any).is_quick).length || undefined,
+    },
+    {
       id: "subscriptions",
       label: "Subscriptions",
       icon: Crown,
@@ -2776,6 +2874,16 @@ export default function Admin() {
                   loading={loadingOrders}
                   onUpdateStatus={handleUpdateOrderStatus}
                   onVerifyUpi={handleVerifyUpi}
+                />
+              )}
+              {section === "quick_store" && (
+                <QuickStoreSection
+                  products={products}
+                  loading={loadingProducts}
+                  onToggleQuick={async (id, isQuick) => {
+                    await supabase.from("products").update({ is_quick: isQuick }).eq("id", id);
+                    setProducts(prev => prev.map(p => p.id === id ? { ...p, is_quick: isQuick } : p));
+                  }}
                 />
               )}
               {section === "subscriptions" && (

@@ -49,6 +49,7 @@ export default function Profile() {
 
   const [fullName, setFullName] = useState("");
   const [hostelBlock, setHostelBlock] = useState("");
+  const [roomNumber, setRoomNumber] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
 
   // Hostel Options
@@ -84,6 +85,7 @@ export default function Profile() {
         setProfile(data);
         setFullName(data.full_name || "");
         setHostelBlock(data.hostel_block || "");
+        setRoomNumber(data.room_number || "");
         setPhoneNumber(data.phone_number || "");
       }
 
@@ -231,6 +233,7 @@ export default function Profile() {
         id: user.id,
         full_name: fullName || user.email?.split("@")[0] || "Student",
         hostel_block: hostelBlock,
+        room_number: roomNumber,
         phone_number: phoneNumber,
       };
       if (formattedUsername) payload.username = formattedUsername;
@@ -545,6 +548,15 @@ export default function Profile() {
                       className="bg-transparent text-[14px] font-bold outline-none w-full text-white placeholder:font-medium placeholder:text-gray-500"
                     />
                   </div>
+                  <div className="flex items-center gap-2 px-4 py-3 rounded-[1.2rem] bg-white/5 border border-white/10 shadow-sm">
+                    <MapPin className="w-4 h-4 text-gray-500" />
+                    <input
+                      value={roomNumber}
+                      onChange={(e) => setRoomNumber(e.target.value)}
+                      placeholder="Room Number (e.g. 502, G-12)"
+                      className="bg-transparent text-[14px] font-bold outline-none w-full text-white placeholder:font-medium placeholder:text-gray-500"
+                    />
+                  </div>
                 </div>
               ) : (
                 <div className="flex flex-col gap-2.5">
@@ -558,6 +570,12 @@ export default function Profile() {
                     <Phone className="w-4 h-4 text-orange-500" />
                     <span className="text-[14px] font-bold">
                       {profile?.phone_number || "Contact not set"}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-center sm:justify-start gap-2.5 text-white">
+                    <MapPin className="w-4 h-4 text-orange-500" />
+                    <span className="text-[14px] font-bold">
+                      Room: {profile?.room_number || "Not set"}
                     </span>
                   </div>
                 </div>

@@ -21,6 +21,7 @@ const Wallet = lazy(() => import("./pages/Wallet"));
 const Grocery = lazy(() => import("./pages/Grocery"));
 const ProductDetail = lazy(() => import("./pages/ProductDetail"));
 const FoodMenu = lazy(() => import("./pages/FoodMenu"));
+const QuickStore = lazy(() => import("./pages/QuickStore"));
 
 // Core pages to preload for flawless switching
 const preloadCoreRoutes = () => {
@@ -302,6 +303,14 @@ function AppLayout() {
               element={
                 <ProtectedRoute>
                   <FoodMenu />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/quick-store"
+              element={
+                <ProtectedRoute>
+                  <QuickStore />
                 </ProtectedRoute>
               }
             />

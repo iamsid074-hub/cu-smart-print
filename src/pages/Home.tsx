@@ -79,7 +79,7 @@ export default function Home() {
   const [productsLoading, setProductsLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState("All");
   const [activeFoodCat, setActiveFoodCat] = useState("all");
-  const [homeMode, setHomeMode] = useState<"meal" | "vending">("meal");
+  const [homeMode, setHomeMode] = useState<"meal" | "vending" | "quick">("meal");
 
   useEffect(() => {
     async function fetchProducts() {
@@ -116,32 +116,36 @@ export default function Home() {
 
           {/* Luxury Mode Switcher */}
           <div className="flex items-center justify-center mb-10 -mt-2 relative z-20">
-            <div className="bg-white/5 backdrop-blur-2xl border border-white/10 p-1.5 rounded-[1.2rem] flex items-center shadow-lg relative">
-              <motion.div
-                layout
-                transition={{ type: "spring", stiffness: 400, damping: 35 }}
-                className="absolute top-1.5 bottom-1.5 rounded-[0.9rem] bg-white shadow-md border border-white"
-                style={{
-                  left: homeMode === "meal" ? "6px" : "calc(50% + 3px)",
-                  width: "calc(50% - 9px)",
-                }}
-              />
-              <button
-                onClick={() => setHomeMode("meal")}
-                className={`relative z-10 px-5 sm:px-8 py-2 sm:py-2.5 rounded-[0.9rem] text-[12px] sm:text-[13px] font-bold transition-colors min-w-[120px] sm:min-w-[140px] flex-1 sm:flex-none ${
-                  homeMode === "meal" ? "text-black" : "text-gray-400 hover:text-white"
-                }`}
-              >
-                Hot Meals
-              </button>
-              <button
-                onClick={() => setHomeMode("vending")}
-                className={`relative z-10 px-5 sm:px-8 py-2 sm:py-2.5 rounded-[0.9rem] text-[12px] sm:text-[13px] font-bold transition-colors min-w-[120px] sm:min-w-[140px] flex-1 sm:flex-none ${
-                  homeMode === "vending" ? "text-black" : "text-gray-400 hover:text-white"
-                }`}
-              >
-                Campus Vending
-              </button>
+            <div className="bg-white/5 backdrop-blur-2xl border border-white/10 p-1.5 rounded-[1.5rem] flex items-center shadow-2xl relative overflow-hidden">
+              {[
+                { id: "meal", label: "Hot Meals" },
+                { id: "vending", label: "Campus Vending" },
+                { id: "quick", label: "Blinkit / Zwigato" }
+              ].map((mode) => (
+                <button
+                  key={mode.id}
+                  onClick={() => {
+                    if (mode.id === "quick") {
+                      setHomeMode("quick" as any);
+                      setTimeout(() => navigate("/quick-store"), 200);
+                    } else {
+                      setHomeMode(mode.id as any);
+                    }
+                  }}
+                  className={`relative z-10 px-6 sm:px-10 py-2.5 sm:py-3 rounded-[1.2rem] text-[11px] sm:text-[13px] font-bold transition-all duration-300 min-w-[100px] sm:min-w-[140px] flex items-center justify-center ${
+                    homeMode === mode.id ? "text-black" : "text-gray-400 hover:text-white"
+                  }`}
+                >
+                  {homeMode === mode.id && (
+                    <motion.div
+                      layoutId="active-pill"
+                      className="absolute inset-0 bg-white rounded-[1.2rem] shadow-xl"
+                      transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                    />
+                  )}
+                  <span className="relative z-20">{mode.label}</span>
+                </button>
+              ))}
             </div>
           </div>
 

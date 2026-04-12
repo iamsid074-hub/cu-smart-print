@@ -43,7 +43,7 @@ export default function Cart() {
     totalPrice,
     rapidAddDetected,
   } = useCart();
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
   const {
@@ -60,18 +60,29 @@ export default function Cart() {
   const [phone, setPhone] = useState("");
 
   useEffect(() => {
-    if (locationLoaded && locationData) {
-      if (locationData.hostel) setHostel(locationData.hostel);
-      if (locationData.room) {
-        setRoom(locationData.room);
-        const firstDigit = parseInt(locationData.room[0]);
-        if (!isNaN(firstDigit) && firstDigit > 0) {
-          setFloor(firstDigit);
-        }
+    if (locationLoaded) {
+      if (locationData) {
+        if (locationData.hostel) setHostel(locationData.hostel);
+        if (locationData.room) setRoom(locationData.room);
+        if (locationData.phone) setPhone(locationData.phone);
+      } else if (profile) {
+        // Fallback to profile data if local storage is empty
+        if (profile.hostel_block) setHostel(profile.hostel_block);
+        if (profile.room_number) setRoom(profile.room_number);
+        if (profile.phone_number) setPhone(profile.phone_number);
       }
-      if (locationData.phone) setPhone(locationData.phone);
     }
-  }, [locationLoaded, locationData]);
+  }, [locationLoaded, locationData, profile]);
+
+  // Sync floor whenever room changes
+  useEffect(() => {
+    if (room && room.length > 0) {
+      const firstDigit = parseInt(room[0]);
+      if (!isNaN(firstDigit) && firstDigit > 0) {
+        setFloor(firstDigit);
+      }
+    }
+  }, [room]);
 
   const [paymentMethod, setPaymentMethod] = useState<"online" | "cod">(
     "online"
@@ -204,6 +215,10 @@ export default function Cart() {
     (item) =>
       item.category !== "Vending Machine" &&
       item.category?.toLowerCase() !== "grocery"
+  ), [items]);
+
+  const hasQuickItem = useMemo(() => items.some(
+    (item) => (item as any).id?.startsWith("grocery-") || (item as any).is_quick
   ), [items]);
 
   const hasFlavourCombo = useMemo(() => items.some(
@@ -594,7 +609,14 @@ export default function Cart() {
           <>
             {/* Cart Items */}
             <div className="bg-white rounded-3xl p-6 px-4 sm:px-6 shadow-[0_4px_20px_rgba(0,0,0,0.03)] mb-6 z-10 relative">
-              <h3 className="text-[17px] font-bold text-slate-900 mb-5">Order Items</h3>
+              <div className="flex items-center justify-between mb-5">
+                <h3 className="text-[17px] font-bold text-slate-900">Order Items</h3>
+                {hasQuickItem && (
+                   <span className="flex items-center gap-1.5 px-3 py-1 bg-orange-50 text-orange-600 rounded-full text-[11px] font-black uppercase tracking-tighter border border-orange-100">
+                     <Zap className="w-3.5 h-3.5 fill-orange-600" /> Quick Delivery
+                   </span>
+                )}
+              </div>
               
               <div className="space-y-6">
                 {useMemo(() => (

@@ -55,7 +55,7 @@ export default function Grocery() {
           <div className="flex items-center justify-between mb-6">
             <div>
               <h1 className="text-2xl font-black text-white tracking-tight uppercase" style={fontH}>
-                Quick Mart
+                Blinkit / Zwigato
               </h1>
               <p className="text-[11px] text-gray-400 font-bold uppercase tracking-widest mt-0.5">
                 Fresh Groceries Delivered in min.

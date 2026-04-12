@@ -1,4 +1,4 @@
-﻿import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Package,
@@ -29,7 +29,7 @@ function getOrderType(order: any): "food" | "item" | "vending" | "cart" {
 
   if (loc.includes("[VENDING MACHINE:") || room.includes("[VENDING MACHINE:"))
     return "vending";
-  if (room.includes("[ITEMS:")) return "cart";
+  if (room.includes("[ITEMS:") || order.is_quick) return "cart";
   if (loc.includes("[Custom Food:") || room.includes("[CUSTOM FOOD ORDER]"))
     return "food";
   return "item";
@@ -207,8 +207,9 @@ function getDeliveryInfo(
       : Date.now();
     const elapsed = Math.floor((Date.now() - startTime) / 60000);
     const remaining =
+      order.is_quick ? Math.max(1, 12 - elapsed) :
       type === "food" ? Math.max(1, 15 - elapsed) : Math.max(1, 25 - elapsed);
-    return { text: `~${remaining} min`, subtext: "On the way to you" };
+    return { text: `~${remaining} min`, subtext: order.is_quick ? "Near your hostel" : "On the way to you" };
   }
 
   // Before "Out for Delivery" — don't show estimated time
@@ -218,7 +219,7 @@ function getDeliveryInfo(
     order.status === "seller_accepted"
   ) {
     return {
-      text: type === "food" ? "Preparing..." : "Processing...",
+      text: order.is_quick ? "Packing..." : type === "food" ? "Preparing..." : "Processing...",
       subtext: "Estimated time will appear once dispatched",
     };
   }
@@ -239,8 +240,9 @@ export default function Tracking() {
     if (!user) return;
     let query = supabase.from("orders").select(`
         *,
+        is_quick,
         products(id, title, image_url, price),
-        buyer:profiles!orders_buyer_id_fkey(full_name, phone_number, hostel_block),
+        buyer:profiles!orders_buyer_id_fkey(full_name, phone_number, hostel_block, room_number),
         seller:profiles!orders_seller_id_fkey(full_name, phone_number, hostel_block)
       `);
 
@@ -431,18 +433,26 @@ export default function Tracking() {
                       <Clock className={`w-6 h-6`} />
                     )}
                   </div>
+                  </div>
                   <div>
-                    <p
-                      className={`text-xs font-bold uppercase tracking-wider ${
-                        displayType === "food"
-                          ? "text-orange-600"
-                          : "text-brand"
-                      }`}
-                    >
-                      {order.status === "delivering"
-                        ? "Estimated Delivery"
-                        : "Status"}
-                    </p>
+                    <div className="flex items-center gap-1.5">
+                      <p
+                        className={`text-xs font-bold uppercase tracking-wider ${
+                          displayType === "food"
+                            ? "text-orange-600"
+                            : "text-brand"
+                        }`}
+                      >
+                        {order.status === "delivering"
+                          ? "Estimated Delivery"
+                          : "Status"}
+                      </p>
+                      {order.is_quick && (
+                        <span className="flex items-center gap-0.5 px-1.5 py-0.5 bg-orange-500 text-black text-[9px] font-black rounded uppercase tracking-tighter shadow-sm">
+                           Quick Delivery
+                        </span>
+                      )}
+                    </div>
                     <p className="text-slate-900 font-black text-xl">
                       {deliveryInfo.text}
                     </p>
