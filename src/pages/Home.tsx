@@ -122,9 +122,8 @@ export default function Home() {
             <MembershipBanner />
           </div>
 
-          {/* Luxury Mode Switcher */}
-          <div className="flex items-center justify-center mb-10 -mt-2 relative z-20">
-            <div className="bg-[#1c1c1e] border border-white/10 p-1.5 rounded-[1.5rem] flex items-center shadow-2xl relative overflow-hidden">
+          <div className="flex items-center justify-center mb-10 -mt-2 relative z-20 w-full px-2">
+            <div className="bg-[#1c1c1e] border border-white/10 p-1.5 rounded-[1.5rem] flex items-center shadow-2xl relative overflow-x-auto scrollbar-hide max-w-full">
               {[
                 { id: "meal", label: "Hot Meals" },
                 { id: "vending", label: "Campus Vending" },
@@ -139,7 +138,7 @@ export default function Home() {
                       setHomeMode(mode.id as any);
                     }
                   }}
-                  className={`relative z-10 px-6 sm:px-10 py-2.5 sm:py-3 rounded-[1.2rem] text-[11px] sm:text-[13px] font-bold transition-all duration-300 min-w-[100px] sm:min-w-[140px] flex items-center justify-center ${
+                  className={`relative z-10 px-4 sm:px-8 py-2.5 sm:py-3 rounded-[1.2rem] text-[11px] sm:text-[13px] font-bold transition-all duration-300 whitespace-nowrap flex items-center justify-center flex-shrink-0 ${
                     homeMode === mode.id ? "text-black" : "text-gray-400 hover:text-white"
                   }`}
                 >
@@ -150,7 +149,12 @@ export default function Home() {
                       transition={{ type: "spring", stiffness: 400, damping: 30 }}
                     />
                   )}
-                  <span className="relative z-20">{mode.label}</span>
+                  {mode.id === "quick" && homeMode !== "quick" && (
+                    <div className="absolute inset-0 rounded-[1.2rem] bg-gradient-to-r from-purple-500/10 to-fuchsia-500/10 border border-purple-500/20" />
+                  )}
+                  <span className={`relative z-20 flex items-center gap-1.5 sm:gap-2 ${mode.id === "quick" && homeMode !== "quick" ? "text-purple-300" : ""}`}>
+                    {mode.label}
+                  </span>
                 </button>
               ))}
             </div>
