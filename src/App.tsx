@@ -41,6 +41,8 @@ const TermsAndConditions = lazy(() => import("./pages/TermsAndConditions"));
 const HelpCenter = lazy(() => import("./pages/HelpCenter"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const Download = lazy(() => import("./pages/Download"));
+const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
+const AboutUs = lazy(() => import("./pages/AboutUs"));
 
 import Navbar from "./components/Navbar";
 import BottomNav from "./components/BottomNav";
@@ -347,6 +349,8 @@ function AppLayout() {
             <Route path="/terms" element={<TermsAndConditions />} />
             <Route path="/help" element={<HelpCenter />} />
             <Route path="/download" element={<Download />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/about-us" element={<AboutUs />} />
 
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

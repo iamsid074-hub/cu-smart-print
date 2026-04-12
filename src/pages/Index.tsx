@@ -469,20 +469,30 @@ export default function Index() {
               &copy; 2026 CU BAZZAR INC.
             </span>
           </div>
-          <div className="flex gap-8">
+          <div className="flex flex-wrap items-center justify-center sm:justify-end gap-x-6 gap-y-3">
+            <Link
+              to="/about-us"
+              className="text-[13px] font-medium hover:underline text-indigo-400"
+            >
+              About Us
+            </Link>
+            <Link
+              to="/privacy-policy"
+              className="text-[13px] font-medium hover:underline text-indigo-400"
+            >
+              Privacy Policy
+            </Link>
             <Link
               to="/terms"
-              className="text-[13px] font-medium hover:underline"
-              style={{ color: "rgba(255,255,255,0.5)" }}
+              className="text-[13px] font-medium hover:underline text-indigo-400"
             >
               Terms
             </Link>
             <Link
-              to="/"
-              className="text-[13px] font-medium hover:underline"
-              style={{ color: "rgba(255,255,255,0.5)" }}
+              to="/help"
+              className="text-[13px] font-medium hover:underline text-indigo-400"
             >
-              Privacy Policy
+              Contact Us
             </Link>
           </div>
         </div>
