@@ -5,36 +5,16 @@ interface BlinkitZomatoTransitionProps {
   onComplete: () => void;
 }
 
-const BlinkitLogo = () => (
-  <svg width="180" height="40" viewBox="0 0 180 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-[120px] sm:w-[200px] h-auto">
-    <text x="0" y="32" fill="#FFD210" style={{ font: "italic 900 32px sans-serif", letterSpacing: "-1px" }}>BLINKI</text>
-    {/* Bolt integrated 'L' */}
-    <path d="M110 5L102 20H112L104 35" stroke="#FFD210" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
-    <text x="120" y="32" fill="#FFD210" style={{ font: "italic 900 32px sans-serif", letterSpacing: "-1px" }}>T</text>
-  </svg>
-);
-
-const ZwigatoLogo = () => (
-  <svg width="240" height="50" viewBox="0 0 240 50" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-[160px] sm:w-[260px] h-auto">
-    {/* Heart-Z Path */}
-    <path 
-      d="M10 15C10 10 15 10 15 15M15 15C15 10 20 10 20 15M10 15L35 15L10 40L40 40" 
-      stroke="#A01519" 
-      strokeWidth="6" 
-      strokeLinecap="round" 
-      strokeLinejoin="round" 
-    />
-    <text x="45" y="40" fill="#A01519" style={{ font: "bold 36px serif", italic: "true" }}>WIGATO</text>
-  </svg>
-);
-
 export default function BlinkitZomatoTransition({ onComplete }: BlinkitZomatoTransitionProps) {
   const [phase, setPhase] = useState<"masking" | "active" | "exit">("masking");
 
   useEffect(() => {
-    const activeTimer = setTimeout(() => setPhase("active"), 50);
-    const exitTimer = setTimeout(() => setPhase("exit"), 1200);
-    const completeTimer = setTimeout(() => onComplete(), 1500);
+    // Stage 1: Ultra Fast Entrance
+    const activeTimer = setTimeout(() => setPhase("active"), 40);
+    // Stage 2: Sharp Swish (Very brief hold)
+    const exitTimer = setTimeout(() => setPhase("exit"), 500); 
+    // Final: Navigation (Total 800ms for that "Swish" feel)
+    const completeTimer = setTimeout(() => onComplete(), 800);
 
     return () => {
       clearTimeout(activeTimer);
@@ -44,97 +24,76 @@ export default function BlinkitZomatoTransition({ onComplete }: BlinkitZomatoTra
   }, [onComplete]);
 
   return (
-    <div className="fixed inset-0 z-[10000] flex items-center justify-center overflow-hidden bg-[#faf9f6] pointer-events-auto">
-      {/* 100% Solid Mask - Creamy luxury background like the image */}
+    <div className="fixed inset-0 z-[10000] flex items-center justify-center overflow-hidden bg-black pointer-events-auto">
+      {/* 100% Solid Mask - Zero Gradient */}
       <motion.div 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        transition={{ duration: 0.2 }}
-        className="absolute inset-0 bg-[#faf9f6] z-0"
+        transition={{ duration: 0.15 }}
+        className="absolute inset-0 bg-black z-0"
       />
 
       <AnimatePresence mode="wait">
         {phase !== "exit" && (
           <motion.div 
-            key="branded-content"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
+            key="swish-content"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             exit={{ 
               opacity: 0, 
-              scale: 1.1,
-              transition: { duration: 0.3 } 
+              scale: 0.95,
+              transition: { duration: 0.2, ease: "easeIn" } 
             }}
             className="absolute inset-0 flex items-center justify-center"
           >
-            {/* Split Screen Colors */}
+            {/* Blinkit Yellow - SOLID */}
             <motion.div
-              initial={{ x: "-100%", skewX: -10 }}
-              animate={phase === "active" ? { x: "-50%", skewX: -10 } : {}}
-              transition={{ duration: 0.5, ease: "easeOut" }}
-              className="absolute inset-y-0 left-0 w-full bg-[#FFD210]/10 z-1"
-            />
-            <motion.div
-              initial={{ x: "100%", skewX: -10 }}
-              animate={phase === "active" ? { x: "50%", skewX: -10 } : {}}
-              transition={{ duration: 0.5, ease: "easeOut" }}
-              className="absolute inset-y-0 right-0 w-full bg-[#A01519]/5 z-1"
+              initial={{ x: "-100%", skewX: -15 }}
+              animate={phase === "active" ? { x: "-5%", skewX: -15 } : {}}
+              transition={{ duration: 0.35, ease: [0.19, 1, 0.22, 1] }}
+              className="absolute inset-0 w-[110%] h-full bg-[#FFD210] origin-left z-10"
             />
 
-            {/* Branded Center Stack */}
-            <div className="relative z-10 flex flex-col items-center gap-6 p-12 bg-white/40 backdrop-blur-md rounded-[3rem] border border-white/20 shadow-2xl">
-              <motion.div
-                initial={{ x: -20, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                transition={{ delay: 0.3 }}
-              >
-                <BlinkitLogo />
-              </motion.div>
-
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1.2 }}
-                transition={{ delay: 0.5, type: "spring" }}
-                className="text-2xl font-black text-gray-400 italic"
-              >
-                &
-              </motion.div>
-
-              <motion.div
-                initial={{ x: 20, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                transition={{ delay: 0.4 }}
-              >
-                <ZwigatoLogo />
-              </motion.div>
-
-              {/* Unique Delivery Status */}
-              <motion.div 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.8 }}
-                className="flex flex-col items-center gap-2 mt-4"
-              >
-                 <div className="w-48 h-1 bg-gray-100 rounded-full overflow-hidden">
-                    <motion.div 
-                      initial={{ scaleX: 0, originX: 0 }}
-                      animate={{ scaleX: 1 }}
-                      transition={{ duration: 1, delay: 0.8 }}
-                      className="h-full bg-gradient-to-r from-[#FFD210] to-[#A01519]"
-                    />
-                 </div>
-                 <p className="text-[10px] font-bold uppercase tracking-[0.5em] text-gray-500">
-                    Hostel Priority Mode
-                 </p>
-              </motion.div>
-            </div>
-
-            {/* Swish Panels (keeping the high-speed impact) */}
+            {/* Zomato Red - SOLID */}
             <motion.div
-              initial={{ x: "-100%", skewX: -20 }}
-              animate={phase === "active" ? { x: "-20%", skewX: -20 } : {}}
-              className="absolute inset-0 w-full h-full bg-[#FFD210] opacity-5 z-2"
+              initial={{ x: "100%", skewX: -15 }}
+              animate={phase === "active" ? { x: "5%", skewX: -15 } : {}}
+              transition={{ duration: 0.35, ease: [0.19, 1, 0.22, 1] }}
+              className="absolute inset-0 w-[110%] h-full bg-[#E23744] origin-right z-10"
             />
+
+            {/* Typography Overlay */}
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={phase === "active" ? { scale: 1, opacity: 1 } : {}}
+              transition={{ delay: 0.25, duration: 0.15 }}
+              className="relative z-20 flex flex-col items-center gap-2 sm:gap-6 px-4"
+            >
+              <div className="flex flex-col sm:flex-row items-center gap-1 sm:gap-8">
+                <span className="text-xl sm:text-2xl font-bold text-black tracking-[0.2em] uppercase leading-none select-none">
+                  BLINKIT
+                </span>
+                
+                <div className="flex items-center justify-center w-8 h-8 sm:w-12 sm:h-12 rounded-full bg-white border-2 border-black shadow-lg skew-x-[-15deg]">
+                    <span className="text-sm sm:text-lg font-black text-red-600">&</span>
+                </div>
+
+                <span className="text-xl sm:text-2xl font-bold text-white tracking-[0.2em] uppercase leading-none select-none">
+                  ZOMATO
+                </span>
+              </div>
+
+              {/* Minimal "Line of Speed" - Desktop Only */}
+              <div className="hidden sm:block w-96 h-1 bg-black/20 rounded-full overflow-hidden mt-8">
+                <motion.div 
+                  initial={{ scaleX: 0, originX: 0 }}
+                  animate={phase === "active" ? { scaleX: 1 } : {}}
+                  transition={{ duration: 0.6, ease: "linear" }}
+                  className="h-full bg-white"
+                />
+              </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
