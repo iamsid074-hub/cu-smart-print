@@ -11,7 +11,7 @@ export default function BlinkitAnnounceModal({ onCheck }: BlinkitAnnounceModalPr
 
   useEffect(() => {
     // Appear every time user enters the site
-    const timer = setTimeout(() => setIsOpen(true), 1000);
+    const timer = setTimeout(() => setIsOpen(true), 800);
     return () => clearTimeout(timer);
   }, []);
 
@@ -27,45 +27,50 @@ export default function BlinkitAnnounceModal({ onCheck }: BlinkitAnnounceModalPr
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed bottom-0 left-0 right-0 z-[10001] flex justify-center pointer-events-none p-0 sm:p-6">
+        <div className="fixed bottom-0 left-0 right-0 z-[10001] flex justify-center pointer-events-none">
           <motion.div
-            initial={{ y: "100%", opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: "100%", opacity: 0 }}
-            transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="relative w-full max-w-[600px] bg-[#FFD210] rounded-t-[2.5rem] sm:rounded-[2.5rem] shadow-[0_-20px_50px_-12px_rgba(255,210,16,0.3)] pointer-events-auto overflow-hidden"
+            initial={{ y: "100%" }}
+            animate={{ y: 0 }}
+            exit={{ y: "100%" }}
+            transition={{ type: "spring", damping: 30, stiffness: 200 }}
+            className="w-full bg-[#FFD210] pointer-events-auto overflow-hidden shadow-[0_-10px_40px_rgba(0,0,0,0.2)]"
           >
-            <div className="flex flex-col sm:flex-row items-center p-6 sm:p-8 gap-6">
-                {/* Visual Icon */}
-                <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-lg rotate-12 shrink-0">
-                    <Zap className="w-8 h-8 text-[#FFD210] fill-[#FFD210]" />
-                </div>
+            {/* Minimalist Top Accent */}
+            <div className="h-1 bg-white/30 w-full" />
 
-                {/* Text Content */}
-                <div className="flex-1 text-center sm:text-left">
-                    <h3 className="text-xl font-black text-black uppercase tracking-tight leading-none mb-1">
-                        Blinkit & Zwigato Live
-                    </h3>
-                    <p className="text-black/70 text-sm font-bold">
-                        Essentials delivered in 15 mins to your hostel.
-                    </p>
+            <div className="max-w-[1400px] mx-auto px-6 py-4 sm:py-5 flex flex-col sm:flex-row items-center justify-between gap-4">
+              
+              {/* Left Side: Brand & Text */}
+              <div className="flex items-center gap-4 text-black">
+                <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-sm shrink-0">
+                  <Zap className="w-6 h-6 text-[#FFD210] fill-[#FFD210]" />
                 </div>
+                <div>
+                  <h3 className="text-lg sm:text-xl font-black uppercase tracking-tight leading-none mb-1">
+                    Blinkit & Zwigato <span className="text-white bg-black px-2 py-0.5 rounded text-[10px] ml-2 align-middle">LIVE</span>
+                  </h3>
+                  <p className="text-black/80 text-xs sm:text-sm font-bold">
+                    Superfast hostel delivery now active. Get your essentials in 15 mins.
+                  </p>
+                </div>
+              </div>
 
-                {/* Actions */}
-                <div className="flex items-center gap-3 w-full sm:w-auto">
-                    <button
-                        onClick={handleAction}
-                        className="flex-1 sm:flex-none px-8 h-12 bg-white text-black font-black uppercase tracking-widest rounded-xl flex items-center justify-center gap-2 transition-all active:scale-95 shadow-md"
-                    >
-                        Try Now <ArrowRight className="w-4 h-4" />
-                    </button>
-                    <button
-                        onClick={handleClose}
-                        className="p-3 text-black/40 hover:text-black transition-colors"
-                    >
-                        <X className="w-6 h-6" />
-                    </button>
-                </div>
+              {/* Right Side: Buttons */}
+              <div className="flex items-center gap-2 w-full sm:w-auto">
+                <button
+                  onClick={handleAction}
+                  className="flex-1 sm:flex-none px-8 py-3 bg-black text-white font-black uppercase tracking-widest text-xs rounded-xl flex items-center justify-center gap-2 transition-all active:scale-95 shadow-xl hover:bg-zinc-900"
+                >
+                  Go to Store <ArrowRight className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={handleClose}
+                  className="p-3 text-black/40 hover:text-black transition-colors"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+
             </div>
           </motion.div>
         </div>
