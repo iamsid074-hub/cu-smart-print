@@ -10,20 +10,16 @@ export default function BlinkitAnnounceModal({ onCheck }: BlinkitAnnounceModalPr
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    const hasBeenAnnounced = localStorage.getItem("blinkit_announced_v1");
-    if (!hasBeenAnnounced) {
-      const timer = setTimeout(() => setIsOpen(true), 1500); // Slight delay for better UX
-      return () => clearTimeout(timer);
-    }
+    // Appear every time user enters the site
+    const timer = setTimeout(() => setIsOpen(true), 1000);
+    return () => clearTimeout(timer);
   }, []);
 
   const handleClose = () => {
-    localStorage.setItem("blinkit_announced_v1", "true");
     setIsOpen(false);
   };
 
   const handleAction = () => {
-    localStorage.setItem("blinkit_announced_v1", "true");
     setIsOpen(false);
     onCheck();
   };
@@ -31,71 +27,46 @@ export default function BlinkitAnnounceModal({ onCheck }: BlinkitAnnounceModalPr
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-[10001] flex items-center justify-center p-4">
+        <div className="fixed bottom-0 left-0 right-0 z-[10001] flex justify-center pointer-events-none p-0 sm:p-6">
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={handleClose}
-            className="absolute inset-0 bg-black/80 backdrop-blur-sm"
-          />
-          
-          <motion.div
-            initial={{ scale: 0.9, opacity: 0, y: 20 }}
-            animate={{ scale: 1, opacity: 1, y: 0 }}
-            exit={{ scale: 0.9, opacity: 0, y: 20 }}
-            className="relative w-full max-w-[400px] bg-[#1c1c1e] border border-white/10 rounded-[2.5rem] overflow-hidden shadow-2xl"
+            initial={{ y: "100%", opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: "100%", opacity: 0 }}
+            transition={{ type: "spring", damping: 25, stiffness: 200 }}
+            className="relative w-full max-w-[600px] bg-[#FFD210] rounded-t-[2.5rem] sm:rounded-[2.5rem] shadow-[0_-20px_50px_-12px_rgba(255,210,16,0.3)] pointer-events-auto overflow-hidden"
           >
-            {/* Branded Header */}
-            <div className="relative h-48 bg-[#FFD210] flex items-center justify-center overflow-hidden text-black">
-                <motion.div 
-                    animate={{ scale: [1, 1.2, 1], rotate: [0, 5, 0] }}
-                    transition={{ duration: 4, repeat: Infinity }}
-                    className="absolute -right-10 -top-10 w-40 h-40 bg-black/10 rounded-full blur-3xl" 
-                />
-                <div className="relative z-10 flex flex-col items-center gap-3">
-                    <div className="w-16 h-16 bg-black rounded-3xl flex items-center justify-center shadow-xl rotate-12">
-                        <Zap className="w-8 h-8 text-[#FFD210] fill-[#FFD210]" />
-                    </div>
-                    <div className="text-black font-black text-2xl uppercase tracking-tighter italic">
-                        BLINKIT & ZWIGATO
-                    </div>
+            <div className="flex flex-col sm:flex-row items-center p-6 sm:p-8 gap-6">
+                {/* Visual Icon */}
+                <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-lg rotate-12 shrink-0">
+                    <Zap className="w-8 h-8 text-[#FFD210] fill-[#FFD210]" />
                 </div>
-            </div>
 
-            {/* Content */}
-            <div className="p-8 text-center">
-                <h3 className="text-2xl font-black text-white mb-2 leading-tight">
-                    Order Acceptor <br /> Now Live!
-                </h3>
-                <p className="text-gray-400 text-sm leading-relaxed mb-8">
-                    Need snacks or essentials? Get them delivered to your hostel room in under 15 minutes. High speed, low cost.
-                </p>
+                {/* Text Content */}
+                <div className="flex-1 text-center sm:text-left">
+                    <h3 className="text-xl font-black text-black uppercase tracking-tight leading-none mb-1">
+                        Blinkit & Zwigato Live
+                    </h3>
+                    <p className="text-black/70 text-sm font-bold">
+                        Essentials delivered in 15 mins to your hostel.
+                    </p>
+                </div>
 
-                <div className="space-y-3">
+                {/* Actions */}
+                <div className="flex items-center gap-3 w-full sm:w-auto">
                     <button
                         onClick={handleAction}
-                        className="w-full h-14 bg-[#FFD210] hover:bg-[#ffe04d] text-black font-black uppercase tracking-widest rounded-2xl flex items-center justify-center gap-2 transition-all active:scale-95 group"
+                        className="flex-1 sm:flex-none px-8 h-12 bg-white text-black font-black uppercase tracking-widest rounded-xl flex items-center justify-center gap-2 transition-all active:scale-95 shadow-md"
                     >
-                        Try Quick Store 
-                        <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                        Try Now <ArrowRight className="w-4 h-4" />
                     </button>
                     <button
                         onClick={handleClose}
-                        className="w-full py-4 text-gray-500 font-bold hover:text-white transition-colors text-sm"
+                        className="p-3 text-black/40 hover:text-black transition-colors"
                     >
-                        Maybe Later
+                        <X className="w-6 h-6" />
                     </button>
                 </div>
             </div>
-
-            {/* Close Icon */}
-            <button 
-                onClick={handleClose}
-                className="absolute top-4 right-4 p-2 bg-black/10 hover:bg-black/20 rounded-full text-black transition-colors"
-            >
-                <X className="w-5 h-5" />
-            </button>
           </motion.div>
         </div>
       )}
