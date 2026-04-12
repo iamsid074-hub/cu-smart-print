@@ -173,8 +173,7 @@ export default function Index() {
           transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
           className="absolute top-8 z-50 flex items-center gap-2 px-4 py-1.5 rounded-full"
           style={{
-            background: "rgba(255,255,255,0.08)",
-            backdropFilter: "blur(20px)",
+            background: "rgba(30,30,35,0.8)",
             border: "1px solid rgba(255,255,255,0.15)",
           }}
         >
@@ -340,9 +339,8 @@ export default function Index() {
               }}
               className="p-8 sm:p-10 rounded-[32px] sm:rounded-[40px] flex flex-col items-start card-hover cursor-default"
               style={{
-                background: "rgba(255,255,255,0.05)",
+                background: "rgba(30,30,35,0.6)",
                 border: "1px solid rgba(255,255,255,0.1)",
-                backdropFilter: "blur(20px)",
               }}
             >
               <div
@@ -382,9 +380,8 @@ export default function Index() {
           transition={{ duration: 0.8 }}
           className="max-w-4xl mx-auto rounded-[40px] p-10 flex flex-col md:flex-row justify-around items-center gap-10 text-center relative overflow-hidden"
           style={{
-            background: "rgba(255,255,255,0.05)",
+            background: "rgba(30,30,35,0.6)",
             border: "1px solid rgba(255,255,255,0.1)",
-            backdropFilter: "blur(30px)",
           }}
         >
           {/* subtle background flare inside stats */}
@@ -416,9 +413,8 @@ export default function Index() {
         <motion.div
           className="max-w-3xl text-center relative z-10 p-12 sm:p-20 rounded-[48px]"
           style={{
-            background: "rgba(255,255,255,0.05)",
+            background: "rgba(30,30,35,0.6)",
             border: "1px solid rgba(255,255,255,0.1)",
-            backdropFilter: "blur(30px)",
           }}
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}

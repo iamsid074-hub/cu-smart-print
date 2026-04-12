@@ -1,4 +1,4 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import { Sparkles, ArrowRight, Zap, Crown } from "lucide-react";
 import { useMembership } from "@/hooks/useMembership";
 import MembershipPlansModal from "./MembershipPlansModal";
@@ -34,7 +34,7 @@ export default function MembershipBanner() {
               </p>
 
               <div className="flex gap-2 mt-4 sm:hidden">
-                <span className="text-xs font-bold bg-white/10 text-white px-3 py-1.5 rounded-full backdrop-blur-md">
+                <span className="text-xs font-bold bg-[#3A3A3C] text-white px-3 py-1.5 rounded-full">
                   Starts at ₹49/wk
                 </span>
               </div>

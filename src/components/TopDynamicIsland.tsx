@@ -649,10 +649,8 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
                     : ""
                 }`}
                 style={{
-                  background: "rgba(10, 10, 10, 0.9)",
-                  backdropFilter: "blur(32px)",
-                  WebkitBackdropFilter: "blur(32px)",
-                  border: "1px solid rgba(255, 255, 255, 0.08)",
+                  background: "rgba(15, 15, 15, 0.98)",
+                  border: "1px solid rgba(255, 255, 255, 0.12)",
                   borderRadius: 50,
                   animation: getAnimation(),
                   position: "relative",
@@ -727,9 +725,7 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
                   onPointerUp={handlePointerUp}
                   className="pointer-events-auto flex items-center justify-center overflow-hidden flex-shrink-0 cursor-pointer hover:bg-zinc-900"
                   style={{
-                    background: "rgba(10, 10, 10, 0.9)",
-                    backdropFilter: "blur(32px)",
-                    WebkitBackdropFilter: "blur(32px)",
+                    background: "rgba(15, 15, 15, 0.98)",
                     height: 40, // consistent dot size
                     borderRadius: "50%",
                     border: "1px solid rgba(255, 255, 255, 0.08)",
@@ -764,9 +760,7 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
                   transition={springTransition}
                   className="pointer-events-auto flex items-center justify-center overflow-hidden flex-shrink-0"
                   style={{
-                    background: "rgba(10, 10, 10, 0.9)",
-                    backdropFilter: "blur(32px)",
-                    WebkitBackdropFilter: "blur(32px)",
+                    background: "rgba(15, 15, 15, 0.98)",
                     height: 40,
                     borderRadius: "50%",
                     border: "1px solid rgba(255, 255, 255, 0.08)",

@@ -124,7 +124,7 @@ export default function Home() {
 
           {/* Luxury Mode Switcher */}
           <div className="flex items-center justify-center mb-10 -mt-2 relative z-20">
-            <div className="bg-white/5 backdrop-blur-2xl border border-white/10 p-1.5 rounded-[1.5rem] flex items-center shadow-2xl relative overflow-hidden">
+            <div className="bg-[#1c1c1e] border border-white/10 p-1.5 rounded-[1.5rem] flex items-center shadow-2xl relative overflow-hidden">
               {[
                 { id: "meal", label: "Hot Meals" },
                 { id: "vending", label: "Campus Vending" },

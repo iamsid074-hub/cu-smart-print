@@ -44,6 +44,7 @@ export default function HomeSpecialSections({
   const [addedIds, setAddedIds] = useState<Set<string>>(new Set());
   const [likedIds, setLikedIds] = useState<Set<string>>(new Set());
   const [selectedItem, setSelectedItem] = useState<any>(null);
+  const [showAll, setShowAll] = useState(false);
 
   const filteredItems = useMemo(() => {
     if (activeCat === "combos") return comboItems;
@@ -67,8 +68,8 @@ export default function HomeSpecialSections({
           });
         });
       });
-      // Sort and slice for bento grid, ensure at least 7 items for grid completeness
-      return items.sort(() => 0.5 - Math.random()).slice(0, 9);
+      // Stable slice for performance rather than random sort
+      return items.slice(0, 8);
     }
 
     shops.forEach((shop) => {
@@ -132,13 +133,16 @@ export default function HomeSpecialSections({
       <div className="sticky top-20 z-40 flex justify-center mb-10 w-full pointer-events-none mt-4">
         <div className="pointer-events-auto max-w-[95%] overflow-hidden">
           <div className="flex gap-2 overflow-x-auto p-2 scrollbar-hide">
-            <div className="flex items-center bg-[#1c1c1e]/90 backdrop-blur-3xl border border-white/5 rounded-[1.2rem] p-1.5 shadow-2xl mx-auto">
+            <div className="flex items-center bg-[#1c1c1e] border border-white/10 rounded-[1.2rem] p-1.5 shadow-2xl mx-auto">
               {categories.map((cat, i) => {
                 const isActive = activeCat === cat.id;
                 return (
                   <button
                     key={cat.id}
-                    onClick={() => onCatChange(cat.id)}
+                    onClick={() => {
+                      onCatChange(cat.id);
+                      setShowAll(false);
+                    }}
                     className={`relative px-3 sm:px-5 py-2 sm:py-2.5 rounded-[0.9rem] text-[11px] sm:text-[13px] font-bold whitespace-nowrap transition-all duration-300 ${
                       isActive ? "text-black" : "text-gray-400 hover:text-white"
                     }`}
@@ -178,7 +182,7 @@ export default function HomeSpecialSections({
 
       {/* ═══ 2. UNIFORM CARD GRID ═══ */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-5 px-1">
-        {filteredItems.map((item, i) => {
+        {(showAll ? filteredItems : filteredItems.slice(0, 4)).map((item, i) => {
           const isAdded = addedIds.has(String(item.id));
           const isLiked = likedIds.has(String(item.id));
           
@@ -205,8 +209,8 @@ export default function HomeSpecialSections({
                 <div className="absolute top-3 right-3 flex items-center gap-2 z-10">
                   <button 
                     onClick={(e) => toggleLike(String(item.id), e)}
-                    className={`w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-md border border-white/10 transition-all ${
-                      isLiked ? "bg-red-500/90 border-red-500" : "bg-black/40 hover:bg-black/60"
+                    className={`w-8 h-8 rounded-full flex items-center justify-center border border-white/10 transition-all ${
+                      isLiked ? "bg-red-500 border-red-500" : "bg-black/60 hover:bg-black/80"
                     }`}
                   >
                     <Heart className={`w-3.5 h-3.5 ${isLiked ? 'fill-white text-white' : 'text-white'}`} />
@@ -246,6 +250,17 @@ export default function HomeSpecialSections({
           );
         })}
       </div>
+
+      {!showAll && filteredItems.length > 4 && (
+        <div className="flex justify-center mt-8">
+          <button 
+            onClick={() => setShowAll(true)}
+            className="px-8 py-3 rounded-full bg-white/5 border border-white/10 text-white font-bold text-[13px] uppercase tracking-widest hover:bg-white/10 hover:border-white/20 transition-colors shadow-sm"
+          >
+            Show More
+          </button>
+        </div>
+      )}
       
       <Dialog open={!!selectedItem} onOpenChange={(open) => !open && setSelectedItem(null)}>
         <DialogContent className="max-w-[90%] w-full sm:max-w-md bg-[#1c1c1e] text-white border-white/10 p-0 rounded-3xl overflow-hidden shadow-2xl">
