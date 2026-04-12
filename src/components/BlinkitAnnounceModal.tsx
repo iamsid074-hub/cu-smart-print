@@ -6,20 +6,27 @@ interface BlinkitAnnounceModalProps {
   onCheck: () => void;
 }
 
+// Module-level variable survives navigation in an SPA but resets on page reload
+let dismissedThisSession = false;
+
 export default function BlinkitAnnounceModal({ onCheck }: BlinkitAnnounceModalProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    // Appear every time user enters the site
-    const timer = setTimeout(() => setIsOpen(true), 800);
+    // If already dismissed in this session, don't show
+    if (dismissedThisSession) return;
+
+    const timer = setTimeout(() => setIsOpen(true), 1200);
     return () => clearTimeout(timer);
   }, []);
 
   const handleClose = () => {
+    dismissedThisSession = true;
     setIsOpen(false);
   };
 
   const handleAction = () => {
+    dismissedThisSession = true;
     setIsOpen(false);
     onCheck();
   };
@@ -27,47 +34,47 @@ export default function BlinkitAnnounceModal({ onCheck }: BlinkitAnnounceModalPr
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed bottom-0 left-0 right-0 z-[10001] flex justify-center pointer-events-none">
+        <div className="fixed bottom-0 left-0 right-0 z-[10001] pointer-events-none">
           <motion.div
             initial={{ y: "100%" }}
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
             transition={{ type: "spring", damping: 30, stiffness: 200 }}
-            className="w-full bg-[#FFD210] pointer-events-auto overflow-hidden shadow-[0_-10px_40px_rgba(0,0,0,0.2)]"
+            className="w-full bg-[#FFD210] pointer-events-auto shadow-[0_-15px_60px_rgba(255,210,16,0.5)] border-none"
           >
-            {/* Minimalist Top Accent */}
-            <div className="h-1 bg-white/30 w-full" />
+            {/* Top Shine/Accent */}
+            <div className="h-[2px] bg-white/50 w-full" />
 
-            <div className="max-w-[1400px] mx-auto px-6 py-4 sm:py-5 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="max-w-[1400px] mx-auto px-5 py-4 sm:py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
               
-              {/* Left Side: Brand & Text */}
-              <div className="flex items-center gap-4 text-black">
-                <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-sm shrink-0">
-                  <Zap className="w-6 h-6 text-[#FFD210] fill-[#FFD210]" />
+              {/* Content */}
+              <div className="flex items-center gap-5">
+                <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center shadow-lg transform rotate-2">
+                  <Zap className="w-8 h-8 text-[#FFD210] fill-[#FFD210]" />
                 </div>
-                <div>
-                  <h3 className="text-lg sm:text-xl font-black uppercase tracking-tight leading-none mb-1">
-                    Blinkit & Zwigato <span className="text-white bg-black px-2 py-0.5 rounded text-[10px] ml-2 align-middle">LIVE</span>
+                <div className="flex flex-col text-black">
+                  <h3 className="text-xl sm:text-2xl font-black uppercase tracking-tighter leading-none mb-1">
+                    Blinkit & Zwigato Live
                   </h3>
-                  <p className="text-black/80 text-xs sm:text-sm font-bold">
-                    Superfast hostel delivery now active. Get your essentials in 15 mins.
+                  <p className="text-black/80 text-[13px] sm:text-[15px] font-bold">
+                    Hostel snacks & essentials delivered in 15 mins.
                   </p>
                 </div>
               </div>
 
-              {/* Right Side: Buttons */}
-              <div className="flex items-center gap-2 w-full sm:w-auto">
+              {/* Actions */}
+              <div className="flex items-center gap-4 w-full sm:w-auto">
                 <button
                   onClick={handleAction}
-                  className="flex-1 sm:flex-none px-8 py-3 bg-black text-white font-black uppercase tracking-widest text-xs rounded-xl flex items-center justify-center gap-2 transition-all active:scale-95 shadow-xl hover:bg-zinc-900"
+                  className="flex-1 sm:flex-none px-10 py-4 bg-white text-black font-black uppercase tracking-widest text-[13px] rounded-2xl shadow-xl hover:shadow-2xl transition-all active:scale-95 flex items-center justify-center gap-2"
                 >
-                  Go to Store <ArrowRight className="w-4 h-4" />
+                  Go to Store <ArrowRight className="w-5 h-5" />
                 </button>
                 <button
                   onClick={handleClose}
-                  className="p-3 text-black/40 hover:text-black transition-colors"
+                  className="p-2 text-black/30 hover:text-black transition-colors"
                 >
-                  <X className="w-6 h-6" />
+                  <X className="w-7 h-7" />
                 </button>
               </div>
 
