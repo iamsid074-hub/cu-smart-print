@@ -43,6 +43,7 @@ function HeroSpotlight() {
       <motion.img 
         src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?q=80&w=2681&auto=format&fit=crop" 
         alt="Spotlight" 
+        loading="lazy" decoding="async" style={{ willChange: "transform" }}
         animate={{ scale: [1.05, 1.15, 1.05] }}
         transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
         className="w-full h-full object-cover" 
@@ -90,7 +91,8 @@ export default function Home() {
         .from("products")
         .select(`*, profiles(full_name)`)
         .eq("status", "available")
-        .order("created_at", { ascending: false });
+        .order("created_at", { ascending: false })
+        .limit(5);
 
       if (activeCategory !== "All") {
         query = query.eq("category", activeCategory);
@@ -214,7 +216,7 @@ export default function Home() {
                          {products.slice(0, 5).map((p, i) => (
                            <div key={p.id} className="relative group rounded-3xl overflow-hidden bg-[#1c1c1e] border border-white/5 hover:border-white/20 transition-all duration-500">
                              <div className="aspect-square bg-[#0a0a0a] overflow-hidden">
-                               <img src={p.image_url || "/placeholder.jpg"} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt={p.title}/>
+                               <img src={p.image_url || "/placeholder.jpg"} loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt={p.title}/>
                              </div>
                              <div className="p-4">
                                <h3 className="font-bold text-[15px] truncate text-white">{p.title}</h3>

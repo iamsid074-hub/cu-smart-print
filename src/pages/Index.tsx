@@ -1,10 +1,11 @@
-﻿import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   motion,
   AnimatePresence,
   useScroll,
   useTransform,
   useInView,
+  animate,
 } from "framer-motion";
 import { Link } from "react-router-dom";
 import {
@@ -18,28 +19,21 @@ import {
 
 // ─── Animated counter ────────────────────────────────────────────────────────────
 function Counter({ target, suffix = "" }: { target: number; suffix?: string }) {
-  const [count, setCount] = useState(0);
   const ref = useRef<HTMLSpanElement>(null);
   const inView = useInView(ref, { once: true });
   useEffect(() => {
-    if (!inView) return;
-    let start = 0;
-    const step = Math.ceil(target / 50);
-    const timer = setInterval(() => {
-      start += step;
-      if (start >= target) {
-        setCount(target);
-        clearInterval(timer);
-      } else setCount(start);
-    }, 25);
-    return () => clearInterval(timer);
-  }, [inView, target]);
-  return (
-    <span ref={ref}>
-      {count}
-      {suffix}
-    </span>
-  );
+    if (!inView || !ref.current) return;
+    const node = ref.current;
+    const controls = animate(0, target, {
+      duration: 1.5,
+      ease: "easeOut",
+      onUpdate(value) {
+        node.textContent = Math.round(value) + suffix;
+      },
+    });
+    return () => controls.stop();
+  }, [inView, target, suffix]);
+  return <span ref={ref}>0{suffix}</span>;
 }
 
 // ─── Premium letter-by-letter reveal component ──────────────────────────────────
@@ -146,7 +140,7 @@ export default function Index() {
           <motion.div
             animate={{ rotate: 360, scale: [1, 1.15, 1] }}
             transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-            className="absolute w-[700px] h-[700px] rounded-full blur-[110px] opacity-40"
+            className="absolute w-[700px] h-[700px] rounded-full opacity-40"
             style={{
               background: "radial-gradient(circle, #9B59B6, transparent 70%)",
               transformOrigin: "38% 38%",
@@ -155,7 +149,7 @@ export default function Index() {
           <motion.div
             animate={{ rotate: -360, scale: [1, 1.25, 1] }}
             transition={{ duration: 27, repeat: Infinity, ease: "linear" }}
-            className="absolute w-[500px] h-[500px] rounded-full blur-[90px] opacity-30"
+            className="absolute w-[500px] h-[500px] rounded-full opacity-30"
             style={{
               background: "radial-gradient(circle, #FF6B6B, transparent 70%)",
               transformOrigin: "65% 65%",
@@ -164,7 +158,7 @@ export default function Index() {
           <motion.div
             animate={{ rotate: 180, scale: [1, 1.1, 1] }}
             transition={{ duration: 35, repeat: Infinity, ease: "linear" }}
-            className="absolute w-[400px] h-[400px] rounded-full blur-[100px] opacity-25"
+            className="absolute w-[400px] h-[400px] rounded-full opacity-25"
             style={{
               background: "radial-gradient(circle, #4DB8AC, transparent 70%)",
               transformOrigin: "50% 20%",
@@ -187,6 +181,7 @@ export default function Index() {
           <img
             src="/logo.webp"
             alt="CU Bazzar"
+            loading="lazy" decoding="async"
             className="w-5 h-5 rounded-md object-cover"
           />
           <span className="text-[11px] font-bold tracking-tight text-white/90">
@@ -433,6 +428,7 @@ export default function Index() {
           <img
             src="/logo.webp"
             alt="Logo"
+            loading="lazy" decoding="async"
             className="w-16 h-16 rounded-2xl mx-auto mb-8 shadow-md"
           />
           <h2 className="font-bold text-white text-4xl sm:text-6xl mb-6 tracking-tighter leading-tight">
