@@ -1,11 +1,13 @@
-﻿import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, MapPin, Phone, CheckCircle, Loader2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { useUserLocation } from "@/hooks/useUserLocation";
 
 interface EditLocationModalProps {
   isOpen: boolean;
   onClose: () => void;
+  returnTo?: string;
 }
 
 const HOSTEL_GROUPS = [
@@ -19,8 +21,10 @@ const HOSTEL_GROUPS = [
 export default function EditLocationModal({
   isOpen,
   onClose,
+  returnTo,
 }: EditLocationModalProps) {
   const { data, saveLocation } = useUserLocation();
+  const navigate = useNavigate();
   const [hostel, setHostel] = useState("");
   const [room, setRoom] = useState("");
   const [phone, setPhone] = useState("");
@@ -40,6 +44,10 @@ export default function EditLocationModal({
       saveLocation({ hostel, room, phone });
       setIsSaving(false);
       onClose();
+      // Redirect back to cart if coming from checkout flow
+      if (returnTo === 'cart') {
+        navigate('/cart?returnTo=checkout');
+      }
     }, 400); // Small delay for UX
   };
 

@@ -6,8 +6,10 @@ import {
   Plus,
   Trash2,
   ArrowLeft,
+  ArrowRight,
   Loader2,
   MapPin,
+  Navigation,
   Phone,
   Clock,
   ShoppingBag,
@@ -20,7 +22,7 @@ import {
   AlertTriangle,
   Wallet,
 } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
@@ -45,6 +47,7 @@ export default function Cart() {
   } = useCart();
   const { user, profile } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { toast } = useToast();
   const {
     data: locationData,
@@ -55,39 +58,37 @@ export default function Cart() {
     useMembership();
 
   const [showCheckout, setShowCheckout] = useState(false);
-  const [hostel, setHostel] = useState("");
-  const [room, setRoom] = useState("");
-  const [phone, setPhone] = useState("");
+  const [showLocationPrompt, setShowLocationPrompt] = useState(false);
 
+  // Auto-open checkout if returning from location setup
   useEffect(() => {
-    if (locationLoaded) {
-      if (locationData) {
-        if (locationData.hostel) setHostel(locationData.hostel);
-        if (locationData.room) setRoom(locationData.room);
-        if (locationData.phone) setPhone(locationData.phone);
-      } else if (profile) {
-        // Fallback to profile data if local storage is empty
-        if (profile.hostel_block) setHostel(profile.hostel_block);
-        if (profile.room_number) setRoom(profile.room_number);
-        if (profile.phone_number) setPhone(profile.phone_number);
-      }
+    if (searchParams.get('returnTo') === 'checkout' && locationLoaded && locationData?.hostel && locationData?.room && locationData?.phone) {
+      setShowCheckout(true);
     }
-  }, [locationLoaded, locationData, profile]);
+  }, [searchParams, locationLoaded, locationData]);
+
+  // Derive hostel/room/phone from location data
+  const hostel = locationData?.hostel || profile?.hostel_block || '';
+  const room = locationData?.room || profile?.room_number || '';
+  const phone = locationData?.phone || profile?.phone_number || '';
+
+
 
   // Sync floor whenever room changes
-  useEffect(() => {
+  const derivedFloor = useMemo(() => {
     if (room && room.length > 0) {
       const firstDigit = parseInt(room[0]);
       if (!isNaN(firstDigit) && firstDigit > 0) {
-        setFloor(firstDigit);
+        return firstDigit;
       }
     }
+    return 1;
   }, [room]);
 
   const [paymentMethod, setPaymentMethod] = useState<"online" | "cod">(
     "online"
   );
-  const [floor, setFloor] = useState<number>(1);
+  const floor = derivedFloor;
   const [submitting, setSubmitting] = useState(false);
   const [showUpiModal, setShowUpiModal] = useState(false);
 
@@ -95,14 +96,7 @@ export default function Cart() {
   const [riskEval, setRiskEval] = useState<RiskEvaluation | null>(null);
   const [showRiskAlert, setShowRiskAlert] = useState(false);
 
-  // Hostel Options
-  const HOSTEL_GROUPS = [
-    { name: "NC Series", options: ["NC1", "NC2", "NC3", "NC4", "NC5", "NC6"] },
-    {
-      name: "Zakir Series",
-      options: ["Zakir A", "Zakir B", "Zakir C", "Zakir D"],
-    },
-  ];
+
 
   const [showDisclaimer, setShowDisclaimer] = useState(false);
   const [disclaimerAccepted, setDisclaimerAccepted] = useState(false);
@@ -280,10 +274,9 @@ export default function Cart() {
   const isPhoneValid = phoneClean.length === 10;
 
   const isRoomCorrect = room.startsWith(floor.toString());
+  const hasLocation = hostel.trim() !== '' && room.trim() !== '' && isPhoneValid;
   const isFormValid =
-    hostel.trim() !== "" &&
-    room.trim() !== "" &&
-    isPhoneValid &&
+    hasLocation &&
     (hasVending ? isRoomCorrect : true);
 
   const createOrder = async (paymentId?: string) => {
@@ -365,6 +358,18 @@ export default function Cart() {
 
     // Redirect to tracking (it automatically fetches the latest order if no ID provided)
     navigate(`/tracking`);
+  };
+
+  const handleProceedToCheckout = () => {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+    if (!hasLocation) {
+      setShowLocationPrompt(true);
+      return;
+    }
+    setShowCheckout(true);
   };
 
   const handleCheckout = async () => {
@@ -540,12 +545,7 @@ export default function Cart() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-8 flex items-center justify-between relative mt-2"
         >
-          <Link
-            to="/food"
-            className="p-2 -ml-2 text-slate-800 hover:bg-slate-200 rounded-full transition-colors relative z-10"
-          >
-            <ArrowLeft className="w-6 h-6" />
-          </Link>
+          <div className="w-6" /> {/* Spacer */}
           <h1 className="text-[19px] font-bold text-slate-900 absolute left-1/2 -translate-x-1/2 w-full text-center pointer-events-none">
             Secure Checkout
           </h1>
@@ -588,25 +588,39 @@ export default function Cart() {
         )}
 
         {items.length === 0 ? (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="rounded-3xl p-12 text-center bg-white shadow-[0_2px_10px_rgba(0,0,0,0.03)] mt-8"
-          >
-            <ShoppingCart className="w-16 h-16 text-slate-200 mx-auto mb-4" />
-            <h2 className="text-lg font-bold text-slate-900 mb-2">
-              Your cart is empty
-            </h2>
-            <p className="text-slate-500 text-[15px] mb-8">
-              Looks like you haven't added anything yet.
-            </p>
-            <Link
-              to="/food"
-              className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full font-bold text-white text-[15px] bg-slate-900 hover:bg-slate-800 transition-all shadow-md"
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="rounded-3xl p-12 text-center bg-white shadow-[0_2px_10px_rgba(0,0,0,0.03)] mt-8"
             >
-              Browse Menu
-            </Link>
-          </motion.div>
+              <ShoppingCart className="w-16 h-16 text-slate-200 mx-auto mb-4" />
+              <h2 className="text-lg font-bold text-slate-900 mb-2">
+                Your cart is empty
+              </h2>
+              <p className="text-slate-500 text-[15px]">
+                Looks like you haven't added anything yet.
+              </p>
+            </motion.div>
+
+            {/* Apple-style fixed bottom action */}
+            <div className="fixed bottom-0 left-0 right-0 z-40 pb-10 pt-6 px-5 flex justify-center" style={{ background: 'linear-gradient(to top, #FAFAFA 80%, transparent)' }}>
+              <motion.button
+                onClick={() => navigate('/home')}
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.5, ease: [0.25, 1, 0.5, 1] }}
+                whileTap={{ scale: 0.97 }}
+                className="w-full max-w-[360px] h-[56px] rounded-2xl bg-[#1C1C1E] flex items-center justify-center gap-2"
+                style={{ WebkitTapHighlightColor: 'transparent' }}
+              >
+                <ArrowLeft className="w-5 h-5 text-white/60" strokeWidth={2} />
+                <span className="text-[17px] font-semibold text-white tracking-[-0.02em]" style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", system-ui, sans-serif' }}>
+                  Back to Home
+                </span>
+              </motion.button>
+            </div>
+          </>
         ) : (
           <>
             {/* Cart Items */}
@@ -796,6 +810,53 @@ export default function Cart() {
               </div>
             </div>
 
+            {/* Location Missing Prompt Modal */}
+            <AnimatePresence>
+              {showLocationPrompt && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center px-4" style={{ background: 'rgba(0,0,0,0.45)' }}>
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.93, y: 16 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.93, y: 16 }}
+                    className="bg-white w-full max-w-sm rounded-3xl shadow-2xl overflow-hidden mx-2"
+                  >
+                    {/* Header */}
+                    <div className="bg-gradient-to-br from-violet-50 to-purple-50 px-6 pt-7 pb-5 text-center">
+                      <div className="w-14 h-14 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center mx-auto mb-4 shadow-lg shadow-violet-500/25">
+                        <Navigation className="w-6 h-6 text-white" />
+                      </div>
+                      <h2 className="text-slate-900 font-black text-[18px] leading-tight mb-1">
+                        Add Delivery Location
+                      </h2>
+                      <p className="text-slate-500 text-[13px] font-medium leading-snug">
+                        Set your hostel, room & phone to place an order
+                      </p>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="px-6 pb-6 pt-5 space-y-3">
+                      <button
+                        onClick={() => {
+                          setShowLocationPrompt(false);
+                          navigate('/home?openLocation=true&returnTo=cart');
+                        }}
+                        className="w-full py-3.5 rounded-2xl font-bold text-[15px] bg-gradient-to-r from-violet-600 to-purple-600 text-white hover:from-violet-700 hover:to-purple-700 active:scale-[0.98] transition-all shadow-md shadow-violet-500/20 flex items-center justify-center gap-2"
+                      >
+                        <MapPin className="w-4.5 h-4.5" />
+                        Set Location
+                      </button>
+                      <button
+                        onClick={() => setShowLocationPrompt(false)}
+                        className="w-full py-3 rounded-2xl font-bold text-[14px] text-slate-500 hover:bg-slate-50 transition-colors"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </motion.div>
+                </div>
+              )}
+            </AnimatePresence>
+
             {/* Delivery Setup Action Block */}
             {showCheckout ? (
               <motion.div
@@ -803,94 +864,20 @@ export default function Cart() {
                 animate={{ opacity: 1, y: 0 }}
                 className="bg-white rounded-3xl p-6 sm:p-7 shadow-[0_4px_20px_rgba(0,0,0,0.03)] space-y-6 mb-8"
               >
-                <div className="flex items-center gap-3 mb-2">
-                   <MapPin className="w-5 h-5 text-slate-900" />
-                   <h3 className="font-bold text-slate-900 text-[17px]">Pickup Location</h3>
-                </div>
-
-                <div className="space-y-6">
-                  {/* Hostel Blocks */}
-                  <div>
-                    <label className="text-[13px] font-bold text-slate-500 mb-3 block">Select Block</label>
-                    <div className="space-y-4">
-                      {HOSTEL_GROUPS.map((group) => (
-                        <div key={group.name}>
-                          <div className="flex flex-wrap gap-2.5">
-                            {group.options.map((opt) => (
-                              <button
-                                key={opt}
-                                onClick={() => setHostel(opt)}
-                                className={`py-2.5 px-4 rounded-[14px] text-[14px] font-bold transition-all border ${
-                                  hostel === opt
-                                    ? 'bg-slate-900 text-white border-slate-900 shadow-md'
-                                    : 'bg-white text-slate-600 border-slate-200 hover:border-slate-400'
-                                }`}
-                              >
-                                {opt}
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Floor and Room */}
-                  <div className="flex gap-4">
-                     {/* Floor */}
-                     <div className="w-[100px]">
-                        <label className="text-[13px] font-bold text-slate-500 mb-2 block">Floor</label>
-                        <div className="flex bg-[#FAFAFA] rounded-[18px] border border-slate-200 items-center justify-between h-[56px] px-2">
-                          <button onClick={() => setFloor(Math.max(1, floor - 1))} className="p-2 text-slate-400 hover:text-slate-900"><Minus className="w-4 h-4"/></button>
-                          <span className="text-[18px] font-bold text-slate-900">{floor}</span>
-                          <button onClick={() => setFloor(Math.min(11, floor + 1))} className="p-2 text-slate-400 hover:text-slate-900"><Plus className="w-4 h-4"/></button>
-                        </div>
-                     </div>
-                     {/* Room Input */}
-                     <div className="flex-1">
-                        <label className="text-[13px] font-bold text-slate-500 mb-2 flex justify-between">
-                           Room Number
-                           {hasVending && room && !room.startsWith(floor.toString()) && (
-                              <span className="text-red-500 text-[11px]">(Must be {floor}xx)</span>
-                           )}
-                        </label>
-                        <input
-                          value={room}
-                          onChange={(e) => {
-                            const val = e.target.value.replace(/\D/g, '');
-                            setRoom(val);
-                            if (val.length > 0) {
-                              const firstDigit = parseInt(val[0]);
-                              if (!isNaN(firstDigit) && firstDigit > 0) {
-                                setFloor(firstDigit);
-                              }
-                            }
-                          }}
-                          placeholder="e.g. 104"
-                          className={`w-full h-[56px] bg-[#FAFAFA] border border-slate-200 rounded-[18px] px-4 font-bold text-[16px] text-slate-900 focus:outline-none focus:border-slate-400 transition-colors placeholder:text-slate-300 placeholder:font-medium ${
-                            hasVending && room && !room.startsWith(floor.toString()) ? 'border-red-300 bg-red-50' : ''
-                          }`}
-                        />
-                     </div>
-                  </div>
-                  
-                  {/* Phone Input */}
-                  <div>
-                    <label className="text-[13px] font-bold text-slate-500 mb-2 block">Mobile Context</label>
-                    <div className="relative">
-                      <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-                      <input
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
-                        type="tel"
-                        placeholder="10-digit number"
-                        maxLength={10}
-                        className={`w-full h-[56px] bg-[#FAFAFA] border rounded-[18px] pl-12 pr-4 font-bold text-[16px] text-slate-900 focus:outline-none focus:border-slate-400 transition-colors placeholder:text-slate-300 placeholder:font-medium ${
-                          phone.length > 0 && !isPhoneValid ? 'border-red-300 bg-red-50' : 'border-slate-200'
-                        }`}
-                      />
-                    </div>
-                  </div>
+                {/* Location Summary Card */}
+                <div className="bg-slate-50 rounded-2xl p-4 flex items-center justify-between border border-slate-100 mb-6 mt-4">
+                   <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
+                         <MapPin className="w-5 h-5 text-emerald-600" />
+                      </div>
+                      <div>
+                         <p className="text-[14px] font-bold text-slate-900">Delivering to {hostel} - {room}</p>
+                         <p className="text-[12px] text-slate-500 font-medium">{phone}</p>
+                      </div>
+                   </div>
+                   <button onClick={() => navigate('/home?openLocation=true&returnTo=cart')} className="text-emerald-600 text-[13px] font-bold px-3 py-1.5 bg-emerald-50 rounded-full hover:bg-emerald-100 transition-colors">
+                      Change
+                   </button>
                 </div>
 
                 <div className="pt-6 border-t border-slate-100">
@@ -924,7 +911,7 @@ export default function Cart() {
                   <div className="max-w-xl w-full">
                     <motion.button
                       whileTap={{ scale: 0.98 }}
-                      onClick={() => setShowCheckout(true)}
+                      onClick={handleProceedToCheckout}
                       className="w-full h-[60px] rounded-[18px] font-bold text-white text-[16px] flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 shadow-[0_4px_14px_rgba(0,0,0,0.15)] transition-all"
                     >
                       <ShoppingBag className="w-5 h-5" /> Proceed to Checkout

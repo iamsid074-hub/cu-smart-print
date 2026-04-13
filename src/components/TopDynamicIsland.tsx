@@ -17,6 +17,8 @@ import {
   Wallet,
   Search,
   User,
+  ShoppingCart,
+  Bike,
 } from "lucide-react";
 import { Haptics, ImpactStyle } from "@capacitor/haptics";
 
@@ -31,9 +33,9 @@ const triggerHaptic = async (style: ImpactStyle = ImpactStyle.Light) => {
 // Fluid, bouncy spring animation mimicking Apple's Dynamic Island
 const springTransition = {
   type: "spring" as const,
-  stiffness: 400,
+  stiffness: 320,
   damping: 30,
-  mass: 1.2,
+  mass: 1,
 };
 
 type IslandState =
@@ -201,20 +203,22 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
   // ── Fetch tracking order & subscribe to real-time updates ───────────────
   const fetchTrackingOrder = useCallback(async () => {
     if (!user) return;
-    const params = new URLSearchParams(location.search);
-    const orderId = params.get("order");
 
+    // If we already have a tracked order ID, always fetch for that specific order
+    const currentId = trackingOrder?.id;
     let query = supabase
       .from("orders")
       .select(
         "id, status, delivery_location, delivery_room, total_price, created_at, products(title, image_url)"
       );
 
-    if (orderId) {
-      query = query.eq("id", orderId);
+    if (currentId) {
+      query = query.eq("id", currentId);
     } else {
+      // No tracked order yet — find a recent active order
       query = query
         .eq("buyer_id", user.id)
+        .not("status", "in", '("completed","cancelled","seller_rejected")')
         .order("created_at", { ascending: false })
         .limit(1);
     }
@@ -223,17 +227,15 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
     if (data) {
       setTrackingOrder(data);
     }
-  }, [user, location.search]);
+  }, [user, trackingOrder?.id]);
 
   useEffect(() => {
-    if (!location.pathname.startsWith("/tracking")) return;
     fetchTrackingOrder();
-  }, [location.pathname, fetchTrackingOrder]);
+  }, [fetchTrackingOrder]);
 
   // Real-time subscription for tracking order
   useEffect(() => {
-    if (!trackingOrder?.id || !location.pathname.startsWith("/tracking"))
-      return;
+    if (!trackingOrder?.id) return;
 
     const channel = supabase
       .channel(`top_di_tracking_${trackingOrder.id}`)
@@ -258,7 +260,7 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
       supabase.removeChannel(channel);
       clearInterval(pollInterval);
     };
-  }, [trackingOrder?.id, location.pathname, fetchTrackingOrder]);
+  }, [trackingOrder?.id, fetchTrackingOrder]);
 
   // Detect status changes for animation
   useEffect(() => {
@@ -296,8 +298,15 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
   const handleIslandClick = () => {
     // Determine what the current visible state is for the click handler
     const currentCount = items.reduce((acc, item) => acc + item.quantity, 0);
+    const hasActiveTracking = trackingOrder && !isTrackingDone && !isTrackingFailed;
+
     let effectiveState = islandState;
     if (
+      hasActiveTracking &&
+      ["default", "explore", "grocery", "sell", "wallet", "profile"].includes(islandState)
+    ) {
+      effectiveState = "tracking";
+    } else if (
       currentCount > 0 &&
       ["default", "explore", "grocery", "sell", "wallet", "profile"].includes(islandState)
     ) {
@@ -311,8 +320,8 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
       effectiveState === "active_cart"
     ) {
       navigate("/cart");
-    } else if (effectiveState === "tracking") {
-      navigate("/tracking");
+    } else if (effectiveState === "tracking" || hasActiveTracking) {
+      navigate("/tracking" + (trackingOrder?.id ? `?order=${trackingOrder.id}` : ""));
     }
   };
 
@@ -352,9 +361,15 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
   let content = null;
   const currentCount = items.reduce((acc, item) => acc + item.quantity, 0);
 
-  // Automatically render the cart pill if there are items and we are currently in an 'idle' navigation state. 
+  // Automatically render tracking or cart pill if in an 'idle' navigation state. 
   let displayState = islandState;
+  
   if (
+    trackingOrder && !isTrackingDone && !isTrackingFailed &&
+    ["default", "explore", "grocery", "sell", "wallet", "profile"].includes(islandState)
+  ) {
+    displayState = "tracking";
+  } else if (
     currentCount > 0 &&
     ["default", "explore", "grocery", "sell", "wallet", "profile"].includes(islandState)
   ) {
@@ -432,24 +447,46 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
       );
       break;
     case "active_cart":
-      width = 300;
-      height = 48;
+      width = 280;
+      height = 44;
       const totalAmount = items.reduce((acc, item) => acc + item.price * item.quantity, 0);
       content = (
-        <div className="flex items-center justify-between w-full h-full pr-1">
-          <div className="flex items-center gap-2">
-             <ShoppingBag className="w-4 h-4 text-emerald-400" />
-             <span className="text-[14px] font-bold text-white tracking-wide">
-                {currentCount} item{currentCount !== 1 ? 's' : ''}
-             </span>
+        <div className="flex items-center justify-between w-full h-full pr-0.5">
+          <div className="flex items-center gap-2.5 ml-1">
+             <div className="relative">
+               <ShoppingBag className="w-4.5 h-4.5 text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.5)]" />
+               <motion.div 
+                 animate={{ opacity: [0.4, 0.8, 0.4] }}
+                 transition={{ duration: 2, repeat: Infinity }}
+                 className="absolute inset-0 bg-emerald-400/20 blur-md rounded-full"
+               />
+             </div>
+             <div className="flex flex-col items-start leading-none">
+                <span className="text-[13px] font-black text-white">
+                   {currentCount}
+                </span>
+                <span className="text-[9px] font-bold text-white/50 uppercase tracking-tighter">
+                   ITEM{currentCount !== 1 ? 'S' : ''}
+                </span>
+             </div>
           </div>
           
           <div className="flex items-center gap-3">
-             <span className="text-[14px] font-black text-white/90">
+             <span className="text-[15px] font-black text-white tabular-nums">
                 ₹{totalAmount}
              </span>
-             <div className="bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-full flex items-center justify-center active:scale-95 transition-all cursor-pointer">
-                <span className="text-[11px] font-bold text-white uppercase tracking-wider pt-0.5">VIEW</span>
+             <div 
+               onClick={() => {
+                 triggerHaptic(ImpactStyle.Light);
+                 navigate("/cart");
+               }}
+               className="bg-zinc-800/80 hover:bg-zinc-700/80 px-4 py-2 rounded-xl flex items-center justify-center active:scale-95 transition-all cursor-pointer border border-white/10 shadow-lg"
+               style={{
+                 backdropFilter: "blur(8px)",
+                 WebkitBackdropFilter: "blur(8px)"
+               }}
+             >
+                <span className="text-[10px] font-black text-white uppercase tracking-[0.15em] leading-none">VIEW</span>
              </div>
           </div>
         </div>
@@ -492,78 +529,73 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
       break;
 
     case "tracking":
-      width = trackingOrder ? 280 : 160;
-      height = trackingOrder ? 48 : 40;
+      width = trackingOrder ? 200 : 160;
+      height = 40; // Default pill height for perfect vertical centering
+      
+      const stepIndex = trackingStatus?.stepIndex ?? 0;
+      // Calculate realistic width progression (0% at pending to 100% at completed)
+      const pct = Math.max(0, Math.min(100, (stepIndex / 4) * 100));
+
       if (trackingOrder && trackingStatus) {
-        const StatusIcon = trackingStatus.icon;
         content = (
-          <div className="flex items-center gap-2.5 w-full px-1">
-            {/* Animated status icon */}
-            <motion.div
-              key={trackingOrder.status}
-              initial={{ scale: 0.5, rotate: -90, opacity: 0 }}
-              animate={{ scale: 1, rotate: 0, opacity: 1 }}
-              transition={{ type: "spring", stiffness: 500, damping: 25 }}
-              className="flex-shrink-0"
-            >
-              <div
-                className="w-7 h-7 rounded-full flex items-center justify-center"
-                style={{ background: `${trackingStatus.color}25` }}
-              >
-                <StatusIcon
-                  className="w-4 h-4"
-                  style={{ color: trackingStatus.color }}
-                />
-              </div>
-            </motion.div>
+          <div className="flex flex-col w-full h-full justify-center px-1 relative"> 
+            {/* The Pure Scooter Animation Track - Centered perfectly */}
+            <div className="w-full flex items-center h-full">
+               <div className="relative w-full h-full flex items-center mx-2 pl-1">
+                 {/* Background Track Strip */}
+                 <div className="absolute left-1 right-12 h-[2px] bg-white/10 rounded-full" />
+                 
+                 {/* Glowing Action Fill */}
+                 <motion.div 
+                   className="absolute left-1 h-[2px] rounded-full"
+                   style={{ background: trackingStatus.color, boxShadow: `0 0 8px ${trackingStatus.color}` }}
+                   initial={{ width: 0 }}
+                   animate={{ width: `calc((100% - 52px) * (${pct} / 100))` }}
+                   transition={{ type: "spring", stiffness: 45, damping: 14 }}
+                 />
 
-            {/* Status text */}
-            <div className="flex-1 min-w-0 flex flex-col">
-              <AnimatePresence mode="wait">
-                <motion.span
-                  key={trackingOrder.status}
-                  initial={{ opacity: 0, y: 6 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -6 }}
-                  transition={{ duration: 0.2 }}
-                  className="text-[13px] font-bold text-white truncate leading-tight"
-                >
-                  {trackingStatus.label}
-                </motion.span>
-              </AnimatePresence>
-              {trackingOrder.total_price > 0 && (
-                <span className="text-[10px] font-medium text-white/40 leading-tight">
-                  ₹{trackingOrder.total_price}
-                </span>
-              )}
-            </div>
-
-            {/* Mini step dots */}
-            <div className="flex items-center gap-1 flex-shrink-0">
-              {STEP_KEYS.map((key, i) => {
-                const currentIdx = trackingStatus.stepIndex;
-                const isDone = currentIdx > i;
-                const isActive = currentIdx === i;
-                return (
-                  <motion.div
-                    key={key}
-                    animate={{
-                      scale: isActive ? 1.3 : 1,
-                      backgroundColor: isDone
-                        ? trackingStatus.color
-                        : isActive
-                        ? trackingStatus.color
-                        : "rgba(255,255,255,0.15)",
-                    }}
-                    transition={{ duration: 0.3 }}
-                    style={{
-                      width: isActive ? 8 : 5,
-                      height: 5,
-                      borderRadius: 10,
-                    }}
-                  />
-                );
-              })}
+                 {/* Scooter Vehicle Bubble */}
+                 <motion.div 
+                   className="absolute z-10 flex items-center justify-center p-1 rounded-full"
+                   style={{ 
+                      background: trackingStatus.color, 
+                      boxShadow: `0 2px 8px ${trackingStatus.color}60` 
+                   }}
+                   initial={{ left: 0 }}
+                   animate={{ left: `calc(4px + (100% - 50px) * (${pct} / 100) - 9px)` }}
+                   transition={{ type: "spring", stiffness: 45, damping: 14 }}
+                 >
+                   <motion.div
+                     animate={stepIndex > 0 && stepIndex < 5 ? { y: [0, -1, 0], rotate: [0, -2, 2, 0] } : {}}
+                     transition={{ repeat: Infinity, duration: 0.3 }}
+                   >
+                     {stepIndex < 0 ? (
+                        <XCircle className="w-2.5 h-2.5 text-[#111]" />
+                     ) : (
+                        <Bike className="w-2.5 h-2.5 text-[#111]" />
+                     )}
+                   </motion.div>
+                 </motion.div>
+                 
+                 {/* Right side: Compact "CART" Button */}
+                 <div className="absolute right-0 top-1/2 -translate-y-1/2 z-10">
+                   <div
+                     onPointerDown={(e) => e.stopPropagation()}
+                     onPointerUp={(e) => { 
+                       e.stopPropagation(); 
+                       triggerHaptic(ImpactStyle.Light); 
+                       navigate("/cart"); 
+                     }}
+                     className="cursor-pointer flex items-center justify-center bg-zinc-800/80 hover:bg-zinc-700/80 active:scale-95 transition-all rounded-lg px-2 py-1.5 border border-white/10 shadow-lg"
+                     style={{
+                       backdropFilter: "blur(8px)",
+                       WebkitBackdropFilter: "blur(8px)"
+                     }}
+                   >
+                     <span className="text-[10px] font-black text-white tracking-widest leading-none">CART</span>
+                   </div>
+                 </div>
+               </div>
             </div>
           </div>
         );
@@ -599,8 +631,11 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
 
   return (
     <>
-      {/* Tracking glow keyframes */}
       <style>{`
+        @keyframes diGlow {
+          0%, 100% { box-shadow: 0 0 0 0.5px rgba(255,255,255,0.08), 0 0 20px rgba(255,255,255,0.05); }
+          50% { box-shadow: 0 0 0 1px rgba(255,255,255,0.15), 0 0 30px rgba(255,255,255,0.1); }
+        }
         @keyframes diTrackingGlow {
           0%, 100% { box-shadow: 0 0 0 0.5px rgba(16,185,129,0.15), 0 0 20px rgba(16,185,129,0.08); }
           50% { box-shadow: 0 0 0 1px rgba(16,185,129,0.3), 0 0 30px rgba(16,185,129,0.15); }
@@ -612,7 +647,7 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
         @keyframes diTrackingPulse {
           0% { box-shadow: 0 0 0 0.5px rgba(16,185,129,0.2); transform: scale(1); }
           30% { box-shadow: 0 0 0 3px rgba(16,185,129,0.5), 0 0 40px rgba(16,185,129,0.3); transform: scale(1.03); }
-          100% { box-shadow: 0 0 0 0.5px rgba(16,185,129,0.15); transform: scale(1); }
+          100% { box-shadow: 0 0 0 0.5px rgba(16,185,129,0.2); transform: scale(1); }
         }
       `}</style>
 
@@ -629,12 +664,17 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
         style={{ willChange: "transform" }}
       >
         <div className="flex items-center gap-3 max-w-md w-full justify-center">
-          {/* Relative wrapper for pill + dropdown alignment */}
-          <div className="relative flex items-center justify-center gap-2">
+          {/* Shared Layout Wrapper for smooth separation */}
+          <motion.div 
+            layout 
+            className="relative flex items-center justify-center gap-2"
+            transition={springTransition}
+          >
             <AnimatePresence mode="popLayout">
               {/* ── Main Pill ── */}
               <motion.div
                 layout
+                key="main-pill"
                 initial={false}
                 animate={{ width, height }}
                 transition={springTransition}
@@ -660,17 +700,7 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
               >
                 {/* Green camera indicator dot */}
                 <motion.div
-                  animate={{
-                    opacity: [0.55, 1, 0.55],
-                    background:
-                      islandState === "tracking" && trackingOrder
-                        ? trackingStatus?.color || "#30D158"
-                        : "#30D158",
-                    boxShadow:
-                      islandState === "tracking" && trackingOrder
-                        ? `0 0 8px ${trackingStatus?.color || "#30D158"}`
-                        : "0 0 8px rgba(48,209,88,0.9)",
-                  }}
+                  animate={{ opacity: [0.5, 1, 0.5] }}
                   transition={{
                     duration: 3,
                     repeat: Infinity,
@@ -684,6 +714,8 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
                     width: 6,
                     height: 6,
                     borderRadius: "50%",
+                    background: "#30D158",
+                    boxShadow: "0 0 8px rgba(48,209,88,0.9)",
                     zIndex: 10,
                   }}
                 />
@@ -701,8 +733,8 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
                       justifyContent: "center",
                       width: "100%",
                       height: "100%",
-                      paddingLeft: 24,
-                      paddingRight: 10,
+                      paddingLeft: islandState === "tracking" ? 22 : 24,
+                      paddingRight: islandState === "tracking" ? 2 : 10,
                       color: "#fff",
                     }}
                   >
@@ -710,61 +742,46 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
                   </motion.div>
                 </AnimatePresence>
               </motion.div>
-            </AnimatePresence>
 
-            {/* ── Liquid Splitting Secondary Pill for Background Orders ── */}
-            <AnimatePresence>
-              {trackingOrder && islandState !== "tracking" && !isTrackingDone && !isTrackingFailed && (
+              {/* ── Secondary Navigation Pill ── */}
+              {displayState === "tracking" && currentCount > 0 ? (
                 <motion.div
                   layout
-                  initial={{ width: 0, opacity: 0, scale: 0.5, marginLeft: -16 }}
-                  animate={{ width: 40, opacity: 1, scale: 1, marginLeft: 0 }}
-                  exit={{ width: 0, opacity: 0, scale: 0.5, marginLeft: -16 }}
+                  key="split-pill-tracking"
+                  initial={{ opacity: 0, scale: 0, x: -20 }}
+                  animate={{ opacity: 1, scale: 1, x: 0 }}
+                  exit={{ opacity: 0, scale: 0, x: -20 }}
                   transition={springTransition}
-                  onPointerDown={handlePointerDown}
-                  onPointerUp={handlePointerUp}
-                  className="pointer-events-auto flex items-center justify-center overflow-hidden flex-shrink-0 cursor-pointer hover:bg-zinc-900"
+                  onPointerDown={(e) => { e.stopPropagation(); triggerHaptic(ImpactStyle.Light); }}
+                  onPointerUp={(e) => { e.stopPropagation(); triggerHaptic(ImpactStyle.Light); navigate("/cart"); }}
+                  className="pointer-events-auto flex items-center justify-center overflow-hidden flex-shrink-0 cursor-pointer hover:bg-zinc-900 shadow-xl"
                   style={{
                     background: "rgba(15, 15, 15, 0.98)",
-                    height: 40, // consistent dot size
+                    width: 44,
+                    height: 44,
                     borderRadius: "50%",
-                    border: "1px solid rgba(255, 255, 255, 0.08)",
-                    zIndex: 100,
+                    border: "1px solid rgba(255, 255, 255, 0.12)",
+                    zIndex: 101,
                   }}
                 >
-                  {trackingOrder.status === "delivering" ? (
-                    <Truck size={16} color="#10B981" />
-                  ) : trackingOrder.status === "picked" ? (
-                    <Package size={16} color="#8B5CF6" />
-                  ) : (
-                    <div
-                      className="rounded-full bg-emerald-500"
-                      style={{
-                        width: 8, height: 8,
-                        animation: "greenPulse 2s infinite ease-in-out"
-                      }}
-                    />
-                  )}
+                  <ShoppingBag className="w-5 h-5 text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.4)]" />
                 </motion.div>
-              )}
-            </AnimatePresence>
-
-            {/* ── Liquid Splitting Secondary Pill when Cart takes over Main Display ── */}
-            <AnimatePresence>
-              {!trackingOrder && currentCount > 0 && ["explore", "grocery", "sell", "wallet", "profile"].includes(islandState) && (
+              ) : displayState === "active_cart" && islandState !== "default" ? (
                 <motion.div
                   layout
-                  initial={{ width: 0, opacity: 0, scale: 0.5, marginLeft: -16 }}
-                  animate={{ width: 40, opacity: 1, scale: 1, marginLeft: 0 }}
-                  exit={{ width: 0, opacity: 0, scale: 0.5, marginLeft: -16 }}
+                  key="split-pill-context"
+                  initial={{ opacity: 0, scale: 0, x: -20 }}
+                  animate={{ opacity: 1, scale: 1, x: 0 }}
+                  exit={{ opacity: 0, scale: 0, x: -20 }}
                   transition={springTransition}
-                  className="pointer-events-auto flex items-center justify-center overflow-hidden flex-shrink-0"
+                  className="pointer-events-auto flex items-center justify-center overflow-hidden flex-shrink-0 shadow-lg"
                   style={{
                     background: "rgba(15, 15, 15, 0.98)",
-                    height: 40,
+                    width: 44,
+                    height: 44,
                     borderRadius: "50%",
-                    border: "1px solid rgba(255, 255, 255, 0.08)",
-                    zIndex: 100,
+                    border: "1px solid rgba(255, 255, 255, 0.12)",
+                    zIndex: 101,
                   }}
                 >
                   {islandState === "explore" ? <Search size={16} color="#3b82f6" /> :
@@ -773,10 +790,9 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
                    islandState === "wallet" ? <Wallet size={16} color="#f59e0b" /> :
                    islandState === "profile" ? <User size={16} color="#ec4899" /> : null}
                 </motion.div>
-              )}
+              ) : null}
             </AnimatePresence>
-          </div>
-          {/* close relative wrapper */}
+          </motion.div>
         </div>
       </div>
     </>

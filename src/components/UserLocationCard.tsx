@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { MapPin, ChevronDown, User } from "lucide-react";
-import { useLocation, Link } from "react-router-dom";
+import { useLocation, Link, useSearchParams } from "react-router-dom";
 import { useUserLocation } from "@/hooks/useUserLocation";
 import { useMembership } from "@/hooks/useMembership";
 import EditLocationModal from "./EditLocationModal";
@@ -13,6 +13,19 @@ export default function UserLocationCard() {
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isPlansOpen, setIsPlansOpen] = useState(false);
   const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // Auto-open location modal when redirected from cart
+  const returnTo = searchParams.get('returnTo');
+  useEffect(() => {
+    if (searchParams.get('openLocation') === 'true' && location.pathname === '/home') {
+      setIsEditOpen(true);
+      // Clean up the URL params without triggering re-render loop
+      const newParams = new URLSearchParams(searchParams);
+      newParams.delete('openLocation');
+      setSearchParams(newParams, { replace: true });
+    }
+  }, [searchParams, location.pathname, setSearchParams]);
 
   if (!isLoaded || location.pathname !== "/home") return null;
 
@@ -130,6 +143,7 @@ export default function UserLocationCard() {
       <EditLocationModal
         isOpen={isEditOpen}
         onClose={() => setIsEditOpen(false)}
+        returnTo={returnTo || undefined}
       />
       <MembershipPlansModal
         isOpen={isPlansOpen}
