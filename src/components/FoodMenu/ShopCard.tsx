@@ -27,17 +27,13 @@ const SHOP_IMAGES: Record<string, string> = {
   "barkat-food":         "/shops/barkat-food.png",
 };
 
-// ── Per-shop accent palette ────────────────────────────────────────────────
-const ACCENTS: Record<string, { grad: string; light: string; dot: string; text: string }> = {
-  "chatori-chai-kulcha": { grad: "linear-gradient(135deg,#f97316,#ef4444)", light: "rgba(249,115,22,0.1)", dot: "#f97316", text: "#fb923c" },
-  "insta-food":          { grad: "linear-gradient(135deg,#6366f1,#8b5cf6)", light: "rgba(99,102,241,0.1)", dot: "#6366f1", text: "#818cf8" },
-  "parantha-house":      { grad: "linear-gradient(135deg,#10b981,#059669)", light: "rgba(16,185,129,0.1)", dot: "#10b981", text: "#34d399" },
-  "punjabi-rasoi":       { grad: "linear-gradient(135deg,#ec4899,#db2777)", light: "rgba(236,72,153,0.1)", dot: "#ec4899", text: "#f472b6" },
-  "flavour-factory":     { grad: "linear-gradient(135deg,#f59e0b,#d97706)", light: "rgba(245,158,11,0.1)", dot: "#f59e0b", text: "#fbbf24" },
-  "catch-up-cafe":       { grad: "linear-gradient(135deg,#14b8a6,#0d9488)", light: "rgba(20,184,166,0.1)", dot: "#14b8a6", text: "#2dd4bf" },
-};
-const getAccent = (id: string) =>
-  ACCENTS[id] ?? { grad: "linear-gradient(135deg,#64748b,#475569)", light: "rgba(100,116,139,0.1)", dot: "#64748b", text: "#94a3b8" };
+// ── Unified Premium Accent ────────────────────────────────────────────────
+const getAccent = () => ({ 
+  grad: "linear-gradient(135deg, #f59e0b, #d97706)", 
+  light: "rgba(245,158,11,0.12)", 
+  dot: "#f59e0b", 
+  text: "#fbbf24" 
+});
 
 interface ShopItem     { name: string; price: number; image?: string }
 interface MenuCategory { category: string; items: ShopItem[] }
@@ -153,108 +149,123 @@ export const ShopCard = memo(({
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.26, ease: "easeInOut" }}
-            className="rounded-[1.4rem] overflow-hidden bg-[#1c1c1e] border border-white/5 mt-2"
-            style={{ boxShadow: "0 6px 24px rgba(0,0,0,0.45)" }}
+            transition={{ duration: 0.35, ease: [0.25, 1, 0.5, 1] }}
+            className="overflow-hidden"
           >
-            {/* Category pill scrollbar */}
-            <div className="flex gap-2 overflow-x-auto scrollbar-hide px-4 pt-3 pb-2">
-              <button
-                onMouseDown={(e) => e.preventDefault()}
-                onClick={() => onToggleCategory(null)}
-                className="flex-shrink-0 px-3 py-1 rounded-full text-[11px] font-bold border transition-all"
-                style={
-                  !expandedMenuCat
-                    ? { background: accent.dot, color: "#fff", borderColor: accent.dot }
-                    : { background: "#2c2c2e", color: "#8E8E93", borderColor: "transparent" }
-                }
+            <div className="pt-2">
+              <div
+                className="rounded-[1.4rem] overflow-hidden bg-[#1c1c1e] border border-white/5"
+                style={{ boxShadow: "0 6px 24px rgba(0,0,0,0.45)" }}
               >
-                All
-              </button>
-              {shop.categories.map((cat) => {
-                const active = expandedMenuCat === cat.category;
-                return (
+                {/* Category pill scrollbar */}
+                <div className="flex gap-2 overflow-x-auto scrollbar-hide px-4 pt-3 pb-2">
                   <button
-                    key={cat.category}
                     onMouseDown={(e) => e.preventDefault()}
-                    onClick={() => onToggleCategory(active ? null : cat.category)}
+                    onClick={() => onToggleCategory(null)}
                     className="flex-shrink-0 px-3 py-1 rounded-full text-[11px] font-bold border transition-all"
                     style={
-                      active
+                      !expandedMenuCat
                         ? { background: accent.dot, color: "#fff", borderColor: accent.dot }
                         : { background: "#2c2c2e", color: "#8E8E93", borderColor: "transparent" }
                     }
                   >
-                    {cat.category}
+                    All
                   </button>
-                );
-              })}
-            </div>
-
-            {/* Items list */}
-            <div className="px-4 pb-4">
-              {shop.categories
-                .filter((cat) => !expandedMenuCat || cat.category === expandedMenuCat)
-                .map((cat) => (
-                  <div key={cat.category} className="mb-1 mt-2">
-                    {/* Category label */}
-                    <div className="flex items-center gap-1.5 mb-2">
-                      <div className="w-1.5 h-1.5 rounded-full" style={{ background: accent.dot }} />
-                      <span className="text-[10px] font-black uppercase tracking-widest" style={{ color: accent.text }}>
+                  {shop.categories.map((cat) => {
+                    const active = expandedMenuCat === cat.category;
+                    return (
+                      <button
+                        key={cat.category}
+                        onMouseDown={(e) => e.preventDefault()}
+                        onClick={() => onToggleCategory(active ? null : cat.category)}
+                        className="flex-shrink-0 px-3 py-1 rounded-full text-[11px] font-bold border transition-all"
+                        style={
+                          active
+                            ? { background: accent.dot, color: "#fff", borderColor: accent.dot }
+                            : { background: "#2c2c2e", color: "#8E8E93", borderColor: "transparent" }
+                        }
+                      >
                         {cat.category}
-                      </span>
-                    </div>
+                      </button>
+                    );
+                  })}
+                </div>
 
-                    {cat.items.map((item, idx) => {
-                      const id      = `${shop.id}-${cat.category}-${idx}`;
-                      const isAdded = cartIds.has(id);
-                      const img     = item.image ?? getPremiumImage(item.name, cat.category);
-
-                      return (
-                        <div
-                          key={idx}
-                          className="flex items-center gap-3 py-2.5 border-b border-white/5 last:border-0"
-                        >
-                          {/* Thumbnail */}
-                          <div className="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 bg-[#0a0a0a]">
-                            <img src={img} alt={item.name} className="w-full h-full object-cover" loading="lazy" />
-                          </div>
-
-                          {/* Name + price */}
-                          <div className="flex-1 min-w-0">
-                            <p className="text-[13px] font-semibold text-white leading-tight truncate">{item.name}</p>
-                            <p className="text-[14px] font-black text-white mt-0.5">₹{item.price}</p>
-                          </div>
-
-                          {/* Add btn */}
-                          <button
-                            onMouseDown={(e) => e.preventDefault()}
-                            onClick={() =>
-                              onAddItem({
-                                id,
-                                title: `${item.name} (${shop.name})`,
-                                price: item.price,
-                                image: img,
-                                category: "shops",
-                              })
-                            }
-                            className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 transition-all active:scale-90"
-                            style={{
-                              background: isAdded ? "#34C759" : accent.grad,
-                              boxShadow: isAdded
-                                ? "0 4px 10px rgba(52,199,89,0.3)"
-                                : `0 4px 10px ${accent.dot}40`,
-                            }}
-                          >
-                            {isAdded
-                              ? <CheckCircle2 className="w-3.5 h-3.5 text-white" />
-                              : <Plus className="w-3.5 h-3.5 text-white stroke-[2.5]" />}
-                          </button>
+                {/* Items list */}
+                <div className="px-4 pb-4">
+                  {shop.categories
+                    .filter((cat) => !expandedMenuCat || cat.category === expandedMenuCat)
+                    .map((cat, catIdx) => (
+                      <div 
+                        key={cat.category} 
+                        className="mb-1 mt-2"
+                        style={{
+                          animation: `fadeInSoft 0.4s cubic-bezier(0.25, 1, 0.5, 1) ${catIdx * 0.08}s both`
+                        }}
+                      >
+                        {/* Category label */}
+                        <div className="flex items-center gap-1.5 mb-2">
+                          <div className="w-1.5 h-1.5 rounded-full" style={{ background: accent.dot }} />
+                          <span className="text-[10px] font-black uppercase tracking-widest" style={{ color: accent.text }}>
+                            {cat.category}
+                          </span>
                         </div>
-                      );
-                    })}
-                  </div>
-                ))}
+
+                        {cat.items.map((item, idx) => {
+                          const id      = `${shop.id}-${cat.category}-${idx}`;
+                          const isAdded = cartIds.has(id);
+                          const img     = item.image ?? getPremiumImage(item.name, cat.category);
+
+                          return (
+                            <div
+                              key={idx}
+                              className="flex items-center gap-3 py-2.5 border-b border-white/5 last:border-0"
+                              style={{
+                                animation: `fadeInSoft 0.3s cubic-bezier(0.25, 1, 0.5, 1) ${(catIdx * 0.08) + (idx * 0.03) + 0.1}s both`
+                              }}
+                            >
+                              {/* Thumbnail */}
+                              <div className="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 bg-[#0a0a0a]">
+                                <img src={img} alt={item.name} className="w-full h-full object-cover" loading="lazy" />
+                              </div>
+
+                              {/* Name + price */}
+                              <div className="flex-1 min-w-0">
+                                <p className="text-[13px] font-semibold text-white leading-tight truncate">{item.name}</p>
+                                <p className="text-[14px] font-black text-white mt-0.5">₹{item.price}</p>
+                              </div>
+
+                              {/* Add btn */}
+                              <button
+                                onMouseDown={(e) => e.preventDefault()}
+                                onClick={() =>
+                                  onAddItem({
+                                    id,
+                                    title: `${item.name} (${shop.name})`,
+                                    price: item.price,
+                                    image: img,
+                                    category: "shops",
+                                  })
+                                }
+                                className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 transition-all active:scale-90"
+                                style={{
+                                  background: isAdded ? "#34C759" : accent.grad,
+                                  boxShadow: isAdded
+                                    ? "0 4px 10px rgba(52,199,89,0.3)"
+                                    : `0 4px 10px ${accent.dot}40`,
+                                }}
+                              >
+                                {isAdded
+                                  ? <CheckCircle2 className="w-3.5 h-3.5 text-white" />
+                                  : <Plus className="w-3.5 h-3.5 text-white stroke-[2.5]" />}
+                              </button>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    ))}
+                </div>
+              </div>
             </div>
           </motion.div>
         )}

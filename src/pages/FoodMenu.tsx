@@ -287,7 +287,6 @@ export default function FoodMenu() {
               onRemoveFromList={handleRemoveFromList}
               onPreview={handlePreviewCustom}
               estimatePrice={estimatePrice}
-              suggestions={getFoodSuggestions("")}
               isListening={isListening}
               onStartListening={startListening}
             />

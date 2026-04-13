@@ -1,4 +1,4 @@
-﻿import React, { useState, memo, useCallback } from "react";
+import React, { useState, memo, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Search,
@@ -30,27 +30,28 @@ export const CustomOrderForm = memo(
     onRemoveFromList,
     onPreview,
     estimatePrice,
-    suggestions,
     isListening,
     onStartListening,
-  }: CustomOrderFormProps) => {
+  }: Omit<CustomOrderFormProps, "suggestions">) => {
     const [input, setInput] = useState("");
+    const [shopName, setShopName] = useState("");
     const [qty, setQty] = useState(1);
     const [price, setPrice] = useState("");
     const [notes, setNotes] = useState("");
-    const [showSuggestions, setShowSuggestions] = useState(false);
 
     const handleAdd = () => {
       if (!input.trim()) return;
       const finalPrice = price ? parseInt(price) : estimatePrice(input);
+      const displayShop = shopName.trim() || "Any Shop";
       onAddToList({
         id: `CUSTOM-LIST-${Date.now()}`,
-        name: input,
+        name: `${input.trim()} (Shop: ${displayShop})`,
         price: finalPrice,
         quantity: qty,
-        notes,
+        notes: notes.trim(),
       });
       setInput("");
+      setShopName("");
       setQty(1);
       setPrice("");
       setNotes("");
@@ -71,7 +72,7 @@ export const CustomOrderForm = memo(
                 Custom Order
               </h2>
               <p className="text-[14px] text-[#8E8E93] font-medium">
-                Order anything, even if not listed!
+                Order anything, from any campus shop!
               </p>
             </div>
 
@@ -83,11 +84,8 @@ export const CustomOrderForm = memo(
                 <input
                   type="text"
                   value={input}
-                  onChange={(e) => {
-                    setInput(e.target.value);
-                    setShowSuggestions(true);
-                  }}
-                  placeholder="What's in your mind? (e.g. Chicken Biryani)"
+                  onChange={(e) => setInput(e.target.value)}
+                  placeholder="What's on your mind?"
                   className="w-full h-16 pl-16 pr-14 rounded-2xl bg-[#F5F5F7] border-2 border-transparent focus:border-white/60 focus:bg-white focus:ring-4 focus:ring-black/5 transition-all text-[15px] font-bold text-[#1D1D1F] placeholder:text-[#8E8E93] placeholder:font-medium shadow-inner"
                 />
                 <button
@@ -100,69 +98,19 @@ export const CustomOrderForm = memo(
                 >
                   {isListening ? "..." : <Mic className="w-5 h-5" />}
                 </button>
-
-                <AnimatePresence>
-                  {showSuggestions &&
-                    (input.trim() || suggestions.length > 0) && (
-                      <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 10 }}
-                        className="absolute top-[calc(100%+8px)] left-0 right-0 bg-white/90 backdrop-blur-3xl border border-white/60 rounded-3xl ios-shadow p-3.5 z-50 overflow-hidden"
-                      >
-                        <div className="max-h-[300px] overflow-y-auto scrollbar-hide space-y-1.5 pr-1">
-                          {(input.trim() ? suggestions : POPULAR_FOODS).map(
-                            (item: any, i) => (
-                              <button
-                                key={i}
-                                onClick={() => {
-                                  setInput(item.name);
-                                  setPrice(item.price.toString());
-                                  setShowSuggestions(false);
-                                }}
-                                className="w-full flex items-center justify-between p-3.5 rounded-2xl hover:bg-[#F5F5F7] transition-all text-left group"
-                              >
-                                <div className="flex items-center gap-3.5">
-                                  <div className="w-10 h-10 rounded-[12px] bg-white border border-black/5 flex items-center justify-center text-[#8E8E93] group-hover:text-[#007AFF] transition-colors shadow-sm">
-                                    {input.trim() ? (
-                                      <Search className="w-4 h-4" />
-                                    ) : (
-                                      <TrendingUp className="w-4 h-4" />
-                                    )}
-                                  </div>
-                                  <div>
-                                    <p className="text-[14px] font-bold text-[#1D1D1F]">
-                                      {item.name}
-                                    </p>
-                                    <p className="text-[11px] font-bold text-[#8E8E93] mt-[2px] flex items-center gap-1.5">
-                                      <Store className="w-3 h-3 text-[#007AFF]" />
-                                      {item.shop}
-                                    </p>
-                                  </div>
-                                </div>
-                                <span className="text-[12px] font-black text-[#007AFF] bg-[#007AFF]/10 px-3 py-1.5 rounded-full">
-                                  {"₹"}
-                                  {item.price}
-                                </span>
-                              </button>
-                            )
-                          )}
-                        </div>
-                      </motion.div>
-                    )}
-                </AnimatePresence>
               </div>
 
-              <div className="flex flex-wrap gap-2.5">
-                {QUICK_TAGS.map((tag) => (
-                  <button
-                    key={tag}
-                    onClick={() => setInput(tag)}
-                    className="px-5 py-2.5 rounded-full bg-white/80 border border-white/60 text-[13px] font-bold text-[#8E8E93] hover:text-[#1D1D1F] hover:bg-white transition-all shadow-sm"
-                  >
-                    {tag}
-                  </button>
-                ))}
+              <div className="relative group">
+                <div className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-xl bg-white flex items-center justify-center text-[#8E8E93] group-focus-within:text-[#007AFF] transition-colors shadow-sm">
+                  <Store className="w-5 h-5" />
+                </div>
+                <input
+                  type="text"
+                  value={shopName}
+                  onChange={(e) => setShopName(e.target.value)}
+                  placeholder="Which shop/location?"
+                  className="w-full h-16 pl-16 pr-6 rounded-2xl bg-[#F5F5F7] border-2 border-transparent focus:border-white/60 focus:bg-white focus:ring-4 focus:ring-black/5 transition-all text-[15px] font-bold text-[#1D1D1F] placeholder:text-[#8E8E93] placeholder:font-medium shadow-inner"
+                />
               </div>
             </div>
 

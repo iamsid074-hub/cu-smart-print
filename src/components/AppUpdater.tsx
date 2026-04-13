@@ -1,6 +1,7 @@
-﻿import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { App as CapacitorApp } from "@capacitor/app";
 import { Capacitor } from "@capacitor/core";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   Dialog,
   DialogContent,
@@ -30,6 +31,88 @@ export default function AppUpdater() {
   const [isOpen, setIsOpen] = useState(false);
   const [isForced, setIsForced] = useState(false);
 
+  const navigate = useNavigate();
+  const location = useLocation();
+  const lastBackPress = useRef(0);
+
+  // ── Android Back Button Handler ────────────────────────────────
+  const handleBackButton = useCallback(() => {
+    const now = Date.now();
+    const isHomePage = location.pathname === "/home";
+    const isLoginPage = location.pathname === "/login" || location.pathname === "/";
+
+    if (isHomePage || isLoginPage) {
+      // Double-tap to exit on home/login screens
+      if (now - lastBackPress.current < 2000) {
+        CapacitorApp.exitApp();
+      } else {
+        lastBackPress.current = now;
+        // Show a toast-like message (using window alert for simplicity in native)
+        const toastEl = document.createElement("div");
+        toastEl.textContent = "Press back again to exit";
+        toastEl.style.cssText =
+          "position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.85);color:#fff;padding:10px 24px;border-radius:24px;font-size:13px;font-weight:600;z-index:99999;pointer-events:none;font-family:Inter,sans-serif;backdrop-filter:blur(10px);";
+        document.body.appendChild(toastEl);
+        setTimeout(() => toastEl.remove(), 1800);
+      }
+    } else {
+      // Navigate back in history for all other pages
+      navigate(-1);
+    }
+  }, [location.pathname, navigate]);
+
+  useEffect(() => {
+    if (!Capacitor.isNativePlatform()) return;
+
+    // Listen for hardware back button
+    const backHandler = CapacitorApp.addListener("backButton", () => {
+      handleBackButton();
+    });
+
+    return () => {
+      backHandler.then((h) => h.remove());
+    };
+  }, [handleBackButton]);
+
+  // ── Deep Link Handler ──────────────────────────────────────────
+  useEffect(() => {
+    if (!Capacitor.isNativePlatform()) return;
+
+    const deepLinkHandler = CapacitorApp.addListener("appUrlOpen", (event) => {
+      // Parse the URL path and navigate within the app
+      try {
+        const url = new URL(event.url);
+        const path = url.pathname;
+        if (path && path !== "/") {
+          navigate(path);
+        }
+      } catch {
+        console.warn("[DeepLink] Could not parse URL:", event.url);
+      }
+    });
+
+    return () => {
+      deepLinkHandler.then((h) => h.remove());
+    };
+  }, [navigate]);
+
+  // ── App State Change (resume/pause) ────────────────────────────
+  useEffect(() => {
+    if (!Capacitor.isNativePlatform()) return;
+
+    const stateHandler = CapacitorApp.addListener("appStateChange", (state) => {
+      if (state.isActive) {
+        // App came to foreground — could refetch data here
+        console.log("[App] Resumed to foreground");
+      }
+    });
+
+    return () => {
+      stateHandler.then((h) => h.remove());
+    };
+  }, []);
+
+  // ── Update Checker ─────────────────────────────────────────────
   useEffect(() => {
     // Only check for updates if running on Android/iOS natively
     if (!Capacitor.isNativePlatform()) return;
