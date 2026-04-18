@@ -24,3 +24,13 @@ dist-ssr
 *.sw?
 
 .vercel
+.env
+
+# Large files mistakenly added
+jdk/
+jdk-*/
+*.apk
+*_log.txt
+*_err.txt
+*_result.txt
+build_*.txt

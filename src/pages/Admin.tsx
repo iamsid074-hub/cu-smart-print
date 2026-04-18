@@ -41,6 +41,7 @@ import {
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
+import { AdminPushService } from "@/services/AdminPushService";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 type AdminSection =
@@ -227,6 +228,55 @@ function StatusBadge({ status }: { status: string }) {
       />
       {cfg.label}
     </span>
+  );
+}
+
+// ─── Notification Status Component ─────────────────────────────────────────────
+function NotificationStatus() {
+  const [status, setStatus] = useState(AdminPushService.getStatus());
+  const [testing, setTesting] = useState(false);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setStatus(AdminPushService.getStatus());
+    }, 2000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleTest = async () => {
+    setTesting(true);
+    await AdminPushService.testNotification();
+    setTimeout(() => setTesting(false), 1000);
+  };
+
+  const statusColors = {
+    inactive: "text-slate-400 bg-slate-400/10 border-slate-400/20",
+    initializing: "text-blue-400 bg-blue-400/10 border-blue-400/20",
+    active: "text-emerald-400 bg-emerald-400/10 border-emerald-400/20",
+    error: "text-red-400 bg-red-400/10 border-red-400/20",
+  };
+
+  const statusLabels = {
+    inactive: "Push: Off",
+    initializing: "Push: Setup...",
+    active: "Push: Live ●",
+    error: "Push: Error!",
+  };
+
+  return (
+    <div className="flex items-center gap-2">
+      <span className={`px-2 py-1 rounded-lg text-[10px] font-black border tracking-tighter uppercase ${statusColors[status]}`}>
+        {statusLabels[status]}
+      </span>
+      <button
+        onClick={handleTest}
+        disabled={testing}
+        className="flex items-center gap-1.5 px-3 py-1 bg-white hover:bg-slate-50 border border-slate-200 text-slate-600 rounded-lg text-[11px] font-bold transition-all active:scale-95"
+      >
+        <Bell className={`w-3 h-3 ${testing ? 'animate-bounce' : ''}`} />
+        {testing ? "Testing..." : "Test Notification"}
+      </button>
+    </div>
   );
 }
 
@@ -491,22 +541,25 @@ function DashboardSection({
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h2 className="text-2xl font-black mb-1 text-slate-900 flex items-center gap-2">
-          <Activity className="w-6 h-6 text-neon-orange" /> Delivery Dashboard
-        </h2>
-        <p className="text-slate-900/70 text-sm">
-          Real-time order management •{" "}
-          {
-            allOrders.filter(
-              (o) =>
-                !["completed", "cancelled", "seller_rejected"].includes(
-                  o.status
-                )
-            ).length
-          }{" "}
-          active orders
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 className="text-2xl font-black mb-1 text-slate-900 flex items-center gap-2">
+            <Activity className="w-6 h-6 text-neon-orange" /> Delivery Dashboard
+          </h2>
+          <p className="text-slate-900/70 text-sm">
+            Real-time order management •{" "}
+            {
+              allOrders.filter(
+                (o) =>
+                  !["completed", "cancelled", "seller_rejected"].includes(
+                    o.status
+                  )
+              ).length
+            }{" "}
+            active orders
+          </p>
+        </div>
+        <NotificationStatus />
       </div>
 
       {/* Stats Row */}
@@ -2201,6 +2254,13 @@ export default function Admin() {
     fetchProducts();
     fetchOrders();
     fetchNotifications();
+
+    // Start native push listening for orders
+    AdminPushService.initialize();
+
+    return () => {
+      AdminPushService.stopListening();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAdmin]);
 

@@ -660,8 +660,8 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
       />
 
       <div
-        className="w-full flex justify-center fixed top-0 left-0 right-0 z-[9999] pointer-events-none px-4 pt-4 sm:pt-5"
-        style={{ willChange: "transform" }}
+        className="w-full flex justify-center fixed top-0 left-0 right-0 z-[9999] pointer-events-none px-4 pt-[calc(var(--sat,env(safe-area-inset-top,20px))+12px)] sm:pt-[calc(var(--sat,env(safe-area-inset-top,20px))+16px)]"
+        style={{ willChange: "transform, width" }}
       >
         <div className="flex items-center gap-3 max-w-md w-full justify-center">
           {/* Shared Layout Wrapper for smooth separation */}

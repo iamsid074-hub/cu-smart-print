@@ -141,6 +141,7 @@ const ProductCard = memo(
             ease: [0.16, 1, 0.3, 1],
           }}
           className="relative flex flex-col ios-glass rounded-[24px] overflow-hidden group cursor-pointer h-full border border-white/60 shadow-sm hover:shadow-lg transition-all duration-300 card-hover bg-white/40"
+          style={{ willChange: "transform, opacity" }}
         >
           {badge && (
             <div className="absolute top-3 left-3 z-10 px-2.5 py-1 rounded-full text-[10px] font-bold bg-[#1D1D1F] text-white shadow-sm uppercase tracking-wider">

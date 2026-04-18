@@ -54,6 +54,7 @@ import StickyStripBanner from "./components/StickyStripBanner";
 
 import ErrorBoundary from "./components/ErrorBoundary";
 import { usePushNotifications } from "./hooks/usePushNotifications";
+import { AdminPushService } from "./services/AdminPushService";
 import {
   useSiteGate,
   ClosedScreen,
@@ -61,6 +62,7 @@ import {
 } from "./components/SiteGate";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { CartProvider } from "./contexts/CartContext";
+import { posthog } from "./lib/posthog";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -136,7 +138,7 @@ function AdminRoute({ children }: { children: React.ReactNode }) {
 
 function AppLayout() {
   const location = useLocation();
-  const { user, loading: authLoading } = useAuth();
+  const { user, isAdmin, loading: authLoading } = useAuth();
   const { gate, loaded: gateLoaded } = useSiteGate();
   
   // Track if we've successfully finished the initial "boot" sequence
@@ -154,6 +156,23 @@ function AppLayout() {
       return () => clearTimeout(timer);
     }
   }, [authLoading, gateLoaded]);
+
+  useEffect(() => {
+    posthog.capture("$pageview");
+  }, [location]);
+
+  // ── Admin Push Notifications (app-wide, not just Admin page) ──────────────
+  // This initializes once for admin users and persists across ALL page navigations.
+  // It listens for new orders via real-time + polling and fires native notifications.
+  useEffect(() => {
+    if (isAdmin && user && !authLoading) {
+      AdminPushService.initialize();
+    }
+    // Only stop on logout (user becomes null), NOT on page navigation
+    if (!user && !authLoading) {
+      AdminPushService.stopListening();
+    }
+  }, [isAdmin, user, authLoading]);
 
   const isLanding = location.pathname === "/";
   const isLogin = location.pathname === "/login";

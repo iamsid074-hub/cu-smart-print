@@ -151,6 +151,7 @@ export const ShopCard = memo(({
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.35, ease: [0.25, 1, 0.5, 1] }}
             className="overflow-hidden"
+            style={{ willChange: "height, opacity" }}
           >
             <div className="pt-2">
               <div
