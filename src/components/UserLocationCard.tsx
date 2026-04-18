@@ -33,7 +33,7 @@ export default function UserLocationCard() {
 
   return (
     <>
-      <div className="absolute top-[5rem] sm:top-[6rem] left-0 right-0 z-[99] pointer-events-none flex justify-center">
+      <div className="absolute top-[3.8rem] sm:top-[4.2rem] left-0 right-0 z-[99] pointer-events-none flex justify-center">
         <div className="w-full max-w-[1240px] px-8 sm:px-12 lg:px-16">
           <motion.div
             initial={{ opacity: 0, y: -8 }}

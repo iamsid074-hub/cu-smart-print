@@ -113,7 +113,7 @@ export default function Home() {
       }} />
 
       {/* Main Content Padding for Island */}
-      <div className="pt-24 px-4 sm:px-6">
+      <div className="pt-32 px-4 sm:px-6">
         <div className="max-w-[1600px] mx-auto">
           
           <HeroSpotlight />
