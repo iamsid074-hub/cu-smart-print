@@ -245,7 +245,12 @@ export default function RestaurantPage() {
             className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-8"
           >
             {filteredCategories.map((category) => (
-              <div key={category.category} className="contents">
+              <div key={category.category} id={`category-${category.category}`} className="contents">
+                <div className="col-span-full py-4 pt-8">
+                   <h3 className="text-[18px] font-black text-white/40 uppercase tracking-[0.2em]">
+                     {category.category}
+                   </h3>
+                </div>
                 {category.items.map((item, idx) => {
                   const itemName = item.name.toLowerCase();
                   const isVeg = shop.veg || itemName.includes("veg") || 
@@ -338,7 +343,52 @@ export default function RestaurantPage() {
         )}
       </div>
 
-      <div className="h-20" /> {/* Bottom spacing */}
+      {/* ─── FLOATING MENU BUTTON ─── */}
+      <div className="fixed bottom-32 right-6 z-[60]">
+        <motion.button 
+          whileTap={{ scale: 0.9 }}
+          onClick={() => {
+             const el = document.getElementById('category-selector');
+             if (el) el.classList.toggle('hidden');
+          }}
+          className="flex items-center gap-2 bg-black/80 backdrop-blur-xl border border-white/10 px-6 py-4 rounded-full shadow-2xl text-white font-black tracking-widest uppercase text-[12px] active:scale-95 transition-all"
+        >
+          <Utensils className="w-5 h-5 text-red-500" />
+          Menu
+        </motion.button>
+
+        {/* Category Selector Popup */}
+        <div 
+          id="category-selector" 
+          className="hidden absolute bottom-20 right-0 w-64 bg-[#1c1c1e] border border-white/10 rounded-[2rem] shadow-[0_20px_60px_rgba(0,0,0,0.8)] overflow-hidden backdrop-blur-3xl animate-in fade-in slide-in-from-bottom-5 duration-300"
+        >
+           <div className="p-6">
+              <h3 className="text-zinc-500 font-black uppercase text-[10px] tracking-widest mb-4">Jump To Category</h3>
+              <div className="flex flex-col gap-2">
+                 {shop.categories.map((cat) => (
+                    <button 
+                       key={cat.category}
+                       onClick={() => {
+                          const el = document.getElementById(`category-${cat.category}`);
+                          if (el) {
+                             const headerOffset = 100;
+                             const elementPosition = el.getBoundingClientRect().top;
+                             const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                             window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+                          }
+                          document.getElementById('category-selector')?.classList.add('hidden');
+                       }}
+                       className="flex items-center justify-between p-3 rounded-2xl hover:bg-white/5 text-left transition-colors group"
+                    >
+                       <span className="text-[14px] font-bold text-white group-hover:text-red-400 transition-colors">{cat.category}</span>
+                       <span className="text-[12px] font-black text-zinc-600">{cat.items.length}</span>
+                    </button>
+                 ))}
+              </div>
+           </div>
+        </div>
+      </div>
+
     </div>
   );
 }

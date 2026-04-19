@@ -297,85 +297,56 @@ export default function Home() {
                        </div>
                     </div>
 
-                    {/* 4. Structured Shop Cards (Image 2 Aesthetic) */}
-                    <div className="flex flex-col gap-8 px-1 mb-20">
+                    {/* 4. Textured Shop Grid (Optimized for Mobile) */}
+                    <div className="grid grid-cols-2 gap-3 sm:gap-6 px-1 mb-20">
                       {liveShops.map((shop, i) => (
                         <motion.div
                           key={shop.id}
-                          initial={{ opacity: 0, scale: 0.95 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          transition={{ delay: i * 0.1 }}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: i * 0.05 }}
                           onClick={() => navigate(`/shop/${shop.id}`)}
-                          className="group relative bg-[#1c1c1e] rounded-[2.5rem] overflow-hidden border border-white/5 shadow-2xl hover:border-white/10 transition-all active:scale-[0.98] cursor-pointer"
+                          className="group relative bg-[#1c1c1e] rounded-[1.8rem] overflow-hidden border border-white/5 shadow-xl hover:border-white/10 transition-all active:scale-[0.97] cursor-pointer"
                         >
-                          {/* Top Image Section */}
-                          <div className="aspect-video sm:aspect-[21/9] relative overflow-hidden">
+                          {/* Image Section */}
+                          <div className="aspect-[4/3] relative overflow-hidden">
                             <img 
                               src={shop.heroImage} 
                               alt={shop.name} 
-                              className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 ${!shop.isOpen ? 'grayscale' : ''}`} 
+                              className={`w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 ${!shop.isOpen ? 'grayscale opacity-40' : ''}`} 
                             />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-60" />
                             
-                            {/* Heart Button */}
-                            <button className="absolute top-4 right-4 p-2.5 bg-black/20 backdrop-blur-xl border border-white/10 rounded-full text-white hover:bg-white hover:text-red-500 transition-all z-10">
-                              <Heart className="w-5 h-5" />
-                            </button>
-
-                            {/* Badge: Trending */}
-                            <div className="absolute bottom-4 left-4 flex items-center gap-2 bg-red-500/20 backdrop-blur-md border border-red-500/30 px-3 py-1.5 rounded-full shadow-lg">
-                              <Flame className="w-3.5 h-3.5 text-red-500" />
-                              <span className="text-[10px] font-black uppercase tracking-widest text-white">Trending</span>
+                            {/* Floating Rating Badge (Rectangular Stripe Mirror) */}
+                            <div className="absolute bottom-0 left-0 bg-emerald-500/90 backdrop-blur-md px-3 py-1.5 rounded-tr-2xl border-r border-t border-white/10 flex items-center gap-1.5 shadow-2xl z-10">
+                              <Star className="w-3 h-3 fill-white text-white" />
+                              <span className="text-[11px] font-black text-white tracking-tight">{shop.rating}</span>
                             </div>
 
-                            {/* Badge: Prep Time */}
-                            <div className="absolute bottom-4 right-4 bg-white/10 backdrop-blur-md border border-white/20 px-4 py-1.5 rounded-full shadow-lg flex items-center gap-2">
-                              {/* <Clock className="w-3 h-3 text-white/60" /> */}
-                              <span className="text-[10px] font-black uppercase tracking-widest text-white">{shop.deliveryTime}</span>
+                            {/* Floating Time Badge (Rectangular Stripe Cutout) */}
+                            <div className="absolute bottom-0 right-0 bg-black/80 backdrop-blur-md px-3 py-1.5 rounded-tl-2xl border-l border-t border-white/10 flex items-center gap-1.5 shadow-2xl z-10">
+                              <Clock className="w-3 h-3 text-red-500" />
+                              <span className="text-[11px] font-black text-white tracking-tight">{shop.deliveryTime}</span>
                             </div>
 
                             {/* Closed Overlay */}
                             {!shop.isOpen && (
-                              <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px] z-20 flex items-center justify-center">
-                                <div className="bg-white/10 backdrop-blur-xl px-6 py-2.5 rounded-full border border-white/20 flex items-center gap-2.5 shadow-2xl">
-                                  <div className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse" />
-                                  <span className="text-[12px] font-black uppercase tracking-widest text-white font-mono">Currently Closed</span>
-                                </div>
+                              <div className="absolute inset-0 bg-black/40 flex items-center justify-center p-2 text-center">
+                                <span className="text-[8px] font-black uppercase tracking-wider text-white bg-red-500/80 px-2 py-1 rounded-full border border-white/20">Closed</span>
                               </div>
                             )}
                           </div>
 
-                          {/* Bottom Content Section */}
-                          <div className="p-6 sm:p-8">
-                            <div className="flex justify-between items-start gap-4 mb-4">
-                              <h3 className="text-[22px] sm:text-[28px] font-black text-white leading-tight tracking-tight mb-1">
-                                {shop.name}
-                              </h3>
-                            </div>
-
-                            {/* Metadata Row */}
-                            <div className="flex items-center gap-3">
-                              {/* Prominent Rating Badge */}
-                              <div className="flex items-center gap-1.5 bg-emerald-500 px-3 py-1.5 rounded-[1rem] shadow-lg shadow-emerald-500/20">
-                                <Star className="w-4 h-4 fill-white text-white" />
-                                <span className="text-[14px] font-black text-white leading-none tracking-tight">{shop.rating}</span>
-                              </div>
-
-                              {/* Broad iOS Style Button */}
-                              <button className="flex-1 bg-[#FF3B30] text-white py-3 rounded-full text-[13px] font-black uppercase tracking-widest shadow-[0_10px_25px_rgba(255,59,48,0.3)] active:scale-[0.97] transition-all flex items-center justify-center gap-3 group/btn whitespace-nowrap overflow-hidden">
-                                Order Now
-                                <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center transition-transform group-hover/btn:translate-x-1">
-                                  <ChevronRight className="w-4 h-4" />
-                                </div>
+                          {/* Detail Section */}
+                          <div className="p-3">
+                            <h3 className="text-[14px] sm:text-[16px] font-black text-white leading-tight mb-1 line-clamp-1">
+                              {shop.name}
+                            </h3>
+                            
+                            <div className="mt-4">
+                              {/* Upsized Apple Button */}
+                              <button className="bg-white text-black text-[12px] font-black px-6 py-2.5 rounded-full shadow-md active:scale-95 transition-all w-full tracking-tight">
+                                ORDER NOW
                               </button>
-                            </div>
-
-                            {/* Location Footer */}
-                            <div className="mt-5 pt-5 border-t border-white/5 flex items-center gap-2.5 text-white/30">
-                              <MapPin className="w-4 h-4 text-white/20" />
-                              <span className="text-[11px] font-bold tracking-wide uppercase opacity-60">
-                                {shop.distance} • Food Republic, CU Main Campus
-                              </span>
                             </div>
                           </div>
                         </motion.div>
