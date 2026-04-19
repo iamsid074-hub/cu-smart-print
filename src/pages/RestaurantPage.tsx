@@ -20,6 +20,8 @@ export default function RestaurantPage() {
   const baseShop = useMemo(() => shops.find(s => s.id === id), [id]);
   const [liveIsOpen, setLiveIsOpen] = useState(baseShop?.isOpen ?? false);
   const [activeFilter, setActiveFilter] = useState<"all" | "veg" | "non-veg">("all");
+  const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
+  const [isCategoryMenuOpen, setIsCategoryMenuOpen] = useState(false);
 
   // Sync with Supabase for real-time open/closed status
   useEffect(() => {
@@ -110,16 +112,49 @@ export default function RestaurantPage() {
         >
           <ChevronLeft className="w-6 h-6" />
         </motion.button>
-        <div className="flex items-center gap-2">
-          <button className="p-2.5 bg-white/5 border border-white/10 rounded-full text-white">
-            <Search className="w-5 h-5" />
-          </button>
-          <button className="p-2.5 bg-white/5 border border-white/10 rounded-full text-white">
-            <Share2 className="w-5 h-5" />
-          </button>
-          <button className="p-2.5 bg-white/5 border border-white/10 rounded-full text-white">
-            <MoreVertical className="w-5 h-5" />
-          </button>
+        <div className="flex items-center gap-2 relative">
+          <motion.button 
+            whileTap={{ scale: 0.9 }}
+            onClick={() => setIsMoreMenuOpen(!isMoreMenuOpen)}
+            className="p-2.5 bg-white/5 border border-white/10 rounded-full text-white active:bg-white/10 transition-colors"
+          >
+            <MoreVertical className="w-6 h-6" />
+          </motion.button>
+
+          <AnimatePresence>
+            {isMoreMenuOpen && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                className="absolute right-0 top-full mt-2 w-48 bg-[#1c1c1e]/95 backdrop-blur-xl border border-white/10 rounded-[1.5rem] shadow-2xl overflow-hidden py-2"
+              >
+                <button 
+                  onClick={() => {
+                    if (navigator.share) {
+                      navigator.share({
+                        title: shop.name,
+                        text: `Check out ${shop.name} on CU Bazzar!`,
+                        url: window.location.href
+                      });
+                    }
+                    setIsMoreMenuOpen(false);
+                  }}
+                  className="w-full flex items-center gap-3 px-4 py-3 text-white/90 hover:bg-white/5 transition-colors font-bold text-sm"
+                >
+                  <Share2 className="w-5 h-5 text-zinc-500" />
+                  Share Shop
+                </button>
+                <button 
+                  onClick={() => setIsMoreMenuOpen(false)}
+                  className="w-full flex items-center gap-3 px-4 py-3 text-white/90 hover:bg-white/5 transition-colors font-bold text-sm"
+                >
+                  <Search className="w-5 h-5 text-zinc-500" />
+                  Search Menu
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
 
@@ -347,46 +382,62 @@ export default function RestaurantPage() {
       <div className="fixed bottom-32 right-6 z-[60]">
         <motion.button 
           whileTap={{ scale: 0.9 }}
-          onClick={() => {
-             const el = document.getElementById('category-selector');
-             if (el) el.classList.toggle('hidden');
-          }}
+          onClick={() => setIsCategoryMenuOpen(!isCategoryMenuOpen)}
           className="flex items-center gap-2 bg-black/80 backdrop-blur-xl border border-white/10 px-6 py-4 rounded-full shadow-2xl text-white font-black tracking-widest uppercase text-[12px] active:scale-95 transition-all"
         >
           <Utensils className="w-5 h-5 text-red-500" />
           Menu
         </motion.button>
 
-        {/* Category Selector Popup */}
-        <div 
-          id="category-selector" 
-          className="hidden absolute bottom-20 right-0 w-64 bg-[#1c1c1e] border border-white/10 rounded-[2rem] shadow-[0_20px_60px_rgba(0,0,0,0.8)] overflow-hidden backdrop-blur-3xl animate-in fade-in slide-in-from-bottom-5 duration-300"
-        >
-           <div className="p-6">
-              <h3 className="text-zinc-500 font-black uppercase text-[10px] tracking-widest mb-4">Jump To Category</h3>
-              <div className="flex flex-col gap-2">
-                 {shop.categories.map((cat) => (
+        {/* Category Selector Popup (iPhone UI Redesign) */}
+        <AnimatePresence>
+          {isCategoryMenuOpen && (
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9, y: 20, filter: 'blur(10px)' }}
+              animate={{ opacity: 1, scale: 1, y: 0, filter: 'blur(0px)' }}
+              exit={{ opacity: 0, scale: 0.9, y: 20, filter: 'blur(10px)' }}
+              transition={{ type: "spring", stiffness: 400, damping: 30 }}
+              className="absolute bottom-20 right-0 w-72 bg-[#1c1c1e]/90 border border-white/10 rounded-[2.5rem] shadow-[0_24px_80px_rgba(0,0,0,0.9)] overflow-hidden backdrop-blur-3xl"
+            >
+               <div className="p-7 max-h-[60vh] flex flex-col">
+                  <h3 className="text-zinc-500 font-black uppercase text-[10px] tracking-[0.2em] mb-6 px-1">Jump To Category</h3>
+                  
+                  <div className="flex flex-col gap-2.5 overflow-y-auto scrollbar-hide pr-1">
+                     {shop.categories.map((cat) => (
+                        <button 
+                           key={cat.category}
+                           onClick={() => {
+                              const el = document.getElementById(`category-${cat.category}`);
+                              if (el) {
+                                 const headerOffset = 100;
+                                 const elementPosition = el.getBoundingClientRect().top;
+                                 const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                                 window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+                              }
+                              setIsCategoryMenuOpen(false);
+                           }}
+                           className="flex items-center justify-between p-4 rounded-[1.5rem] bg-white/[0.03] border border-white/[0.02] hover:bg-white/[0.08] hover:border-white/10 text-left transition-all group active:scale-[0.98]"
+                        >
+                           <span className="text-[15px] font-bold text-white group-hover:text-red-400 transition-colors">{cat.category}</span>
+                           <div className="flex items-center gap-2">
+                             <span className="text-[11px] font-black text-zinc-600 bg-white/5 px-2 py-0.5 rounded-full">{cat.items.length}</span>
+                           </div>
+                        </button>
+                     ))}
+                  </div>
+                  
+                  <div className="mt-6 pt-4 border-t border-white/5 flex justify-center">
                     <button 
-                       key={cat.category}
-                       onClick={() => {
-                          const el = document.getElementById(`category-${cat.category}`);
-                          if (el) {
-                             const headerOffset = 100;
-                             const elementPosition = el.getBoundingClientRect().top;
-                             const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-                             window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-                          }
-                          document.getElementById('category-selector')?.classList.add('hidden');
-                       }}
-                       className="flex items-center justify-between p-3 rounded-2xl hover:bg-white/5 text-left transition-colors group"
+                      onClick={() => setIsCategoryMenuOpen(false)}
+                      className="text-[11px] font-black text-zinc-500 uppercase tracking-widest hover:text-white transition-colors"
                     >
-                       <span className="text-[14px] font-bold text-white group-hover:text-red-400 transition-colors">{cat.category}</span>
-                       <span className="text-[12px] font-black text-zinc-600">{cat.items.length}</span>
+                      Close Menu
                     </button>
-                 ))}
-              </div>
-           </div>
-        </div>
+                  </div>
+               </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
     </div>

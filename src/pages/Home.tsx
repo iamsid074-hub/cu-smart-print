@@ -51,11 +51,12 @@ function HeroSpotlight() {
   return (
     <div className="relative w-full h-[55vh] sm:h-[65vh] rounded-[2.5rem] overflow-hidden mb-12 group cursor-pointer" onClick={() => navigate('/browse')}>
       <motion.img 
-        src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?q=80&w=2681&auto=format&fit=crop" 
+        src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?q=70&w=1200&auto=format&fit=crop" 
         alt="Spotlight" 
         loading="lazy" decoding="async" style={{ willChange: "transform" }}
-        animate={{ scale: [1.05, 1.15, 1.05] }}
-        transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+        initial={{ scale: 1.1 }}
+        animate={{ scale: 1 }}
+        transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
         className="w-full h-full object-cover" 
       />
       <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/40 to-[#000000]" />
@@ -316,14 +317,14 @@ export default function Home() {
                               className={`w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 ${!shop.isOpen ? 'grayscale opacity-40' : ''}`} 
                             />
                             
-                            {/* Floating Rating Badge (Rectangular Stripe Mirror) */}
-                            <div className="absolute bottom-0 left-0 bg-emerald-500/90 backdrop-blur-md px-3 py-1.5 rounded-tr-2xl border-r border-t border-white/10 flex items-center gap-1.5 shadow-2xl z-10">
+                            {/* Floating Rating Badge */}
+                            <div className="absolute bottom-0 left-0 bg-emerald-600 px-3 py-1.5 rounded-tr-2xl border-r border-t border-white/10 flex items-center gap-1.5 shadow-2xl z-10 transition-colors">
                               <Star className="w-3 h-3 fill-white text-white" />
                               <span className="text-[11px] font-black text-white tracking-tight">{shop.rating}</span>
                             </div>
 
-                            {/* Floating Time Badge (Rectangular Stripe Cutout) */}
-                            <div className="absolute bottom-0 right-0 bg-black/80 backdrop-blur-md px-3 py-1.5 rounded-tl-2xl border-l border-t border-white/10 flex items-center gap-1.5 shadow-2xl z-10">
+                            {/* Floating Time Badge */}
+                            <div className="absolute bottom-0 right-0 bg-[#0d0d0f]/90 px-3 py-1.5 rounded-tl-2xl border-l border-t border-white/10 flex items-center gap-1.5 shadow-2xl z-10 transition-colors">
                               <Clock className="w-3 h-3 text-red-500" />
                               <span className="text-[11px] font-black text-white tracking-tight">{shop.deliveryTime}</span>
                             </div>
@@ -396,7 +397,7 @@ export default function Home() {
                 <div className="w-[3px] h-8 bg-orange-500 rounded-full" />
                 <h2 className="text-3xl sm:text-4xl font-black tracking-tight uppercase">Campus Market</h2>
               </div>
-              <div className="flex items-center gap-2 bg-white/5 p-1 rounded-2xl border border-white/10 self-start no-scrollbar overflow-x-auto max-w-full">
+              <div className="flex items-center gap-2 bg-white/5 p-1 rounded-2xl border border-white/10 self-start scrollbar-hide overflow-x-auto max-w-full">
                 {categories.map((cat) => (
                   <button
                     key={cat.id}

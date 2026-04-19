@@ -95,7 +95,7 @@ export default function SearchResultsPage() {
          </div>
 
          {/* SUB TABS */}
-         <div className="flex overflow-x-auto no-scrollbar px-4 pt-2 pb-0 gap-6 border-b border-gray-100 shrink-0">
+         <div className="flex overflow-x-auto scrollbar-hide px-4 pt-2 pb-0 gap-6 border-b border-gray-100 shrink-0">
             {subTabs.map((tab) => (
                <button 
                  key={tab} 
@@ -114,7 +114,7 @@ export default function SearchResultsPage() {
          </div>
          
          {/* FILTERS */}
-         <div className="flex overflow-x-auto no-scrollbar px-4 py-3 gap-2 shrink-0">
+         <div className="flex overflow-x-auto scrollbar-hide px-4 py-3 gap-2 shrink-0">
              <FilterChip icon={<SlidersHorizontal className="w-3.5 h-3.5" />} label="Filters" hasDropdown />
              {["Under ₹150", "Schedule", "Pure Veg", "Rating 4.0+"].map(filter => (
                 <FilterChip 
@@ -135,7 +135,7 @@ export default function SearchResultsPage() {
                <h3 className="text-[13px] font-bold text-gray-500 uppercase tracking-widest mb-4">
                   Recommended For You
                </h3>
-               <div className="flex overflow-x-auto no-scrollbar gap-4 -mx-4 px-4 pb-4">
+               <div className="flex overflow-x-auto scrollbar-hide gap-4 -mx-4 px-4 pb-4">
                   {recommendedItems.map(item => (
                      <div key={item.id} className="min-w-[150px] w-[150px] flex flex-col gap-2 shrink-0 relative cursor-pointer" onClick={() => navigate(`/shop/${encodeURIComponent(item.shopName)}`)}>
                         <div className="w-[150px] h-[140px] rounded-[18px] overflow-hidden relative shadow-sm">

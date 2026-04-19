@@ -161,14 +161,16 @@
   .text-ios-gray { color: #8E8E93; }
 
   /* iOS card float on hover */
-  .card-hover {
-    transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
-    will-change: transform;
-    transform: translateZ(0); /* Promote to GPU layer */
-  }
   .card-hover:hover {
-    transform: translateY(-2px) scale(1.005) translateZ(0);
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.03);
+    transform: translateY(-2px) scale(1.002) translateZ(0);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  }
+
+  .smooth-gpu {
+    transform: translate3d(0, 0, 0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+    will-change: transform;
   }
 }
 
