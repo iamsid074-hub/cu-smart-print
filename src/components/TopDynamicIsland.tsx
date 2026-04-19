@@ -113,6 +113,15 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
   const location = useLocation();
   const { items } = useCart();
   const { user } = useAuth();
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 10);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const [islandState, setIslandState] = useState<IslandState>("default");
   const [prevItemsCount, setPrevItemsCount] = useState(
@@ -651,13 +660,50 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
         }
       `}</style>
 
-      {/* Top Header Layer - Clean and shadow-free */}
-      <div
-        className="fixed top-0 left-0 right-0 h-16 sm:h-20 z-[9998] pointer-events-none"
-        style={{
-          background: "transparent",
+      {/* Smart Glass Header - Enhanced with Mesh Blur Aura */}
+      <motion.div
+        initial={false}
+        animate={{
+          opacity: scrolled ? 1 : 0,
         }}
-      />
+        className="fixed top-0 left-0 right-0 z-[9997] pointer-events-none overflow-hidden"
+        style={{
+          height: `calc(var(--sat,env(safe-area-inset-top,20px)) + 120px)`,
+          background: "linear-gradient(to bottom, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 30%, rgba(0,0,0,0.1) 60%, transparent 100%)",
+          backdropFilter: "blur(16px)",
+          WebkitBackdropFilter: "blur(16px)",
+          maskImage: "linear-gradient(to bottom, black 0%, black 25%, transparent 100%)",
+          WebkitMaskImage: "linear-gradient(to bottom, black 0%, black 25%, transparent 100%)",
+        }}
+      >
+        {/* Mesh Blur Blobs - GPU Optimized for Mobile */}
+        <motion.div
+          animate={{
+            x: scrolled ? [-80, 80, -80] : 0,
+            y: [-15, 15, -15],
+          }}
+          transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
+          className="absolute -top-10 left-1/4 w-48 sm:w-64 h-48 sm:h-64 bg-indigo-500/15 rounded-full blur-[60px] sm:blur-[80px] will-change-transform"
+          style={{ backfaceVisibility: "hidden", transform: "translateZ(0)" }}
+        />
+        <motion.div
+          animate={{
+            x: scrolled ? [80, -80, 80] : 0,
+            y: [15, -15, 15],
+          }}
+          transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+          className="absolute -top-10 right-1/4 w-64 sm:w-80 h-64 sm:h-80 bg-purple-500/15 rounded-full blur-[80px] sm:blur-[100px] will-change-transform"
+          style={{ backfaceVisibility: "hidden", transform: "translateZ(0)" }}
+        />
+        <motion.div
+          animate={{
+            scale: scrolled ? [1, 1.1, 1] : 1,
+          }}
+          transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+          className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-blue-600/5 blur-[100px] sm:blur-[120px] will-change-transform"
+          style={{ backfaceVisibility: "hidden", transform: "translateZ(0)" }}
+        />
+      </motion.div>
 
       <div
         className="w-full flex justify-center fixed top-0 left-0 right-0 z-[9999] pointer-events-none px-4 pt-[calc(var(--sat,env(safe-area-inset-top,20px))+12px)] sm:pt-[calc(var(--sat,env(safe-area-inset-top,20px))+16px)]"
@@ -671,6 +717,8 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
             transition={springTransition}
           >
             <AnimatePresence mode="popLayout">
+
+
               {/* ── Main Pill ── */}
               <motion.div
                 layout
