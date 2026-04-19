@@ -155,7 +155,7 @@ export default function Home() {
   const modes = [
     { id: "meal", label: "Full Meals", icon: Utensils },
     { id: "vending", label: "Late Night", icon: Clock },
-    { id: "quick", label: "Essential Shop", icon: Flame },
+    { id: "quick", label: "Blinkit / Zwigato", icon: Flame },
   ];
 
   return (
@@ -164,12 +164,12 @@ export default function Home() {
         {showQuickTransition && (
           <BlinkitZomatoTransition onComplete={() => {
             setShowQuickTransition(false);
-            setHomeMode("quick");
+            navigate('/quick-store');
           }} />
         )}
       </AnimatePresence>
 
-      <BlinkitAnnounceModal />
+      <BlinkitAnnounceModal onCheck={() => setShowQuickTransition(true)} />
 
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <HeroSpotlight />
@@ -390,36 +390,7 @@ export default function Home() {
               </motion.div>
             )}
 
-            {homeMode === "quick" && (
-              <motion.div
-                key="quick"
-                initial={{ opacity: 0, x: 50 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -50 }}
-                className="py-12"
-              >
-                <div className="flex flex-col items-center gap-12 text-center mb-16 px-4">
-                  <div className="max-w-2xl">
-                    <motion.div 
-                      initial={{ y: -20, opacity: 0 }}
-                      animate={{ y: 0, opacity: 1 }}
-                      className="inline-flex items-center gap-2 bg-purple-500/10 border border-purple-500/20 px-4 py-2 rounded-full mb-6"
-                    >
-                      <Flame className="w-4 h-4 text-purple-400" />
-                      <span className="text-xs font-black uppercase tracking-widest text-purple-300">Fast Forward Delivery</span>
-                    </motion.div>
-                    <h2 className="text-4xl sm:text-6xl font-black mb-6 tracking-tighter">
-                      Essential <span className="text-purple-400">Shopping</span> 
-                    </h2>
-                    <p className="text-gray-400 text-lg sm:text-xl font-medium">
-                      Student essentials delivered in 10-15 minutes.<br className="hidden sm:block" />
-                      Powered by CU Bazzar Network.
-                    </p>
-                  </div>
-                </div>
-                <MembershipBanner />
-              </motion.div>
-            )}
+
           </AnimatePresence>
         </div>
 

@@ -39,7 +39,7 @@ const PARTNERS = [
     bio: "Expert urban navigator. Fast hosteler-to-hosteler delivery specialist."
   },
   { 
-    name: "Rahul", 
+    name: "AKSHAY", 
     phone: "9876543210", 
     available: false, 
     status: "Active Squad", 
@@ -47,11 +47,11 @@ const PARTNERS = [
     bio: "Late-night essential specialist. Ensures your snacks arrive hot and fresh."
   },
   { 
-    name: "Shreya", 
+    name: "Aditya", 
     phone: "9123456789", 
     available: false, 
     status: "Night Owl", 
-    image: "/images/partner_shreya.png",
+    image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&auto=format&fit=crop",
     bio: "Highly efficient with 500+ successful night deliveries this month."
   },
 ];
