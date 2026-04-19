@@ -14,14 +14,22 @@ import {
   Loader2,
   Compass,
   ChevronRight,
-  TrendingUp
+  TrendingUp,
+  Store,
+  ArrowUpRight,
+  Utensils,
+  Clock,
+  Flame,
+  BadgeCheck,
+  Star
 } from "lucide-react";
+import { shops } from "@/config/shopMenus";
 import ProductCard from "@/components/ProductCard";
 import VendingMachine from "@/components/VendingMachine";
 import { supabase } from "@/lib/supabase";
 import MembershipBanner from "@/components/MembershipBanner";
 import HomeSpecialSections from "@/components/HomeSpecialSections";
-import { AuthProvider, useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/contexts/AuthContext";
 import BlinkitZomatoTransition from "@/components/BlinkitZomatoTransition";
 import BlinkitAnnounceModal from "@/components/BlinkitAnnounceModal";
 import type { Database } from "@/types/supabase";
@@ -34,7 +42,6 @@ const categories = [
   { id: "Sports", label: "Sports" },
   { id: "Furniture", label: "Furniture" },
 ];
-
 
 function HeroSpotlight() {
   const navigate = useNavigate();
@@ -77,12 +84,51 @@ function HeroSpotlight() {
 
 export default function Home() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [products, setProducts] = useState<any[]>([]);
   const [productsLoading, setProductsLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState("All");
   const [activeFoodCat, setActiveFoodCat] = useState("all");
   const [homeMode, setHomeMode] = useState<"meal" | "vending" | "quick">("meal");
   const [showQuickTransition, setShowQuickTransition] = useState(false);
+  const [deliveryMode, setDeliveryMode] = useState<"takeaway" | "delivery">("delivery");
+
+  // ─── LIVE SHOPS STATE ───
+  const [liveShops, setLiveShops] = useState(shops);
+
+  const fetchLiveStatus = async () => {
+    try {
+      const { data, error } = await supabase.from("shops").select("id, is_open");
+      if (error) {
+        console.warn("Shops table missing or RLS blocking:", error.message);
+        return;
+      }
+      if (data && data.length > 0) {
+        const statusMap = Object.fromEntries(data.map(s => [s.id, s.is_open]));
+        setLiveShops(prev => prev.map(shop => ({
+          ...shop,
+          isOpen: statusMap[shop.id] ?? shop.isOpen
+        })));
+      }
+    } catch (err) {
+      console.error("Live shop status fetch failed:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchLiveStatus();
+    const interval = setInterval(fetchLiveStatus, 60000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const fastCategories = [
+    { name: "Burger", img: "https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=200&h=200&auto=format&fit=crop" },
+    { name: "Pizza", img: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=200&h=200&auto=format&fit=crop" },
+    { name: "Pasta", img: "https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=200&h=200&auto=format&fit=crop" },
+    { name: "Noodles", img: "https://images.unsplash.com/photo-1585032226651-759b368d7246?w=200&h=200&auto=format&fit=crop" },
+    { name: "Rolls", img: "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=200&h=200&auto=format&fit=crop" },
+    { name: "Biryani", img: "https://images.unsplash.com/photo-1589302168068-1c459288350d?w=200&h=200&auto=format&fit=crop" },
+  ];
 
   useEffect(() => {
     async function fetchProducts() {
@@ -105,28 +151,32 @@ export default function Home() {
     fetchProducts();
   }, [activeCategory]);
 
+  const modes = [
+    { id: "meal", label: "Full Meals", icon: Utensils },
+    { id: "vending", label: "Late Night", icon: Clock },
+    { id: "quick", label: "Essential Shop", icon: Flame },
+  ];
+
   return (
-    <div className="min-h-screen pb-32 relative bg-[#000000] text-white selection:bg-orange-500 selection:text-white">
-      <BlinkitAnnounceModal onCheck={() => {
-        setShowQuickTransition(true); 
-        setHomeMode("quick" as any);
-      }} />
+    <div className="min-h-screen bg-[#000000] text-white">
+      <AnimatePresence>
+        {showQuickTransition && (
+          <BlinkitZomatoTransition onComplete={() => {
+            setShowQuickTransition(false);
+            setHomeMode("quick");
+          }} />
+        )}
+      </AnimatePresence>
 
-      {/* Main Content Padding for Island */}
-      <div className="pt-32 px-4 sm:px-6">
-        <div className="max-w-[1600px] mx-auto">
-          
-          <HeroSpotlight />
+      <BlinkitAnnounceModal />
 
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <HeroSpotlight />
 
-
-          <div className="flex items-center justify-center mb-10 -mt-2 relative z-20 w-[100vw] sm:w-full -ml-4 sm:ml-0 px-2 sm:px-0">
-            <div className="bg-[#1c1c1e] border border-white/10 p-1 sm:p-1.5 rounded-[1.5rem] flex items-center shadow-2xl relative overflow-x-auto scrollbar-hide max-w-full">
-              {[
-                { id: "meal", label: "Hot Meals" },
-                { id: "vending", label: "Campus Vending" },
-                { id: "quick", label: "Blinkit / Zwigato" }
-              ].map((mode) => (
+        <div className="space-y-16">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 overflow-x-auto pb-4 scrollbar-hide no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0">
+              {modes.map((mode) => (
                 <button
                   key={mode.id}
                   onClick={() => {
@@ -172,63 +222,100 @@ export default function Home() {
                   onCatChange={setActiveFoodCat}
                 />
 
-                {/* Campus Market Grid below Food */}
+                {/* ═══ SHOP DISCOVERY FLOW (LIVE DATA) ═══ */}
                 {activeFoodCat === "all" && (
-                   <section className="mb-10 sm:mb-16 mt-16 pt-8 border-t border-white/10">
-                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-                       <div className="flex items-center gap-3">
-                         <TrendingUp className="w-6 h-6 text-orange-500" />
-                         <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
-                           Campus Market
-                         </h2>
-                       </div>
-                       <Link
-                         to="/browse"
-                         className="flex items-center gap-1 text-[14px] text-gray-400 font-bold hover:text-white transition-colors"
-                       >
-                         View Market <ChevronRight className="w-4 h-4" />
-                       </Link>
-                     </div>
-                     
-                     <div className="flex gap-3 overflow-x-auto pb-6 scrollbar-hide -mx-1 px-1">
-                       {categories.map((cat) => {
-                         const isActive = activeCategory === cat.id;
-                         return (
-                           <button
-                             key={cat.id}
-                             onClick={() => setActiveCategory(cat.id)}
-                             className={`px-5 py-2.5 rounded-full font-bold transition-all flex-shrink-0 text-[13px] shadow-sm border ${
-                               isActive
-                                 ? "bg-white text-black border-white"
-                                 : "bg-white/5 text-gray-400 border-white/10 hover:bg-white/10 hover:text-white"
-                             }`}
-                           >
-                             {cat.label}
-                           </button>
-                         );
-                       })}
-                     </div>
+                  <div className="mt-8">
+                    {/* 1. Circle Categories */}
+                    <div className="flex gap-4 overflow-x-auto pb-8 scrollbar-hide px-1">
+                      {fastCategories.map((cat, i) => (
+                        <motion.div
+                          key={cat.name}
+                          initial={{ opacity: 0, scale: 0.8 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ delay: i * 0.1 }}
+                          className="flex flex-col items-center gap-2 shrink-0 cursor-pointer"
+                        >
+                          <div className="w-[72px] h-[72px] sm:w-[84px] sm:h-[84px] rounded-full overflow-hidden border-2 border-white/5 p-1 bg-[#1c1c1e] shadow-xl group hover:border-indigo-500/50 transition-all">
+                            <img src={cat.img} alt={cat.name} className="w-full h-full object-cover rounded-full transition-transform group-hover:scale-110" />
+                          </div>
+                        </motion.div>
+                      ))}
+                    </div>
 
-                     {productsLoading ? (
-                       <div className="flex flex-col items-center justify-center py-20 gap-3">
-                         <Loader2 className="w-8 h-8 animate-spin text-orange-500" />
-                       </div>
-                     ) : (
-                       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-5">
-                         {products.slice(0, 5).map((p, i) => (
-                           <div key={p.id} className="relative group rounded-3xl overflow-hidden bg-[#1c1c1e] border border-white/5 hover:border-white/20 transition-all duration-500">
-                             <div className="aspect-square bg-[#0a0a0a] overflow-hidden">
-                               <img src={p.image_url || "/placeholder.jpg"} loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt={p.title}/>
-                             </div>
-                             <div className="p-4">
-                               <h3 className="font-bold text-[15px] truncate text-white">{p.title}</h3>
-                               <p className="text-[14px] font-black mt-1 text-orange-400">₹{p.price}</p>
-                             </div>
-                           </div>
-                         ))}
-                       </div>
-                     )}
-                   </section>
+                    {/* 2. Service Toggle */}
+                    <div className="flex justify-center mb-10 px-1">
+                      <div className="bg-[#1c1c1e] p-1.5 rounded-full flex items-center shadow-lg border border-white/5 w-full max-w-[500px]">
+                        <button
+                          onClick={() => setDeliveryMode("takeaway")}
+                          className={`flex-1 py-3.5 rounded-full text-[13px] font-black uppercase tracking-widest transition-all ${
+                            deliveryMode === "takeaway" ? "bg-white text-black shadow-lg" : "text-gray-500 hover:text-white"
+                          }`}
+                        >
+                          Take-away
+                        </button>
+                        <button
+                          onClick={() => setDeliveryMode("delivery")}
+                          className={`flex-1 py-3.5 rounded-full text-[13px] font-black uppercase tracking-widest transition-all ${
+                            deliveryMode === "delivery" ? "bg-white text-black shadow-lg" : "text-gray-500 hover:text-white"
+                          }`}
+                        >
+                          Fast Delivery
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* 3. Section Title */}
+                    <div className="mb-8 px-2 flex items-center gap-3">
+                      <h2 className="text-[14px] sm:text-[16px] font-black tracking-[0.15em] text-zinc-500 uppercase">
+                        All the good places around you
+                      </h2>
+                    </div>
+
+                    {/* 4. Native-Style Shop Cards (Using Live Data) */}
+                    <div className="flex flex-col gap-6 px-1 mb-20">
+                      {liveShops.map((shop, i) => (
+                        <motion.div
+                          key={shop.id}
+                          initial={{ opacity: 0, y: 30 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: i * 0.1 }}
+                          onClick={() => navigate(`/shop/${shop.id}`)}
+                          className="group relative bg-[#1c1c1e] rounded-[2.5rem] overflow-hidden border border-white/5 shadow-2xl hover:border-white/10 transition-all active:scale-[0.98] cursor-pointer"
+                        >
+                          <div className="aspect-[21/9] overflow-hidden relative">
+                            <img 
+                              src={shop.heroImage} 
+                              alt={shop.name} 
+                              className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 ${!shop.isOpen ? 'grayscale' : ''}`} 
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                            
+                            {/* Open/Closed Badge */}
+                            {!shop.isOpen && (
+                              <div className="absolute top-6 right-6 bg-black/60 backdrop-blur-md px-4 py-2 rounded-full border border-white/10 flex items-center gap-2">
+                                <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                                <span className="text-[11px] font-black uppercase tracking-widest text-white/80">Currently Closed</span>
+                              </div>
+                            )}
+
+                            <div className="absolute bottom-6 left-8 right-8 flex items-end justify-between">
+                              <div>
+                                <h3 className="text-[24px] sm:text-[32px] font-black text-white leading-tight mb-1">{shop.name}</h3>
+                                <div className="flex items-center gap-4 text-white/60 text-[13px] font-bold">
+                                  <span className="flex items-center gap-1.5"><Clock className="w-4 h-4" /> {shop.deliveryTime.toLowerCase()} mins</span>
+                                  <span className="flex items-center gap-1.5"><MapPin className="w-4 h-4" /> {shop.distance}</span>
+                                </div>
+                              </div>
+                              <div className="flex flex-col items-center bg-white text-black px-4 py-3 rounded-[1.5rem] shadow-xl">
+                                <span className="text-[16px] font-black flex items-center gap-1"><Star className="w-4 h-4 fill-black" /> {shop.rating}</span>
+                                <span className="text-[10px] font-bold uppercase tracking-tighter opacity-40">{shop.reviews}</span>
+                              </div>
+                            </div>
+                          </div>
+                        </motion.div>
+                      ))}
+                    </div>
+                  </div>
                 )}
               </motion.div>
             )}
@@ -236,23 +323,131 @@ export default function Home() {
             {homeMode === "vending" && (
               <motion.div
                 key="vending"
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -30 }}
-                transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                className="pt-6"
+                initial={{ opacity: 0, x: 50 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -50 }}
+                className="py-12"
               >
+                <div className="flex flex-col items-center gap-12 text-center mb-24">
+                  <div className="max-w-2xl px-4">
+                    <motion.h2 
+                      initial={{ y: 20, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      className="text-4xl sm:text-6xl font-black mb-6 tracking-tighter"
+                    >
+                      Midnight Hunger?<br /><span className="text-orange-400">We got you.</span>
+                    </motion.h2>
+                    <p className="text-gray-400 text-lg sm:text-xl font-medium">
+                      Real-time vending availability across all hostels. 
+                      No more wasted walks.
+                    </p>
+                  </div>
+                </div>
                 <VendingMachine />
+              </motion.div>
+            )}
+
+            {homeMode === "quick" && (
+              <motion.div
+                key="quick"
+                initial={{ opacity: 0, x: 50 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -50 }}
+                className="py-12"
+              >
+                <div className="flex flex-col items-center gap-12 text-center mb-16 px-4">
+                  <div className="max-w-2xl">
+                    <motion.div 
+                      initial={{ y: -20, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      className="inline-flex items-center gap-2 bg-purple-500/10 border border-purple-500/20 px-4 py-2 rounded-full mb-6"
+                    >
+                      <Flame className="w-4 h-4 text-purple-400" />
+                      <span className="text-xs font-black uppercase tracking-widest text-purple-300">Fast Forward Delivery</span>
+                    </motion.div>
+                    <h2 className="text-4xl sm:text-6xl font-black mb-6 tracking-tighter">
+                      Essential <span className="text-purple-400">Shopping</span> 
+                    </h2>
+                    <p className="text-gray-400 text-lg sm:text-xl font-medium">
+                      Student essentials delivered in 10-15 minutes.<br className="hidden sm:block" />
+                      Powered by CU Bazzar Network.
+                    </p>
+                  </div>
+                </div>
+                <MembershipBanner />
               </motion.div>
             )}
           </AnimatePresence>
         </div>
-      </div>
-      <AnimatePresence>
-        {showQuickTransition && (
-          <BlinkitZomatoTransition onComplete={() => navigate("/quick-store")} />
+
+        {/* Explore Sellers Section (Always visible) */}
+        {(homeMode === "meal" || homeMode === "vending" || homeMode === "quick") && (
+          <section className="mt-32 pb-40">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-12">
+              <div className="flex items-center gap-3">
+                <div className="w-[3px] h-8 bg-orange-500 rounded-full" />
+                <h2 className="text-3xl sm:text-4xl font-black tracking-tight uppercase">Campus Market</h2>
+              </div>
+              <div className="flex items-center gap-2 bg-white/5 p-1 rounded-2xl border border-white/10 self-start no-scrollbar overflow-x-auto max-w-full">
+                {categories.map((cat) => (
+                  <button
+                    key={cat.id}
+                    onClick={() => setActiveCategory(cat.id)}
+                    className={`px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap ${
+                      activeCategory === cat.id
+                        ? "bg-white text-black shadow-lg"
+                        : "text-gray-500 hover:text-white"
+                    }`}
+                  >
+                    {cat.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {productsLoading ? (
+              <div className="flex items-center justify-center py-40">
+                <Loader2 className="w-12 h-12 text-white/20 animate-spin" />
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6 lg:gap-8">
+                {products.length > 0 ? (
+                  products.map((product) => (
+                    <ProductCard
+                       key={product.id}
+                       id={product.id}
+                       image={product.image_url}
+                       title={product.title}
+                       price={product.price}
+                       condition={product.condition}
+                       category={product.category}
+                       delay={0}
+                    />
+                  ))
+                ) : (
+                  <div className="col-span-full py-40 text-center">
+                    <p className="text-gray-500 text-xl font-bold uppercase tracking-widest">No listings found in this category</p>
+                  </div>
+                )}
+              </div>
+            )}
+            
+            <motion.div 
+               whileHover={{ scale: 1.02 }}
+               whileTap={{ scale: 0.98 }}
+               className="mt-16 text-center"
+            >
+              <Link
+                to="/browse"
+                className="group inline-flex items-center gap-3 bg-white text-black px-12 py-5 rounded-[2rem] text-[15px] font-black uppercase tracking-widest hover:bg-gray-100 transition-all shadow-[0_20px_50px_rgba(255,255,255,0.1)] hover:shadow-[0_25px_60px_rgba(255,255,255,0.15)]"
+              >
+                Explore All Products
+                <ArrowUpRight className="w-5 h-5 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
+              </Link>
+            </motion.div>
+          </section>
         )}
-      </AnimatePresence>
+      </div>
     </div>
   );
 }

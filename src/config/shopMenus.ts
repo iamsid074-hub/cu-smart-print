@@ -1,4 +1,4 @@
-﻿// Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Campus Food Shop Menus Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
+// Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Campus Food Shop Menus Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 // Transcribed from real shop menus on campus.
 
 export interface MenuItem {
@@ -17,6 +17,13 @@ export interface Shop {
   name: string;
   tag: string; // short description
   veg: boolean; // pure-veg flag
+  rating: number;
+  reviews: string;
+  openTime: string;
+  distance: string;
+  deliveryTime: string;
+  isOpen: boolean;
+  heroImage: string;
   categories: MenuCategory[];
 }
 
@@ -29,6 +36,13 @@ export const shops: Shop[] = [
     name: "Chatori Chaat & Kulcha Corner",
     tag: "Chaat • Kulcha • Snacks",
     veg: false,
+    rating: 4.2,
+    reviews: "100+",
+    openTime: "09:00 AM",
+    distance: "0.8 km",
+    deliveryTime: "10-15 MINS",
+    isOpen: true,
+    heroImage: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=800&auto=format&fit=crop",
     categories: [
       {
         category: "Bombay Bites",
@@ -294,6 +308,13 @@ export const shops: Shop[] = [
     name: "Insta Food",
     tag: "Multi-cuisine • Juice • Shakes",
     veg: false,
+    rating: 4.5,
+    reviews: "500+",
+    openTime: "08:00 AM",
+    distance: "1.2 km",
+    deliveryTime: "5-10 MINS",
+    isOpen: true,
+    heroImage: "https://images.unsplash.com/photo-1547592166-23ac45744acd?w=800&auto=format&fit=crop",
     categories: [
       {
         category: "Juice",
@@ -576,6 +597,13 @@ export const shops: Shop[] = [
     name: "Parantha House",
     tag: "Paranthas • Snacks • Rolls",
     veg: false,
+    rating: 4.0,
+    reviews: "50+",
+    openTime: "10:00 AM",
+    distance: "1.5 km",
+    deliveryTime: "15-20 MINS",
+    isOpen: false,
+    heroImage: "https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?w=800&auto=format&fit=crop",
     categories: [
       {
         category: "Parantha's",
@@ -741,6 +769,13 @@ export const shops: Shop[] = [
     name: "Punjabi Rasoi",
     tag: "100% Veg • North Indian • Pizza",
     veg: true,
+    rating: 4.3,
+    reviews: "200+",
+    openTime: "11:00 AM",
+    distance: "0.5 km",
+    deliveryTime: "5-10 MINS",
+    isOpen: true,
+    heroImage: "https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=800&auto=format&fit=crop",
     categories: [
       {
         category: "Burger",
@@ -1005,6 +1040,13 @@ export const shops: Shop[] = [
     name: "Catch Up Cafe",
     tag: "Cafe • Non-Veg • Dessert",
     veg: false,
+    rating: 4.1,
+    reviews: "80+",
+    openTime: "10:30 AM",
+    distance: "1.1 km",
+    deliveryTime: "15-20 MINS",
+    isOpen: true,
+    heroImage: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800&auto=format&fit=crop",
     categories: [
       {
         category: "Noodles",
@@ -1220,6 +1262,13 @@ export const shops: Shop[] = [
     name: "Flavour Factory",
     tag: "Sandwiches • Pasta • Shakes • Healthy Meals",
     veg: false,
+    rating: 4.4,
+    reviews: "150+",
+    openTime: "09:30 AM",
+    distance: "0.9 km",
+    deliveryTime: "10-15 MINS",
+    isOpen: true,
+    heroImage: "https://images.unsplash.com/photo-1476718406336-bb5a9690ee2a?w=800&auto=format&fit=crop",
     categories: [
       {
         category: "Sandwich",
@@ -1440,6 +1489,13 @@ export const shops: Shop[] = [
     name: "Vasano Fast Food",
     tag: "100% Veg • Pizza • Indian • Bakery",
     veg: true,
+    rating: 4.2,
+    reviews: "120+",
+    openTime: "10:00 AM",
+    distance: "1.3 km",
+    deliveryTime: "15-20 MINS",
+    isOpen: true,
+    heroImage: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=800&auto=format&fit=crop",
     categories: [
       {
         category: "Roll",
@@ -1665,270 +1721,20 @@ export const shops: Shop[] = [
   },
 
   // Ã¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•Â
-  // 7. CHATORI CHAAT & KULCHA CORNER
-  // Ã¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•Â
-  {
-    id: "chatori-chaat",
-    name: "Chatori Chaat & Kulcha Corner",
-    tag: "Chaat • Street Food • Kulcha • Combos",
-    veg: false,
-    categories: [
-      {
-        category: "Bombay Bites",
-        items: [
-          { name: "Mumbai Aloo Vadapav", price: 40 },
-          { name: "Onion Vadapav", price: 36 },
-          { name: "Schezwan Vadapav", price: 40 },
-          { name: "Cheese Vada Pav", price: 40 },
-          { name: "Samosa", price: 16 },
-          { name: "Samosa with Chana", price: 36 },
-          { name: "Kachori with Sabji", price: 30 },
-          { name: "Chole Bhature", price: 70 },
-          { name: "Pav Bhaji", price: 100 },
-        ],
-      },
-      {
-        category: "Chaat",
-        items: [
-          { name: "Pani Puri (6pc)", price: 40 },
-          { name: "Stuffed Pani Puri (5pc)", price: 60 },
-          { name: "Bhelpuri", price: 60 },
-          { name: "Aloo Tikki", price: 70 },
-          { name: "Bhalla Papdi Chaat", price: 70 },
-          { name: "Dahi Bhalla", price: 70 },
-          { name: "Protein Chaat", price: 80 },
-        ],
-      },
-      {
-        category: "Chowmien",
-        items: [
-          { name: "Veg Noodles", price: 60 },
-          { name: "Chilli Garlic Noodles", price: 70 },
-          { name: "Singapore Noodles", price: 90 },
-          { name: "Paneer Noodles", price: 90 },
-          { name: "Schezwan Noodles", price: 90 },
-          { name: "Hakka Noodles", price: 90 },
-          { name: "Chicken Noodles", price: 100 },
-        ],
-      },
-      {
-        category: "Burgers",
-        items: [
-          {
-            name: "Aloo Tikki Burger",
-            price: 50,
-            image: "/banners/burger_aloo_tikki.webp",
-          },
-          {
-            name: "Veg Burger",
-            price: 50,
-            image: "/banners/burger_aloo_tikki.webp",
-          },
-          { name: "Noodle Tikki Burger", price: 60 },
-          { name: "Cheese Burger", price: 60 },
-          { name: "Cheese Slice Veg Burger", price: 70 },
-          { name: "Double Tikki Burger", price: 70 },
-          { name: "Paneer Tikki Burger", price: 80 },
-          { name: "Special Makni Burger", price: 100 },
-          {
-            name: "Chicken Burger",
-            price: 80,
-            image: "/banners/burger_chicken_crispy.webp",
-          },
-          { name: "Chicken Burger with Cheese", price: 90 },
-        ],
-      },
-      {
-        category: "Snacks",
-        items: [
-          { name: "Spring Rolls", price: 60 },
-          { name: "Veg Bullet", price: 60 },
-          { name: "Manchurian Dry", price: 100 },
-          { name: "Honey Chilli Potato", price: 110 },
-          { name: "Manchurian Gravy", price: 100 },
-          { name: "Chilli Paneer", price: 160 },
-        ],
-      },
-      {
-        category: "Steamed Sensation",
-        items: [
-          { name: "Sweet Corn Salted", price: 50 },
-          { name: "Masala Sweet Corn", price: 60 },
-          { name: "Cheesy Sweet Corn", price: 70 },
-          { name: "Veg Momos", price: 60 },
-          { name: "Fried Momos", price: 70 },
-          { name: "Kurkure Momos", price: 80 },
-          { name: "Afghani Momos", price: 90 },
-        ],
-      },
-      {
-        category: "Rice Combo",
-        items: [
-          { name: "Rajma Chawal", price: 80 },
-          { name: "Cholle Chawal", price: 80 },
-          { name: "Kadhi Chawal", price: 80 },
-          { name: "Dal Chawal", price: 80 },
-          { name: "Paneer Chawal", price: 100 },
-        ],
-      },
-      {
-        category: "Fries",
-        items: [
-          { name: "Salted Fries", price: 70 },
-          { name: "Peri Peri Fries", price: 80 },
-          { name: "Cheesy Fries", price: 90 },
-          { name: "Makni Fries", price: 100 },
-          { name: "Honey Chilli Fries", price: 110 },
-          { name: "Mexican Fries", price: 110 },
-        ],
-      },
-      {
-        category: "Beverages",
-        items: [
-          { name: "Tea", price: 15 },
-          { name: "Coffee", price: 30 },
-          { name: "Milk / Bournvita", price: 35 },
-          { name: "Cappuccino", price: 35 },
-          { name: "Nimbu Pani", price: 35 },
-          { name: "Masala Lime Soda", price: 45 },
-          { name: "Cold Coffee", price: 60 },
-        ],
-      },
-      {
-        category: "Shakes",
-        items: [
-          { name: "Banana Shake", price: 60 },
-          { name: "Mango Shake", price: 60 },
-          { name: "Vanilla Shake", price: 60 },
-          { name: "Chocolate Shake", price: 60 },
-          { name: "Strawberry Shake", price: 60 },
-          { name: "Butterscotch Shake", price: 60 },
-          { name: "Oreo Shake", price: 80 },
-          { name: "KitKat Shake", price: 80 },
-          { name: "Hazelnut Coffee", price: 70 },
-        ],
-      },
-      {
-        category: "Omelette",
-        items: [
-          { name: "1 Pc Boiled Egg", price: 15 },
-          { name: "Omelette", price: 40 },
-          { name: "2 Egg Bhurji", price: 45 },
-          { name: "Bread Omelette", price: 60 },
-          { name: "Omelette with Veggies", price: 55 },
-          { name: "Bread Omelette with Cheese", price: 70 },
-        ],
-      },
-      {
-        category: "Patties",
-        items: [
-          { name: "Veg Patty", price: 20 },
-          { name: "Veg Patty with Cheese", price: 30 },
-          { name: "Veg Cheese Corn Patty", price: 40 },
-          { name: "Paneer Patty", price: 40 },
-          { name: "Chicken Patty", price: 60 },
-        ],
-      },
-      {
-        category: "Parantha",
-        items: [
-          { name: "Aloo Parantha", price: 30 },
-          { name: "Pyaz Parantha", price: 30 },
-          { name: "Aloo Pyaz Parantha", price: 35 },
-          { name: "Gobhi Parantha", price: 45 },
-          { name: "Paneer Parantha", price: 50 },
-        ],
-      },
-      {
-        category: "Maggi",
-        items: [
-          { name: "Simple Maggi", price: 55 },
-          { name: "Masala Maggi", price: 60 },
-          { name: "Veg Maggi", price: 65 },
-          { name: "Chilly Maggi", price: 70 },
-          { name: "Paneer Maggi", price: 75 },
-        ],
-      },
-      {
-        category: "Rolls",
-        items: [
-          { name: "Noodle Roll", price: 50 },
-          { name: "Egg Roll", price: 50 },
-          { name: "Aloo Roll", price: 50 },
-          { name: "Veg Roll", price: 60 },
-          { name: "Paneer Roll", price: 80 },
-          { name: "Chicken Roll", price: 90 },
-        ],
-      },
-      {
-        category: "Sandwich",
-        items: [
-          { name: "Aloo Sandwich", price: 50 },
-          { name: "Corn Sandwich", price: 60 },
-          { name: "Veg Grilled Sandwich", price: 70 },
-          { name: "Paneer Grilled Sandwich", price: 80 },
-          { name: "Jambo Sandwich", price: 100 },
-          { name: "Chicken Sandwich", price: 100 },
-        ],
-      },
-      {
-        category: "Rice & Wraps",
-        items: [
-          { name: "Veg Fried Rice", price: 70 },
-          { name: "Paneer Fried Rice", price: 90 },
-          { name: "Egg Fried Rice", price: 80 },
-          { name: "Chicken Fried Rice", price: 120 },
-          {
-            name: "Chicken Biryani",
-            price: 160,
-            image: "/banners/biryani_chicken.webp",
-          },
-          { name: "Chicken Gravy with Rice", price: 130 },
-          { name: "Egg Wrap", price: 50 },
-          { name: "Aloo Tikki Wrap", price: 60 },
-          { name: "Veg Wrap", price: 70 },
-          { name: "Paneer Wrap", price: 90 },
-          { name: "Chicken Wrap", price: 100 },
-        ],
-      },
-      {
-        category: "Pasta",
-        items: [
-          { name: "Red Sauce Pasta", price: 90 },
-          {
-            name: "White Sauce Pasta",
-            price: 90,
-            image: "/banners/pasta_white_sauce.webp",
-          },
-          { name: "Makhni Sauce Pasta", price: 110 },
-          { name: "Schezwan Sauce Pasta", price: 100 },
-          { name: "Mix Sauce Pasta", price: 110 },
-          { name: "Chicken Pasta", price: 130 },
-        ],
-      },
-      {
-        category: "Desserts",
-        items: [
-          { name: "Brownie", price: 50 },
-          { name: "Brownie with Ice Cream", price: 70 },
-          { name: "Sizzling Brownie", price: 80 },
-        ],
-      },
-      {
-        category: "Chicken Items",
-        items: [{ name: "Chicken Kulcha", price: 100 }],
-      },
-    ],
-  },
-
-  // Ã¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•Â
   // DIRECTORY-ONLY SHOPS (menu coming soon)
   // Ã¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•ÂÃ¢•Â
   {
     id: "rock-in-roll",
     name: "Rock in Roll (NC-3)",
-    tag: "📞 9888391974 • Rolls • Noodles • Rice",
+    tag: "Rolls • Noodles • Rice",
     veg: false,
+    rating: 4.6,
+    reviews: "450+",
+    openTime: "11:00 AM",
+    distance: "0.6 km",
+    deliveryTime: "5-10 MINS",
+    isOpen: true,
+    heroImage: "https://images.unsplash.com/photo-1534422298391-e4f8c170db76?w=800&auto=format&fit=crop",
     categories: [
       {
         category: "Egg Roll",
@@ -2003,8 +1809,15 @@ export const shops: Shop[] = [
   {
     id: "food-castle",
     name: "Food Castle (NC-5)",
-    tag: "📞 9988619177 • Pizza • Bakery • Sandwiches",
+    tag: "Pizza • Bakery • Sandwiches",
     veg: false,
+    rating: 4.2,
+    reviews: "180+",
+    openTime: "09:00 AM",
+    distance: "1.4 km",
+    deliveryTime: "20-25 MINS",
+    isOpen: true,
+    heroImage: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=800&auto=format&fit=crop",
     categories: [
       {
         category: "Hot Beverages",
@@ -2269,8 +2082,15 @@ export const shops: Shop[] = [
   {
     id: "eat-and-smile",
     name: "Eat and Smile (NC-6)",
-    tag: "📞 7988511867 • Breakfast • Chinese • Rolls",
+    tag: "Breakfast • Chinese • Rolls",
     veg: false,
+    rating: 4.0,
+    reviews: "50+",
+    openTime: "08:30 AM",
+    distance: "1.8 km",
+    deliveryTime: "25-30 MINS",
+    isOpen: true,
+    heroImage: "https://images.unsplash.com/photo-1541167760496-1628856ab772?w=800&auto=format&fit=crop",
     categories: [
       {
         category: "Breakfast",
@@ -2428,8 +2248,15 @@ export const shops: Shop[] = [
   {
     id: "zaika",
     name: "Zaika (NC-4)",
-    tag: "📞 8360292356 • Indian • Thali • Biryani",
+    tag: "Indian • Thali • Biryani",
     veg: false,
+    rating: 4.4,
+    reviews: "600+",
+    openTime: "11:30 AM",
+    distance: "0.4 km",
+    deliveryTime: "5-10 MINS",
+    isOpen: true,
+    heroImage: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&auto=format&fit=crop",
     categories: [
       {
         category: "Veg Thali",
@@ -2565,8 +2392,15 @@ export const shops: Shop[] = [
   {
     id: "bakerz-hub",
     name: "Bakerz Hub (NC-2)",
-    tag: "📞 8947000006 • Pizza • Cafe • Bakery",
+    tag: "Pizza • Cafe • Bakery",
     veg: false,
+    rating: 4.7,
+    reviews: "1.2k+",
+    openTime: "09:00 AM",
+    distance: "0.7 km",
+    deliveryTime: "10-15 MINS",
+    isOpen: true,
+    heroImage: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=800&auto=format&fit=crop",
     categories: [
       {
         category: "Baker'z Hub Meals",
@@ -2762,6 +2596,13 @@ export const shops: Shop[] = [
     name: "Food Junction (Zakir A)",
     tag: "Multi-cuisine • Main Course • Thali",
     veg: false,
+    rating: 4.1,
+    reviews: "250+",
+    openTime: "10:00 AM",
+    distance: "1.2 km",
+    deliveryTime: "15-20 MINS",
+    isOpen: true,
+    heroImage: "https://images.unsplash.com/photo-1517244671473-efdf03ca8fe5?w=800&auto=format&fit=crop",
     categories: [
       {
         category: "Breakfast",
@@ -2955,8 +2796,15 @@ export const shops: Shop[] = [
   {
     id: "king-cafe",
     name: "King Cafe (Zakir B)",
-    tag: "📞 8877263548 • Full Menu • Tandoori • Main Course",
+    tag: "Full Menu • Tandoori • Main Course",
     veg: false,
+    rating: 4.3,
+    reviews: "400+",
+    openTime: "11:00 AM",
+    distance: "1.1 km",
+    deliveryTime: "10-15 MINS",
+    isOpen: true,
+    heroImage: "https://images.unsplash.com/photo-1552566626-52f8b828add9?w=800&auto=format&fit=crop",
     categories: [
       {
         category: "Breakfast",
@@ -3191,6 +3039,13 @@ export const shops: Shop[] = [
     name: "Handi Biryani (Zakir D)",
     tag: "Biryani • Indian Main Course • Chinese",
     veg: false,
+    rating: 4.5,
+    reviews: "550+",
+    openTime: "12:00 PM",
+    distance: "1.4 km",
+    deliveryTime: "20-25 MINS",
+    isOpen: true,
+    heroImage: "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=800&auto=format&fit=crop",
     categories: [
       {
         category: "Hyd. Dum Biryani (Veg)",
@@ -3340,8 +3195,15 @@ export const shops: Shop[] = [
   {
     id: "barkat-food",
     name: "Barkat Food (Zakir C)",
-    tag: "📞 7056853177 • Main Course • Biryani • Chinese",
+    tag: "Main Course • Biryani • Chinese",
     veg: false,
+    rating: 4.2,
+    reviews: "180+",
+    openTime: "10:30 AM",
+    distance: "1.3 km",
+    deliveryTime: "15-20 MINS",
+    isOpen: true,
+    heroImage: "https://images.unsplash.com/photo-1541167760496-1628856ab772?w=800&auto=format&fit=crop",
     categories: [
       {
         category: "Breakfast",

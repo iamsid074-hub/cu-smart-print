@@ -42,6 +42,9 @@ import {
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
 import { AdminPushService } from "@/services/AdminPushService";
+import { toast } from "sonner";
+import { shops as staticShops } from "@/config/shopMenus";
+import { Store } from "lucide-react";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 type AdminSection =
@@ -50,6 +53,7 @@ type AdminSection =
   | "item_orders"
   | "food_orders"
   | "quick_store"
+  | "shops"
   | "subscriptions"
   | "notifications";
 
@@ -1820,6 +1824,127 @@ function FoodOrdersSection({
 }
 
 // ─── Notifications Section ─────────────────────────────────────────────────────
+// ─── Shops Section ─────────────────────────────────────────────────────────────
+function ShopsSection() {
+  const [liveStatuses, setLiveStatuses] = useState<Record<string, boolean>>({});
+  const [loading, setLoading] = useState(true);
+  const [processingId, setProcessingId] = useState<string | null>(null);
+
+  const fetchStatuses = useCallback(async () => {
+    try {
+      const { data, error } = await supabase.from("shops").select("id, is_open");
+      if (error) throw error;
+      const statusMap: Record<string, boolean> = {};
+      data?.forEach((s: any) => {
+        statusMap[s.id] = s.is_open;
+      });
+      setLiveStatuses(statusMap);
+    } catch (err) {
+      console.error("Error fetching shop statuses:", err);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchStatuses();
+  }, [fetchStatuses]);
+
+  const handleToggle = async (shopId: string, currentStatus: boolean) => {
+    setProcessingId(shopId);
+    const newStatus = !currentStatus;
+    
+    try {
+      const { error } = await supabase
+        .from("shops")
+        .upsert({ id: shopId, is_open: newStatus, updated_at: new Date().toISOString() });
+      
+      if (error) throw error;
+      
+      setLiveStatuses(prev => ({ ...prev, [shopId]: newStatus }));
+      toast.success(`${staticShops.find(s => s.id === shopId)?.name} is now ${newStatus ? 'OPEN' : 'CLOSED'}`);
+    } catch (err) {
+      console.error("Error toggling shop status:", err);
+      // Fallback if table doesn't exist yet
+      setLiveStatuses(prev => ({ ...prev, [shopId]: newStatus }));
+      toast.error("Database sync failed. Please ensure the 'shops' table exists.");
+    } finally {
+      setProcessingId(null);
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 className="text-2xl font-black mb-1 text-slate-900 flex items-center gap-2">
+            <Store className="w-6 h-6 text-emerald-500" /> Shop Management
+          </h2>
+          <p className="text-slate-900/70 text-sm">
+            Control live availability for all campus outlets
+          </p>
+        </div>
+        <button 
+          onClick={() => { setLoading(true); fetchStatuses(); }}
+          className="p-2.5 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 transition-all active:scale-95"
+        >
+          <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
+        </button>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+        {staticShops.map((shop, i) => {
+          const isOpen = liveStatuses[shop.id] ?? shop.isOpen;
+          const isProcessing = processingId === shop.id;
+
+          return (
+            <motion.div
+              key={shop.id}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.03 }}
+              className="bg-white rounded-2xl p-5 border border-slate-200 flex items-center gap-4 hover:shadow-md transition-all group"
+            >
+              <div className="w-14 h-14 rounded-xl overflow-hidden bg-slate-100 border border-slate-200 shrink-0">
+                <img src={shop.heroImage} alt="" className="w-full h-full object-cover" />
+              </div>
+              
+              <div className="flex-1 min-w-0">
+                <h4 className="font-bold text-slate-900 truncate tracking-tight">{shop.name}</h4>
+                <div className="flex items-center gap-1.5 mt-1">
+                  <div className={`w-2 h-2 rounded-full ${isOpen ? 'bg-emerald-500 animate-pulse' : 'bg-red-500'}`} />
+                  <span className={`text-[10px] font-black uppercase tracking-widest ${isOpen ? 'text-emerald-500' : 'text-red-500'}`}>
+                    {isOpen ? 'Accepting Orders' : 'Closed'}
+                  </span>
+                </div>
+              </div>
+
+              {/* iPhone Style Toggle */}
+              <button
+                onClick={() => handleToggle(shop.id, isOpen)}
+                disabled={isProcessing}
+                className={`relative w-14 h-8 rounded-full transition-colors duration-300 flex items-center p-1 ${
+                  isOpen ? 'bg-emerald-500' : 'bg-slate-200'
+                } ${isProcessing ? 'opacity-50 cursor-not-allowed' : ''}`}
+              >
+                <div className="relative w-full h-full">
+                  <motion.div
+                    animate={{ x: isOpen ? 24 : 0 }}
+                    transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                    className="w-6 h-6 bg-white rounded-full shadow-sm flex items-center justify-center"
+                  >
+                    {isProcessing && <Loader2 className="w-3 h-3 animate-spin text-slate-400" />}
+                  </motion.div>
+                </div>
+              </button>
+            </motion.div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 function NotificationsSection({
   notifications,
   loading,
@@ -2642,6 +2767,11 @@ export default function Admin() {
           .length || undefined,
     },
     {
+      id: "shops",
+      label: "Manage Shops",
+      icon: Store,
+    },
+    {
       id: "notifications",
       label: "Notifications",
       icon: Bell,
@@ -2861,6 +2991,9 @@ export default function Admin() {
                   onApproveSubscription={handleApproveSubscription}
                   onDeclineSubscription={handleDeclineSubscription}
                 />
+              )}
+              {section === "shops" && (
+                <ShopsSection />
               )}
               {section === "notifications" && (
                 <NotificationsSection

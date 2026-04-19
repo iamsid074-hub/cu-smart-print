@@ -212,7 +212,7 @@ const ProductCard = memo(
             <div className="flex items-center justify-between mt-auto pt-2">
               <span className="font-bold text-xl tracking-tight text-[#1D1D1F] truncate pr-2">
                 {"\u20B9"}
-                {price.toLocaleString()}
+                {(price || 0).toLocaleString()}
               </span>
 
               <motion.button
