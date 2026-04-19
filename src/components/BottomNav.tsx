@@ -20,19 +20,24 @@ const BottomNav = () => {
   const [lastScrollY, setLastScrollY] = useState(0);
 
   useEffect(() => {
+    let ticking = false;
     const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      
-      // If we've scrolled more than 10px, determine direction
-      if (Math.abs(currentScrollY - lastScrollY) > 10) {
-        if (currentScrollY > lastScrollY && currentScrollY > 100) {
-          // Scrolling down & past a small threshold
-          setIsVisible(false);
-        } else {
-          // Scrolling up
-          setIsVisible(true);
-        }
-        setLastScrollY(currentScrollY);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const currentScrollY = window.scrollY;
+          
+          // Increased threshold and added 'direction-lock' logic to prevent flickering
+          if (Math.abs(currentScrollY - lastScrollY) > 25) {
+            if (currentScrollY > lastScrollY && currentScrollY > 150) {
+              setIsVisible(false);
+            } else if (currentScrollY < lastScrollY - 10) {
+              setIsVisible(true);
+            }
+            setLastScrollY(currentScrollY);
+          }
+          ticking = false;
+        });
+        ticking = true;
       }
     };
 
@@ -56,45 +61,25 @@ const BottomNav = () => {
 
   return (
     <motion.div
-      initial={{ y: 0 }}
-      animate={{ y: isCart || !isVisible ? 100 : 0 }}
-      transition={{ type: "spring", stiffness: 260, damping: 30 }}
-      className="fixed bottom-0 left-0 right-0 z-[100] flex justify-center bg-[rgba(18,18,20,0.92)] backdrop-blur-2xl border-t border-white/5"
+      initial={false}
+      animate={{ y: isCart || !isVisible ? 120 : 0 }}
+      transition={{ 
+        type: "spring", 
+        stiffness: 120,    // Lowered for 'Butter-Smooth' motion
+        damping: 22,       // Refined for no-bounce landing
+        mass: 0.8          // Lighter feel
+      }}
+      className="fixed bottom-0 left-0 right-0 z-[100] flex justify-center bg-[#09090b]/90 backdrop-blur-2xl border-t border-white/10 will-change-transform"
       style={{ 
         paddingBottom: "env(safe-area-inset-bottom, 0px)",
+        WebkitTapHighlightColor: "transparent",
+        backfaceVisibility: "hidden", // Hardware optimization
+        transform: "translateZ(0)"    // Force GPU layer
       }}
     >
-      {/* Attached modern bar */}
       <div
-        style={{
-          width: "100%",
-          maxWidth: "600px",
-          display: "flex",
-          alignItems: "center",
-          height: "64px",
-          position: "relative",
-          overflow: "hidden",
-        }}
+        className="w-full max-w-[600px] flex items-stretch h-[66px] relative overflow-hidden"
       >
-        {/* Sliding active background */}
-        {activeIndex !== -1 && (
-          <div
-            style={{
-              position: "absolute",
-              top: "8px",
-              bottom: "8px",
-              left: `calc(${activeIndex * 25}% + 8px)`,
-              width: "calc(25% - 16px)",
-              borderRadius: "16px",
-              background: GLOBAL_ACTIVE_COLOR + "20",
-              transition: "left 0.28s cubic-bezier(0.34,1.4,0.64,1)",
-              willChange: "left",
-              pointerEvents: "none",
-              zIndex: 0,
-            }}
-          />
-        )}
-
         {NAV_ITEMS.map((item, i) => {
           const isActive = i === activeIndex;
           const Icon = item.icon;
@@ -104,75 +89,59 @@ const BottomNav = () => {
             <Link
               key={item.to}
               to={item.to}
-              tabIndex={-1}
-              draggable={false}
-              onMouseDown={(e) => e.preventDefault()}
+              className="flex-1 relative flex flex-col items-center justify-center gap-1.5 no-underline transition-all duration-300"
               style={{
-                flex: "1 1 0",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: "4px",
-                height: "100%",
-                textDecoration: "none",
-                outline: "none",
-                userSelect: "none",
-                WebkitUserSelect: "none",
-                position: "relative",
-                zIndex: 1,
+                WebkitTapHighlightColor: "transparent",
               }}
             >
-              {/* Icon wrapper */}
-              <div style={{ position: "relative" }}>
-                <Icon
-                  strokeWidth={isActive ? 2.5 : 2}
-                  style={{
-                    width: isActive ? "1.3rem" : "1.2rem",
-                    height: isActive ? "1.3rem" : "1.2rem",
-                    color: isActive ? GLOBAL_ACTIVE_COLOR : "#6b7280",
-                    transition: "color 0.2s ease, width 0.2s ease, height 0.2s ease",
-                    display: "block",
-                  }}
+              {/* Tap Feedback & Active Aura */}
+              {isActive && (
+                <motion.div
+                  layoutId="nav-bg"
+                  className="absolute inset-x-2 inset-y-2 rounded-2xl bg-white/[0.06] z-0"
+                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
                 />
+              )}
+
+              {/* Icon Section */}
+              <div className="relative z-10 flex flex-col items-center justify-center">
+                <motion.div
+                  animate={{ 
+                    scale: isActive ? 1.05 : 1,
+                    y: isActive ? -1 : 0 
+                  }}
+                  transition={{ type: "spring", stiffness: 350, damping: 25 }}
+                >
+                  <Icon
+                    size={22}
+                    strokeWidth={isActive ? 2.5 : 2}
+                    className={`transition-colors duration-300 ${isActive ? 'text-indigo-400' : 'text-zinc-500'}`}
+                  />
+                </motion.div>
+                
                 {showBadge && (
-                  <span style={{
-                    position: "absolute", top: "-4px", right: "-7px",
-                    background: "#f97316", color: "#fff",
-                    fontSize: "8px", fontWeight: 900, minWidth: "13px", height: "13px",
-                    paddingInline: "2px", borderRadius: "99px",
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                  }}>
+                  <span className="absolute -top-1.5 -right-2 bg-indigo-600 text-white text-[9px] font-black min-w-[15px] h-[15px] flex items-center justify-center rounded-full border-2 border-[#09090b] shadow-lg">
                     {totalItems > 9 ? "9+" : totalItems}
                   </span>
                 )}
               </div>
 
-              {/* Label */}
-              <span style={{
-                fontSize: "10px",
-                fontWeight: isActive ? 800 : 600,
-                color: isActive ? GLOBAL_ACTIVE_COLOR : "#4b5563",
-                transition: "color 0.2s ease, font-weight 0.2s ease",
-                lineHeight: 1,
-                userSelect: "none",
-                pointerEvents: "none",
-              }}>
+              {/* Label Section */}
+              <span 
+                className={`text-[11px] font-bold tracking-tight transition-all duration-300 z-10 ${
+                  isActive ? 'text-indigo-400 opacity-100' : 'text-zinc-500 opacity-70'
+                }`}
+              >
                 {item.label}
               </span>
 
-              {/* Active underline dot */}
-              <div style={{
-                position: "absolute",
-                bottom: "6px",
-                width: "4px",
-                height: "4px",
-                borderRadius: "50%",
-                background: GLOBAL_ACTIVE_COLOR,
-                opacity: isActive ? 1 : 0,
-                transform: `scale(${isActive ? 1 : 0})`,
-                transition: "opacity 0.2s ease, transform 0.2s cubic-bezier(0.34,1.6,0.64,1)",
-              }} />
+              {/* Active Indicator bar */}
+              {isActive && (
+                <motion.div
+                  layoutId="active-line"
+                  className="absolute top-0 inset-x-8 h-[2.5px] bg-indigo-500 shadow-[0_0_15px_rgba(99,102,241,0.6)] rounded-b-full scale-x-110"
+                />
+              )}
             </Link>
           );
         })}
