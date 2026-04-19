@@ -59,22 +59,19 @@ const BottomNav = () => {
       initial={{ y: 0 }}
       animate={{ y: isCart || !isVisible ? 100 : 0 }}
       transition={{ type: "spring", stiffness: 260, damping: 30 }}
-      className="fixed bottom-0 left-0 right-0 z-[100] flex justify-center"
-      style={{ paddingBottom: "env(safe-area-inset-bottom, 12px)" }}
+      className="fixed bottom-0 left-0 right-0 z-[100] flex justify-center bg-[rgba(18,18,20,0.92)] backdrop-blur-2xl border-t border-white/5"
+      style={{ 
+        paddingBottom: "env(safe-area-inset-bottom, 0px)",
+      }}
     >
-      {/* Glass bar */}
+      {/* Attached modern bar */}
       <div
         style={{
           width: "100%",
-          maxWidth: "480px",
-          margin: "0 12px 10px",
-          borderRadius: "24px",
-          background: "rgba(28,28,30,0.98)",
-          border: "1px solid rgba(255,255,255,0.08)",
-          boxShadow: "0 -4px 32px rgba(0,0,0,0.5), 0 8px 32px rgba(0,0,0,0.5)",
+          maxWidth: "600px",
           display: "flex",
           alignItems: "center",
-          height: "62px",
+          height: "64px",
           position: "relative",
           overflow: "hidden",
         }}
