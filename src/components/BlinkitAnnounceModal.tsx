@@ -53,27 +53,27 @@ export default function BlinkitAnnounceModal({ onCheck }: BlinkitAnnounceModalPr
             <div className="h-full max-w-[1400px] mx-auto px-6 sm:px-12 flex flex-col justify-center gap-6 sm:gap-10 relative z-10 py-8">
               
               {/* Header Group */}
-              <div className="flex items-center gap-5 sm:gap-8 shrink-0">
+              <div className="flex items-center gap-4 sm:gap-8 shrink-0">
                 <motion.div 
-                   animate={{ scale: [1, 1.1, 1], rotate: [2, -2, 2] }}
+                   animate={{ scale: [1, 1.05, 1] }}
                    transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                   className="w-14 h-14 sm:w-24 sm:h-24 bg-white rounded-2xl flex items-center justify-center shadow-lg transform rotate-3 shrink-0"
+                   className="w-12 h-12 sm:w-24 sm:h-24 bg-white rounded-2xl flex items-center justify-center shadow-lg shrink-0"
                 >
-                  <Zap className="w-8 h-8 sm:w-12 sm:h-12 text-[#FFD210] fill-[#FFD210]" />
+                  <Zap className="w-6 h-6 sm:w-12 sm:h-12 text-[#FFD210] fill-[#FFD210]" />
                 </motion.div>
                 
                 <div className="flex flex-col min-w-0">
-                  <h3 className="text-3xl sm:text-7xl font-[1000] uppercase tracking-tighter leading-none mb-1">
+                  <h3 className="text-[1.6rem] sm:text-7xl font-black tracking-tight leading-none mb-1.5 whitespace-nowrap">
                     Blinkit & Zwigato
                   </h3>
-                  <p className="text-black/80 text-sm sm:text-2xl font-black uppercase opacity-60">
-                    CU Campus Special — 15 Min Delivery
+                  <p className="text-black/60 text-[11px] sm:text-2xl font-bold uppercase tracking-wider">
+                    CU Special — 15 Min Delivery
                   </p>
                 </div>
               </div>
 
               {/* Feature Points Group */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-6 bg-black/5 p-5 sm:p-8 rounded-[2rem] border border-black/5">
+              <div className="space-y-3 sm:space-y-6 bg-black/[0.03] p-6 sm:p-10 rounded-[2.5rem] border border-black/5">
                 {[
                   "Anything you order will come at your room",
                   "Fastest delivery on campus",
@@ -85,12 +85,12 @@ export default function BlinkitAnnounceModal({ onCheck }: BlinkitAnnounceModalPr
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.4 + (idx * 0.1) }}
                     key={idx} 
-                    className="flex items-center gap-3"
+                    className="flex items-center gap-4"
                   >
-                    <div className="w-5 h-5 sm:w-7 sm:h-7 rounded-full bg-black flex items-center justify-center shrink-0">
-                      <Zap className="w-2.5 h-2.5 sm:w-3.5 h-3.5 text-[#FFD210] fill-[#FFD210]" />
+                    <div className="w-5 h-5 sm:w-8 sm:h-8 rounded-full bg-black flex items-center justify-center shrink-0">
+                      <Zap className="w-2.5 h-2.5 sm:w-4 h-4 text-[#FFD210] fill-[#FFD210]" />
                     </div>
-                    <span className="text-[14px] sm:text-[22px] font-black leading-tight text-black">
+                    <span className="text-[13.5px] sm:text-[24px] font-bold text-black tracking-tight">
                       {point}
                     </span>
                   </motion.div>
@@ -98,15 +98,14 @@ export default function BlinkitAnnounceModal({ onCheck }: BlinkitAnnounceModalPr
               </div>
 
               {/* Action Group */}
-              <div className="flex items-center gap-4 sm:gap-8 mt-2">
+              <div className="flex items-center justify-center w-full mt-2">
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={handleAction}
-                  className="w-full sm:w-auto px-8 sm:px-20 py-4.5 sm:py-8 bg-black text-white font-[1000] uppercase tracking-wider text-[14px] sm:text-[22px] rounded-2xl sm:rounded-[2.5rem] shadow-xl flex items-center justify-center gap-3 sm:gap-4 transition-all"
+                  className="w-full h-[60px] sm:h-[84px] bg-black text-white font-bold text-[17px] sm:text-[24px] rounded-[22px] sm:rounded-[32px] shadow-2xl flex items-center justify-center gap-3 transition-all active:opacity-90"
                 >
-                  <span>Go to Store</span>
-                  <ArrowRight className="w-5 h-5 sm:w-8 sm:h-8" />
+                  Go to Store <ArrowRight className="w-5 h-5 sm:w-8 sm:h-8" />
                 </motion.button>
               </div>
 
