@@ -40,8 +40,16 @@ export default function BlinkitAnnounceModal({ onCheck }: BlinkitAnnounceModalPr
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
             transition={{ type: "spring", damping: 30, stiffness: 200 }}
-            className="w-full h-[50vh] bg-[#FFD210] pointer-events-auto border-none relative overflow-hidden"
+            className="w-full h-[50vh] bg-[#FFD210] pointer-events-auto border-none relative overflow-hidden rounded-t-[3.5rem] shadow-[0_-20px_60px_rgba(0,0,0,0.1)]"
           >
+            {/* Top Close Button - Absolute Positioned */}
+            <button
+              onClick={handleClose}
+              className="absolute top-6 right-6 z-20 p-3 sm:p-5 text-black/30 hover:text-black transition-colors rounded-full hover:bg-black/10 shrink-0"
+            >
+              <X className="w-7 h-7 sm:w-10 sm:h-10" />
+            </button>
+
             <div className="h-full max-w-[1400px] mx-auto px-6 sm:px-12 flex flex-col justify-center gap-6 sm:gap-10 relative z-10 py-8">
               
               {/* Header Group */}
@@ -95,18 +103,11 @@ export default function BlinkitAnnounceModal({ onCheck }: BlinkitAnnounceModalPr
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={handleAction}
-                  className="flex-1 sm:flex-none px-8 sm:px-16 py-4 sm:py-7 bg-black text-white font-[1000] uppercase tracking-wider text-[13px] sm:text-[20px] rounded-2xl sm:rounded-[2.5rem] shadow-xl flex items-center justify-center gap-3 sm:gap-4 transition-all"
+                  className="w-full sm:w-auto px-8 sm:px-20 py-4.5 sm:py-8 bg-black text-white font-[1000] uppercase tracking-wider text-[14px] sm:text-[22px] rounded-2xl sm:rounded-[2.5rem] shadow-xl flex items-center justify-center gap-3 sm:gap-4 transition-all"
                 >
                   <span>Go to Store</span>
                   <ArrowRight className="w-5 h-5 sm:w-8 sm:h-8" />
                 </motion.button>
-                
-                <button
-                  onClick={handleClose}
-                  className="p-3 sm:p-5 text-black/30 hover:text-black transition-colors rounded-full hover:bg-black/10 shrink-0"
-                >
-                  <X className="w-7 h-7 sm:w-12 sm:h-12" />
-                </button>
               </div>
 
             </div>
