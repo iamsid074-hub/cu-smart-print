@@ -177,7 +177,7 @@ export default function RestaurantPage() {
               <motion.button 
                 whileTap={{ scale: 0.96 }}
                 onClick={() => navigate(-1)}
-                className="flex items-center justify-center gap-2 py-4.5 rounded-[1.4rem] bg-white/[0.03] border border-white/10 text-white font-bold active:bg-white/5 transition-all text-[15px]"
+                className="flex items-center justify-center gap-2 py-4 rounded-full bg-[#1c1c1e] border border-white/5 text-white font-bold active:bg-zinc-800 transition-all text-[15px] shadow-lg"
               >
                 <ArrowLeft className="w-5 h-5" />
                 Go Back
@@ -185,7 +185,7 @@ export default function RestaurantPage() {
               <motion.button 
                 whileTap={{ scale: 0.96 }}
                 onClick={() => navigate("/home")}
-                className="flex items-center justify-center gap-2 py-4.5 rounded-[1.4rem] bg-red-500 text-white font-bold shadow-[0_12px_44px_rgba(239,68,68,0.25)] active:bg-red-600 transition-all text-[15px]"
+                className="flex items-center justify-center gap-2 py-4 rounded-full bg-[#FF3B30] text-white font-bold shadow-[0_12px_44px_rgba(255,59,48,0.25)] active:bg-[#D73229] transition-all text-[15px]"
               >
                 <SearchIcon className="w-5 h-5" />
                 Find Others
@@ -309,14 +309,14 @@ export default function RestaurantPage() {
                               });
                               toast.success(`${item.name} added to cart!`);
                             }}
-                            className={`px-8 py-2.5 rounded-xl font-black text-[14px] transition-all ${
+                            className={`px-8 py-2.5 rounded-full font-bold text-[14px] transition-all flex items-center gap-1.5 ${
                               shop.isOpen 
-                                ? "bg-white text-black shadow-xl hover:bg-zinc-200" 
+                                ? "bg-[#FF3B30] text-white shadow-lg shadow-[#FF3B30]/20 hover:bg-[#D73229]" 
                                 : "bg-white/5 text-zinc-600 cursor-not-allowed border border-white/5 shadow-none"
                             }`}
                           >
                             ADD
-                            <Plus className="inline-block ml-1 w-4 h-4 stroke-[4]" />
+                            <Plus className="w-4 h-4 stroke-[3]" />
                           </motion.button>
                         </div>
                       </div>
