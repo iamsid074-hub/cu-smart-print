@@ -1734,7 +1734,7 @@ export const shops: Shop[] = [
     distance: "0.6 km",
     deliveryTime: "5-10 MINS",
     isOpen: true,
-    heroImage: "https://images.unsplash.com/photo-1534422298391-e4f8c170db76?w=800&auto=format&fit=crop",
+    heroImage: "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=800&auto=format&fit=crop",
     categories: [
       {
         category: "Egg Roll",
@@ -2602,7 +2602,7 @@ export const shops: Shop[] = [
     distance: "1.2 km",
     deliveryTime: "15-20 MINS",
     isOpen: true,
-    heroImage: "https://images.unsplash.com/photo-1517244671473-efdf03ca8fe5?w=800&auto=format&fit=crop",
+    heroImage: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800&auto=format&fit=crop",
     categories: [
       {
         category: "Breakfast",

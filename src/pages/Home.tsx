@@ -22,7 +22,9 @@ import {
   Flame,
   BadgeCheck,
   Star,
-  Heart
+  Heart,
+  Share2,
+  MoreVertical
 } from "lucide-react";
 import { shops } from "@/config/shopMenus";
 import ProductCard from "@/components/ProductCard";
@@ -128,7 +130,7 @@ export default function Home() {
     { name: "Pasta", img: "https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=200&h=200&auto=format&fit=crop" },
     { name: "Noodles", img: "https://images.unsplash.com/photo-1585032226651-759b368d7246?w=200&h=200&auto=format&fit=crop" },
     { name: "Rolls", img: "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=200&h=200&auto=format&fit=crop" },
-    { name: "Biryani", img: "https://images.unsplash.com/photo-1589302168068-1c459288350d?w=200&h=200&auto=format&fit=crop" },
+    { name: "Biryani", img: "https://images.unsplash.com/photo-1563379091339-03b2164bb3fe?w=200&h=200&auto=format&fit=crop" },
   ];
 
   useEffect(() => {
@@ -266,10 +268,33 @@ export default function Home() {
                     </div>
 
                     {/* 3. Section Title */}
-                    <div className="mb-8 px-2 flex items-center gap-3">
-                      <h2 className="text-[14px] sm:text-[16px] font-black tracking-[0.15em] text-zinc-500 uppercase">
-                        All the good places around you
-                      </h2>
+                    <div className="flex items-center justify-between mb-8 px-1">
+                       <h2 className="text-[14px] sm:text-[16px] font-black tracking-[0.15em] text-zinc-500 uppercase">
+                          Campus Spotlight
+                       </h2>
+                       <div className="flex items-center gap-3">
+                         <button 
+                           onClick={() => navigate('/search')}
+                           className="w-10 h-10 rounded-full bg-zinc-900 border border-white/5 flex items-center justify-center text-white/70 hover:text-white hover:bg-zinc-800 transition-all shadow-lg active:scale-95"
+                         >
+                           <Search size={18} />
+                         </button>
+                         <button 
+                           onClick={() => {
+                             if (navigator.share) {
+                               navigator.share({ title: 'CU Bazzar', text: 'Check out the campus food hub!', url: window.location.href });
+                             }
+                           }}
+                           className="w-10 h-10 rounded-full bg-zinc-900 border border-white/5 flex items-center justify-center text-white/70 hover:text-white hover:bg-zinc-800 transition-all shadow-lg active:scale-95"
+                         >
+                           <Share2 size={18} />
+                         </button>
+                         <button 
+                           className="w-10 h-10 rounded-full bg-zinc-900 border border-white/5 flex items-center justify-center text-white/70 hover:text-white hover:bg-zinc-800 transition-all shadow-lg active:scale-95"
+                         >
+                           <MoreVertical size={18} />
+                         </button>
+                       </div>
                     </div>
 
                     {/* 4. Structured Shop Cards (Image 2 Aesthetic) */}
@@ -329,21 +354,19 @@ export default function Home() {
                             </div>
 
                             {/* Metadata Row */}
-                            <div className="flex items-center justify-between gap-3">
-                              <div className="flex items-center gap-4">
-                                <div className="flex items-center gap-1.5 bg-emerald-500 px-2.5 py-1 rounded-lg">
-                                  <Star className="w-3.5 h-3.5 fill-white text-white" />
-                                  <span className="text-[13px] font-black text-white leading-none">{shop.rating}</span>
-                                </div>
-                                <div className="w-[1px] h-5 bg-white/10" />
-                                <span className="text-white/40 text-[12px] font-bold uppercase tracking-[0.1em] truncate max-w-[150px]">
-                                  {shop.tag.includes('•') ? shop.tag.split('•')[0] : shop.tag}
-                                </span>
+                            <div className="flex items-center gap-3">
+                              {/* Prominent Rating Badge */}
+                              <div className="flex items-center gap-1.5 bg-emerald-500 px-3 py-1.5 rounded-[1rem] shadow-lg shadow-emerald-500/20">
+                                <Star className="w-4 h-4 fill-white text-white" />
+                                <span className="text-[14px] font-black text-white leading-none tracking-tight">{shop.rating}</span>
                               </div>
 
-                              <button className="bg-[#FF3B30] text-white px-6 py-2.5 rounded-full text-[11px] font-bold uppercase tracking-widest shadow-lg shadow-red-500/20 active:scale-95 transition-all flex items-center gap-2 group/btn">
+                              {/* Broad iOS Style Button */}
+                              <button className="flex-1 bg-[#FF3B30] text-white py-3 rounded-full text-[13px] font-black uppercase tracking-widest shadow-[0_10px_25px_rgba(255,59,48,0.3)] active:scale-[0.97] transition-all flex items-center justify-center gap-3 group/btn whitespace-nowrap overflow-hidden">
                                 Order Now
-                                <ChevronRight className="w-3.5 h-3.5 transition-transform group-hover/btn:translate-x-1" />
+                                <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center transition-transform group-hover/btn:translate-x-1">
+                                  <ChevronRight className="w-4 h-4" />
+                                </div>
                               </button>
                             </div>
 
