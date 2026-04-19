@@ -40,61 +40,72 @@ export default function BlinkitAnnounceModal({ onCheck }: BlinkitAnnounceModalPr
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
             transition={{ type: "spring", damping: 30, stiffness: 200 }}
-            className="w-full h-[22vh] sm:h-[25vh] bg-[#FFD210] pointer-events-auto shadow-[0_-20px_80px_rgba(255,210,16,0.6)] border-none relative overflow-hidden"
+            className="w-full h-[50vh] bg-[#FFD210] pointer-events-auto border-none relative overflow-hidden"
           >
-            {/* Background Accent / Glow */}
-            <div className="absolute inset-0 bg-gradient-to-t from-white/20 to-transparent pointer-events-none" />
-            <div className="absolute top-0 left-1/4 w-1/2 h-full bg-white/10 blur-[100px] rounded-full pointer-events-none" />
-
-            <div className="h-full max-w-[1400px] mx-auto px-6 sm:px-12 flex items-center justify-between gap-6 sm:gap-12 relative z-10">
+            <div className="h-full max-w-[1400px] mx-auto px-6 sm:px-12 flex flex-col justify-center gap-6 sm:gap-10 relative z-10 py-8">
               
-              {/* Content Group - Left */}
-              <div className="flex items-center gap-5 sm:gap-10 flex-1 min-w-0">
+              {/* Header Group */}
+              <div className="flex items-center gap-5 sm:gap-8 shrink-0">
                 <motion.div 
-                  animate={{ scale: [1, 1.1, 1], rotate: [2, -2, 2] }}
-                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                  className="w-16 h-16 sm:w-32 sm:h-32 bg-white rounded-2xl sm:rounded-[2.5rem] flex items-center justify-center shadow-2xl transform rotate-3 shrink-0"
+                   animate={{ scale: [1, 1.1, 1], rotate: [2, -2, 2] }}
+                   transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                   className="w-14 h-14 sm:w-24 sm:h-24 bg-white rounded-2xl flex items-center justify-center shadow-lg transform rotate-3 shrink-0"
                 >
-                  <Zap className="w-8 h-8 sm:w-16 sm:h-16 text-[#FFD210] fill-[#FFD210]" />
+                  <Zap className="w-8 h-8 sm:w-12 sm:h-12 text-[#FFD210] fill-[#FFD210]" />
                 </motion.div>
                 
                 <div className="flex flex-col min-w-0">
-                  <motion.h3 
-                    initial={{ x: -20, opacity: 0 }}
-                    animate={{ x: 0, opacity: 1 }}
-                    transition={{ delay: 0.2 }}
-                    className="text-2xl sm:text-6xl font-[1000] uppercase tracking-tighter leading-[0.9] mb-1 sm:mb-2 truncate"
-                  >
+                  <h3 className="text-3xl sm:text-7xl font-[1000] uppercase tracking-tighter leading-none mb-1">
                     Blinkit & Zwigato
-                  </motion.h3>
-                  <motion.p 
-                    initial={{ x: -20, opacity: 0 }}
-                    animate={{ x: 0, opacity: 1 }}
-                    transition={{ delay: 0.3 }}
-                    className="text-black/80 text-sm sm:text-2xl font-black leading-none truncate opacity-80"
-                  >
-                    Delivered in 15 mins — CU Campus Special
-                  </motion.p>
+                  </h3>
+                  <p className="text-black/80 text-sm sm:text-2xl font-black uppercase opacity-60">
+                    CU Campus Special — 15 Min Delivery
+                  </p>
                 </div>
               </div>
 
-              {/* Action Group - Right */}
-              <div className="flex items-center gap-4 sm:gap-8 shrink-0">
+              {/* Feature Points Group */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-6 bg-black/5 p-5 sm:p-8 rounded-[2rem] border border-black/5">
+                {[
+                  "Anything you order will come at your room",
+                  "Fastest delivery on campus",
+                  "Minimal service charges ever",
+                  "3 delivery partners (No Delay)"
+                ].map((point, idx) => (
+                  <motion.div 
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.4 + (idx * 0.1) }}
+                    key={idx} 
+                    className="flex items-center gap-3"
+                  >
+                    <div className="w-5 h-5 sm:w-7 sm:h-7 rounded-full bg-black flex items-center justify-center shrink-0">
+                      <Zap className="w-2.5 h-2.5 sm:w-3.5 h-3.5 text-[#FFD210] fill-[#FFD210]" />
+                    </div>
+                    <span className="text-[14px] sm:text-[22px] font-black leading-tight text-black">
+                      {point}
+                    </span>
+                  </motion.div>
+                ))}
+              </div>
+
+              {/* Action Group */}
+              <div className="flex items-center gap-4 sm:gap-8 mt-2">
                 <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   onClick={handleAction}
-                  className="px-6 sm:px-16 py-3.5 sm:py-7 bg-black text-white font-black uppercase tracking-[0.15em] text-[11px] sm:text-[18px] rounded-2xl sm:rounded-[2.5rem] shadow-[0_15px_40px_rgba(0,0,0,0.3)] hover:shadow-[0_20px_50px_rgba(0,0,0,0.4)] transition-all flex items-center justify-center gap-2 sm:gap-4 group"
+                  className="flex-1 sm:flex-none px-8 sm:px-16 py-4 sm:py-7 bg-black text-white font-[1000] uppercase tracking-wider text-[13px] sm:text-[20px] rounded-2xl sm:rounded-[2.5rem] shadow-xl flex items-center justify-center gap-3 sm:gap-4 transition-all"
                 >
                   <span>Go to Store</span>
-                  <ArrowRight className="w-4 h-4 sm:w-7 sm:h-7 group-hover:translate-x-1.5 transition-transform" />
+                  <ArrowRight className="w-5 h-5 sm:w-8 sm:h-8" />
                 </motion.button>
                 
                 <button
                   onClick={handleClose}
-                  className="p-2 sm:p-4 text-black/20 hover:text-black transition-colors rounded-full hover:bg-black/5"
+                  className="p-3 sm:p-5 text-black/30 hover:text-black transition-colors rounded-full hover:bg-black/10 shrink-0"
                 >
-                  <X className="w-6 h-6 sm:w-10 sm:h-10" />
+                  <X className="w-7 h-7 sm:w-12 sm:h-12" />
                 </button>
               </div>
 

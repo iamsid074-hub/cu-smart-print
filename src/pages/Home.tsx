@@ -118,9 +118,7 @@ export default function Home() {
           
           <HeroSpotlight />
 
-          <div className="mb-0">
-            <MembershipBanner />
-          </div>
+
 
           <div className="flex items-center justify-center mb-10 -mt-2 relative z-20 w-[100vw] sm:w-full -ml-4 sm:ml-0 px-2 sm:px-0">
             <div className="bg-[#1c1c1e] border border-white/10 p-1 sm:p-1.5 rounded-[1.5rem] flex items-center shadow-2xl relative overflow-x-auto scrollbar-hide max-w-full">

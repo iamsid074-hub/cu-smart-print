@@ -118,16 +118,14 @@ export default function UserLocationCard() {
               </div>
 
               <div className="flex items-center gap-2.5">
-                {isActive && (
-                  <motion.button
-                    onClick={() => setIsPlansOpen(true)}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-400 text-purple-900 px-2.5 py-1 rounded-full shadow-[0_4px_16px_rgba(251,191,36,0.3),inset_0_1px_0_rgba(255,255,255,0.4)] border border-amber-300/40"
-                  >
-                    ✦ MEMBER
-                  </motion.button>
-                )}
+                <motion.button
+                  onClick={() => setIsPlansOpen(true)}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="text-[9.5px] sm:text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full shadow-[0_4px_16px_rgba(251,191,36,0.3),inset_0_1px_0_rgba(255,255,255,0.4)] border border-amber-300/40 bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-400 text-purple-900 transition-all"
+                >
+                  {isActive ? "✦ MEMBER" : "✦ BE MEMBER"}
+                </motion.button>
                 <Link
                   to="/profile"
                   className="w-7 h-7 rounded-full bg-white/20 backdrop-blur-sm border border-white/25 shadow-[0_4px_12px_rgba(0,0,0,0.15),inset_0_1px_0_rgba(255,255,255,0.2)] flex items-center justify-center text-white hover:bg-white/30 hover:scale-105 transition-all"

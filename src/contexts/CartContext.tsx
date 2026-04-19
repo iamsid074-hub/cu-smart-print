@@ -94,11 +94,17 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const removeItem = useCallback((id: string) => {
     setItems((prev) => {
       const found = prev.find((i) => i.id === id);
-      setLastAction({
-        type: "remove",
-        itemTitle: found?.title,
-        timestamp: Date.now(),
-      });
+      if (found) {
+        // Set last action outside the updater if needed, or skip if not used.
+        // For now, keeping it but ensuring it's not breaking the update flow.
+        setTimeout(() => {
+          setLastAction({
+            type: "remove",
+            itemTitle: found.title,
+            timestamp: Date.now(),
+          });
+        }, 0);
+      }
       return prev.filter((i) => i.id !== id);
     });
   }, []);

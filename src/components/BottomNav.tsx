@@ -1,4 +1,4 @@
-import { memo, useMemo } from "react";
+import { memo, useMemo, useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Home, Utensils, ShoppingBag, Wallet } from "lucide-react";
@@ -14,8 +14,31 @@ const NAV_ITEMS = [
 ];
 
 const BottomNav = () => {
-  const location    = useLocation();
+  const location = useLocation();
   const { totalItems } = useCart();
+  const [isVisible, setIsVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      
+      // If we've scrolled more than 10px, determine direction
+      if (Math.abs(currentScrollY - lastScrollY) > 10) {
+        if (currentScrollY > lastScrollY && currentScrollY > 100) {
+          // Scrolling down & past a small threshold
+          setIsVisible(false);
+        } else {
+          // Scrolling up
+          setIsVisible(true);
+        }
+        setLastScrollY(currentScrollY);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [lastScrollY]);
 
   const activeIndex = useMemo(
     () => NAV_ITEMS.findIndex((i) => location.pathname.startsWith(i.to)),
@@ -34,7 +57,7 @@ const BottomNav = () => {
   return (
     <motion.div
       initial={{ y: 0 }}
-      animate={{ y: isCart ? 120 : 0 }}
+      animate={{ y: isCart || !isVisible ? 100 : 0 }}
       transition={{ type: "spring", stiffness: 260, damping: 30 }}
       className="fixed bottom-0 left-0 right-0 z-[100] flex justify-center"
       style={{ paddingBottom: "env(safe-area-inset-bottom, 12px)" }}

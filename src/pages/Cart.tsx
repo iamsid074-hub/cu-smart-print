@@ -635,9 +635,8 @@ export default function Cart() {
               </div>
               
               <div className="space-y-6">
-                {useMemo(() => (
-                  <AnimatePresence>
-                    {items.map((item, index) => (
+                <AnimatePresence>
+                  {items.map((item, index) => (
                       <motion.div
                         key={item.id}
                         layout
@@ -708,18 +707,10 @@ export default function Cart() {
                       </motion.div>
                     ))}
                   </AnimatePresence>
-                ), [items, updateQuantity, removeItem])}
               </div>
             </div>
 
-            {/* Membership Smart Upsell */}
-            {!hasFreeDelivery && (
-              <div className="mb-6">
-                <MembershipUpsell
-                  currentDeliveryFee={paymentMethod === 'cod' ? 51 : baseDelivery}
-                />
-              </div>
-            )}
+
 
             {/* Payment Summary */}
             <div className="bg-white rounded-3xl p-6 sm:p-7 shadow-[0_4px_20px_rgba(0,0,0,0.03)] mb-6">
