@@ -219,14 +219,18 @@ export default function Cart() {
     (item) => item.id === "flavour-factory-combo"
   ), [items]);
 
-  // Logic: If there's a food shop item, use standard flat rate.
-  // Only if it's EXCLUSIVELY Vending/Grocery, use the tiered vending fee.
+  // Logic: If there's a quick item, flat rate 50.
+  // If there's a food shop item, use standard flat rate.
+  // Only if it's EXCLUSIVELY Vending, use the tiered vending fee.
   const baseDelivery = useMemo(() => {
+    if (hasQuickItem) {
+      return 50;
+    }
     if (hasFoodShopItem) {
       return standardDeliveryFee;
     }
     return calculateVendingDelivery(floor);
-  }, [hasFoodShopItem, floor]);
+  }, [hasQuickItem, hasFoodShopItem, floor]);
 
   const deliveryFee = useMemo(() => (hasFreeDelivery
     ? 0
@@ -237,9 +241,11 @@ export default function Cart() {
   const displayedDeliveryFee = useMemo(() => (
     paymentMethod === "cod"
       ? 49
+      : hasQuickItem
+      ? 50
       : hasFoodShopItem
       ? standardDeliveryFee
-      : calculateVendingDelivery(floor)), [paymentMethod, hasFoodShopItem, floor]);
+      : calculateVendingDelivery(floor)), [paymentMethod, hasQuickItem, hasFoodShopItem, floor]);
 
   const maxWalletUsagePerDay = 50;
   const availableToday = Math.max(0, maxWalletUsagePerDay - dailyWalletUsed);

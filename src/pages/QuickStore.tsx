@@ -376,7 +376,7 @@ export default function QuickStore() {
                       </div>
                       <div>
                         <p className="text-[13px] font-black text-white uppercase tracking-tight mb-0.5">Late Night Premium</p>
-                        <p className="text-[11px] text-orange-400 font-bold uppercase tracking-widest opacity-80 leading-snug">₹30 Delivery surcharge applies for midnight orders.</p>
+                        <p className="text-[11px] text-orange-400 font-bold uppercase tracking-widest opacity-80 leading-snug">₹50 Delivery surcharge applies for midnight orders.</p>
                       </div>
                     </div>
                   </div>
