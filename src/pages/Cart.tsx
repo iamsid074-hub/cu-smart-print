@@ -202,7 +202,7 @@ export default function Cart() {
   };
 
   const originalDeliveryFee = 37;
-  const specialDeliveryFee = 30;
+  const standardDeliveryFee = 30;
 
   // A "Food Shop" item is any item that is NOT from the Vending Machine or Grocery
   const hasFoodShopItem = useMemo(() => items.some(
@@ -219,12 +219,11 @@ export default function Cart() {
     (item) => item.id === "flavour-factory-combo"
   ), [items]);
 
-  // Logic: If there's a food shop item, use floor-based rates.
-  // 1-3rd floor: 30rs, 4-11th floor: 37rs.
+  // Logic: If there's a food shop item, use standard flat rate.
   // Only if it's EXCLUSIVELY Vending/Grocery, use the tiered vending fee.
   const baseDelivery = useMemo(() => {
     if (hasFoodShopItem) {
-      return floor >= 4 ? originalDeliveryFee : specialDeliveryFee;
+      return standardDeliveryFee;
     }
     return calculateVendingDelivery(floor);
   }, [hasFoodShopItem, floor]);
@@ -239,9 +238,7 @@ export default function Cart() {
     paymentMethod === "cod"
       ? 49
       : hasFoodShopItem
-      ? floor >= 4
-        ? originalDeliveryFee
-        : specialDeliveryFee
+      ? standardDeliveryFee
       : calculateVendingDelivery(floor)), [paymentMethod, hasFoodShopItem, floor]);
 
   const maxWalletUsagePerDay = 50;
@@ -736,14 +733,7 @@ export default function Cart() {
                 {paymentMethod !== 'cod' && !hasFreeDelivery && hasFlavourCombo && (
                   <div className="flex justify-between items-center text-[14.5px]">
                     <span className="text-violet-500 font-medium">Flavour Factory Promo</span>
-                    <span className="font-bold text-violet-500">-₹{(originalDeliveryFee - specialDeliveryFee).toFixed(2)}</span>
-                  </div>
-                )}
-
-                {paymentMethod !== 'cod' && !hasVending && [1, 2, 3].includes(floor) && (
-                  <div className="flex justify-between items-center text-[14.5px]">
-                    <span className="text-[#8B5CF6] font-medium">Floor Special Offer</span>
-                    <span className="font-bold text-[#8B5CF6]">-₹{(originalDeliveryFee - specialDeliveryFee).toFixed(2)}</span>
+                    <span className="font-bold text-violet-500">-₹7.00</span>
                   </div>
                 )}
               </div>

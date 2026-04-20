@@ -95,7 +95,7 @@ export default function Home() {
   const [activeFoodCat, setActiveFoodCat] = useState("all");
   const [homeMode, setHomeMode] = useState<"meal" | "vending" | "quick">("meal");
   const [showQuickTransition, setShowQuickTransition] = useState(false);
-  const [deliveryMode, setDeliveryMode] = useState<"takeaway" | "delivery">("delivery");
+  const [deliveryMode, setDeliveryMode] = useState<"takeaway" | "delivery">("takeaway");
 
   // ─── LIVE SHOPS STATE ───
   const [liveShops, setLiveShops] = useState(shops);
