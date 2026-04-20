@@ -20,13 +20,11 @@ const Profile = lazy(() => import("./pages/Profile"));
 const Wallet = lazy(() => import("./pages/Wallet"));
 const Grocery = lazy(() => import("./pages/Grocery"));
 const ProductDetail = lazy(() => import("./pages/ProductDetail"));
-const FoodMenu = lazy(() => import("./pages/FoodMenu"));
 const QuickStore = lazy(() => import("./pages/QuickStore"));
 
 // Core pages to preload for flawless switching
 const preloadCoreRoutes = () => {
   import("./pages/Home");
-  import("./pages/FoodMenu");
   import("./pages/Grocery");
   import("./pages/Wallet");
 };
@@ -43,6 +41,11 @@ const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const Download = lazy(() => import("./pages/Download"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const AboutUs = lazy(() => import("./pages/AboutUs"));
+
+const Settings = lazy(() => import("./pages/Settings"));
+const Transactions = lazy(() => import("./pages/Transactions"));
+const ShippingPolicy = lazy(() => import("./pages/ShippingPolicy"));
+const FAQ = lazy(() => import("./pages/FAQ"));
 
 import Navbar from "./components/Navbar";
 import BottomNav from "./components/BottomNav";
@@ -320,14 +323,6 @@ function AppLayout() {
               }
             />
             <Route
-              path="/food"
-              element={
-                <ProtectedRoute>
-                  <FoodMenu />
-                </ProtectedRoute>
-              }
-            />
-            <Route
               path="/quick-store"
               element={
                 <ProtectedRoute>
@@ -365,11 +360,30 @@ function AppLayout() {
               }
             />
 
+            <Route
+              path="/settings"
+              element={
+                <ProtectedRoute>
+                  <Settings />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/transactions"
+              element={
+                <ProtectedRoute>
+                  <Transactions />
+                </ProtectedRoute>
+              }
+            />
+
             <Route path="/terms" element={<TermsAndConditions />} />
             <Route path="/help" element={<HelpCenter />} />
             <Route path="/download" element={<Download />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/about-us" element={<AboutUs />} />
+            <Route path="/shipping-policy" element={<ShippingPolicy />} />
+            <Route path="/faq" element={<FAQ />} />
 
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

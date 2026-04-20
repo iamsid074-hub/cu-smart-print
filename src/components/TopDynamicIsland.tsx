@@ -40,7 +40,6 @@ const springTransition = {
 
 type IslandState =
   | "default"
-  | "browsing"
   | "explore"
   | "cart"
   | "profile"
@@ -185,8 +184,6 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
     if (location.pathname.startsWith("/tracking")) {
       setIslandState("tracking");
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    } else if (location.pathname.startsWith("/food")) {
-      triggerState("browsing");
     } else if (location.pathname.startsWith("/browse")) {
       setIslandState("explore");
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
@@ -386,15 +383,6 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
   }
 
   switch (displayState) {
-    case "browsing":
-      width = 220;
-      content = (
-        <span className="text-sm font-medium tracking-wide">
-          Browsing Food Shops
-        </span>
-      );
-      break;
-
     case "explore":
       width = 160;
       content = (

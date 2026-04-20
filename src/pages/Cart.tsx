@@ -897,7 +897,14 @@ export default function Cart() {
               </motion.div>
             ) : (
               <div className="fixed bottom-0 left-0 right-0 z-40 bg-white/80 backdrop-blur-xl border-t border-slate-100 p-4 pb-8 flex justify-center">
-                  <div className="max-w-xl w-full">
+                  <div className="max-w-xl w-full flex flex-col gap-3">
+                    <motion.button
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() => navigate('/home')}
+                      className="w-full h-[60px] rounded-[18px] font-bold text-white text-[16px] flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 shadow-[0_4px_14px_rgba(0,0,0,0.15)] transition-all"
+                    >
+                      <ArrowLeft className="w-5 h-5" /> Back to Home
+                    </motion.button>
                     <motion.button
                       whileTap={{ scale: 0.98 }}
                       onClick={handleProceedToCheckout}

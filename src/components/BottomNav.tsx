@@ -1,16 +1,16 @@
 import { memo, useMemo, useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Home, Utensils, ShoppingBag, Wallet } from "lucide-react";
+import { Home, Utensils, ShoppingBag, Wallet, Settings } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 
 const GLOBAL_ACTIVE_COLOR = "#6366f1";
 
 const NAV_ITEMS = [
   { to: "/home",    icon: Home,        label: "Home" },
-  { to: "/food",    icon: Utensils,    label: "Food" },
   { to: "/grocery", icon: ShoppingBag, label: "Grocery" },
   { to: "/wallet",  icon: Wallet,      label: "Wallet" },
+  { to: "/settings", icon: Settings,   label: "Settings" },
 ];
 
 const BottomNav = () => {
