@@ -53,16 +53,8 @@ export default function WalletPayment() {
 
   return (
     <div className="min-h-screen bg-[#0d0d0f] text-white flex flex-col items-center">
-      {/* HEADER */}
-      <div className="sticky top-0 z-40 bg-[#0d0d0f]/80 backdrop-blur-xl border-b border-white/5 w-full px-4 pt-16 pb-4 flex items-center gap-3">
-        <button
-          onClick={() => navigate(-1)}
-          className="p-2 rounded-full hover:bg-white/5 transition-all text-white active:scale-95"
-        >
-          <ArrowLeft className="w-5 h-5" />
-        </button>
-        <h1 className="text-[18px] font-black tracking-tight">Complete Payment</h1>
-      </div>
+      {/* HEADER IS NOW MANAGED BY TOPDYNAMICISLAND */}
+      <div className="pt-24" />
 
       <div className="w-full max-w-md px-6 py-8 flex flex-col items-center">
         {/* TIMER FLOATER */}
@@ -117,7 +109,7 @@ export default function WalletPayment() {
         </div>
 
         {/* ACTION BUTTON */}
-        <div className="fixed bottom-10 left-0 right-0 px-6 flex flex-col items-center">
+        <div className="w-full mt-4 flex flex-col items-center">
             <AnimatePresence>
                 {showStatus ? (
                     <motion.div

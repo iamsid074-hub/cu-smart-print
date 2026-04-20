@@ -44,6 +44,7 @@ type IslandState =
   | "cart"
   | "profile"
   | "wallet"
+  | "payment"
   | "added"
   | "updated"
   | "grocery"
@@ -156,7 +157,8 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
       newState !== "tracking" &&
       newState !== "grocery" &&
       newState !== "sell" &&
-      newState !== "wallet"
+      newState !== "wallet" &&
+      newState !== "payment"
     ) {
       timeoutRef.current = setTimeout(() => {
         if (location.pathname.startsWith("/browse")) {
@@ -170,6 +172,8 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
           location.pathname.startsWith("/list")
         ) {
           setIslandState("sell");
+        } else if (location.pathname.startsWith("/wallet-payment")) {
+          setIslandState("payment");
         } else if (location.pathname.startsWith("/wallet")) {
           setIslandState("wallet");
         } else {
@@ -192,6 +196,9 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
     } else if (location.pathname.startsWith("/list")) {
       setIslandState("sell");
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    } else if (location.pathname.startsWith("/wallet-payment")) {
+      setIslandState("payment");
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
     } else if (location.pathname.startsWith("/wallet")) {
       setIslandState("wallet");
@@ -433,13 +440,25 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
       );
       break;
     case "wallet":
-      width = 140;
+      width = 110;
       content = (
-        <div className="flex items-center justify-center gap-2">
-          <Wallet className="w-4 h-4 text-blue-400" />
-          <span className="text-sm font-semibold tracking-wide text-white/90">
-            Wallet
-          </span>
+        <div className="flex items-center gap-2">
+          <div className="flex items-center justify-center w-5 h-5 rounded-full bg-emerald-500/20">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+          </div>
+          <Wallet className="w-4 h-4 text-emerald-400" />
+          <span className="text-sm font-bold tracking-tight">Wallet</span>
+        </div>
+      );
+      break;
+    case "payment":
+      width = 200;
+      content = (
+        <div className="flex items-center gap-2 cursor-pointer active:scale-95 transition-all" onClick={() => window.history.back()}>
+          <div className="flex items-center justify-center w-5 h-5 rounded-full bg-emerald-500/20">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+          </div>
+          <span className="text-sm font-bold tracking-tight">Complete Payment</span>
         </div>
       );
       break;

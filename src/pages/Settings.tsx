@@ -23,6 +23,75 @@ import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { AnimatePresence, motion } from "framer-motion";
 
+// Helper components for iOS Settings Layout
+function ActionSheet({
+  children,
+  onClose,
+}: {
+  children: React.ReactNode;
+  onClose: () => void;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-[110] flex flex-col justify-end bg-black/40 backdrop-blur-sm"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+    >
+      <motion.div
+        initial={{ y: "100%" }}
+        animate={{ y: 0 }}
+        exit={{ y: "100%" }}
+        transition={{ type: "spring", damping: 26, stiffness: 320 }}
+        className="w-full max-w-sm mx-auto bg-[#1c1c1e] rounded-t-[13px] px-4 pt-3 pb-8 relative shadow-[0_-10px_40px_rgba(0,0,0,0.5)]"
+      >
+        <div className="w-10 h-1.5 bg-[#48484a] rounded-full mx-auto mb-6" />
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 w-7 h-7 rounded-full bg-[#2c2c2e] flex items-center justify-center text-[#8e8e93] hover:text-white transition-colors"
+        >
+          <X className="w-4 h-4" />
+        </button>
+        {children}
+      </motion.div>
+    </motion.div>
+  );
+}
+
+const SettingsLink = ({ icon: Icon, iconBg, label, to, isLast }: any) => (
+  <Link
+    to={to}
+    className="flex items-center pl-4 active:bg-[#2c2c2e] transition-colors"
+  >
+    <div className={`w-[29px] h-[29px] rounded-[6px] ${iconBg} flex items-center justify-center flex-shrink-0 my-2`}>
+      <Icon className="w-5 h-5 text-white" />
+    </div>
+    <div className={`flex-1 flex items-center justify-between py-3 ml-3 pr-4 ${!isLast ? 'border-b border-[#38383a]' : ''}`}>
+      <span className="text-[17px] font-normal text-white tracking-tight">{label}</span>
+      <ChevronRight className="w-5 h-5 text-[#3c3c43] opacity-60 flex-shrink-0" />
+    </div>
+  </Link>
+);
+
+const SettingsButton = ({ icon: Icon, iconBg, iconColor, label, labelColor, onClick, isLast, hideArrow }: any) => (
+  <button
+    onClick={onClick}
+    className="w-full flex items-center pl-4 active:bg-[#2c2c2e] transition-colors text-left"
+  >
+    <div className={`w-[29px] h-[29px] rounded-[6px] ${iconBg} flex items-center justify-center flex-shrink-0 my-2`}>
+      <Icon className={`w-5 h-5 ${iconColor || 'text-white'}`} />
+    </div>
+    <div className={`flex-1 flex items-center justify-between py-3 ml-3 pr-4 ${!isLast ? 'border-b border-[#38383a]' : ''}`}>
+      <span className={`text-[17px] font-normal tracking-tight ${labelColor || 'text-white'}`}>{label}</span>
+      {!hideArrow && <ChevronRight className="w-5 h-5 text-[#3c3c43] opacity-60 flex-shrink-0" />}
+    </div>
+  </button>
+);
+
+
 export default function Settings() {
   const { signOut, user } = useAuth();
   const navigate = useNavigate();
@@ -32,7 +101,6 @@ export default function Settings() {
   const [isDeliveryModalOpen, setIsDeliveryModalOpen] = useState(false);
   const [comboText, setComboText] = useState("");
 
-  // Try to get avatar url from user metadata
   const avatarUrl =
     user?.user_metadata?.avatar_url ||
     user?.user_metadata?.picture ||
@@ -72,205 +140,146 @@ export default function Settings() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0d0d0f] text-white pb-[100px]">
-      {/* HEADER - Adjusted for Dynamic Island clearance */}
-      <div className="sticky top-0 z-40 bg-[#0d0d0f]/80 backdrop-blur-xl border-b border-white/5 px-4 pt-16 pb-4 flex items-center gap-3">
-        <button
-          onClick={() => navigate(-1)}
-          className="p-2 rounded-full hover:bg-white/5 transition-all text-white active:scale-95"
-        >
-          <ArrowLeft className="w-5 h-5" />
-        </button>
-        <h1 className="text-[18px] font-black tracking-tight">Settings</h1>
+    <div className="min-h-screen bg-[#000000] text-white pb-[100px]">
+      {/* HEADER - iOS Large Title Style */}
+      <div className="pt-16 pb-2 px-4 sticky top-0 z-40 bg-[#000000]/80 backdrop-blur-3xl border-b border-[#38383a]">
+         <div className="flex items-center justify-between">
+           <h1 className="text-[34px] font-bold tracking-tight text-white mb-2">Settings</h1>
+         </div>
       </div>
 
-      <div className="px-4 py-5 space-y-5 max-w-lg mx-auto w-full">
+      <div className="px-4 py-6 space-y-8 max-w-lg mx-auto w-full">
 
-        {/* PROFILE CARD */}
+        {/* PROFILE CARD - iOS Apple ID Style */}
         <div
           onClick={() => navigate("/profile")}
-          className="bg-[#1c1c1e] p-4 rounded-[1.5rem] border border-white/5 flex items-center justify-between cursor-pointer active:scale-[0.98] transition-all gap-3"
+          className="bg-[#1c1c1e] p-4 rounded-[10px] flex items-center justify-between cursor-pointer active:bg-[#2c2c2e] transition-colors gap-4"
         >
-          <div className="flex items-center gap-3 min-w-0">
-            {/* Avatar: real photo → 3D character → initial */}
-            <div className="w-14 h-14 rounded-2xl overflow-hidden flex-shrink-0 bg-[#2c2c2e] relative">
-              {avatarUrl ? (
-                <img
-                  src={avatarUrl}
-                  alt="Profile"
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <img
-                  src="/3d_backpack_v2.webp"
-                  alt="3D Avatar"
-                  className="w-full h-full object-cover"
-                />
-              )}
-            </div>
-            <div className="min-w-0">
-              <h3 className="text-white font-black text-[15px] truncate capitalize">
-                {displayName}
-              </h3>
-              <p className="text-gray-500 font-medium text-[12px] truncate">
-                {email}
-              </p>
-              <p className="text-indigo-400 font-bold text-[11px] mt-0.5">
-                View Profile →
-              </p>
-            </div>
+          <div className="w-[60px] h-[60px] rounded-full overflow-hidden flex-shrink-0 bg-[#2c2c2e]">
+            {avatarUrl ? (
+              <img
+                src={avatarUrl}
+                alt="Profile"
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <img
+                src="/3d_backpack_v2.webp"
+                alt="3D Avatar"
+                className="w-full h-full object-cover"
+              />
+            )}
           </div>
-          <ChevronRight className="w-5 h-5 text-gray-600 flex-shrink-0" />
+          <div className="flex-1 min-w-0">
+            <h3 className="text-white text-[20px] font-normal tracking-tight truncate capitalize">
+              {displayName}
+            </h3>
+            <p className="text-[13px] text-gray-400 font-normal truncate mt-0.5">
+              Apple ID, iCloud+, Media & Purchases
+            </p> 
+          </div>
+          <ChevronRight className="w-5 h-5 text-[#3c3c43] opacity-60 flex-shrink-0" />
         </div>
 
         {/* SECTION 1: OFFERS & PROGRAMS */}
-        <div>
-          <p className="px-1 text-[10px] font-black uppercase tracking-widest text-gray-500 mb-2">
-            Offers & Programs
-          </p>
-          <div className="bg-[#1c1c1e] rounded-[1.5rem] overflow-hidden border border-white/5 divide-y divide-white/5">
-            <button
-              onClick={() => setIsWalletModalOpen(true)}
-              className="w-full flex items-center justify-between px-4 py-3.5 hover:bg-white/[0.03] active:bg-white/[0.06] transition-colors"
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-xl bg-indigo-500/15 flex items-center justify-center flex-shrink-0">
-                  <Wallet className="w-4 h-4 text-indigo-400" />
-                </div>
-                <span className="font-bold text-[14px] text-left">
-                  Increase Daily Wallet Limit
-                </span>
-              </div>
-              <ChevronRight className="w-4 h-4 text-gray-600 flex-shrink-0" />
-            </button>
-
-            <button
-              onClick={() => setIsComboModalOpen(true)}
-              className="w-full flex items-center justify-between px-4 py-3.5 hover:bg-white/[0.03] active:bg-white/[0.06] transition-colors"
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-xl bg-amber-500/15 flex items-center justify-center flex-shrink-0">
-                  <Utensils className="w-4 h-4 text-amber-400" />
-                </div>
-                <span className="font-bold text-[14px]">Suggest Us a Combo</span>
-              </div>
-              <ChevronRight className="w-4 h-4 text-gray-600 flex-shrink-0" />
-            </button>
-
-            <button
-              onClick={() => setIsDeliveryModalOpen(true)}
-              className="w-full flex items-center justify-between px-4 py-3.5 hover:bg-white/[0.03] active:bg-white/[0.06] transition-colors"
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-xl bg-emerald-500/15 flex items-center justify-center flex-shrink-0">
-                  <Bike className="w-4 h-4 text-emerald-400" />
-                </div>
-                <span className="font-bold text-[14px]">Be Our Delivery Partner</span>
-              </div>
-              <ChevronRight className="w-4 h-4 text-gray-600 flex-shrink-0" />
-            </button>
-          </div>
+        <div className="bg-[#1c1c1e] rounded-[10px] overflow-hidden">
+             <SettingsButton
+               onClick={() => setIsWalletModalOpen(true)}
+               icon={Wallet}
+               iconBg="bg-[#34C759]" // iOS Green
+               label="Increase Daily Wallet Limit"
+               isLast={false}
+             />
+             <SettingsButton
+               onClick={() => setIsComboModalOpen(true)}
+               icon={Utensils}
+               iconBg="bg-[#FF9500]" // iOS Orange
+               label="Suggest Us a Combo"
+               isLast={false}
+             />
+             <SettingsButton
+               onClick={() => setIsDeliveryModalOpen(true)}
+               icon={Bike}
+               iconBg="bg-[#007AFF]" // iOS System Blue
+               label="Be Our Delivery Partner"
+               isLast={true}
+             />
         </div>
 
         {/* SECTION 2: ASSISTANCE & LEGAL */}
-        <div>
-          <p className="px-1 text-[10px] font-black uppercase tracking-widest text-gray-500 mb-2">
-            Assistance & Legal
-          </p>
-          <div className="bg-[#1c1c1e] rounded-[1.5rem] overflow-hidden border border-white/5 divide-y divide-white/5">
-            {[
-              { to: "/transactions", icon: ReceiptText, label: "Transactions" },
-              { to: "/help", icon: LifeBuoy, label: "Support" },
-              { to: "/about-us", icon: Info, label: "About Us" },
-              { to: "/terms", icon: FileText, label: "Terms and Conditions" },
-              { to: "/privacy-policy", icon: Shield, label: "Privacy Policy" },
-              { to: "/shipping-policy", icon: Truck, label: "Shipping Policy" },
-              { to: "/faq", icon: HelpCircle, label: "CU Bazzar FAQ" },
-            ].map(({ to, icon: Icon, label }) => (
-              <Link
-                key={to}
-                to={to}
-                className="w-full flex items-center justify-between px-4 py-3.5 hover:bg-white/[0.03] active:bg-white/[0.06] transition-colors"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-xl bg-white/5 flex items-center justify-center flex-shrink-0">
-                    <Icon className="w-4 h-4 text-gray-300" />
-                  </div>
-                  <span className="font-bold text-[14px]">{label}</span>
-                </div>
-                <ChevronRight className="w-4 h-4 text-gray-600 flex-shrink-0" />
-              </Link>
-            ))}
-          </div>
+        <div className="bg-[#1c1c1e] rounded-[10px] overflow-hidden">
+           <SettingsLink to="/transactions" icon={ReceiptText} iconBg="bg-[#5856D6]" label="Transactions" isLast={false} />
+           <SettingsLink to="/help" icon={LifeBuoy} iconBg="bg-[#007AFF]" label="Support" isLast={false} />
+           <SettingsLink to="/about-us" icon={Info} iconBg="bg-[#8E8E93]" label="About Us" isLast={false} />
+           <SettingsLink to="/terms" icon={FileText} iconBg="bg-[#AF52DE]" label="Terms and Conditions" isLast={false} />
+           <SettingsLink to="/privacy-policy" icon={Shield} iconBg="bg-[#FF3B30]" label="Privacy Policy" isLast={false} />
+           <SettingsLink to="/shipping-policy" icon={Truck} iconBg="bg-[#FF9500]" label="Shipping Policy" isLast={false} />
+           <SettingsLink to="/faq" icon={HelpCircle} iconBg="bg-[#FF2D55]" label="CU Bazzar FAQ" isLast={true} />
         </div>
 
         {/* SECTION 3: DANGER ZONE */}
-        <div>
-          <p className="px-1 text-[10px] font-black uppercase tracking-widest text-[#FF3B30] mb-2">
-            Danger Zone
-          </p>
-          <div className="bg-[#1c1c1e] rounded-[1.5rem] overflow-hidden border border-[#FF3B30]/15 divide-y divide-[#FF3B30]/10">
-            <button
-              onClick={handleDeleteAccount}
-              className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-[#FF3B30]/10 active:bg-[#FF3B30]/20 transition-colors"
-            >
-              <div className="w-8 h-8 rounded-xl bg-[#FF3B30]/10 flex items-center justify-center flex-shrink-0">
-                <Trash2 className="w-4 h-4 text-[#FF3B30]" />
-              </div>
-              <span className="font-bold text-[14px] text-[#FF3B30]">
-                Delete Account
-              </span>
-            </button>
-
-            <button
-              onClick={handleLogout}
-              className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-white/[0.03] active:bg-white/[0.06] transition-colors"
-            >
-              <div className="w-8 h-8 rounded-xl bg-white/5 flex items-center justify-center flex-shrink-0">
-                <LogOut className="w-4 h-4 text-gray-400" />
-              </div>
-              <span className="font-bold text-[14px] text-gray-300">Log Out</span>
-            </button>
-          </div>
+        <div className="bg-[#1c1c1e] rounded-[10px] overflow-hidden">
+           <SettingsButton
+               onClick={handleDeleteAccount}
+               icon={Trash2}
+               iconBg="bg-transparent"
+               iconColor="text-[#FF3B30]"
+               labelColor="text-[#FF3B30]"
+               label="Delete Account"
+               isLast={false}
+               hideArrow={true}
+             />
+            <SettingsButton
+               onClick={handleLogout}
+               icon={LogOut}
+               iconBg="bg-transparent"
+               iconColor="text-[#FF3B30]"
+               labelColor="text-[#FF3B30]"
+               label="Log Out"
+               isLast={true}
+               hideArrow={true}
+             />
         </div>
 
         {/* Footer version stamp */}
-        <p className="text-center text-[11px] text-gray-600 font-bold pb-2">
-          CU Bazzar © 2026 · All rights reserved
+        <p className="text-center text-[13px] text-[#8e8e93] font-normal pb-2 px-6 leading-tight pt-2">
+          CU Bazzar App version 1.0.0
+          <br />
+          Data retrieved securely from Campus networks.
         </p>
       </div>
 
-      {/* --- MODALS --- */}
+      {/* --- MODALS (ACTION SHEETS) --- */}
       <AnimatePresence>
         {isWalletModalOpen && (
-          <ModalOverlay onClose={() => setIsWalletModalOpen(false)}>
-            <div className="flex flex-col items-center mb-5">
-              <div className="w-14 h-14 bg-indigo-500/10 rounded-2xl flex items-center justify-center mb-3 border border-indigo-500/20">
-                <Wallet className="w-7 h-7 text-indigo-400" />
+          <ActionSheet onClose={() => setIsWalletModalOpen(false)}>
+            <div className="flex flex-col items-center mb-6 px-4">
+              <div className="w-16 h-16 bg-[#34C759]/10 rounded-2xl flex items-center justify-center mb-4">
+                <Wallet className="w-8 h-8 text-[#34C759]" />
               </div>
-              <h2 className="text-[20px] font-black text-white text-center tracking-tight leading-tight">
+              <h2 className="text-[22px] font-bold text-white text-center tracking-tight leading-tight">
                 Increase Daily Wallet Limit
               </h2>
-              <p className="text-gray-400 mt-2 font-medium text-[13px] text-center leading-relaxed">
-                Purchase an offer to securely increase your standard daily wallet spending limit.
+              <p className="text-[#8e8e93] mt-2 font-normal text-[15px] text-center leading-normal">
+                Purchase an offer to securely increase your standard daily wallet spending limit natively.
               </p>
             </div>
-            <div className="space-y-3">
+            <div className="space-y-3 px-2">
               <button
                 onClick={() => {
                   setIsWalletModalOpen(false);
                   navigate('/wallet-payment', { state: { pack: { name: '3 Offers Pack — ₹50 Daily Limit · 1 Week', price: 50 } } });
                 }}
-                className="w-full p-4 rounded-2xl bg-[#0d0d0f] border border-white/5 flex items-center justify-between hover:border-indigo-500/40 active:scale-95 transition-all cursor-pointer text-left"
+                className="w-full p-4 rounded-[10px] bg-[#2c2c2e] flex items-center justify-between active:scale-[0.98] transition-transform cursor-pointer text-left"
               >
                 <div>
-                  <p className="font-black text-white text-[15px]">3 Offers Pack</p>
-                  <p className="text-[12px] font-bold text-gray-500 mt-0.5">
+                  <p className="font-semibold text-white text-[17px] tracking-tight">3 Offers Pack</p>
+                  <p className="text-[13px] font-normal text-[#8e8e93] mt-0.5">
                     ₹50 daily limit ·{" "}
-                    <span className="text-indigo-400">Valid 1 Week</span>
+                    <span className="text-[#34C759]">Valid 1 Week</span>
                   </p>
                 </div>
-                <div className="px-4 py-2 rounded-xl bg-indigo-500 text-white font-black text-[14px]">
+                <div className="px-5 py-2 rounded-full bg-[#34C759] text-white font-bold text-[15px]">
                   ₹50
                 </div>
               </button>
@@ -279,134 +288,103 @@ export default function Settings() {
                   setIsWalletModalOpen(false);
                   navigate('/wallet-payment', { state: { pack: { name: 'Extended Pro — ₹50 Daily Limit · 2 Weeks', price: 200 } } });
                 }}
-                className="w-full p-4 rounded-2xl bg-[#0d0d0f] border border-white/5 flex items-center justify-between hover:border-indigo-500/40 active:scale-95 transition-all cursor-pointer text-left"
+                className="w-full p-4 rounded-[10px] bg-[#2c2c2e] flex items-center justify-between active:scale-[0.98] transition-transform cursor-pointer text-left"
               >
                 <div>
-                  <p className="font-black text-white text-[15px]">Extended Pro</p>
-                  <p className="text-[12px] font-bold text-gray-500 mt-0.5">
+                  <p className="font-semibold text-white text-[17px] tracking-tight">Extended Pro</p>
+                  <p className="text-[13px] font-normal text-[#8e8e93] mt-0.5">
                     ₹50 daily limit ·{" "}
-                    <span className="text-indigo-400">Valid 2 Weeks</span>
+                    <span className="text-[#34C759]">Valid 2 Weeks</span>
                   </p>
                 </div>
-                <div className="px-4 py-2 rounded-xl bg-indigo-500 text-white font-black text-[14px]">
+                <div className="px-5 py-2 rounded-full bg-[#34C759] text-white font-bold text-[15px]">
                   ₹200
                 </div>
               </button>
             </div>
-          </ModalOverlay>
+          </ActionSheet>
         )}
 
         {isComboModalOpen && (
-          <ModalOverlay onClose={() => setIsComboModalOpen(false)}>
-            <div className="flex flex-col items-center mb-5">
-              <div className="w-14 h-14 bg-amber-500/10 rounded-2xl flex items-center justify-center mb-3 border border-amber-500/20">
-                <Utensils className="w-7 h-7 text-amber-400" />
+          <ActionSheet onClose={() => setIsComboModalOpen(false)}>
+            <div className="flex flex-col items-center mb-6 px-4">
+              <div className="w-16 h-16 bg-[#FF9500]/10 rounded-2xl flex items-center justify-center mb-4">
+                <Utensils className="w-8 h-8 text-[#FF9500]" />
               </div>
-              <h2 className="text-[20px] font-black text-white text-center tracking-tight leading-tight">
+              <h2 className="text-[22px] font-bold text-white text-center tracking-tight leading-tight">
                 Suggest Us a Combo
               </h2>
-              <p className="text-gray-400 mt-2 font-medium text-[13px] text-center leading-relaxed">
+              <p className="text-[#8e8e93] mt-2 font-normal text-[15px] text-center leading-normal">
                 Have a great snack combination in mind? Suggest it and we might add it to the platform.
               </p>
             </div>
-            <form onSubmit={handleSuggestCombo} className="space-y-3">
+            <form onSubmit={handleSuggestCombo} className="space-y-4 px-2">
               <textarea
                 value={comboText}
                 onChange={(e) => setComboText(e.target.value)}
                 placeholder="Write your combo suggestion here..."
-                className="w-full h-28 bg-[#0d0d0f] border border-white/10 rounded-2xl p-4 text-[14px] font-bold text-white placeholder:text-gray-600 focus:outline-none focus:border-amber-500/50 resize-none transition-colors"
+                className="w-full h-32 bg-[#2c2c2e] rounded-[10px] p-4 text-[17px] font-normal text-white placeholder:text-[#8e8e93] focus:outline-none resize-none transition-colors"
                 required
               />
-              <p className="text-[10px] font-black text-[#FF3B30] uppercase tracking-widest text-center leading-tight">
+              <p className="text-[12px] font-normal text-[#8e8e93] text-center leading-tight">
                 No abusive language permitted.
               </p>
               <button
                 type="submit"
-                className="w-full bg-amber-500 text-black font-black text-[14px] py-3.5 rounded-2xl active:scale-95 transition-transform"
+                className="w-full bg-[#007AFF] text-white font-semibold text-[17px] py-4 rounded-[10px] active:scale-[0.98] transition-transform tracking-tight mt-2"
               >
                 Submit Combo
               </button>
             </form>
-          </ModalOverlay>
+          </ActionSheet>
         )}
 
         {isDeliveryModalOpen && (
-          <ModalOverlay onClose={() => setIsDeliveryModalOpen(false)}>
-            <div className="flex flex-col items-center mb-5">
-              <div className="w-14 h-14 bg-emerald-500/10 rounded-2xl flex items-center justify-center mb-3 border border-emerald-500/20">
-                <Bike className="w-7 h-7 text-emerald-400" />
+          <ActionSheet onClose={() => setIsDeliveryModalOpen(false)}>
+            <div className="flex flex-col items-center mb-6 px-4">
+              <div className="w-16 h-16 bg-[#007AFF]/10 rounded-2xl flex items-center justify-center mb-4">
+                <Bike className="w-8 h-8 text-[#007AFF]" />
               </div>
-              <h2 className="text-[20px] font-black text-white text-center tracking-tight leading-tight">
+              <h2 className="text-[22px] font-bold text-white text-center tracking-tight leading-tight">
                 Be Our Delivery Partner
               </h2>
-              <p className="text-gray-400 mt-2 font-medium text-[13px] text-center leading-relaxed">
+              <p className="text-[#8e8e93] mt-2 font-normal text-[15px] text-center leading-normal">
                 Earn money by delivering orders to peers within your hostel block.
               </p>
             </div>
-            <div className="space-y-2 mb-5">
-              <div className="p-3.5 rounded-2xl bg-[#0d0d0f] border border-white/5 flex gap-3 items-start">
-                <Shield className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
-                <p className="text-[13px] font-bold text-gray-300">
+            <div className="space-y-3 mb-6 px-2">
+              <div className="p-4 rounded-[10px] bg-[#2c2c2e] flex gap-3 items-start">
+                <Shield className="w-5 h-5 text-[#007AFF] flex-shrink-0" />
+                <p className="text-[15px] font-normal text-[#8e8e93] leading-tight">
                   Active as a delivery partner for{" "}
-                  <span className="text-emerald-400">7 continuous days</span>.
+                  <span className="text-white font-semibold">7 continuous days</span>.
                 </p>
               </div>
-              <div className="p-3.5 rounded-2xl bg-[#0d0d0f] border border-white/5 flex gap-3 items-start">
-                <CreditCard className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
-                <p className="text-[13px] font-bold text-gray-300">
+              <div className="p-4 rounded-[10px] bg-[#2c2c2e] flex gap-3 items-center">
+                <CreditCard className="w-5 h-5 text-[#007AFF] flex-shrink-0" />
+                <p className="text-[15px] font-normal text-[#8e8e93] leading-tight">
                   Earn{" "}
-                  <span className="text-emerald-400 text-[16px] font-black">
+                  <span className="text-[#34C759] text-[17px] font-semibold">
                     60%
                   </span>{" "}
-                  of the delivery charge from each fulfilled order.
+                  of the delivery charge.
                 </p>
               </div>
             </div>
-            <button
-              onClick={() => {
-                toast.success("Application submitted successfully!");
-                setIsDeliveryModalOpen(false);
-              }}
-              className="w-full bg-emerald-500 text-black font-black text-[14px] py-3.5 rounded-2xl active:scale-95 transition-transform"
-            >
-              Apply to Partner Now
-            </button>
-          </ModalOverlay>
+            <div className="px-2">
+               <button
+                 onClick={() => {
+                   toast.success("Application submitted successfully!");
+                   setIsDeliveryModalOpen(false);
+                 }}
+                 className="w-full bg-[#007AFF] text-white font-semibold text-[17px] py-4 rounded-[10px] active:scale-[0.98] transition-transform tracking-tight"
+               >
+                 Apply to Partner Now
+               </button>
+            </div>
+          </ActionSheet>
         )}
       </AnimatePresence>
     </div>
-  );
-}
-
-function ModalOverlay({
-  children,
-  onClose,
-}: {
-  children: React.ReactNode;
-  onClose: () => void;
-}) {
-  return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
-      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
-    >
-      <motion.div
-        initial={{ y: 40, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        exit={{ y: 40, opacity: 0 }}
-        className="w-full max-w-sm bg-[#1c1c1e] rounded-[2rem] p-5 shadow-2xl relative border border-white/10"
-      >
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 w-7 h-7 rounded-full bg-white/5 flex items-center justify-center text-gray-500 hover:text-white transition-colors"
-        >
-          <X className="w-3.5 h-3.5" />
-        </button>
-        {children}
-      </motion.div>
-    </motion.div>
   );
 }
