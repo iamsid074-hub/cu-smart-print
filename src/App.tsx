@@ -62,6 +62,7 @@ import LiveOrderBanner from "./components/LiveOrderBanner";
 import UsernameSetup from "./components/UsernameSetup";
 import ScrollToTop from "./components/ScrollToTop";
 import StickyStripBanner from "./components/StickyStripBanner";
+import VoiceAssistant from "./components/VoiceAssistant";
 
 import ErrorBoundary from "./components/ErrorBoundary";
 import { usePushNotifications } from "./hooks/usePushNotifications";
@@ -216,6 +217,7 @@ function AppLayout() {
         <>
           {location.pathname !== "/pasta-offer" && <Navbar />}
           {location.pathname !== "/pasta-offer" && <BottomNav />}
+          {location.pathname !== "/pasta-offer" && <VoiceAssistant />}
         </>
       )}
       <ErrorBoundary>
