@@ -74,7 +74,7 @@ export default function Settings() {
   return (
     <div className="min-h-screen bg-[#0d0d0f] text-white pb-[100px]">
       {/* HEADER - Adjusted for Dynamic Island clearance */}
-      <div className="sticky top-0 z-40 bg-[#0d0d0f]/80 backdrop-blur-xl border-b border-white/5 px-4 pt-16 pb-4 flex items-center gap-3">
+      <div className="border-b border-white/5 px-4 pt-16 pb-4 flex items-center gap-3">
         <button
           onClick={() => navigate(-1)}
           className="p-2 rounded-full hover:bg-white/5 transition-all text-white active:scale-95"
