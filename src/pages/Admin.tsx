@@ -1829,6 +1829,7 @@ function ShopsSection() {
   const [liveStatuses, setLiveStatuses] = useState<Record<string, boolean>>({});
   const [loading, setLoading] = useState(true);
   const [processingId, setProcessingId] = useState<string | null>(null);
+  const [isBulkUpdating, setIsBulkUpdating] = useState(false);
 
   const fetchStatuses = useCallback(async () => {
     try {
@@ -1873,6 +1874,35 @@ function ShopsSection() {
     }
   };
 
+  const handleBulkToggle = async (open: boolean) => {
+    setIsBulkUpdating(true);
+    try {
+      const updates = staticShops.map(shop => ({
+        id: shop.id,
+        is_open: open,
+        updated_at: new Date().toISOString()
+      }));
+
+      const { error } = await supabase
+        .from("shops")
+        .upsert(updates);
+
+      if (error) throw error;
+
+      const newStatuses: Record<string, boolean> = {};
+      staticShops.forEach(shop => {
+        newStatuses[shop.id] = open;
+      });
+      setLiveStatuses(newStatuses);
+      toast.success(`All shops are now ${open ? 'OPEN' : 'CLOSED'}`);
+    } catch (err) {
+      console.error("Error performing bulk update:", err);
+      toast.error("Bulk update failed.");
+    } finally {
+      setIsBulkUpdating(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -1884,12 +1914,34 @@ function ShopsSection() {
             Control live availability for all campus outlets
           </p>
         </div>
-        <button 
-          onClick={() => { setLoading(true); fetchStatuses(); }}
-          className="p-2.5 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 transition-all active:scale-95"
-        >
-          <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
-        </button>
+        
+        <div className="flex items-center gap-2">
+          <div className="flex bg-slate-100 p-1 rounded-xl border border-slate-200">
+            <button
+              onClick={() => handleBulkToggle(true)}
+              disabled={isBulkUpdating}
+              className="px-4 py-2 text-xs font-bold rounded-lg transition-all hover:bg-emerald-500 hover:text-white text-emerald-600 flex items-center gap-1.5 disabled:opacity-50"
+            >
+              <Zap className={`w-3.5 h-3.5 ${isBulkUpdating ? 'animate-pulse' : ''}`} />
+              OPEN ALL
+            </button>
+            <button
+              onClick={() => handleBulkToggle(false)}
+              disabled={isBulkUpdating}
+              className="px-4 py-2 text-xs font-bold rounded-lg transition-all hover:bg-red-500 hover:text-white text-red-600 flex items-center gap-1.5 disabled:opacity-50"
+            >
+              <ShoppingBag className="w-3.5 h-3.5" />
+              CLOSE ALL
+            </button>
+          </div>
+
+          <button 
+            onClick={() => { setLoading(true); fetchStatuses(); }}
+            className="p-2.5 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 transition-all active:scale-95 h-[42px] w-[42px] flex items-center justify-center"
+          >
+            <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
@@ -2543,15 +2595,27 @@ export default function Admin() {
             const newTotalOrders = (profileData.total_orders || 0) + 1;
             let newBalance = profileData.wallet_balance || 0;
 
-            // Reward ₹30 exactly on the 3rd completed order this week (limit once per week)
+            // Reward ₹15 exactly on the 3rd completed order this week (limit once per week)
             if (currentWeeklyCount === 3) {
-              newBalance += 30;
-              await supabase.from("wallet_transactions").insert({
-                user_id: buyerId,
-                amount: 30,
-                type: "reward",
-                description: `Weekly Reward: ${currentWeeklyCount} orders completed this week!`,
-              });
+              // Safety Check: Verify if a reward has already been given this week
+              const { data: existingReward } = await supabase
+                .from("wallet_transactions")
+                .select("id")
+                .eq("user_id", buyerId)
+                .eq("type", "reward")
+                .ilike("description", "Weekly Reward%")
+                .gte("created_at", startOfWeekIST)
+                .maybeSingle();
+
+              if (!existingReward) {
+                newBalance += 15;
+                await supabase.from("wallet_transactions").insert({
+                  user_id: buyerId,
+                  amount: 15,
+                  type: "reward",
+                  description: `Weekly Reward: ${currentWeeklyCount} orders completed this week!`,
+                });
+              }
             }
 
             // Flavour Factory High Value Reward (₹499+)

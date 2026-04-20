@@ -1,4 +1,4 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Check, Zap, Sparkles, Crown, Clock } from "lucide-react";
 import { supabase } from "@/lib/supabase";
@@ -15,8 +15,8 @@ const PLANS = [
   {
     id: "plus",
     name: "CB PLUS",
-    price: 49,
-    deliveries: 5,
+    price: 99,
+    deliveries: 4,
     color: "bg-[#1D1D1F]",
     iconColor: "text-[#8E8E93]",
     icon: Zap,
@@ -26,8 +26,8 @@ const PLANS = [
   {
     id: "prime",
     name: "CB PRIME",
-    price: 149,
-    deliveries: 15,
+    price: 199,
+    deliveries: 9,
     color: "bg-[#3A3A3C]",
     iconColor: "text-white",
     icon: Sparkles,
@@ -37,8 +37,8 @@ const PLANS = [
   {
     id: "prime_plus",
     name: "CB PRIME+",
-    price: 249,
-    deliveries: 25,
+    price: 379,
+    deliveries: 14,
     color: "bg-black",
     iconColor: "text-[#D4AF37]", // Premium gold
     icon: Crown,

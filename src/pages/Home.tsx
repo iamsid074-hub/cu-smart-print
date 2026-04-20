@@ -331,8 +331,7 @@ export default function Home() {
 
                             {/* Closed Overlay */}
                             {!shop.isOpen && (
-                              <div className="absolute inset-0 bg-black/40 flex items-center justify-center p-2 text-center">
-                                <span className="text-[8px] font-black uppercase tracking-wider text-white bg-red-500/80 px-2 py-1 rounded-full border border-white/20">Closed</span>
+                              <div className="absolute inset-0 bg-black/40 flex items-center justify-center p-2">
                               </div>
                             )}
                           </div>

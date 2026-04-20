@@ -69,22 +69,29 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, [additionHistory]);
 
   const addItem = useCallback((
-    item: Omit<CartItem, "quantity"> & { quantity?: number }
+    itemData: Omit<CartItem, "quantity" | "title"> & { title?: string; name?: string; quantity?: number }
   ) => {
     const now = Date.now();
+    // Support both 'title' and 'name' for item identity
+    const title = itemData.title || itemData.name || "Unnamed Item";
+    const item: Omit<CartItem, "quantity"> = {
+      ...itemData,
+      title: title
+    };
+
     setItems((prev) => {
       const existing = prev.find((i) => i.id === item.id);
-      const qtyToAdd = item.quantity || 1;
+      const qtyToAdd = itemData.quantity || 1;
       if (existing) {
         return prev.map((i) =>
           i.id === item.id ? { ...i, quantity: i.quantity + qtyToAdd } : i
         );
       }
-      return [...prev, { ...item, quantity: qtyToAdd }];
+      return [...prev, { ...item, quantity: qtyToAdd } as CartItem];
     });
     setLastAction({
       type: "add",
-      itemTitle: item.title,
+      itemTitle: title,
       itemPrice: item.price,
       timestamp: now,
     });

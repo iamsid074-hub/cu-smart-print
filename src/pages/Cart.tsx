@@ -195,14 +195,14 @@ export default function Cart() {
   ), [items]);
 
   const calculateVendingDelivery = (f: number) => {
-    if (f <= 3) return 8;
-    if (f <= 6) return 11;
-    if (f <= 9) return 14;
-    return 16;
+    if (f <= 3) return 15;
+    if (f <= 6) return 22;
+    if (f <= 9) return 30;
+    return 35;
   };
 
-  const originalDeliveryFee = 29;
-  const specialDeliveryFee = 21;
+  const originalDeliveryFee = 37;
+  const specialDeliveryFee = 30;
 
   // A "Food Shop" item is any item that is NOT from the Vending Machine or Grocery
   const hasFoodShopItem = useMemo(() => items.some(
@@ -219,31 +219,29 @@ export default function Cart() {
     (item) => item.id === "flavour-factory-combo"
   ), [items]);
 
-  // Logic: If there's a food shop item, prioritize the 29rs/21rs fee.
-  // Only if it's EXCLUSIVELY Vending/Grocery, use the floor-based vending fee.
+  // Logic: If there's a food shop item, use floor-based rates.
+  // 1-3rd floor: 30rs, 4-11th floor: 37rs.
+  // Only if it's EXCLUSIVELY Vending/Grocery, use the tiered vending fee.
   const baseDelivery = useMemo(() => {
-    return hasFlavourCombo
-      ? specialDeliveryFee
-      : hasFoodShopItem
-      ? [2, 3].includes(floor)
-        ? specialDeliveryFee
-        : originalDeliveryFee
-      : calculateVendingDelivery(floor);
-  }, [hasFlavourCombo, hasFoodShopItem, floor]);
+    if (hasFoodShopItem) {
+      return floor >= 4 ? originalDeliveryFee : specialDeliveryFee;
+    }
+    return calculateVendingDelivery(floor);
+  }, [hasFoodShopItem, floor]);
 
   const deliveryFee = useMemo(() => (hasFreeDelivery
     ? 0
     : paymentMethod === "cod"
-    ? 51
+    ? 49
     : baseDelivery), [hasFreeDelivery, paymentMethod, baseDelivery]);
 
   const displayedDeliveryFee = useMemo(() => (
     paymentMethod === "cod"
-      ? 51
+      ? 49
       : hasFoodShopItem
-      ? [2, 3].includes(floor)
-        ? specialDeliveryFee
-        : originalDeliveryFee
+      ? floor >= 4
+        ? originalDeliveryFee
+        : specialDeliveryFee
       : calculateVendingDelivery(floor)), [paymentMethod, hasFoodShopItem, floor]);
 
   const maxWalletUsagePerDay = 50;
@@ -283,7 +281,7 @@ export default function Cart() {
     const itemsSummary = items
       .map(
         (i) =>
-          `${i.quantity}x ${i.title} [IMG:${i.image}] (${i.category}) (₹${i.price})`
+          `${i.quantity}x ${i.title || (i as any).name || "Unnamed Item"} [IMG:${i.image}] (${i.category}) (₹${i.price})`
       )
       .join("\n");
 
@@ -658,7 +656,7 @@ export default function Cart() {
                         
                         <div className="flex-1 pt-0.5">
                           <h4 className="text-[15px] font-bold text-slate-900 leading-snug pr-2">
-                            {item.title}
+                            {item.title || (item as any).name || "Unnamed Item"}
                           </h4>
                           
                           {item.notes ? (
@@ -742,7 +740,7 @@ export default function Cart() {
                   </div>
                 )}
 
-                {paymentMethod !== 'cod' && !hasVending && [2, 3].includes(floor) && (
+                {paymentMethod !== 'cod' && !hasVending && [1, 2, 3].includes(floor) && (
                   <div className="flex justify-between items-center text-[14.5px]">
                     <span className="text-[#8B5CF6] font-medium">Floor Special Offer</span>
                     <span className="font-bold text-[#8B5CF6]">-₹{(originalDeliveryFee - specialDeliveryFee).toFixed(2)}</span>

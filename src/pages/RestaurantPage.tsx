@@ -341,6 +341,7 @@ export default function RestaurantPage() {
                               }
                               addItem({
                                 id: `${shop.id}-${item.name}`,
+                                title: item.name,
                                 name: item.name,
                                 price: item.price,
                                 image: item.image,

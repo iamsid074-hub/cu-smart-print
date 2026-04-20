@@ -194,10 +194,10 @@ export default function Wallet() {
               </div>
               <div>
                 <h3 className="font-black text-white text-[16px] tracking-tight">
-                  Unlock ₹30 Reward
+                  Unlock ₹15 Reward
                 </h3>
                 <p className="text-[12px] font-medium text-gray-400">
-                  Complete 3 orders in a week to get ₹30 in your wallet.
+                  Complete 3 orders in a week to get ₹15 in your wallet.
                 </p>
               </div>
             </div>
@@ -224,7 +224,7 @@ export default function Wallet() {
                           : "text-orange-400 bg-orange-500/10 border border-orange-500/30"
                       }`}
                     >
-                      ₹30!
+                      ₹15!
                     </span>
                   </>
                 );
