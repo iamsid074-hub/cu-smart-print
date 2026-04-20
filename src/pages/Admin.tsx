@@ -110,7 +110,7 @@ interface Order {
 
 interface AdminNotification {
   id: string;
-  type: "new_product" | "new_order";
+  type: "new_product" | "new_order" | "combo_suggestion";
   payload: any;
   is_read: boolean;
   created_at: string;
@@ -2065,6 +2065,7 @@ function NotificationsSection({
         <div className="space-y-3">
           {notifications.map((n, i) => {
             const isProduct = n.type === "new_product";
+            const isCombo = n.type === "combo_suggestion";
             const payload = n.payload || {};
             return (
               <motion.div
@@ -2085,11 +2086,15 @@ function NotificationsSection({
                     className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${
                       isProduct
                         ? "bg-neon-cyan/15 border border-neon-cyan/30"
+                        : isCombo
+                        ? "bg-amber-500/15 border border-amber-500/30"
                         : "bg-neon-orange/15 border border-neon-orange/30"
                     }`}
                   >
                     {isProduct ? (
                       <Package className="w-5 h-5 text-neon-cyan" />
+                    ) : isCombo ? (
+                      <UtensilsCrossed className="w-5 h-5 text-amber-500" />
                     ) : (
                       <ShoppingCart className="w-5 h-5 text-neon-orange" />
                     )}
@@ -2100,10 +2105,10 @@ function NotificationsSection({
                     <div className="flex items-center gap-2 mb-1">
                       <span
                         className={`text-xs font-bold uppercase tracking-wider ${
-                          isProduct ? "text-neon-cyan" : "text-neon-orange"
+                          isProduct ? "text-neon-cyan" : isCombo ? "text-amber-500" : "text-neon-orange"
                         }`}
                       >
-                        {isProduct ? "New Product Listed" : "New Order Placed"}
+                        {isProduct ? "New Product Listed" : isCombo ? "Combo Suggestion" : "New Order Placed"}
                       </span>
                       {!n.is_read && (
                         <span className="w-2 h-2 rounded-full bg-neon-orange animate-pulse" />
@@ -2118,6 +2123,15 @@ function NotificationsSection({
                         <p className="text-xs text-slate-500">
                           ₹{(payload.price || 0).toLocaleString()} ·{" "}
                           {payload.category} · {payload.condition}
+                        </p>
+                      </div>
+                    ) : isCombo ? (
+                      <div>
+                        <p className="text-sm font-semibold text-slate-900 break-words whitespace-pre-wrap">
+                          "{payload.suggestion || "N/A"}"
+                        </p>
+                        <p className="text-xs text-slate-500 mt-1">
+                          Suggested by: {payload.user_name || "Guest"}
                         </p>
                       </div>
                     ) : (

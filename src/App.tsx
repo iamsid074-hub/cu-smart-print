@@ -24,9 +24,16 @@ const QuickStore = lazy(() => import("./pages/QuickStore"));
 
 // Core pages to preload for flawless switching
 const preloadCoreRoutes = () => {
+  // Bottom Nav items
   import("./pages/Home");
   import("./pages/Grocery");
   import("./pages/Wallet");
+  import("./pages/Settings");
+  
+  // Frequent heavily-animated interactions
+  import("./pages/SearchPage");
+  import("./pages/Profile");
+  import("./pages/QuickStore");
 };
 // FoodSearch replaced by new /search flow
 const SearchPage = lazy(() => import("./pages/SearchPage"));

@@ -21,11 +21,11 @@ export default function AboutUs() {
         
         {/* HERO SECTION — Real Logo */}
         <div className="text-center space-y-3">
-          <div className="w-24 h-24 rounded-3xl mx-auto overflow-hidden mb-4 shadow-2xl">
+          <div className="w-24 h-24 rounded-3xl mx-auto overflow-hidden mb-4 shadow-2xl bg-white flex items-center justify-center p-2">
             <img
-              src="/cb_logo_final.webp"
+              src="/logo.webp"
               alt="CU Bazzar Logo"
-              className="w-full h-full object-cover"
+              className="w-full h-full object-contain"
             />
           </div>
           <h2 className="text-[28px] font-black tracking-tighter leading-none">CU Bazzar</h2>

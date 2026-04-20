@@ -22,6 +22,8 @@ export default function RestaurantPage() {
   const [activeFilter, setActiveFilter] = useState<"all" | "veg" | "non-veg">("all");
   const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
   const [isCategoryMenuOpen, setIsCategoryMenuOpen] = useState(false);
+  const [isNavVisible, setIsNavVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
 
   // Sync with Supabase for real-time open/closed status
   useEffect(() => {
@@ -42,6 +44,30 @@ export default function RestaurantPage() {
     const interval = setInterval(fetchStatus, 30000); // Check every 30s
     return () => clearInterval(interval);
   }, [id]);
+
+  // Handle scroll for nav visibility
+  useEffect(() => {
+    let ticking = false;
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const currentScrollY = window.scrollY;
+          if (Math.abs(currentScrollY - lastScrollY) > 25) {
+            if (currentScrollY > lastScrollY && currentScrollY > 150) {
+              setIsNavVisible(false);
+            } else if (currentScrollY < lastScrollY - 10) {
+              setIsNavVisible(true);
+            }
+            setLastScrollY(currentScrollY);
+          }
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [lastScrollY]);
 
   // Merge live status into base shop data
   const shop = useMemo(() => {
@@ -277,11 +303,11 @@ export default function RestaurantPage() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.3 }}
-            className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-8"
+            className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6"
           >
             {filteredCategories.map((category) => (
-              <div key={category.category} id={`category-${category.category}`} className="contents">
-                <div className="col-span-full py-4 pt-8">
+              <div key={category.category} className="contents">
+                <div id={`category-${category.category}`} className="col-span-full py-4 pt-8">
                    <h3 className="text-[18px] font-black text-white/40 uppercase tracking-[0.2em]">
                      {category.category}
                    </h3>
@@ -300,35 +326,35 @@ export default function RestaurantPage() {
                       initial={{ opacity: 0, scale: 0.95 }}
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ delay: idx * 0.05 }}
-                      className="group flex flex-col gap-4 p-5 bg-[#1c1c1e]/50 border border-white/5 rounded-[2rem] hover:bg-[#1c1c1e] transition-all relative overflow-hidden"
+                      className="group flex flex-col gap-2 sm:gap-4 p-3 sm:p-5 bg-[#1c1c1e]/50 border border-white/5 rounded-[1.2rem] sm:rounded-[2rem] hover:bg-[#1c1c1e] transition-all relative overflow-hidden"
                     >
                       {/* Veg/Non-veg Indicator */}
-                      <div className={`absolute top-4 left-4 z-10 w-4 h-4 rounded-sm border-2 flex items-center justify-center bg-[#0d0d0f] ${isVeg ? 'border-emerald-500/50' : 'border-red-500/50'}`}>
-                         <div className={`w-1.5 h-1.5 rounded-full ${isVeg ? 'bg-emerald-500' : 'bg-red-500'}`} />
+                      <div className={`absolute top-2 left-2 sm:top-4 sm:left-4 z-10 w-3 h-3 sm:w-4 sm:h-4 rounded-sm border-2 flex items-center justify-center bg-[#0d0d0f] ${isVeg ? 'border-emerald-500/50' : 'border-red-500/50'}`}>
+                         <div className={`w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full ${isVeg ? 'bg-emerald-500' : 'bg-red-500'}`} />
                       </div>
 
                       {/* Item Image */}
-                      <div className="w-full aspect-[4/3] rounded-[1.5rem] overflow-hidden bg-[#2c2c2e] relative border border-white/5 shadow-inner">
+                      <div className="w-full aspect-[4/3] rounded-[1rem] sm:rounded-[1.5rem] overflow-hidden bg-[#2c2c2e] relative border border-white/5 shadow-inner">
                         <img 
                           src={item.image || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800&auto=format&fit=crop"} 
                           alt={item.name} 
                           className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 ${!shop.isOpen ? 'grayscale opacity-40' : ''}`}
                         />
                         {!shop.isOpen && (
-                          <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-full flex items-center gap-1.5 border border-white/10">
-                            <Store className="w-3 h-3 text-red-500" />
-                            <span className="text-[10px] font-black uppercase tracking-widest text-white/80">Closed</span>
+                          <div className="absolute top-2 right-2 sm:top-4 sm:right-4 bg-black/60 backdrop-blur-md px-2 py-1 sm:px-3 sm:py-1.5 rounded-full flex items-center gap-1 border border-white/10">
+                            <Store className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-red-500" />
+                            <span className="text-[8px] sm:text-[10px] font-black uppercase tracking-widest text-white/80">Closed</span>
                           </div>
                         )}
                       </div>
 
                       {/* Info & Action */}
                       <div className="flex flex-col gap-1 px-1">
-                        <h4 className="text-[16px] font-black text-white/90 leading-tight group-hover:text-white transition-colors">
+                        <h4 className="text-[13px] sm:text-[16px] font-black text-white/90 leading-tight group-hover:text-white transition-colors line-clamp-2">
                           {item.name}
                         </h4>
-                        <div className="flex items-center justify-between gap-4 mt-2">
-                          <span className="text-[18px] font-black text-white">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mt-auto pt-2">
+                          <span className="text-[14px] sm:text-[18px] font-black text-white">
                             ₹{item.price}
                           </span>
                           
@@ -350,14 +376,14 @@ export default function RestaurantPage() {
                               });
                               toast.success(`${item.name} added to cart!`);
                             }}
-                            className={`px-8 py-2.5 rounded-full font-bold text-[14px] transition-all flex items-center gap-1.5 ${
+                            className={`px-3 py-1.5 sm:px-6 sm:py-2.5 rounded-full font-bold text-[11px] sm:text-[14px] transition-all flex items-center justify-center gap-1 ${
                               shop.isOpen 
                                 ? "bg-[#FF3B30] text-white shadow-lg shadow-[#FF3B30]/20 hover:bg-[#D73229]" 
                                 : "bg-white/5 text-zinc-600 cursor-not-allowed border border-white/5 shadow-none"
                             }`}
                           >
                             ADD
-                            <Plus className="w-4 h-4 stroke-[3]" />
+                            <Plus className="w-3 h-3 sm:w-4 sm:h-4 stroke-[3]" />
                           </motion.button>
                         </div>
                       </div>
@@ -380,7 +406,12 @@ export default function RestaurantPage() {
       </div>
 
       {/* ─── FLOATING MENU BUTTON ─── */}
-      <div className="fixed bottom-32 right-6 z-[60]">
+      <motion.div 
+        animate={{ bottom: isNavVisible ? 104 : 24 }}
+        transition={{ type: "tween", duration: 0.25, ease: "easeOut" }}
+        className="fixed right-6 z-[60]"
+        style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
+      >
         <motion.button 
           whileTap={{ scale: 0.9 }}
           onClick={() => setIsCategoryMenuOpen(!isCategoryMenuOpen)}
@@ -439,7 +470,7 @@ export default function RestaurantPage() {
             </motion.div>
           )}
         </AnimatePresence>
-      </div>
+      </motion.div>
 
     </div>
   );

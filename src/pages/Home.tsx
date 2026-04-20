@@ -103,15 +103,34 @@ export default function Home() {
   const fetchLiveStatus = async () => {
     try {
       const { data, error } = await supabase.from("shops").select("id, is_open");
+      
+      const now = new Date();
+      const hour = now.getHours();
+      const min = now.getMinutes();
+      const currentTotal = hour * 60 + min;
+      const isAutoOpen = currentTotal >= 10 * 60 && currentTotal <= 23 * 60 + 30;
+
       if (error) {
         console.warn("Shops table missing or RLS blocking:", error.message);
+        // Fallback to time bounds if no DB data
+        setLiveShops(prev => prev.map(shop => ({
+          ...shop,
+          isOpen: isAutoOpen ? shop.isOpen : false
+        })));
         return;
       }
+      
       if (data && data.length > 0) {
         const statusMap = Object.fromEntries(data.map(s => [s.id, s.is_open]));
         setLiveShops(prev => prev.map(shop => ({
           ...shop,
-          isOpen: statusMap[shop.id] ?? shop.isOpen
+          isOpen: isAutoOpen ? (statusMap[shop.id] ?? shop.isOpen) : false
+        })));
+      } else {
+        // Fallback if data is empty
+        setLiveShops(prev => prev.map(shop => ({
+          ...shop,
+          isOpen: isAutoOpen ? shop.isOpen : false
         })));
       }
     } catch (err) {

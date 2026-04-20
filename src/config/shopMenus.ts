@@ -1268,7 +1268,7 @@ export const shops: Shop[] = [
     distance: "0.9 km",
     deliveryTime: "10-15 MINS",
     isOpen: true,
-    heroImage: "https://images.unsplash.com/photo-1476718406336-bb5a9690ee2a?w=800&auto=format&fit=crop",
+    heroImage: "/cb_logo_final.webp",
     categories: [
       {
         category: "Sandwich",
@@ -3426,3 +3426,24 @@ export const shops: Shop[] = [
     ],
   },
 ];
+
+// Implement automatic opening / closing bounds (10:00 AM to 11:30 PM)
+shops.forEach(shop => {
+  const originalIsOpen = shop.isOpen;
+  Object.defineProperty(shop, 'isOpen', {
+    get() {
+      const now = new Date();
+      const hour = now.getHours();
+      const min = now.getMinutes();
+      const currentTotal = hour * 60 + min;
+      
+      const startTotal = 10 * 60; // 10:00 AM
+      const endTotal = 23 * 60 + 30; // 11:30 PM
+      
+      const isAutoOpen = currentTotal >= startTotal && currentTotal <= endTotal;
+      return originalIsOpen && isAutoOpen;
+    },
+    enumerable: true,
+    configurable: true
+  });
+});

@@ -91,18 +91,26 @@ export const ShopCard = memo(({
             />
 
             {/* Shop name — bottom left, bold cute font */}
-            <div className="absolute inset-x-0 bottom-0 px-4 pb-3.5 pt-6">
-              {shop.veg && (
-                <span className="inline-flex items-center gap-1 bg-white/15 backdrop-blur-sm px-2 py-0.5 rounded-full text-white text-[8px] font-bold uppercase tracking-wider mb-1.5">
-                  <Leaf className="w-2.5 h-2.5" /> Pure Veg
+            <div className="absolute inset-x-0 bottom-0 px-4 pb-3.5 pt-6 flex justify-between items-end">
+              <div>
+                {shop.veg && (
+                  <span className="inline-flex items-center gap-1 bg-white/15 backdrop-blur-sm px-2 py-0.5 rounded-full text-white text-[8px] font-bold uppercase tracking-wider mb-1.5">
+                    <Leaf className="w-2.5 h-2.5" /> Pure Veg
+                  </span>
+                )}
+                <h3
+                  className="text-[20px] sm:text-[22px] font-black text-white leading-tight tracking-tight drop-shadow-[0_2px_8px_rgba(0,0,0,0.7)]"
+                  style={{ fontFamily: "'Outfit', 'SF Pro Rounded', -apple-system, sans-serif" }}
+                >
+                  {shop.name}
+                </h3>
+              </div>
+
+              {!shop.isOpen && (
+                <span className="bg-red-500/90 backdrop-blur-md px-3 py-1 rounded-[0.8rem] text-white text-[10px] font-black uppercase tracking-widest shadow-lg">
+                  Closed
                 </span>
               )}
-              <h3
-                className="text-[20px] sm:text-[22px] font-black text-white leading-tight tracking-tight drop-shadow-[0_2px_8px_rgba(0,0,0,0.7)]"
-                style={{ fontFamily: "'Outfit', 'SF Pro Rounded', -apple-system, sans-serif" }}
-              >
-                {shop.name}
-              </h3>
             </div>
           </div>
         </div>
@@ -238,8 +246,14 @@ export const ShopCard = memo(({
 
                               {/* Add btn */}
                               <button
-                                onMouseDown={(e) => e.preventDefault()}
-                                onClick={() =>
+                                onMouseDown={(e) => {
+                                  e.preventDefault();
+                                  if (!shop.isOpen) {
+                                    toast({ title: "Shop Closed", description: "This shop is currently closed. Opens at 10 AM.", variant: "destructive" });
+                                  }
+                                }}
+                                onClick={() => {
+                                  if (!shop.isOpen) return;
                                   onAddItem({
                                     id,
                                     title: `${item.name} (${shop.name})`,
@@ -247,13 +261,15 @@ export const ShopCard = memo(({
                                     image: img,
                                     category: "shops",
                                   })
-                                }
-                                className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 transition-all active:scale-90"
+                                }}
+                                className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 transition-all ${
+                                  shop.isOpen ? "active:scale-90" : "opacity-50 cursor-not-allowed"
+                                }`}
                                 style={{
-                                  background: isAdded ? "#34C759" : accent.grad,
+                                  background: isAdded ? "#34C759" : (shop.isOpen ? accent.grad : "#444"),
                                   boxShadow: isAdded
                                     ? "0 4px 10px rgba(52,199,89,0.3)"
-                                    : `0 4px 10px ${accent.dot}40`,
+                                    : (shop.isOpen ? `0 4px 10px ${accent.dot}40` : "none"),
                                 }}
                               >
                                 {isAdded

@@ -18,10 +18,12 @@ import {
   X,
   CreditCard,
   User,
+  Star,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { AnimatePresence, motion } from "framer-motion";
+import { supabase } from "@/lib/supabase";
 
 export default function Settings() {
   const { signOut, user } = useAuth();
@@ -63,12 +65,29 @@ export default function Settings() {
     }
   };
 
-  const handleSuggestCombo = (e: React.FormEvent) => {
+  const handleSuggestCombo = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!comboText.trim()) return toast.error("Please enter a combo suggestion");
-    toast.success("Combo suggestion sent successfully! We will review it soon.");
-    setComboText("");
+    
     setIsComboModalOpen(false);
+
+    try {
+      const { error } = await supabase.from("admin_notifications").insert({
+        type: "combo_suggestion",
+        is_read: false,
+        payload: {
+          suggestion: comboText.trim(),
+          user_name: displayName,
+        }
+      });
+
+      if (error) throw error;
+      toast.success("Combo suggestion sent successfully! We will review it soon.");
+    } catch (err: any) {
+      toast.error(err.message || "Failed to send suggestion");
+    } finally {
+      setComboText("");
+    }
   };
 
   return (
