@@ -440,14 +440,13 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
       );
       break;
     case "wallet":
-      width = 110;
+      width = 140;
       content = (
-        <div className="flex items-center gap-2">
-          <div className="flex items-center justify-center w-5 h-5 rounded-full bg-emerald-500/20">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-          </div>
-          <Wallet className="w-4 h-4 text-emerald-400" />
-          <span className="text-sm font-bold tracking-tight">Wallet</span>
+        <div className="flex items-center justify-center gap-2">
+          <Wallet className="w-4 h-4 text-blue-400" />
+          <span className="text-sm font-semibold tracking-wide text-white/90">
+            Wallet
+          </span>
         </div>
       );
       break;

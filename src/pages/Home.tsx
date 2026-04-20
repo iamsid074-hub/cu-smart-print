@@ -157,7 +157,6 @@ export default function Home() {
 
   const modes = [
     { id: "meal", label: "Full Meals", icon: Utensils },
-    { id: "vending", label: "Late Night", icon: Clock },
     { id: "quick", label: "Blinkit / Zwigato", icon: Flame },
   ];
 
@@ -255,7 +254,7 @@ export default function Home() {
                             deliveryMode === "takeaway" ? "bg-white text-black shadow-lg" : "text-gray-500 hover:text-white"
                           }`}
                         >
-                          Take-away
+                          SHOPS
                         </button>
                         <button
                           onClick={() => setDeliveryMode("delivery")}
@@ -263,13 +262,15 @@ export default function Home() {
                             deliveryMode === "delivery" ? "bg-white text-black shadow-lg" : "text-gray-500 hover:text-white"
                           }`}
                         >
-                          Fast Delivery
+                          VENDING
                         </button>
                       </div>
                     </div>
 
-                    {/* 3. Section Title */}
-                    <div className="flex items-center justify-between mb-8 px-1">
+                    {/* 3. Render Shops OR Vending Machine */}
+                    {deliveryMode === "takeaway" ? (
+                      <>
+                        <div className="flex items-center justify-between mb-8 px-1">
                        <h2 className="text-[14px] sm:text-[16px] font-black tracking-[0.15em] text-zinc-500 uppercase">
                           Campus Spotlight
                        </h2>
@@ -352,44 +353,30 @@ export default function Home() {
                         </motion.div>
                       ))}
                     </div>
+                  </>
+                ) : (
+                  <div className="w-full pb-10">
+                    <div className="text-center mb-8 px-4">
+                      <p className="text-gray-400 text-[13px] font-bold uppercase tracking-widest">
+                        Real-time Vending Availability
+                      </p>
+                    </div>
+                    <VendingMachine />
+                  </div>
+                )}
                   </div>
                 )}
               </motion.div>
             )}
 
-            {homeMode === "vending" && (
-              <motion.div
-                key="vending"
-                initial={{ opacity: 0, x: 50 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -50 }}
-                className="py-12"
-              >
-                <div className="flex flex-col items-center gap-12 text-center mb-24">
-                  <div className="max-w-2xl px-4">
-                    <motion.h2 
-                      initial={{ y: 20, opacity: 0 }}
-                      animate={{ y: 0, opacity: 1 }}
-                      className="text-4xl sm:text-6xl font-black mb-6 tracking-tighter"
-                    >
-                      Midnight Hunger?<br /><span className="text-orange-400">We got you.</span>
-                    </motion.h2>
-                    <p className="text-gray-400 text-lg sm:text-xl font-medium">
-                      Real-time vending availability across all hostels. 
-                      No more wasted walks.
-                    </p>
-                  </div>
-                </div>
-                <VendingMachine />
-              </motion.div>
-            )}
+
 
 
           </AnimatePresence>
         </div>
 
         {/* Explore Sellers Section (Always visible) */}
-        {(homeMode === "meal" || homeMode === "vending" || homeMode === "quick") && (
+        {(homeMode === "meal" || homeMode === "quick") && (
           <section className="mt-32 pb-40">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-12">
               <div className="flex items-center gap-3">
