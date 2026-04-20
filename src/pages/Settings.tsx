@@ -73,8 +73,8 @@ export default function Settings() {
 
   return (
     <div className="min-h-screen bg-[#0d0d0f] text-white pb-[100px]">
-      {/* HEADER */}
-      <div className="sticky top-0 z-40 bg-[#0d0d0f]/80 backdrop-blur-xl border-b border-white/5 px-4 h-14 flex items-center gap-3">
+      {/* HEADER - Adjusted for Dynamic Island clearance */}
+      <div className="sticky top-0 z-40 bg-[#0d0d0f]/80 backdrop-blur-xl border-b border-white/5 px-4 pt-16 pb-4 flex items-center gap-3">
         <button
           onClick={() => navigate(-1)}
           className="p-2 rounded-full hover:bg-white/5 transition-all text-white active:scale-95"
@@ -256,7 +256,13 @@ export default function Settings() {
               </p>
             </div>
             <div className="space-y-3">
-              <div className="p-4 rounded-2xl bg-[#0d0d0f] border border-white/5 flex items-center justify-between hover:border-indigo-500/30 transition-colors cursor-pointer">
+              <button
+                onClick={() => {
+                  setIsWalletModalOpen(false);
+                  navigate('/wallet-payment', { state: { pack: { name: '3 Offers Pack — ₹50 Daily Limit · 1 Week', price: 50 } } });
+                }}
+                className="w-full p-4 rounded-2xl bg-[#0d0d0f] border border-white/5 flex items-center justify-between hover:border-indigo-500/40 active:scale-95 transition-all cursor-pointer text-left"
+              >
                 <div>
                   <p className="font-black text-white text-[15px]">3 Offers Pack</p>
                   <p className="text-[12px] font-bold text-gray-500 mt-0.5">
@@ -267,8 +273,14 @@ export default function Settings() {
                 <div className="px-4 py-2 rounded-xl bg-indigo-500 text-white font-black text-[14px]">
                   ₹50
                 </div>
-              </div>
-              <div className="p-4 rounded-2xl bg-[#0d0d0f] border border-white/5 flex items-center justify-between hover:border-indigo-500/30 transition-colors cursor-pointer">
+              </button>
+              <button
+                onClick={() => {
+                  setIsWalletModalOpen(false);
+                  navigate('/wallet-payment', { state: { pack: { name: 'Extended Pro — ₹50 Daily Limit · 2 Weeks', price: 200 } } });
+                }}
+                className="w-full p-4 rounded-2xl bg-[#0d0d0f] border border-white/5 flex items-center justify-between hover:border-indigo-500/40 active:scale-95 transition-all cursor-pointer text-left"
+              >
                 <div>
                   <p className="font-black text-white text-[15px]">Extended Pro</p>
                   <p className="text-[12px] font-bold text-gray-500 mt-0.5">
@@ -279,7 +291,7 @@ export default function Settings() {
                 <div className="px-4 py-2 rounded-xl bg-indigo-500 text-white font-black text-[14px]">
                   ₹200
                 </div>
-              </div>
+              </button>
             </div>
           </ModalOverlay>
         )}
