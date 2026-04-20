@@ -1114,6 +1114,27 @@ function parseOrderDetails(order: Order): {
         .replace(/\(\s*\)$/, "")
         .trim();
 
+      // Guess shop retrospectively if it's not present
+      if (!name.includes("(")) {
+        const cleanItemName = name.replace(/^\d+x\s*/, "").trim();
+        let foundShop = "";
+        for (const shop of staticShops) {
+          for (const cat of shop.categories) {
+            for (const menu of cat.items) {
+               if (menu.name.toLowerCase() === cleanItemName.toLowerCase()) {
+                 foundShop = shop.name;
+                 break;
+               }
+            }
+            if (foundShop) break;
+          }
+          if (foundShop) break;
+        }
+        if (foundShop) {
+           name = `${name} (${foundShop})`;
+        }
+      }
+
       return price ? `${name} - ${price}` : name;
     })
     .join("\n");
