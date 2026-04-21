@@ -152,7 +152,7 @@ export function VoiceAssistantProvider({ children }: { children: React.ReactNode
 
     if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
     
-    debounceTimerRef.current = setTimeout(() => {
+    debounceTimerRef.current = setTimeout(async () => {
       synthRef.current.cancel();
 
       const old = recognitionRef.current;
@@ -164,12 +164,27 @@ export function VoiceAssistantProvider({ children }: { children: React.ReactNode
         (window as any).webkitSpeechRecognition;
 
       if (!SpeechRecognitionAPI) {
-        setErrorMsg("Voice system not available.");
+        setErrorMsg("Voice not supported on this browser.");
         setState("error");
         setTimeout(() => setState("idle"), 3000);
         return;
       }
 
+      // ── Step 1: Explicitly request mic permission on mobile ──────────────
+      // This shows the native Android/iOS permission dialog correctly.
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        // Permission granted — release the stream immediately, SpeechRecognition handles its own stream
+        stream.getTracks().forEach(t => t.stop());
+      } catch (permError: any) {
+        // User denied or permission unavailable
+        setErrorMsg("Enable mic in browser settings to use SAFY.");
+        setState("error");
+        setTimeout(() => setState("idle"), 4000);
+        return;
+      }
+
+      // ── Step 2: Now safe to start SpeechRecognition ──────────────────────
       const recognition: SpeechRecognition = new SpeechRecognitionAPI();
       recognitionRef.current = recognition;
 
@@ -210,17 +225,18 @@ export function VoiceAssistantProvider({ children }: { children: React.ReactNode
         
         switch (event.error) {
           case "no-speech":
-            setErrorMsg("Click to try again if I stopped.");
+            setErrorMsg("Didn't catch that. Tap to try again!");
             setState("error");
             setTimeout(() => { setState(prev => prev === "error" ? "idle" : prev); }, 3000);
             break;
           case "not-allowed":
           case "service-not-allowed":
-            setErrorMsg("Mic permission denied.");
+            setErrorMsg("Enable mic in browser settings.");
             setState("error");
+            setTimeout(() => setState("idle"), 4000);
             break;
           case "network":
-            setErrorMsg("Network error.");
+            setErrorMsg("Network error. Check your connection.");
             setState("error");
             setTimeout(() => setState("idle"), 3000);
             break;
