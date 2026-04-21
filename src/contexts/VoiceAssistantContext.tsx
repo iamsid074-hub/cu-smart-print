@@ -51,6 +51,7 @@ export function VoiceAssistantProvider({ children }: { children: React.ReactNode
     setTranscript("");
     setResponse("");
   }, []);
+  const isSupported =
     typeof window !== "undefined" &&
     ("SpeechRecognition" in window || "webkitSpeechRecognition" in window);
 
