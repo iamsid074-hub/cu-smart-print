@@ -64,6 +64,7 @@ import ScrollToTop from "./components/ScrollToTop";
 import StickyStripBanner from "./components/StickyStripBanner";
 import VoiceAssistant from "./components/VoiceAssistant";
 import { VoiceAssistantProvider } from "./contexts/VoiceAssistantContext";
+import SiriEdgeGlow from "./components/SiriEdgeGlow";
 
 import ErrorBoundary from "./components/ErrorBoundary";
 import { usePushNotifications } from "./hooks/usePushNotifications";
@@ -219,6 +220,7 @@ function AppLayout() {
           {location.pathname !== "/pasta-offer" && <Navbar />}
           {location.pathname !== "/pasta-offer" && <BottomNav />}
           {location.pathname !== "/pasta-offer" && <VoiceAssistant />}
+          <SiriEdgeGlow />
         </>
       )}
       <ErrorBoundary>

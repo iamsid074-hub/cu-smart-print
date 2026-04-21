@@ -1,6 +1,7 @@
 import { Mic } from "lucide-react";
 import { useVoiceAssistant } from "@/hooks/useVoiceAssistant";
 import { useLocation } from "react-router-dom";
+import { Haptics, ImpactStyle } from "@capacitor/haptics";
 
 export default function VoiceAssistant() {
   const { state, isSupported, activate } = useVoiceAssistant();
@@ -17,11 +18,16 @@ export default function VoiceAssistant() {
   const isActive = state !== "idle";
   if (isActive) return null; // Hide the trigger button while the island is active
 
+  const handleActivate = () => {
+    try { Haptics.impact({ style: ImpactStyle.Light }); } catch { navigator.vibrate?.(10); }
+    activate();
+  };
+
   return (
     <>
       <button
         id="safy-voice-btn"
-        onClick={activate}
+        onClick={handleActivate}
         aria-label="Talk to SAFY"
         className="fixed right-5 z-[300] flex items-center gap-2 px-4 py-2.5 rounded-full shadow-[0_6px_28px_rgba(99,102,241,0.5)] active:scale-95 transition-transform select-none"
         style={{

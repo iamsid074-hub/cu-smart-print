@@ -154,7 +154,9 @@ export function VoiceAssistantProvider({ children }: { children: React.ReactNode
 
       // 4. Smart local fallback — never say "I don't know" bluntly
       const t = text.toLowerCase();
-      if (t.includes("time") || t.includes("date")) {
+      if (t === "hi" || t === "hello" || t === "hey" || t.includes("namaste") || t.includes("aur batao")) {
+        speak("Hello! I am SAFY. What would you like to order today?");
+      } else if (t.includes("time") || t.includes("date")) {
         const now = new Date();
         speak(`It's ${now.toLocaleTimeString('en-IN', {hour:'2-digit', minute:'2-digit'})} right now!`);
       } else if (t.includes("thank") || t.includes("thanks") || t.includes("shukriya")) {
