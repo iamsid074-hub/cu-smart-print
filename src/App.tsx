@@ -63,6 +63,7 @@ import UsernameSetup from "./components/UsernameSetup";
 import ScrollToTop from "./components/ScrollToTop";
 import StickyStripBanner from "./components/StickyStripBanner";
 import VoiceAssistant from "./components/VoiceAssistant";
+import { VoiceAssistantProvider } from "./contexts/VoiceAssistantContext";
 
 import ErrorBoundary from "./components/ErrorBoundary";
 import { usePushNotifications } from "./hooks/usePushNotifications";
@@ -413,16 +414,18 @@ function AppLayout() {
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <CartProvider>
-        <TooltipProvider>
-          <BrowserRouter>
-            <ScrollToTop />
-            <AppLayout />
-          </BrowserRouter>
-        </TooltipProvider>
-      </CartProvider>
-    </AuthProvider>
+    <BrowserRouter>
+      <AuthProvider>
+        <CartProvider>
+          <VoiceAssistantProvider>
+            <TooltipProvider>
+              <ScrollToTop />
+              <AppLayout />
+            </TooltipProvider>
+          </VoiceAssistantProvider>
+        </CartProvider>
+      </AuthProvider>
+    </BrowserRouter>
   </QueryClientProvider>
 );
 

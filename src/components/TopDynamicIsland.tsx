@@ -21,6 +21,8 @@ import {
   Bike,
 } from "lucide-react";
 import { Haptics, ImpactStyle } from "@capacitor/haptics";
+import { useVoiceAssistant } from "@/hooks/useVoiceAssistant";
+import { Mic } from "lucide-react";
 
 const triggerHaptic = async (style: ImpactStyle = ImpactStyle.Light) => {
   try {
@@ -50,7 +52,8 @@ type IslandState =
   | "grocery"
   | "sell"
   | "tracking"
-  | "active_cart";
+  | "active_cart"
+  | "safy";
 
 // ── Tracking status configuration ───────────────────────────────────────────
 const TRACKING_STATUSES: Record<
@@ -113,6 +116,7 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
   const location = useLocation();
   const { items } = useCart();
   const { user } = useAuth();
+  const { state: safyState, transcript, response: safyResponse, errorMsg, dismiss: dismissSafy } = useVoiceAssistant();
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -207,11 +211,22 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
       triggerState("cart");
     } else if (location.pathname === "/profile") {
       triggerState("profile");
-    } else {
+    } else if (safyState === "idle") {
       setIslandState("default");
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
     }
-  }, [location.pathname]);
+  }, [location.pathname, safyState]);
+
+  // ── Sync SAFY state with Island ──────────────────────────────────────────
+  useEffect(() => {
+    if (safyState !== "idle") {
+      setIslandState("safy");
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    } else if (islandState === "safy") {
+      // Revert to route-based state when SAFY is done
+      setIslandState("default");
+    }
+  }, [safyState]);
 
   // ── Fetch tracking order & subscribe to real-time updates ───────────────
   const fetchTrackingOrder = useCallback(async () => {
@@ -389,6 +404,11 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
     displayState = "active_cart";
   }
 
+  // FORCE SAFY PRIORITY
+  if (safyState !== "idle") {
+    displayState = "safy";
+  }
+
   switch (displayState) {
     case "explore":
       width = 160;
@@ -539,6 +559,64 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
           <span className="text-sm font-medium tracking-wide">
             Cart Updated
           </span>
+        </div>
+      );
+      break;
+
+    case "safy":
+      const isLongResponse = (safyResponse?.length || 0) > 40;
+      width = isLongResponse ? 300 : transcript.length > 20 ? 240 : 180;
+      height = isLongResponse ? 90 : 56;
+      content = (
+        <div className="flex flex-col w-full h-full justify-center px-3 overflow-hidden">
+          <div className="flex items-center gap-3">
+             {/* Waveform / Icon */}
+             <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center shrink-0">
+               <Mic className="w-4 h-4 text-white" strokeWidth={2.5} />
+             </div>
+
+             <div className="flex flex-col min-w-0 flex-1">
+                <div className="flex items-center gap-2">
+                   <span className="text-[10px] font-black tracking-widest text-white/50 uppercase">SAFY</span>
+                   {(safyState === "listening" || safyState === "speaking") && (
+                     <div className="flex items-center gap-0.5 h-3">
+                       {[0.4, 1, 0.7, 0.4].map((h, i) => (
+                         <motion.div
+                           key={i}
+                           className="w-[1.5px] rounded-full bg-white/60"
+                           animate={{ scaleY: [h, 1, h] }}
+                           transition={{ repeat: Infinity, duration: 0.6, delay: i * 0.1 }}
+                           style={{ height: "100%", transformOrigin: "center" }}
+                         />
+                       ))}
+                     </div>
+                   )}
+                </div>
+                {/* Text Content */}
+                <div className="text-[12px] font-bold text-white leading-tight truncate">
+                   {errorMsg || safyResponse || transcript || (safyState === "listening" ? "Listening…" : "How can I help?")}
+                </div>
+             </div>
+
+             {/* Close Button */}
+             <button 
+               onClick={(e) => { e.stopPropagation(); dismissSafy(); }}
+               className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center shrink-0 hover:bg-white/20 transition-colors"
+             >
+               <XCircle className="w-4 h-4 text-white/60" strokeWidth={2.5} />
+             </button>
+          </div>
+          
+          {/* Expanded Response Area for long answers */}
+          {isLongResponse && (
+            <motion.div 
+               initial={{ opacity: 0 }}
+               animate={{ opacity: 1 }}
+               className="mt-2 text-[10px] font-medium text-white/80 leading-snug line-clamp-2 px-1"
+            >
+              {safyResponse}
+            </motion.div>
+          )}
         </div>
       );
       break;
@@ -730,7 +808,17 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
                 layout
                 key="main-pill"
                 initial={false}
-                animate={{ width, height }}
+                animate={{ 
+                  width, 
+                  height,
+                  backgroundColor: displayState === "safy" ? {
+                    listening: "#ef4444",
+                    processing: "#f59e0b",
+                    speaking: "#10b981",
+                    error: "#dc2626",
+                    idle: "rgba(15, 15, 15, 0.98)"
+                  }[safyState] || "rgba(15, 15, 15, 0.98)" : "rgba(15, 15, 15, 0.98)"
+                }}
                 transition={springTransition}
                 onPointerDown={handlePointerDown}
                 onPointerUp={handlePointerUp}
@@ -743,13 +831,21 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
                     : ""
                 }`}
                 style={{
-                  background: "rgba(15, 15, 15, 0.98)",
                   border: "1px solid rgba(255, 255, 255, 0.12)",
                   borderRadius: 50,
                   animation: getAnimation(),
                   position: "relative",
                   zIndex: 100,
                   willChange: "transform, width",
+                  boxShadow: displayState === "safy" ? `0 8px 32px rgba(0,0,0,0.5), 0 0 20px ${
+                    {
+                      listening: "rgba(239, 68, 68, 0.4)",
+                      processing: "rgba(245, 158, 11, 0.4)",
+                      speaking: "rgba(16, 185, 129, 0.4)",
+                      error: "rgba(220, 38, 38, 0.4)",
+                      idle: "transparent"
+                    }[safyState] || "transparent"
+                  }` : undefined
                 }}
               >
                 {/* Green camera indicator dot */}
