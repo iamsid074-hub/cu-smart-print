@@ -92,17 +92,22 @@ export function VoiceAssistantProvider({ children }: { children: React.ReactNode
     }
   }, []);
 
-  // ── Process command transcript (Hybrid Rule-based + LLM Fallback) ───────
+  // ── Process command transcript (Hybrid Rule-based + Smart Fallback) ─────
   const processCommand = useCallback(
     async (text: string) => {
       setState("processing");
       setTranscript(text);
 
-      // 1. Try local rule-based matching first, passing current shop context
+      // 1. Try local rule-based matching first
       const action = interpretCommand(text, items, currentShopId);
 
-      // 2. Handle all local actions immediately WITHOUT calling AI
-      if (action.type === "navigate" || action.type === "open_shop" || action.type === "cart_info" || action.type === "search" || action.type === "speak" || action.type === "add_to_cart" || action.type === "remove_from_cart" || action.type === "clear_cart") {
+      // 2. Handle all local actions immediately
+      if (
+        action.type === "navigate" || action.type === "open_shop" ||
+        action.type === "cart_info" || action.type === "search" ||
+        action.type === "speak" || action.type === "add_to_cart" ||
+        action.type === "remove_from_cart" || action.type === "clear_cart"
+      ) {
         setTimeout(() => {
           switch (action.type) {
             case "navigate":
@@ -131,19 +136,40 @@ export function VoiceAssistantProvider({ children }: { children: React.ReactNode
               speak(action.message);
               break;
           }
-        }, 400);
+        }, 300);
         return;
       }
 
-      // 3. Otherwise, use Gemini for a smart, conversational response
-      try {
-        const aiResponse = await getSafyAIResponse(text);
-        speak(aiResponse);
-      } catch (error) {
-        speak("I ran into a small hiccup while thinking. Could you say that again?");
+      // 3. Try Gemini AI for general knowledge questions
+      // Only attempt if we have a real question (not a garbled word)
+      if (text.trim().length > 3) {
+        try {
+          const aiResponse = await getSafyAIResponse(text);
+          speak(aiResponse);
+          return;
+        } catch (error) {
+          // AI failed — fall through to helpful local response
+        }
+      }
+
+      // 4. Smart local fallback — never say "I don't know" bluntly
+      const t = text.toLowerCase();
+      if (t.includes("time") || t.includes("date")) {
+        const now = new Date();
+        speak(`It's ${now.toLocaleTimeString('en-IN', {hour:'2-digit', minute:'2-digit'})} right now!`);
+      } else if (t.includes("thank") || t.includes("thanks") || t.includes("shukriya")) {
+        speak("You're welcome! Anything else I can help you order?");
+      } else if (t.includes("who are you") || t.includes("tum kaun")) {
+        speak("I'm SAFY, your CU Bazzar assistant! I can open shops, add food to your cart, and more.");
+      } else {
+        // Redirect to search — most useful fallback on mobile
+        speak(`Let me search for "${text}" for you!`, () =>
+          navigate(`/search?q=${encodeURIComponent(text)}`)
+        );
       }
     },
-    [items, navigate, speak]
+    // ⚠️ Include ALL used values to prevent stale closure on mobile
+    [items, navigate, speak, currentShopId, addItem, removeItem, clearCart]
   );
 
   // ── Activate ──────────────────────────────────────────────────────────────
@@ -193,8 +219,8 @@ export function VoiceAssistantProvider({ children }: { children: React.ReactNode
 
       recognition.lang = "en-IN";
       recognition.interimResults = true;
-      recognition.maxAlternatives = 1;
-      recognition.continuous = true;
+      recognition.maxAlternatives = 3; // More alternatives = better accuracy on mobile
+      recognition.continuous = false;  // FIXED: continuous=true breaks Android Chrome
 
       recognition.onstart = () => {
         setState("listening");

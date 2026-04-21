@@ -56,15 +56,24 @@ export function interpretCommand(
   const t = transcript.toLowerCase().trim();
 
   // ── Context-Aware Cart Add (when user is on a shop page) ──────────────────
-  const orderTriggerWords = ["add", "order", "want", "get", "lekar", "kardo", "buy", "dedo", "chahiye", "lelo"];
+  const orderTriggerWords = [
+    "add", "order", "want", "get", "buy", "give", "bring",
+    "kardo", "karo", "kar", "lekar", "lao", "lena", "lelo",
+    "dedo", "dena", "dijiye", "chahiye", "chahta", "chahti",
+    "mangta", "manga", "milega", "mujhe", "dikhao",
+    "bhukh", "hungry",
+  ];
   const isOrderIntent = orderTriggerWords.some(trig => t.includes(trig));
 
   if (isOrderIntent && currentShopId) {
     // Find the current shop
     const currentShop = shops.find(s => s.id === currentShopId);
     if (currentShop) {
-      // Extract the food query (remove trigger words)
-      const query = t.replace(/add|order|want|to|cart|please|can|you|me|kardo|lekar|ao|dedo|chahiye|lelo|get|buy|mujhe/g, "").trim();
+      // Strip all filler/trigger words to extract just the food item name
+      const query = t
+        .replace(/add|order|want|to|cart|please|can|you|me|kardo|karo|kar|lekar|lao|lena|lelo|dedo|dena|dijiye|chahiye|chahta|chahti|mangta|manga|milega|mujhe|dikhao|give|bring|buy|get|hungry|bhukh|aur|ek|bhi|main|mai|from|here/g, "")
+        .replace(/\s+/g, " ")
+        .trim();
       
       if (query.length > 1) {
         // Fuzzy search through this shop's menu
