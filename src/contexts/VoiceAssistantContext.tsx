@@ -102,12 +102,7 @@ export function VoiceAssistantProvider({ children }: { children: React.ReactNode
       const action = interpretCommand(text, items, currentShopId);
 
       // 2. Handle all local actions immediately
-      if (
-        action.type === "navigate" || action.type === "open_shop" ||
-        action.type === "cart_info" || action.type === "search" ||
-        action.type === "speak" || action.type === "add_to_cart" ||
-        action.type === "remove_from_cart" || action.type === "clear_cart"
-      ) {
+      if (action) {
         setTimeout(() => {
           switch (action.type) {
             case "navigate":
@@ -152,22 +147,22 @@ export function VoiceAssistantProvider({ children }: { children: React.ReactNode
         }
       }
 
-      // 4. Smart local fallback — never say "I don't know" bluntly
+      // 4. Smart local fallback - Safety net for specific utilities
       const t = text.toLowerCase();
-      if (t === "hi" || t === "hello" || t === "hey" || t.includes("namaste") || t.includes("aur batao")) {
-        speak("Hello! I am SAFY. What would you like to order today?");
-      } else if (t.includes("time") || t.includes("date")) {
+      if (t.includes("time") || t.includes("date")) {
         const now = new Date();
-        speak(`It's ${now.toLocaleTimeString('en-IN', {hour:'2-digit', minute:'2-digit'})} right now!`);
+        speak(`It's ${now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })} right now!`);
       } else if (t.includes("thank") || t.includes("thanks") || t.includes("shukriya")) {
         speak("You're welcome! Anything else I can help you order?");
       } else if (t.includes("who are you") || t.includes("tum kaun")) {
         speak("I'm SAFY, your CU Bazzar assistant! I can open shops, add food to your cart, and more.");
       } else {
-        // Redirect to search — most useful fallback on mobile
-        speak(`Let me search for "${text}" for you!`, () =>
-          navigate(`/search?q=${encodeURIComponent(text)}`)
-        );
+        // Ultimate Fallback: Redirect to Search
+        // This ensures SAFY never leaves the user hanging.
+        const query = t.replace(/please|hey|hi|safy|bazz|search|find|order|get/g, "").trim();
+        speak(`I'm not exactly sure about that, but let me search for "${query || t}" for you!`, () => {
+          navigate(`/search?q=${encodeURIComponent(query || t)}`);
+        });
       }
     },
     // ⚠️ Include ALL used values to prevent stale closure on mobile

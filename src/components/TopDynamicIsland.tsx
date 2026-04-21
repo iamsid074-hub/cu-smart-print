@@ -40,12 +40,12 @@ const springTransition = {
   mass: 0.9,
 };
 
-// Slower, deliberate spring for SAFY expand/contract — feels intentional
+// Optimized spring for SAFY expand/contract - high performance for mobile
 const safySpring = {
   type: "spring" as const,
-  stiffness: 260,
-  damping: 28,
-  mass: 1.1,
+  stiffness: 240,
+  damping: 30,
+  mass: 1.0,
 };
 
 type IslandState =
@@ -768,29 +768,29 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
         {/* Mesh Blur Blobs - GPU Optimized for Mobile */}
         <motion.div
           animate={{
-            x: scrolled ? [-80, 80, -80] : 0,
-            y: [-15, 15, -15],
+            x: scrolled ? [-60, 60, -60] : 0,
+            y: [-10, 10, -10],
           }}
           transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
-          className="absolute -top-10 left-1/4 w-48 sm:w-64 h-48 sm:h-64 bg-indigo-500/15 rounded-full blur-[60px] sm:blur-[80px] will-change-transform"
-          style={{ backfaceVisibility: "hidden", transform: "translateZ(0)" }}
+          className="absolute -top-10 left-1/4 w-32 sm:w-64 h-32 sm:h-64 bg-indigo-500/10 rounded-full blur-[40px] sm:blur-[80px] will-change-transform"
+          style={{ backfaceVisibility: "hidden", transform: "translate3d(0,0,0)" }}
         />
         <motion.div
           animate={{
-            x: scrolled ? [80, -80, 80] : 0,
-            y: [15, -15, 15],
+            x: scrolled ? [60, -60, 60] : 0,
+            y: [10, -10, 10],
           }}
           transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-          className="absolute -top-10 right-1/4 w-64 sm:w-80 h-64 sm:h-80 bg-purple-500/15 rounded-full blur-[80px] sm:blur-[100px] will-change-transform"
-          style={{ backfaceVisibility: "hidden", transform: "translateZ(0)" }}
+          className="absolute -top-12 right-1/4 w-32 sm:w-64 h-32 sm:h-64 bg-purple-500/10 rounded-full blur-[40px] sm:blur-[80px] will-change-transform"
+          style={{ backfaceVisibility: "hidden", transform: "translate3d(0,0,0)" }}
         />
         <motion.div
           animate={{
-            scale: scrolled ? [1, 1.1, 1] : 1,
+            scale: scrolled ? [1, 1.05, 1] : 1,
           }}
           transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-          className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-blue-600/5 blur-[100px] sm:blur-[120px] will-change-transform"
-          style={{ backfaceVisibility: "hidden", transform: "translateZ(0)" }}
+          className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-blue-600/5 blur-[50px] sm:blur-[80px] will-change-transform"
+          style={{ backfaceVisibility: "hidden", transform: "translate3d(0,0,0)" }}
         />
       </motion.div>
 
@@ -834,7 +834,9 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
                   animation: getAnimation(),
                   position: "relative",
                   zIndex: 100,
-                  willChange: "transform, width",
+                  willChange: "transform, width, height, background-color",
+                  transform: "translateZ(0)",
+                  backfaceVisibility: "hidden",
                   boxShadow: displayState === "safy" ? `0 8px 32px rgba(0,0,0,0.5), 0 0 0 1px rgba(255, 255, 255, 0.12)` : undefined
                 }}
               >

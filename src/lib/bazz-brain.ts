@@ -48,35 +48,63 @@ export type AssistantAction =
   | { type: "clear_cart"; message: string }
   | { type: "speak"; message: string };
 
+function getGreetingResponse(): string {
+  const hour = new Date().getHours();
+  let timeStr = "day";
+  if (hour < 12) timeStr = "morning";
+  else if (hour < 17) timeStr = "afternoon";
+  else if (hour < 21) timeStr = "evening";
+  else timeStr = "night";
+
+  const responses = [
+    `Good ${timeStr}! I'm SAFY. How can I help you eat today?`,
+    `Hey there! Hope your ${timeStr} is going great. What can I get for you?`,
+    `Hello! Any delicious plans for this ${timeStr}? I'm here to help.`,
+    `Namaste! Good ${timeStr}. Tell me what you're craving!`,
+    `Hii! SAFY here. Wishing you a wonderful ${timeStr}. Need help with an order?`
+  ];
+  return responses[Math.floor(Math.random() * responses.length)];
+}
+
 export function interpretCommand(
   transcript: string,
   cartItems: ReturnType<typeof useCart>["items"],
   currentShopId?: string | null
-): AssistantAction {
-  const t = transcript.toLowerCase().trim();
+): AssistantAction | null {
+  const fullT = transcript.toLowerCase().trim();
+  
+  // ── Step 0: Handle Pure Greetings ──────────────────────────────────────────
+  const greetingWords = ["hi", "hii", "hello", "hey", "namaste", "aur batao", "good morning", "good evening", "good afternoon", "good night", "morning", "evening", "afternoon", "kaise ho", "kya haal", "kaise hai", "whats up", "wassup"];
+  
+  // Check if the entire transcript is just a greeting
+  if (greetingWords.some(g => fullT === g || fullT === `hey ${g}` || fullT === `hi ${g}`)) {
+    return { type: "speak", message: getGreetingResponse() };
+  }
+
+  // ── Step 1: Strip Greetings to get the Core Command ────────────────────────
+  // This allows "Hi SAFY, add pasta" to become just "add pasta"
+  let t = fullT;
+  const greetingRegex = new RegExp(`^(${greetingWords.join("|")}|safy|bazz|please|can you|o|oi|sun| सुनो| सुन )\\s*`, "i");
+  t = t.replace(greetingRegex, "").trim();
 
   // ── Context-Aware Cart Add (when user is on a shop page) ──────────────────
   const orderTriggerWords = [
-    "add", "order", "want", "get", "buy", "give", "bring",
-    "kardo", "karo", "kar", "lekar", "lao", "lena", "lelo",
-    "dedo", "dena", "dijiye", "chahiye", "chahta", "chahti",
-    "mangta", "manga", "milega", "mujhe", "dikhao",
-    "bhukh", "hungry",
+    "add", "order", "want", "get", "buy", "give", "bring", "manga", "lao", "dedo",
+    "kardo", "karo", "kar", "lekar", "lena", "lelo", "dena", "dijiye", "chahiye",
+    "chahta", "chahti", "mangta", "milega", "mujhe", "bhukh", "hungry"
   ];
   const isOrderIntent = orderTriggerWords.some(trig => t.includes(trig));
 
   if (isOrderIntent && currentShopId) {
-    // Find the current shop
     const currentShop = shops.find(s => s.id === currentShopId);
     if (currentShop) {
-      // Strip all filler/trigger words to extract just the food item name
+      // Strip fillers to find the item
       const query = t
         .replace(/add|order|want|to|cart|please|can|you|me|kardo|karo|kar|lekar|lao|lena|lelo|dedo|dena|dijiye|chahiye|chahta|chahti|mangta|manga|milega|mujhe|dikhao|give|bring|buy|get|hungry|bhukh|aur|ek|bhi|main|mai|from|here/g, "")
         .replace(/\s+/g, " ")
         .trim();
       
       if (query.length > 1) {
-        // Fuzzy search through this shop's menu
         let bestMatch: any = null;
         let bestScore = 0;
 
@@ -86,9 +114,7 @@ export function interpretCommand(
             const queryWords = query.split(" ").filter(w => w.length > 2);
             let score = 0;
 
-            // Exact match scores highest
             if (itemName.includes(query)) score += 10;
-            // Word-by-word matching
             for (const word of queryWords) {
               if (itemName.includes(word)) score += 3;
             }
@@ -110,132 +136,68 @@ export function interpretCommand(
               image: getPremiumImage(bestMatch.name, bestMatch.category),
               category: bestMatch.category,
             },
-            message: `Adding ${bestMatch.name} for ₹${bestMatch.price} to your cart! Great choice!`
+            message: `Adding ${bestMatch.name} to your cart! Anything else from ${currentShop.name}?`
           };
         }
-        // Item not found in THIS shop, search globally
-        return {
-          type: "search",
-          query,
-          message: `I couldn't find "${query}" in this shop, so I'm searching everywhere for you!`
-        };
+        
+        // Final fuzzy catch: if we caught a food word but no specific item match in THIS shop
+        return { type: "search", query, message: `I couldn't find "${query}" in this shop, searching across all of CU Bazzar for you!` };
       }
     }
   }
 
-  // ── Cart query & remove actions ───────────────────────────────────────────────
+  // ── Cart actions ────────────────────────────────────────────────────────────
   const isRemoveIntent = t.includes("remove") || t.includes("delete") || t.includes("hatao") || t.includes("nikalo") || t.includes("cancel");
   const isClearIntent = isRemoveIntent && (t.includes("all") || t.includes("everything") || t.includes("cart") || t.includes("sab"));
 
-  // Clear entire cart
-  if (isClearIntent && !t.includes("check") && !t.includes("show")) {
-    if (cartItems.length === 0) {
-      return { type: "speak", message: "Your cart is already empty!" };
-    }
-    return { type: "clear_cart", message: `Done! I've cleared all ${cartItems.length} item${cartItems.length > 1 ? "s" : ""} from your cart.` };
+  if (isClearIntent) {
+    if (cartItems.length === 0) return { type: "speak", message: "Your cart is already empty!" };
+    return { type: "clear_cart", message: "Done! I've cleared your entire cart." };
   }
 
-  // Remove specific item by name
   if (isRemoveIntent && cartItems.length > 0) {
     const query = t.replace(/remove|delete|hatao|nikalo|cancel|please|from|cart|my/g, "").trim();
     if (query.length > 1) {
-      // Fuzzy match cart items
       let bestMatch: typeof cartItems[0] | null = null;
       let bestScore = 0;
       for (const item of cartItems) {
-        const itemTitle = (item.title || "").toLowerCase();
-        const words = query.split(" ").filter(w => w.length > 2);
-        let score = 0;
-        if (itemTitle.includes(query)) score += 10;
-        for (const word of words) {
-          if (itemTitle.includes(word)) score += 3;
-        }
-        if (score > bestScore) { bestScore = score; bestMatch = item; }
+        const title = item.title.toLowerCase();
+        if (title.includes(query)) { bestMatch = item; break; }
       }
-      if (bestMatch && bestScore >= 3) {
-        return { type: "remove_from_cart", itemId: bestMatch.id, itemName: bestMatch.title, message: `Removed ${bestMatch.title} from your cart!` };
+      if (bestMatch) {
+        return { type: "remove_from_cart", itemId: bestMatch.id, itemName: bestMatch.title, message: `Removed ${bestMatch.title} from your cart.` };
       }
-      return { type: "speak", message: `I couldn't find "${query}" in your cart. Try saying the full item name!` };
     }
   }
 
-  // Show cart contents
-  if (t.includes("cart") || t.includes("what have i ordered") || t.includes("my order")) {
-    if (cartItems.length === 0) {
-      return { type: "cart_info", message: "Your cart is empty right now. Want me to open a shop so you can add something?" };
-    }
-    const itemList = cartItems.map(i => `${i.title} for ₹${i.price}`).join(", ");
+  if (t.includes("cart") || t.includes("order") || t.includes("bill") || t.includes("mangaya")) {
+    if (cartItems.length === 0) return { type: "cart_info", message: "Your cart is empty. Want to see some trending food?" };
     const total = cartItems.reduce((acc, i) => acc + i.price * (i.quantity || 1), 0);
-    return {
-      type: "cart_info",
-      message: `You have ${cartItems.length} item${cartItems.length > 1 ? "s" : ""} in your cart: ${itemList}. Total is ₹${total}.`
-    };
+    return { type: "cart_info", message: `You have ${cartItems.length} items totaling ₹${total}. Shall I go to the checkout?` };
   }
 
-  // ── Shop navigation ─────────────────────────────────────────────────────────
+  // ── Navigation ──────────────────────────────────────────────────────────────
   for (const shop of SHOP_DIRECTORY) {
-    const allMatchers = [shop.name.toLowerCase(), ...shop.aliases];
-    if (allMatchers.some(alias => t.includes(alias))) {
-      return {
-        type: "open_shop",
-        shopId: shop.id,
-        message: `Opening ${shop.name} for you!`
-      };
+    if ([shop.name.toLowerCase(), ...shop.aliases].some(a => t.includes(a))) {
+      return { type: "open_shop", shopId: shop.id, message: `Opening ${shop.name}!` };
     }
   }
 
-  // ── Route navigation ────────────────────────────────────────────────────────
   for (const cmd of ROUTE_COMMANDS) {
-    if (cmd.keywords.some(keyword => t.includes(keyword))) {
-      return {
-        type: "navigate",
-        route: cmd.route,
-        message: `Navigating to ${cmd.label}.`
-      };
+    if (cmd.keywords.some(k => t.includes(k))) {
+      return { type: "navigate", route: cmd.route, message: `Opening your ${cmd.label}!` };
     }
   }
 
-  // ── What can you do? ────────────────────────────────────────────────────────
-  if (t.includes("help") || t.includes("what can you do") || t.includes("commands")) {
-    return {
-      type: "speak",
-      message: "I'm SAFY, your CU Bazzar assistant! I can open any shop for you, check your cart, navigate to wallet, grocery, settings, tracking, and more. Just tell me what you need!"
-    };
-  }
-
-  // ── Greeting ────────────────────────────────────────────────────────────────
-  if (t.includes("hello") || t.includes("hi") || t.includes("hey") || t.includes("safy") || t.includes("bazz")) {
-    return {
-      type: "speak",
-      message: "Hey! I'm SAFY, your personal CU Bazzar assistant. What can I get for you today?"
-    };
-  }
-
-  // ── Food/Search Detection (Instant Local Intelligence) ─────────────────────
-  const FOOD_KEYWORDS = [
-    "sandwich", "chese", "cheese", "burger", "pizza", "chai", "tea", "coffee", 
-    "maggi", "maggie", "pasta", "biryani", "coke", "pepsi", "drink", "food", 
-    "momos", "roll", "paratha", "thali", "rice", "noodle", "chinese"
-  ];
+  // ── Smart Food Detection ───────────────────────────────────────────────────
+  const FOOD_KEYWORDS = ["sandwich", "burger", "pizza", "chai", "tea", "coffee", "maggi", "pasta", "biryani", "momos", "roll", "paratha", "thali", "rice", "noodle", "chinese", "khana", "paneer", "chicken", "cold drink"];
+  const HUNGER_KEYWORDS = ["bhukh", "hungry", "khana hai", "kuch mangao", "kuch khana", "order food"];
   
-  const orderTriggers = ["add", "order", "want", "get", "lekar", "kardo", "buy", "bhukh", "hungry"];
-  
-  if (FOOD_KEYWORDS.some(f => t.includes(f)) || orderTriggers.some(trig => t.includes(trig))) {
-     // Robustly clean the query to get just the food item
-     let query = t.replace(/add|order|want|to|cart|please|can|you|me|kardo|lekar|ao|search|find|dikhao/g, "").trim();
-     
-     if (query.length > 1) {
-       return {
-         type: "search",
-         query: query,
-         message: `I've found some delicious ${query} options for you! Opening the search results now.`
-       };
-     }
+  if (FOOD_KEYWORDS.some(f => t.includes(f)) || HUNGER_KEYWORDS.some(h => t.includes(h))) {
+    const query = t.replace(/add|order|want|get|to|cart|search|find|dikhao|manga|bhukh|khana|lagi|hai|de|do/g, "").trim();
+    return { type: "search", query: query || "food", message: `I've got you covered! Searching for the best ${query || "food"} for you right now.` };
   }
 
-  // ── Fallback ────────────────────────────────────────────────────────────────
-  return {
-    type: "speak",
-    message: `I heard you say "${transcript}", but I'm not sure what to do with that yet. Try saying something like "Open Flavour Factory" or "Go to my wallet".`
-  };
+  // ── Hand over to AI or Search phase if nothing matches ────────────────────
+  return null;
 }
