@@ -195,8 +195,31 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
     }
   };
 
-  // ── Route-based state switching ─────────────────────────────────────────
+  // ── Unified State Synchronization ───────────────────────────────────────
   useEffect(() => {
+    // 1. SAFY state takes absolute priority
+    if (safyState !== "idle") {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      setIslandState("safy");
+      return;
+    }
+
+    // 2. If we just finished a SAFY session, handle the smooth closing delay
+    if (islandState === "safy") {
+      const t = setTimeout(() => {
+        // Fall back to the appropriate route-based state
+        if (location.pathname.startsWith("/tracking")) setIslandState("tracking");
+        else if (location.pathname.startsWith("/browse")) setIslandState("explore");
+        else if (location.pathname.startsWith("/grocery")) setIslandState("grocery");
+        else if (location.pathname.startsWith("/list")) setIslandState("sell");
+        else if (location.pathname.startsWith("/wallet-payment")) setIslandState("payment");
+        else if (location.pathname.startsWith("/wallet")) setIslandState("wallet");
+        else setIslandState("default");
+      }, 350);
+      return () => clearTimeout(t);
+    }
+
+    // 3. Normal logic for non-SAFY states
     if (location.pathname.startsWith("/tracking")) {
       setIslandState("tracking");
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
@@ -219,26 +242,11 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
       triggerState("cart");
     } else if (location.pathname === "/profile") {
       triggerState("profile");
-    } else if (safyState === "idle") {
+    } else {
       setIslandState("default");
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
     }
   }, [location.pathname, safyState]);
-
-  // ── Sync SAFY state with Island ──────────────────────────────────────────
-  useEffect(() => {
-    if (safyState !== "idle") {
-      // Cancel any pending dismiss timers so SAFY takes full priority
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
-      setIslandState("safy");
-    } else if (islandState === "safy") {
-      // Delay revert so the exit animation plays fully before shrinking
-      const t = setTimeout(() => {
-        setIslandState("default");
-      }, 350);
-      return () => clearTimeout(t);
-    }
-  }, [safyState]);
 
   // ── Fetch tracking order & subscribe to real-time updates ───────────────
   const fetchTrackingOrder = useCallback(async () => {
@@ -753,7 +761,7 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
       <motion.div
         initial={false}
         animate={{
-          opacity: scrolled ? 1 : 0,
+          opacity: scrolled && islandState !== "safy" ? 1 : 0,
         }}
         className="fixed top-0 left-0 right-0 z-[9997] pointer-events-none overflow-hidden"
         style={{

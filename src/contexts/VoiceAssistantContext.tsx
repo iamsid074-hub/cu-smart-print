@@ -41,8 +41,16 @@ export function VoiceAssistantProvider({ children }: { children: React.ReactNode
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const synthRef = useRef(window.speechSynthesis);
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const watchdogTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  const isSupported =
+  // Helper to safely clear all timers and revert to idle
+  const forceIdle = useCallback(() => {
+    if (watchdogTimerRef.current) clearTimeout(watchdogTimerRef.current);
+    if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
+    setState("idle");
+    setTranscript("");
+    setResponse("");
+  }, []);
     typeof window !== "undefined" &&
     ("SpeechRecognition" in window || "webkitSpeechRecognition" in window);
 
@@ -72,15 +80,11 @@ export function VoiceAssistantProvider({ children }: { children: React.ReactNode
       utterance.volume = 1.0;
 
       utterance.onend = () => {
-        setState("idle");
-        setTranscript("");
-        setResponse("");
+        forceIdle();
         onDone?.();
       };
       utterance.onerror = () => {
-        setState("idle");
-        setTranscript("");
-        setResponse("");
+        forceIdle();
       };
       synth.speak(utterance);
     };
@@ -97,6 +101,14 @@ export function VoiceAssistantProvider({ children }: { children: React.ReactNode
     async (text: string) => {
       setState("processing");
       setTranscript(text);
+
+      // Start watchdog if it's not already running
+      if (watchdogTimerRef.current) clearTimeout(watchdogTimerRef.current);
+      watchdogTimerRef.current = setTimeout(() => {
+        if (state === "processing" || state === "listening") {
+          forceIdle();
+        }
+      }, 10000); // 10 second safety net
 
       // 1. Try local rule-based matching first
       const action = interpretCommand(text, items, currentShopId);
@@ -177,6 +189,10 @@ export function VoiceAssistantProvider({ children }: { children: React.ReactNode
     
     debounceTimerRef.current = setTimeout(async () => {
       synthRef.current.cancel();
+
+      // Start watchdog for the entire session
+      if (watchdogTimerRef.current) clearTimeout(watchdogTimerRef.current);
+      watchdogTimerRef.current = setTimeout(() => forceIdle(), 12000); 
 
       const old = recognitionRef.current;
       recognitionRef.current = null;
