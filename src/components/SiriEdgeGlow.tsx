@@ -29,14 +29,14 @@ export default function SiriEdgeGlow() {
           <motion.div
             animate={{
               x: isProcessing ? ["-10%", "10%", "-10%"] : ["0%", "5%", "0%"],
-              scaleY: isProcessing ? [1, 1.3, 1] : [1, 1.1, 1],
+              scaleY: isProcessing ? [1, 1.2, 1] : [1, 1.05, 1],
             }}
             transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute top-[-40px] left-[-20%] right-[-20%] h-[120px]"
+            className="absolute top-[-80px] left-[-20%] right-[-20%] h-[100px]"
             style={{
               background: "linear-gradient(90deg, #ff0f7b, #f89b29, #ff0f7b)",
-              filter: "blur(50px)",
-              opacity: isProcessing ? 0.95 : 0.75,
+              filter: "blur(40px)",
+              opacity: isProcessing ? 0.75 : 0.55,
             }}
           />
 
@@ -44,14 +44,14 @@ export default function SiriEdgeGlow() {
           <motion.div
             animate={{
               x: isProcessing ? ["10%", "-10%", "10%"] : ["0%", "-5%", "0%"],
-              scaleY: isProcessing ? [1, 1.4, 1] : [1, 1.1, 1],
+              scaleY: isProcessing ? [1, 1.2, 1] : [1, 1.05, 1],
             }}
             transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute bottom-[-50px] left-[-20%] right-[-20%] h-[140px]"
+            className="absolute bottom-[-100px] left-[-20%] right-[-20%] h-[120px]"
             style={{
               background: "linear-gradient(90deg, #00eeff, #8a2be2, #00eeff)",
-              filter: "blur(55px)",
-              opacity: isProcessing ? 0.9 : 0.7,
+              filter: "blur(45px)",
+              opacity: isProcessing ? 0.7 : 0.5,
             }}
           />
 
@@ -59,14 +59,14 @@ export default function SiriEdgeGlow() {
           <motion.div
             animate={{
               y: isProcessing ? ["-10%", "10%", "-10%"] : ["0%", "5%", "0%"],
-              scaleX: isProcessing ? [1, 1.5, 1] : [1, 1.1, 1],
+              scaleX: isProcessing ? [1, 1.2, 1] : [1, 1.05, 1],
             }}
             transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute left-[-40px] top-[-20%] bottom-[-20%] w-[120px]"
+            className="absolute left-[-80px] top-[-20%] bottom-[-20%] w-[100px]"
             style={{
               background: "linear-gradient(180deg, #ff0f7b, #8a2be2, #ff0f7b)",
-              filter: "blur(50px)",
-              opacity: isProcessing ? 0.85 : 0.65,
+              filter: "blur(40px)",
+              opacity: isProcessing ? 0.65 : 0.45,
             }}
           />
 
@@ -74,14 +74,14 @@ export default function SiriEdgeGlow() {
           <motion.div
             animate={{
               y: isProcessing ? ["10%", "-10%", "10%"] : ["0%", "-5%", "0%"],
-              scaleX: isProcessing ? [1, 1.6, 1] : [1, 1.1, 1],
+              scaleX: isProcessing ? [1, 1.2, 1] : [1, 1.05, 1],
             }}
             transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute right-[-40px] top-[-20%] bottom-[-20%] w-[120px]"
+            className="absolute right-[-80px] top-[-20%] bottom-[-20%] w-[100px]"
             style={{
               background: "linear-gradient(180deg, #00eeff, #f89b29, #00eeff)",
-              filter: "blur(50px)",
-              opacity: isProcessing ? 0.85 : 0.65,
+              filter: "blur(40px)",
+              opacity: isProcessing ? 0.65 : 0.45,
             }}
           />
         </motion.div>
