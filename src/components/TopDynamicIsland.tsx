@@ -35,9 +35,17 @@ const triggerHaptic = async (style: ImpactStyle = ImpactStyle.Light) => {
 // Fluid, bouncy spring animation mimicking Apple's Dynamic Island
 const springTransition = {
   type: "spring" as const,
-  stiffness: 320,
-  damping: 30,
-  mass: 1,
+  stiffness: 380,
+  damping: 36,
+  mass: 0.9,
+};
+
+// Slower, deliberate spring for SAFY expand/contract — feels intentional
+const safySpring = {
+  type: "spring" as const,
+  stiffness: 260,
+  damping: 28,
+  mass: 1.1,
 };
 
 type IslandState =
@@ -220,11 +228,15 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
   // ── Sync SAFY state with Island ──────────────────────────────────────────
   useEffect(() => {
     if (safyState !== "idle") {
-      setIslandState("safy");
+      // Cancel any pending dismiss timers so SAFY takes full priority
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      setIslandState("safy");
     } else if (islandState === "safy") {
-      // Revert to route-based state when SAFY is done
-      setIslandState("default");
+      // Delay revert so the exit animation plays fully before shrinking
+      const t = setTimeout(() => {
+        setIslandState("default");
+      }, 350);
+      return () => clearTimeout(t);
     }
   }, [safyState]);
 
@@ -800,13 +812,12 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
               <motion.div
                 layout
                 key="main-pill"
-                initial={false}
                 animate={{ 
                   width, 
                   height,
                   backgroundColor: "rgba(15, 15, 15, 0.98)"
                 }}
-                transition={springTransition}
+                transition={displayState === "safy" ? safySpring : springTransition}
                 onPointerDown={handlePointerDown}
                 onPointerUp={handlePointerUp}
                 className={`pointer-events-auto flex items-center justify-center overflow-hidden flex-shrink-0 ${
@@ -851,11 +862,14 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
 
                 <AnimatePresence mode="wait">
                   <motion.div
-                    key={islandState + (trackingOrder?.status || "")}
-                    initial={{ opacity: 0, y: 4, scale: 0.93 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: -4, scale: 0.93 }}
-                    transition={{ duration: 0.16, ease: "easeInOut" }}
+                    key={islandState + (trackingOrder?.status || "") + safyState}
+                    initial={{ opacity: 0, scale: 0.92, filter: "blur(4px)" }}
+                    animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+                    exit={{ opacity: 0, scale: 0.88, filter: "blur(6px)" }}
+                    transition={displayState === "safy"
+                      ? { duration: 0.28, ease: [0.25, 0.46, 0.45, 0.94] }  // smooth cubic for SAFY
+                      : { duration: 0.15, ease: "easeInOut" }                // snappy for others
+                    }
                     style={{
                       display: "flex",
                       alignItems: "center",
