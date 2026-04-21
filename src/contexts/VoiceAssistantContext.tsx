@@ -1,7 +1,8 @@
 import React, { createContext, useContext, useState, useRef, useCallback, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
 import { interpretCommand } from "@/lib/bazz-brain";
+import { getSafyAIResponse } from "@/services/safy-ai";
 
 export type SafyState =
   | "idle"
@@ -24,7 +25,13 @@ const VoiceAssistantContext = createContext<VoiceAssistantContextType | undefine
 
 export function VoiceAssistantProvider({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
-  const { items } = useCart();
+  const location = useLocation();
+  const { items, addItem, removeItem, clearCart } = useCart();
+
+  // Detect if user is on a shop page — e.g. /shop/flavour-factory
+  const currentShopId = location.pathname.startsWith("/shop/")
+    ? location.pathname.split("/shop/")[1]?.split("/")[0] || null
+    : null;
 
   const [state, setState] = useState<SafyState>("idle");
   const [transcript, setTranscript] = useState("");
@@ -85,26 +92,56 @@ export function VoiceAssistantProvider({ children }: { children: React.ReactNode
     }
   }, []);
 
-  // ── Process command transcript ─────────────────────────────────────────────
+  // ── Process command transcript (Hybrid Rule-based + LLM Fallback) ───────
   const processCommand = useCallback(
-    (text: string) => {
+    async (text: string) => {
       setState("processing");
       setTranscript(text);
 
-      const action = interpretCommand(text, items);
+      // 1. Try local rule-based matching first, passing current shop context
+      const action = interpretCommand(text, items, currentShopId);
 
-      setTimeout(() => {
-        switch (action.type) {
-          case "navigate":
-            speak(action.message, () => navigate(action.route));
-            break;
-          case "open_shop":
-            speak(action.message, () => navigate(`/shop/${action.shopId}`));
-            break;
-          default:
-            speak(action.message);
-        }
-      }, 300);
+      // 2. Handle all local actions immediately WITHOUT calling AI
+      if (action.type === "navigate" || action.type === "open_shop" || action.type === "cart_info" || action.type === "search" || action.type === "speak" || action.type === "add_to_cart" || action.type === "remove_from_cart" || action.type === "clear_cart") {
+        setTimeout(() => {
+          switch (action.type) {
+            case "navigate":
+              speak(action.message, () => navigate(action.route));
+              break;
+            case "open_shop":
+              speak(action.message, () => navigate(`/shop/${action.shopId}`));
+              break;
+            case "search":
+              speak(action.message, () => navigate(`/search?q=${encodeURIComponent(action.query)}`));
+              break;
+            case "add_to_cart":
+              addItem(action.item);
+              speak(action.message);
+              break;
+            case "remove_from_cart":
+              removeItem(action.itemId);
+              speak(action.message);
+              break;
+            case "clear_cart":
+              clearCart();
+              speak(action.message);
+              break;
+            case "cart_info":
+            case "speak":
+              speak(action.message);
+              break;
+          }
+        }, 400);
+        return;
+      }
+
+      // 3. Otherwise, use Gemini for a smart, conversational response
+      try {
+        const aiResponse = await getSafyAIResponse(text);
+        speak(aiResponse);
+      } catch (error) {
+        speak("I ran into a small hiccup while thinking. Could you say that again?");
+      }
     },
     [items, navigate, speak]
   );

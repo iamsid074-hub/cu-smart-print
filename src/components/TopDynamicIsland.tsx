@@ -565,15 +565,17 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
 
     case "safy":
       const isLongResponse = (safyResponse?.length || 0) > 40;
-      width = isLongResponse ? 300 : transcript.length > 20 ? 240 : 180;
-      height = isLongResponse ? 90 : 56;
+      width = isLongResponse ? 340 : (transcript.length > 20 ? 300 : 260);
+      height = 56; // Locked height to prevent "downwards" expansion
       content = (
         <div className="flex flex-col w-full h-full justify-center px-3 overflow-hidden">
           <div className="flex items-center gap-3">
              {/* Waveform / Icon */}
-             <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center shrink-0">
-               <Mic className="w-4 h-4 text-white" strokeWidth={2.5} />
-             </div>
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition-colors duration-500 ${
+                safyState === "processing" ? "bg-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.5)]" : "bg-white/10"
+              }`}>
+                <Mic className={`w-4 h-4 ${safyState === "processing" ? "text-blue-400 animate-pulse" : "text-white"}`} strokeWidth={2.5} />
+              </div>
 
              <div className="flex flex-col min-w-0 flex-1">
                 <div className="flex items-center gap-2">
@@ -592,9 +594,11 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
                      </div>
                    )}
                 </div>
-                {/* Text Content */}
-                <div className="text-[12px] font-bold text-white leading-tight truncate">
-                   {errorMsg || safyResponse || transcript || (safyState === "listening" ? "Listening…" : "How can I help?")}
+                {/* Text Content - Forced single line and clean truncation */}
+                <div className="text-[12px] font-bold text-white truncate pr-4">
+                   {errorMsg || safyResponse || transcript || 
+                    (safyState === "listening" ? "Listening…" : 
+                     safyState === "processing" ? "Thinking…" : "How can I help?")}
                 </div>
              </div>
 
@@ -606,17 +610,6 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
                <XCircle className="w-4 h-4 text-white/60" strokeWidth={2.5} />
              </button>
           </div>
-          
-          {/* Expanded Response Area for long answers */}
-          {isLongResponse && (
-            <motion.div 
-               initial={{ opacity: 0 }}
-               animate={{ opacity: 1 }}
-               className="mt-2 text-[10px] font-medium text-white/80 leading-snug line-clamp-2 px-1"
-            >
-              {safyResponse}
-            </motion.div>
-          )}
         </div>
       );
       break;
@@ -811,13 +804,7 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
                 animate={{ 
                   width, 
                   height,
-                  backgroundColor: displayState === "safy" ? {
-                    listening: "#ef4444",
-                    processing: "#f59e0b",
-                    speaking: "#10b981",
-                    error: "#dc2626",
-                    idle: "rgba(15, 15, 15, 0.98)"
-                  }[safyState] || "rgba(15, 15, 15, 0.98)" : "rgba(15, 15, 15, 0.98)"
+                  backgroundColor: "rgba(15, 15, 15, 0.98)"
                 }}
                 transition={springTransition}
                 onPointerDown={handlePointerDown}
@@ -837,15 +824,7 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
                   position: "relative",
                   zIndex: 100,
                   willChange: "transform, width",
-                  boxShadow: displayState === "safy" ? `0 8px 32px rgba(0,0,0,0.5), 0 0 20px ${
-                    {
-                      listening: "rgba(239, 68, 68, 0.4)",
-                      processing: "rgba(245, 158, 11, 0.4)",
-                      speaking: "rgba(16, 185, 129, 0.4)",
-                      error: "rgba(220, 38, 38, 0.4)",
-                      idle: "transparent"
-                    }[safyState] || "transparent"
-                  }` : undefined
+                  boxShadow: displayState === "safy" ? `0 8px 32px rgba(0,0,0,0.5), 0 0 0 1px rgba(255, 255, 255, 0.12)` : undefined
                 }}
               >
                 {/* Green camera indicator dot */}
