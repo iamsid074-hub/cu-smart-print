@@ -4,11 +4,10 @@ import { useCart } from "@/contexts/CartContext";
 import { interpretCommand } from "@/lib/bazz-brain";
 
 export type SafyState =
-  | "idle"         // background — not visible
-  | "waking"       // heard wake word, expanding island
-  | "listening"    // actively recording command
-  | "processing"   // interpreting
-  | "speaking"     // reading response aloud
+  | "idle"
+  | "listening"
+  | "processing"
+  | "speaking"
   | "error";
 
 interface UseVoiceAssistantReturn {
@@ -16,6 +15,8 @@ interface UseVoiceAssistantReturn {
   transcript: string;
   response: string;
   isSupported: boolean;
+  errorMsg: string;
+  activate: () => void;
   dismiss: () => void;
 }
 
@@ -26,59 +27,63 @@ export function useVoiceAssistant(): UseVoiceAssistantReturn {
   const [state, setState] = useState<SafyState>("idle");
   const [transcript, setTranscript] = useState("");
   const [response, setResponse] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
 
-  const wakeRecognitionRef = useRef<SpeechRecognition | null>(null);
-  const commandRecognitionRef = useRef<SpeechRecognition | null>(null);
+  const recognitionRef = useRef<SpeechRecognition | null>(null);
   const synthRef = useRef(window.speechSynthesis);
-  const isListeningRef = useRef(false);
-  const isActiveRef = useRef(false);
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const isSupported =
     typeof window !== "undefined" &&
     ("SpeechRecognition" in window || "webkitSpeechRecognition" in window);
 
-  const SpeechRecognitionAPI = isSupported
-    ? (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
-    : null;
-
-  // ── TTS helper ────────────────────────────────────────────────────────────
+  // ── TTS ────────────────────────────────────────────────────────────────────
   const speak = useCallback((text: string, onDone?: () => void) => {
     setState("speaking");
     setResponse(text);
+
     const synth = synthRef.current;
     synth.cancel();
 
     const utterance = new SpeechSynthesisUtterance(text);
-    const voices = synth.getVoices();
-    const preferred = voices.find(
-      (v) =>
-        v.lang.startsWith("en") &&
-        (v.name.includes("Google") || v.name.includes("Samantha") || v.name.includes("Natural"))
-    );
-    if (preferred) utterance.voice = preferred;
-    utterance.rate = 1.0;
-    utterance.pitch = 1.08;
-    utterance.volume = 1.0;
 
-    utterance.onend = () => {
-      onDone?.();
-      // After speaking, go back to idle and restart wake listening
-      setState("idle");
-      setTranscript("");
-      setResponse("");
-      isActiveRef.current = false;
-      setTimeout(() => startWakeListener(), 400);
-    };
-    utterance.onerror = () => {
-      setState("idle");
-      isActiveRef.current = false;
-      setTimeout(() => startWakeListener(), 400);
+    const loadAndSpeak = () => {
+      const voices = synth.getVoices();
+      const preferred = voices.find(
+        (v) =>
+          v.lang.startsWith("en") &&
+          (v.name.includes("Google") ||
+            v.name.includes("Samantha") ||
+            v.name.includes("Natural") ||
+            v.name.includes("Female"))
+      );
+      if (preferred) utterance.voice = preferred;
+      utterance.rate = 1.05;
+      utterance.pitch = 1.1;
+      utterance.volume = 1.0;
+
+      utterance.onend = () => {
+        setState("idle");
+        setTranscript("");
+        setResponse("");
+        onDone?.();
+      };
+      utterance.onerror = () => {
+        setState("idle");
+        setTranscript("");
+        setResponse("");
+      };
+      synth.speak(utterance);
     };
 
-    synth.speak(utterance);
+    if (synth.getVoices().length > 0) {
+      loadAndSpeak();
+    } else {
+      synth.onvoiceschanged = loadAndSpeak;
+    }
   }, []);
 
-  // ── Process a confirmed command transcript ─────────────────────────────────
+  // ── Process command transcript ─────────────────────────────────────────────
   const processCommand = useCallback(
     (text: string) => {
       setState("processing");
@@ -96,142 +101,149 @@ export function useVoiceAssistant(): UseVoiceAssistantReturn {
             break;
           default:
             speak(action.message);
-            break;
         }
-      }, 350);
+      }, 300);
     },
     [items, navigate, speak]
   );
 
-  // ── Command listener (after wake) ──────────────────────────────────────────
-  const startCommandListener = useCallback(() => {
-    if (!SpeechRecognitionAPI) return;
+  // ── Activate: start ONE listening session ──────────────────────────────────
+  const activate = useCallback(() => {
+    if (!isSupported) return;
 
-    // Kill old instance
-    commandRecognitionRef.current?.abort();
+    // Small debounce/delay to prevent double-execution triggering an instant abort/kill
+    if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
+    
+    debounceTimerRef.current = setTimeout(() => {
+      // Kill any existing speech
+      synthRef.current.cancel();
 
-    const recognition: SpeechRecognition = new SpeechRecognitionAPI();
-    commandRecognitionRef.current = recognition;
+      // Null out ref BEFORE aborting so old onerror is ignored
+      const old = recognitionRef.current;
+      recognitionRef.current = null;
+      try { old?.abort(); } catch {}
 
-    recognition.lang = "en-IN";
-    recognition.interimResults = false;
-    recognition.maxAlternatives = 1;
-    recognition.continuous = false;
+      const SpeechRecognitionAPI =
+        (window as any).SpeechRecognition ||
+        (window as any).webkitSpeechRecognition;
 
-    recognition.onstart = () => setState("listening");
-
-    recognition.onresult = (event: SpeechRecognitionEvent) => {
-      const heard = event.results[0]?.[0]?.transcript ?? "";
-      if (heard.trim()) processCommand(heard);
-    };
-
-    recognition.onerror = () => {
-      speak("I didn't catch that. Just say SAFY again when you need me!");
-    };
-
-    recognition.onend = () => {
-      if (state === "listening") {
-        speak("I didn't catch that. Just say SAFY again when you need me!");
+      if (!SpeechRecognitionAPI) {
+        setErrorMsg("Voice system not available.");
+        setState("error");
+        setTimeout(() => setState("idle"), 3000);
+        return;
       }
-    };
 
-    recognition.start();
-  }, [SpeechRecognitionAPI, processCommand, speak, state]);
+      const recognition: SpeechRecognition = new SpeechRecognitionAPI();
+      recognitionRef.current = recognition;
 
-  // ── Wake word listener (always running in background) ─────────────────────
-  const startWakeListener = useCallback(() => {
-    if (!SpeechRecognitionAPI || isListeningRef.current) return;
+      let hasProcessed = false;
+      let hasErrored = false;
 
-    wakeRecognitionRef.current?.abort();
-    wakeRecognitionRef.current = null;
+      // Configuration for stability on Android WebView
+      recognition.lang = "en-IN";
+      recognition.interimResults = true; // Stay open and show feedback
+      recognition.maxAlternatives = 1;
+      recognition.continuous = true; // Critical: keeps mic open on Android
 
-    const recognition: SpeechRecognition = new SpeechRecognitionAPI();
-    wakeRecognitionRef.current = recognition;
+      recognition.onstart = () => {
+        setState("listening");
+        setTranscript("");
+        setResponse("");
+        setErrorMsg("");
+        try { navigator.vibrate?.(40); } catch {}
+      };
 
-    recognition.lang = "en-IN";
-    recognition.interimResults = true;
-    recognition.maxAlternatives = 1;
-    recognition.continuous = true; // keep listening until wake word
+      recognition.onresult = (event: SpeechRecognitionEvent) => {
+        const resultIndex = event.resultIndex;
+        const result = event.results[resultIndex];
+        const text = result[0].transcript;
+        
+        setTranscript(text.trim());
 
-    isListeningRef.current = true;
-
-    recognition.onresult = (event: SpeechRecognitionEvent) => {
-      if (isActiveRef.current) return; // already awake, ignore
-
-      for (let i = event.resultIndex; i < event.results.length; i++) {
-        const text = event.results[i][0].transcript.toLowerCase().trim();
-        // Wake word detection — "safy" or "hi safy" or "hey safy"
-        if (
-          text.includes("safy") ||
-          text.includes("safi") ||
-          text.includes("safety") || // common misrecognition
-          text.includes("sophie") ||  // another misrecognition edge case
-          text.includes("safe")
-        ) {
-          isActiveRef.current = true;
-          recognition.stop();
-          isListeningRef.current = false;
-
-          // Trigger wake sequence
-          setState("waking");
-          synthRef.current.cancel();
-
-          setTimeout(() => {
-            startCommandListener();
-          }, 600); // small delay for the island animation to expand
-          break;
+        if (result.isFinal) {
+          if (hasProcessed) return;
+          hasProcessed = true;
+          
+          recognition.stop(); 
+          processCommand(text.trim());
         }
+      };
+
+      recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
+        if (recognitionRef.current !== recognition) return;
+        hasErrored = true;
+        console.warn("[SAFY] Error:", event.error);
+        
+        switch (event.error) {
+          case "no-speech":
+            // Usually happens if noise floor is high or user takes too long
+            // Don't kill it instantly, just show a message
+            setErrorMsg("Click to try again if I stopped.");
+            setState("error");
+            setTimeout(() => { if (state === "error") setState("idle"); }, 3000);
+            break;
+          case "not-allowed":
+          case "service-not-allowed":
+            setErrorMsg("Mic permission denied. Check phone settings.");
+            setState("error");
+            break;
+          case "network":
+            setErrorMsg("Network error. Checking connection...");
+            setState("error");
+            setTimeout(() => setState("idle"), 3000);
+            break;
+          case "aborted":
+            setState("idle");
+            break;
+          default:
+            setState("idle");
+            break;
+        }
+      };
+
+      recognition.onend = () => {
+        if (hasProcessed || hasErrored) return;
+        // If it ends abruptly without result/error, go idle
+        setState((prev) => (prev === "listening" ? "idle" : prev));
+        if (recognitionRef.current === recognition) {
+          recognitionRef.current = null;
+        }
+      };
+
+      try {
+        recognition.start();
+      } catch (e: any) {
+        console.error("[SAFY] Init failed:", e);
+        setState("idle");
       }
-    };
+    }, 150); // 150ms debounce
+  }, [isSupported, processCommand, speak, state]);
 
-    recognition.onend = () => {
-      isListeningRef.current = false;
-      // Restart wake listener automatically unless we are actively processing
-      if (!isActiveRef.current) {
-        setTimeout(() => startWakeListener(), 300);
-      }
-    };
-
-    recognition.onerror = (e: SpeechRecognitionErrorEvent) => {
-      isListeningRef.current = false;
-      if (e.error !== "aborted" && !isActiveRef.current) {
-        setTimeout(() => startWakeListener(), 1000);
-      }
-    };
-
-    try {
-      recognition.start();
-    } catch {
-      isListeningRef.current = false;
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [SpeechRecognitionAPI]);
-
-  // ── Dismiss ────────────────────────────────────────────────────────────────
+  // ── Dismiss everything ────────────────────────────────────────────────────
   const dismiss = useCallback(() => {
-    commandRecognitionRef.current?.abort();
+    const r = recognitionRef.current;
+    recognitionRef.current = null;
+    try { r?.abort(); } catch {}
     synthRef.current.cancel();
+    if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
     setState("idle");
     setTranscript("");
     setResponse("");
-    isActiveRef.current = false;
-    setTimeout(() => startWakeListener(), 400);
-  }, [startWakeListener]);
-
-  // ── Boot: start wake listener when component mounts ───────────────────────
-  useEffect(() => {
-    if (!isSupported) return;
-    // Short delay to avoid fighting with other audio contexts on page load
-    const t = setTimeout(() => startWakeListener(), 1500);
-    return () => {
-      clearTimeout(t);
-      wakeRecognitionRef.current?.abort();
-      commandRecognitionRef.current?.abort();
-      synthRef.current.cancel();
-      isListeningRef.current = false;
-    };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    setErrorMsg("");
   }, []);
 
-  return { state, transcript, response, isSupported, dismiss };
+  // ── Cleanup on unmount ────────────────────────────────────────────────────
+  useEffect(
+    () => () => {
+      const r = recognitionRef.current;
+      recognitionRef.current = null;
+      try { r?.abort(); } catch {}
+      synthRef.current.cancel();
+      if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
+    },
+    []
+  );
+
+  return { state, transcript, response, errorMsg, isSupported, activate, dismiss };
 }

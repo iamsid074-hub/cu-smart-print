@@ -1,37 +1,38 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { Mic, X } from "lucide-react";
-import { useVoiceAssistant } from "@/hooks/useVoiceAssistant";
+import { useVoiceAssistant, type SafyState } from "@/hooks/useVoiceAssistant";
+import { useLocation } from "react-router-dom";
 
-// ─── Gradient per state ──────────────────────────────────────────────────────
-const STATE_BG: Record<string, string> = {
-  waking:     "rgba(99,102,241,0.95)",
-  listening:  "rgba(239,68,68,0.95)",
-  processing: "rgba(245,158,11,0.95)",
-  speaking:   "rgba(16,185,129,0.95)",
-  error:      "rgba(239,68,68,0.9)",
+// ─── Pill colour per state ────────────────────────────────────────────────────
+const PILL_COLOR: Record<SafyState, string> = {
+  idle:       "transparent",
+  listening:  "#ef4444",
+  processing: "#f59e0b",
+  speaking:   "#10b981",
+  error:      "#dc2626",
 };
 
-const STATE_LABEL: Record<string, string> = {
-  waking:     "Hey! What can I do for you?",
+const PILL_LABEL: Record<SafyState, string> = {
+  idle:       "",
   listening:  "Listening…",
   processing: "Thinking…",
-  speaking:   "",
-  error:      "Try again",
+  speaking:   "Speaking…",
+  error:      "Mic error — try again",
 };
 
-// ─── Waveform bars that animate while speaking/listening ─────────────────────
-function WaveBars({ active }: { active: boolean }) {
+// ─── Small waveform ───────────────────────────────────────────────────────────
+function Wave({ active }: { active: boolean }) {
   return (
-    <div className="flex items-center gap-[3px] h-5">
-      {[0.4, 0.7, 1, 0.7, 0.5, 0.8, 0.6].map((h, i) => (
+    <div className="flex items-center gap-[2.5px] h-4">
+      {[0.5, 0.9, 1, 0.7, 0.5].map((h, i) => (
         <motion.div
           key={i}
           className="w-[3px] rounded-full bg-white"
-          animate={active ? { scaleY: [h, 1, h * 0.5, 1, h] } : { scaleY: 0.3 }}
+          animate={active ? { scaleY: [h, 1, h * 0.4, 1, h] } : { scaleY: 0.25 }}
           transition={{
             repeat: Infinity,
-            duration: 0.7 + i * 0.08,
-            delay: i * 0.07,
+            duration: 0.65 + i * 0.07,
+            delay: i * 0.06,
             ease: "easeInOut",
           }}
           style={{ transformOrigin: "center", height: "100%" }}
@@ -42,104 +43,142 @@ function WaveBars({ active }: { active: boolean }) {
 }
 
 export default function VoiceAssistant() {
-  const { state, transcript, response, isSupported, dismiss } = useVoiceAssistant();
+  const { state, transcript, response, errorMsg, isSupported, activate, dismiss } =
+    useVoiceAssistant();
+  const location = useLocation();
 
-  if (!isSupported) return null;
+  // Hide on pages that don't need it
+  const hiddenPaths = ["/", "/login", "/reset-password", "/pasta-offer"];
+  if (!isSupported || hiddenPaths.includes(location.pathname)) return null;
+  if (location.pathname.startsWith("/admin")) return null;
 
   const isActive = state !== "idle";
-  const bg = STATE_BG[state] ?? STATE_BG.listening;
+  const pillColor = PILL_COLOR[state];
 
-  // ─── Compact Dynamic Island pill (visible only when SAFY is active) ────────
   return (
-    <AnimatePresence>
-      {isActive && (
-        <motion.div
-          key="safy-island"
-          // Position: directly inside / below the top Dynamic Island notch
-          initial={{ opacity: 0, scaleX: 0.3, scaleY: 0.3, y: -12 }}
-          animate={{ opacity: 1, scaleX: 1, scaleY: 1, y: 0 }}
-          exit={{ opacity: 0, scaleX: 0.3, scaleY: 0.3, y: -12 }}
-          transition={{ type: "spring", stiffness: 380, damping: 28, mass: 0.9 }}
-          className="fixed top-3 left-1/2 z-[400]"
-          style={{
-            transform: "translateX(-50%)",
-            transformOrigin: "top center",
-          }}
-        >
+    <>
+      {/* ── Dynamic Island SAFY pill (slides down from top when active) ─────── */}
+      <AnimatePresence>
+        {isActive && (
           <motion.div
-            animate={{ backgroundColor: bg }}
-            transition={{ duration: 0.3 }}
-            className="relative flex items-center gap-3 px-4 py-2.5 rounded-full shadow-[0_8px_32px_rgba(0,0,0,0.6)]"
-            style={{ minWidth: 180, maxWidth: "90vw" }}
+            key="safy-pill"
+            initial={{ opacity: 0, y: -60, scale: 0.7 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -60, scale: 0.7 }}
+            transition={{ type: "spring", stiffness: 400, damping: 30, mass: 0.8 }}
+            className="fixed top-4 left-1/2 z-[500] flex flex-col items-center"
+            style={{ transform: "translateX(-50%)" }}
           >
-            {/* SAFY mic icon */}
-            <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center shrink-0">
-              <Mic className="w-3.5 h-3.5 text-white" strokeWidth={2.5} />
-            </div>
-
-            {/* Content area */}
-            <div className="flex flex-col min-w-0 flex-1">
-              {/* Name row */}
-              <div className="flex items-center gap-2">
-                <span className="text-white text-[11px] font-black tracking-widest uppercase">
-                  SAFY
-                </span>
-                {(state === "listening" || state === "speaking" || state === "waking") && (
-                  <WaveBars active={state === "listening" || state === "speaking"} />
-                )}
+            {/* Pill */}
+            <motion.div
+              animate={{ backgroundColor: pillColor }}
+              transition={{ duration: 0.25 }}
+              className="flex items-center gap-2.5 px-4 py-2 rounded-full shadow-[0_8px_40px_rgba(0,0,0,0.7)]"
+              style={{ minWidth: 160 }}
+            >
+              {/* Mic dot */}
+              <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center shrink-0">
+                <Mic className="w-3 h-3 text-white" strokeWidth={3} />
               </div>
 
-              {/* Dynamic status / transcript / response */}
-              <AnimatePresence mode="wait">
-                <motion.p
-                  key={response || transcript || state}
-                  initial={{ opacity: 0, y: 4 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -4 }}
-                  transition={{ duration: 0.18 }}
-                  className="text-white/80 text-[11px] font-medium leading-tight mt-0.5 truncate max-w-[200px]"
-                >
-                  {response
-                    ? response
-                    : transcript
-                    ? transcript
-                    : STATE_LABEL[state] ?? ""}
-                </motion.p>
-              </AnimatePresence>
-            </div>
+              <div className="flex flex-col min-w-0 flex-1">
+                <div className="flex items-center gap-1.5">
+                  <span className="text-white text-[10px] font-black tracking-[0.15em] uppercase">
+                    SAFY
+                  </span>
+                  {(state === "listening" || state === "speaking") && (
+                    <Wave active />
+                  )}
+                </div>
 
-            {/* Dismiss X */}
-            <button
-              onClick={dismiss}
-              className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center shrink-0 hover:bg-white/35 transition-colors"
-              aria-label="Dismiss SAFY"
-            >
-              <X className="w-3 h-3 text-white" strokeWidth={3} />
-            </button>
-          </motion.div>
+                <AnimatePresence mode="wait">
+                  <motion.p
+                    key={state + transcript + response + errorMsg}
+                    initial={{ opacity: 0, y: 3 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -3 }}
+                    transition={{ duration: 0.15 }}
+                    className="text-white/75 text-[10px] font-medium leading-tight mt-0.5 truncate"
+                    style={{ maxWidth: 170 }}
+                  >
+                    {errorMsg
+                      ? errorMsg
+                      : state === "speaking" && response
+                      ? response
+                      : state === "processing" && transcript
+                      ? `"${transcript}"`
+                      : PILL_LABEL[state]}
+                  </motion.p>
+                </AnimatePresence>
+              </div>
 
-          {/* Full command overlay — slides down from island when speaking long responses */}
-          <AnimatePresence>
-            {state === "speaking" && response.length > 40 && (
-              <motion.div
-                initial={{ opacity: 0, y: -8, scaleY: 0.85 }}
-                animate={{ opacity: 1, y: 8, scaleY: 1 }}
-                exit={{ opacity: 0, y: -8, scaleY: 0.85 }}
-                transition={{ type: "spring", stiffness: 300, damping: 28 }}
-                className="absolute top-full left-1/2 mt-2 w-72"
-                style={{ transform: "translateX(-50%)", transformOrigin: "top center" }}
+              {/* Dismiss */}
+              <button
+                onClick={dismiss}
+                className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center shrink-0 hover:bg-white/35 transition-colors"
+                aria-label="Dismiss SAFY"
               >
-                <div
-                  className="rounded-2xl px-5 py-4 text-white/90 text-sm font-medium leading-relaxed shadow-2xl"
-                  style={{ background: "rgba(20,20,25,0.97)", border: "1px solid rgba(255,255,255,0.08)" }}
+                <X className="w-2.5 h-2.5 text-white" strokeWidth={3.5} />
+              </button>
+            </motion.div>
+
+            {/* Long response card drops below pill */}
+            <AnimatePresence>
+              {state === "speaking" && response.length > 50 && (
+                <motion.div
+                  initial={{ opacity: 0, y: -6, scale: 0.94 }}
+                  animate={{ opacity: 1, y: 6, scale: 1 }}
+                  exit={{ opacity: 0, y: -6, scale: 0.94 }}
+                  transition={{ type: "spring", stiffness: 320, damping: 28 }}
+                  className="mt-2 rounded-2xl px-5 py-3.5 text-white/90 text-sm font-medium leading-relaxed shadow-2xl max-w-[300px] text-center"
+                  style={{
+                    background: "rgba(15,15,20,0.97)",
+                    border: "1px solid rgba(255,255,255,0.08)",
+                  }}
                 >
                   {response}
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </motion.div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ── Static SAFY button (no layout animation = no glitch) ─────────────── */}
+      {!isActive && (
+        <button
+          id="safy-voice-btn"
+          onClick={activate}
+          aria-label="Talk to SAFY"
+          className="fixed right-5 z-[300] flex items-center gap-2 px-4 py-2.5 rounded-full shadow-[0_6px_28px_rgba(99,102,241,0.5)] active:scale-95 transition-transform select-none"
+          style={{
+            bottom: "calc(env(safe-area-inset-bottom, 0px) + 104px)",
+            background: "linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)",
+            WebkitTapHighlightColor: "transparent",
+          }}
+        >
+          {/* Gentle idle pulse ring */}
+          <span
+            className="absolute inset-0 rounded-full"
+            style={{
+              background: "rgba(99,102,241,0.35)",
+              animation: "safy-pulse 2.2s ease-in-out infinite",
+            }}
+          />
+          <Mic className="w-4 h-4 text-white relative z-10" strokeWidth={2.5} />
+          <span className="text-white text-[11px] font-black tracking-widest uppercase relative z-10">
+            SAFY
+          </span>
+        </button>
       )}
-    </AnimatePresence>
+
+      {/* Keyframe for idle pulse — injected once */}
+      <style>{`
+        @keyframes safy-pulse {
+          0%, 100% { transform: scale(1); opacity: 0.55; }
+          50%       { transform: scale(1.5); opacity: 0; }
+        }
+      `}</style>
+    </>
   );
 }
