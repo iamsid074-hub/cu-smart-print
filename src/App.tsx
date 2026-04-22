@@ -24,16 +24,23 @@ const QuickStore = lazy(() => import("./pages/QuickStore"));
 
 // Core pages to preload for flawless switching
 const preloadCoreRoutes = () => {
-  // Bottom Nav items
-  import("./pages/Home");
-  import("./pages/Grocery");
-  import("./pages/Wallet");
-  import("./pages/Settings");
-  
-  // Frequent heavily-animated interactions
-  import("./pages/SearchPage");
-  import("./pages/Profile");
-  import("./pages/QuickStore");
+  const doPreload = () => {
+    // Bottom Nav items
+    import("./pages/Home");
+    import("./pages/Grocery");
+    import("./pages/Wallet");
+    import("./pages/Settings");
+    // Frequent interactions
+    import("./pages/SearchPage");
+    import("./pages/Profile");
+    import("./pages/QuickStore");
+  };
+  // Use requestIdleCallback to avoid blocking initial render
+  if ('requestIdleCallback' in window) {
+    (window as any).requestIdleCallback(doPreload, { timeout: 3000 });
+  } else {
+    setTimeout(doPreload, 1500);
+  }
 };
 // FoodSearch replaced by new /search flow
 const SearchPage = lazy(() => import("./pages/SearchPage"));
@@ -58,13 +65,15 @@ const WalletPayment = lazy(() => import("./pages/WalletPayment"));
 import Navbar from "./components/Navbar";
 import BottomNav from "./components/BottomNav";
 import AppUpdater from "./components/AppUpdater";
-import LiveOrderBanner from "./components/LiveOrderBanner";
 import UsernameSetup from "./components/UsernameSetup";
 import ScrollToTop from "./components/ScrollToTop";
 import StickyStripBanner from "./components/StickyStripBanner";
-import VoiceAssistant from "./components/VoiceAssistant";
 import { VoiceAssistantProvider } from "./contexts/VoiceAssistantContext";
-import SiriEdgeGlow from "./components/SiriEdgeGlow";
+
+// Lazy-load non-critical-path components
+const VoiceAssistant = lazy(() => import("./components/VoiceAssistant"));
+const SiriEdgeGlow = lazy(() => import("./components/SiriEdgeGlow"));
+const LiveOrderBanner = lazy(() => import("./components/LiveOrderBanner"));
 
 import ErrorBoundary from "./components/ErrorBoundary";
 import { usePushNotifications } from "./hooks/usePushNotifications";
@@ -164,9 +173,9 @@ function AppLayout() {
       const timer = setTimeout(() => {
         setInitialBootFinished(true);
         (window as any).hasBooted = true;
-        // Once boot is finished, preload other sections in background
+        // Preload other sections when browser is idle
         preloadCoreRoutes();
-      }, 300);
+      }, 200);
       return () => clearTimeout(timer);
     }
   }, [authLoading, gateLoaded]);
@@ -219,8 +228,10 @@ function AppLayout() {
         <>
           {location.pathname !== "/pasta-offer" && <Navbar />}
           {location.pathname !== "/pasta-offer" && <BottomNav />}
-          {location.pathname !== "/pasta-offer" && <VoiceAssistant />}
-          <SiriEdgeGlow />
+          <Suspense fallback={null}>
+            {location.pathname !== "/pasta-offer" && <VoiceAssistant />}
+            <SiriEdgeGlow />
+          </Suspense>
         </>
       )}
       <ErrorBoundary>

@@ -39,6 +39,10 @@ export default defineConfig(({ mode }) => ({
           ],
           "vendor-forms": ["react-hook-form", "@hookform/resolvers", "zod"],
           "vendor-misc": ["sonner", "date-fns", "clsx", "tailwind-merge", "lucide-react"],
+          // Heavy, page-specific dependencies — split to avoid bloating initial load
+          "vendor-ai": ["@google/generative-ai"],
+          "vendor-charts": ["recharts"],
+          "vendor-analytics": ["posthog-js"],
         },
       },
     },

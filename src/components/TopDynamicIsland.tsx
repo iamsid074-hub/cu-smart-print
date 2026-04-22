@@ -718,9 +718,6 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
 
   // ── Determine glow animation ────────────────────────────────────────────
   const getAnimation = () => {
-    if (displayState === "safy") {
-      return "diSafyGlow 3s ease-in-out infinite";
-    }
     if (islandState === "tracking" && trackingOrder) {
       if (statusAnimating) return "diTrackingPulse 0.8s ease-out 1";
       if (trackingOrder.status === "delivering")
@@ -736,14 +733,6 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
         @keyframes diGlow {
           0%, 100% { box-shadow: 0 0 0 0.5px rgba(255,255,255,0.08), 0 0 20px rgba(255,255,255,0.05); }
           50% { box-shadow: 0 0 0 1px rgba(255,255,255,0.15), 0 0 30px rgba(255,255,255,0.1); }
-        }
-        @keyframes diSafyGlow {
-          0%, 100% {
-            box-shadow: 0 0 12px rgba(139,92,246,0.25);
-          }
-          50% {
-            box-shadow: 0 0 16px rgba(139,92,246,0.35);
-          }
         }
         @keyframes diTrackingGlow {
           0%, 100% { box-shadow: 0 0 0 0.5px rgba(16,185,129,0.15), 0 0 20px rgba(16,185,129,0.08); }
@@ -838,21 +827,15 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
                     : ""
                 }`}
                 style={{
-                  border: displayState === "safy"
-                    ? "1px solid rgba(139,92,246,0.35)"
-                    : "1px solid rgba(255, 255, 255, 0.12)",
+                  border: "1px solid rgba(255, 255, 255, 0.12)",
                   borderRadius: 50,
                   animation: getAnimation(),
                   position: "relative",
                   zIndex: 100,
+                  contain: "layout style paint",
                   willChange: "transform, width",
-                  transition: "border-color 0.6s ease",
                 }}
               >
-
-
-                {/* Internal container to handle content clipping instead of the pill itself */}
-                <div className="absolute inset-0 overflow-hidden rounded-[inherit] pointer-events-none" />
                 <div className="relative w-full h-full flex items-center justify-center overflow-hidden rounded-[inherit]">
 
                 {/* Green camera indicator dot */}

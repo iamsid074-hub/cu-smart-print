@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useRef, useCallback, useEffect } from "react";
+import React, { createContext, useContext, useState, useRef, useCallback, useEffect, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
 import { interpretCommand } from "@/lib/bazz-brain";
@@ -317,8 +317,12 @@ export function VoiceAssistantProvider({ children }: { children: React.ReactNode
     []
   );
 
+  const contextValue = useMemo(() => ({
+    state, transcript, response, errorMsg, isSupported, activate, dismiss
+  }), [state, transcript, response, errorMsg, isSupported, activate, dismiss]);
+
   return (
-    <VoiceAssistantContext.Provider value={{ state, transcript, response, errorMsg, isSupported, activate, dismiss }}>
+    <VoiceAssistantContext.Provider value={contextValue}>
       {children}
     </VoiceAssistantContext.Provider>
   );
