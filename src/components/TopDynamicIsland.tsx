@@ -40,12 +40,12 @@ const springTransition = {
   mass: 0.9,
 };
 
-// Optimized spring for SAFY expand/contract - high performance for mobile
+// Slower, deliberate spring for SAFY expand/contract — feels intentional & silky
 const safySpring = {
   type: "spring" as const,
-  stiffness: 240,
-  damping: 30,
-  mass: 1.0,
+  stiffness: 200,
+  damping: 26,
+  mass: 1.3,
 };
 
 type IslandState =
@@ -195,31 +195,8 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
     }
   };
 
-  // ── Unified State Synchronization ───────────────────────────────────────
+  // ── Route-based state switching ─────────────────────────────────────────
   useEffect(() => {
-    // 1. SAFY state takes absolute priority
-    if (safyState !== "idle") {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
-      setIslandState("safy");
-      return;
-    }
-
-    // 2. If we just finished a SAFY session, handle the smooth closing delay
-    if (islandState === "safy") {
-      const t = setTimeout(() => {
-        // Fall back to the appropriate route-based state
-        if (location.pathname.startsWith("/tracking")) setIslandState("tracking");
-        else if (location.pathname.startsWith("/browse")) setIslandState("explore");
-        else if (location.pathname.startsWith("/grocery")) setIslandState("grocery");
-        else if (location.pathname.startsWith("/list")) setIslandState("sell");
-        else if (location.pathname.startsWith("/wallet-payment")) setIslandState("payment");
-        else if (location.pathname.startsWith("/wallet")) setIslandState("wallet");
-        else setIslandState("default");
-      }, 350);
-      return () => clearTimeout(t);
-    }
-
-    // 3. Normal logic for non-SAFY states
     if (location.pathname.startsWith("/tracking")) {
       setIslandState("tracking");
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
@@ -242,11 +219,26 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
       triggerState("cart");
     } else if (location.pathname === "/profile") {
       triggerState("profile");
-    } else {
+    } else if (safyState === "idle") {
       setIslandState("default");
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
     }
   }, [location.pathname, safyState]);
+
+  // ── Sync SAFY state with Island ──────────────────────────────────────────
+  useEffect(() => {
+    if (safyState !== "idle") {
+      // Cancel any pending dismiss timers so SAFY takes full priority
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      setIslandState("safy");
+    } else if (islandState === "safy") {
+      // Delay revert so the exit animation plays fully before shrinking
+      const t = setTimeout(() => {
+        setIslandState("default");
+      }, 350);
+      return () => clearTimeout(t);
+    }
+  }, [safyState]);
 
   // ── Fetch tracking order & subscribe to real-time updates ───────────────
   const fetchTrackingOrder = useCallback(async () => {
@@ -585,8 +577,8 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
 
     case "safy":
       const isLongResponse = (safyResponse?.length || 0) > 40;
-      width = isLongResponse ? 340 : (transcript.length > 20 ? 300 : 260);
-      height = 56; // Locked height to prevent "downwards" expansion
+      width = isLongResponse ? 310 : (transcript.length > 20 ? 270 : 240);
+      height = 54; // Locked height to prevent "downwards" expansion
       content = (
         <div className="flex flex-col w-full h-full justify-center px-3 overflow-hidden">
           <div className="flex items-center gap-3">
@@ -726,6 +718,9 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
 
   // ── Determine glow animation ────────────────────────────────────────────
   const getAnimation = () => {
+    if (displayState === "safy") {
+      return "diSafyGlow 3s ease-in-out infinite";
+    }
     if (islandState === "tracking" && trackingOrder) {
       if (statusAnimating) return "diTrackingPulse 0.8s ease-out 1";
       if (trackingOrder.status === "delivering")
@@ -741,6 +736,18 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
         @keyframes diGlow {
           0%, 100% { box-shadow: 0 0 0 0.5px rgba(255,255,255,0.08), 0 0 20px rgba(255,255,255,0.05); }
           50% { box-shadow: 0 0 0 1px rgba(255,255,255,0.15), 0 0 30px rgba(255,255,255,0.1); }
+        }
+        @keyframes diSafyGlow {
+          0%, 100% {
+            box-shadow:
+              0 0 30px 10px rgba(139,92,246,0.25),
+              0 0 60px 20px rgba(99,102,241,0.15);
+          }
+          50% {
+            box-shadow:
+              0 0 45px 15px rgba(59,130,246,0.3),
+              0 0 90px 25px rgba(139,92,246,0.2);
+          }
         }
         @keyframes diTrackingGlow {
           0%, 100% { box-shadow: 0 0 0 0.5px rgba(16,185,129,0.15), 0 0 20px rgba(16,185,129,0.08); }
@@ -761,7 +768,7 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
       <motion.div
         initial={false}
         animate={{
-          opacity: scrolled && islandState !== "safy" ? 1 : 0,
+          opacity: scrolled ? 1 : 0,
         }}
         className="fixed top-0 left-0 right-0 z-[9997] pointer-events-none overflow-hidden"
         style={{
@@ -776,29 +783,29 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
         {/* Mesh Blur Blobs - GPU Optimized for Mobile */}
         <motion.div
           animate={{
-            x: scrolled ? [-60, 60, -60] : 0,
-            y: [-10, 10, -10],
+            x: scrolled ? [-80, 80, -80] : 0,
+            y: [-15, 15, -15],
           }}
           transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
-          className="absolute -top-10 left-1/4 w-32 sm:w-64 h-32 sm:h-64 bg-indigo-500/10 rounded-full blur-[40px] sm:blur-[80px] will-change-transform"
-          style={{ backfaceVisibility: "hidden", transform: "translate3d(0,0,0)" }}
+          className="absolute -top-10 left-1/4 w-48 sm:w-64 h-48 sm:h-64 bg-indigo-500/15 rounded-full blur-[60px] sm:blur-[80px] will-change-transform"
+          style={{ backfaceVisibility: "hidden", transform: "translateZ(0)" }}
         />
         <motion.div
           animate={{
-            x: scrolled ? [60, -60, 60] : 0,
-            y: [10, -10, 10],
+            x: scrolled ? [80, -80, 80] : 0,
+            y: [15, -15, 15],
           }}
           transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-          className="absolute -top-12 right-1/4 w-32 sm:w-64 h-32 sm:h-64 bg-purple-500/10 rounded-full blur-[40px] sm:blur-[80px] will-change-transform"
-          style={{ backfaceVisibility: "hidden", transform: "translate3d(0,0,0)" }}
+          className="absolute -top-10 right-1/4 w-64 sm:w-80 h-64 sm:h-80 bg-purple-500/15 rounded-full blur-[80px] sm:blur-[100px] will-change-transform"
+          style={{ backfaceVisibility: "hidden", transform: "translateZ(0)" }}
         />
         <motion.div
           animate={{
-            scale: scrolled ? [1, 1.05, 1] : 1,
+            scale: scrolled ? [1, 1.1, 1] : 1,
           }}
           transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-          className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-blue-600/5 blur-[50px] sm:blur-[80px] will-change-transform"
-          style={{ backfaceVisibility: "hidden", transform: "translate3d(0,0,0)" }}
+          className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-blue-600/5 blur-[100px] sm:blur-[120px] will-change-transform"
+          style={{ backfaceVisibility: "hidden", transform: "translateZ(0)" }}
         />
       </motion.div>
 
@@ -837,15 +844,15 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
                     : ""
                 }`}
                 style={{
-                  border: "1px solid rgba(255, 255, 255, 0.12)",
+                  border: displayState === "safy"
+                    ? "1px solid rgba(139,92,246,0.35)"
+                    : "1px solid rgba(255, 255, 255, 0.12)",
                   borderRadius: 50,
                   animation: getAnimation(),
                   position: "relative",
                   zIndex: 100,
-                  willChange: "transform, width, height, background-color",
-                  transform: "translateZ(0)",
-                  backfaceVisibility: "hidden",
-                  boxShadow: displayState === "safy" ? `0 8px 32px rgba(0,0,0,0.5), 0 0 0 1px rgba(255, 255, 255, 0.12)` : undefined
+                  willChange: "transform, width",
+                  transition: "border-color 0.6s ease",
                 }}
               >
                 {/* Green camera indicator dot */}
@@ -873,12 +880,18 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={islandState + (trackingOrder?.status || "") + safyState}
-                    initial={{ opacity: 0, scale: 0.92, filter: "blur(4px)" }}
+                    initial={displayState === "safy"
+                      ? { opacity: 0, scale: 0.88, filter: "blur(8px)" }
+                      : { opacity: 0, scale: 0.92, filter: "blur(4px)" }
+                    }
                     animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-                    exit={{ opacity: 0, scale: 0.88, filter: "blur(6px)" }}
+                    exit={displayState === "safy"
+                      ? { opacity: 0, scale: 0.92, filter: "blur(10px)" }
+                      : { opacity: 0, scale: 0.88, filter: "blur(6px)" }
+                    }
                     transition={displayState === "safy"
-                      ? { duration: 0.28, ease: [0.25, 0.46, 0.45, 0.94] }  // smooth cubic for SAFY
-                      : { duration: 0.15, ease: "easeInOut" }                // snappy for others
+                      ? { duration: 0.5, ease: [0.16, 1, 0.3, 1] }   // silky smooth for SAFY
+                      : { duration: 0.15, ease: "easeInOut" }          // snappy for others
                     }
                     style={{
                       display: "flex",

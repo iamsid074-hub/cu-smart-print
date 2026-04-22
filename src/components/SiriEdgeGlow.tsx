@@ -15,49 +15,76 @@ export default function SiriEdgeGlow() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.6, ease: [0.33, 1, 0.68, 1] }} // Premium cubic-bezier
+          transition={{ duration: 0.6, ease: "easeInOut" }}
           className="pointer-events-none fixed inset-0 z-[8000] overflow-hidden"
           style={{ 
-            willChange: "opacity",
-            transform: "translate3d(0,0,0)", // Force GPU layer
-            background: "transparent"
+            mixBlendMode: "screen",
+            maskImage: "radial-gradient(circle at 50% 50%, transparent 85%, black 100%)",
+            WebkitMaskImage: "radial-gradient(circle at 50% 50%, transparent 85%, black 100%)"
           }}
         >
           {/* 
-            ULTRA-OPTIMIZED BLOBS: 
-            Reducing to Top and Bottom only significantly cuts down on mobile GPU workload.
-            Removed mix-blend-mode: screen as it is the #1 cause of refresh-rate lag.
+            Premium iOS 18 "Wavy Edge Bleed"
+            Restricted strictly to edges via the mask above.
           */}
 
-          {/* Top Edge Glow */}
+          {/* Top Edge Blob - Orange/Pink */}
           <motion.div
             animate={{
-              x: isProcessing ? ["-2%", "2%", "-2%"] : ["0%", "1%", "0%"],
+              x: isProcessing ? ["-10%", "10%", "-10%"] : ["0%", "5%", "0%"],
+              scaleY: isProcessing ? [1, 1.25, 1] : [1, 1.1, 1],
             }}
-            transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
-            className="absolute top-[-110px] left-[-20%] right-[-20%] h-[130px]"
+            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute top-[-60px] left-[-20%] right-[-20%] h-[120px]"
             style={{
-              background: "linear-gradient(90deg, rgba(255,15,123,0.4), rgba(248,155,41,0.4), rgba(255,15,123,0.4))",
-              filter: "blur(30px)",
-              opacity: isProcessing ? 0.8 : 0.6,
-              willChange: "transform",
-              transform: "translate3d(0,0,0)"
+              background: "linear-gradient(90deg, #ff0f7b, #f89b29, #ff0f7b)",
+              filter: "blur(40px)",
+              opacity: isProcessing ? 0.95 : 0.8,
             }}
           />
 
-          {/* Bottom Edge Glow */}
+          {/* Bottom Edge Blob - Blue/Purple */}
           <motion.div
             animate={{
-              x: isProcessing ? ["2%", "-2%", "2%"] : ["0%", "-1%", "0%"],
+              x: isProcessing ? ["10%", "-10%", "10%"] : ["0%", "-5%", "0%"],
+              scaleY: isProcessing ? [1, 1.25, 1] : [1, 1.1, 1],
             }}
-            transition={{ duration: 5.5, repeat: Infinity, ease: "linear" }}
-            className="absolute bottom-[-120px] left-[-20%] right-[-20%] h-[140px]"
+            transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute bottom-[-80px] left-[-20%] right-[-20%] h-[140px]"
             style={{
-              background: "linear-gradient(90deg, rgba(0,238,255,0.35), rgba(138,43,226,0.35), rgba(0,238,255,0.35))",
-              filter: "blur(35px)",
-              opacity: isProcessing ? 0.7 : 0.5,
-              willChange: "transform",
-              transform: "translate3d(0,0,0)"
+              background: "linear-gradient(90deg, #00eeff, #8a2be2, #00eeff)",
+              filter: "blur(45px)",
+              opacity: isProcessing ? 0.9 : 0.75,
+            }}
+          />
+
+          {/* Left Edge Blob - Pink/Purple */}
+          <motion.div
+            animate={{
+              y: isProcessing ? ["-10%", "10%", "-10%"] : ["0%", "5%", "0%"],
+              scaleX: isProcessing ? [1, 1.3, 1] : [1, 1.15, 1],
+            }}
+            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute left-[-60px] top-[-20%] bottom-[-20%] w-[120px]"
+            style={{
+              background: "linear-gradient(180deg, #ff0f7b, #8a2be2, #ff0f7b)",
+              filter: "blur(60px)",
+              opacity: isProcessing ? 0.85 : 0.7,
+            }}
+          />
+
+          {/* Right Edge Blob - Teal/Orange */}
+          <motion.div
+            animate={{
+              y: isProcessing ? ["10%", "-10%", "10%"] : ["0%", "-5%", "0%"],
+              scaleX: isProcessing ? [1, 1.3, 1] : [1, 1.15, 1],
+            }}
+            transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute right-[-60px] top-[-20%] bottom-[-20%] w-[120px]"
+            style={{
+              background: "linear-gradient(180deg, #00eeff, #f89b29, #00eeff)",
+              filter: "blur(60px)",
+              opacity: isProcessing ? 0.85 : 0.7,
             }}
           />
         </motion.div>

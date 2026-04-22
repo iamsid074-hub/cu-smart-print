@@ -41,16 +41,7 @@ export function VoiceAssistantProvider({ children }: { children: React.ReactNode
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const synthRef = useRef(window.speechSynthesis);
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
-  const watchdogTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Helper to safely clear all timers and revert to idle
-  const forceIdle = useCallback(() => {
-    if (watchdogTimerRef.current) clearTimeout(watchdogTimerRef.current);
-    if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
-    setState("idle");
-    setTranscript("");
-    setResponse("");
-  }, []);
   const isSupported =
     typeof window !== "undefined" &&
     ("SpeechRecognition" in window || "webkitSpeechRecognition" in window);
@@ -81,11 +72,15 @@ export function VoiceAssistantProvider({ children }: { children: React.ReactNode
       utterance.volume = 1.0;
 
       utterance.onend = () => {
-        forceIdle();
+        setState("idle");
+        setTranscript("");
+        setResponse("");
         onDone?.();
       };
       utterance.onerror = () => {
-        forceIdle();
+        setState("idle");
+        setTranscript("");
+        setResponse("");
       };
       synth.speak(utterance);
     };
@@ -103,19 +98,16 @@ export function VoiceAssistantProvider({ children }: { children: React.ReactNode
       setState("processing");
       setTranscript(text);
 
-      // Start watchdog if it's not already running
-      if (watchdogTimerRef.current) clearTimeout(watchdogTimerRef.current);
-      watchdogTimerRef.current = setTimeout(() => {
-        if (state === "processing" || state === "listening") {
-          forceIdle();
-        }
-      }, 10000); // 10 second safety net
-
       // 1. Try local rule-based matching first
       const action = interpretCommand(text, items, currentShopId);
 
       // 2. Handle all local actions immediately
-      if (action) {
+      if (
+        action.type === "navigate" || action.type === "open_shop" ||
+        action.type === "cart_info" || action.type === "search" ||
+        action.type === "speak" || action.type === "add_to_cart" ||
+        action.type === "remove_from_cart" || action.type === "clear_cart"
+      ) {
         setTimeout(() => {
           switch (action.type) {
             case "navigate":
@@ -190,10 +182,6 @@ export function VoiceAssistantProvider({ children }: { children: React.ReactNode
     
     debounceTimerRef.current = setTimeout(async () => {
       synthRef.current.cancel();
-
-      // Start watchdog for the entire session
-      if (watchdogTimerRef.current) clearTimeout(watchdogTimerRef.current);
-      watchdogTimerRef.current = setTimeout(() => forceIdle(), 12000); 
 
       const old = recognitionRef.current;
       recognitionRef.current = null;
