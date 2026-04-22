@@ -739,14 +739,10 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
         }
         @keyframes diSafyGlow {
           0%, 100% {
-            box-shadow:
-              0 0 30px 10px rgba(139,92,246,0.25),
-              0 0 60px 20px rgba(99,102,241,0.15);
+            box-shadow: 0 0 12px rgba(139,92,246,0.25);
           }
           50% {
-            box-shadow:
-              0 0 45px 15px rgba(59,130,246,0.3),
-              0 0 90px 25px rgba(139,92,246,0.2);
+            box-shadow: 0 0 16px rgba(139,92,246,0.35);
           }
         }
         @keyframes diTrackingGlow {
@@ -821,8 +817,6 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
             transition={springTransition}
           >
             <AnimatePresence mode="popLayout">
-
-
               {/* ── Main Pill ── */}
               <motion.div
                 layout
@@ -835,7 +829,7 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
                 transition={displayState === "safy" ? safySpring : springTransition}
                 onPointerDown={handlePointerDown}
                 onPointerUp={handlePointerUp}
-                className={`pointer-events-auto flex items-center justify-center overflow-hidden flex-shrink-0 ${
+                className={`pointer-events-auto flex items-center justify-center flex-shrink-0 ${
                   islandState === "added" ||
                   islandState === "updated" ||
                   islandState === "cart" ||
@@ -855,6 +849,12 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
                   transition: "border-color 0.6s ease",
                 }}
               >
+
+
+                {/* Internal container to handle content clipping instead of the pill itself */}
+                <div className="absolute inset-0 overflow-hidden rounded-[inherit] pointer-events-none" />
+                <div className="relative w-full h-full flex items-center justify-center overflow-hidden rounded-[inherit]">
+
                 {/* Green camera indicator dot */}
                 <motion.div
                   animate={{ opacity: [0.5, 1, 0.5] }}
@@ -907,6 +907,7 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
                     {content}
                   </motion.div>
                 </AnimatePresence>
+                </div>
               </motion.div>
 
               {/* ── Secondary Navigation Pill ── */}
