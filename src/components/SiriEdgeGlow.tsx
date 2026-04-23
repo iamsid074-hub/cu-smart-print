@@ -24,7 +24,7 @@ const SiriEdgeGlow = memo(function SiriEdgeGlow() {
             WebkitMaskImage: "radial-gradient(circle at 50% 50%, transparent 85%, black 100%)",
           }}
         >
-          {/* Top Edge — simplified: only opacity animation, reduced blur */}
+          {/* Top Edge */}
           <motion.div
             animate={{ opacity: isProcessing ? [0.7, 0.95, 0.7] : [0.5, 0.8, 0.5] }}
             transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}

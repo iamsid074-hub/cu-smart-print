@@ -189,15 +189,6 @@ export function interpretCommand(
     }
   }
 
-  // ── Smart Food Detection ───────────────────────────────────────────────────
-  const FOOD_KEYWORDS = ["sandwich", "burger", "pizza", "chai", "tea", "coffee", "maggi", "pasta", "biryani", "momos", "roll", "paratha", "thali", "rice", "noodle", "chinese", "khana", "paneer", "chicken", "cold drink"];
-  const HUNGER_KEYWORDS = ["bhukh", "hungry", "khana hai", "kuch mangao", "kuch khana", "order food"];
-  
-  if (FOOD_KEYWORDS.some(f => t.includes(f)) || HUNGER_KEYWORDS.some(h => t.includes(h))) {
-    const query = t.replace(/add|order|want|get|to|cart|search|find|dikhao|manga|bhukh|khana|lagi|hai|de|do/g, "").trim();
-    return { type: "search", query: query || "food", message: `I've got you covered! Searching for the best ${query || "food"} for you right now.` };
-  }
-
-  // ── Hand over to AI or Search phase if nothing matches ────────────────────
+  // ── Hand over to intelligent AI Agent for all other conversational intents ──
   return null;
 }

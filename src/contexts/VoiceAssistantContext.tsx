@@ -102,73 +102,75 @@ export function VoiceAssistantProvider({ children }: { children: React.ReactNode
       const action = interpretCommand(text, items, currentShopId);
 
       // 2. Handle all local actions immediately
-      if (
-        action.type === "navigate" || action.type === "open_shop" ||
-        action.type === "cart_info" || action.type === "search" ||
-        action.type === "speak" || action.type === "add_to_cart" ||
-        action.type === "remove_from_cart" || action.type === "clear_cart"
-      ) {
-        setTimeout(() => {
-          switch (action.type) {
-            case "navigate":
-              speak(action.message, () => navigate(action.route));
-              break;
-            case "open_shop":
-              speak(action.message, () => navigate(`/shop/${action.shopId}`));
-              break;
-            case "search":
-              speak(action.message, () => navigate(`/search?q=${encodeURIComponent(action.query)}`));
-              break;
-            case "add_to_cart":
-              addItem(action.item);
-              speak(action.message);
-              break;
-            case "remove_from_cart":
-              removeItem(action.itemId);
-              speak(action.message);
-              break;
-            case "clear_cart":
-              clearCart();
-              speak(action.message);
-              break;
-            case "cart_info":
-            case "speak":
-              speak(action.message);
-              break;
-          }
-        }, 300);
-        return;
-      }
-
-      // 3. Try Gemini AI for general knowledge questions
-      // Only attempt if we have a real question (not a garbled word)
-      if (text.trim().length > 3) {
-        try {
-          const aiResponse = await getSafyAIResponse(text);
-          speak(aiResponse);
+      if (action) {
+        if (
+          action.type === "navigate" || action.type === "open_shop" ||
+          action.type === "cart_info" || action.type === "search" ||
+          action.type === "speak" || action.type === "add_to_cart" ||
+          action.type === "remove_from_cart" || action.type === "clear_cart"
+        ) {
+          setTimeout(() => {
+            switch (action.type) {
+              case "navigate":
+                speak(action.message, () => navigate(action.route));
+                break;
+              case "open_shop":
+                speak(action.message, () => navigate(`/shop/${action.shopId}`));
+                break;
+              case "search":
+                speak(action.message, () => navigate(`/search?q=${encodeURIComponent(action.query)}`));
+                break;
+              case "add_to_cart":
+                addItem(action.item);
+                speak(action.message);
+                break;
+              case "remove_from_cart":
+                removeItem(action.itemId);
+                speak(action.message);
+                break;
+              case "clear_cart":
+                clearCart();
+                speak(action.message);
+                break;
+              case "cart_info":
+              case "speak":
+                speak(action.message);
+                break;
+            }
+          }, 300);
           return;
-        } catch (error) {
-          // AI failed — fall through to helpful local response
         }
       }
 
-      // 4. Smart local fallback - Safety net for specific utilities
-      const t = text.toLowerCase();
-      if (t.includes("time") || t.includes("date")) {
-        const now = new Date();
-        speak(`It's ${now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })} right now!`);
-      } else if (t.includes("thank") || t.includes("thanks") || t.includes("shukriya")) {
-        speak("You're welcome! Anything else I can help you order?");
-      } else if (t.includes("who are you") || t.includes("tum kaun")) {
-        speak("I'm SAFY, your CU Bazzar assistant! I can open shops, add food to your cart, and more.");
-      } else {
-        // Ultimate Fallback: Redirect to Search
-        // This ensures SAFY never leaves the user hanging.
-        const query = t.replace(/please|hey|hi|safy|bazz|search|find|order|get/g, "").trim();
-        speak(`I'm not exactly sure about that, but let me search for "${query || t}" for you!`, () => {
-          navigate(`/search?q=${encodeURIComponent(query || t)}`);
-        });
+      // 3. Try Gemini AI JSON Agent for intelligent interaction
+      if (text.trim().length > 2) {
+        try {
+          const ai = await getSafyAIResponse(text);
+          
+          if (ai.action === "search") {
+            speak(ai.reply, () => navigate(`/search?q=${encodeURIComponent(ai.data || text)}`));
+          } else if (ai.action === "navigate") {
+            const routeMap: Record<string, string> = {
+              wallet: "/wallet", settings: "/settings", profile: "/profile", 
+              grocery: "/grocery", cart: "/grocery", home: "/home", 
+              tracking: "/tracking", help: "/help"
+            };
+            const target = routeMap[ai.data?.toLowerCase() || ""] || "/home";
+            speak(ai.reply, () => navigate(target));
+          } else {
+            // "speak" action or fallback
+            speak(ai.reply);
+          }
+          return;
+        } catch (error) {
+          console.error("Agent failed:", error);
+        }
       }
+
+      // Ultimate Fallback if everything fails
+      speak("Pardon? Main thoda confuse ho rahi hoon, can you say that again?", () => {
+        setTranscript("");
+      });
     },
     // ⚠️ Include ALL used values to prevent stale closure on mobile
     [items, navigate, speak, currentShopId, addItem, removeItem, clearCart]

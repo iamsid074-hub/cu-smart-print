@@ -1,118 +1,124 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-const SYSTEM_PROMPT = `You are SAFY, a friendly AI assistant for CU Bazzar at Chandigarh University. Keep answers short (1-2 sentences). Help students with food, cart, and navigation.`;
+export interface SafyAIAction {
+  action: "speak" | "search" | "navigate";
+  data?: string;
+  reply: string;
+}
 
-// ── Singleton SDK instance (reused across all calls) ──────────────────────────
+const SYSTEM_PROMPT = `You are SAFY, the intelligent voice agent for CU Bazzar at Chandigarh University.
+Your mission is to help students with food, orders, and navigation using a friendly, Hinglish (mixed Hindi/English) personality.
+
+You MUST respond in valid JSON format only according to this schema:
+{
+  "action": "speak" | "search" | "navigate",
+  "data": "search query or route name",
+  "reply": "friendly Hinglish response to be spoken"
+}
+
+- For general talk or questions: action="speak", reply="your response".
+- If user wants food but isn't specific: action="search", data="vague food category", reply="Let me search for that!".
+- If user wants to see their wallet/settings/profile: action="navigate", data="wallet/settings/profile", reply="Opening your wallet now!".
+- If you don't understand or need more info: action="speak", reply="Aapne kya kaha? Kya main aapke liye kuch order karun ya shop dikhau?".
+
+REPLY STYLE: "Theek hai, main aapke liye search kar rahi hoon!" or "Bilkul, wallet page khul raha hai." Keep it short.`;
+
+// ── Singleton SDK instance ───────────────────────────────────────────────────
 const API_KEY = "AIzaSyCapO-hpehSYAE1HeibFOYVTditbMLKTDY";
 const genAI = new GoogleGenerativeAI(API_KEY);
 
-// ── LRU Response Cache ────────────────────────────────────────────────────────
+// ── LRU Response Cache (Parsed Objects) ──────────────────────────────────────
 const CACHE_MAX = 50;
-const responseCache = new Map<string, { text: string; ts: number }>();
+const responseCache = new Map<string, { data: SafyAIAction; ts: number }>();
 
-function getCached(key: string): string | null {
+function getCached(key: string): SafyAIAction | null {
   const entry = responseCache.get(key);
   if (!entry) return null;
-  // Expire after 10 minutes
   if (Date.now() - entry.ts > 10 * 60_000) {
     responseCache.delete(key);
     return null;
   }
-  // LRU: move to end
   responseCache.delete(key);
   responseCache.set(key, entry);
-  return entry.text;
+  return entry.data;
 }
 
-function setCache(key: string, text: string) {
+function setCache(key: string, data: SafyAIAction) {
   if (responseCache.size >= CACHE_MAX) {
-    // Delete oldest entry
     const firstKey = responseCache.keys().next().value;
     if (firstKey) responseCache.delete(firstKey);
   }
-  responseCache.set(key, { text, ts: Date.now() });
+  responseCache.set(key, { data, ts: Date.now() });
 }
 
-// ── Model selection (try once, cache the working model) ───────────────────────
-let cachedModel: ReturnType<typeof genAI.getGenerativeModel> | null = null;
-const MODEL_PRIORITY = ["gemini-1.5-flash-latest", "models/gemini-1.5-flash", "gemini-2.0-flash-exp", "models/gemini-pro"];
+// ── Model selection ──────────────────────────────────────────────────────────
+let cachedModel: any = null;
+const MODEL_PRIORITY = ["gemini-1.5-flash-latest", "gemini-1.5-flash"];
 
 async function getWorkingModel() {
   if (cachedModel) return cachedModel;
   
   for (const modelName of MODEL_PRIORITY) {
     try {
-      const model = genAI.getGenerativeModel({ model: modelName });
-      // Test with a tiny prompt
+      const model = genAI.getGenerativeModel({ 
+        model: modelName,
+        generationConfig: {
+          responseMimeType: "application/json"
+        }
+      });
+      // Verification test
       await model.generateContent("hi");
       cachedModel = model;
       return model;
-    } catch {
+    } catch (e) {
+      console.warn(`Model ${modelName} failed, trying next...`);
       continue;
     }
   }
   throw new Error("No working model found");
 }
 
-// ── Main API function with timeout + cache ────────────────────────────────────
-export async function getSafyAIResponse(userMessage: string): Promise<string> {
+/**
+ * Main API function returning structured AI commands
+ */
+export async function getSafyAIResponse(userMessage: string): Promise<SafyAIAction> {
   const cacheKey = userMessage.trim().toLowerCase();
   
-  // 1. Check cache first (instant response)
   const cached = getCached(cacheKey);
   if (cached) return cached;
 
-  // 2. Call Gemini with timeout protection
   try {
     const model = await getWorkingModel();
     const combinedPrompt = `${SYSTEM_PROMPT}\n\nUser Question: ${userMessage}`;
 
     const resultPromise = model.generateContent(combinedPrompt);
-    
-    // 8-second timeout
     const timeoutPromise = new Promise<never>((_, reject) =>
       setTimeout(() => reject(new Error("timeout")), 8000)
     );
 
     const result = await Promise.race([resultPromise, timeoutPromise]);
-    const response = await result.response;
+    const response = await (result as any).response;
     const text = response.text().trim();
     
     if (!text) throw new Error("Empty AI response");
 
-    // Cache for future use
-    setCache(cacheKey, text);
-    return text;
-  } catch (error: any) {
-    console.error("[SAFY AI Error]:", error);
-    const msg = error?.message?.toLowerCase() || "unknown";
-    
-    // Reset cached model on 404 (model may have been deprecated)
-    if (msg.includes("404") || msg.includes("not found")) {
-      cachedModel = null;
-      // Try once more with fallback
-      try {
-        const model = await getWorkingModel();
-        const result = await model.generateContent(`${SYSTEM_PROMPT}\n\nUser: ${userMessage}`);
-        const response = await result.response;
-        const text = response.text().trim();
-        if (text) {
-          setCache(cacheKey, text);
-          return text;
-        }
-      } catch {
-        // Fall through to local responses
-      }
+    try {
+      const parsed: SafyAIAction = JSON.parse(text);
+      setCache(cacheKey, parsed);
+      return parsed;
+    } catch (parseErr) {
+      console.error("AI JSON Parse Error:", text);
+      return { action: "speak", reply: "I'm having trouble thinking clearly. Try again?" };
     }
 
-    if (msg.includes("api key")) return "The API key seems incorrect. Please check your key in Google AI Studio.";
-    if (msg.includes("safety")) return "I can't talk about that. Ask me something else!";
-    if (msg.includes("quota") || msg.includes("limit")) return "My AI brain is resting for a moment (Quota Limit). Try in a minute!";
-    if (msg.includes("timeout")) return "I'm thinking too hard! Can you ask that again in a simpler way?";
+  } catch (error: any) {
+    console.error("[SAFY AI Agent Error]:", error);
     
-    if (userMessage.length < 50) {
-      return `I'm SAFY, your university assistant. I'm having a small connection issue with my main brain, but I can still help you with food, orders, and navigation! Just tell me what you want to eat.`;
-    }
-    return "I'm having a connection flicker. Can you try saying that one more time?";
+    const fallback: SafyAIAction = {
+      action: "speak",
+      reply: "Main thoda connection error face kar rahi hoon. Kya aap dobara bol sakte hain?"
+    };
+
+    return fallback;
   }
 }
