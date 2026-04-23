@@ -21,8 +21,7 @@ import {
   Bike,
 } from "lucide-react";
 import { Haptics, ImpactStyle } from "@capacitor/haptics";
-import { useVoiceAssistant } from "@/hooks/useVoiceAssistant";
-import { Mic } from "lucide-react";
+
 
 const triggerHaptic = async (style: ImpactStyle = ImpactStyle.Light) => {
   try {
@@ -60,8 +59,7 @@ type IslandState =
   | "grocery"
   | "sell"
   | "tracking"
-  | "active_cart"
-  | "safy";
+  | "active_cart";
 
 // ── Tracking status configuration ───────────────────────────────────────────
 const TRACKING_STATUSES: Record<
@@ -124,7 +122,7 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
   const location = useLocation();
   const { items } = useCart();
   const { user } = useAuth();
-  const { state: safyState, transcript, response: safyResponse, errorMsg, dismiss: dismissSafy } = useVoiceAssistant();
+
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -215,30 +213,13 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
     } else if (location.pathname.startsWith("/wallet")) {
       setIslandState("wallet");
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    } else if (location.pathname === "/cart") {
-      triggerState("cart");
-    } else if (location.pathname === "/profile") {
-      triggerState("profile");
-    } else if (safyState === "idle") {
+    } else {
       setIslandState("default");
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
     }
-  }, [location.pathname, safyState]);
+  }, [location.pathname]);
 
-  // ── Sync SAFY state with Island ──────────────────────────────────────────
-  useEffect(() => {
-    if (safyState !== "idle") {
-      // Cancel any pending dismiss timers so SAFY takes full priority
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
-      setIslandState("safy");
-    } else if (islandState === "safy") {
-      // Delay revert so the exit animation plays fully before shrinking
-      const t = setTimeout(() => {
-        setIslandState("default");
-      }, 350);
-      return () => clearTimeout(t);
-    }
-  }, [safyState]);
+
 
   // ── Fetch tracking order & subscribe to real-time updates ───────────────
   const fetchTrackingOrder = useCallback(async () => {
@@ -416,10 +397,7 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
     displayState = "active_cart";
   }
 
-  // FORCE SAFY PRIORITY
-  if (safyState !== "idle") {
-    displayState = "safy";
-  }
+
 
   switch (displayState) {
     case "explore":
@@ -838,43 +816,17 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
               >
                 <div className="relative w-full h-full flex items-center justify-center overflow-hidden rounded-[inherit]">
 
-                {/* Green camera indicator dot */}
-                <motion.div
-                  animate={{ opacity: [0.5, 1, 0.5] }}
-                  transition={{
-                    duration: 3,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                  }}
-                  style={{
-                    position: "absolute",
-                    left: 12,
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    width: 6,
-                    height: 6,
-                    borderRadius: "50%",
-                    background: "#30D158",
-                    boxShadow: "0 0 8px rgba(48,209,88,0.9)",
-                    zIndex: 10,
-                  }}
-                />
+
 
                 <AnimatePresence mode="wait">
                   <motion.div
-                    key={islandState + (trackingOrder?.status || "") + safyState}
-                    initial={displayState === "safy"
-                      ? { opacity: 0, scale: 0.88, filter: "blur(8px)" }
-                      : { opacity: 0, scale: 0.92, filter: "blur(4px)" }
+                  key={islandState + (trackingOrder?.status || "")}
+                    initial={{ opacity: 0, scale: 0.92, filter: "blur(4px)" }
                     }
                     animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-                    exit={displayState === "safy"
-                      ? { opacity: 0, scale: 0.92, filter: "blur(10px)" }
-                      : { opacity: 0, scale: 0.88, filter: "blur(6px)" }
+                    exit={{ opacity: 0, scale: 0.88, filter: "blur(6px)" }
                     }
-                    transition={displayState === "safy"
-                      ? { duration: 0.5, ease: [0.16, 1, 0.3, 1] }   // silky smooth for SAFY
-                      : { duration: 0.15, ease: "easeInOut" }          // snappy for others
+                    transition={{ duration: 0.15, ease: "easeInOut" }
                     }
                     style={{
                       display: "flex",

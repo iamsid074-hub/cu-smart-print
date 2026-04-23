@@ -68,11 +68,9 @@ import AppUpdater from "./components/AppUpdater";
 import UsernameSetup from "./components/UsernameSetup";
 import ScrollToTop from "./components/ScrollToTop";
 import StickyStripBanner from "./components/StickyStripBanner";
-import { VoiceAssistantProvider } from "./contexts/VoiceAssistantContext";
+
 
 // Lazy-load non-critical-path components
-const VoiceAssistant = lazy(() => import("./components/VoiceAssistant"));
-const SiriEdgeGlow = lazy(() => import("./components/SiriEdgeGlow"));
 const LiveOrderBanner = lazy(() => import("./components/LiveOrderBanner"));
 
 import ErrorBoundary from "./components/ErrorBoundary";
@@ -228,10 +226,6 @@ function AppLayout() {
         <>
           {location.pathname !== "/pasta-offer" && <Navbar />}
           {location.pathname !== "/pasta-offer" && <BottomNav />}
-          <Suspense fallback={null}>
-            {location.pathname !== "/pasta-offer" && <VoiceAssistant />}
-            <SiriEdgeGlow />
-          </Suspense>
         </>
       )}
       <ErrorBoundary>
@@ -430,12 +424,10 @@ const App = () => (
     <BrowserRouter>
       <AuthProvider>
         <CartProvider>
-          <VoiceAssistantProvider>
             <TooltipProvider>
               <ScrollToTop />
               <AppLayout />
             </TooltipProvider>
-          </VoiceAssistantProvider>
         </CartProvider>
       </AuthProvider>
     </BrowserRouter>
