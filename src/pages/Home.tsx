@@ -230,9 +230,10 @@ export default function Home() {
               
               <button
                 onClick={() => navigate('/search')}
-                className="relative z-10 p-2.5 sm:p-3 rounded-[1.2rem] bg-white/5 border border-white/10 text-white hover:bg-white/10 transition-all flex items-center justify-center shrink-0 active:scale-95"
+                className="flex-1 min-w-[120px] relative z-10 px-4 py-2 sm:py-3 rounded-[1.2rem] bg-white/5 border border-white/10 text-white/50 hover:bg-white/10 transition-all flex items-center gap-3 active:scale-[0.98]"
               >
-                <Search size={18} className="text-zinc-400" />
+                <Search size={16} className="text-zinc-500 shrink-0" />
+                <span className="text-[11px] sm:text-[13px] font-bold tracking-tight whitespace-nowrap">Search...</span>
               </button>
             </div>
           </div>
