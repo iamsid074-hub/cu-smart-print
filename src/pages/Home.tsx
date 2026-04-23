@@ -247,23 +247,6 @@ export default function Home() {
                 {/* ═══ SHOP DISCOVERY FLOW (STRUCTURED CARDS) ═══ */}
                 {activeFoodCat === "all" && (
                   <div className="mt-8">
-                    {/* 1. Circle Categories */}
-                    <div className="flex gap-4 overflow-x-auto pb-8 scrollbar-hide px-1">
-                      {fastCategories.map((cat, i) => (
-                        <motion.div
-                          key={cat.name}
-                          initial={{ opacity: 0, scale: 0.8 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          transition={{ delay: i * 0.1 }}
-                          className="flex flex-col items-center gap-2 shrink-0 cursor-pointer"
-                        >
-                          <div className="w-[72px] h-[72px] sm:w-[84px] sm:h-[84px] rounded-full overflow-hidden border-2 border-white/5 p-1 bg-[#1c1c1e] shadow-xl group hover:border-indigo-500/50 transition-all">
-                            <img src={cat.img} alt={cat.name} className="w-full h-full object-cover rounded-full transition-transform group-hover:scale-110" />
-                          </div>
-                        </motion.div>
-                      ))}
-                    </div>
-
                     {/* 2. Service Toggle */}
                     <div className="flex justify-center mb-10 px-1">
                       <div className="bg-[#1c1c1e] p-1.5 rounded-full flex items-center shadow-lg border border-white/5 w-full max-w-[500px]">
