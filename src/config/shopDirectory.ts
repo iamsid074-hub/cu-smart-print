@@ -1,0 +1,18 @@
+export const SHOP_DIRECTORY = [
+  { id: "chatori-chai-kulcha",  name: "Chatori Chaat & Kulcha Corner", aliases: ["chatori", "chaat", "kulcha", "chaat corner"] },
+  { id: "insta-food",           name: "Insta Food",                     aliases: ["insta", "insta food"] },
+  { id: "parantha-house",       name: "Parantha House",                  aliases: ["parantha", "paratha house", "paratha"] },
+  { id: "punjabi-rasoi",        name: "Punjabi Rasoi",                   aliases: ["punjabi", "rasoi", "punjabi rasoi"] },
+  { id: "catch-up-cafe",        name: "Catch Up Cafe",                   aliases: ["catch up", "cafe", "catch"] },
+  { id: "flavour-factory",      name: "Flavour Factory",                 aliases: ["flavour", "factory", "flavor factory", "flavor"] },
+  { id: "vasano-fast-food",     name: "Vasano Fast Food",                aliases: ["vasano", "fast food"] },
+  { id: "rock-in-roll",         name: "Rock In Roll",                    aliases: ["rock", "rock in roll", "roll"] },
+  { id: "food-castle",          name: "Food Castle",                     aliases: ["food castle", "castle"] },
+  { id: "eat-and-smile",        name: "Eat & Smile",                     aliases: ["eat and smile", "smile", "eat smile"] },
+  { id: "zaika",                name: "Zaika",                           aliases: ["zaika"] },
+  { id: "bakerz-hub",          name: "Bakerz Hub",                      aliases: ["bakerz", "baker", "bakery", "hub"] },
+  { id: "food-junction",        name: "Food Junction",                   aliases: ["food junction", "junction"] },
+  { id: "king-cafe",            name: "King Cafe",                       aliases: ["king", "king cafe"] },
+  { id: "handi-biryani",        name: "Handi Biryani",                  aliases: ["handi", "biryani", "handi biryani"] },
+  { id: "barkat-food",          name: "Barkat Food",                     aliases: ["barkat", "barkat food"] },
+];

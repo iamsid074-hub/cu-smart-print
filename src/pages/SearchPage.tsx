@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, Search, X, Flame, Clock, TrendingUp, Store, ChefHat } from "lucide-react";
 import { getAllFoodItems } from "@/data/foodData";
-import { SHOP_DIRECTORY } from "@/lib/bazz-brain";
+import { SHOP_DIRECTORY } from "@/config/shopDirectory";
 import { useCart } from "@/contexts/CartContext";
 import { getPremiumImage } from "@/data/foodData";
 
