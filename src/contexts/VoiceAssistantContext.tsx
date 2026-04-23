@@ -147,8 +147,14 @@ export function VoiceAssistantProvider({ children }: { children: React.ReactNode
         try {
           const ai = await getSafyAIResponse(text);
           
+          // Define what to do after speaking (e.g. keep listening if AI requested it)
+          const onDone = ai.autoListen ? () => activate() : undefined;
+
           if (ai.action === "search") {
-            speak(ai.reply, () => navigate(`/search?q=${encodeURIComponent(ai.data || text)}`));
+            speak(ai.reply, () => {
+              navigate(`/search?q=${encodeURIComponent(ai.data || text)}`);
+              if (ai.autoListen) activate();
+            });
           } else if (ai.action === "navigate") {
             const routeMap: Record<string, string> = {
               wallet: "/wallet", settings: "/settings", profile: "/profile", 
@@ -156,10 +162,13 @@ export function VoiceAssistantProvider({ children }: { children: React.ReactNode
               tracking: "/tracking", help: "/help"
             };
             const target = routeMap[ai.data?.toLowerCase() || ""] || "/home";
-            speak(ai.reply, () => navigate(target));
+            speak(ai.reply, () => {
+              navigate(target);
+              if (ai.autoListen) activate();
+            });
           } else {
-            // "speak" action or fallback
-            speak(ai.reply);
+            // "speak" action or fallback - keep the loop alive if AI wants to ask a question
+            speak(ai.reply, onDone);
           }
           return;
         } catch (error) {
@@ -167,10 +176,8 @@ export function VoiceAssistantProvider({ children }: { children: React.ReactNode
         }
       }
 
-      // Ultimate Fallback if everything fails
-      speak("Pardon? Main thoda confuse ho rahi hoon, can you say that again?", () => {
-        setTranscript("");
-      });
+      // Ultimate Fallback - keep listening to prevent dead ends
+      speak("Pardon? Main thoda confuse ho rahi hoon, can you say that again?", () => activate());
     },
     // ⚠️ Include ALL used values to prevent stale closure on mobile
     [items, navigate, speak, currentShopId, addItem, removeItem, clearCart]

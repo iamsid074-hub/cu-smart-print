@@ -4,121 +4,89 @@ export interface SafyAIAction {
   action: "speak" | "search" | "navigate";
   data?: string;
   reply: string;
+  autoListen?: boolean; // Should SAFY start listening again after speaking?
 }
 
 const SYSTEM_PROMPT = `You are SAFY, the intelligent voice agent for CU Bazzar at Chandigarh University.
-Your mission is to help students with food, orders, and navigation using a friendly, Hinglish (mixed Hindi/English) personality.
+You help students with food, orders, and navigation. 
+Speak in a friendly Hinglish (Hindi + English mix) tone.
 
-You MUST respond in valid JSON format only according to this schema:
-{
-  "action": "speak" | "search" | "navigate",
-  "data": "search query or route name",
-  "reply": "friendly Hinglish response to be spoken"
-}
+RULES:
+1. ALWAYS respond in valid JSON.
+2. Action Schema: {"action": "speak"|"search"|"navigate", "data": "query/route", "reply": "spoken text", "autoListen": boolean}
+3. If user is vague (e.g., "bhukh lagi hai", "kuch thanda"): 
+   - Set action="speak".
+   - Set autoListen=true.
+   - Reply with a question to narrow down (e.g. "Bilkul! Kya aap cold drink pasand karenge ya something else?").
+4. If intent is clear (e.g., "search pizza"): action="search", data="pizza", autoListen=false.
+5. For navigation: action="navigate", data="wallet"|"settings"|"profile", autoListen=false.
 
-- For general talk or questions: action="speak", reply="your response".
-- If user wants food but isn't specific: action="search", data="vague food category", reply="Let me search for that!".
-- If user wants to see their wallet/settings/profile: action="navigate", data="wallet/settings/profile", reply="Opening your wallet now!".
-- If you don't understand or need more info: action="speak", reply="Aapne kya kaha? Kya main aapke liye kuch order karun ya shop dikhau?".
+STYLE: Be helpful, fast, and conversational. Use Hindi words like 'zaroor', 'theek hai', 'shukriya'.`;
 
-REPLY STYLE: "Theek hai, main aapke liye search kar rahi hoon!" or "Bilkul, wallet page khul raha hai." Keep it short.`;
-
-// ── Singleton SDK instance ───────────────────────────────────────────────────
 const API_KEY = "AIzaSyCapO-hpehSYAE1HeibFOYVTditbMLKTDY";
 const genAI = new GoogleGenerativeAI(API_KEY);
 
-// ── LRU Response Cache (Parsed Objects) ──────────────────────────────────────
-const CACHE_MAX = 50;
 const responseCache = new Map<string, { data: SafyAIAction; ts: number }>();
 
 function getCached(key: string): SafyAIAction | null {
   const entry = responseCache.get(key);
-  if (!entry) return null;
-  if (Date.now() - entry.ts > 10 * 60_000) {
-    responseCache.delete(key);
-    return null;
-  }
-  responseCache.delete(key);
-  responseCache.set(key, entry);
-  return entry.data;
+  if (entry && Date.now() - entry.ts < 10 * 60_000) return entry.data;
+  return null;
 }
 
-function setCache(key: string, data: SafyAIAction) {
-  if (responseCache.size >= CACHE_MAX) {
-    const firstKey = responseCache.keys().next().value;
-    if (firstKey) responseCache.delete(firstKey);
-  }
-  responseCache.set(key, { data, ts: Date.now() });
-}
-
-// ── Model selection ──────────────────────────────────────────────────────────
 let cachedModel: any = null;
-const MODEL_PRIORITY = ["gemini-1.5-flash-latest", "gemini-1.5-flash"];
+const MODEL_PRIORITY = ["gemini-1.5-flash", "gemini-1.5-pro", "gemini-pro"];
 
 async function getWorkingModel() {
   if (cachedModel) return cachedModel;
-  
   for (const modelName of MODEL_PRIORITY) {
     try {
       const model = genAI.getGenerativeModel({ 
         model: modelName,
-        generationConfig: {
-          responseMimeType: "application/json"
-        }
+        generationConfig: { responseMimeType: "application/json" }
       });
-      // Verification test
-      await model.generateContent("hi");
+      const result = await model.generateContent({
+        contents: [{ role: "user", parts: [{ text: "Return JSON: {\"status\":\"ok\"}" }] }]
+      });
+      JSON.parse(result.response.text());
       cachedModel = model;
       return model;
     } catch (e) {
-      console.warn(`Model ${modelName} failed, trying next...`);
+      console.error(`Model ${modelName} init failed:`, e);
       continue;
     }
   }
-  throw new Error("No working model found");
+  throw new Error("All models failed");
 }
 
-/**
- * Main API function returning structured AI commands
- */
 export async function getSafyAIResponse(userMessage: string): Promise<SafyAIAction> {
   const cacheKey = userMessage.trim().toLowerCase();
-  
   const cached = getCached(cacheKey);
   if (cached) return cached;
 
   try {
     const model = await getWorkingModel();
-    const combinedPrompt = `${SYSTEM_PROMPT}\n\nUser Question: ${userMessage}`;
+    const prompt = `${SYSTEM_PROMPT}\n\nUser Question: "${userMessage}"\nJSON Action:`;
 
-    const resultPromise = model.generateContent(combinedPrompt);
-    const timeoutPromise = new Promise<never>((_, reject) =>
-      setTimeout(() => reject(new Error("timeout")), 8000)
-    );
+    const result = await Promise.race([
+      model.generateContent(prompt),
+      new Promise<never>((_, reject) => setTimeout(() => reject(new Error("Timeout")), 10000))
+    ]);
 
-    const result = await Promise.race([resultPromise, timeoutPromise]);
-    const response = await (result as any).response;
-    const text = response.text().trim();
+    const text = result.response.text().trim();
+    const parsed: SafyAIAction = JSON.parse(text);
     
-    if (!text) throw new Error("Empty AI response");
+    if (!parsed.action || !parsed.reply) throw new Error("Missing keys");
 
-    try {
-      const parsed: SafyAIAction = JSON.parse(text);
-      setCache(cacheKey, parsed);
-      return parsed;
-    } catch (parseErr) {
-      console.error("AI JSON Parse Error:", text);
-      return { action: "speak", reply: "I'm having trouble thinking clearly. Try again?" };
-    }
+    responseCache.set(cacheKey, { data: parsed, ts: Date.now() });
+    return parsed;
 
   } catch (error: any) {
-    console.error("[SAFY AI Agent Error]:", error);
-    
-    const fallback: SafyAIAction = {
+    console.error("[SAFY AI Error]:", error);
+    return {
       action: "speak",
-      reply: "Main thoda connection error face kar rahi hoon. Kya aap dobara bol sakte hain?"
+      reply: "Main thoda connection error face kar rahi hoon. Kya aap dobara bol sakte hain?",
+      autoListen: true
     };
-
-    return fallback;
   }
 }
