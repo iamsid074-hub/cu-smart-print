@@ -227,6 +227,13 @@ export default function Home() {
                   </span>
                 </button>
               ))}
+              
+              <button
+                onClick={() => navigate('/search')}
+                className="relative z-10 p-2.5 sm:p-3 rounded-[1.2rem] bg-white/5 border border-white/10 text-white hover:bg-white/10 transition-all flex items-center justify-center shrink-0 active:scale-95"
+              >
+                <Search size={18} className="text-zinc-400" />
+              </button>
             </div>
           </div>
 
