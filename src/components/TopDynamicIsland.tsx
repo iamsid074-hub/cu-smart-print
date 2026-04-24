@@ -816,7 +816,27 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
               >
                 <div className="relative w-full h-full flex items-center justify-center overflow-hidden rounded-[inherit]">
 
-
+                {/* Green camera indicator dot */}
+                <motion.div
+                  animate={{ opacity: [0.5, 1, 0.5] }}
+                  transition={{
+                    duration: 3,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  }}
+                  style={{
+                    position: "absolute",
+                    left: 12,
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    width: 6,
+                    height: 6,
+                    borderRadius: "50%",
+                    background: "#30D158",
+                    boxShadow: "0 0 8px rgba(48,209,88,0.9)",
+                    zIndex: 10,
+                  }}
+                />
 
                 <AnimatePresence mode="wait">
                   <motion.div

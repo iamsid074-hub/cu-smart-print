@@ -196,46 +196,77 @@ export default function Home() {
         <HeroSpotlight />
 
         <div className="space-y-16">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 overflow-x-auto pb-4 scrollbar-hide no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0">
-              {modes.map((mode) => (
-                <button
-                  key={mode.id}
-                  onClick={() => {
-                    if (mode.id === "quick") {
-                      setShowQuickTransition(true);
-                    } else {
-                      setHomeMode(mode.id as any);
-                    }
+          {/* ═══ TOP NAV: MODE TABS + SEARCH ═══ */}
+          <div className="-mx-4 px-4 sm:mx-0 sm:px-0">
+            {/* Gradient connector line at top of the block */}
+            <div className="h-[2px] w-full rounded-full mb-3 bg-gradient-to-r from-transparent via-orange-500/40 to-purple-500/40" />
+
+            <div
+              className="flex items-center gap-2 p-1.5 rounded-[1.6rem] border border-white/[0.07]"
+              style={{
+                background: "linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,140,0,0.06) 50%, rgba(139,92,246,0.06) 100%)",
+                backdropFilter: "blur(12px)",
+                WebkitBackdropFilter: "blur(12px)",
+              }}
+            >
+              {/* Full Meals pill */}
+              <button
+                onClick={() => setHomeMode("meal" as any)}
+                className="relative flex-shrink-0 px-4 py-2.5 rounded-[1.2rem] text-[11px] sm:text-[13px] font-black tracking-tight whitespace-nowrap transition-all duration-300 active:scale-[0.96]"
+              >
+                {homeMode === "meal" && (
+                  <motion.div
+                    layoutId="top-mode-pill"
+                    className="absolute inset-0 rounded-[1.2rem] bg-white shadow-lg"
+                    transition={{ type: "spring", stiffness: 420, damping: 32 }}
+                  />
+                )}
+                <span
+                  className="relative z-10 flex items-center gap-1.5"
+                  style={{
+                    color: homeMode === "meal" ? "#000" : "rgba(255,255,255,0.4)",
                   }}
-                  className={`relative z-10 px-3 sm:px-8 py-2 sm:py-3 rounded-[1.2rem] text-[10.5px] sm:text-[13px] font-bold transition-all duration-300 whitespace-nowrap flex items-center justify-center flex-shrink-0 ${
-                    homeMode === mode.id ? "text-black" : "text-gray-400 hover:text-white"
-                  }`}
                 >
-                  {homeMode === mode.id && (
-                    <motion.div
-                      layoutId="active-pill"
-                      className="absolute inset-0 bg-white rounded-[1.2rem] shadow-xl"
-                      transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                    />
-                  )}
-                  {mode.id === "quick" && homeMode !== "quick" && (
-                    <div className="absolute inset-0 rounded-[1.2rem] bg-gradient-to-r from-purple-500/10 to-fuchsia-500/10 border border-purple-500/20" />
-                  )}
-                  <span className={`relative z-20 flex items-center gap-1.5 sm:gap-2 ${mode.id === "quick" && homeMode !== "quick" ? "text-purple-300" : ""}`}>
-                    {mode.label}
-                  </span>
-                </button>
-              ))}
-              
+                  <Utensils size={13} />
+                  Full Meals
+                </span>
+              </button>
+
+              {/* Blinkit / Zwigato pill */}
+              <button
+                onClick={() => setShowQuickTransition(true)}
+                className="relative flex-shrink-0 px-4 py-2.5 rounded-[1.2rem] text-[11px] sm:text-[13px] font-black tracking-tight whitespace-nowrap transition-all duration-300 active:scale-[0.96]"
+              >
+                {/* Subtle permanent glow for Blinkit */}
+                <div
+                  className="absolute inset-0 rounded-[1.2rem]"
+                  style={{
+                    background: "linear-gradient(135deg, rgba(139,92,246,0.15) 0%, rgba(217,70,239,0.15) 100%)",
+                    border: "1px solid rgba(139,92,246,0.3)",
+                  }}
+                />
+                <span className="relative z-10 flex items-center gap-1.5" style={{ color: "#c084fc" }}>
+                  <Flame size={13} className="text-fuchsia-400" />
+                  Blinkit / Zwigato
+                </span>
+              </button>
+
+              {/* Search – grows to fill remaining space */}
               <button
                 onClick={() => navigate('/search')}
-                className="flex-1 min-w-[120px] relative z-10 px-4 py-2 sm:py-3 rounded-[1.2rem] bg-white/5 border border-white/10 text-white/50 hover:bg-white/10 transition-all flex items-center gap-3 active:scale-[0.98]"
+                className="flex-1 min-w-0 relative py-2.5 px-4 rounded-[1.2rem] flex items-center gap-2.5 active:scale-[0.97] transition-all"
+                style={{
+                  background: "rgba(255,255,255,0.05)",
+                  border: "1px solid rgba(255,255,255,0.08)",
+                }}
               >
-                <Search size={16} className="text-zinc-500 shrink-0" />
-                <span className="text-[11px] sm:text-[13px] font-bold tracking-tight whitespace-nowrap">Search...</span>
+                <Search size={14} style={{ color: "rgba(255,255,255,0.35)", flexShrink: 0 }} />
+                <span className="text-[11px] sm:text-[13px] font-bold tracking-tight truncate" style={{ color: "rgba(255,255,255,0.3)" }}>Search...</span>
               </button>
             </div>
+
+            {/* Gradient connector line at bottom — ties to SHOPS/VENDING below */}
+            <div className="h-[2px] w-full rounded-full mt-3 bg-gradient-to-r from-orange-500/40 via-purple-500/30 to-transparent" />
           </div>
 
           <AnimatePresence mode="wait">
@@ -255,22 +286,38 @@ export default function Home() {
                 {/* ═══ SHOP DISCOVERY FLOW (STRUCTURED CARDS) ═══ */}
                 {activeFoodCat === "all" && (
                   <div className="mt-8">
-                    {/* 2. Service Toggle */}
+                    {/* 2. Service Toggle — visually connected to the top bar */}
                     <div className="flex justify-center mb-10 px-1">
-                      <div className="bg-[#1c1c1e] p-1.5 rounded-full flex items-center shadow-lg border border-white/5 w-full max-w-[500px]">
+                      <div
+                        className="relative p-1.5 rounded-[2rem] flex items-center w-full max-w-[440px] overflow-hidden"
+                        style={{
+                          background: "linear-gradient(135deg, rgba(255,140,0,0.08) 0%, rgba(139,92,246,0.08) 100%)",
+                          border: "1px solid rgba(255,255,255,0.08)",
+                          backdropFilter: "blur(10px)",
+                          WebkitBackdropFilter: "blur(10px)",
+                        }}
+                      >
+                        {/* Animated sliding background — white pill */}
+                        <motion.div
+                          className="absolute rounded-[1.6rem] top-1.5 bottom-1.5 bg-white shadow-lg"
+                          animate={{
+                            left: deliveryMode === "takeaway" ? "6px" : "50%",
+                            width: "calc(50% - 6px)",
+                          }}
+                          transition={{ type: "spring", stiffness: 400, damping: 35 }}
+                        />
+
                         <button
                           onClick={() => setDeliveryMode("takeaway")}
-                          className={`flex-1 py-3.5 rounded-full text-[13px] font-black uppercase tracking-widest transition-all ${
-                            deliveryMode === "takeaway" ? "bg-white text-black shadow-lg" : "text-gray-500 hover:text-white"
-                          }`}
+                          className="relative z-10 flex-1 py-3.5 rounded-[1.6rem] text-[13px] font-black uppercase tracking-widest transition-colors duration-200"
+                          style={{ color: deliveryMode === "takeaway" ? "#000" : "rgba(255,255,255,0.4)" }}
                         >
                           SHOPS
                         </button>
                         <button
                           onClick={() => setDeliveryMode("delivery")}
-                          className={`flex-1 py-3.5 rounded-full text-[13px] font-black uppercase tracking-widest transition-all ${
-                            deliveryMode === "delivery" ? "bg-white text-black shadow-lg" : "text-gray-500 hover:text-white"
-                          }`}
+                          className="relative z-10 flex-1 py-3.5 rounded-[1.6rem] text-[13px] font-black uppercase tracking-widest transition-colors duration-200"
+                          style={{ color: deliveryMode === "delivery" ? "#000" : "rgba(255,255,255,0.4)" }}
                         >
                           VENDING
                         </button>
