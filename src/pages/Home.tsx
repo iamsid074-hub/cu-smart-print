@@ -35,7 +35,9 @@ import HomeSpecialSections from "@/components/HomeSpecialSections";
 import { useAuth } from "@/contexts/AuthContext";
 import BlinkitZomatoTransition from "@/components/BlinkitZomatoTransition";
 import BlinkitAnnounceModal from "@/components/BlinkitAnnounceModal";
+import ThreeDStreet from "@/components/ThreeDStreet";
 import type { Database } from "@/types/supabase";
+import { LayoutGrid, Boxes } from "lucide-react";
 
 const categories = [
   { id: "All", label: "All" },
@@ -96,6 +98,7 @@ export default function Home() {
   const [homeMode, setHomeMode] = useState<"meal" | "vending" | "quick">("meal");
   const [showQuickTransition, setShowQuickTransition] = useState(false);
   const [deliveryMode, setDeliveryMode] = useState<"takeaway" | "delivery">("takeaway");
+  const [viewMode, setViewMode] = useState<"grid" | "immersive">("grid");
 
   // ─── LIVE SHOPS STATE ───
   const [liveShops, setLiveShops] = useState(shops);
@@ -328,10 +331,32 @@ export default function Home() {
                     {deliveryMode === "takeaway" ? (
                       <>
                         <div className="flex items-center justify-between mb-8 px-1">
-                       <h2 className="text-[14px] sm:text-[16px] font-black tracking-[0.15em] text-zinc-500 uppercase">
-                          Campus Spotlight
-                       </h2>
-                       <div className="flex items-center gap-3">
+                          <div className="flex flex-col">
+                            <h2 className="text-[14px] sm:text-[16px] font-black tracking-[0.15em] text-zinc-500 uppercase">
+                                Campus Spotlight
+                            </h2>
+                            <div className="flex items-center gap-2 mt-1">
+                              <span className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
+                              <span className="text-[10px] font-bold text-orange-500 uppercase tracking-widest">{liveShops.filter(s => s.isOpen).length} SHOPS OPEN NOW</span>
+                            </div>
+                          </div>
+                          
+                          <div className="flex items-center gap-3">
+                            {/* View Mode Toggle */}
+                            <div className="flex items-center gap-1 bg-zinc-900 border border-white/5 p-1 rounded-full mr-2">
+                              <button 
+                                onClick={() => setViewMode("grid")}
+                                className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${viewMode === "grid" ? "bg-white text-black" : "text-zinc-500"}`}
+                              >
+                                <LayoutGrid size={14} />
+                              </button>
+                              <button 
+                                onClick={() => setViewMode("immersive")}
+                                className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${viewMode === "immersive" ? "bg-white text-black" : "text-zinc-500"}`}
+                              >
+                                <Boxes size={14} />
+                              </button>
+                            </div>
                          <button 
                            onClick={() => navigate('/search')}
                            className="w-10 h-10 rounded-full bg-zinc-900 border border-white/5 flex items-center justify-center text-white/70 hover:text-white hover:bg-zinc-800 transition-all shadow-lg active:scale-95"
@@ -356,60 +381,79 @@ export default function Home() {
                        </div>
                     </div>
 
-                    {/* 4. Textured Shop Grid (Optimized for Mobile) */}
-                    <div className="grid grid-cols-2 gap-3 sm:gap-6 px-1 mb-20">
-                      {liveShops.map((shop, i) => (
-                        <motion.div
-                          key={shop.id}
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: i * 0.05 }}
-                          onClick={() => navigate(`/shop/${shop.id}`)}
-                          className="group relative bg-[#1c1c1e] rounded-[1.8rem] overflow-hidden border border-white/5 shadow-xl hover:border-white/10 transition-all active:scale-[0.97] cursor-pointer"
+                    {/* 4. Textured Shop Grid OR 3D Street */}
+                    <AnimatePresence mode="wait">
+                      {viewMode === "grid" ? (
+                        <motion.div 
+                          key="grid"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          className="grid grid-cols-2 gap-3 sm:gap-6 px-1 mb-20"
                         >
-                          {/* Image Section */}
-                          <div className="aspect-[4/3] relative overflow-hidden">
-                            <img 
-                              src={shop.heroImage} 
-                              alt={shop.name} 
-                              className={`w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 ${!shop.isOpen ? 'grayscale opacity-40' : ''}`} 
-                            />
-                            
-                            {/* Floating Rating Badge */}
-                            <div className="absolute bottom-0 left-0 bg-emerald-600 px-3 py-1.5 rounded-tr-2xl border-r border-t border-white/10 flex items-center gap-1.5 shadow-2xl z-10 transition-colors">
-                              <Star className="w-3 h-3 fill-white text-white" />
-                              <span className="text-[11px] font-black text-white tracking-tight">{shop.rating}</span>
-                            </div>
-
-                            {/* Floating Time Badge */}
-                            <div className="absolute bottom-0 right-0 bg-[#0d0d0f]/90 px-3 py-1.5 rounded-tl-2xl border-l border-t border-white/10 flex items-center gap-1.5 shadow-2xl z-10 transition-colors">
-                              <Clock className="w-3 h-3 text-red-500" />
-                              <span className="text-[11px] font-black text-white tracking-tight">{shop.deliveryTime}</span>
-                            </div>
-
-                            {/* Closed Overlay */}
-                            {!shop.isOpen && (
-                              <div className="absolute inset-0 bg-black/40 flex items-center justify-center p-2">
+                          {liveShops.map((shop, i) => (
+                            <motion.div
+                              key={shop.id}
+                              initial={{ opacity: 0, y: 20 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ delay: i * 0.05 }}
+                              onClick={() => navigate(`/shop/${shop.id}`)}
+                              className="group relative bg-[#1c1c1e] rounded-[1.8rem] overflow-hidden border border-white/5 shadow-xl hover:border-white/10 transition-all active:scale-[0.97] cursor-pointer"
+                            >
+                              {/* Image Section */}
+                              <div className="aspect-[4/3] relative overflow-hidden">
+                                <img 
+                                  src={shop.heroImage} 
+                                  alt={shop.name} 
+                                  className={`w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 ${!shop.isOpen ? 'grayscale opacity-40' : ''}`} 
+                                />
+                                
+                                {/* Floating Rating Badge */}
+                                <div className="absolute bottom-0 left-0 bg-emerald-600 px-3 py-1.5 rounded-tr-2xl border-r border-t border-white/10 flex items-center gap-1.5 shadow-2xl z-10 transition-colors">
+                                  <Star className="w-3 h-3 fill-white text-white" />
+                                  <span className="text-[11px] font-black text-white tracking-tight">{shop.rating}</span>
+                                </div>
+    
+                                {/* Floating Time Badge */}
+                                <div className="absolute bottom-0 right-0 bg-[#0d0d0f]/90 px-3 py-1.5 rounded-tl-2xl border-l border-t border-white/10 flex items-center gap-1.5 shadow-2xl z-10 transition-colors">
+                                  <Clock className="w-3 h-3 text-red-500" />
+                                  <span className="text-[11px] font-black text-white tracking-tight">{shop.deliveryTime}</span>
+                                </div>
+    
+                                {/* Closed Overlay */}
+                                {!shop.isOpen && (
+                                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center p-2">
+                                  </div>
+                                )}
                               </div>
-                            )}
-                          </div>
-
-                          {/* Detail Section */}
-                          <div className="p-3">
-                            <h3 className="text-[14px] sm:text-[16px] font-black text-white leading-tight mb-1 line-clamp-1">
-                              {shop.name}
-                            </h3>
-                            
-                            <div className="mt-4">
-                              {/* Upsized Apple Button */}
-                              <button className="bg-white text-black text-[12px] font-black px-6 py-2.5 rounded-full shadow-md active:scale-95 transition-all w-full tracking-tight">
-                                ORDER NOW
-                              </button>
-                            </div>
-                          </div>
+    
+                              {/* Detail Section */}
+                              <div className="p-3">
+                                <h3 className="text-[14px] sm:text-[16px] font-black text-white leading-tight mb-1 line-clamp-1">
+                                  {shop.name}
+                                </h3>
+                                
+                                <div className="mt-4">
+                                  <button className="bg-white text-black text-[12px] font-black px-6 py-2.5 rounded-full shadow-md active:scale-95 transition-all w-full tracking-tight">
+                                    ORDER NOW
+                                  </button>
+                                </div>
+                              </div>
+                            </motion.div>
+                          ))}
                         </motion.div>
-                      ))}
-                    </div>
+                      ) : (
+                        <motion.div
+                          key="immersive"
+                          initial={{ opacity: 0, scale: 0.9 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          exit={{ opacity: 0, scale: 1.1 }}
+                          transition={{ type: "spring", stiffness: 300, damping: 25 }}
+                        >
+                          <ThreeDStreet shops={liveShops} />
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </>
                 ) : (
                   <div className="w-full pb-10">

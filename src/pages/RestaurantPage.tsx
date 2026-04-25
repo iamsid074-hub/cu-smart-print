@@ -10,6 +10,9 @@ import { useCart } from "@/contexts/CartContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { supabase } from "@/lib/supabase";
+import ARPreviewModal from "@/components/ARPreviewModal";
+import { ScanFace } from "lucide-react";
+import { audioSystem } from "@/utils/audioUtils";
 
 export default function RestaurantPage() {
   const { id } = useParams();
@@ -24,6 +27,7 @@ export default function RestaurantPage() {
   const [isCategoryMenuOpen, setIsCategoryMenuOpen] = useState(false);
   const [isNavVisible, setIsNavVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const [arItem, setArItem] = useState<{ name: string; category: string } | null>(null);
 
   // Sync with Supabase for real-time open/closed status
   useEffect(() => {
@@ -129,6 +133,12 @@ export default function RestaurantPage() {
 
   return (
     <div className="min-h-screen bg-[#0d0d0f] text-white pb-32 font-sans overflow-x-hidden">
+      <ARPreviewModal 
+        isOpen={!!arItem} 
+        onClose={() => setArItem(null)} 
+        itemName={arItem?.name || ""} 
+        itemCategory={arItem?.category || ""} 
+      />
       {/* ─── STICKY HEADER ─── */}
       <div className="sticky top-0 z-50 bg-[#0d0d0f]/80 backdrop-blur-xl border-b border-white/5 flex items-center justify-between px-4 py-4">
         <motion.button 
@@ -326,6 +336,7 @@ export default function RestaurantPage() {
                       initial={{ opacity: 0, scale: 0.95 }}
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ delay: idx * 0.05 }}
+                      onMouseEnter={() => audioSystem.playByItem(item.name, category.category)}
                       className="group flex flex-col gap-2 sm:gap-4 p-3 sm:p-5 bg-[#1c1c1e]/50 border border-white/5 rounded-[1.2rem] sm:rounded-[2rem] hover:bg-[#1c1c1e] transition-all relative overflow-hidden"
                     >
                       {/* Veg/Non-veg Indicator */}
@@ -335,6 +346,19 @@ export default function RestaurantPage() {
 
                       {/* Item Image */}
                       <div className="w-full aspect-[4/3] rounded-[1rem] sm:rounded-[1.5rem] overflow-hidden bg-[#2c2c2e] relative border border-white/5 shadow-inner">
+                        {/* View in AR Button Overlay */}
+                        {shop.isOpen && (
+                          <motion.button
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
+                            onClick={() => setArItem({ name: item.name, category: category.category })}
+                            className="absolute top-2 right-2 sm:top-4 sm:right-4 z-10 w-10 h-10 sm:w-12 sm:h-12 bg-black/60 backdrop-blur-xl border border-white/10 rounded-2xl flex flex-col items-center justify-center shadow-2xl active:bg-orange-500 transition-colors"
+                          >
+                             <ScanFace className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+                             <span className="text-[7px] font-black uppercase text-white/60">AR</span>
+                          </motion.button>
+                        )}
+
                         <img 
                           src={item.image || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800&auto=format&fit=crop"} 
                           alt={item.name} 
