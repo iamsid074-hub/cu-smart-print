@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useMotionValue, useTransform, animate } from 'framer-motion';
 import { Package, ArrowRight, ArrowLeft } from 'lucide-react';
 import { VirtualCard } from './VirtualCard';
 
@@ -14,24 +14,23 @@ export const VirtualCardUnboxing: React.FC<VirtualCardUnboxingProps> = ({
   balance,
   onComplete
 }) => {
-  const [swipeProgress, setSwipeProgress] = useState(0);
   const [step, setStep] = useState<'initial' | 'opening' | 'revealed'>('initial');
-
-  const handleDrag = (event: any, info: any) => {
-    // Assuming a total swipe distance of about 200px
-    const progress = Math.max(0, Math.min(100, (info.offset.x / 200) * 100));
-    setSwipeProgress(progress);
-  };
+  const x = useMotionValue(0);
+  const swipeTextOpacity = useTransform(x, [0, 80], [1, 0]);
+  const openingOpacity = useTransform(x, [80, 160], [0, 1]);
 
   const handleDragEnd = (event: any, info: any) => {
-    if (swipeProgress > 80 || info.offset.x > 150) {
+    if (x.get() > 150) {
       setStep('opening');
+      
+      // Force handle to end
+      animate(x, 256, { type: "spring", stiffness: 400, damping: 30 });
       
       // Box opening animation (1.5s) -> Card reveal (2s)
       setTimeout(() => {
         setStep('revealed');
         // Vibrate if available
-        if (navigator.vibrate) navigator.vibrate(200);
+        if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
         
         // Let them see it, then complete
         setTimeout(() => {
@@ -39,7 +38,8 @@ export const VirtualCardUnboxing: React.FC<VirtualCardUnboxingProps> = ({
         }, 3000);
       }, 1500);
     } else {
-      setSwipeProgress(0);
+      // Snap back
+      animate(x, 0, { type: "spring", stiffness: 300, damping: 25 });
     }
   };
 
@@ -68,32 +68,41 @@ export const VirtualCardUnboxing: React.FC<VirtualCardUnboxingProps> = ({
             </h2>
             
             {/* Swipe Button Container */}
-            <div className="w-full max-w-[300px] mt-12 bg-white/5 border border-white/10 rounded-full h-16 relative overflow-hidden flex items-center shadow-inner">
-              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <span className="text-white/50 font-bold tracking-widest text-sm uppercase flex items-center gap-2">
-                  <ArrowRight className="w-4 h-4" />
-                  Swipe to Unbox
-                  <ArrowLeft className="w-4 h-4 opacity-0" /> {/* Balance for centering */}
-                </span>
-              </div>
+            <div className="w-full max-w-[320px] mt-12 bg-[#1a1a1a] border border-white/10 rounded-full h-16 relative overflow-hidden flex items-center shadow-[inset_0_2px_8px_rgba(0,0,0,0.8)]">
               
-              <motion.div
-                drag="x"
-                dragConstraints={{ left: 0, right: 236 }} // 300 - 64 (button width)
-                dragElastic={0.1}
-                onDrag={handleDrag}
-                onDragEnd={handleDragEnd}
-                animate={{ x: swipeProgress === 0 ? 0 : undefined }}
-                className="w-16 h-16 rounded-full bg-gradient-to-r from-[#d4af37] to-[#c9a961] shadow-[0_0_20px_rgba(212,175,55,0.4)] flex items-center justify-center cursor-grab active:cursor-grabbing z-10 relative left-0"
+              {/* OPENING... Text (Fades in) */}
+              <motion.div 
+                className="absolute inset-0 flex items-center justify-center pointer-events-none"
+                style={{ opacity: openingOpacity }}
               >
-                <ArrowRight className="w-6 h-6 text-black" />
+                <span className="font-bold tracking-widest text-[13px] uppercase text-[#d4af37]">
+                  Opening...
+                </span>
+              </motion.div>
+
+              {/* SWIPE TO UNBOX Text (Fades out) */}
+              <motion.div 
+                className="absolute inset-0 flex items-center justify-center pointer-events-none"
+                style={{ opacity: swipeTextOpacity }}
+              >
+                <span className="font-bold tracking-widest text-[13px] uppercase flex items-center gap-2 ml-4 text-white/60">
+                  <ArrowRight className="w-4 h-4 text-white/50" />
+                  Swipe to Unbox
+                  <ArrowLeft className="w-4 h-4 opacity-0" />
+                </span>
               </motion.div>
               
-              {/* Highlight fill behind button */}
-              <div 
-                className="absolute top-0 left-0 h-full bg-[#d4af37]/20 pointer-events-none"
-                style={{ width: `calc(${swipeProgress}% + 32px)` }}
-              />
+              <motion.div
+                style={{ x }}
+                drag="x"
+                dragConstraints={{ left: 0, right: 256 }} // 320 - 64
+                dragElastic={0}
+                dragMomentum={false}
+                onDragEnd={handleDragEnd}
+                className="w-16 h-16 rounded-full bg-gradient-to-br from-white to-gray-200 shadow-[0_0_20px_rgba(255,255,255,0.15)] flex items-center justify-center cursor-grab active:cursor-grabbing z-10 relative left-0 border border-gray-300 touch-none will-change-transform"
+              >
+                <Package className="w-6 h-6 text-[#1a1a1a]" />
+              </motion.div>
             </div>
           </motion.div>
         )}

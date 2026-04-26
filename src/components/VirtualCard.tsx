@@ -28,7 +28,7 @@ export const VirtualCard: React.FC<VirtualCardProps> = ({
 
   return (
     <div 
-      className={`perspective-1000 w-full max-w-[450px] mx-auto cursor-pointer group ${className}`}
+      className={`perspective-1000 w-full max-w-[450px] mx-auto cursor-pointer group px-1 sm:px-0 ${className}`}
       onClick={handleTap}
     >
       <motion.div
@@ -50,7 +50,7 @@ export const VirtualCard: React.FC<VirtualCardProps> = ({
               <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#d4af37] to-[#c9a961] flex items-center justify-center shadow-lg">
                 <Zap className="w-4 h-4 text-black" fill="currentColor" />
               </div>
-              <span className="text-white font-black tracking-widest uppercase text-lg">CU CARD</span>
+              <span className="text-white font-black tracking-widest uppercase text-base sm:text-lg">CU CARD</span>
             </div>
             <div className="flex gap-2">
               <ShieldCheck className="w-5 h-5 text-[#d4af37]/80" />
@@ -64,7 +64,7 @@ export const VirtualCard: React.FC<VirtualCardProps> = ({
               <div className="w-full h-[1px] bg-black/20" />
               <div className="w-full h-[1px] bg-black/20" />
             </div>
-            <div className="text-white/90 font-mono text-xl sm:text-2xl tracking-[0.15em] drop-shadow-md">
+            <div className="text-white/90 font-mono text-base sm:text-2xl tracking-[0.1em] sm:tracking-[0.15em] drop-shadow-md">
               •••• •••• •••• 8834
             </div>
           </div>

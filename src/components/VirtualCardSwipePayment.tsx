@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence, useMotionValue, useTransform, animate } from 'framer-motion';
-import { CreditCard, CheckCircle, XCircle, ArrowRight, ArrowLeft } from 'lucide-react';
+import { CreditCard, CheckCircle, XCircle, ArrowRight, ArrowLeft, Lock, Delete } from 'lucide-react';
 import { VirtualCard } from './VirtualCard';
 
 interface VirtualCardSwipePaymentProps {
@@ -18,8 +18,10 @@ export const VirtualCardSwipePayment: React.FC<VirtualCardSwipePaymentProps> = (
   onCancel,
   userName
 }) => {
-  const [stage, setStage] = useState<'idle' | 'machine_appears' | 'swiping' | 'processing' | 'success' | 'error'>('idle');
+  const [stage, setStage] = useState<'idle' | 'passcode_required' | 'processing' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
+  const [passcodeInput, setPasscodeInput] = useState('');
+  const [isWrongPasscode, setIsWrongPasscode] = useState(false);
 
   const isInsufficient = balance < amount;
 
@@ -35,36 +37,68 @@ export const VirtualCardSwipePayment: React.FC<VirtualCardSwipePaymentProps> = (
   const handleDragEnd = (event: any, info: any) => {
     if (isInsufficient) return;
     
-    // Check current x position (use offset.x or x.get())
     if (x.get() > 150) {
-      setStage('machine_appears');
-      
-      // Force handle to end
       animate(x, 256, { type: "spring", stiffness: 400, damping: 30 });
       
-      // Sequence
-      setTimeout(() => setStage('swiping'), 500);
-      setTimeout(() => setStage('processing'), 2000);
-      
-      setTimeout(() => {
-        if (balance >= amount) {
-          if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
-          setStage('success');
-          setTimeout(() => onSuccess(), 1500);
-        } else {
-          if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
-          setStage('error');
-          setErrorMessage('Insufficient balance');
-          setTimeout(() => {
-            setStage('idle');
-            animate(x, 0, { type: "spring", stiffness: 300, damping: 25 });
-          }, 2000);
-        }
-      }, 3000);
+      const storedPasscode = localStorage.getItem("wallet_passcode");
+      if (storedPasscode) {
+        setStage('passcode_required');
+      } else {
+        processPayment();
+      }
     } else {
-      // Snap back if didn't swipe far enough
       animate(x, 0, { type: "spring", stiffness: 300, damping: 25 });
     }
+  };
+
+  const processPayment = () => {
+    setStage('processing');
+    setTimeout(() => {
+      if (balance >= amount) {
+        if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+        setStage('success');
+        setTimeout(() => onSuccess(), 1500);
+      } else {
+        if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+        setStage('error');
+        setErrorMessage('Insufficient balance');
+        setTimeout(() => {
+          setStage('idle');
+          animate(x, 0, { type: "spring", stiffness: 300, damping: 25 });
+        }, 2000);
+      }
+    }, 2000);
+  };
+
+  const handleNumpadPress = (num: string) => {
+    if (isWrongPasscode) setIsWrongPasscode(false);
+    if (passcodeInput.length < 4) {
+      const newVal = passcodeInput + num;
+      setPasscodeInput(newVal);
+      if (newVal.length === 4) {
+        // Validate
+        const storedPasscode = localStorage.getItem("wallet_passcode");
+        if (newVal === storedPasscode) {
+          processPayment();
+        } else {
+          setIsWrongPasscode(true);
+          if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+          setTimeout(() => {
+            setPasscodeInput("");
+            setIsWrongPasscode(false);
+          }, 600);
+        }
+      }
+    }
+  };
+
+  const handleNumpadDelete = () => {
+    if (isWrongPasscode) {
+      setIsWrongPasscode(false);
+      setPasscodeInput("");
+      return;
+    }
+    setPasscodeInput(prev => prev.slice(0, -1));
   };
 
   return (
@@ -133,74 +167,136 @@ export const VirtualCardSwipePayment: React.FC<VirtualCardSwipePaymentProps> = (
         </motion.div>
       </div>
 
-      {/* ── Fullscreen POS Machine Animation (Stages 2-6) ── */}
+      {/* ── Fullscreen Payment Flow ── */}
       <AnimatePresence>
         {stage !== 'idle' && (
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[9999] bg-black/80 backdrop-blur-md flex flex-col items-center justify-center"
+            className="fixed inset-0 z-[9999] bg-[#000000] backdrop-blur-3xl flex flex-col items-center pt-24"
           >
-            {/* POS Machine */}
+            {/* Render the Virtual Card at the top */}
             <motion.div
-              initial={{ y: 200, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              className="relative w-[300px] h-[400px] bg-gradient-to-b from-[#2a2a2a] to-[#1a1a1a] rounded-[2rem] border-2 border-[#333] shadow-2xl flex flex-col items-center p-6 overflow-hidden"
+              initial={{ y: -50, opacity: 0, scale: 0.9 }}
+              animate={{ y: 0, opacity: 1, scale: 1 }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              className="w-full max-w-[450px] px-4 pointer-events-none mb-10"
             >
-              {/* POS Screen */}
-              <div className="w-full h-32 bg-[#a3b899] rounded-xl border-4 border-[#111] shadow-inner p-4 flex flex-col justify-center items-center font-mono">
-                {stage === 'machine_appears' && <span className="text-[#1a3b11] font-bold text-lg animate-pulse">INSERT/SWIPE CARD</span>}
-                {stage === 'swiping' && <span className="text-[#1a3b11] font-bold text-lg">READING...</span>}
-                {stage === 'processing' && <span className="text-[#1a3b11] font-bold text-lg animate-pulse">PROCESSING...</span>}
-                {stage === 'success' && (
-                  <div className="flex flex-col items-center text-[#1a3b11]">
-                    <CheckCircle className="w-8 h-8 mb-1" />
-                    <span className="font-bold">APPROVED</span>
-                  </div>
-                )}
-                {stage === 'error' && (
-                  <div className="flex flex-col items-center text-red-800">
-                    <XCircle className="w-8 h-8 mb-1" />
-                    <span className="font-bold">DECLINED</span>
-                  </div>
-                )}
-              </div>
-
-              {/* POS Keypad (Decor) */}
-              <div className="w-full flex-1 mt-6 grid grid-cols-3 gap-2 opacity-50">
-                {[1,2,3,4,5,6,7,8,9,'*',0,'#'].map((k) => (
-                  <div key={k} className="bg-[#111] rounded-lg flex items-center justify-center text-white/30 text-sm font-bold border-b-2 border-black">
-                    {k}
-                  </div>
-                ))}
-              </div>
-
-              {/* Card Slot */}
-              <div className="absolute -top-4 w-full h-8 bg-black border-b border-[#333] z-20 flex justify-center">
-                 <div className={`w-3/4 h-2 bg-[#050505] rounded-full mt-5 border border-[#111] transition-all duration-300 ${stage === 'swiping' ? 'shadow-[0_0_10px_#d4af37]' : ''}`} />
-              </div>
+              <VirtualCard name={userName} balance={balance} balanceHidden={true} />
             </motion.div>
 
-            {/* The Virtual Card that swipes */}
-            <AnimatePresence>
-              {stage === 'swiping' && (
-                <motion.div
-                  initial={{ x: 300, y: -220, rotateZ: 90, scale: 0.6 }}
-                  animate={{ x: -300, y: -220, rotateZ: 90, scale: 0.6 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 1.5, ease: "linear" }}
-                  className="absolute z-10 pointer-events-none"
-                >
-                  <VirtualCard name={userName} balance={balance} />
-                </motion.div>
-              )}
-            </AnimatePresence>
+            {/* Passcode UI */}
+            {stage === 'passcode_required' && (
+              <motion.div
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                className="w-full max-w-sm flex flex-col items-center"
+              >
+                <div className="flex flex-col items-center mb-8">
+                  <div className="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center mb-4">
+                    <Lock className="w-6 h-6 text-white" />
+                  </div>
+                  <h2 className="text-xl font-bold text-white mb-2 tracking-tight">Enter Wallet PIN</h2>
+                  <p className="text-sm text-gray-400">Confirm payment of ₹{amount.toLocaleString('en-IN')}</p>
+                </div>
 
-            {stage === 'machine_appears' && (
+                {/* PIN Dots */}
+                <motion.div 
+                  className="flex gap-4 mb-12"
+                  animate={isWrongPasscode ? { x: [-10, 10, -10, 10, 0] } : {}}
+                  transition={{ duration: 0.4 }}
+                >
+                  {[0, 1, 2, 3].map((i) => (
+                    <div
+                      key={i}
+                      className={`w-4 h-4 rounded-full transition-all duration-300 ${
+                        isWrongPasscode
+                          ? "bg-red-500 shadow-[0_0_15px_rgba(239,68,68,0.5)]"
+                          : i < passcodeInput.length
+                          ? "bg-[#d4af37] shadow-[0_0_15px_rgba(212,175,55,0.5)]"
+                          : "bg-white/10"
+                      }`}
+                    />
+                  ))}
+                </motion.div>
+
+                {/* iOS Style Numpad */}
+                <div className="grid grid-cols-3 gap-x-8 gap-y-6 px-8 w-full max-w-[320px]">
+                  {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
+                    <button
+                      key={num}
+                      onClick={() => handleNumpadPress(num.toString())}
+                      className="w-[72px] h-[72px] rounded-full bg-white/5 border border-white/5 text-2xl font-semibold text-white hover:bg-white/10 active:bg-white/20 active:scale-95 transition-all flex items-center justify-center mx-auto"
+                    >
+                      {num}
+                    </button>
+                  ))}
+                  <div />
+                  <button
+                    onClick={() => handleNumpadPress("0")}
+                    className="w-[72px] h-[72px] rounded-full bg-white/5 border border-white/5 text-2xl font-semibold text-white hover:bg-white/10 active:bg-white/20 active:scale-95 transition-all flex items-center justify-center mx-auto"
+                  >
+                    0
+                  </button>
+                  <button
+                    onClick={handleNumpadDelete}
+                    className="w-[72px] h-[72px] rounded-full text-white/50 hover:text-white active:scale-95 transition-all flex items-center justify-center mx-auto"
+                  >
+                    <Delete className="w-8 h-8" />
+                  </button>
+                </div>
+              </motion.div>
+            )}
+
+            {/* Processing / Success UI */}
+            {stage === 'processing' && (
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                className="flex flex-col items-center mt-20"
+              >
+                <div className="w-16 h-16 border-4 border-white/10 border-t-[#d4af37] rounded-full animate-spin mb-6" />
+                <p className="text-white font-bold tracking-widest uppercase animate-pulse">Processing Payment</p>
+              </motion.div>
+            )}
+
+            {stage === 'success' && (
+              <motion.div
+                initial={{ scale: 0.5, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                className="flex flex-col items-center mt-20"
+              >
+                <div className="w-20 h-20 bg-[#34C759]/20 rounded-full flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(52,199,89,0.3)]">
+                  <CheckCircle className="w-10 h-10 text-[#34C759]" />
+                </div>
+                <p className="text-2xl font-black text-white mb-2">Payment Successful</p>
+                <p className="text-gray-400">₹{amount.toLocaleString('en-IN')} paid via CU Card</p>
+              </motion.div>
+            )}
+
+            {stage === 'error' && (
+              <motion.div
+                initial={{ scale: 0.5, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                className="flex flex-col items-center mt-20"
+              >
+                <div className="w-20 h-20 bg-red-500/20 rounded-full flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(239,68,68,0.3)]">
+                  <XCircle className="w-10 h-10 text-red-500" />
+                </div>
+                <p className="text-2xl font-black text-white mb-2">Payment Failed</p>
+                <p className="text-gray-400">{errorMessage}</p>
+              </motion.div>
+            )}
+
+            {stage === 'passcode_required' && (
               <button 
-                onClick={() => setStage('idle')}
-                className="absolute top-10 right-10 text-white/50 hover:text-white"
+                onClick={() => {
+                  setStage('idle');
+                  animate(x, 0, { type: "spring", stiffness: 300, damping: 25 });
+                  setPasscodeInput('');
+                }}
+                className="absolute top-10 right-6 text-white/50 hover:text-white font-bold text-sm"
               >
                 Cancel
               </button>
