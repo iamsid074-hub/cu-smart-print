@@ -246,37 +246,54 @@ export default function RealTimeSatelliteMap() {
     }
   }, [driverDisplayPos, customerPos, heading, isRealLive, isApproaching, isArrived, isMapLoaded]);
 
+  // ── Resize map when permission is granted so tiles fill the container ───────────
+  useEffect(() => {
+    if (permissionStatus === "granted" && mapRef.current) {
+      // Small delay ensures the overlay is gone from DOM before resize
+      setTimeout(() => mapRef.current?.resize(), 100);
+    }
+  }, [permissionStatus]);
+
   // ─────────────────────────────────────────────────────────────────────────────
 
-  if (permissionStatus !== "granted") {
-    return (
-      <div className="relative w-full h-[440px] sm:h-[540px] bg-[#0A0A0A] overflow-hidden rounded-[2rem] border border-white/5 shadow-2xl mb-6 flex flex-col items-center justify-center p-8 text-center">
-        <div className="w-20 h-20 bg-emerald-500/10 rounded-full flex items-center justify-center mb-6">
-          <MapPin className="w-10 h-10 text-emerald-500" />
-        </div>
-        <h3 className="text-2xl sm:text-3xl font-black text-white mb-3 tracking-tight">Enable Live Tracking</h3>
-        <p className="text-white/50 mb-8 max-w-sm text-sm sm:text-base">
-          {permissionStatus === "denied" 
-            ? "Location access was denied. Please allow location in your browser settings to see exactly how far your order is."
-            : "To calculate accurate distance and ETA, we need your location to show where you are on the map."}
-        </p>
-        <button
-          onClick={requestLocation}
-          className="bg-emerald-500 text-black px-8 py-4 rounded-full font-black uppercase tracking-widest text-sm hover:bg-emerald-400 transition-colors shadow-[0_0_30px_rgba(16,185,129,0.2)] active:scale-95"
-        >
-          {permissionStatus === "denied" ? "Try Again" : "Allow Location"}
-        </button>
-      </div>
-    );
-  }
 
   return (
+
     <div className="relative w-full h-[440px] sm:h-[540px] bg-[#0A0A0A] overflow-hidden rounded-[2rem] border border-white/5 shadow-2xl mb-6">
 
       <style>{MARKER_STYLES}</style>
 
-      {/* MapLibre container */}
+      {/* MapLibre canvas — always in DOM so the map can initialise */}
       <div ref={mapContainerRef} className="absolute inset-0 w-full h-full" />
+
+      {/* ── Locating overlay — shown after permission granted but before first fix ── */}
+      {permissionStatus === "granted" && !isRealGps && (
+        <div className="absolute inset-0 z-[1500] flex flex-col items-center justify-center bg-[#0A0A0A]/80 backdrop-blur-sm">
+          <div className="w-16 h-16 border-4 border-emerald-500/20 border-t-emerald-500 rounded-full animate-spin mb-4" />
+          <p className="text-white font-bold tracking-widest text-sm uppercase">Acquiring GPS Signal...</p>
+        </div>
+      )}
+
+      {/* ── Permission overlay — rendered ON TOP until location is granted ── */}
+      {permissionStatus !== "granted" && (
+        <div className="absolute inset-0 z-[2000] flex flex-col items-center justify-center p-8 text-center bg-[#0A0A0A]/95 backdrop-blur-sm">
+          <div className="w-20 h-20 bg-emerald-500/10 rounded-full flex items-center justify-center mb-6">
+            <MapPin className="w-10 h-10 text-emerald-500" />
+          </div>
+          <h3 className="text-2xl sm:text-3xl font-black text-white mb-3 tracking-tight">Enable Live Tracking</h3>
+          <p className="text-white/50 mb-8 max-w-sm text-sm sm:text-base">
+            {permissionStatus === "denied"
+              ? "Location access was denied. Tap \"Try Again\" or allow location in your device settings."
+              : "Share your location so we can show exactly how far your delivery partner is."}
+          </p>
+          <button
+            onClick={requestLocation}
+            className="bg-emerald-500 text-black px-8 py-4 rounded-full font-black uppercase tracking-widest text-sm hover:bg-emerald-400 transition-all shadow-[0_0_30px_rgba(16,185,129,0.3)] active:scale-95"
+          >
+            {permissionStatus === "denied" ? "Try Again" : "Allow Location"}
+          </button>
+        </div>
+      )}
 
       {/* ── Top-left: Live status ── */}
       <div className="absolute top-5 left-5 z-[1000] pointer-events-none">

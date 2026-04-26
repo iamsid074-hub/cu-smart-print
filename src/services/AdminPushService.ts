@@ -142,7 +142,9 @@ export class AdminPushService {
               payload: { 
                 lat: pos.coords.latitude, 
                 lng: pos.coords.longitude,
-                timestamp: new Date().toISOString(),
+                heading: pos.coords.heading ?? 0,
+                accuracy: pos.coords.accuracy ?? 20,
+                timestamp: Date.now(),
                 driverId: this.adminId 
               }
             });

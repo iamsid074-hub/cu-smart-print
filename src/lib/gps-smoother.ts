@@ -60,20 +60,6 @@ export function smooth(
   state: SmootherState,
   raw: RawGPSFix
 ): SmoothedFix | null {
-  // ── Stage 1: Accuracy filter ───────────────────────────────────────────────
-  if (raw.accuracy > ACCURACY_MAX_M) {
-    // Fix is too imprecise — return last known position unchanged
-    if (state.lastAccepted) {
-      return {
-        lat: state.lastAccepted.smoothedLat,
-        lng: state.lastAccepted.smoothedLng,
-        heading: state.lastAccepted.smoothedHeading,
-        timestamp: state.lastAccepted.timestamp,
-      };
-    }
-    return null; // No prior state — we have nothing to return
-  }
-
   // ── First fix ever — accept immediately ───────────────────────────────────
   if (!state.lastAccepted) {
     state.lastAccepted = {
@@ -87,6 +73,17 @@ export function smooth(
       lng: raw.lng,
       heading: raw.heading ?? 0,
       timestamp: raw.timestamp,
+    };
+  }
+
+  // ── Stage 1: Accuracy filter ───────────────────────────────────────────────
+  if (raw.accuracy > ACCURACY_MAX_M) {
+    // Fix is too imprecise — return last known position unchanged
+    return {
+      lat: state.lastAccepted.smoothedLat,
+      lng: state.lastAccepted.smoothedLng,
+      heading: state.lastAccepted.smoothedHeading,
+      timestamp: state.lastAccepted.timestamp,
     };
   }
 
