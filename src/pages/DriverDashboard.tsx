@@ -48,15 +48,17 @@ export default function DriverDashboard() {
               const newPos: [number, number] = [pos.coords.latitude, pos.coords.longitude];
               setLocation(newPos);
               
-              // Broadcast to Supabase
+              // Broadcast to Supabase — payload must match DriverLocationEvent type
               channel.send({
                 type: 'broadcast',
                 event: 'location-update',
-                payload: { 
-                  lat: pos.coords.latitude, 
+                payload: {
+                  lat: pos.coords.latitude,
                   lng: pos.coords.longitude,
-                  timestamp: new Date().toISOString(),
-                  driverId: user?.id 
+                  heading: pos.coords.heading ?? 0,
+                  accuracy: pos.coords.accuracy,
+                  timestamp: Date.now(), // numeric ms — NOT ISO string
+                  driverId: user?.id,
                 }
               });
             }
