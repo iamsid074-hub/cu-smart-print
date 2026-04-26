@@ -21,6 +21,8 @@ const Wallet = lazy(() => import("./pages/Wallet"));
 const Grocery = lazy(() => import("./pages/Grocery"));
 const ProductDetail = lazy(() => import("./pages/ProductDetail"));
 const QuickStore = lazy(() => import("./pages/QuickStore"));
+const DriverDashboard = lazy(() => import("./pages/DriverDashboard"));
+
 
 // Core pages to preload for flawless switching
 const preloadCoreRoutes = () => {
@@ -187,7 +189,7 @@ function AppLayout() {
   // It listens for new orders via real-time + polling and fires native notifications.
   useEffect(() => {
     if (isAdmin && user && !authLoading) {
-      AdminPushService.initialize();
+      AdminPushService.initialize(user.id);
     }
     // Only stop on logout (user becomes null), NOT on page navigation
     if (!user && !authLoading) {
@@ -200,6 +202,7 @@ function AppLayout() {
   const isResetPassword = location.pathname === "/reset-password";
   const isAdminPath = location.pathname.startsWith("/admin");
   const isDownload = location.pathname === "/download";
+  const isDriverPage = location.pathname === "/driver";
 
   // Show branded loading ONLY during initial boot
   if (!initialBootFinished && !isLanding && !isLogin && !isAdminPath && !isDownload && !isResetPassword) {
@@ -213,7 +216,8 @@ function AppLayout() {
     !isLogin &&
     !isLanding &&
     !isResetPassword &&
-    !isDownload
+    !isDownload &&
+    !isDriverPage
   ) {
     if (gate === "maintenance") return <MaintenanceScreen />;
     if (gate === "closed") return <ClosedScreen />;
@@ -222,7 +226,7 @@ function AppLayout() {
   return (
     <>
       <AppUpdater />
-      {!isLanding && !isLogin && !isAdminPath && !isDownload && (
+      {!isLanding && !isLogin && !isAdminPath && !isDownload && !isDriverPage && (
         <>
           {location.pathname !== "/pasta-offer" && <Navbar />}
           {location.pathname !== "/pasta-offer" && <BottomNav />}
@@ -384,6 +388,15 @@ function AppLayout() {
                   <Admin />
                 </AdminRoute>
               }
+            />
+
+            <Route 
+              path="/driver" 
+              element={
+                <ProtectedRoute>
+                  <DriverDashboard />
+                </ProtectedRoute>
+              } 
             />
 
             <Route

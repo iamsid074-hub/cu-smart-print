@@ -17,10 +17,14 @@ import {
   ShoppingBag,
   X,
   PartyPopper,
+  Sparkles,
 } from "lucide-react";
 import { Link, useSearchParams } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
+import RealTimeSatelliteMap from "@/components/RealTimeSatelliteMap";
+
+import { shops } from "@/config/shopMenus";
 
 // ─── Detect order type ──────────────────────────────────────────────────────────
 function getOrderType(order: any): "food" | "item" | "vending" | "cart" {
@@ -355,7 +359,7 @@ export default function Tracking() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 pb-32 px-4">
+    <div className="min-h-screen bg-slate-50 pb-32 px-4 overflow-x-hidden">
       <div className="h-28" /> {/* Safe area for Dynamic Island */}
       <div className="max-w-2xl mx-auto">
         {/* Header removed for Dynamic Island */}
@@ -409,59 +413,33 @@ export default function Tracking() {
           </motion.div>
         ) : (
           <>
-            {/* ── Delivery Status Banner ─────────────────────────────── */}
+            {/* ── 3D Holographic Map ─────────────────────────────── */}
             {!isCompleted && (
               <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className={`w-full border rounded-2xl p-4 mb-6 flex justify-between items-center ${
-                  displayType === "food"
-                    ? "bg-orange-50 border-orange-200"
-                    : "bg-brand-50 border-brand-muted"
-                }`}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
               >
-                <div className="flex items-center gap-4">
-                  <div
-                    className={`w-12 h-12 rounded-xl flex items-center justify-center ${
-                      displayType === "food"
-                        ? "bg-white text-orange-500 shadow-sm border border-orange-100"
-                        : "bg-white text-brand shadow-sm border border-brand-50"
-                    }`}
-                  >
-                    {order.status === "delivering" ? (
-                      <Truck className={`w-6 h-6 animate-pulse`} />
-                    ) : (
-                      <Clock className={`w-6 h-6`} />
-                    )}
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-1.5">
-                      <p
-                        className={`text-xs font-bold uppercase tracking-wider ${
-                          displayType === "food"
-                            ? "text-orange-600"
-                            : "text-brand"
-                        }`}
-                      >
-                        {order.status === "delivering"
-                          ? "Estimated Delivery"
-                          : "Status"}
-                      </p>
-                      {order.is_quick && (
-                        <span className="flex items-center gap-0.5 px-1.5 py-0.5 bg-orange-500 text-black text-[9px] font-black rounded uppercase tracking-tighter shadow-sm">
-                           Blinkit / Zwigato
-                        </span>
-                      )}
-                    </div>
-                    <p className="text-slate-900 font-black text-xl">
-                      {deliveryInfo.text}
-                    </p>
+                <RealTimeSatelliteMap />
+              </motion.div>
+            )}
+
+            {/* ── Simplified Chef Bazzar Status ─────────────────────── */}
+            {!isCompleted && (
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="bg-white border border-slate-200 rounded-3xl p-5 mb-8 flex items-center gap-4 shadow-sm"
+              >
+                <div className="w-12 h-12 rounded-2xl bg-orange-50 flex items-center justify-center shrink-0">
+                  {/* Using a more 'authentic' culinary icon */}
+                  <div className="relative">
+                    <ShoppingBag className="w-6 h-6 text-orange-500" />
+                    <div className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-orange-500 rounded-full border-2 border-white animate-pulse" />
                   </div>
                 </div>
-                <div className="text-right">
-                  <p className="text-xs font-medium text-slate-500">
-                    {deliveryInfo.subtext}
-                  </p>
+                <div>
+                  <h3 className="text-slate-900 font-bold text-base tracking-tight">Chef Bazzar is preparing your order</h3>
+                  <p className="text-slate-500 text-xs font-medium">Checking items and quality for delivery</p>
                 </div>
               </motion.div>
             )}

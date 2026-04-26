@@ -3,6 +3,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
 import {
   LogOut,
+  Navigation2,
   User,
   MapPin,
   Phone,
@@ -32,6 +33,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useMembership } from "@/hooks/useMembership";
 import MembershipPlansModal from "@/components/MembershipPlansModal";
+import BazzarPass from "@/components/BazzarPass";
 
 type TabId = "listings" | "orders" | "saved" | "membership";
 
@@ -335,15 +337,26 @@ export default function Profile() {
         {/* Cover Actions */}
         <div className="absolute top-20 right-4 z-20 flex gap-2">
           {isAdmin && (
-            <button
-              onClick={() => navigate("/admin")}
-              className="p-2.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-white/20 transition-all flex items-center gap-2 px-4"
-            >
-              <Shield className="w-4 h-4" />
-              <span className="text-xs font-black uppercase tracking-wider hidden sm:inline">
-                Admin
-              </span>
-            </button>
+            <>
+              <button
+                onClick={() => navigate("/driver")}
+                className="p-2.5 rounded-full bg-emerald-500/20 backdrop-blur-md border border-emerald-500/40 text-emerald-400 hover:bg-emerald-500/30 transition-all flex items-center gap-2 px-4 shadow-[0_0_15px_rgba(16,185,129,0.3)]"
+              >
+                <Navigation2 className="w-4 h-4 fill-emerald-500" />
+                <span className="text-xs font-black uppercase tracking-wider hidden sm:inline">
+                  Driver
+                </span>
+              </button>
+              <button
+                onClick={() => navigate("/admin")}
+                className="p-2.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-white/20 transition-all flex items-center gap-2 px-4"
+              >
+                <Shield className="w-4 h-4" />
+                <span className="text-xs font-black uppercase tracking-wider hidden sm:inline">
+                  Admin
+                </span>
+              </button>
+            </>
           )}
           <button
             onClick={async () => {
@@ -440,14 +453,14 @@ export default function Profile() {
                     </h1>
                     <CheckCircle className="w-5 h-5 text-[#007AFF] fill-[#007AFF]/10" />
                     {membership.isActive && (
-                      <button
-                        onClick={() => {
-                          setActiveTab("membership");
-                        }}
-                        className="ml-2 text-[10px] sm:text-[11px] font-black uppercase tracking-widest bg-gradient-to-r from-yellow-400 to-amber-500 text-black px-3 py-1.5 rounded-full shadow-[0_4px_10px_rgba(245,158,11,0.3)] hover:scale-105 active:scale-95 transition-all outline outline-2 outline-white/50"
+                      <div 
+                        className="ml-3 flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-gradient-to-br from-zinc-800 to-black border border-white/10 shadow-[0_4px_10px_rgba(0,0,0,0.5)]"
                       >
-                        MEMBER
-                      </button>
+                        <Crown className="w-3 h-3 text-yellow-500" />
+                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white">
+                          ELITE MEMBER
+                        </span>
+                      </div>
                     )}
                   </div>
                   <p className="text-gray-400 font-bold text-sm tracking-wide">
@@ -928,7 +941,7 @@ export default function Profile() {
                     </div>
                   ) : !membership.isActive ? (
                     <div className="py-20 text-center bg-[#1c1c1e] rounded-[2.5rem] border border-white/5 border-dashed shadow-sm">
-                      <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-indigo-500 rounded-2xl flex items-center justify-center mx-auto mb-4 xl-shadow shadow-sm">
+                      <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-indigo-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm">
                         <Crown className="w-8 h-8 text-white" />
                       </div>
                       <h3 className="text-[18px] font-bold text-white tracking-tight">
@@ -945,69 +958,63 @@ export default function Profile() {
                       </button>
                     </div>
                   ) : (
-                    <div className="bg-[#1c1c1e] backdrop-blur-3xl rounded-[2rem] p-6 sm:p-8 border border-white/5 shadow-2xl relative overflow-hidden">
-                      <div className="absolute top-0 right-0 w-48 h-48 bg-purple-500/5 blur-[50px] rounded-full pointer-events-none" />
-                      <div className="absolute bottom-0 left-0 w-32 h-32 bg-indigo-500/5 blur-[50px] rounded-full pointer-events-none" />
-
-                      <div className="flex items-center gap-4 mb-6 relative z-10">
-                        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center shadow-lg shadow-purple-500/20">
-                          <Crown className="w-8 h-8 text-white" />
-                        </div>
-                        <div>
-                          <p className="text-[11px] font-black uppercase tracking-widest text-gray-500 mb-1">
-                            Active Plan
-                          </p>
-                          <h3 className="text-[24px] font-black text-white tracking-tight">
-                            CB{" "}
-                            {membership.plan?.replace("_", " ").toUpperCase()}
-                          </h3>
-                        </div>
-                      </div>
-
-                      <div className="bg-white/5 border border-white/5 rounded-[1.5rem] p-5 mb-6 shadow-sm relative z-10">
-                        <div className="flex justify-between items-end mb-3">
-                          <div>
-                            <p className="text-[13px] font-bold text-gray-400 tracking-tight mb-1">
-                              Free Deliveries This Week
-                            </p>
-                            <p className="text-[16px] font-black text-white">
-                              {membership.remainingDeliveries}{" "}
-                              <span className="text-gray-500">
-                                / {membership.totalDeliveriesLimit}
-                              </span>
-                            </p>
+                    <div className="flex flex-col items-center">
+                       <BazzarPass 
+                          userName={profile?.full_name || "MEMBER"} 
+                          userId={user.id}
+                          tier={membership.plan?.replace("_", " ").toUpperCase() || "ELITE"} 
+                          points={Math.floor(user.id.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0) / 1.5)} 
+                       />
+                       
+                       <div className="w-full bg-[#1c1c1e] backdrop-blur-3xl rounded-[2.5rem] p-8 border border-white/5 shadow-2xl relative overflow-hidden -mt-8">
+                          <div className="absolute top-0 right-0 w-48 h-48 bg-purple-500/5 blur-[50px] rounded-full pointer-events-none" />
+                          
+                          <div className="bg-white/5 border border-white/5 rounded-[1.5rem] p-5 mb-6 shadow-sm relative z-10">
+                            <div className="flex justify-between items-end mb-3">
+                              <div>
+                                <p className="text-[13px] font-bold text-gray-400 tracking-tight mb-1">
+                                  Weekly Free Deliveries Remaining
+                                </p>
+                                <p className="text-[16px] font-black text-white">
+                                  {membership.remainingDeliveries}{" "}
+                                  <span className="text-gray-500">
+                                    / {membership.totalDeliveriesLimit}
+                                  </span>
+                                </p>
+                              </div>
+                              <div className="text-right">
+                                <span className="text-[12px] font-bold text-[#34C759] bg-[#34C759]/10 px-3 py-1.5 rounded-full border border-[#34C759]/20">
+                                   RESET IN 3 DAYS
+                                </span>
+                              </div>
+                            </div>
+                            <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden">
+                              <motion.div
+                                initial={{ width: 0 }}
+                                animate={{
+                                  width: `${
+                                    (membership.remainingDeliveries /
+                                      membership.totalDeliveriesLimit) *
+                                    100
+                                  }%`,
+                                }}
+                                className="h-full bg-gradient-to-r from-[#34C759] to-emerald-400 rounded-full"
+                                transition={{ duration: 1, type: "spring" }}
+                              />
+                            </div>
                           </div>
-                          <div className="text-right">
-                            <span className="text-[12px] font-bold text-orange-400 bg-orange-500/10 px-3 py-1.5 rounded-full border border-orange-500/20">
-                              {membership.usedDeliveries} Used
-                            </span>
-                          </div>
-                        </div>
-                        <div className="h-3 w-full bg-white/5 rounded-full overflow-hidden">
-                          <motion.div
-                            initial={{ width: 0 }}
-                            animate={{
-                              width: `${
-                                (membership.usedDeliveries /
-                                  membership.totalDeliveriesLimit) *
-                                100
-                              }%`,
-                            }}
-                            className="h-full bg-gradient-to-r from-purple-500 to-indigo-500 rounded-full"
-                            transition={{ duration: 1, type: "spring" }}
-                          />
-                        </div>
-                        <p className="text-[11px] font-bold text-[#8E8E93] tracking-tight mt-3 text-center">
-                          Counter auto-resets every 7 days.
-                        </p>
-                      </div>
 
-                      <div className="text-center relative z-10">
-                        <p className="text-[13px] font-bold text-[#8E8E93]">
-                          Member since:{" "}
-                          {new Date(membership.startDate!).toLocaleDateString()}
-                        </p>
-                      </div>
+                          <div className="grid grid-cols-2 gap-4 text-center">
+                             <div className="p-4 rounded-2xl bg-white/5 border border-white/5">
+                                <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-1">Status</p>
+                                <p className="text-[14px] font-bold text-[#34C759]">VERIFIED</p>
+                             </div>
+                             <div className="p-4 rounded-2xl bg-white/5 border border-white/5">
+                                <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-1">Since</p>
+                                <p className="text-[14px] font-bold text-white">{new Date(membership.startDate!).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</p>
+                             </div>
+                          </div>
+                       </div>
                     </div>
                   )}
                 </motion.div>

@@ -235,14 +235,16 @@ function StatusBadge({ status }: { status: string }) {
   );
 }
 
-// ─── Notification Status Component ─────────────────────────────────────────────
-function NotificationStatus() {
-  const [status, setStatus] = useState(AdminPushService.getStatus());
+// ─── Admin Service Status Component ──────────────────────────────────────────
+function AdminServiceStatus() {
+  const [pushStatus, setPushStatus] = useState(AdminPushService.getStatus());
+  const [isTracking, setIsTracking] = useState(AdminPushService.isTrackingActive());
   const [testing, setTesting] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setStatus(AdminPushService.getStatus());
+      setPushStatus(AdminPushService.getStatus());
+      setIsTracking(AdminPushService.isTrackingActive());
     }, 2000);
     return () => clearInterval(interval);
   }, []);
@@ -251,6 +253,16 @@ function NotificationStatus() {
     setTesting(true);
     await AdminPushService.testNotification();
     setTimeout(() => setTesting(false), 1000);
+  };
+
+  const handleToggleTracking = async () => {
+    const active = await AdminPushService.toggleTracking();
+    setIsTracking(active);
+    if (active) {
+      toast.success("Live GPS Tracking Started");
+    } else {
+      toast.error("Live GPS Tracking Stopped");
+    }
   };
 
   const statusColors = {
@@ -268,14 +280,30 @@ function NotificationStatus() {
   };
 
   return (
-    <div className="flex items-center gap-2">
-      <span className={`px-2 py-1 rounded-lg text-[10px] font-black border tracking-tighter uppercase ${statusColors[status]}`}>
-        {statusLabels[status]}
+    <div className="flex flex-wrap items-center gap-2">
+      {/* Push Status Badge */}
+      <span className={`px-2 py-1 rounded-lg text-[10px] font-black border tracking-tighter uppercase ${statusColors[pushStatus]}`}>
+        {statusLabels[pushStatus]}
       </span>
+
+      {/* Live Tracking Toggle */}
+      <button
+        onClick={handleToggleTracking}
+        className={`flex items-center gap-1.5 px-3 py-1 border rounded-lg text-[10px] font-black tracking-tighter uppercase transition-all active:scale-95 ${
+          isTracking 
+            ? "bg-emerald-500 text-white border-emerald-600 shadow-lg shadow-emerald-500/20" 
+            : "bg-white text-slate-400 border-slate-200 hover:bg-slate-50"
+        }`}
+      >
+        <MapPin className={`w-3 h-3 ${isTracking ? 'animate-pulse' : ''}`} />
+        {isTracking ? "GPS Tracking: ON" : "GPS Tracking: OFF"}
+      </button>
+
+      {/* Test Button */}
       <button
         onClick={handleTest}
         disabled={testing}
-        className="flex items-center gap-1.5 px-3 py-1 bg-white hover:bg-slate-50 border border-slate-200 text-slate-600 rounded-lg text-[11px] font-bold transition-all active:scale-95"
+        className="flex items-center gap-1.5 px-3 py-1 bg-white hover:bg-slate-50 border border-slate-200 text-slate-600 rounded-lg text-[10px] font-black tracking-tighter uppercase transition-all active:scale-95"
       >
         <Bell className={`w-3 h-3 ${testing ? 'animate-bounce' : ''}`} />
         {testing ? "Testing..." : "Test Notification"}
@@ -563,7 +591,7 @@ function DashboardSection({
             active orders
           </p>
         </div>
-        <NotificationStatus />
+        <AdminServiceStatus />
       </div>
 
       {/* Stats Row */}

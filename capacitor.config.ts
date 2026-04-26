@@ -2,7 +2,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'com.cubazzar.app',
-  appName: 'CU Bazzar',
+  appName: 'Cu Bazzar',
   webDir: 'dist',
   android: {
     backgroundColor: '#000000',

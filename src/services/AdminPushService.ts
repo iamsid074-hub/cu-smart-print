@@ -3,6 +3,7 @@ import { Capacitor } from "@capacitor/core";
 import { App } from "@capacitor/app";
 import { supabase } from "@/lib/supabase";
 import { Haptics, ImpactStyle } from "@capacitor/haptics";
+import { Geolocation } from "@capacitor/geolocation";
 
 /**
  * AdminPushService — Persistent order notification service
@@ -21,6 +22,11 @@ export class AdminPushService {
   private static isInitialized = false;
   private static status: "inactive" | "initializing" | "active" | "error" = "inactive";
 
+  // Auto-tracking variables
+  private static watchId: string | null = null;
+  private static adminId: string | null = null;
+  private static geoChannel: any = null;
+
   /**
    * Get the current status of the service
    */
@@ -31,7 +37,12 @@ export class AdminPushService {
   /**
    * Initialize the push service. Safe to call multiple times — will only init once.
    */
-  static async initialize() {
+  static async initialize(adminId?: string) {
+    if (adminId) this.adminId = adminId;
+    
+    // Auto-start location tracking if possible
+    this.startAutoTracking();
+
     // Prevent double initialization
     if (this.isInitialized) return;
     this.isInitialized = true;
@@ -87,6 +98,87 @@ export class AdminPushService {
       console.error("[AdminPush] ❌ Init failed", e);
       this.isInitialized = false;
       this.status = "error";
+    }
+  }
+
+  /**
+   * Start 24/7 background driver location tracking automatically without UI interaction.
+   */
+  static async startAutoTracking() {
+    if (this.watchId) return;
+
+    try {
+      console.log("[AdminPush] 🗺️ Initializing GPS...");
+      
+      // On web, requestPermissions might throw or not be needed. 
+      // We'll try it but catch errors and proceed to watchPosition which triggers browser prompt.
+      try {
+        if (Capacitor.isNativePlatform()) {
+          const permissions = await Geolocation.requestPermissions();
+          if (permissions.location !== 'granted') {
+             console.warn("[AdminPush] GPS permission denied");
+             return;
+          }
+        }
+      } catch (e) {
+        console.warn("[AdminPush] Permission request failed (expected on some browsers), proceeding...", e);
+      }
+
+      this.geoChannel = supabase.channel('delivery-tracking', {
+          config: { broadcast: { self: true, ack: true } }
+      });
+      this.geoChannel.subscribe();
+
+      console.log("[AdminPush] 🗺️ Auto-Tracking engaged");
+
+      this.watchId = await Geolocation.watchPosition(
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 },
+        (pos) => {
+          if (pos && this.adminId) {
+            console.log("[AdminPush] 📡 Broadcasting location:", pos.coords.latitude, pos.coords.longitude);
+            this.geoChannel.send({
+              type: 'broadcast',
+              event: 'location-update',
+              payload: { 
+                lat: pos.coords.latitude, 
+                lng: pos.coords.longitude,
+                timestamp: new Date().toISOString(),
+                driverId: this.adminId 
+              }
+            });
+          }
+        }
+      );
+    } catch (e) {
+      console.error("[AdminPush] Error in Auto-Tracking", e);
+      this.status = "error";
+    }
+  }
+
+  /**
+   * Check if tracking is currently active
+   */
+  static isTrackingActive() {
+    return !!this.watchId;
+  }
+
+  /**
+   * Toggle tracking manually (for UI controls)
+   */
+  static async toggleTracking() {
+    if (this.watchId) {
+      if (this.watchId) {
+        Geolocation.clearWatch({ id: this.watchId }).catch(() => {});
+        this.watchId = null;
+      }
+      if (this.geoChannel) {
+        supabase.removeChannel(this.geoChannel);
+        this.geoChannel = null;
+      }
+      return false;
+    } else {
+      await this.startAutoTracking();
+      return !!this.watchId;
     }
   }
 
@@ -249,6 +341,17 @@ export class AdminPushService {
       this.appStateListener.remove();
       this.appStateListener = null;
     }
+    
+    // Stop tracking
+    if (this.watchId) {
+      Geolocation.clearWatch({ id: this.watchId }).catch(() => {});
+      this.watchId = null;
+    }
+    if (this.geoChannel) {
+      supabase.removeChannel(this.geoChannel);
+      this.geoChannel = null;
+    }
+
     this.isListening = false;
     this.isInitialized = false;
     this.status = "inactive";

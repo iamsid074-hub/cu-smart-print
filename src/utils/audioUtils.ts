@@ -27,28 +27,11 @@ class AudioSystem {
   }
 
   public play(key: string) {
-    const audio = this.audioMap.get(key);
-    if (audio) {
-      audio.currentTime = 0;
-      audio.play().catch(() => {
-        // Handle browser autoplay restrictions - usually requires one user interaction first
-      });
-    }
+    // Disabled as requested
   }
 
   public playByItem(name: string, category: string) {
-    const n = name.toLowerCase();
-    const c = category.toLowerCase();
-
-    if (n.includes("burger") || n.includes("fries") || n.includes("crunch") || n.includes("crispy")) {
-      this.play("crunch");
-    } else if (n.includes("coffee") || n.includes("chai") || n.includes("shake") || n.includes("tea")) {
-       this.play("pour");
-    } else if (n.includes("pizza") || n.includes("pasta") || n.includes("biryani") || n.includes("hot")) {
-       this.play("sizzle");
-    } else {
-       this.play("hover");
-    }
+    // Disabled as requested
   }
 }
 

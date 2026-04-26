@@ -99,7 +99,7 @@ export default function ARPreviewModal({ isOpen, onClose, itemName, itemCategory
                       />
                       <Box className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 text-emerald-400" />
                    </div>
-                   <p className="text-emerald-400 font-black tracking-[0.2em] uppercase text-sm animate-pulse">Detecting Surface...</p>
+                    <p className="text-emerald-400 font-bold tracking-widest uppercase text-xs animate-pulse">Scanning table...</p>
                 </motion.div>
               ) : (
                 <motion.div 
@@ -137,8 +137,8 @@ export default function ARPreviewModal({ isOpen, onClose, itemName, itemCategory
 
                   {/* UI Label */}
                   <div className="absolute -top-12 left-1/2 -translate-x-1/2 bg-black/60 backdrop-blur-md border border-white/20 px-6 py-2 rounded-2xl flex flex-col items-center">
-                     <span className="text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-1">Scale: 1:1 Actual Size</span>
-                     <h2 className="text-white font-black text-lg whitespace-nowrap">{itemName}</h2>
+                     <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest mb-1">Actual Size</span>
+                     <h2 className="text-white font-bold text-lg whitespace-nowrap">{itemName}</h2>
                   </div>
                 </motion.div>
               )}

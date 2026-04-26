@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, memo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ShoppingBag, X, CheckCircle, ArrowRight, Zap, ScanFace, Cpu, Activity, Fingerprint, Crosshair, ChevronRight } from "lucide-react";
+import { ShoppingBag, X, CheckCircle, ArrowRight, Zap, Cpu, Activity, Fingerprint, Crosshair, ChevronRight } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
