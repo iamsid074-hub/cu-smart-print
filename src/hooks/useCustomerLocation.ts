@@ -35,7 +35,7 @@ export interface CustomerLocationState {
   permissionStatus: GpsPermissionStatus;
 }
 
-export function useCustomerLocation(): CustomerLocationState {
+export function useCustomerLocation(): CustomerLocationState & { requestLocation: () => void } {
   const smootherRef = useRef(createSmootherState());
   const watchIdRef = useRef<number | null>(null);
 
@@ -49,11 +49,13 @@ export function useCustomerLocation(): CustomerLocationState {
   });
   const [isRealGps, setIsRealGps] = useState(false);
 
-  useEffect(() => {
+  const startWatching = () => {
     if (!("geolocation" in navigator)) {
       setPermissionStatus("unsupported");
       return;
     }
+
+    if (watchIdRef.current !== null) return; // Already watching
 
     const onSuccess = (pos: GeolocationPosition) => {
       setPermissionStatus("granted");
@@ -71,19 +73,37 @@ export function useCustomerLocation(): CustomerLocationState {
       if (err.code === 1) {
         setPermissionStatus("denied");
       }
-      // Keep showing last known position (campus fallback if nothing yet)
     };
 
-    // watchPosition: fires every time position changes, not just once
     watchIdRef.current = navigator.geolocation.watchPosition(
       onSuccess,
       onError,
       {
         enableHighAccuracy: true,
         timeout: 10_000,
-        maximumAge: 0, // Always fresh — never use a cached position
+        maximumAge: 0,
       }
     );
+  };
+
+  const requestLocation = () => {
+    startWatching();
+  };
+
+  useEffect(() => {
+    // Check if already granted, if so start automatically
+    if ("permissions" in navigator) {
+      navigator.permissions.query({ name: "geolocation" }).then((result) => {
+        if (result.state === "granted") {
+          startWatching();
+        } else if (result.state === "denied") {
+          setPermissionStatus("denied");
+        }
+      });
+    } else {
+      // Fallback if permissions API is not available
+      startWatching();
+    }
 
     return () => {
       if (watchIdRef.current !== null) {
@@ -92,5 +112,5 @@ export function useCustomerLocation(): CustomerLocationState {
     };
   }, []);
 
-  return { position, isRealGps, permissionStatus };
+  return { position, isRealGps, permissionStatus, requestLocation };
 }

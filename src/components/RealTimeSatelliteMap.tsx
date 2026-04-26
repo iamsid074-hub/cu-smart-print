@@ -102,7 +102,7 @@ export default function RealTimeSatelliteMap() {
   const driverApproachingRef = useRef(false);
 
   // ── Phase 1 data layer ──────────────────────────────────────────────────────
-  const { position: customerPos, isRealGps } = useCustomerLocation();
+  const { position: customerPos, isRealGps, permissionStatus, requestLocation } = useCustomerLocation();
   const { position: rawDriverPos, heading, isRealLive } = useDriverLocation(customerPos);
   const driverDisplayPos = useMarkerInterpolation(rawDriverPos, 1000);
 
@@ -247,6 +247,29 @@ export default function RealTimeSatelliteMap() {
   }, [driverDisplayPos, customerPos, heading, isRealLive, isApproaching, isArrived, isMapLoaded]);
 
   // ─────────────────────────────────────────────────────────────────────────────
+
+  if (permissionStatus !== "granted") {
+    return (
+      <div className="relative w-full h-[440px] sm:h-[540px] bg-[#0A0A0A] overflow-hidden rounded-[2rem] border border-white/5 shadow-2xl mb-6 flex flex-col items-center justify-center p-8 text-center">
+        <div className="w-20 h-20 bg-emerald-500/10 rounded-full flex items-center justify-center mb-6">
+          <MapPin className="w-10 h-10 text-emerald-500" />
+        </div>
+        <h3 className="text-2xl sm:text-3xl font-black text-white mb-3 tracking-tight">Enable Live Tracking</h3>
+        <p className="text-white/50 mb-8 max-w-sm text-sm sm:text-base">
+          {permissionStatus === "denied" 
+            ? "Location access was denied. Please allow location in your browser settings to see exactly how far your order is."
+            : "To calculate accurate distance and ETA, we need your location to show where you are on the map."}
+        </p>
+        <button
+          onClick={requestLocation}
+          className="bg-emerald-500 text-black px-8 py-4 rounded-full font-black uppercase tracking-widest text-sm hover:bg-emerald-400 transition-colors shadow-[0_0_30px_rgba(16,185,129,0.2)] active:scale-95"
+        >
+          {permissionStatus === "denied" ? "Try Again" : "Allow Location"}
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="relative w-full h-[440px] sm:h-[540px] bg-[#0A0A0A] overflow-hidden rounded-[2rem] border border-white/5 shadow-2xl mb-6">
 
