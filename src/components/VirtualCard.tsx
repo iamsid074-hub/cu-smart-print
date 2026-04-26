@@ -41,6 +41,16 @@ export const VirtualCard: React.FC<VirtualCardProps> = ({
         {/* FRONT OF CARD */}
         <div className="absolute inset-0 backface-hidden bg-gradient-to-br from-[#1a1a1a] via-[#2d2d2d] to-[#121212] rounded-[1.25rem] shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-white/10 overflow-hidden flex flex-col justify-between p-6">
           
+          {/* Metallic Gold Stripes */}
+          <div className="absolute top-0 left-0 w-full h-full opacity-20 pointer-events-none">
+            <div className="absolute top-1/4 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#d4af37] to-transparent" />
+            <div className="absolute top-1/3 left-0 w-full h-[1.5px] bg-gradient-to-r from-transparent via-[#d4af37] to-transparent opacity-60" />
+            <div className="absolute bottom-1/4 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#d4af37] to-transparent" />
+          </div>
+
+          {/* Angled Gold Accent Strip */}
+          <div className="absolute -top-1/2 -left-1/2 w-full h-[200%] bg-gradient-to-tr from-[#d4af37]/0 via-[#d4af37]/5 to-[#d4af37]/0 rotate-45 pointer-events-none" />
+
           {/* Shimmer effect */}
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-[100%] group-hover:animate-[shimmer_2s_infinite]" />
 
@@ -59,13 +69,24 @@ export const VirtualCard: React.FC<VirtualCardProps> = ({
 
           {/* Middle Section (Chip + Number) */}
           <div className="relative z-10 space-y-4">
-            <div className="w-12 h-9 rounded-md bg-gradient-to-br from-[#e6c15c] via-[#d4af37] to-[#b3932b] border border-[#f0df9e] flex flex-col justify-between py-1 px-1.5 opacity-90 shadow-inner">
-              <div className="w-full h-[1px] bg-black/20" />
-              <div className="w-full h-[1px] bg-black/20" />
-              <div className="w-full h-[1px] bg-black/20" />
+            {/* EMV Chip */}
+            <div className="w-11 h-8 rounded-[4px] bg-gradient-to-br from-[#f0df9e] via-[#d4af37] to-[#b3932b] relative overflow-hidden shadow-[inset_0_1px_2px_rgba(255,255,255,0.5),0_2px_4px_rgba(0,0,0,0.3)] border-[0.5px] border-black/10">
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[0.5px] h-full bg-black/20" />
+              <div className="absolute top-1/2 left-0 -translate-y-1/2 w-full h-[0.5px] bg-black/20" />
+              <div className="absolute top-1/4 left-0 w-full h-[0.5px] bg-black/20" />
+              <div className="absolute bottom-1/4 left-0 w-full h-[0.5px] bg-black/20" />
+              <div className="absolute top-0 left-1/4 w-[0.5px] h-full bg-black/20" />
+              <div className="absolute top-0 right-1/4 w-[0.5px] h-full bg-black/20" />
+              <div className="absolute inset-1.5 border-[0.5px] border-black/10 rounded-[2px]" />
             </div>
-            <div className="text-white/90 font-mono text-base sm:text-2xl tracking-[0.1em] sm:tracking-[0.15em] drop-shadow-md">
-              •••• •••• •••• 8834
+            <div className="flex justify-between items-end">
+              <div className="text-white/90 font-mono text-base sm:text-2xl tracking-[0.1em] sm:tracking-[0.15em] drop-shadow-md">
+                •••• •••• •••• 8834
+              </div>
+              <div className="text-right pb-1">
+                <p className="text-[7px] text-[#d4af37] uppercase font-bold tracking-tighter leading-none mb-0.5">Valid Thru</p>
+                <p className="text-white font-mono text-[10px] sm:text-xs tracking-wider">12/30</p>
+              </div>
             </div>
           </div>
 

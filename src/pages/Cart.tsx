@@ -106,6 +106,7 @@ export default function Cart() {
   const [loadingOrder, setLoadingOrder] = useState(true);
 
   const [walletBalance, setWalletBalance] = useState(0);
+  const [profileName, setProfileName] = useState("");
   const [dailyWalletUsed, setDailyWalletUsed] = useState(0);
   const [useWalletBalance, setUseWalletBalance] = useState(false);
   const [totalOrdersTracker, setTotalOrdersTracker] = useState(0);
@@ -143,12 +144,13 @@ export default function Cart() {
     const fetchWallet = async () => {
       const { data } = await supabase
         .from("profiles")
-        .select("wallet_balance, total_orders, hostel_block")
+        .select("wallet_balance, total_orders, hostel_block, full_name")
         .eq("id", user.id)
         .single();
       if (data) {
         setWalletBalance(data.wallet_balance || 0);
         setTotalOrdersTracker(data.total_orders || 0);
+        setProfileName(data.full_name || user?.user_metadata?.full_name || "CU USER");
       }
 
       const startOfDay = new Date();
@@ -886,7 +888,7 @@ export default function Cart() {
                     <VirtualCardSwipePayment 
                       amount={orderTotal} 
                       balance={walletBalance} 
-                      userName={user?.user_metadata?.full_name || "BAZZAR USER"}
+                      userName={profileName || "CU USER"}
                       onSuccess={handleVirtualCardSuccess}
                       onCancel={() => {}}
                     />

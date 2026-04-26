@@ -357,28 +357,7 @@ export default function Home() {
                                 <Boxes size={14} />
                               </button>
                             </div>
-                         <button 
-                           onClick={() => navigate('/search')}
-                           className="w-10 h-10 rounded-full bg-zinc-900 border border-white/5 flex items-center justify-center text-white/70 hover:text-white hover:bg-zinc-800 transition-all shadow-lg active:scale-95"
-                         >
-                           <Search size={18} />
-                         </button>
-                         <button 
-                           onClick={() => {
-                             if (navigator.share) {
-                               navigator.share({ title: 'CU Bazzar', text: 'Check out the campus food hub!', url: window.location.href });
-                             }
-                           }}
-                           className="w-10 h-10 rounded-full bg-zinc-900 border border-white/5 flex items-center justify-center text-white/70 hover:text-white hover:bg-zinc-800 transition-all shadow-lg active:scale-95"
-                         >
-                           <Share2 size={18} />
-                         </button>
-                         <button 
-                           className="w-10 h-10 rounded-full bg-zinc-900 border border-white/5 flex items-center justify-center text-white/70 hover:text-white hover:bg-zinc-800 transition-all shadow-lg active:scale-95"
-                         >
-                           <MoreVertical size={18} />
-                         </button>
-                       </div>
+                        </div>
                     </div>
 
                     {/* 4. Textured Shop Grid OR 3D Street */}

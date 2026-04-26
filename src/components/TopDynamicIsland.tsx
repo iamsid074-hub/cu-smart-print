@@ -515,12 +515,13 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
       );
       break;
     case "wrong_pass":
-      width = 230;
+      width = 200;
       height = 42;
       content = (
-        <div className="flex items-center gap-2 px-1">
-          <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse flex-shrink-0" />
-          <span className="text-[13px] font-black tracking-wide text-white">Wrong Passcode</span>
+        <div className="flex items-center gap-3 px-2">
+          {/* Main island dot turning red */}
+          <div className="w-2.5 h-2.5 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.8)] animate-pulse" />
+          <span className="text-[13px] font-black tracking-wide text-white uppercase">Wrong Passcode</span>
         </div>
       );
       break;

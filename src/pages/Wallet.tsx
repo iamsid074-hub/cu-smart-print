@@ -223,6 +223,7 @@ export default function Wallet() {
   const [isUnboxed, setIsUnboxed] = useState(() =>
     localStorage.getItem("bazzar_card_unboxed") === "true"
   );
+  const [profileName, setProfileName] = useState("");
 
   // ── Passcode state ──
   const [passcode, setPasscode] = useState<string | null>(() =>
@@ -250,10 +251,13 @@ export default function Wallet() {
 
     const { data: profile } = await supabase
       .from("profiles")
-      .select("wallet_balance")
+      .select("wallet_balance, full_name")
       .eq("id", user.id)
       .single();
-    if (profile) setWalletBalance(profile.wallet_balance || 0);
+    if (profile) {
+      setWalletBalance(profile.wallet_balance || 0);
+      setProfileName(profile.full_name || user?.user_metadata?.full_name || "CU USER");
+    }
 
     try {
       const now = new Date();
@@ -380,7 +384,7 @@ export default function Wallet() {
         {!isUnboxed ? (
           <div className="mb-12">
             <VirtualCardUnboxing
-              name={user?.user_metadata?.full_name || "CU USER"}
+              name={profileName || "CU USER"}
               balance={walletBalance}
               onComplete={() => {
                 setIsUnboxed(true);
@@ -393,7 +397,7 @@ export default function Wallet() {
             {/* Card */}
             <div className="w-full max-w-[450px] mb-4">
               <VirtualCard
-                name={user?.user_metadata?.full_name || "CU USER"}
+                name={profileName || "CU USER"}
                 balance={walletBalance}
                 balanceHidden={!balanceVisible}
                 onEyeClick={handleEyeClick}
