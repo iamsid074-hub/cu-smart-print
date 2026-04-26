@@ -1,0 +1,767 @@
+# PREMIUM VIRTUAL WALLET CARD - IMPLEMENTATION PROMPT
+## Complete Phase-by-Phase Development Guide
+
+---
+
+## PROJECT OVERVIEW
+
+Build a premium virtual wallet card feature that:
+- Displays user's wallet as a realistic credit card
+- Includes unboxing experience for first-time users
+- Enables card swipe payments at checkout
+- Provides premium, realistic animations throughout
+
+---
+
+## PHASE 1: PREMIUM CARD DESIGN
+### Objective: Create a realistic, premium virtual credit card
+
+**Card Specifications:**
+
+```
+DESIGN A VIRTUAL CREDIT CARD WITH THESE EXACT FEATURES:
+
+Visual Design:
+- Card size: Standard credit card aspect ratio (85.6mm × 53.98mm or 3.375" × 2.125")
+- Card orientation: Horizontal/landscape
+- Card background: Premium gradient (deep black to charcoal grey, or navy to midnight blue)
+- Premium golden accents: Horizontal golden/metallic gold stripe across the card
+- Card material effect: Glossy plastic/metallic finish with subtle shine/reflection
+- Rounded corners: 3-4mm radius for premium look
+- Subtle shadow: Elevated card effect (floating 2-3px above background)
+
+Card Content Layout:
+
+TOP SECTION (30% of card):
+- Golden metallic horizontal stripe (like real credit cards)
+- App logo/brand name in white or gold
+- Hologram effect icon (optional, top right corner)
+
+MIDDLE SECTION (40% of card):
+- Chip icon: EMV chip graphic (metallic gold/silver, positioned left side)
+- Card number placeholder: •••• •••• •••• (masked, monospace font, centered or left-aligned)
+- Small contactless payment icon (optional, right side)
+
+BOTTOM SECTION (30% of card):
+Display in clean, organized rows:
+
+Row 1 (Left aligned):
+- Label: "CARDHOLDER" (small, uppercase, light grey/gold)
+- Value: [User Full Name] (white, medium font, uppercase)
+
+Row 2 (Two columns):
+- Left column:
+  * Label: "WALLET BALANCE" (small, uppercase, grey/gold)
+  * Value: ₹[Amount] (large, white/gold, bold)
+  
+- Right column:
+  * Label: "REFERRAL POINTS" (small, uppercase, grey/gold)
+  * Value: [Points] (medium, white/gold)
+
+BACK DESIGN (Optional for flip animation):
+- Magnetic stripe: Black horizontal stripe across top
+- Signature panel: White/grey rectangle
+- CVV: Three dots •••
+- Terms text: Small print at bottom
+
+Style Requirements:
+- Use premium fonts: 
+  * Numbers: "OCR A" or "Courier" (credit card style)
+  * Name: "Montserrat" or "Roboto" (clean, modern)
+- Color palette: 
+  * Primary: #1a1a1a (black) to #2d2d2d (charcoal)
+  * Accent: #d4af37 (gold) or #c9a961 (metallic gold)
+  * Text: #ffffff (white) or #e5e5e5 (off-white)
+- Micro-interactions: Subtle hover effect (slight lift + glow)
+- Glassmorphism: Optional frosted glass effect overlay
+```
+
+**Deliverable for Phase 1:**
+- A single, premium virtual card component
+- Responsive design (works on mobile and desktop)
+- Static design first (no animations yet)
+- Should look EXACTLY like a real premium credit card
+
+---
+
+## PHASE 2: WALLET PAGE INTEGRATION
+### Objective: Replace old wallet UI with new card prominently displayed
+
+**Implementation:**
+
+```
+WALLET PAGE REDESIGN:
+
+Layout Structure:
+┌─────────────────────────────────────┐
+│         WALLET PAGE                 │
+│                                     │
+│  ┌───────────────────────────────┐ │
+│  │                               │ │
+│  │    [PREMIUM VIRTUAL CARD]     │ │
+│  │    - User Name                │ │
+│  │    - Wallet Balance           │ │
+│  │    - Referral Points          │ │
+│  │                               │ │
+│  └───────────────────────────────┘ │
+│                                     │
+│  Card should be CENTERED and        │
+│  occupy 80-90% of screen width      │
+│                                     │
+│  ┌───────────────────────────────┐ │
+│  │  Recent Transactions          │ │
+│  │  [Transaction List Below]     │ │
+│  └───────────────────────────────┘ │
+└─────────────────────────────────────┘
+
+Requirements:
+1. Card is ALWAYS VISIBLE at top of wallet page
+2. Card is the PRIMARY focus element (hero section)
+3. Remove old wallet balance UI elements
+4. Card should be interactive (tappable to flip/view details)
+5. Smooth scroll - card stays prominent even when scrolling
+6. On mobile: Card width 90% of screen, proper padding
+7. On desktop: Max-width 450px, centered
+
+Additional Elements Below Card:
+- Quick actions (Add money, Send money, Transaction history)
+- Transaction list
+- Promotional banners (if any)
+```
+
+**Deliverable for Phase 2:**
+- Wallet page with card prominently displayed
+- Old wallet UI completely replaced
+- Card is hero element
+- Responsive layout working
+
+---
+
+## PHASE 3: FIRST-TIME UNBOXING EXPERIENCE
+### Objective: Create premium unboxing animation for new users
+
+**Unboxing Flow:**
+
+```
+FIRST-TIME USER EXPERIENCE - UNBOXING ANIMATION:
+
+Initial State (When user first opens Wallet page):
+┌─────────────────────────────────────┐
+│                                     │
+│         ┌───────────────┐          │
+│         │               │          │
+│         │   [PACKAGE]   │          │
+│         │   [BOX ICON]  │          │
+│         │               │          │
+│         └───────────────┘          │
+│                                     │
+│      🎁 Your Premium Card          │
+│         is ready!                   │
+│                                     │
+│  ┌─────────────────────────────┐  │
+│  │  👉 SWIPE TO UNBOX 👈       │  │ <-- Swipeable button
+│  └─────────────────────────────┘  │
+│                                     │
+└─────────────────────────────────────┘
+
+Package Box Design:
+- 3D box illustration or icon
+- Premium gift box appearance (gold ribbons, elegant wrapping)
+- Subtle breathing animation (gentle scale pulse)
+- Glow effect around the box
+- Icon: Closed gift box or premium package
+
+Swipe Button Design:
+- Pill-shaped button with gradient
+- Text: "Swipe to Unbox" with arrow icons (👉 👈)
+- Swipe gesture indicator (animated arrows)
+- Touch feedback: When user touches, button highlights
+- Swipe direction: Left to right or right to left
+
+UNBOXING ANIMATION SEQUENCE (Premium, NO sparkling):
+
+Step 1: User Swipes (Duration: 0.5s)
+- Button slides across screen following finger/cursor
+- Once swipe completes (reaches 80% of width)
+- Button disappears with fade
+
+Step 2: Box Opening (Duration: 1.5s)
+- Box lid lifts upward (3D rotation/transform)
+- Smooth, elegant opening animation
+- No sparks, no confetti, PURE PREMIUM
+- Subtle light ray effect from inside box (soft gold glow)
+- Box gradually fades out
+
+Step 3: Card Reveal (Duration: 2s)
+- Card rises from box position (translateY from bottom to center)
+- Card starts slightly smaller, scales to full size (0.8 → 1.0)
+- Card has subtle rotation (3D flip effect, -10deg to 0deg)
+- Smooth ease-out animation
+- Gentle glow/shadow builds around card
+- Background slightly blurs (focus on card)
+
+Step 4: Final State (Duration: 0.5s)
+- Card settles into final position
+- Background returns to normal
+- Card is now permanently visible
+- Small haptic feedback (vibration on mobile)
+- Success message: "Your Premium Card is Ready!"
+
+Animation Timing:
+- Total duration: ~4 seconds (smooth, not rushed)
+- Use cubic-bezier easing for premium feel
+- Timing function: ease-in-out or custom cubic-bezier(0.4, 0.0, 0.2, 1)
+
+Technical Requirements:
+- Mark user as "card_unboxed: true" in database
+- Never show unboxing again after first time
+- Smooth 60fps animation
+- Work on both mobile (touch) and desktop (mouse drag)
+- Prevent accidental triggers
+- Allow users to skip (small "Skip" button, optional)
+
+Premium Feel Elements:
+- Use metallic/gold color accents
+- Smooth, sophisticated transitions
+- No childish elements (no stars, no sparkles, no party poppers)
+- Sound effect: Subtle "unlock" or "reveal" sound (elegant chime)
+- Haptic feedback on mobile devices
+```
+
+**Deliverable for Phase 3:**
+- Complete unboxing flow for first-time users
+- Swipe gesture detection
+- Premium box opening animation
+- Card reveal animation
+- User preference saved (never show again)
+
+---
+
+## PHASE 4: CHECKOUT PAGE - SWIPE TO PAY FEATURE
+### Objective: Replace "Use Wallet" button with realistic card swipe payment
+
+**Checkout Page Redesign:**
+
+```
+CHECKOUT PAGE PAYMENT SECTION:
+
+Before (Old Design):
+┌─────────────────────────────────┐
+│  Payment Options:               │
+│  ○ Credit/Debit Card            │
+│  ○ UPI                          │
+│  ○ Net Banking                  │
+│  ● Use Wallet Balance           │ <-- OLD
+│                                 │
+│  [Pay ₹500] (Button)            │
+└─────────────────────────────────┘
+
+After (New Design):
+┌─────────────────────────────────┐
+│  Payment Options:               │
+│  ○ Credit/Debit Card            │
+│  ○ UPI                          │
+│  ○ Net Banking                  │
+│  ● Pay with Virtual Card        │
+│                                 │
+│  ┌───────────────────────────┐ │
+│  │  [MINI CARD PREVIEW]      │ │ <-- Small card preview
+│  │  Balance: ₹1,250          │ │
+│  └───────────────────────────┘ │
+│                                 │
+│  ┌─────────────────────────────┐ │
+│  │ 👉 SWIPE CARD TO PAY 👈   │ │ <-- Swipe button
+│  │     Amount: ₹500           │ │
+│  └─────────────────────────────┘ │
+└─────────────────────────────────┘
+
+When User Selects "Pay with Virtual Card":
+1. Show mini card preview (same design, smaller size)
+2. Display current wallet balance
+3. Show swipeable button
+4. If balance insufficient: Show error, disable swipe
+```
+
+**Deliverable for Phase 4:**
+- Updated checkout page UI
+- Virtual card payment option integrated
+- Mini card preview displayed
+- Swipe button ready (animation in next phase)
+
+---
+
+## PHASE 5: REALISTIC CARD SWIPE ANIMATION
+### Objective: Create authentic credit card swiping machine animation
+
+**Swipe Payment Animation:**
+
+```
+CARD SWIPE MACHINE ANIMATION - REALISTIC PAYMENT FLOW
+
+Animation Sequence (When user swipes):
+
+STAGE 1: SWIPE INITIATION (0.3s)
+- User swipes the button (left to right or right to left)
+- Button moves with finger/cursor
+- Once swipe reaches 80% completion
+- Button disappears
+- Screen transitions to payment animation
+
+STAGE 2: CARD MACHINE APPEARS (0.5s)
+- Full screen or modal overlay appears
+- Background dims (overlay: rgba(0,0,0,0.7))
+- Card reader machine illustration/graphic appears from bottom
+- Machine design: Realistic POS terminal or card swipe machine
+- Machine has a card slot (horizontal slot visible)
+
+Card Reader Machine Elements:
+┌─────────────────────────┐
+│   POS TERMINAL          │
+│  ┌─────────────────┐    │
+│  │ [Display Screen]│    │
+│  │  Processing...  │    │
+│  └─────────────────┘    │
+│                         │
+│   ═══════════════       │ <-- Card slot (horizontal)
+│   SWIPE CARD HERE       │
+│                         │
+│  ┌───┐ ┌───┐ ┌───┐     │
+│  │ 7 │ │ 8 │ │ 9 │     │ <-- Keypad (optional detail)
+│  └───┘ └───┘ └───┘     │
+└─────────────────────────┘
+
+STAGE 3: CARD SWIPE MOTION (1.5s) - MOST IMPORTANT
+- User's virtual card appears on screen (full size, same premium card)
+- Card is positioned to the RIGHT of card machine (off-screen)
+- Card smoothly slides/swipes through the card slot
+- Movement: Right to left (card enters slot and exits left side)
+- Card slightly tilts during swipe (realistic angle, ~15deg)
+- Card should appear to physically go THROUGH the slot
+- Smooth, continuous motion (no jerky movements)
+- Speed: Medium pace (not too fast, not too slow)
+
+Technical Animation Details:
+- Card path: Bezier curve for natural motion
+- Card rotation: Slight 3D tilt effect during swipe
+- Z-index layering: Card appears to go "through" the slot
+- Shadow effect: Card shadow visible on machine surface
+- Slot highlight: Slot glows/highlights when card passes through
+
+STAGE 4: PROCESSING (1.0s)
+- Card completes swipe (exits left side, disappears)
+- Machine display shows: "PROCESSING..."
+- Loading indicator on machine screen (dots or spinner)
+- Subtle beep sound effect (authentic POS sound)
+- Card reader slot has slight glow/pulse
+
+STAGE 5: PAYMENT SUCCESS (1.0s)
+- Machine display changes to: "✓ PAYMENT APPROVED"
+- Success checkmark animation on screen
+- Green color indication
+- Machine beeps (success tone)
+- Haptic feedback (vibration)
+
+STAGE 6: COMPLETION (0.5s)
+- Machine and overlay fade out
+- Return to checkout page
+- Show success message: "Payment successful using Virtual Card"
+- Wallet balance updated
+- Order confirmation appears
+
+Total Animation Duration: ~4.5 seconds
+
+Visual Requirements:
+- Smooth 60fps animation throughout
+- Realistic physics (card weight, inertia)
+- Authentic sound effects:
+  * Card swipe sound (magnetic stripe swipe)
+  * Processing beep
+  * Success chime
+- Mobile: Touch gesture swipe
+- Desktop: Mouse drag swipe or auto-swipe after click
+
+Alternative Views:
+Option A: Full machine view (POS terminal with screen)
+Option B: Slot-only view (close-up of card slot with card swiping)
+Option C: Hybrid (machine top portion with slot focus)
+
+Error Handling:
+If payment fails:
+- Machine display: "✗ PAYMENT DECLINED"
+- Error beep sound
+- Red color indication
+- Reason shown: "Insufficient balance" or "Transaction failed"
+- Card returns (swipes back right, reverse animation)
+- User returns to checkout page
+```
+
+**Deliverable for Phase 5:**
+- Complete card swipe animation
+- Realistic card reader machine graphic
+- Smooth swipe motion physics
+- Processing states
+- Success/failure animations
+- Sound effects integrated
+- Balance deduction logic
+
+---
+
+## PHASE 6: POLISH & MICRO-INTERACTIONS
+### Objective: Add finishing touches for premium experience
+
+**Enhancement Checklist:**
+
+```
+PREMIUM POLISH & MICRO-INTERACTIONS:
+
+1. CARD INTERACTIONS:
+   - Hover effect: Slight lift + subtle glow (desktop)
+   - Tap feedback: Scale slightly (0.98) on press (mobile)
+   - Card flip: Tap card to flip front/back (show CVV, etc.)
+   - 3D tilt: Parallax effect on card (follows cursor/gyroscope)
+   - Shimmer effect: Subtle light reflection moves across gold strip
+
+2. LOADING STATES:
+   - Skeleton loader while card data loads
+   - Smooth transition from skeleton to actual card
+   - Loading animation matches premium theme
+
+3. ANIMATIONS REFINEMENT:
+   - All animations use GPU-accelerated properties (transform, opacity)
+   - Respect user's "reduce motion" preference
+   - Smooth 60fps minimum on all devices
+   - Proper easing functions (cubic-bezier)
+
+4. HAPTIC FEEDBACK (Mobile):
+   - Card unboxing: Medium impact
+   - Swipe to pay: Light impact during swipe, medium on success
+   - Card tap/interactions: Light impact
+
+5. SOUND EFFECTS (Optional but premium):
+   - Unboxing: Elegant "reveal" chime
+   - Card swipe: Authentic magnetic stripe sound
+   - Payment success: Pleasant success tone
+   - All sounds: High quality, subtle, not annoying
+   - Mute toggle available
+
+6. ACCESSIBILITY:
+   - Screen reader support: Proper ARIA labels
+   - Keyboard navigation: Tab through elements, Enter to activate
+   - High contrast mode support
+   - Text readability: Sufficient contrast ratios
+   - Touch targets: Minimum 44×44px (mobile)
+
+7. ERROR STATES:
+   - Insufficient balance: Clear message, suggest adding money
+   - Payment failure: Retry option, clear error message
+   - Network error: Offline state, retry mechanism
+   - All errors: Friendly, helpful language
+
+8. PERFORMANCE:
+   - Lazy load card component
+   - Optimize images/graphics (SVG preferred)
+   - Preload critical assets
+   - Code splitting for animations
+   - Monitor FPS during animations
+
+9. SECURITY INDICATORS:
+   - Card number: Always masked (•••• •••• ••••)
+   - Option to reveal full number (with authentication)
+   - Lock icon indicating secure transaction
+   - Biometric authentication before payment (optional)
+
+10. PLATFORM-SPECIFIC POLISH:
+    Mobile:
+    - Native-feeling gestures (swipe, tap)
+    - System haptics
+    - Safe area insets (notch support)
+    - Portrait/landscape optimization
+    
+    Desktop:
+    - Hover states
+    - Cursor changes (pointer, grab)
+    - Keyboard shortcuts
+    - Tooltips on hover
+
+11. CONGRATULATIONS/CELEBRATION (First successful payment):
+    - One-time celebration animation
+    - Message: "Your first Virtual Card payment! 🎉"
+    - Small reward: Bonus referral points
+    - Elegant animation (not overdone)
+```
+
+**Deliverable for Phase 6:**
+- All micro-interactions implemented
+- Performance optimized
+- Accessibility features
+- Error handling
+- Platform-specific optimizations
+- Quality assurance testing
+
+---
+
+## IMPLEMENTATION PHASES SUMMARY
+
+### Phase 1: Premium Card Design (Week 1)
+✓ Design virtual card component
+✓ Implement card layout with user data
+✓ Add golden accents and premium styling
+✓ Make responsive
+
+### Phase 2: Wallet Integration (Week 1-2)
+✓ Replace old wallet UI
+✓ Add card to wallet page
+✓ Position as hero element
+✓ Test on all devices
+
+### Phase 3: Unboxing Experience (Week 2)
+✓ Create package box UI
+✓ Build swipe-to-unbox button
+✓ Implement unboxing animation
+✓ Save user preference
+✓ Test first-time flow
+
+### Phase 4: Checkout Integration (Week 3)
+✓ Add "Pay with Virtual Card" option
+✓ Show mini card preview
+✓ Create swipe button
+✓ Connect to payment flow
+
+### Phase 5: Swipe Animation (Week 3-4)
+✓ Design card reader machine
+✓ Implement realistic swipe motion
+✓ Add processing states
+✓ Handle success/failure
+✓ Integrate sound effects
+
+### Phase 6: Polish (Week 4)
+✓ Add micro-interactions
+✓ Optimize performance
+✓ Ensure accessibility
+✓ Test thoroughly
+✓ Fix bugs
+
+---
+
+## TECHNICAL STACK RECOMMENDATIONS
+
+**Frontend Framework:**
+- React / React Native (Mobile + Web)
+- Flutter (Cross-platform)
+- Native iOS/Android (Best performance)
+
+**Animation Libraries:**
+- Framer Motion (React)
+- React Spring (React)
+- Lottie (For complex animations)
+- GSAP (Advanced animations)
+- CSS Animations + Transitions (Lightweight)
+
+**3D Effects:**
+- Three.js (Advanced 3D)
+- React Three Fiber (React + Three.js)
+- CSS 3D Transforms (Simple 3D)
+
+**State Management:**
+- Redux / Zustand (Global state)
+- React Context (Simple state)
+- MobX (Reactive state)
+
+---
+
+## DESIGN ASSETS NEEDED
+
+1. **Card Design:**
+   - Vector card template (SVG/Figma)
+   - Gold stripe texture
+   - Chip icon
+   - Hologram icon
+   - Background gradient
+
+2. **Unboxing:**
+   - Package box illustration
+   - Box opening animation frames
+   - Ribbon/wrapping graphics
+
+3. **Payment Machine:**
+   - Card reader illustration
+   - POS terminal graphic
+   - Display screen states
+   - Card slot graphic
+
+4. **Icons:**
+   - Contactless payment icon
+   - Lock/security icons
+   - Success/error checkmarks
+   - Loading spinners
+
+5. **Sound Effects:**
+   - Card reveal chime
+   - Swipe sound
+   - Processing beep
+   - Success tone
+   - Error buzz
+
+---
+
+## USER FLOW DIAGRAM
+
+```
+User First Time:
+┌────────────┐
+│ Open Wallet│
+└──────┬─────┘
+       │
+       v
+┌────────────────┐
+│ See Package Box│
+└──────┬─────────┘
+       │
+       v
+┌──────────────────┐
+│ Swipe to Unbox   │
+└──────┬───────────┘
+       │
+       v
+┌─────────────────────┐
+│ Box Opens Animation │
+└──────┬──────────────┘
+       │
+       v
+┌───────────────────┐
+│ Card Revealed     │
+└──────┬────────────┘
+       │
+       v
+┌─────────────────────┐
+│ Card Visible (Always)│
+└─────────────────────┘
+
+User Making Payment:
+┌────────────┐
+│ Checkout   │
+└──────┬─────┘
+       │
+       v
+┌─────────────────────┐
+│ Select Virtual Card │
+└──────┬──────────────┘
+       │
+       v
+┌────────────────────┐
+│ Swipe to Pay       │
+└──────┬─────────────┘
+       │
+       v
+┌──────────────────────┐
+│ Card Swipe Animation │
+└──────┬───────────────┘
+       │
+       v
+┌──────────────┐
+│ Processing   │
+└──────┬───────┘
+       │
+       v
+┌──────────────┐
+│ Success!     │
+└──────────────┘
+```
+
+---
+
+## SUCCESS CRITERIA
+
+### Design Quality:
+✓ Card looks premium and realistic (like a real credit card)
+✓ Golden accents are elegant, not tacky
+✓ All animations are smooth (60fps)
+✓ Design is consistent across platforms
+
+### User Experience:
+✓ Unboxing feels exciting and premium
+✓ Card swipe animation feels realistic
+✓ Payment flow is intuitive
+✓ No confusion or friction points
+
+### Technical Performance:
+✓ Animations run smoothly on low-end devices
+✓ No lag or frame drops
+✓ Fast loading times
+✓ Minimal battery drain
+
+### Business Metrics:
+✓ Increased wallet usage
+✓ Higher payment completion rate
+✓ Positive user feedback
+✓ Reduced support tickets
+
+---
+
+## TESTING CHECKLIST
+
+- [ ] Card displays correctly on all screen sizes
+- [ ] Unboxing animation plays smoothly
+- [ ] Swipe gesture works on touch devices
+- [ ] Swipe gesture works with mouse (desktop)
+- [ ] Card swipe animation is realistic
+- [ ] Payment success flow works
+- [ ] Payment failure flow works
+- [ ] Insufficient balance handled properly
+- [ ] Sound effects play correctly
+- [ ] Haptic feedback works (mobile)
+- [ ] Accessibility features work
+- [ ] Works offline (graceful degradation)
+- [ ] Performance is acceptable on low-end devices
+- [ ] No visual bugs on different browsers
+- [ ] Animation respects "reduce motion" setting
+
+---
+
+## FINAL DELIVERABLES
+
+1. **Premium Virtual Card Component** - Fully designed and functional
+2. **Wallet Page** - Redesigned with card as hero element
+3. **Unboxing Experience** - Complete first-time user flow
+4. **Checkout Integration** - Virtual card payment option
+5. **Swipe Animation** - Realistic card swipe payment
+6. **Documentation** - User guide and technical docs
+7. **Design Assets** - All graphics, sounds, animations
+8. **Test Reports** - QA testing results
+9. **Performance Metrics** - Animation FPS, load times
+10. **User Feedback** - Beta testing results
+
+---
+
+## ADDITIONAL NOTES
+
+**Premium Feel Principles:**
+1. Less is more - Avoid clutter, keep it clean
+2. Smooth over flashy - Elegant animations, not gimmicky
+3. Attention to detail - Small touches matter
+4. Consistency - Maintain design language throughout
+5. Quality over quantity - One great animation > multiple mediocre ones
+
+**Common Pitfalls to Avoid:**
+❌ Overuse of sparkles/confetti (not premium)
+❌ Janky/laggy animations
+❌ Too many steps in user flow
+❌ Unclear error messages
+❌ Ignoring accessibility
+❌ Poor performance on older devices
+❌ Inconsistent design elements
+❌ Too much text/information on card
+
+**Pro Tips:**
+💡 Test on real devices, not just simulators
+💡 Get user feedback early and often
+💡 A/B test different animation styles
+💡 Monitor analytics: completion rates, drop-offs
+💡 Keep animations skippable (respect user time)
+💡 Use real data during testing (real names, balances)
+💡 Pay attention to small details (shadows, gradients)
+💡 Sound effects should enhance, not annoy
+
+---
+
+END OF IMPLEMENTATION PROMPT

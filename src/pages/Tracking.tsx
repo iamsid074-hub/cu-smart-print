@@ -510,6 +510,8 @@ export default function Tracking() {
                     >
                       {order.payment_status === "verifying"
                         ? "🟡 Verifying Payment..."
+                        : order.payment_status === "paid" && order.payment_method === "virtual_card"
+                        ? "💳 Paid with Virtual Card ✓"
                         : order.payment_status === "paid"
                         ? "💳 Paid Online ✓"
                         : "💵 Pay on Delivery"}

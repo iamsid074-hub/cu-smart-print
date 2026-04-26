@@ -29,7 +29,7 @@ import {
   Crown,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import { useMembership } from "@/hooks/useMembership";
 import MembershipPlansModal from "@/components/MembershipPlansModal";
@@ -40,6 +40,7 @@ type TabId = "listings" | "orders" | "saved" | "membership";
 export default function Profile() {
   const { user, isAdmin, signOut } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const fontH = { fontFamily: "'Outfit', sans-serif" };
 
   const membership = useMembership();
@@ -73,7 +74,17 @@ export default function Profile() {
     null
   );
 
-  const [activeTab, setActiveTab] = useState<TabId>("membership");
+  const [activeTab, setActiveTab] = useState<TabId>(
+    (searchParams.get("tab") as TabId) || "membership"
+  );
+
+  // Sync tab with URL
+  useEffect(() => {
+    const tabParam = searchParams.get("tab") as TabId;
+    if (tabParam && ["listings", "orders", "saved", "membership"].includes(tabParam)) {
+      setActiveTab(tabParam);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     async function fetchProfileAndListings() {
@@ -438,7 +449,7 @@ export default function Profile() {
                             username: e.target.value.toLowerCase().trim(),
                           })
                         }
-                        className="bg-transparent outline-none font-bold text-[#1D1D1F] w-full"
+                        className="bg-transparent outline-none font-bold text-white w-full"
                         placeholder="username"
                         maxLength={20}
                       />
@@ -452,16 +463,6 @@ export default function Profile() {
                       {profile?.full_name || "Student"}
                     </h1>
                     <CheckCircle className="w-5 h-5 text-[#007AFF] fill-[#007AFF]/10" />
-                    {membership.isActive && (
-                      <div 
-                        className="ml-3 flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-gradient-to-br from-zinc-800 to-black border border-white/10 shadow-[0_4px_10px_rgba(0,0,0,0.5)]"
-                      >
-                        <Crown className="w-3 h-3 text-yellow-500" />
-                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white">
-                          ELITE MEMBER
-                        </span>
-                      </div>
-                    )}
                   </div>
                   <p className="text-gray-400 font-bold text-sm tracking-wide">
                     @{profile?.username || "user"} <span className="mx-1.5 opacity-30">|</span> {user.email}
@@ -470,131 +471,123 @@ export default function Profile() {
               )}
             </div>
 
-            {/* Edit Button */}
-            <div className="flex-shrink-0">
+            {/* Right Actions */}
+            <div className="flex flex-col gap-3 flex-shrink-0 items-center sm:items-end">
+              {/* Membership Badge */}
+              {membership.isActive ? (
+                <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-br from-zinc-800 to-black border border-yellow-500/30 shadow-[0_4px_15px_rgba(212,175,55,0.15)]">
+                  <Crown className="w-4 h-4 text-yellow-400" />
+                  <span className="text-[11px] font-black uppercase tracking-[0.2em] text-yellow-400">ELITE MEMBER</span>
+                </div>
+              ) : (
+                <button
+                  onClick={() => setIsPlansOpen(true)}
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-br from-yellow-500/10 to-yellow-600/5 border border-yellow-500/20 text-yellow-400 hover:border-yellow-500/40 transition-all"
+                >
+                  <Crown className="w-4 h-4" />
+                  <span className="text-[11px] font-black uppercase tracking-[0.2em]">Get Membership</span>
+                </button>
+              )}
+
+              {/* Edit Profile Button */}
               <button
                 onClick={() => {
                   if (isEditing) handleSaveProfile();
                   else setIsEditing(true);
                 }}
                 disabled={loading}
-                className={`px-6 py-3 rounded-full font-black text-[15px] transition-all flex items-center gap-2 ios-action-button duration-300 ${
+                className={`px-6 py-3 rounded-full font-black text-[15px] transition-all flex items-center gap-2 duration-300 ${
                   isEditing
                     ? "bg-[#34C759] text-white shadow-lg shadow-[#34C759]/30 hover:bg-[#32B853]"
-                    : "bg-[#1D1D1F] text-white shadow-md hover:shadow-lg"
+                    : "bg-[#007AFF] text-white shadow-md hover:shadow-lg hover:bg-[#0071e3]"
                 }`}
               >
                 {loading ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
                 ) : isEditing ? (
-                  <>
-                    <Check className="w-4 h-4" /> Done
-                  </>
+                  <><Check className="w-4 h-4" /> Done</>
                 ) : (
-                  <>
-                    <Edit2 className="w-4 h-4" /> Edit Profile
-                  </>
+                  <><Edit2 className="w-4 h-4" /> Edit Profile</>
                 )}
               </button>
             </div>
           </div>
 
-          {/* Stats & Detailed Info */}
-          <div className="mt-10 pt-8 border-t border-white/5 grid grid-cols-2 sm:grid-cols-4 gap-6">
-            <div className="text-center sm:text-left">
-              <p className="text-[11px] font-black uppercase tracking-widest text-gray-500 mb-1">
-                Listings
-              </p>
-              <p className="text-[22px] font-black tracking-tight text-white">
-                {myProducts.length}
-              </p>
-            </div>
-            <div className="text-center sm:text-left">
-              <p className="text-[11px] font-black uppercase tracking-widest text-gray-500 mb-1">
-                Sold
-              </p>
-              <p className="text-[22px] font-black tracking-tight text-orange-500">
-                {myProducts.filter((p) => p.status === "sold").length}
-              </p>
-            </div>
-            <div className="col-span-2 space-y-3">
-              {isEditing ? (
-                <div className="grid grid-cols-1 gap-4">
-                  <div className="bg-white/60 rounded-2xl p-4 border border-white/60 shadow-sm">
-                    <div className="flex items-center gap-2 mb-3">
-                      <MapPin className="w-3.5 h-3.5 text-[#007AFF]" />
-                      <span className="text-[10px] font-black uppercase tracking-widest text-[#8E8E93]">
-                        Hostel Block
-                      </span>
-                    </div>
-                    <div className="space-y-3">
-                      {HOSTEL_GROUPS.map((group) => (
-                        <div key={group.name} className="space-y-1.5">
-                          <p className="text-[10px] font-bold text-[#8E8E93] px-1 tracking-tight">
-                            {group.name}
-                          </p>
-                          <div className="flex flex-wrap gap-1.5">
-                            {group.options.map((opt) => (
-                              <button
-                                key={opt}
-                                onClick={() => setHostelBlock(opt)}
-                                className={`py-1.5 px-3 rounded-full text-[12px] font-bold transition-all border ${
-                                  hostelBlock === opt
-                                    ? "bg-white text-black border-white shadow-md scale-[1.02]"
-                                    : "bg-white/5 text-gray-400 border-white/10 hover:text-white hover:bg-white/10"
-                                }`}
-                              >
-                                {opt}
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2 px-4 py-3 rounded-[1.2rem] bg-white/5 border border-white/10 shadow-sm">
-                    <Phone className="w-4 h-4 text-gray-500" />
-                    <input
-                      value={phoneNumber}
-                      onChange={(e) => setPhoneNumber(e.target.value)}
-                      placeholder="Phone Number"
-                      className="bg-transparent text-[14px] font-bold outline-none w-full text-white placeholder:font-medium placeholder:text-gray-500"
-                    />
-                  </div>
-                  <div className="flex items-center gap-2 px-4 py-3 rounded-[1.2rem] bg-white/5 border border-white/10 shadow-sm">
-                    <MapPin className="w-4 h-4 text-gray-500" />
-                    <input
-                      value={roomNumber}
-                      onChange={(e) => setRoomNumber(e.target.value)}
-                      placeholder="Room Number (e.g. 502, G-12)"
-                      className="bg-transparent text-[14px] font-bold outline-none w-full text-white placeholder:font-medium placeholder:text-gray-500"
-                    />
-                  </div>
+          {/* Edit Mode — Location/Phone fields */}
+          {isEditing && (
+            <div className="mt-8 pt-6 border-t border-white/5 grid grid-cols-1 gap-4">
+              <div className="bg-white/5 rounded-2xl p-4 border border-white/10">
+                <div className="flex items-center gap-2 mb-3">
+                  <MapPin className="w-3.5 h-3.5 text-[#007AFF]" />
+                  <span className="text-[10px] font-black uppercase tracking-widest text-[#8E8E93]">Hostel Block</span>
                 </div>
-              ) : (
-                <div className="flex flex-col gap-2.5">
-                  <div className="flex items-center justify-center sm:justify-start gap-2.5 text-white">
-                    <MapPin className="w-4 h-4 text-orange-500" />
-                    <span className="text-[14px] font-bold">
-                      {profile?.hostel_block || "Location not set"}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-center sm:justify-start gap-2.5 text-white">
-                    <Phone className="w-4 h-4 text-orange-500" />
-                    <span className="text-[14px] font-bold">
-                      {profile?.phone_number || "Contact not set"}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-center sm:justify-start gap-2.5 text-white">
-                    <MapPin className="w-4 h-4 text-orange-500" />
-                    <span className="text-[14px] font-bold">
-                      Room: {profile?.room_number || "Not set"}
-                    </span>
-                  </div>
+                <div className="space-y-3">
+                  {HOSTEL_GROUPS.map((group) => (
+                    <div key={group.name} className="space-y-1.5">
+                      <p className="text-[10px] font-bold text-[#8E8E93] px-1 tracking-tight">{group.name}</p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {group.options.map((opt) => (
+                          <button
+                            key={opt}
+                            onClick={() => setHostelBlock(opt)}
+                            className={`py-1.5 px-3 rounded-full text-[12px] font-bold transition-all border ${
+                              hostelBlock === opt
+                                ? "bg-white text-black border-white shadow-md scale-[1.02]"
+                                : "bg-white/5 text-gray-400 border-white/10 hover:text-white hover:bg-white/10"
+                            }`}
+                          >
+                            {opt}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="flex items-center gap-2 px-4 py-3 rounded-[1.2rem] bg-white/5 border border-white/10">
+                <Phone className="w-4 h-4 text-gray-500" />
+                <input
+                  value={phoneNumber}
+                  onChange={(e) => setPhoneNumber(e.target.value)}
+                  placeholder="Phone Number"
+                  className="bg-transparent text-[14px] font-bold outline-none w-full text-white placeholder:font-medium placeholder:text-gray-500"
+                />
+              </div>
+              <div className="flex items-center gap-2 px-4 py-3 rounded-[1.2rem] bg-white/5 border border-white/10">
+                <MapPin className="w-4 h-4 text-gray-500" />
+                <input
+                  value={roomNumber}
+                  onChange={(e) => setRoomNumber(e.target.value)}
+                  placeholder="Room Number (e.g. 502, G-12)"
+                  className="bg-transparent text-[14px] font-bold outline-none w-full text-white placeholder:font-medium placeholder:text-gray-500"
+                />
+              </div>
+            </div>
+          )}
+
+          {/* View-mode location strip */}
+          {!isEditing && (
+            <div className="mt-6 pt-5 border-t border-white/5 flex flex-wrap items-center justify-center sm:justify-start gap-4">
+              {profile?.hostel_block && (
+                <div className="flex items-center gap-2 text-sm text-gray-400">
+                  <MapPin className="w-3.5 h-3.5 text-orange-500" />
+                  <span className="font-semibold">{profile.hostel_block}</span>
+                </div>
+              )}
+              {profile?.phone_number && (
+                <div className="flex items-center gap-2 text-sm text-gray-400">
+                  <Phone className="w-3.5 h-3.5 text-orange-500" />
+                  <span className="font-semibold">{profile.phone_number}</span>
+                </div>
+              )}
+              {profile?.room_number && (
+                <div className="flex items-center gap-2 text-sm text-gray-400">
+                  <MapPin className="w-3.5 h-3.5 text-orange-500" />
+                  <span className="font-semibold">Room: {profile.room_number}</span>
                 </div>
               )}
             </div>
-          </div>
+          )}
         </motion.div>
 
         {/* ── TABS ── */}

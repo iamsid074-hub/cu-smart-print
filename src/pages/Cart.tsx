@@ -29,8 +29,9 @@ import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
 import PaymentSelector from "@/components/PaymentSelector";
 import UpiPaymentModal from "@/components/UpiPaymentModal";
-import RiskAlert from "@/components/RiskAlert";
-import { evaluateOrderRisk, RiskEvaluation } from "@/lib/risk";
+import RiskAlert, { RiskEvaluation } from "@/components/RiskAlert";
+import { evaluateOrderRisk } from "@/lib/risk";
+import { VirtualCardSwipePayment } from "@/components/VirtualCardSwipePayment";
 import { useUserLocation } from "@/hooks/useUserLocation";
 import { useMembership } from "@/hooks/useMembership";
 import MembershipUpsell from "@/components/MembershipUpsell";
@@ -85,7 +86,7 @@ export default function Cart() {
     return 1;
   }, [room]);
 
-  const [paymentMethod, setPaymentMethod] = useState<"online" | "cod">(
+  const [paymentMethod, setPaymentMethod] = useState<"online" | "cod" | "virtual_card">(
     "online"
   );
   const floor = derivedFloor;
@@ -292,10 +293,19 @@ export default function Cart() {
     const fullItemsString = `${itemsSummary}\n\n[SAFETY:Disclaimer Accepted @ ${new Date().toISOString()}]`;
 
     // 1. Ensure Profile Exists (Auto-fix for missing profiles / Foreign Key error 23503)
+    // IMPORTANT: Only update phone_number and hostel_block — NEVER overwrite full_name
+    // because the user may have manually set their name in Profile settings.
+    const { data: existingProfile } = await supabase
+      .from("profiles")
+      .select("full_name")
+      .eq("id", user!.id)
+      .maybeSingle();
+
     await supabase.from("profiles").upsert(
       {
         id: user!.id,
-        full_name:
+        // Only fall back to Google name if profile has no name at all
+        full_name: existingProfile?.full_name ||
           user?.user_metadata?.full_name ||
           user?.email?.split("@")[0] ||
           "Student",
@@ -317,8 +327,8 @@ export default function Cart() {
       delivery_room: `[ROOM:${room}] | [ITEMS:${fullItemsString}]`,
       buyer_phone: phoneClean,
       status: "pending",
-      payment_method: paymentMethod === "online" ? "cashfree" : "cod",
-      payment_status: paymentMethod === "online" ? "paid" : "pending",
+      payment_method: paymentMethod === "online" ? "cashfree" : paymentMethod === "virtual_card" ? "virtual_card" : "cod",
+      payment_status: (paymentMethod === "online" || paymentMethod === "virtual_card") ? "paid" : "pending",
       razorpay_payment_id: paymentId || null,
       is_quick: hasQuickItem,
       seller_notified_at: new Date().toISOString(),
@@ -346,6 +356,21 @@ export default function Cart() {
         amount: -walletDiscount,
         type: "usage",
         description: "Used balance for order",
+      });
+    }
+
+    // Virtual Card Wallet Deduction
+    if (paymentMethod === "virtual_card") {
+      const newBalance = walletBalance - orderTotal;
+      await supabase
+        .from("profiles")
+        .update({ wallet_balance: newBalance })
+        .eq("id", user!.id);
+      await supabase.from("wallet_transactions").insert({
+        user_id: user!.id,
+        amount: -orderTotal,
+        type: "usage",
+        description: "Paid with Virtual Card",
       });
     }
 
@@ -425,6 +450,9 @@ export default function Cart() {
     if (paymentMethod === "online" && orderTotal > 0) {
       setShowCheckout(false);
       setTimeout(() => setShowUpiModal(true), 150);
+    } else if (paymentMethod === "virtual_card") {
+      // Virtual Card handles its own success in onSuccess callback
+      // We do nothing here, the swipe UI is active
     } else {
       // Cash on Gate Flow
       try {
@@ -443,6 +471,25 @@ export default function Cart() {
       } finally {
         setSubmitting(false);
       }
+    }
+  };
+
+  const handleVirtualCardSuccess = async () => {
+    try {
+      setSubmitting(true);
+      await createOrder();
+      toast({
+        title: "Payment successful! 🎉",
+        description: "Paid using Virtual Card.",
+      });
+    } catch (err: any) {
+      toast({
+        title: "Order failed",
+        description: err.message || "Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -736,7 +783,7 @@ export default function Cart() {
                   </div>
                 )}
 
-                {paymentMethod !== 'cod' && !hasFreeDelivery && hasFlavourCombo && (
+                {paymentMethod !== 'cod' && paymentMethod !== 'virtual_card' && !hasFreeDelivery && hasFlavourCombo && (
                   <div className="flex justify-between items-center text-[14.5px]">
                     <span className="text-violet-500 font-medium">Flavour Factory Promo</span>
                     <span className="font-bold text-violet-500">-₹7.00</span>
@@ -744,48 +791,7 @@ export default function Cart() {
                 )}
               </div>
 
-              {/* Seamless Wallet Integration directly above total */}
-              {isFoodOrder && walletBalance > 0 && (
-                 <div 
-                   className={`mb-5 bg-[#FAFAFA] rounded-2xl p-4 border border-slate-100 flex items-center justify-between transition-all ${usableWalletBalance > 0 ? "cursor-pointer hover:bg-slate-50" : "opacity-60 cursor-not-allowed"}`}
-                   onClick={() => usableWalletBalance > 0 && setUseWalletBalance(!useWalletBalance)}
-                 >
-                    <div className="flex items-center gap-3">
-                       <Wallet className={`w-5 h-5 ${useWalletBalance && usableWalletBalance > 0 ? 'text-emerald-500' : 'text-slate-500'}`} />
-                       <div>
-                          <p className="font-bold text-slate-900 text-[14px]">Use Wallet Balance</p>
-                          <p className="text-[11px] font-medium text-slate-500">
-                             {usableWalletBalance > 0 ? `Available: ₹${usableWalletBalance} (Max ₹50/day)` : 'Daily limit reached'}
-                          </p>
-                       </div>
-                    </div>
-                    {/* iOS style toggle */}
-                    <div
-                      className={`w-[50px] h-7 rounded-full p-1 transition-colors duration-300 ease-in-out ${
-                        useWalletBalance && usableWalletBalance > 0 ? 'bg-emerald-500' : 'bg-slate-200'
-                      }`}
-                    >
-                      <div className={`bg-white w-5 h-5 rounded-full shadow-sm transform transition-transform duration-300 ${useWalletBalance && usableWalletBalance > 0 ? 'translate-x-[22px]' : 'translate-x-0'}`} />
-                    </div>
-                 </div>
-              )}
-
-              {/* Applied Wallet Line */}
-              <AnimatePresence>
-                {useWalletBalance && walletDiscount > 0 && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: 'auto', opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    className="overflow-hidden mb-4"
-                  >
-                    <div className="flex justify-between items-center text-[14.5px]">
-                      <span className="text-[#0ea5e9] font-medium">Wallet Applied</span>
-                      <span className="font-bold text-[#0ea5e9]">-₹{walletDiscount.toFixed(2)}</span>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+              {/* Seamless Wallet Integration directly above total is removed */}
 
               <div className="border-t border-slate-100 pt-5 mt-2 flex justify-between items-center">
                 <span className="font-bold text-slate-900 text-lg">Total</span>
@@ -875,21 +881,33 @@ export default function Cart() {
                   />
                 </div>
 
-                <div className="pt-2">
-                   <button
-                     onClick={handleCheckout}
-                     disabled={submitting || !isFormValid}
-                     className={`w-full h-[60px] rounded-[18px] font-bold text-[16px] flex items-center justify-center gap-2 transition-all shadow-md ${
-                       isFormValid ? 'bg-[#10B981] text-white hover:bg-[#059669]' : 'bg-slate-100 text-slate-400 cursor-not-allowed shadow-none'
-                     }`}
-                   >
-                     {submitting ? (
-                       <Loader2 className="w-6 h-6 animate-spin" />
-                     ) : (
-                       `Confirm & Pay ₹${orderTotal.toFixed(2)}`
-                     )}
-                   </button>
-                </div>
+                {paymentMethod === "virtual_card" ? (
+                  <div className="pt-2">
+                    <VirtualCardSwipePayment 
+                      amount={orderTotal} 
+                      balance={walletBalance} 
+                      userName={user?.user_metadata?.full_name || "BAZZAR USER"}
+                      onSuccess={handleVirtualCardSuccess}
+                      onCancel={() => {}}
+                    />
+                  </div>
+                ) : (
+                  <div className="pt-2">
+                     <button
+                       onClick={handleCheckout}
+                       disabled={submitting || !isFormValid}
+                       className={`w-full h-[60px] rounded-[18px] font-bold text-[16px] flex items-center justify-center gap-2 transition-all shadow-md ${
+                         isFormValid ? 'bg-[#10B981] text-white hover:bg-[#059669]' : 'bg-slate-100 text-slate-400 cursor-not-allowed shadow-none'
+                       }`}
+                     >
+                       {submitting ? (
+                         <Loader2 className="w-6 h-6 animate-spin" />
+                       ) : (
+                         `Confirm & Pay ₹${orderTotal.toFixed(2)}`
+                       )}
+                     </button>
+                  </div>
+                )}
               </motion.div>
             ) : (
               <div className="fixed bottom-0 left-0 right-0 z-40 bg-white/80 backdrop-blur-xl border-t border-slate-100 p-4 pb-8 flex justify-center">

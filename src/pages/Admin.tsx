@@ -847,8 +847,10 @@ function DashboardSection({
                     >
                       {order.payment_status === "verifying"
                         ? "🟡 Verify UTR"
+                        : order.payment_status === "paid" && order.payment_method === "virtual_card"
+                        ? "💳 Paid with Virtual Card"
                         : order.payment_status === "paid"
-                        ? "💳 Paid"
+                        ? "💳 Paid Online"
                         : "💵 Cash on Gate"}
                     </span>
                     {order.payment_status === "verifying" && (

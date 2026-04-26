@@ -59,7 +59,8 @@ type IslandState =
   | "grocery"
   | "sell"
   | "tracking"
-  | "active_cart";
+  | "active_cart"
+  | "wrong_pass";
 
 // ── Tracking status configuration ───────────────────────────────────────────
 const TRACKING_STATUSES: Record<
@@ -219,46 +220,100 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
     }
   }, [location.pathname]);
 
+  // ── Listen for wrong passcode event from Wallet ──────────────────────────
+  useEffect(() => {
+    const handler = () => {
+      triggerState("wrong_pass");
+    };
+    window.addEventListener("cu_card_wrong_pass", handler);
+    return () => window.removeEventListener("cu_card_wrong_pass", handler);
+  }, []);
+
 
 
   // ── Fetch tracking order & subscribe to real-time updates ───────────────
-  const fetchTrackingOrder = useCallback(async () => {
+  // Separate stable fetch fn that never depends on trackingOrder.id
+  const fetchLatestActiveOrder = useCallback(async () => {
     if (!user) return;
-
-    // If we already have a tracked order ID, always fetch for that specific order
-    const currentId = trackingOrder?.id;
-    let query = supabase
+    const { data } = await supabase
       .from("orders")
       .select(
-        "id, status, delivery_location, delivery_room, total_price, created_at, products(title, image_url)"
-      );
-
-    if (currentId) {
-      query = query.eq("id", currentId);
-    } else {
-      // No tracked order yet — find a recent active order
-      query = query
-        .eq("buyer_id", user.id)
-        .not("status", "in", '("completed","cancelled","seller_rejected")')
-        .order("created_at", { ascending: false })
-        .limit(1);
-    }
-
-    const { data } = await query.single();
+        "id, status, delivery_location, delivery_room, total_price, created_at, payment_method, payment_status, products(title, image_url)"
+      )
+      .eq("buyer_id", user.id)
+      .not("status", "in", '("completed","cancelled","seller_rejected")')
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
     if (data) {
       setTrackingOrder(data);
     }
-  }, [user, trackingOrder?.id]);
+  }, [user]);
 
+  const fetchTrackingOrder = useCallback(async () => {
+    if (!user) return;
+    const currentId = trackingOrder?.id;
+
+    if (currentId) {
+      const { data } = await supabase
+        .from("orders")
+        .select(
+          "id, status, delivery_location, delivery_room, total_price, created_at, payment_method, payment_status, products(title, image_url)"
+        )
+        .eq("id", currentId)
+        .maybeSingle();
+      if (data) setTrackingOrder(data);
+    } else {
+      await fetchLatestActiveOrder();
+    }
+  }, [user, trackingOrder?.id, fetchLatestActiveOrder]);
+
+  // Initial fetch on mount
   useEffect(() => {
-    fetchTrackingOrder();
-  }, [fetchTrackingOrder]);
+    fetchLatestActiveOrder();
+  }, [fetchLatestActiveOrder]);
 
-  // Real-time subscription for tracking order
+  // Re-fetch when user navigates back (location changes)
+  useEffect(() => {
+    if (!trackingOrder) {
+      fetchLatestActiveOrder();
+    }
+  }, [location.pathname]);
+
+  // Real-time subscription: listen for new INSERTs (user places order) AND UPDATEs
+  useEffect(() => {
+    if (!user) return;
+
+    // Subscribe to new orders being inserted for this user
+    const insertChannel = supabase
+      .channel(`top_di_new_orders_${user.id}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "orders",
+          filter: `buyer_id=eq.${user.id}`,
+        },
+        (payload) => {
+          // Immediately set the new order as the tracked order
+          if (payload.new && !['completed','cancelled','seller_rejected'].includes(payload.new.status)) {
+            setTrackingOrder(payload.new as any);
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(insertChannel);
+    };
+  }, [user]);
+
+  // Real-time subscription for UPDATE on specific tracked order
   useEffect(() => {
     if (!trackingOrder?.id) return;
 
-    const channel = supabase
+    const updateChannel = supabase
       .channel(`top_di_tracking_${trackingOrder.id}`)
       .on(
         "postgres_changes",
@@ -274,14 +329,21 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
       )
       .subscribe();
 
-    // Polling fallback every 15s
+    // Polling fallback every 15s once we have a tracked order
     const pollInterval = setInterval(fetchTrackingOrder, 15000);
 
     return () => {
-      supabase.removeChannel(channel);
+      supabase.removeChannel(updateChannel);
       clearInterval(pollInterval);
     };
   }, [trackingOrder?.id, fetchTrackingOrder]);
+
+  // Aggressive poll every 5s when no order is tracked yet (catches missed INSERTs)
+  useEffect(() => {
+    if (trackingOrder?.id) return; // Already tracking, stop
+    const aggressivePoll = setInterval(fetchLatestActiveOrder, 5000);
+    return () => clearInterval(aggressivePoll);
+  }, [trackingOrder?.id, fetchLatestActiveOrder]);
 
   // Detect status changes for animation
   useEffect(() => {
@@ -384,17 +446,20 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
 
   // Automatically render tracking or cart pill if in an 'idle' navigation state. 
   let displayState = islandState;
-  
-  if (
-    trackingOrder && !isTrackingDone && !isTrackingFailed &&
-    ["default", "explore", "grocery", "sell", "wallet", "profile"].includes(islandState)
-  ) {
-    displayState = "tracking";
-  } else if (
-    currentCount > 0 &&
-    ["default", "explore", "grocery", "sell", "wallet", "profile"].includes(islandState)
-  ) {
-    displayState = "active_cart";
+
+  // wrong_pass always takes priority
+  if (islandState !== "wrong_pass") {
+    if (
+      trackingOrder && !isTrackingDone && !isTrackingFailed &&
+      ["default", "explore", "grocery", "sell", "wallet", "profile"].includes(islandState)
+    ) {
+      displayState = "tracking";
+    } else if (
+      currentCount > 0 &&
+      ["default", "explore", "grocery", "sell", "wallet", "profile"].includes(islandState)
+    ) {
+      displayState = "active_cart";
+    }
   }
 
 
@@ -449,6 +514,17 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
         </span>
       );
       break;
+    case "wrong_pass":
+      width = 230;
+      height = 42;
+      content = (
+        <div className="flex items-center gap-2 px-1">
+          <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse flex-shrink-0" />
+          <span className="text-[13px] font-black tracking-wide text-white">Wrong Passcode</span>
+        </div>
+      );
+      break;
+
     case "wallet":
       width = 140;
       content = (
@@ -653,14 +729,14 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
                    </motion.div>
                  </motion.div>
                  
-                 {/* Right side: Compact "CART" Button */}
+                 {/* Right side: Compact "VIEW" Button */}
                  <div className="absolute right-0 top-1/2 -translate-y-1/2 z-10">
                    <div
                      onPointerDown={(e) => e.stopPropagation()}
                      onPointerUp={(e) => { 
                        e.stopPropagation(); 
                        triggerHaptic(ImpactStyle.Light); 
-                       navigate("/cart"); 
+                       navigate("/tracking" + (trackingOrder?.id ? `?order=${trackingOrder.id}` : "")); 
                      }}
                      className="cursor-pointer flex items-center justify-center bg-zinc-800/80 hover:bg-zinc-700/80 active:scale-95 transition-all rounded-lg px-2 py-1.5 border border-white/10 shadow-lg"
                      style={{
@@ -668,7 +744,7 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
                        WebkitBackdropFilter: "blur(8px)"
                      }}
                    >
-                     <span className="text-[10px] font-black text-white tracking-widest leading-none">CART</span>
+                     <span className="text-[10px] font-black text-white tracking-widest leading-none">VIEW</span>
                    </div>
                  </div>
                </div>

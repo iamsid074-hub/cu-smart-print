@@ -19,6 +19,7 @@ import {
   CreditCard,
   User,
   Star,
+  Lock,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
@@ -223,7 +224,35 @@ export default function Settings() {
           </div>
         </div>
 
-        {/* SECTION 3: DANGER ZONE */}
+        {/* SECTION 3: PASSCODE & SECURITY */}
+        <div id="security">
+          <p className="px-1 text-[10px] font-black uppercase tracking-widest text-gray-500 mb-2">
+            Security
+          </p>
+          <div className="bg-[#1c1c1e] rounded-[1.5rem] overflow-hidden border border-white/5 divide-y divide-white/5">
+            <button
+              onClick={() => {
+                toast.success("Appeal submitted! We will review your request shortly.");
+              }}
+              className="w-full flex items-center justify-between px-4 py-3.5 hover:bg-white/[0.03] active:bg-white/[0.06] transition-colors"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-xl bg-red-500/15 flex items-center justify-center flex-shrink-0">
+                  <Lock className="w-4 h-4 text-red-500" />
+                </div>
+                <div className="flex-1 text-left">
+                  <span className="font-bold text-[14px] text-white">
+                    Appeal for Passcode Change
+                  </span>
+                  <p className="text-[11px] text-gray-500 font-medium">Request admin to reset your wallet lock</p>
+                </div>
+              </div>
+              <ChevronRight className="w-4 h-4 text-gray-600 flex-shrink-0" />
+            </button>
+          </div>
+        </div>
+
+        {/* SECTION 4: DANGER ZONE */}
         <div>
           <p className="px-1 text-[10px] font-black uppercase tracking-widest text-[#FF3B30] mb-2">
             Danger Zone
