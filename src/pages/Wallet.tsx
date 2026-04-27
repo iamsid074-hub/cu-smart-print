@@ -463,14 +463,16 @@ export default function Wallet() {
                                 // Match!
                                 localStorage.setItem(WALLET_LOCK_KEY, next);
                                 setPasscode(next);
-                                window.dispatchEvent(new Event("wallet_lock_setup"));
                                 setTimeout(() => {
                                   setBalanceVisible(true);
                                   setIsUnlocked(true);
                                   setShowSetPassModal(false);
                                   setSetupFirstPass("");
                                   setSetupStep("set");
-                                }, 400);
+                                }, 200);
+                                setTimeout(() => {
+                                  window.dispatchEvent(new Event("wallet_lock_setup"));
+                                }, 1000);
                               } else {
                                 // Mismatch
                                 setSetupMismatch(true);
@@ -556,13 +558,15 @@ export default function Wallet() {
                           // to avoid stale closure bug
                           const savedPass = localStorage.getItem(WALLET_LOCK_KEY);
                           if (next === savedPass) {
-                            window.dispatchEvent(new Event("wallet_unlock_success"));
                             setTimeout(() => {
                               setBalanceVisible(true);
                               setIsUnlocked(true);
                               setShowUnlockModal(false);
                               setUnlockInput("");
-                            }, 400);
+                            }, 200);
+                            setTimeout(() => {
+                              window.dispatchEvent(new Event("wallet_unlock_success"));
+                            }, 1000);
                           } else {
                             setUnlockInput("");
                             window.dispatchEvent(new Event("cu_card_wrong_pass"));
