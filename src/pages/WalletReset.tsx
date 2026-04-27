@@ -1,16 +1,19 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { Lock, ShieldAlert, RotateCcw, CheckCircle, ArrowLeft } from "lucide-react";
-
-const WALLET_LOCK_KEY = "wallet_section_passcode";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function WalletReset() {
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [step, setStep] = useState<"confirm" | "done">("confirm");
 
   const handleReset = () => {
-    localStorage.removeItem(WALLET_LOCK_KEY);
+    if (user) {
+      localStorage.removeItem(`wallet_section_passcode_${user.id}`);
+      localStorage.removeItem(`wallet_balance_reveal_passcode_${user.id}`);
+    }
     setStep("done");
   };
 

@@ -151,8 +151,23 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
   const successAudioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
-    successAudioRef.current = new Audio("/sounds/apple_pay_success.mp3");
-    successAudioRef.current.load();
+    // Pre-load audio from multiple possible sources for maximum reliability
+    const audio = new Audio("/sounds/apple_pay_success.mp3");
+    audio.load();
+    successAudioRef.current = audio;
+
+    // "Unlock" audio on first user interaction to satisfy browser policies
+    const unlockAudio = () => {
+      if (successAudioRef.current) {
+        successAudioRef.current.play().then(() => {
+          successAudioRef.current?.pause();
+          successAudioRef.current!.currentTime = 0;
+        }).catch(() => {});
+        window.removeEventListener("click", unlockAudio);
+      }
+    };
+    window.addEventListener("click", unlockAudio);
+    return () => window.removeEventListener("click", unlockAudio);
   }, []);
 
   // ── Tracking state ──────────────────────────────────────────────────────
@@ -235,18 +250,27 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
     const wrongPassHandler = () => triggerState("wrong_pass");
     const unlockSuccessHandler = () => {
       console.log("Wallet unlock success event received");
-      if (successAudioRef.current) {
-        successAudioRef.current.currentTime = 0;
-        successAudioRef.current.play().catch(err => console.error("Audio play failed:", err));
-      }
+      // Apple Pay success sound timing is slightly delayed to match the visual "pop"
+      setTimeout(() => {
+        if (successAudioRef.current) {
+          successAudioRef.current.currentTime = 0;
+          successAudioRef.current.volume = 0.6;
+          successAudioRef.current.play().catch(err => console.error("Audio play failed:", err));
+        }
+        triggerHaptic(ImpactStyle.Medium);
+      }, 100);
       triggerState("wallet_unlock_success");
     };
     const lockSetupHandler = () => {
       console.log("Wallet lock setup event received");
-      if (successAudioRef.current) {
-        successAudioRef.current.currentTime = 0;
-        successAudioRef.current.play().catch(err => console.error("Audio play failed:", err));
-      }
+      setTimeout(() => {
+        if (successAudioRef.current) {
+          successAudioRef.current.currentTime = 0;
+          successAudioRef.current.volume = 0.6;
+          successAudioRef.current.play().catch(err => console.error("Audio play failed:", err));
+        }
+        triggerHaptic(ImpactStyle.Medium);
+      }, 100);
       triggerState("wallet_lock_setup");
     };
 
