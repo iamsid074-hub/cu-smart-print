@@ -148,6 +148,12 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
   } | null>(null);
 
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const successAudioRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    successAudioRef.current = new Audio("/sounds/apple_pay_success.mp3");
+    successAudioRef.current.load();
+  }, []);
 
   // ── Tracking state ──────────────────────────────────────────────────────
   const [trackingOrder, setTrackingOrder] = useState<any>(null);
@@ -224,15 +230,35 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
     }
   }, [location.pathname]);
 
-  // ── Listen for wrong passcode event from Wallet ──────────────────────────
+  // ── Listen for wallet events ───────────────────────────────────────────
   useEffect(() => {
     const wrongPassHandler = () => triggerState("wrong_pass");
-    const unlockSuccessHandler = () => triggerState("wallet_unlock_success");
-    const lockSetupHandler = () => triggerState("wallet_lock_setup");
+    const unlockSuccessHandler = () => {
+      console.log("Wallet unlock success event received");
+      if (successAudioRef.current) {
+        successAudioRef.current.currentTime = 0;
+        successAudioRef.current.play().catch(err => console.error("Audio play failed:", err));
+      }
+      triggerState("wallet_unlock_success");
+    };
+    const lockSetupHandler = () => {
+      console.log("Wallet lock setup event received");
+      if (successAudioRef.current) {
+        successAudioRef.current.currentTime = 0;
+        successAudioRef.current.play().catch(err => console.error("Audio play failed:", err));
+      }
+      triggerState("wallet_lock_setup");
+    };
 
     window.addEventListener("cu_card_wrong_pass", wrongPassHandler);
     window.addEventListener("wallet_unlock_success", unlockSuccessHandler);
     window.addEventListener("wallet_lock_setup", lockSetupHandler);
+    window.addEventListener("play_wallet_sound", () => {
+      if (successAudioRef.current) {
+        successAudioRef.current.currentTime = 0;
+        successAudioRef.current.play().catch(err => console.error("Audio play failed:", err));
+      }
+    });
 
     return () => {
       window.removeEventListener("cu_card_wrong_pass", wrongPassHandler);
@@ -240,6 +266,8 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
       window.removeEventListener("wallet_lock_setup", lockSetupHandler);
     };
   }, []);
+
+
 
 
 

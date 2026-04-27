@@ -527,6 +527,7 @@ export default function Wallet() {
                                 // Match!
                                 localStorage.setItem(WALLET_LOCK_KEY, next);
                                 setPasscode(next);
+                                window.dispatchEvent(new Event("play_wallet_sound"));
                                 setTimeout(() => {
                                   setBalanceVisible(false);
                                   setIsUnlocked(true);
@@ -622,6 +623,7 @@ export default function Wallet() {
                           // to avoid stale closure bug
                           const savedPass = localStorage.getItem(WALLET_LOCK_KEY);
                           if (next === savedPass) {
+                            window.dispatchEvent(new Event("play_wallet_sound"));
                             setTimeout(() => {
                               setBalanceVisible(false);
                               setIsUnlocked(true);
