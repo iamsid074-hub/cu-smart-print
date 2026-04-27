@@ -559,7 +559,7 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
           <motion.div
             initial={{ opacity: 1 }}
             animate={{ opacity: 0 }}
-            transition={{ delay: 0.6, duration: 0.2 }}
+            transition={{ delay: 0.9, duration: 0.2 }}
             className="absolute inset-0 flex items-center justify-center"
           >
             <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -569,7 +569,7 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
                 stroke="#10b981" strokeWidth="4"
                 initial={{ pathLength: 0 }}
                 animate={{ pathLength: 1 }}
-                transition={{ duration: 0.3, ease: "easeOut" }}
+                transition={{ delay: 0.3, duration: 0.3, ease: "easeOut" }}
               />
               {/* Left Eye */}
               <motion.rect
@@ -577,7 +577,7 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
                 fill="#10b981"
                 initial={{ opacity: 0, scaleY: 0 }}
                 animate={{ opacity: 1, scaleY: 1 }}
-                transition={{ delay: 0.15, duration: 0.2 }}
+                transition={{ delay: 0.45, duration: 0.2 }}
               />
               {/* Right Eye */}
               <motion.rect
@@ -585,15 +585,19 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
                 fill="#10b981"
                 initial={{ opacity: 0, scaleY: 0 }}
                 animate={{ opacity: 1, scaleY: 1 }}
-                transition={{ delay: 0.15, duration: 0.2 }}
+                transition={{ delay: 0.45, duration: 0.2 }}
               />
-              {/* Mouth - Starts flat, then smiles */}
+              {/* Mouth - Starts invisible, then draws as flat, then smiles */}
               <motion.path
                 d="M22 40 Q30 40 38 40"
                 stroke="#10b981" strokeWidth="4" strokeLinecap="round"
-                initial={{ d: "M22 40 Q30 40 38 40" }}
-                animate={{ d: "M22 36 Q30 48 38 36" }}
-                transition={{ delay: 0.25, duration: 0.25, type: "spring", stiffness: 400 }}
+                initial={{ opacity: 0, pathLength: 0 }}
+                animate={{ opacity: 1, pathLength: 1, d: "M22 36 Q30 48 38 36" }}
+                transition={{ 
+                  opacity: { delay: 0.55, duration: 0.1 },
+                  pathLength: { delay: 0.55, duration: 0.15 },
+                  d: { delay: 0.65, duration: 0.25, type: "spring", stiffness: 400 } 
+                }}
               />
             </svg>
           </motion.div>
@@ -602,7 +606,7 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
           <motion.div
             initial={{ opacity: 0, scale: 0.5 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.6, type: "spring", stiffness: 500, damping: 25 }}
+            transition={{ delay: 0.9, type: "spring", stiffness: 500, damping: 25 }}
             className="absolute inset-0 flex items-center justify-center bg-[rgba(15,15,15,0.98)]"
           >
             <svg
@@ -619,7 +623,7 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
                   fill="none"
                   initial={{ pathLength: 0 }}
                   animate={{ pathLength: 1 }}
-                  transition={{ delay: 0.6, duration: 0.4, ease: "easeOut" }}
+                  transition={{ delay: 0.9, duration: 0.4, ease: "easeOut" }}
                   style={{ filter: "drop-shadow(0 0 6px rgba(16,185,129,0.9))" }}
                 />
               </g>
@@ -633,7 +637,7 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
                 fill="none"
                 initial={{ pathLength: 0 }}
                 animate={{ pathLength: 1 }}
-                transition={{ delay: 0.7, duration: 0.3, ease: "easeOut" }}
+                transition={{ delay: 1.0, duration: 0.3, ease: "easeOut" }}
                 style={{ filter: "drop-shadow(0 0 4px rgba(16,185,129,0.8))" }}
               />
             </svg>
@@ -983,6 +987,7 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
                 animate={{ 
                   width, 
                   height,
+                  borderRadius: (displayState === "wallet_unlock_success" || displayState === "wallet_lock_setup") ? 26 : 50,
                   backgroundColor: "rgba(15, 15, 15, 0.98)"
                 }}
                 transition={displayState === "safy" ? safySpring : springTransition}
@@ -998,7 +1003,6 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
                 }`}
                 style={{
                   border: (displayState === "wallet_unlock_success" || displayState === "wallet_lock_setup") ? "none" : "1px solid rgba(255, 255, 255, 0.12)",
-                  borderRadius: (displayState === "wallet_unlock_success" || displayState === "wallet_lock_setup") ? 26 : 50,
                   animation: getAnimation(),
                   position: "relative",
                   zIndex: 100,
