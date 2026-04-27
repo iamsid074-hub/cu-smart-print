@@ -50,9 +50,7 @@ export const VirtualCard: React.FC<VirtualCardProps> = ({
           {/* Premium Vertical Golden Strip (Left) */}
           <div className="absolute left-0 top-0 bottom-0 w-1 sm:w-1.5 bg-gradient-to-b from-[#d4af37] via-[#f9e29c] to-[#b3932b] shadow-[2px_0_15px_rgba(212,175,55,0.3)]" />
 
-          {/* Luxury Horizontal Golden Strips */}
-          <div className="absolute top-[15%] left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#d4af37]/40 to-transparent pointer-events-none" />
-          <div className="absolute bottom-[15%] left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#d4af37]/40 to-transparent pointer-events-none" />
+
 
           {/* Diagonal Glass Highlight */}
           <div className="absolute -top-1/2 -left-1/2 w-full h-[200%] bg-gradient-to-tr from-transparent via-white/[0.03] to-transparent rotate-45 pointer-events-none transition-transform duration-1000 group-hover:translate-x-full" />
@@ -63,9 +61,7 @@ export const VirtualCard: React.FC<VirtualCardProps> = ({
           {/* Top Section */}
           <div className="relative z-10 flex justify-between items-start">
             <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#d4af37] via-[#f9e29c] to-[#b3932b] flex items-center justify-center shadow-[0_4px_12px_rgba(212,175,55,0.4)] border border-white/20">
-                <Diamond className="w-5 h-5 text-black" fill="currentColor" />
-              </div>
+
               <div>
                 <span className="text-white font-black tracking-[0.2em] uppercase text-sm sm:text-base block leading-none">CU CARD</span>
                 <span className="text-[#d4af37] font-bold text-[8px] sm:text-[9px] uppercase tracking-widest mt-1 opacity-80">Elite Rewards</span>
