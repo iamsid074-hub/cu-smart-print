@@ -194,7 +194,7 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
         } else {
           setIslandState("default");
         }
-      }, newState === "wallet_unlock_success" || newState === "wallet_lock_setup" ? 3500 : 2000);
+      }, newState === "wallet_unlock_success" || newState === "wallet_lock_setup" ? 1800 : 2000);
     }
   };
 
@@ -566,7 +566,12 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
               fill="none" xmlns="http://www.w3.org/2000/svg"
             >
               {/* Fast drawing green circle - Native SVG rotation avoids CSS transform bugs */}
-              <g transform="rotate(-90 45 45)">
+              <motion.g 
+                initial={{ rotate: -90 }}
+                animate={{ rotate: 270 }}
+                transition={{ delay: 0.2, duration: 0.5, ease: "anticipate" }}
+                style={{ transformOrigin: "45px 45px" }}
+              >
                 <motion.circle
                   cx="45" cy="45" r="34"
                   stroke="#10b981"
@@ -578,7 +583,7 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
                   transition={{ delay: 0.2, duration: 0.4, ease: "easeOut" }}
                   style={{ filter: "drop-shadow(0 0 6px rgba(16,185,129,0.9))" }}
                 />
-              </g>
+              </motion.g>
               {/* Checkmark draws in */}
               <motion.path
                 d="M30 46 L42 58 L62 34"

@@ -24,6 +24,7 @@ import { VirtualCardUnboxing } from "@/components/VirtualCardUnboxing";
 
 // Wallet section lock — SEPARATE from card payment passcode (cu_card_passcode)
 const WALLET_LOCK_KEY = "wallet_section_passcode";
+const BALANCE_LOCK_KEY = "wallet_balance_reveal_passcode";
 
 // ── Numpad Component ────────────────────────────────────────────────────────
 function NumPad({
@@ -249,6 +250,18 @@ export default function Wallet() {
   const [showUnlockModal, setShowUnlockModal] = useState(!!passcode && !isUnlocked);
   const [showTxSheet, setShowTxSheet] = useState(false);
 
+  // ── Balance Reveal Flow state ──
+  const [revealPasscode, setRevealPasscode] = useState<string | null>(() =>
+    localStorage.getItem(BALANCE_LOCK_KEY)
+  );
+  const [showRevealUnlockModal, setShowRevealUnlockModal] = useState(false);
+  const [showSetRevealModal, setShowSetRevealModal] = useState(false);
+  const [revealInput, setRevealInput] = useState("");
+  const [revealSetupStep, setRevealSetupStep] = useState<"set" | "confirm">("set");
+  const [revealFirstPass, setRevealFirstPass] = useState("");
+  const [revealMismatch, setRevealMismatch] = useState(false);
+  const [revealError, setRevealError] = useState("");
+
   // Legacy - kept for Forgot Lock button
   const [passInput, setPassInput] = useState("");
   const [confirmPassInput, setConfirmPassInput] = useState("");
@@ -312,13 +325,13 @@ export default function Wallet() {
       setPasscode(setupInput);
       window.dispatchEvent(new Event("wallet_lock_setup"));
       setTimeout(() => {
-        setBalanceVisible(true);
+        setBalanceVisible(false);
         setIsUnlocked(true);
         setShowSetPassModal(false);
         setSetupInput("");
         setSetupFirstPass("");
         setSetupStep("set");
-      }, 400);
+      }, 200);
     } else {
       // Mismatch — restart from step 1
       setSetupMismatch(true);
@@ -334,11 +347,11 @@ export default function Wallet() {
     if (unlockInput === passcode) {
       window.dispatchEvent(new Event("wallet_unlock_success"));
       setTimeout(() => {
-        setBalanceVisible(true);
+        setBalanceVisible(false);
         setIsUnlocked(true);
         setShowUnlockModal(false);
         setUnlockInput("");
-      }, 400);
+      }, 200);
     } else {
       setUnlockInput("");
       window.dispatchEvent(new Event("cu_card_wrong_pass"));
@@ -356,7 +369,7 @@ export default function Wallet() {
         setPasscode(passInput);
         window.dispatchEvent(new Event("wallet_lock_setup"));
         setTimeout(() => {
-          setBalanceVisible(true);
+          setBalanceVisible(false);
           setIsUnlocked(true);
           setShowSetPassModal(false);
           setPassInput("");
@@ -378,7 +391,58 @@ export default function Wallet() {
     if (balanceVisible) {
       setBalanceVisible(false);
     } else {
+      if (!revealPasscode) {
+        // First time: set reveal passcode
+        setRevealInput("");
+        setRevealSetupStep("set");
+        setShowSetRevealModal(true);
+      } else {
+        // Unlock with reveal passcode
+        setRevealInput("");
+        setShowRevealUnlockModal(true);
+      }
+    }
+  };
+
+  const handleRevealSetupSubmit = () => {
+    if (revealSetupStep === "set") {
+      if (revealInput === passcode) {
+        setRevealError("Reveal passcode must be different from entrance passcode!");
+        setRevealInput("");
+        setTimeout(() => setRevealError(""), 3000);
+        return;
+      }
+      setRevealFirstPass(revealInput);
+      setRevealInput("");
+      setRevealSetupStep("confirm");
+      setRevealMismatch(false);
+    } else {
+      if (revealInput === revealFirstPass) {
+        localStorage.setItem(BALANCE_LOCK_KEY, revealInput);
+        setRevealPasscode(revealInput);
+        setBalanceVisible(true);
+        setShowSetRevealModal(false);
+        setRevealInput("");
+        setRevealFirstPass("");
+        setRevealSetupStep("set");
+      } else {
+        setRevealMismatch(true);
+        setRevealInput("");
+        setRevealFirstPass("");
+        setRevealSetupStep("set");
+        setTimeout(() => setRevealMismatch(false), 2000);
+      }
+    }
+  };
+
+  const handleRevealUnlockSubmit = () => {
+    if (revealInput === revealPasscode) {
       setBalanceVisible(true);
+      setShowRevealUnlockModal(false);
+      setRevealInput("");
+    } else {
+      setRevealInput("");
+      window.dispatchEvent(new Event("cu_card_wrong_pass"));
     }
   };
 
@@ -464,7 +528,7 @@ export default function Wallet() {
                                 localStorage.setItem(WALLET_LOCK_KEY, next);
                                 setPasscode(next);
                                 setTimeout(() => {
-                                  setBalanceVisible(true);
+                                  setBalanceVisible(false);
                                   setIsUnlocked(true);
                                   setShowSetPassModal(false);
                                   setSetupFirstPass("");
@@ -559,7 +623,7 @@ export default function Wallet() {
                           const savedPass = localStorage.getItem(WALLET_LOCK_KEY);
                           if (next === savedPass) {
                             setTimeout(() => {
-                              setBalanceVisible(true);
+                              setBalanceVisible(false);
                               setIsUnlocked(true);
                               setShowUnlockModal(false);
                               setUnlockInput("");
@@ -596,6 +660,31 @@ export default function Wallet() {
               </button>
             </motion.div>
           </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ── Balance Reveal Passcode Modals ── */}
+      <AnimatePresence>
+        {showSetRevealModal && (
+          <NumPad
+            value={revealInput}
+            onChange={setRevealInput}
+            onSubmit={handleRevealSetupSubmit}
+            onClose={() => setShowSetRevealModal(false)}
+            title={revealSetupStep === "set" ? "Set Reveal Pass" : "Confirm Reveal Pass"}
+            subtitle={revealError || (revealMismatch ? "Mismatch! Try again." : (revealSetupStep === "set" ? "Create a DIFFERENT passcode to reveal balance" : "Re-enter to confirm"))}
+          />
+        )}
+
+        {showRevealUnlockModal && (
+          <NumPad
+            value={revealInput}
+            onChange={setRevealInput}
+            onSubmit={handleRevealUnlockSubmit}
+            onClose={() => setShowRevealUnlockModal(false)}
+            title="Reveal Balance"
+            subtitle="Enter your reveal passcode"
+          />
         )}
       </AnimatePresence>
 
