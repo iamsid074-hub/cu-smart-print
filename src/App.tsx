@@ -63,6 +63,7 @@ const Transactions = lazy(() => import("./pages/Transactions"));
 const ShippingPolicy = lazy(() => import("./pages/ShippingPolicy"));
 const FAQ = lazy(() => import("./pages/FAQ"));
 const WalletPayment = lazy(() => import("./pages/WalletPayment"));
+const WalletReset = lazy(() => import("./pages/WalletReset"));
 
 import Navbar from "./components/Navbar";
 import BottomNav from "./components/BottomNav";
@@ -325,6 +326,14 @@ function AppLayout() {
               element={
                 <ProtectedRoute>
                   <WalletPayment />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/wallet-reset"
+              element={
+                <ProtectedRoute>
+                  <WalletReset />
                 </ProtectedRoute>
               }
             />

@@ -231,9 +231,7 @@ export default function Settings() {
           </p>
           <div className="bg-[#1c1c1e] rounded-[1.5rem] overflow-hidden border border-white/5 divide-y divide-white/5">
             <button
-              onClick={() => {
-                toast.success("Appeal submitted! We will review your request shortly.");
-              }}
+              onClick={() => navigate("/wallet-reset")}
               className="w-full flex items-center justify-between px-4 py-3.5 hover:bg-white/[0.03] active:bg-white/[0.06] transition-colors"
             >
               <div className="flex items-center gap-3">

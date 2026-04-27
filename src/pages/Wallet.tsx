@@ -15,13 +15,15 @@ import {
   Delete,
   CreditCard,
   ChevronRight,
+  Check,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
 import { VirtualCard } from "@/components/VirtualCard";
 import { VirtualCardUnboxing } from "@/components/VirtualCardUnboxing";
 
-const PASSCODE_KEY = "cu_card_passcode";
+// Wallet section lock — SEPARATE from card payment passcode (cu_card_passcode)
+const WALLET_LOCK_KEY = "wallet_section_passcode";
 
 // ── Numpad Component ────────────────────────────────────────────────────────
 function NumPad({
@@ -224,22 +226,30 @@ export default function Wallet() {
     localStorage.getItem("bazzar_card_unboxed") === "true"
   );
   const [profileName, setProfileName] = useState("");
+  const [isUnlocked, setIsUnlocked] = useState(false);
 
-  // ── Passcode state ──
+  // ── Wallet section passcode (different from card payment passcode) ──
   const [passcode, setPasscode] = useState<string | null>(() =>
-    localStorage.getItem(PASSCODE_KEY)
+    localStorage.getItem(WALLET_LOCK_KEY)
   );
-  const [balanceVisible, setBalanceVisible] = useState<boolean>(() =>
-    !localStorage.getItem(PASSCODE_KEY)
-  );
+  const [balanceVisible, setBalanceVisible] = useState<boolean>(false);
   const balanceLocked = !!passcode;
 
-  // ── Modal / sheet flags ──
-  const [showSetPassModal, setShowSetPassModal] = useState(false);
-  const [showUnlockModal, setShowUnlockModal] = useState(false);
+  // ── Setup flow state ──
+  const [setupStep, setSetupStep] = useState<"set" | "confirm">("set");
+  const [setupFirstPass, setSetupFirstPass] = useState("");
+  const [setupInput, setSetupInput] = useState("");
+  const [setupMismatch, setSetupMismatch] = useState(false);
+
+  // ── Unlock flow state ──
+  const [unlockInput, setUnlockInput] = useState("");
+
+  // ── Modal flags ──
+  const [showSetPassModal, setShowSetPassModal] = useState(!passcode);
+  const [showUnlockModal, setShowUnlockModal] = useState(!!passcode && !isUnlocked);
   const [showTxSheet, setShowTxSheet] = useState(false);
 
-  // ── Numpad input ──
+  // Legacy - kept for Forgot Lock button
   const [passInput, setPassInput] = useState("");
   const [confirmPassInput, setConfirmPassInput] = useState("");
   const [setPassStep, setSetPassStep] = useState<"set" | "confirm">("set");
@@ -286,22 +296,74 @@ export default function Wallet() {
     if (txList) setTransactions(txList);
   };
 
-  // ── Set passcode ──
+  // ── Setup passcode: step 1 (enter) then step 2 (confirm) ──
+  const handleSetupNext = () => {
+    // Step 1: save first entry, move to confirm
+    setSetupFirstPass(setupInput);
+    setSetupInput("");
+    setSetupStep("confirm");
+    setSetupMismatch(false);
+  };
+
+  const handleSetupConfirm = () => {
+    if (setupInput === setupFirstPass) {
+      // Match — save and unlock
+      localStorage.setItem(WALLET_LOCK_KEY, setupInput);
+      setPasscode(setupInput);
+      window.dispatchEvent(new Event("wallet_lock_setup"));
+      setTimeout(() => {
+        setBalanceVisible(true);
+        setIsUnlocked(true);
+        setShowSetPassModal(false);
+        setSetupInput("");
+        setSetupFirstPass("");
+        setSetupStep("set");
+      }, 400);
+    } else {
+      // Mismatch — restart from step 1
+      setSetupMismatch(true);
+      setSetupInput("");
+      setSetupFirstPass("");
+      setSetupStep("set");
+      setTimeout(() => setSetupMismatch(false), 1500);
+    }
+  };
+
+  // ── Unlock wallet ──
+  const handleUnlockSubmit = () => {
+    if (unlockInput === passcode) {
+      window.dispatchEvent(new Event("wallet_unlock_success"));
+      setTimeout(() => {
+        setBalanceVisible(true);
+        setIsUnlocked(true);
+        setShowUnlockModal(false);
+        setUnlockInput("");
+      }, 400);
+    } else {
+      setUnlockInput("");
+      window.dispatchEvent(new Event("cu_card_wrong_pass"));
+    }
+  };
+
+  // Legacy handlers (used by Forgot Lock button in action rows)
   const handleSetPassSubmit = () => {
     if (setPassStep === "set") {
       setConfirmPassInput("");
       setSetPassStep("confirm");
     } else {
       if (passInput === confirmPassInput) {
-        localStorage.setItem(PASSCODE_KEY, passInput);
+        localStorage.setItem(WALLET_LOCK_KEY, passInput);
         setPasscode(passInput);
-        setBalanceVisible(false);
-        setShowSetPassModal(false);
-        setPassInput("");
-        setConfirmPassInput("");
-        setSetPassStep("set");
+        window.dispatchEvent(new Event("wallet_lock_setup"));
+        setTimeout(() => {
+          setBalanceVisible(true);
+          setIsUnlocked(true);
+          setShowSetPassModal(false);
+          setPassInput("");
+          setConfirmPassInput("");
+          setSetPassStep("set");
+        }, 400);
       } else {
-        // Mismatch — restart
         setPassInput("");
         setConfirmPassInput("");
         setSetPassStep("set");
@@ -309,33 +371,12 @@ export default function Wallet() {
     }
   };
 
-  // ── Forgot lock: reset via numpad confirm ──
-  const handleForgotLockSubmit = () => {
-    // For "forgot lock" we re-enter a new pass (same flow as set)
-    handleSetPassSubmit();
-  };
-
-  // ── Unlock to view balance ──
-  const handleUnlockSubmit = () => {
-    if (passInput === passcode) {
-      setBalanceVisible(true);
-      setShowUnlockModal(false);
-      setPassInput("");
-    } else {
-      setPassInput("");
-      setShowUnlockModal(false);
-      // Tell TopDynamicIsland to show "Wrong Passcode" via elongation
-      window.dispatchEvent(new Event("cu_card_wrong_pass"));
-    }
-  };
+  const handleForgotLockSubmit = () => handleSetPassSubmit();
 
   // ── Eye button ──
   const handleEyeClick = () => {
     if (balanceVisible) {
       setBalanceVisible(false);
-    } else if (balanceLocked) {
-      setPassInput("");
-      setShowUnlockModal(true);
     } else {
       setBalanceVisible(true);
     }
@@ -343,6 +384,217 @@ export default function Wallet() {
 
   return (
     <div className="relative min-h-screen pb-32 overflow-hidden bg-[#000] text-white">
+      {/* ── Lock Overlays ── */}
+      <AnimatePresence>
+        {/* SETUP: First time - Enter then Confirm passcode */}
+        {showSetPassModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[9999] bg-black/85 backdrop-blur-md flex flex-col items-center justify-center px-6"
+          >
+            <motion.div
+              initial={{ y: 60, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 60, opacity: 0 }}
+              className="w-full max-w-xs bg-[#1c1c1e] rounded-[2rem] p-6 border border-white/10 shadow-2xl"
+            >
+              {/* Header */}
+              <div className="text-center mb-6">
+                <div className="w-14 h-14 rounded-[18px] bg-[#d4af37]/10 border border-[#d4af37]/20 flex items-center justify-center mx-auto mb-4">
+                  <Lock className="w-7 h-7 text-[#d4af37]" />
+                </div>
+                <p className="font-black text-white text-xl">
+                  {setupStep === "set" ? "Set Wallet Lock" : "Confirm Passcode"}
+                </p>
+                <p className="text-xs text-gray-500 mt-1.5">
+                  {setupMismatch
+                    ? "❌ Passcodes didn't match. Try again."
+                    : setupStep === "set"
+                    ? "Create a 4-digit passcode for your wallet"
+                    : "Re-enter your passcode to confirm"}
+                </p>
+              </div>
+
+              {/* PIN dots */}
+              <div className="flex gap-4 justify-center mb-8">
+                {[0, 1, 2, 3].map((i) => (
+                  <motion.div
+                    key={i}
+                    animate={{ scale: setupInput.length > i ? 1.2 : 1 }}
+                    transition={{ type: "spring", stiffness: 500 }}
+                    className={`w-4 h-4 rounded-full border-2 transition-all ${
+                      setupInput.length > i
+                        ? "bg-[#d4af37] border-[#d4af37] shadow-[0_0_10px_rgba(212,175,55,0.6)]"
+                        : setupMismatch
+                        ? "border-red-500/50"
+                        : "bg-transparent border-white/30"
+                    }`}
+                  />
+                ))}
+              </div>
+
+              {/* Keypad */}
+              <div className="grid grid-cols-3 gap-3">
+                {["1","2","3","4","5","6","7","8","9","","0","⌫"].map((k, i) => (
+                  <button
+                    key={i}
+                    onClick={() => {
+                      if (k === "⌫") { setSetupInput(prev => prev.slice(0, -1)); return; }
+                      if (k === "" || setupInput.length >= 4) return;
+                      const next = setupInput + k;
+                      setSetupInput(next);
+                      if (next.length === 4) {
+                        setTimeout(() => {
+                          if (setupStep === "set") {
+                            // Move to confirm step using `next` directly
+                            setSetupFirstPass(next);
+                            setSetupInput("");
+                            setSetupStep("confirm");
+                            setSetupMismatch(false);
+                          } else {
+                            // Confirm step — compare `next` against `setupFirstPass` from state
+                            // We can’t read setupFirstPass here reliably so we pass it via ref approach
+                            setSetupInput("");
+                            // Use a functional check
+                            setSetupFirstPass(prev => {
+                              if (next === prev) {
+                                // Match!
+                                localStorage.setItem(WALLET_LOCK_KEY, next);
+                                setPasscode(next);
+                                window.dispatchEvent(new Event("wallet_lock_setup"));
+                                setTimeout(() => {
+                                  setBalanceVisible(true);
+                                  setIsUnlocked(true);
+                                  setShowSetPassModal(false);
+                                  setSetupFirstPass("");
+                                  setSetupStep("set");
+                                }, 400);
+                              } else {
+                                // Mismatch
+                                setSetupMismatch(true);
+                                setSetupFirstPass("");
+                                setSetupStep("set");
+                                setTimeout(() => setSetupMismatch(false), 1500);
+                              }
+                              return "";
+                            });
+                          }
+                        }, 200);
+                      }
+                    }}
+                    disabled={k === ""}
+                    className={`h-14 rounded-2xl text-xl font-bold transition-all active:scale-90 ${
+                      k === "" ? "opacity-0 pointer-events-none"
+                      : k === "⌫" ? "bg-white/5 border border-white/10 text-gray-400 hover:bg-white/10"
+                      : "bg-white/10 border border-white/10 text-white hover:bg-white/20 shadow-sm"
+                    }`}
+                  >
+                    {k === "⌫" ? <Delete className="w-5 h-5 mx-auto" /> : k}
+                  </button>
+                ))}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+
+        {/* UNLOCK: passcode already set - enter once to unlock */}
+        {(showUnlockModal && !isUnlocked) && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[9999] bg-black/85 backdrop-blur-md flex flex-col items-center justify-center px-6"
+          >
+            <motion.div
+              initial={{ y: 60, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 60, opacity: 0 }}
+              className="w-full max-w-xs bg-[#1c1c1e] rounded-[2rem] p-6 border border-white/10 shadow-2xl"
+            >
+              {/* Header */}
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <p className="font-black text-white text-lg">Wallet Locked</p>
+                  <p className="text-xs text-gray-500 mt-0.5">Enter your 4-digit passcode to unlock</p>
+                </div>
+                <button onClick={() => navigate(-1)} className="p-2 rounded-full bg-white/5 border border-white/10 text-gray-400">
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              {/* PIN dots */}
+              <div className="flex gap-4 justify-center mb-8">
+                {[0, 1, 2, 3].map((i) => (
+                  <motion.div
+                    key={i}
+                    animate={{ scale: unlockInput.length > i ? 1.2 : 1 }}
+                    transition={{ type: "spring", stiffness: 500 }}
+                    className={`w-4 h-4 rounded-full border-2 transition-all ${
+                      unlockInput.length > i
+                        ? "bg-[#d4af37] border-[#d4af37] shadow-[0_0_10px_rgba(212,175,55,0.6)]"
+                        : "bg-transparent border-white/30"
+                    }`}
+                  />
+                ))}
+              </div>
+
+              {/* Keypad */}
+              <div className="grid grid-cols-3 gap-3">
+                {["1","2","3","4","5","6","7","8","9","","0","⌫"].map((k, i) => (
+                  <button
+                    key={i}
+                    onClick={() => {
+                      if (k === "⌫") { setUnlockInput(prev => prev.slice(0, -1)); return; }
+                      if (k === "" || unlockInput.length >= 4) return;
+                      const next = unlockInput + k;
+                      setUnlockInput(next);
+                      if (next.length === 4) {
+                        setTimeout(() => {
+                          // Use `next` (local) and read passcode from localStorage directly
+                          // to avoid stale closure bug
+                          const savedPass = localStorage.getItem(WALLET_LOCK_KEY);
+                          if (next === savedPass) {
+                            window.dispatchEvent(new Event("wallet_unlock_success"));
+                            setTimeout(() => {
+                              setBalanceVisible(true);
+                              setIsUnlocked(true);
+                              setShowUnlockModal(false);
+                              setUnlockInput("");
+                            }, 400);
+                          } else {
+                            setUnlockInput("");
+                            window.dispatchEvent(new Event("cu_card_wrong_pass"));
+                          }
+                        }, 200);
+                      }
+                    }}
+                    disabled={k === ""}
+                    className={`h-14 rounded-2xl text-xl font-bold transition-all active:scale-90 ${
+                      k === "" ? "opacity-0 pointer-events-none"
+                      : k === "⌫" ? "bg-white/5 border border-white/10 text-gray-400 hover:bg-white/10"
+                      : "bg-white/10 border border-white/10 text-white hover:bg-white/20 shadow-sm"
+                    }`}
+                  >
+                    {k === "⌫" ? <Delete className="w-5 h-5 mx-auto" /> : k}
+                  </button>
+                ))}
+              </div>
+
+              {/* Forgot Pass */}
+              <button
+                onClick={() => navigate("/settings#security")}
+                className="w-full mt-5 text-center text-[12px] text-gray-500 hover:text-[#d4af37] font-bold transition-colors flex items-center justify-center gap-1.5"
+              >
+                <Lock className="w-3 h-3" />
+                Forgot Passcode?
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Background ambience */}
       <div className="absolute inset-0 pointer-events-none z-0">
         <div className="absolute top-0 right-1/4 w-[400px] h-[400px] bg-[#007AFF]/10 rounded-full blur-[100px] opacity-40" />
@@ -495,46 +747,6 @@ export default function Wallet() {
         )}
       </AnimatePresence>
 
-      {/* ── Set / Forgot Lock numpad ── */}
-      <AnimatePresence>
-        {showSetPassModal && (
-          <NumPad
-            value={setPassStep === "set" ? passInput : confirmPassInput}
-            onChange={setPassStep === "set" ? setPassInput : setConfirmPassInput}
-            onSubmit={handleSetPassSubmit}
-            onClose={() => {
-              setShowSetPassModal(false);
-              setPassInput("");
-              setConfirmPassInput("");
-              setSetPassStep("set");
-            }}
-            title={
-              balanceLocked
-                ? setPassStep === "set" ? "New Passcode" : "Confirm New Passcode"
-                : setPassStep === "set" ? "Set Passcode" : "Confirm Passcode"
-            }
-            subtitle={
-              setPassStep === "set"
-                ? "Choose a 4-digit PIN to lock your balance"
-                : "Re-enter the same PIN to confirm"
-            }
-          />
-        )}
-      </AnimatePresence>
-
-      {/* ── Unlock balance numpad ── */}
-      <AnimatePresence>
-        {showUnlockModal && (
-          <NumPad
-            value={passInput}
-            onChange={setPassInput}
-            onSubmit={handleUnlockSubmit}
-            onClose={() => { setShowUnlockModal(false); setPassInput(""); }}
-            title="Enter Passcode"
-            subtitle="Enter your 4-digit PIN to view balance"
-          />
-        )}
-      </AnimatePresence>
     </div>
   );
 }

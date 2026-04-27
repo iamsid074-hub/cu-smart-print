@@ -19,6 +19,8 @@ import {
   User,
   ShoppingCart,
   Bike,
+  Check,
+  Lock,
 } from "lucide-react";
 import { Haptics, ImpactStyle } from "@capacitor/haptics";
 
@@ -53,6 +55,8 @@ type IslandState =
   | "cart"
   | "profile"
   | "wallet"
+  | "wallet_unlock_success"
+  | "wallet_lock_setup"
   | "payment"
   | "added"
   | "updated"
@@ -190,7 +194,7 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
         } else {
           setIslandState("default");
         }
-      }, 2000);
+      }, newState === "wallet_unlock_success" || newState === "wallet_lock_setup" ? 3500 : 2000);
     }
   };
 
@@ -222,11 +226,19 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
 
   // ── Listen for wrong passcode event from Wallet ──────────────────────────
   useEffect(() => {
-    const handler = () => {
-      triggerState("wrong_pass");
+    const wrongPassHandler = () => triggerState("wrong_pass");
+    const unlockSuccessHandler = () => triggerState("wallet_unlock_success");
+    const lockSetupHandler = () => triggerState("wallet_lock_setup");
+
+    window.addEventListener("cu_card_wrong_pass", wrongPassHandler);
+    window.addEventListener("wallet_unlock_success", unlockSuccessHandler);
+    window.addEventListener("wallet_lock_setup", lockSetupHandler);
+
+    return () => {
+      window.removeEventListener("cu_card_wrong_pass", wrongPassHandler);
+      window.removeEventListener("wallet_unlock_success", unlockSuccessHandler);
+      window.removeEventListener("wallet_lock_setup", lockSetupHandler);
     };
-    window.addEventListener("cu_card_wrong_pass", handler);
-    return () => window.removeEventListener("cu_card_wrong_pass", handler);
   }, []);
 
 
@@ -534,6 +546,109 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
           <span className="text-sm font-semibold tracking-wide text-white/90">
             Wallet
           </span>
+        </div>
+      );
+      break;
+
+    case "wallet_unlock_success":
+      width = 110;
+      height = 110;
+      content = (
+        <div className="flex items-center justify-center w-full h-full relative">
+          {/* 1. FaceID Smiley (Fades out when checkmark appears) */}
+          <motion.div
+            initial={{ opacity: 1 }}
+            animate={{ opacity: 0 }}
+            transition={{ delay: 0.6, duration: 0.2 }}
+            className="absolute inset-0 flex items-center justify-center"
+          >
+            <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+              {/* Face Frame */}
+              <motion.rect
+                x="5" y="5" width="50" height="50" rx="14"
+                stroke="#10b981" strokeWidth="4"
+                initial={{ pathLength: 0 }}
+                animate={{ pathLength: 1 }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
+              />
+              {/* Left Eye */}
+              <motion.rect
+                x="18" y="22" width="5" height="7" rx="2.5"
+                fill="#10b981"
+                initial={{ opacity: 0, scaleY: 0 }}
+                animate={{ opacity: 1, scaleY: 1 }}
+                transition={{ delay: 0.15, duration: 0.2 }}
+              />
+              {/* Right Eye */}
+              <motion.rect
+                x="37" y="22" width="5" height="7" rx="2.5"
+                fill="#10b981"
+                initial={{ opacity: 0, scaleY: 0 }}
+                animate={{ opacity: 1, scaleY: 1 }}
+                transition={{ delay: 0.15, duration: 0.2 }}
+              />
+              {/* Mouth - Starts flat, then smiles */}
+              <motion.path
+                d="M22 40 Q30 40 38 40"
+                stroke="#10b981" strokeWidth="4" strokeLinecap="round"
+                initial={{ d: "M22 40 Q30 40 38 40" }}
+                animate={{ d: "M22 36 Q30 48 38 36" }}
+                transition={{ delay: 0.25, duration: 0.25, type: "spring", stiffness: 400 }}
+              />
+            </svg>
+          </motion.div>
+
+          {/* 2. Success Checkmark (Pops in after FaceID) */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.6, type: "spring", stiffness: 500, damping: 25 }}
+            className="absolute inset-0 flex items-center justify-center bg-[rgba(15,15,15,0.98)]"
+          >
+            <svg
+              width="90" height="90" viewBox="0 0 90 90"
+              fill="none" xmlns="http://www.w3.org/2000/svg"
+            >
+              {/* Fast drawing green circle - Native SVG rotation avoids CSS transform bugs */}
+              <g transform="rotate(-90 45 45)">
+                <motion.circle
+                  cx="45" cy="45" r="34"
+                  stroke="#10b981"
+                  strokeWidth="5"
+                  strokeLinecap="round"
+                  fill="none"
+                  initial={{ pathLength: 0 }}
+                  animate={{ pathLength: 1 }}
+                  transition={{ delay: 0.6, duration: 0.4, ease: "easeOut" }}
+                  style={{ filter: "drop-shadow(0 0 6px rgba(16,185,129,0.9))" }}
+                />
+              </g>
+              {/* Checkmark draws in */}
+              <motion.path
+                d="M30 46 L42 58 L62 34"
+                stroke="#10b981"
+                strokeWidth="6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                fill="none"
+                initial={{ pathLength: 0 }}
+                animate={{ pathLength: 1 }}
+                transition={{ delay: 0.7, duration: 0.3, ease: "easeOut" }}
+                style={{ filter: "drop-shadow(0 0 4px rgba(16,185,129,0.8))" }}
+              />
+            </svg>
+          </motion.div>
+        </div>
+      );
+      break;
+
+    case "wallet_lock_setup":
+      width = 210;
+      height = 42;
+      content = (
+        <div className="flex items-center gap-3 px-2">
+          <Lock className="w-4 h-4 text-[#d4af37]" />
+          <span className="text-[13px] font-black tracking-wide text-white uppercase">Security Set</span>
         </div>
       );
       break;
@@ -882,38 +997,41 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
                     : ""
                 }`}
                 style={{
-                  border: "1px solid rgba(255, 255, 255, 0.12)",
-                  borderRadius: 50,
+                  border: (displayState === "wallet_unlock_success" || displayState === "wallet_lock_setup") ? "none" : "1px solid rgba(255, 255, 255, 0.12)",
+                  borderRadius: (displayState === "wallet_unlock_success" || displayState === "wallet_lock_setup") ? 26 : 50,
                   animation: getAnimation(),
                   position: "relative",
                   zIndex: 100,
                   contain: "layout style paint",
                   willChange: "transform, width",
+                  overflow: "hidden",
                 }}
               >
                 <div className="relative w-full h-full flex items-center justify-center overflow-hidden rounded-[inherit]">
 
                 {/* Green camera indicator dot */}
-                <motion.div
-                  animate={{ opacity: [0.5, 1, 0.5] }}
-                  transition={{
-                    duration: 3,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                  }}
-                  style={{
-                    position: "absolute",
-                    left: 12,
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    width: 6,
-                    height: 6,
-                    borderRadius: "50%",
-                    background: "#30D158",
-                    boxShadow: "0 0 8px rgba(48,209,88,0.9)",
-                    zIndex: 10,
-                  }}
-                />
+                {!(displayState === "wallet_unlock_success" || displayState === "wallet_lock_setup") && (
+                  <motion.div
+                    animate={{ opacity: [0.5, 1, 0.5] }}
+                    transition={{
+                      duration: 3,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                    }}
+                    style={{
+                      position: "absolute",
+                      left: 12,
+                      top: "50%",
+                      transform: "translateY(-50%)",
+                      width: 6,
+                      height: 6,
+                      borderRadius: "50%",
+                      background: "#30D158",
+                      boxShadow: "0 0 8px rgba(48,209,88,0.9)",
+                      zIndex: 10,
+                    }}
+                  />
+                )}
 
                 <AnimatePresence mode="wait">
                   <motion.div
@@ -931,8 +1049,8 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
                       justifyContent: "center",
                       width: "100%",
                       height: "100%",
-                      paddingLeft: islandState === "tracking" ? 22 : 24,
-                      paddingRight: islandState === "tracking" ? 2 : 10,
+                      paddingLeft: (displayState === "wallet_unlock_success" || displayState === "wallet_lock_setup") ? 0 : (islandState === "tracking" ? 22 : 24),
+                      paddingRight: (displayState === "wallet_unlock_success" || displayState === "wallet_lock_setup") ? 0 : (islandState === "tracking" ? 2 : 10),
                       color: "#fff",
                     }}
                   >
