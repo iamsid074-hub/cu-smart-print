@@ -208,6 +208,7 @@ function AppLayout() {
   const isAdminPath = location.pathname.startsWith("/admin");
   const isDownload = location.pathname === "/download";
   const isDriverPage = location.pathname === "/driver";
+  const isSections = location.pathname.startsWith("/sections");
 
   // Show branded loading ONLY during initial boot
   if (!initialBootFinished && !isLanding && !isLogin && !isAdminPath && !isDownload && !isResetPassword) {
@@ -233,8 +234,8 @@ function AppLayout() {
       <AppUpdater />
       {!isLanding && !isLogin && !isAdminPath && !isDownload && !isDriverPage && (
         <>
-          {location.pathname !== "/pasta-offer" && <Navbar />}
-          {location.pathname !== "/pasta-offer" && <BottomNav />}
+          {location.pathname !== "/pasta-offer" && !isSections && <Navbar />}
+          {location.pathname !== "/pasta-offer" && !isSections && <BottomNav />}
         </>
       )}
       <ErrorBoundary>

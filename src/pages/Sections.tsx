@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLocation, useNavigate } from "react-router-dom";
-import { ShoppingBag, Zap, Wallet, Settings } from "lucide-react";
+import { ShoppingBag, Zap, Wallet, Settings, ArrowLeft } from "lucide-react";
 
 // Import the existing pages
 import Grocery from "./Grocery";
@@ -35,6 +35,22 @@ export default function Sections() {
     <div className="min-h-screen bg-[#0d0d0f] flex items-start">
       {/* ── Left Vertical Stripe (Sidebar) ── */}
       <div className="sticky top-0 h-screen flex-shrink-0 w-[80px] bg-[#0a0a0b] z-[70] shadow-[10px_0_30px_rgba(0,0,0,0.8)] flex flex-col items-center py-6 gap-6 overflow-y-auto hide-scrollbar rounded-r-[1.5rem] md:rounded-none">
+        
+        {/* BACK TO HOME */}
+        <button
+          onClick={() => navigate('/home')}
+          className="relative flex flex-col items-center gap-1.5 w-full group mb-2"
+        >
+          <div className="relative w-full flex justify-center">
+            <div className="w-12 h-12 rounded-full flex flex-col items-center justify-center transition-all duration-300 bg-white/5 text-gray-400 hover:bg-white/20 hover:text-white">
+              <ArrowLeft size={20} strokeWidth={2.5} />
+            </div>
+          </div>
+          <span className="text-[9px] font-bold tracking-tight uppercase text-gray-500 group-hover:text-gray-400">
+            Back
+          </span>
+        </button>
+
         {SECTIONS.map((section) => {
           const isActive = activeSection === section.id;
           const Icon = section.icon;
