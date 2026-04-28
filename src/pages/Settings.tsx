@@ -157,11 +157,11 @@ export default function Settings() {
                 <div className="w-8 h-8 rounded-xl bg-indigo-500/15 flex items-center justify-center flex-shrink-0">
                   <Wallet className="w-4 h-4 text-indigo-400" />
                 </div>
-                <span className="font-bold text-[14px] text-left">
+                <span className="font-bold text-[13px] truncate text-left">
                   Increase Daily Wallet Limit
                 </span>
               </div>
-              <ChevronRight className="w-4 h-4 text-gray-600 flex-shrink-0" />
+              <ChevronRight className="w-4 h-4 text-gray-600 flex-shrink-0 ml-2" />
             </button>
 
             <button
@@ -172,9 +172,9 @@ export default function Settings() {
                 <div className="w-8 h-8 rounded-xl bg-amber-500/15 flex items-center justify-center flex-shrink-0">
                   <Utensils className="w-4 h-4 text-amber-400" />
                 </div>
-                <span className="font-bold text-[14px]">Suggest Us a Combo</span>
+                <span className="font-bold text-[13px] truncate">Suggest Us a Combo</span>
               </div>
-              <ChevronRight className="w-4 h-4 text-gray-600 flex-shrink-0" />
+              <ChevronRight className="w-4 h-4 text-gray-600 flex-shrink-0 ml-2" />
             </button>
 
             <button
@@ -185,9 +185,9 @@ export default function Settings() {
                 <div className="w-8 h-8 rounded-xl bg-emerald-500/15 flex items-center justify-center flex-shrink-0">
                   <Bike className="w-4 h-4 text-emerald-400" />
                 </div>
-                <span className="font-bold text-[14px]">Be Our Delivery Partner</span>
+                <span className="font-bold text-[13px] truncate">Be Our Delivery Partner</span>
               </div>
-              <ChevronRight className="w-4 h-4 text-gray-600 flex-shrink-0" />
+              <ChevronRight className="w-4 h-4 text-gray-600 flex-shrink-0 ml-2" />
             </button>
           </div>
         </div>
@@ -216,9 +216,9 @@ export default function Settings() {
                   <div className="w-8 h-8 rounded-xl bg-white/5 flex items-center justify-center flex-shrink-0">
                     <Icon className="w-4 h-4 text-gray-300" />
                   </div>
-                  <span className="font-bold text-[14px]">{label}</span>
+                  <span className="font-bold text-[13px] truncate">{label}</span>
                 </div>
-                <ChevronRight className="w-4 h-4 text-gray-600 flex-shrink-0" />
+                <ChevronRight className="w-4 h-4 text-gray-600 flex-shrink-0 ml-2" />
               </Link>
             ))}
           </div>
@@ -239,10 +239,10 @@ export default function Settings() {
                   <Lock className="w-4 h-4 text-red-500" />
                 </div>
                 <div className="flex-1 text-left">
-                  <span className="font-bold text-[14px] text-white">
+                  <span className="font-bold text-[13px] truncate text-white">
                     Appeal for Passcode Change
                   </span>
-                  <p className="text-[11px] text-gray-500 font-medium">Request admin to reset your wallet lock</p>
+                  <p className="text-[11px] text-gray-500 font-medium truncate">Request admin to reset your wallet lock</p>
                 </div>
               </div>
               <ChevronRight className="w-4 h-4 text-gray-600 flex-shrink-0" />
@@ -263,7 +263,7 @@ export default function Settings() {
               <div className="w-8 h-8 rounded-xl bg-[#FF3B30]/10 flex items-center justify-center flex-shrink-0">
                 <Trash2 className="w-4 h-4 text-[#FF3B30]" />
               </div>
-              <span className="font-bold text-[14px] text-[#FF3B30]">
+              <span className="font-bold text-[13px] truncate text-[#FF3B30]">
                 Delete Account
               </span>
             </button>
@@ -275,7 +275,7 @@ export default function Settings() {
               <div className="w-8 h-8 rounded-xl bg-white/5 flex items-center justify-center flex-shrink-0">
                 <LogOut className="w-4 h-4 text-gray-400" />
               </div>
-              <span className="font-bold text-[14px] text-gray-300">Log Out</span>
+              <span className="font-bold text-[13px] truncate text-gray-300">Log Out</span>
             </button>
           </div>
         </div>
@@ -436,7 +436,7 @@ function ModalOverlay({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[110] flex items-end sm:items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+      className="absolute inset-0 z-[110] flex items-end sm:items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
     >
       <motion.div

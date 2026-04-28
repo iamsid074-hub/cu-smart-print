@@ -74,7 +74,7 @@ function NumPad({
 
   return (
     <div
-      className="fixed inset-0 z-[9999] bg-black/85 flex flex-col items-center justify-center px-6"
+      className="absolute inset-0 z-[9999] bg-black/85 flex flex-col items-center justify-center px-6"
     >
       <div
         className="w-full max-w-xs bg-[#1c1c1e] rounded-[2rem] p-6 border border-white/10 shadow-2xl"
@@ -153,7 +153,7 @@ function TransactionsSheet({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[9990] bg-black/70 backdrop-blur-sm flex items-end"
+      className="absolute inset-0 z-[9990] bg-black/70 backdrop-blur-sm flex items-end"
       onClick={onClose}
     >
       <motion.div
@@ -566,7 +566,7 @@ export default function Wallet() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[9999] bg-black/85 backdrop-blur-md flex flex-col items-center justify-center px-6"
+            className="absolute inset-0 z-[9999] bg-black/85 backdrop-blur-md flex flex-col items-center justify-center px-6"
           >
             <motion.div
               initial={{ y: 60, opacity: 0 }}
@@ -673,7 +673,7 @@ export default function Wallet() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[9999] bg-black/85 backdrop-blur-md flex flex-col items-center justify-center px-6"
+            className="absolute inset-0 z-[9999] bg-black/85 backdrop-blur-md flex flex-col items-center justify-center px-6"
           >
             <motion.div
               initial={{ y: 60, opacity: 0 }}
@@ -901,7 +901,7 @@ export default function Wallet() {
                 <ChevronRight className="w-5 h-5 text-gray-500" />
               </button>
             </div>
-          </div>
+          </motion.div>
         )}
 
         {/* Weekly Reward */}

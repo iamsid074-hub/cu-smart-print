@@ -90,11 +90,11 @@ export const VirtualCard: React.FC<VirtualCardProps> = ({
               </svg>
             </div>
 
-            <div className="flex justify-between items-center">
-              <div className="text-white font-mono text-[16px] sm:text-[22px] md:text-2xl tracking-[0.12em] sm:tracking-[0.18em] drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+            <div className="flex justify-between items-center w-full">
+              <div className="text-white font-mono text-[13px] xs:text-[16px] sm:text-[22px] md:text-2xl tracking-widest sm:tracking-[0.18em] drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] truncate mr-2">
                 •••• •••• •••• 8834
               </div>
-              <div className="text-right flex flex-col items-end">
+              <div className="text-right flex flex-col items-end flex-shrink-0">
                 <p className="text-[7px] text-[#d4af37] uppercase font-black tracking-tighter leading-none mb-0.5">Valid Thru</p>
                 <p className="text-white font-mono text-[10px] sm:text-xs font-bold tracking-wider">12/30</p>
               </div>
