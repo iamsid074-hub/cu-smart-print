@@ -299,6 +299,14 @@ export default function Wallet() {
   const openGoldenTicket = async () => {
     if (!user) return;
     setIsGeneratingTicket(true);
+
+    // Cryptographically random code generator — no confusable chars (0/O, 1/I/L)
+    const generateCode = () => {
+      const chars = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+      const arr = new Uint8Array(8);
+      crypto.getRandomValues(arr);
+      return 'TKT-' + Array.from(arr).map(b => chars[b % chars.length]).join('');
+    };
     
     try {
       // 1. Check if user already has an unused ticket
@@ -317,22 +325,32 @@ export default function Wallet() {
         return;
       }
 
-      // 2. No unused ticket found, generate a new one
-      const newCode = `TKT-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
-      
-      const { error: insertError } = await supabase
-        .from('golden_tickets')
-        .insert([{
-          creator_id: user.id,
-          code: newCode
-        }]);
+      // 2. Generate a unique new code — retry up to 3 times on collision
+      let inserted = false;
+      for (let attempt = 0; attempt < 3; attempt++) {
+        const newCode = generateCode();
+        const { error: insertError } = await supabase
+          .from('golden_tickets')
+          .insert([{ creator_id: user.id, code: newCode }]);
 
-      if (insertError) {
-        console.error("Failed to generate ticket:", insertError);
-        alert("Could not generate Golden Ticket right now. Try again.");
-      } else {
-        setReferralCode(newCode);
-        setShowReferralModal(true);
+        if (!insertError) {
+          setReferralCode(newCode);
+          setShowReferralModal(true);
+          inserted = true;
+          break;
+        }
+
+        // If it's NOT a unique constraint error, stop retrying
+        if (!insertError.message?.includes('unique') && !insertError.message?.includes('duplicate')) {
+          console.error("Failed to generate ticket:", insertError);
+          alert("Could not generate Golden Ticket right now. Try again.");
+          break;
+        }
+        // Otherwise it's a collision — loop and try a new code
+      }
+
+      if (!inserted) {
+        alert("Could not generate a unique ticket. Please try again.");
       }
     } catch (err) {
       console.error(err);

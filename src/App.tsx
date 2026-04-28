@@ -64,6 +64,10 @@ const ShippingPolicy = lazy(() => import("./pages/ShippingPolicy"));
 const FAQ = lazy(() => import("./pages/FAQ"));
 const WalletPayment = lazy(() => import("./pages/WalletPayment"));
 const WalletReset = lazy(() => import("./pages/WalletReset"));
+const Games = lazy(() => import("./pages/Games"));
+const CoinFlip = lazy(() => import("./pages/games/CoinFlip"));
+const DiceRoll = lazy(() => import("./pages/games/DiceRoll"));
+const Sections = lazy(() => import("./pages/Sections"));
 
 import Navbar from "./components/Navbar";
 import BottomNav from "./components/BottomNav";
@@ -318,6 +322,38 @@ function AppLayout() {
               element={
                 <ProtectedRoute>
                   <Wallet />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/games"
+              element={
+                <ProtectedRoute>
+                  <Games />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/sections"
+              element={
+                <ProtectedRoute>
+                  <Sections />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/games/coin-flip"
+              element={
+                <ProtectedRoute>
+                  <CoinFlip />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/games/dice-roll"
+              element={
+                <ProtectedRoute>
+                  <DiceRoll />
                 </ProtectedRoute>
               }
             />

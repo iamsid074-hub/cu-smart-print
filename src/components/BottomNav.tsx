@@ -1,21 +1,10 @@
-import { memo, useMemo, useState, useEffect } from "react";
+import { memo, useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Home, Utensils, ShoppingBag, Wallet, Settings } from "lucide-react";
-import { useCart } from "@/contexts/CartContext";
-
-const GLOBAL_ACTIVE_COLOR = "#6366f1";
-
-const NAV_ITEMS = [
-  { to: "/home",    icon: Home,        label: "Home" },
-  { to: "/grocery", icon: ShoppingBag, label: "Grocery" },
-  { to: "/wallet",  icon: Wallet,      label: "Wallet" },
-  { to: "/settings", icon: Settings,   label: "Settings" },
-];
+import { Home, Layers, Gamepad2 } from "lucide-react";
 
 const BottomNav = () => {
   const location = useLocation();
-  const { totalItems } = useCart();
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
 
@@ -26,7 +15,6 @@ const BottomNav = () => {
         window.requestAnimationFrame(() => {
           const currentScrollY = window.scrollY;
           
-          // Increased threshold and added 'direction-lock' logic to prevent flickering
           if (Math.abs(currentScrollY - lastScrollY) > 25) {
             if (currentScrollY > lastScrollY && currentScrollY > 150) {
               setIsVisible(false);
@@ -45,18 +33,16 @@ const BottomNav = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [lastScrollY]);
 
-  const activeIndex = useMemo(
-    () => NAV_ITEMS.findIndex((i) => location.pathname.startsWith(i.to)),
-    [location.pathname]
-  );
-
   const isCart = location.pathname === "/cart";
 
+  // Only hide on entirely standalone pages. 
+  // We want this nav to appear on home, and potentially sections
   if (
     location.pathname === "/" ||
     location.pathname === "/login" ||
     location.pathname === "/reset-password" ||
-    location.pathname.startsWith("/admin")
+    location.pathname.startsWith("/admin") ||
+    location.pathname.startsWith("/games") // hide on games themselves? Wait, if they click Games, they go to /games. Let's keep it visible so they can go back.
   ) return null;
 
   return (
@@ -67,78 +53,54 @@ const BottomNav = () => {
         opacity: isCart || !isVisible ? 0 : 1 
       }}
       transition={{ 
-        type: "tween",        // Switched to 'tween' for predictable, linear performance on mobile
-        duration: 0.25,      // Snappier duration reduces lag perception
+        type: "tween",
+        duration: 0.25,
         ease: "easeOut"
       }}
-      className="fixed bottom-0 left-0 right-0 z-[100] flex justify-center bg-[#0d0d0f] border-t border-white/[0.08] shadow-[0_-8px_40px_rgba(0,0,0,0.6)] will-change-transform"
+      className="fixed bottom-6 left-0 right-0 z-[100] flex justify-center px-4 pointer-events-none will-change-transform"
       style={{ 
         paddingBottom: "env(safe-area-inset-bottom, 0px)",
-        WebkitTapHighlightColor: "transparent",
-        backfaceVisibility: "hidden",
         transform: "translateZ(0)"
       }}
     >
-      <div
-        className="w-full max-w-[600px] flex items-stretch h-[64px] relative"
-      >
-        {NAV_ITEMS.map((item, i) => {
-          const isActive = i === activeIndex;
-          const Icon = item.icon;
-          const showBadge = item.to === "/grocery" && totalItems > 0;
+      <div className="w-full max-w-[600px] flex items-center gap-3">
+        {/* Left Pill (Dark) */}
+        <div className="flex-1 bg-[#151518] rounded-full p-1 flex items-center justify-between shadow-[0_8px_30px_rgba(0,0,0,0.6)] pointer-events-auto border border-white/10 backdrop-blur-xl">
+          <Link
+            to="/home"
+            className={`flex-1 flex flex-col items-center justify-center py-2.5 rounded-full transition-all ${
+              location.pathname === "/home" || location.pathname === "/"
+                ? "bg-white/10 text-white shadow-inner"
+                : "text-gray-500 hover:bg-white/5"
+            }`}
+          >
+            <Home size={22} strokeWidth={location.pathname === "/home" ? 2.5 : 2} className="mb-1" />
+            <span className="text-[11px] font-bold tracking-tight leading-none">Home</span>
+          </Link>
+          
+          <div className="w-[1px] h-8 bg-white/10 mx-1" />
+          
+          <Link
+            to="/sections"
+            className={`flex-1 flex flex-col items-center justify-center py-2.5 rounded-full transition-all ${
+              location.pathname.startsWith("/sections")
+                ? "bg-white/10 text-white shadow-inner"
+                : "text-gray-500 hover:bg-white/5"
+            }`}
+          >
+            <Layers size={22} strokeWidth={location.pathname.startsWith("/sections") ? 2.5 : 2} className="mb-1" />
+            <span className="text-[11px] font-bold tracking-tight leading-none">Sections</span>
+          </Link>
+        </div>
 
-          return (
-            <Link
-              key={item.to}
-              to={item.to}
-              className="flex-1 relative flex flex-col items-center justify-center gap-1 no-underline transition-all active:scale-95"
-              style={{
-                WebkitTapHighlightColor: "transparent",
-              }}
-            >
-              {/* Active Glow Aura */}
-              {isActive && (
-                <motion.div
-                  layoutId="nav-aura"
-                  className="absolute inset-x-2 inset-y-1.5 rounded-2xl bg-indigo-500/5 z-0"
-                  transition={{ type: "spring", stiffness: 400, damping: 35 }}
-                />
-              )}
-
-              {/* Icon Section */}
-              <div className="relative z-10 flex flex-col items-center justify-center">
-                <Icon
-                  size={21}
-                  strokeWidth={isActive ? 2.5 : 2}
-                  className={`transition-colors duration-200 ${isActive ? 'text-indigo-400' : 'text-zinc-500'}`}
-                />
-                
-                {showBadge && (
-                  <span className="absolute -top-1.5 -right-2 bg-indigo-600 text-white text-[9px] font-black min-w-[15px] h-[15px] flex items-center justify-center rounded-full border-2 border-[#0d0d0f]">
-                    {totalItems > 9 ? "9+" : totalItems}
-                  </span>
-                )}
-              </div>
-
-              {/* Label Section */}
-              <span 
-                className={`text-[10px] font-bold tracking-tight transition-colors duration-200 z-10 ${
-                  isActive ? 'text-indigo-400' : 'text-zinc-500 opacity-60'
-                }`}
-              >
-                {item.label}
-              </span>
-
-              {/* Active Indicator bar */}
-              {isActive && (
-                <motion.div
-                  layoutId="active-line"
-                  className="absolute top-0 inset-x-8 h-[2px] bg-indigo-500 shadow-[0_0_12px_rgba(99,102,241,0.4)] rounded-b-full"
-                />
-              )}
-            </Link>
-          );
-        })}
+        {/* Right Pill (Purple) */}
+        <Link
+          to="/games"
+          className="shrink-0 bg-[#6320EE] hover:bg-[#5210D8] active:scale-95 text-white rounded-full px-6 py-2.5 flex flex-col items-center justify-center shadow-[0_8px_30px_rgba(99,32,238,0.5)] pointer-events-auto transition-all border border-[#7A3FFF]/30"
+        >
+          <Gamepad2 size={24} strokeWidth={2.5} className="mb-1" />
+          <span className="text-[12px] font-black tracking-tight leading-none italic uppercase">Games ↗</span>
+        </Link>
       </div>
     </motion.div>
   );
