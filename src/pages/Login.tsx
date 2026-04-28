@@ -148,12 +148,12 @@ export default function Login() {
 
           if (goldenTicket.trim()) {
             try {
-              await supabase.rpc('redeem_golden_ticket', { 
+              await supabase.rpc('claim_golden_ticket', { 
                 p_ticket_code: goldenTicket.trim().toUpperCase(), 
                 p_new_user_id: sessionData.session.user.id 
               });
             } catch (err) {
-              console.error("Failed to redeem ticket:", err);
+              console.error("Failed to claim ticket:", err);
             }
           }
         }
