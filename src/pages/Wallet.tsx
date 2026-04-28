@@ -565,12 +565,13 @@ export default function Wallet() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed top-0 right-0 bottom-0 left-[80px] z-[9999] bg-black/85 backdrop-blur-md flex flex-col items-center justify-center px-6"
+            className="fixed top-0 right-0 bottom-0 left-[80px] z-[9999] bg-black/95 flex flex-col items-center justify-center px-6"
           >
             <motion.div
-              initial={{ y: 60, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: 60, opacity: 0 }}
+              initial={{ scale: 0.8, y: 100, rotate: 5, opacity: 0 }}
+              animate={{ scale: 1, y: 0, rotate: 0, opacity: 1 }}
+              exit={{ scale: 0.9, y: 50, rotate: -2, opacity: 0 }}
+              transition={{ type: "spring", stiffness: 120, damping: 15 }}
               className="w-full max-w-[280px] bg-[#1c1c1e] rounded-[2rem] p-5 border border-white/10 shadow-2xl"
             >
               {/* Header */}
@@ -672,12 +673,13 @@ export default function Wallet() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed top-0 right-0 bottom-0 left-[80px] z-[9999] bg-black/85 backdrop-blur-md flex flex-col items-center justify-center px-6"
+            className="fixed top-0 right-0 bottom-0 left-[80px] z-[9999] bg-black/95 flex flex-col items-center justify-center px-6"
           >
             <motion.div
-              initial={{ y: 60, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: 60, opacity: 0 }}
+              initial={{ scale: 0.8, y: 100, rotate: 5, opacity: 0 }}
+              animate={{ scale: 1, y: 0, rotate: 0, opacity: 1 }}
+              exit={{ scale: 0.9, y: 50, rotate: -2, opacity: 0 }}
+              transition={{ type: "spring", stiffness: 120, damping: 15 }}
               className="w-full max-w-[280px] bg-[#1c1c1e] rounded-[2rem] p-5 border border-white/10 shadow-2xl"
             >
               {/* Header */}

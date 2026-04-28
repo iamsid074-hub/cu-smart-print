@@ -234,7 +234,7 @@ function AppLayout() {
       <AppUpdater />
       {!isLanding && !isLogin && !isAdminPath && !isDownload && !isDriverPage && (
         <>
-          {location.pathname !== "/pasta-offer" && !isSections && <Navbar />}
+          {location.pathname !== "/pasta-offer" && <Navbar />}
           {location.pathname !== "/pasta-offer" && !isSections && <BottomNav />}
         </>
       )}
