@@ -4,14 +4,18 @@ import { MapPin, ChevronDown, User } from "lucide-react";
 import { useLocation, Link, useSearchParams } from "react-router-dom";
 import { useUserLocation } from "@/hooks/useUserLocation";
 import { useMembership } from "@/hooks/useMembership";
+import { useAuth } from "@/contexts/AuthContext";
+import { AnimatePresence } from "framer-motion";
 import EditLocationModal from "./EditLocationModal";
 import MembershipPlansModal from "./MembershipPlansModal";
 
 export default function UserLocationCard() {
   const { data, isLoaded } = useUserLocation();
   const { isActive, plan } = useMembership();
+  const { user, profile } = useAuth();
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isPlansOpen, setIsPlansOpen] = useState(false);
+  const [showGreeting, setShowGreeting] = useState(true);
   const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -27,9 +31,21 @@ export default function UserLocationCard() {
     }
   }, [searchParams, location.pathname, setSearchParams]);
 
+  // Greeting timer
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowGreeting(false);
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, []);
+
   if (!isLoaded || location.pathname !== "/home") return null;
 
   const hasLocation = data && (data.hostel || data.phone);
+  
+  // Extract first name
+  const fullName = profile?.full_name || user?.user_metadata?.full_name || "There";
+  const firstName = fullName.split(' ')[0];
 
   return (
     <>
@@ -89,50 +105,90 @@ export default function UserLocationCard() {
               />
             </div>
 
-            {/* Content */}
-            <div className="relative z-10 flex justify-between items-center px-4 py-1.5">
-              <div className="flex flex-col items-start gap-0.5">
-                <p className="text-[9px] font-bold text-purple-200/80 uppercase tracking-[0.15em] leading-none pl-[2px]">
-                  Your location
-                </p>
-                <button
-                  onClick={() => setIsEditOpen(true)}
-                  className="flex items-center gap-1.5 text-white transition-opacity hover:opacity-90 group max-w-[160px] sm:max-w-[220px]"
-                >
-                  <div className="bg-white/20 backdrop-blur-sm p-1 rounded-lg shadow-[inset_0_1px_0_rgba(255,255,255,0.2)]">
-                    <MapPin
-                      className="w-3.5 h-3.5 text-white shrink-0"
-                      strokeWidth={3}
-                    />
-                  </div>
-                  <span className="text-[13px] sm:text-[15px] font-black tracking-tight truncate leading-snug drop-shadow-sm">
-                    {hasLocation
-                      ? `${data.room}, ${data.hostel}`
-                      : "Add Location"}
-                  </span>
-                  <ChevronDown
-                    className="w-3.5 h-3.5 text-purple-200 group-hover:text-white transition-colors shrink-0"
-                    strokeWidth={3}
-                  />
-                </button>
-              </div>
+            {/* Content Container */}
+            <div className="relative z-10 flex w-full min-h-[46px] items-center">
+              <AnimatePresence mode="wait">
+                {showGreeting ? (
+                  <motion.div
+                    key="greeting"
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 1.05 }}
+                    transition={{ duration: 0.6, ease: "easeOut" }}
+                    className="absolute inset-0 flex items-center justify-center w-full"
+                  >
+                    <span
+                      className="text-[2rem] text-white whitespace-nowrap drop-shadow-[0_2px_12px_rgba(0,0,0,0.5)] tracking-[0.08em]"
+                      style={{ fontFamily: "'Playfair Display', serif", fontStyle: "italic", fontWeight: 700 }}
+                    >
+                      Hi {firstName}
+                    </span>
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="content"
+                    variants={{
+                      hidden: { opacity: 0 },
+                      show: {
+                        opacity: 1,
+                        transition: {
+                          staggerChildren: 0.15,
+                        },
+                      },
+                    }}
+                    initial="hidden"
+                    animate="show"
+                    className="flex w-full justify-between items-center px-4 py-1.5"
+                  >
+                    <motion.div
+                      variants={{
+                        hidden: { opacity: 0, y: 15 },
+                        show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 20 } },
+                      }}
+                      className="flex flex-col items-start gap-0.5"
+                    >
+                      <p className="text-[9px] font-bold text-purple-200/80 uppercase tracking-[0.15em] leading-none pl-[2px]">
+                        Your location
+                      </p>
+                      <button
+                        onClick={() => setIsEditOpen(true)}
+                        className="flex items-center gap-1.5 text-white transition-opacity hover:opacity-90 group max-w-[160px] sm:max-w-[220px]"
+                      >
+                        <div className="bg-white/20 backdrop-blur-sm p-1 rounded-lg shadow-[inset_0_1px_0_rgba(255,255,255,0.2)]">
+                          <MapPin className="w-3.5 h-3.5 text-white shrink-0" strokeWidth={3} />
+                        </div>
+                        <span className="text-[13px] sm:text-[15px] font-black tracking-tight truncate leading-snug drop-shadow-sm">
+                          {hasLocation ? `${data.room}, ${data.hostel}` : "Add Location"}
+                        </span>
+                        <ChevronDown className="w-3.5 h-3.5 text-purple-200 group-hover:text-white transition-colors shrink-0" strokeWidth={3} />
+                      </button>
+                    </motion.div>
 
-              <div className="flex items-center gap-2.5">
-                <motion.button
-                  onClick={() => setIsPlansOpen(true)}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="text-[9.5px] sm:text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full shadow-[0_4px_16px_rgba(251,191,36,0.3),inset_0_1px_0_rgba(255,255,255,0.4)] border border-amber-300/40 bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-400 text-purple-900 transition-all"
-                >
-                  {isActive ? "✦ MEMBER" : "✦ BE MEMBER"}
-                </motion.button>
-                <Link
-                  to="/profile"
-                  className="w-7 h-7 rounded-full bg-white/20 backdrop-blur-sm border border-white/25 shadow-[0_4px_12px_rgba(0,0,0,0.15),inset_0_1px_0_rgba(255,255,255,0.2)] flex items-center justify-center text-white hover:bg-white/30 hover:scale-105 transition-all"
-                >
-                  <User className="w-3.5 h-3.5" strokeWidth={2.5} />
-                </Link>
-              </div>
+                    <motion.div
+                      variants={{
+                        hidden: { opacity: 0, y: 15 },
+                        show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 20 } },
+                      }}
+                      className="flex items-center gap-2.5"
+                    >
+                      <motion.button
+                        onClick={() => setIsPlansOpen(true)}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        className="text-[9.5px] sm:text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full shadow-[0_4px_16px_rgba(251,191,36,0.3),inset_0_1px_0_rgba(255,255,255,0.4)] border border-amber-300/40 bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-400 text-purple-900 transition-all"
+                      >
+                        {isActive ? "✦ MEMBER" : "✦ BE MEMBER"}
+                      </motion.button>
+                      <Link
+                        to="/profile"
+                        className="w-7 h-7 rounded-full bg-white/20 backdrop-blur-sm border border-white/25 shadow-[0_4px_12px_rgba(0,0,0,0.15),inset_0_1px_0_rgba(255,255,255,0.2)] flex items-center justify-center text-white hover:bg-white/30 hover:scale-105 transition-all"
+                      >
+                        <User className="w-3.5 h-3.5" strokeWidth={2.5} />
+                      </Link>
+                    </motion.div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </motion.div>
         </div>
