@@ -57,31 +57,26 @@ function NumPad({
 }) {
   const keys = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "", "0", "⌫"];
 
-  const tap = (k: string) => {
-    if (k === "⌫") { onChange(value.slice(0, -1)); return; }
+  // Use useCallback so tap fn is never re-created on every render
+  const tap = React.useCallback((k: string) => {
+    if (k === "⌫") { onChange(""); return; }  // instant clear for delete
     if (k === "") return;
-    if (value.length >= 4) return;
-    onChange(value + k);
-  };
-
-  useEffect(() => {
-    if (value.length === 4) {
-      const t = setTimeout(() => onSubmit(), 200);
-      return () => clearTimeout(t);
-    }
-  }, [value]);
+    onChange((prev: string) => {
+      if (prev.length >= 4) return prev;
+      const next = prev + k;
+      // Auto-submit immediately when 4th digit is entered (no delay)
+      if (next.length === 4) {
+        setTimeout(() => onSubmit(), 80);
+      }
+      return next;
+    });
+  }, [onChange, onSubmit]);
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[9999] bg-black/80 backdrop-blur-md flex flex-col items-center justify-center px-6"
+    <div
+      className="fixed inset-0 z-[9999] bg-black/85 flex flex-col items-center justify-center px-6"
     >
-      <motion.div
-        initial={{ y: 60, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        exit={{ y: 60, opacity: 0 }}
+      <div
         className="w-full max-w-xs bg-[#1c1c1e] rounded-[2rem] p-6 border border-white/10 shadow-2xl"
       >
         <div className="flex items-center justify-between mb-6">
@@ -89,48 +84,59 @@ function NumPad({
             <p className="font-black text-white text-lg">{title}</p>
             {subtitle && <p className="text-xs text-gray-500 mt-0.5">{subtitle}</p>}
           </div>
-          <button onClick={onClose} className="p-2 rounded-full bg-white/5 border border-white/10 text-gray-400">
+          <button
+            onPointerDown={onClose}
+            className="p-2 rounded-full bg-white/5 border border-white/10 text-gray-400"
+          >
             <X className="w-4 h-4" />
           </button>
         </div>
 
-        {/* PIN dots */}
+        {/* PIN dots — pure CSS, no framer re-renders */}
         <div className="flex gap-4 justify-center mb-8">
           {[0, 1, 2, 3].map((i) => (
-            <motion.div
+            <div
               key={i}
-              animate={{ scale: value.length > i ? 1.2 : 1 }}
-              transition={{ type: "spring", stiffness: 500 }}
-              className={`w-4 h-4 rounded-full border-2 transition-all ${
-                value.length > i
-                  ? "bg-[#d4af37] border-[#d4af37] shadow-[0_0_10px_rgba(212,175,55,0.6)]"
-                  : "bg-transparent border-white/30"
-              }`}
+              style={{
+                width: 16,
+                height: 16,
+                borderRadius: "50%",
+                border: "2px solid",
+                transition: "background 0.1s, border-color 0.1s, transform 0.1s",
+                transform: value.length > i ? "scale(1.2)" : "scale(1)",
+                backgroundColor: value.length > i ? "#d4af37" : "transparent",
+                borderColor: value.length > i ? "#d4af37" : "rgba(255,255,255,0.3)",
+                boxShadow: value.length > i ? "0 0 10px rgba(212,175,55,0.6)" : "none",
+              }}
             />
           ))}
         </div>
 
-        {/* Keypad */}
+        {/* Keypad — onPointerDown fires instantly on touch, no 300ms click delay */}
         <div className="grid grid-cols-3 gap-3">
           {keys.map((k, i) => (
             <button
               key={i}
-              onClick={() => tap(k)}
+              onPointerDown={(e) => {
+                e.preventDefault(); // prevent any default browser delay
+                tap(k);
+              }}
               disabled={k === ""}
-              className={`h-14 rounded-2xl text-xl font-bold transition-all active:scale-90 ${
+              style={{ WebkitTapHighlightColor: "transparent" }}
+              className={`h-14 rounded-2xl text-xl font-bold select-none ${
                 k === ""
                   ? "opacity-0 pointer-events-none"
                   : k === "⌫"
-                  ? "bg-white/5 border border-white/10 text-gray-400 hover:bg-white/10"
-                  : "bg-white/10 border border-white/10 text-white hover:bg-white/20 shadow-sm"
+                  ? "bg-white/5 border border-white/10 text-gray-400 active:bg-white/20 active:scale-90"
+                  : "bg-white/10 border border-white/10 text-white active:bg-white/25 active:scale-90"
               }`}
             >
               {k === "⌫" ? <Delete className="w-5 h-5 mx-auto" /> : k}
             </button>
           ))}
         </div>
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   );
 }
 
@@ -567,20 +573,19 @@ export default function Wallet() {
                 </p>
               </div>
 
-              {/* PIN dots */}
+              {/* PIN dots — pure CSS */}
               <div className="flex gap-4 justify-center mb-8">
                 {[0, 1, 2, 3].map((i) => (
-                  <motion.div
+                  <div
                     key={i}
-                    animate={{ scale: setupInput.length > i ? 1.2 : 1 }}
-                    transition={{ type: "spring", stiffness: 500 }}
-                    className={`w-4 h-4 rounded-full border-2 transition-all ${
-                      setupInput.length > i
-                        ? "bg-[#d4af37] border-[#d4af37] shadow-[0_0_10px_rgba(212,175,55,0.6)]"
-                        : setupMismatch
-                        ? "border-red-500/50"
-                        : "bg-transparent border-white/30"
-                    }`}
+                    style={{
+                      width: 16, height: 16, borderRadius: "50%", border: "2px solid",
+                      transition: "background 0.1s, border-color 0.1s, transform 0.1s",
+                      transform: setupInput.length > i ? "scale(1.2)" : "scale(1)",
+                      backgroundColor: setupInput.length > i ? "#d4af37" : "transparent",
+                      borderColor: setupInput.length > i ? "#d4af37" : setupMismatch ? "rgba(239,68,68,0.5)" : "rgba(255,255,255,0.3)",
+                      boxShadow: setupInput.length > i ? "0 0 10px rgba(212,175,55,0.6)" : "none",
+                    }}
                   />
                 ))}
               </div>
@@ -590,58 +595,50 @@ export default function Wallet() {
                 {["1","2","3","4","5","6","7","8","9","","0","⌫"].map((k, i) => (
                   <button
                     key={i}
-                    onClick={() => {
+                    onPointerDown={(e) => {
+                      e.preventDefault();
                       if (k === "⌫") { setSetupInput(prev => prev.slice(0, -1)); return; }
                       if (k === "" || setupInput.length >= 4) return;
                       const next = setupInput + k;
                       setSetupInput(next);
                       if (next.length === 4) {
-                        setTimeout(() => {
-                          if (setupStep === "set") {
-                            // Move to confirm step using `next` directly
-                            setSetupFirstPass(next);
-                            setSetupInput("");
-                            setSetupStep("confirm");
-                            setSetupMismatch(false);
-                          } else {
-                            // Confirm step — compare `next` against `setupFirstPass` from state
-                            // We can’t read setupFirstPass here reliably so we pass it via ref approach
-                            setSetupInput("");
-                            // Use a functional check
-                            setSetupFirstPass(prev => {
-                              if (next === prev) {
-                                // Match!
-                                localStorage.setItem(getWalletLockKey(user!.id), next);
-                                setPasscode(next);
-                                window.dispatchEvent(new Event("play_wallet_sound"));
-                                setTimeout(() => {
-                                  setBalanceVisible(false);
-                                  setIsUnlocked(true);
-                                  setShowSetPassModal(false);
-                                  setSetupFirstPass("");
-                                  setSetupStep("set");
-                                }, 200);
-                                setTimeout(() => {
-                                  window.dispatchEvent(new Event("wallet_lock_setup"));
-                                }, 1000);
-                              } else {
-                                // Mismatch
-                                setSetupMismatch(true);
+                        if (setupStep === "set") {
+                          setSetupFirstPass(next);
+                          setSetupInput("");
+                          setSetupStep("confirm");
+                          setSetupMismatch(false);
+                        } else {
+                          setSetupInput("");
+                          setSetupFirstPass(prev => {
+                            if (next === prev) {
+                              localStorage.setItem(getWalletLockKey(user!.id), next);
+                              setPasscode(next);
+                              window.dispatchEvent(new Event("play_wallet_sound"));
+                              setTimeout(() => {
+                                setBalanceVisible(false);
+                                setIsUnlocked(true);
+                                setShowSetPassModal(false);
                                 setSetupFirstPass("");
                                 setSetupStep("set");
-                                setTimeout(() => setSetupMismatch(false), 1500);
-                              }
-                              return "";
-                            });
-                          }
-                        }, 200);
+                              }, 200);
+                              setTimeout(() => { window.dispatchEvent(new Event("wallet_lock_setup")); }, 1000);
+                            } else {
+                              setSetupMismatch(true);
+                              setSetupFirstPass("");
+                              setSetupStep("set");
+                              setTimeout(() => setSetupMismatch(false), 1500);
+                            }
+                            return "";
+                          });
+                        }
                       }
                     }}
                     disabled={k === ""}
-                    className={`h-14 rounded-2xl text-xl font-bold transition-all active:scale-90 ${
+                    style={{ WebkitTapHighlightColor: "transparent" }}
+                    className={`h-14 rounded-2xl text-xl font-bold select-none ${
                       k === "" ? "opacity-0 pointer-events-none"
-                      : k === "⌫" ? "bg-white/5 border border-white/10 text-gray-400 hover:bg-white/10"
-                      : "bg-white/10 border border-white/10 text-white hover:bg-white/20 shadow-sm"
+                      : k === "⌫" ? "bg-white/5 border border-white/10 text-gray-400 active:bg-white/20 active:scale-90"
+                      : "bg-white/10 border border-white/10 text-white active:bg-white/25 active:scale-90"
                     }`}
                   >
                     {k === "⌫" ? <Delete className="w-5 h-5 mx-auto" /> : k}
@@ -677,18 +674,19 @@ export default function Wallet() {
                 </button>
               </div>
 
-              {/* PIN dots */}
+              {/* PIN dots — pure CSS */}
               <div className="flex gap-4 justify-center mb-8">
                 {[0, 1, 2, 3].map((i) => (
-                  <motion.div
+                  <div
                     key={i}
-                    animate={{ scale: unlockInput.length > i ? 1.2 : 1 }}
-                    transition={{ type: "spring", stiffness: 500 }}
-                    className={`w-4 h-4 rounded-full border-2 transition-all ${
-                      unlockInput.length > i
-                        ? "bg-[#d4af37] border-[#d4af37] shadow-[0_0_10px_rgba(212,175,55,0.6)]"
-                        : "bg-transparent border-white/30"
-                    }`}
+                    style={{
+                      width: 16, height: 16, borderRadius: "50%", border: "2px solid",
+                      transition: "background 0.1s, border-color 0.1s, transform 0.1s",
+                      transform: unlockInput.length > i ? "scale(1.2)" : "scale(1)",
+                      backgroundColor: unlockInput.length > i ? "#d4af37" : "transparent",
+                      borderColor: unlockInput.length > i ? "#d4af37" : "rgba(255,255,255,0.3)",
+                      boxShadow: unlockInput.length > i ? "0 0 10px rgba(212,175,55,0.6)" : "none",
+                    }}
                   />
                 ))}
               </div>
@@ -698,39 +696,35 @@ export default function Wallet() {
                 {["1","2","3","4","5","6","7","8","9","","0","⌫"].map((k, i) => (
                   <button
                     key={i}
-                    onClick={() => {
+                    onPointerDown={(e) => {
+                      e.preventDefault();
                       if (k === "⌫") { setUnlockInput(prev => prev.slice(0, -1)); return; }
                       if (k === "" || unlockInput.length >= 4) return;
                       const next = unlockInput + k;
                       setUnlockInput(next);
                       if (next.length === 4) {
-                        setTimeout(() => {
-                          // Use `next` (local) and read passcode from localStorage directly
-                          // to avoid stale closure bug
-                          const savedPass = localStorage.getItem(getWalletLockKey(user!.id));
-                          if (next === savedPass) {
-                            window.dispatchEvent(new Event("play_wallet_sound"));
-                            setTimeout(() => {
-                              setBalanceVisible(false);
-                              setIsUnlocked(true);
-                              setShowUnlockModal(false);
-                              setUnlockInput("");
-                            }, 200);
-                            setTimeout(() => {
-                              window.dispatchEvent(new Event("wallet_unlock_success"));
-                            }, 1000);
-                          } else {
+                        const savedPass = localStorage.getItem(getWalletLockKey(user!.id));
+                        if (next === savedPass) {
+                          window.dispatchEvent(new Event("play_wallet_sound"));
+                          setTimeout(() => {
+                            setBalanceVisible(false);
+                            setIsUnlocked(true);
+                            setShowUnlockModal(false);
                             setUnlockInput("");
-                            window.dispatchEvent(new Event("cu_card_wrong_pass"));
-                          }
-                        }, 200);
+                          }, 200);
+                          setTimeout(() => { window.dispatchEvent(new Event("wallet_unlock_success")); }, 1000);
+                        } else {
+                          setUnlockInput("");
+                          window.dispatchEvent(new Event("cu_card_wrong_pass"));
+                        }
                       }
                     }}
                     disabled={k === ""}
-                    className={`h-14 rounded-2xl text-xl font-bold transition-all active:scale-90 ${
+                    style={{ WebkitTapHighlightColor: "transparent" }}
+                    className={`h-14 rounded-2xl text-xl font-bold select-none ${
                       k === "" ? "opacity-0 pointer-events-none"
-                      : k === "⌫" ? "bg-white/5 border border-white/10 text-gray-400 hover:bg-white/10"
-                      : "bg-white/10 border border-white/10 text-white hover:bg-white/20 shadow-sm"
+                      : k === "⌫" ? "bg-white/5 border border-white/10 text-gray-400 active:bg-white/20 active:scale-90"
+                      : "bg-white/10 border border-white/10 text-white active:bg-white/25 active:scale-90"
                     }`}
                   >
                     {k === "⌫" ? <Delete className="w-5 h-5 mx-auto" /> : k}
