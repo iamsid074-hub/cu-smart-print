@@ -838,7 +838,12 @@ export default function Wallet() {
             />
           </div>
         ) : (
-          <div className="mb-8 flex flex-col items-center">
+          <motion.div 
+            initial={{ x: 100, y: 150, rotate: 15, opacity: 0 }}
+            animate={{ x: 0, y: 0, rotate: 0, opacity: 1 }}
+            transition={{ type: "spring", stiffness: 90, damping: 14, delay: 0.1 }}
+            className="mb-8 flex flex-col items-center"
+          >
             {/* Card */}
             <div className="w-full max-w-[450px] mb-4">
               <VirtualCard
