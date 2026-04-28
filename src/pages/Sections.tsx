@@ -32,9 +32,9 @@ export default function Sections() {
   const ActiveComponent = SECTIONS.find(s => s.id === activeSection)?.component || Grocery;
 
   return (
-    <div className="min-h-screen bg-[#0d0d0f] flex relative">
+    <div className="min-h-screen bg-[#0d0d0f] flex items-start">
       {/* ── Left Vertical Stripe (Sidebar) ── */}
-      <div className="fixed top-0 left-0 bottom-0 w-[80px] bg-[#0a0a0b] z-[70] shadow-[10px_0_30px_rgba(0,0,0,0.8)] flex flex-col items-center py-6 gap-6 overflow-y-auto hide-scrollbar rounded-r-[1.5rem] md:rounded-none">
+      <div className="sticky top-0 h-screen flex-shrink-0 w-[80px] bg-[#0a0a0b] z-[70] shadow-[10px_0_30px_rgba(0,0,0,0.8)] flex flex-col items-center py-6 gap-6 overflow-y-auto hide-scrollbar rounded-r-[1.5rem] md:rounded-none">
         {SECTIONS.map((section) => {
           const isActive = activeSection === section.id;
           const Icon = section.icon;
@@ -77,11 +77,7 @@ export default function Sections() {
       </div>
 
       {/* ── Right Content Area ── */}
-      {/* 
-        We pad the left side by the width of the sidebar (80px).
-        The inner component is rendered exactly as if it were a standalone page.
-      */}
-      <div className="flex-1 ml-[80px] relative w-[calc(100vw-80px)] overflow-x-hidden min-h-screen bg-black">
+      <div className="flex-1 min-w-0 relative overflow-x-hidden min-h-screen bg-black">
         <AnimatePresence mode="wait">
           <motion.div
             key={activeSection}
@@ -91,30 +87,10 @@ export default function Sections() {
             transition={{ duration: 0.3 }}
             className="w-full h-full min-h-screen"
           >
-            {/* 
-              Render the component. 
-              Note: Because the components have their own fixed navbars or sticky headers, 
-              we might need global CSS to adjust their "left" values if they use fixed positioning.
-              However, since they usually use `max-w-xl mx-auto`, it should naturally sit within the container.
-            */}
             <ActiveComponent />
           </motion.div>
         </AnimatePresence>
       </div>
-
-      {/* CSS overrides for children components that use fixed positioning */}
-      <style>{`
-        /* Target any fixed elements inside the sections and force them to respect the sidebar */
-        .ml-\\[80px\\] .fixed {
-           left: 80px !important;
-           width: calc(100vw - 80px) !important;
-        }
-        /* Except modal dialogs or toasts that should cover screen */
-        .ml-\\[80px\\] .z-\\[100\\], .ml-\\[80px\\] .z-\\[9999\\] {
-           left: 0 !important;
-           width: 100vw !important;
-        }
-      `}</style>
     </div>
   );
 }

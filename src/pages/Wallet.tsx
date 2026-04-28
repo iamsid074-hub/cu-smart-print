@@ -77,7 +77,7 @@ function NumPad({
       className="absolute inset-0 z-[9999] bg-black/85 flex flex-col items-center justify-center px-6"
     >
       <div
-        className="w-full max-w-xs bg-[#1c1c1e] rounded-[2rem] p-6 border border-white/10 shadow-2xl"
+        className="w-full max-w-[280px] bg-[#1c1c1e] rounded-[2rem] p-5 border border-white/10 shadow-2xl mx-auto"
       >
         <div className="flex items-center justify-between mb-6">
           <div>
@@ -112,8 +112,7 @@ function NumPad({
           ))}
         </div>
 
-        {/* Keypad — onPointerDown fires instantly on touch, no 300ms click delay */}
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-3 gap-2">
           {keys.map((k, i) => (
             <button
               key={i}
@@ -123,7 +122,7 @@ function NumPad({
               }}
               disabled={k === ""}
               style={{ WebkitTapHighlightColor: "transparent" }}
-              className={`h-14 rounded-2xl text-xl font-bold select-none ${
+              className={`h-12 rounded-2xl text-[18px] font-bold select-none ${
                 k === ""
                   ? "opacity-0 pointer-events-none"
                   : k === "⌫"
@@ -572,7 +571,7 @@ export default function Wallet() {
               initial={{ y: 60, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: 60, opacity: 0 }}
-              className="w-full max-w-xs bg-[#1c1c1e] rounded-[2rem] p-6 border border-white/10 shadow-2xl"
+              className="w-full max-w-[280px] bg-[#1c1c1e] rounded-[2rem] p-5 border border-white/10 shadow-2xl"
             >
               {/* Header */}
               <div className="text-center mb-6">
@@ -653,7 +652,7 @@ export default function Wallet() {
                     }}
                     disabled={k === ""}
                     style={{ WebkitTapHighlightColor: "transparent" }}
-                    className={`h-14 rounded-2xl text-xl font-bold select-none ${
+                    className={`h-12 rounded-2xl text-[18px] font-bold select-none ${
                       k === "" ? "opacity-0 pointer-events-none"
                       : k === "⌫" ? "bg-white/5 border border-white/10 text-gray-400 active:bg-white/20 active:scale-90"
                       : "bg-white/10 border border-white/10 text-white active:bg-white/25 active:scale-90"
@@ -679,7 +678,7 @@ export default function Wallet() {
               initial={{ y: 60, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: 60, opacity: 0 }}
-              className="w-full max-w-xs bg-[#1c1c1e] rounded-[2rem] p-6 border border-white/10 shadow-2xl"
+              className="w-full max-w-[280px] bg-[#1c1c1e] rounded-[2rem] p-5 border border-white/10 shadow-2xl"
             >
               {/* Header */}
               <div className="flex items-center justify-between mb-6">
@@ -739,7 +738,7 @@ export default function Wallet() {
                     }}
                     disabled={k === ""}
                     style={{ WebkitTapHighlightColor: "transparent" }}
-                    className={`h-14 rounded-2xl text-xl font-bold select-none ${
+                    className={`h-12 rounded-2xl text-[18px] font-bold select-none ${
                       k === "" ? "opacity-0 pointer-events-none"
                       : k === "⌫" ? "bg-white/5 border border-white/10 text-gray-400 active:bg-white/20 active:scale-90"
                       : "bg-white/10 border border-white/10 text-white active:bg-white/25 active:scale-90"
