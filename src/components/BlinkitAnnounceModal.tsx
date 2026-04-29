@@ -1,29 +1,22 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
-import { X, Gamepad2, Zap, TrendingUp, Coins, Trophy } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Zap, X, ArrowRight } from "lucide-react";
 
 interface BlinkitAnnounceModalProps {
-  onCheck?: () => void;
+  onCheck: () => void;
 }
 
-// Module-level variable: survives SPA navigation but resets on full page reload (login → fresh session)
+// Module-level variable survives navigation in an SPA but resets on page reload
 let dismissedThisSession = false;
-
-const features = [
-  { icon: TrendingUp,  text: "Earn upto ₹5,000 / day",        color: "#4ade80" },
-  { icon: Coins,       text: "Start with just ₹10",            color: "#facc15" },
-  { icon: Gamepad2,    text: "Play your favourite game",       color: "#a78bfa" },
-  { icon: Zap,         text: "Instant money in your card",     color: "#38bdf8" },
-];
 
 export default function BlinkitAnnounceModal({ onCheck }: BlinkitAnnounceModalProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const navigate = useNavigate();
 
   useEffect(() => {
+    // If already dismissed in this session, don't show
     if (dismissedThisSession) return;
-    const timer = setTimeout(() => setIsOpen(true), 1000);
+
+    const timer = setTimeout(() => setIsOpen(true), 1200);
     return () => clearTimeout(timer);
   }, []);
 
@@ -32,133 +25,90 @@ export default function BlinkitAnnounceModal({ onCheck }: BlinkitAnnounceModalPr
     setIsOpen(false);
   };
 
-  const handleEnter = () => {
+  const handleAction = () => {
     dismissedThisSession = true;
     setIsOpen(false);
-    onCheck?.();
-    navigate("/games");
+    onCheck();
   };
 
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-[10001] flex items-end sm:items-center justify-center px-0 sm:px-6 pointer-events-none">
-          {/* Backdrop */}
+        <div className="fixed bottom-0 sm:bottom-8 left-0 right-0 z-[10001] pointer-events-none px-0 sm:px-6">
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={handleClose}
-            className="absolute inset-0 bg-black/70 pointer-events-auto"
-          />
-
-          {/* Card */}
-          <motion.div
-            initial={{ y: "100%", opacity: 0, scale: 0.96 }}
-            animate={{ y: 0, opacity: 1, scale: 1 }}
-            exit={{ y: "100%", opacity: 0, scale: 0.96 }}
-            transition={{ type: "spring", damping: 26, stiffness: 200 }}
-            className="relative pointer-events-auto w-full sm:max-w-[480px] overflow-hidden rounded-t-[2.5rem] sm:rounded-[2.5rem] shadow-[0_-30px_80px_rgba(0,0,0,0.5)]"
-            style={{
-              background: "linear-gradient(145deg, #0f0f1a 0%, #1a0f2e 50%, #0d1a2e 100%)",
-              border: "1px solid rgba(255,255,255,0.08)",
-            }}
+            initial={{ y: "100%", opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: "100%", opacity: 0 }}
+            transition={{ type: "spring", damping: 30, stiffness: 200 }}
+            className="w-full sm:max-w-[700px] sm:mx-auto h-[50vh] sm:h-auto bg-[#FFD210] pointer-events-auto border-none relative overflow-hidden rounded-t-[3rem] sm:rounded-[3rem] shadow-[0_-20px_60px_rgba(0,0,0,0.15)] sm:shadow-[0_20px_80px_rgba(0,0,0,0.3)]"
           >
-            {/* Animated glow orbs */}
-            <div className="absolute -top-16 -left-16 w-48 h-48 rounded-full bg-purple-600/20 blur-3xl pointer-events-none" />
-            <div className="absolute -bottom-10 -right-10 w-40 h-40 rounded-full bg-blue-500/20 blur-3xl pointer-events-none" />
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-32 rounded-full bg-violet-500/10 blur-2xl pointer-events-none" />
-
-            {/* Close */}
+            {/* Top Close Button - Absolute Positioned */}
             <button
               onClick={handleClose}
-              className="absolute top-4 right-4 z-20 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white/60 hover:text-white transition-all"
+              className="absolute top-4 right-4 sm:top-6 sm:right-6 z-20 p-3 text-black/30 hover:text-black transition-colors rounded-full hover:bg-black/10 shrink-0"
             >
-              <X className="w-5 h-5" />
+              <X className="w-6 h-6 sm:w-8 sm:h-8" />
             </button>
 
-            <div className="relative z-10 p-7 sm:p-9 flex flex-col gap-6">
-
-              {/* Header */}
-              <div className="flex items-center gap-4">
-                <motion.div
-                  animate={{ rotate: [0, -8, 8, -8, 0], scale: [1, 1.1, 1] }}
-                  transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                  className="w-14 h-14 rounded-2xl flex items-center justify-center shrink-0"
-                  style={{
-                    background: "linear-gradient(135deg, #7c3aed, #4f46e5)",
-                    boxShadow: "0 0 24px rgba(124,58,237,0.5)",
-                  }}
+            <div className="h-full flex flex-col justify-center gap-6 sm:gap-8 relative z-10 p-8 sm:p-12">
+              
+              {/* Header Group */}
+              <div className="flex items-center gap-4 sm:gap-6 shrink-0">
+                <motion.div 
+                   animate={{ scale: [1, 1.05, 1] }}
+                   transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                   className="w-12 h-12 sm:w-16 sm:h-16 bg-white rounded-2xl flex items-center justify-center shadow-lg shrink-0"
                 >
-                  <Gamepad2 className="w-7 h-7 text-white" />
+                  <Zap className="w-6 h-6 sm:w-9 sm:h-9 text-[#FFD210] fill-[#FFD210]" />
                 </motion.div>
-                <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <span
-                      className="text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full"
-                      style={{ background: "linear-gradient(90deg,#7c3aed,#4f46e5)", color: "#fff" }}
-                    >
-                      🎮 New
-                    </span>
-                  </div>
-                  <h3 className="text-2xl sm:text-3xl font-black text-white leading-tight">
-                    Earn Money<br />
-                    <span style={{ background: "linear-gradient(90deg,#a78bfa,#60a5fa)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
-                      By Playing Games
-                    </span>
+                
+                <div className="flex flex-col min-w-0">
+                  <h3 className="text-[1.6rem] sm:text-[2.5rem] font-black tracking-tight leading-none mb-1.5 whitespace-nowrap overflow-hidden text-ellipsis">
+                    Blinkit & Zwigato
                   </h3>
+                  <p className="text-black/60 text-[11px] sm:text-[14px] font-bold uppercase tracking-wider">
+                    CU Special — 15 Min Delivery
+                  </p>
                 </div>
               </div>
 
-              {/* Feature list */}
-              <div
-                className="rounded-2xl p-5 flex flex-col gap-3"
-                style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}
-              >
-                {features.map(({ icon: Icon, text, color }, idx) => (
-                  <motion.div
-                    key={idx}
-                    initial={{ opacity: 0, x: -16 }}
+              {/* Feature Points Group */}
+              <div className="space-y-3 sm:space-y-4 bg-black/[0.04] p-6 sm:p-8 rounded-[2rem] border border-black/5">
+                {[
+                  "Anything you order will come at your room",
+                  "Fastest delivery on campus",
+                  "Minimal service charges ever",
+                  "3 delivery partners (No Delay)"
+                ].map((point, idx) => (
+                  <motion.div 
+                    initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.25 + idx * 0.1 }}
-                    className="flex items-center gap-3"
+                    transition={{ delay: 0.4 + (idx * 0.1) }}
+                    key={idx} 
+                    className="flex items-center gap-4"
                   >
-                    <div
-                      className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0"
-                      style={{ background: `${color}22`, border: `1px solid ${color}44` }}
-                    >
-                      <Icon className="w-4 h-4" style={{ color }} />
+                    <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-black flex items-center justify-center shrink-0">
+                      <Zap className="w-2.5 h-2.5 sm:w-3.5 h-3.5 text-[#FFD210] fill-[#FFD210]" />
                     </div>
-                    <span className="text-sm sm:text-[15px] font-semibold text-white/85">{text}</span>
+                    <span className="text-[13.5px] sm:text-[16px] font-bold text-black tracking-tight">
+                      {point}
+                    </span>
                   </motion.div>
                 ))}
               </div>
 
-              {/* CTA Button */}
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.97 }}
-                onClick={handleEnter}
-                className="relative w-full h-[58px] rounded-2xl font-black text-white text-base sm:text-[17px] overflow-hidden flex items-center justify-center gap-2 shadow-2xl"
-                style={{
-                  background: "linear-gradient(135deg, #7c3aed 0%, #4f46e5 50%, #2563eb 100%)",
-                  boxShadow: "0 8px 32px rgba(124,58,237,0.45)",
-                }}
-              >
-                {/* Shimmer */}
-                <motion.div
-                  animate={{ x: ["-100%", "200%"] }}
-                  transition={{ duration: 2, repeat: Infinity, ease: "easeInOut", repeatDelay: 1 }}
-                  className="absolute inset-0 pointer-events-none"
-                  style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent)", width: "60%" }}
-                />
-                <Trophy className="w-5 h-5" />
-                Enter Game Section
-              </motion.button>
+              {/* Action Group */}
+              <div className="flex items-center justify-center w-full mt-2">
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={handleAction}
+                  className="w-full h-[60px] sm:h-[64px] bg-black text-white font-bold text-[17px] rounded-[22px] shadow-2xl flex items-center justify-center gap-3 transition-all active:opacity-90"
+                >
+                  Go to Store <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6" />
+                </motion.button>
+              </div>
 
-              <p className="text-center text-[11px] text-white/30">
-                Tap outside to dismiss · Won't show again this session
-              </p>
             </div>
           </motion.div>
         </div>
