@@ -47,9 +47,7 @@ export default function Games() {
         style={{
           paddingTop: "calc(env(safe-area-inset-top, 50px) + 16px)",
           paddingBottom: "14px",
-          background: "rgba(8,8,11,0.85)",
-          backdropFilter: "blur(20px)",
-          WebkitBackdropFilter: "blur(20px)",
+          background: "rgba(8,8,11,0.95)",
           borderBottom: "1px solid rgba(255,255,255,0.05)",
         }}
       >

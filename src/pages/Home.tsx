@@ -207,9 +207,7 @@ export default function Home() {
             <div
               className="flex items-center gap-2 p-1.5 rounded-[1.6rem] border border-white/[0.07]"
               style={{
-                background: "linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,140,0,0.06) 50%, rgba(139,92,246,0.06) 100%)",
-                backdropFilter: "blur(12px)",
-                WebkitBackdropFilter: "blur(12px)",
+                background: "linear-gradient(135deg, rgba(25,25,25,0.9) 0%, rgba(255,140,0,0.1) 50%, rgba(139,92,246,0.1) 100%)",
               }}
             >
               {/* Full Meals pill */}
@@ -294,10 +292,8 @@ export default function Home() {
                       <div
                         className="relative p-1.5 rounded-[2rem] flex items-center w-full max-w-[440px] overflow-hidden"
                         style={{
-                          background: "linear-gradient(135deg, rgba(255,140,0,0.08) 0%, rgba(139,92,246,0.08) 100%)",
+                          background: "linear-gradient(135deg, rgba(255,140,0,0.15) 0%, rgba(139,92,246,0.15) 100%)",
                           border: "1px solid rgba(255,255,255,0.08)",
-                          backdropFilter: "blur(10px)",
-                          WebkitBackdropFilter: "blur(10px)",
                         }}
                       >
                         {/* Animated sliding background — white pill */}

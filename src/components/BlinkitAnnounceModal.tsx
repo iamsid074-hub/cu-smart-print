@@ -58,7 +58,7 @@ export default function BlinkitAnnounceModal({ onCheck }: BlinkitAnnounceModalPr
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={handleClose}
-            className="absolute inset-0 bg-black/70 backdrop-blur-sm pointer-events-auto"
+            className="absolute inset-0 bg-black/85 pointer-events-auto"
           />
 
           {/* Card */}
@@ -71,7 +71,7 @@ export default function BlinkitAnnounceModal({ onCheck }: BlinkitAnnounceModalPr
             style={{
               background: "linear-gradient(160deg, #0f0f14 0%, #13101f 100%)",
               border: "1px solid rgba(139,92,246,0.2)",
-              boxShadow: "0 -20px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(139,92,246,0.1)",
+              boxShadow: "0 -5px 25px rgba(0,0,0,0.8), 0 0 0 1px rgba(139,92,246,0.1)",
             }}
           >
             {/* Top glow */}

@@ -59,8 +59,8 @@ export const VirtualCardUnboxing: React.FC<VirtualCardUnboxingProps> = ({
               animate={{ scale: [1, 1.05, 1] }}
               transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
             >
-              <div className="absolute inset-0 bg-[#d4af37]/20 blur-3xl rounded-full" />
-              <Package className="w-24 h-24 text-[#d4af37] drop-shadow-[0_0_15px_rgba(212,175,55,0.5)] relative z-10" />
+              <div className="absolute inset-0 bg-[#d4af37]/10 rounded-full" />
+              <Package className="w-24 h-24 text-[#d4af37] relative z-10" />
             </motion.div>
             
             <h2 className="text-2xl font-black text-white mb-2 tracking-tight text-center">
@@ -68,7 +68,7 @@ export const VirtualCardUnboxing: React.FC<VirtualCardUnboxingProps> = ({
             </h2>
             
             {/* Swipe Button Container */}
-            <div className="w-full max-w-[320px] mt-12 bg-[#1a1a1a] border border-white/10 rounded-full h-16 relative overflow-hidden flex items-center shadow-[inset_0_2px_8px_rgba(0,0,0,0.8)]">
+            <div className="w-full max-w-[320px] mt-12 bg-[#1a1a1a] border border-white/10 rounded-full h-16 relative overflow-hidden flex items-center">
               
               {/* OPENING... Text (Fades in) */}
               <motion.div 
@@ -99,7 +99,8 @@ export const VirtualCardUnboxing: React.FC<VirtualCardUnboxingProps> = ({
                 dragElastic={0}
                 dragMomentum={false}
                 onDragEnd={handleDragEnd}
-                className="w-16 h-16 rounded-full bg-gradient-to-br from-white to-gray-200 shadow-[0_0_20px_rgba(255,255,255,0.15)] flex items-center justify-center cursor-grab active:cursor-grabbing z-10 relative left-0 border border-gray-300 touch-none will-change-transform"
+                className="w-16 h-16 rounded-full bg-gradient-to-br from-white to-gray-200 flex items-center justify-center cursor-grab active:cursor-grabbing z-10 relative left-0 border border-gray-300 touch-none will-change-transform"
+                style={{ x, zIndex: 10 }}
               >
                 <Package className="w-6 h-6 text-[#1a1a1a]" />
               </motion.div>
@@ -122,7 +123,7 @@ export const VirtualCardUnboxing: React.FC<VirtualCardUnboxingProps> = ({
             >
               <Package className="w-24 h-24 text-[#d4af37]" />
             </motion.div>
-            <div className="absolute inset-0 bg-[#d4af37]/30 blur-[100px] animate-pulse" />
+            <div className="absolute inset-0 bg-[#d4af37]/10 rounded-full opacity-50" />
           </motion.div>
         )}
 

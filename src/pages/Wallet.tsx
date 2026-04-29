@@ -789,10 +789,10 @@ export default function Wallet() {
         )}
       </AnimatePresence>
 
-      {/* Background ambience */}
-      <div className="absolute inset-0 pointer-events-none z-0">
-        <div className="absolute top-0 right-1/4 w-[400px] h-[400px] bg-[#007AFF]/10 rounded-full blur-[100px] opacity-40" />
-        <div className="absolute top-[20%] left-1/4 w-[500px] h-[500px] bg-[#FF9500]/5 rounded-full blur-[120px] opacity-30" />
+      {/* Background ambience (optimized for 60fps mobile) */}
+      <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+        <div className="absolute top-0 right-0 w-[80vw] h-[80vw] max-w-[600px] max-h-[600px] rounded-full translate-x-1/4 -translate-y-1/4" style={{ background: "radial-gradient(circle, rgba(0,122,255,0.12) 0%, transparent 70%)" }} />
+        <div className="absolute top-[20%] left-0 w-[100vw] h-[100vw] max-w-[800px] max-h-[800px] rounded-full -translate-x-1/4" style={{ background: "radial-gradient(circle, rgba(255,149,0,0.06) 0%, transparent 70%)" }} />
         <div className="absolute bottom-0 w-full h-[30vh] bg-gradient-to-t from-black to-transparent opacity-80" />
       </div>
 
