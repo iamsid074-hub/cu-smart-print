@@ -65,8 +65,8 @@ const FAQ = lazy(() => import("./pages/FAQ"));
 const WalletPayment = lazy(() => import("./pages/WalletPayment"));
 const WalletReset = lazy(() => import("./pages/WalletReset"));
 const Games = lazy(() => import("./pages/Games"));
-const CoinFlip = lazy(() => import("./pages/games/CoinFlip"));
-const DiceRoll = lazy(() => import("./pages/games/DiceRoll"));
+const NumberBlitz = lazy(() => import("./pages/games/NumberBlitz"));
+const ColorRush = lazy(() => import("./pages/games/ColorRush"));
 const Sections = lazy(() => import("./pages/Sections"));
 
 import Navbar from "./components/Navbar";
@@ -343,18 +343,18 @@ function AppLayout() {
               }
             />
             <Route
-              path="/games/coin-flip"
+              path="/games/number-blitz"
               element={
                 <ProtectedRoute>
-                  <CoinFlip />
+                  <NumberBlitz />
                 </ProtectedRoute>
               }
             />
             <Route
-              path="/games/dice-roll"
+              path="/games/color-rush"
               element={
                 <ProtectedRoute>
-                  <DiceRoll />
+                  <ColorRush />
                 </ProtectedRoute>
               }
             />

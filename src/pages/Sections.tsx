@@ -34,7 +34,7 @@ export default function Sections() {
   return (
     <div className="min-h-screen bg-[#0d0d0f] flex items-start">
       {/* ── Left Vertical Stripe (Sidebar) ── */}
-      <div className="sticky top-0 h-screen flex-shrink-0 w-[80px] bg-[#0a0a0b] z-[70] shadow-[10px_0_30px_rgba(0,0,0,0.8)] flex flex-col items-center py-6 gap-6 overflow-y-auto hide-scrollbar rounded-r-[1.5rem] md:rounded-none">
+      <div className="sticky top-0 h-screen flex-shrink-0 w-[60px] bg-[#0a0a0b] z-[70] shadow-[10px_0_30px_rgba(0,0,0,0.8)] flex flex-col items-center py-5 gap-4 overflow-y-auto hide-scrollbar rounded-r-[1.2rem] md:rounded-none">
         
         {/* BACK TO HOME */}
         <button
@@ -42,11 +42,11 @@ export default function Sections() {
           className="relative flex flex-col items-center gap-1.5 w-full group mb-2"
         >
           <div className="relative w-full flex justify-center">
-            <div className="w-12 h-12 rounded-full flex flex-col items-center justify-center transition-all duration-300 bg-white/5 text-gray-400 hover:bg-white/20 hover:text-white">
-              <ArrowLeft size={20} strokeWidth={2.5} />
+            <div className="w-9 h-9 rounded-full flex flex-col items-center justify-center transition-all duration-300 bg-white/5 text-gray-400 hover:bg-white/20 hover:text-white">
+              <ArrowLeft size={15} strokeWidth={2.5} />
             </div>
           </div>
-          <span className="text-[9px] font-bold tracking-tight uppercase text-gray-500 group-hover:text-gray-400">
+          <span className="text-[8px] font-bold tracking-tight uppercase text-gray-500 group-hover:text-gray-400">
             Back
           </span>
         </button>
@@ -67,21 +67,21 @@ export default function Sections() {
                 {isActive && (
                   <motion.div
                     layoutId="active-indicator"
-                    className="absolute right-0 top-2 w-1.5 h-10 bg-purple-500 rounded-l-full shadow-[-2px_0_10px_rgba(168,85,247,0.5)]"
+                    className="absolute right-0 top-1.5 w-1 h-7 bg-purple-500 rounded-l-full shadow-[-2px_0_8px_rgba(168,85,247,0.5)]"
                   />
                 )}
                 <div 
-                  className={`w-14 h-14 rounded-full flex flex-col items-center justify-center transition-all duration-300 ${
+                  className={`w-10 h-10 rounded-full flex flex-col items-center justify-center transition-all duration-300 ${
                     isActive 
                       ? "bg-white/10 text-white shadow-inner scale-110" 
                       : "bg-transparent text-gray-500 hover:bg-white/5 hover:text-gray-300"
                   }`}
                 >
-                  <Icon size={isActive ? 24 : 22} strokeWidth={isActive ? 2.5 : 2} />
+                  <Icon size={isActive ? 17 : 16} strokeWidth={isActive ? 2.5 : 2} />
                 </div>
               </div>
               <span 
-                className={`text-[9px] font-bold tracking-tight uppercase ${
+                className={`text-[7px] font-bold tracking-tight uppercase ${
                   isActive ? "text-purple-400" : "text-gray-500"
                 }`}
               >
@@ -93,7 +93,7 @@ export default function Sections() {
       </div>
 
       {/* ── Right Content Area ── */}
-      <div className="flex-1 min-w-0 relative overflow-x-hidden min-h-screen bg-black">
+      <div className="flex-1 min-w-0 relative overflow-x-hidden min-h-screen bg-black" style={{ marginLeft: 0 }}>
         <AnimatePresence mode="wait">
           <motion.div
             key={activeSection}

@@ -1,21 +1,38 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
-import { Zap, X, ArrowRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { X, Gamepad2, Zap, CreditCard, IndianRupee } from "lucide-react";
 
 interface BlinkitAnnounceModalProps {
   onCheck: () => void;
 }
 
-// Module-level variable survives navigation in an SPA but resets on page reload
 let dismissedThisSession = false;
+
+const PERKS = [
+  {
+    icon: IndianRupee,
+    text: "Earn up to ₹5,000/day by playing games",
+    highlight: "₹5,000/day",
+  },
+  {
+    icon: CreditCard,
+    text: "Instant money transfer to your CU Card",
+    highlight: "Instant",
+  },
+  {
+    icon: Zap,
+    text: "Start playing from just ₹10",
+    highlight: "₹10",
+  },
+];
 
 export default function BlinkitAnnounceModal({ onCheck }: BlinkitAnnounceModalProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // If already dismissed in this session, don't show
     if (dismissedThisSession) return;
-
     const timer = setTimeout(() => setIsOpen(true), 1200);
     return () => clearTimeout(timer);
   }, []);
@@ -25,89 +42,153 @@ export default function BlinkitAnnounceModal({ onCheck }: BlinkitAnnounceModalPr
     setIsOpen(false);
   };
 
-  const handleAction = () => {
+  const handlePlay = () => {
     dismissedThisSession = true;
     setIsOpen(false);
-    onCheck();
+    navigate("/games");
   };
 
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed bottom-0 sm:bottom-8 left-0 right-0 z-[10001] pointer-events-none px-0 sm:px-6">
+        <div className="fixed inset-0 z-[10001] flex items-end sm:items-center justify-center pointer-events-none px-0 sm:px-6">
+          {/* Backdrop */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={handleClose}
+            className="absolute inset-0 bg-black/70 backdrop-blur-sm pointer-events-auto"
+          />
+
+          {/* Card */}
           <motion.div
             initial={{ y: "100%", opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: "100%", opacity: 0 }}
-            transition={{ type: "spring", damping: 30, stiffness: 200 }}
-            className="w-full sm:max-w-[700px] sm:mx-auto h-[50vh] sm:h-auto bg-[#FFD210] pointer-events-auto border-none relative overflow-hidden rounded-t-[3rem] sm:rounded-[3rem] shadow-[0_-20px_60px_rgba(0,0,0,0.15)] sm:shadow-[0_20px_80px_rgba(0,0,0,0.3)]"
+            transition={{ type: "spring", damping: 28, stiffness: 220 }}
+            className="relative w-full sm:max-w-[480px] pointer-events-auto rounded-t-[2.5rem] sm:rounded-[2.5rem] overflow-hidden"
+            style={{
+              background: "linear-gradient(160deg, #0f0f14 0%, #13101f 100%)",
+              border: "1px solid rgba(139,92,246,0.2)",
+              boxShadow: "0 -20px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(139,92,246,0.1)",
+            }}
           >
-            {/* Top Close Button - Absolute Positioned */}
+            {/* Top glow */}
+            <div
+              className="absolute top-0 left-0 right-0 h-[2px] pointer-events-none"
+              style={{ background: "linear-gradient(90deg, transparent, #8b5cf6 40%, #ec4899 60%, transparent)" }}
+            />
+
+            {/* Background orbs */}
+            <div className="absolute top-[-60px] right-[-40px] w-52 h-52 rounded-full pointer-events-none"
+              style={{ background: "radial-gradient(circle, rgba(139,92,246,0.18) 0%, transparent 70%)" }} />
+            <div className="absolute bottom-[-40px] left-[-40px] w-44 h-44 rounded-full pointer-events-none"
+              style={{ background: "radial-gradient(circle, rgba(236,72,153,0.12) 0%, transparent 70%)" }} />
+
+            {/* Close */}
             <button
               onClick={handleClose}
-              className="absolute top-4 right-4 sm:top-6 sm:right-6 z-20 p-3 text-black/30 hover:text-black transition-colors rounded-full hover:bg-black/10 shrink-0"
+              className="absolute top-4 right-4 z-20 w-9 h-9 rounded-full bg-white/8 flex items-center justify-center text-white/50 hover:text-white hover:bg-white/12 transition-all"
             >
-              <X className="w-6 h-6 sm:w-8 sm:h-8" />
+              <X size={16} />
             </button>
 
-            <div className="h-full flex flex-col justify-center gap-6 sm:gap-8 relative z-10 p-8 sm:p-12">
-              
-              {/* Header Group */}
-              <div className="flex items-center gap-4 sm:gap-6 shrink-0">
-                <motion.div 
-                   animate={{ scale: [1, 1.05, 1] }}
-                   transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                   className="w-12 h-12 sm:w-16 sm:h-16 bg-white rounded-2xl flex items-center justify-center shadow-lg shrink-0"
+            <div className="relative z-10 p-7 sm:p-10 flex flex-col gap-6">
+
+              {/* Badge */}
+              <div className="flex items-center gap-2 w-fit">
+                <div className="flex items-center gap-1.5 px-3 py-1 rounded-full"
+                  style={{ background: "rgba(139,92,246,0.15)", border: "1px solid rgba(139,92,246,0.3)" }}>
+                  <div className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse" />
+                  <span className="text-[10px] font-black tracking-widest uppercase text-purple-300">New Feature</span>
+                </div>
+              </div>
+
+              {/* Title */}
+              <div className="flex items-center gap-4">
+                <motion.div
+                  animate={{ rotate: [0, -10, 10, -5, 0] }}
+                  transition={{ duration: 2.5, repeat: Infinity, repeatDelay: 3 }}
+                  className="w-14 h-14 rounded-2xl flex items-center justify-center shrink-0"
+                  style={{
+                    background: "linear-gradient(135deg, #7c3aed, #ec4899)",
+                    boxShadow: "0 8px 28px rgba(124,58,237,0.45)",
+                  }}
                 >
-                  <Zap className="w-6 h-6 sm:w-9 sm:h-9 text-[#FFD210] fill-[#FFD210]" />
+                  <Gamepad2 size={28} className="text-white" strokeWidth={2.5} />
                 </motion.div>
-                
-                <div className="flex flex-col min-w-0">
-                  <h3 className="text-[1.6rem] sm:text-[2.5rem] font-black tracking-tight leading-none mb-1.5 whitespace-nowrap overflow-hidden text-ellipsis">
-                    Blinkit & Zwigato
-                  </h3>
-                  <p className="text-black/60 text-[11px] sm:text-[14px] font-bold uppercase tracking-wider">
-                    CU Special — 15 Min Delivery
+                <div>
+                  <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight leading-none mb-1">
+                    Games Section
+                  </h2>
+                  <p className="text-white/40 text-xs font-semibold uppercase tracking-widest">
+                    Play · Earn · Win Real Cash
                   </p>
                 </div>
               </div>
 
-              {/* Feature Points Group */}
-              <div className="space-y-3 sm:space-y-4 bg-black/[0.04] p-6 sm:p-8 rounded-[2rem] border border-black/5">
-                {[
-                  "Anything you order will come at your room",
-                  "Fastest delivery on campus",
-                  "Minimal service charges ever",
-                  "3 delivery partners (No Delay)"
-                ].map((point, idx) => (
-                  <motion.div 
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.4 + (idx * 0.1) }}
-                    key={idx} 
-                    className="flex items-center gap-4"
-                  >
-                    <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-black flex items-center justify-center shrink-0">
-                      <Zap className="w-2.5 h-2.5 sm:w-3.5 h-3.5 text-[#FFD210] fill-[#FFD210]" />
-                    </div>
-                    <span className="text-[13.5px] sm:text-[16px] font-bold text-black tracking-tight">
-                      {point}
-                    </span>
-                  </motion.div>
-                ))}
+              {/* Perks */}
+              <div className="flex flex-col gap-3">
+                {PERKS.map((perk, idx) => {
+                  const Icon = perk.icon;
+                  return (
+                    <motion.div
+                      key={idx}
+                      initial={{ opacity: 0, x: -16 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.3 + idx * 0.12 }}
+                      className="flex items-center gap-4 px-4 py-3.5 rounded-2xl"
+                      style={{
+                        background: "rgba(255,255,255,0.04)",
+                        border: "1px solid rgba(255,255,255,0.07)",
+                      }}
+                    >
+                      <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
+                        style={{ background: "linear-gradient(135deg, rgba(124,58,237,0.3), rgba(236,72,153,0.2))", border: "1px solid rgba(139,92,246,0.2)" }}>
+                        <Icon size={17} className="text-purple-300" />
+                      </div>
+                      <span className="text-[13.5px] font-semibold text-white/80 leading-snug">
+                        {perk.text}
+                      </span>
+                    </motion.div>
+                  );
+                })}
               </div>
 
-              {/* Action Group */}
-              <div className="flex items-center justify-center w-full mt-2">
+              {/* CTAs */}
+              <div className="flex gap-3 mt-1">
+                <button
+                  onClick={handleClose}
+                  className="flex-[0.4] py-3.5 rounded-2xl text-sm font-bold text-white/40 bg-white/5 border border-white/8 active:scale-95 transition-transform"
+                >
+                  Later
+                </button>
                 <motion.button
                   whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={handleAction}
-                  className="w-full h-[60px] sm:h-[64px] bg-black text-white font-bold text-[17px] rounded-[22px] shadow-2xl flex items-center justify-center gap-3 transition-all active:opacity-90"
+                  whileTap={{ scale: 0.97 }}
+                  onClick={handlePlay}
+                  className="flex-[0.6] py-3.5 rounded-2xl font-black text-sm text-white flex items-center justify-center gap-2 relative overflow-hidden"
+                  style={{
+                    background: "linear-gradient(135deg, #7c3aed 0%, #4f46e5 50%, #ec4899 100%)",
+                    boxShadow: "0 6px 28px rgba(124,58,237,0.5)",
+                  }}
                 >
-                  Go to Store <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6" />
+                  {/* Shimmer */}
+                  <motion.div
+                    animate={{ x: ["-100%", "200%"] }}
+                    transition={{ duration: 2, repeat: Infinity, ease: "easeInOut", repeatDelay: 1.5 }}
+                    className="absolute inset-0 pointer-events-none"
+                    style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent)", width: "60%" }}
+                  />
+                  <Gamepad2 size={16} />
+                  Play Now ↗
                 </motion.button>
               </div>
+
+              <p className="text-center text-[10px] text-white/20">
+                Tap outside to dismiss · Won't show again this session
+              </p>
 
             </div>
           </motion.div>
