@@ -882,19 +882,19 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
         );
       } else {
         content = (
-          <span className="text-[13px] font-black tracking-widest text-white/90 uppercase z-10 drop-shadow-md">
-            CU BAZZAR
+          <span className="text-[11px] font-black tracking-widest text-white/90 uppercase z-10 drop-shadow-md whitespace-nowrap">
+            {location.pathname.startsWith('/games') ? 'STARTING ON 1 MAY' : 'CU BAZZAR'}
           </span>
         );
       }
       break;
 
     default:
-      width = 160;
+      width = location.pathname.startsWith('/games') ? 200 : 160;
       content = (
-        <span className="text-[13px] font-black tracking-widest text-white/90 uppercase z-10 drop-shadow-md">
-          CU BAZZAR
-        </span>
+          <span className="text-[11px] font-black tracking-widest text-white/90 uppercase z-10 drop-shadow-md whitespace-nowrap">
+            {location.pathname.startsWith('/games') ? 'STARTING ON 1 MAY' : 'CU BAZZAR'}
+          </span>
       );
       break;
   }

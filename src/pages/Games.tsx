@@ -63,7 +63,7 @@ export default function Games() {
         <span
           className="text-[10px] font-black uppercase tracking-[0.2em] text-white/20"
         >
-          CU Bazzar
+          STARTING ON 1 MAY
         </span>
       </div>
 

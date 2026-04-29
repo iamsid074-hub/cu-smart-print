@@ -67,11 +67,13 @@ export default function BlinkitAnnounceModal({ onCheck }: BlinkitAnnounceModalPr
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: "100%", opacity: 0 }}
             transition={{ type: "spring", damping: 28, stiffness: 220 }}
-            className="relative w-full sm:max-w-[480px] pointer-events-auto rounded-t-[2.5rem] sm:rounded-[2.5rem] overflow-hidden"
+            className="relative w-full sm:max-w-[480px] pointer-events-auto rounded-t-[2.5rem] sm:rounded-[2.5rem] overflow-hidden will-change-transform"
             style={{
               background: "linear-gradient(160deg, #0f0f14 0%, #13101f 100%)",
-              border: "1px solid rgba(139,92,246,0.2)",
-              boxShadow: "0 -5px 25px rgba(0,0,0,0.8), 0 0 0 1px rgba(139,92,246,0.1)",
+              borderTop: "1px solid rgba(139,92,246,0.3)",
+              borderLeft: "1px solid rgba(139,92,246,0.1)",
+              borderRight: "1px solid rgba(139,92,246,0.1)",
+              willChange: "transform",
             }}
           >
             {/* Top glow */}
@@ -113,7 +115,6 @@ export default function BlinkitAnnounceModal({ onCheck }: BlinkitAnnounceModalPr
                   className="w-14 h-14 rounded-2xl flex items-center justify-center shrink-0"
                   style={{
                     background: "linear-gradient(135deg, #7c3aed, #ec4899)",
-                    boxShadow: "0 8px 28px rgba(124,58,237,0.45)",
                   }}
                 >
                   <Gamepad2 size={28} className="text-white" strokeWidth={2.5} />
@@ -171,14 +172,13 @@ export default function BlinkitAnnounceModal({ onCheck }: BlinkitAnnounceModalPr
                   className="flex-[0.6] py-3.5 rounded-2xl font-black text-sm text-white flex items-center justify-center gap-2 relative overflow-hidden"
                   style={{
                     background: "linear-gradient(135deg, #7c3aed 0%, #4f46e5 50%, #ec4899 100%)",
-                    boxShadow: "0 6px 28px rgba(124,58,237,0.5)",
                   }}
                 >
                   {/* Shimmer */}
                   <motion.div
                     animate={{ x: ["-100%", "200%"] }}
                     transition={{ duration: 2, repeat: Infinity, ease: "easeInOut", repeatDelay: 1.5 }}
-                    className="absolute inset-0 pointer-events-none"
+                    className="absolute inset-0 pointer-events-none will-change-transform"
                     style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent)", width: "60%" }}
                   />
                   <Gamepad2 size={16} />
