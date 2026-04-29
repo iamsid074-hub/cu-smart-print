@@ -26,7 +26,6 @@ const BottomNav = () => {
   // Motion value for the sliding indicator X position
   const indicatorX = useMotionValue(0);
   const isDragging = useRef(false);
-  const wasDragged = useRef(false);
   const dragStartX = useRef(0);
   const pillWidth = useRef(0);
 
@@ -70,7 +69,6 @@ const BottomNav = () => {
   // Drag handlers on the pill container
   const handleDragStart = (e: React.PointerEvent) => {
     isDragging.current = true;
-    wasDragged.current = false;
     dragStartX.current = e.clientX;
     const target = e.currentTarget as HTMLElement;
     target.setPointerCapture(e.pointerId);
@@ -80,9 +78,6 @@ const BottomNav = () => {
     if (!isDragging.current) return;
     const w = containerRef.current ? containerRef.current.offsetWidth / 2 : 150;
     const delta = e.clientX - dragStartX.current;
-    if (Math.abs(delta) > 5) {
-      wasDragged.current = true;
-    }
     const base = currentIndex * w;
     // Clamp with resistance at edges
     const raw = base + delta;
@@ -94,12 +89,6 @@ const BottomNav = () => {
   const handleDragEnd = (e: React.PointerEvent) => {
     if (!isDragging.current) return;
     isDragging.current = false;
-    
-    const target = e.currentTarget as HTMLElement;
-    if (target.hasPointerCapture(e.pointerId)) {
-      target.releasePointerCapture(e.pointerId);
-    }
-
     const w = containerRef.current ? containerRef.current.offsetWidth / 2 : 150;
     const currentX = indicatorX.get();
     const delta = e.clientX - dragStartX.current;
@@ -114,14 +103,6 @@ const BottomNav = () => {
 
     if (newIndex !== currentIndex) {
       setTimeout(() => navigate(TABS[newIndex].path), 80);
-    } else if (!wasDragged.current) {
-      // Handle click manually because pointer capture prevents native click on Links
-      const rect = target.getBoundingClientRect();
-      const clickX = e.clientX - rect.left;
-      const clickedIndex = Math.floor(clickX / w);
-      const validIndex = Math.max(0, Math.min(TABS.length - 1, clickedIndex));
-      
-      setTimeout(() => navigate(TABS[validIndex].path), 80);
     }
   };
 
@@ -218,7 +199,7 @@ const BottomNav = () => {
                   draggable={false}
                   onClick={e => {
                     // Don't navigate if it was a drag
-                    if (wasDragged.current) {
+                    if (Math.abs(dragStartX.current - (e as any).clientX) > 5) {
                       e.preventDefault();
                     }
                   }}
