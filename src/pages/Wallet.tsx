@@ -919,21 +919,21 @@ export default function Wallet() {
             <div className="w-full max-w-[450px] grid grid-cols-2 gap-3 mt-2 mb-4">
               <button
                 onClick={() => setShowAddMoneyModal(true)}
-                className="bg-[#1c1c1e] rounded-[24px] p-6 flex flex-col items-start border border-white/5 hover:bg-white/10 transition-all active:scale-[0.98] shadow-lg"
+                className="bg-[#1c1c1e] rounded-[24px] py-4 px-5 flex flex-col items-start border border-white/5 hover:bg-white/10 transition-all active:scale-[0.98] shadow-lg"
               >
                 <div className="text-left w-full">
-                  <span className="font-black text-[16px] text-white block mb-1">Add Money</span>
-                  <span className="text-[10px] text-green-400 font-bold uppercase tracking-widest block leading-tight">Instant Deposit</span>
+                  <span className="font-black text-[15px] text-white block mb-0.5">Add Money</span>
+                  <span className="text-[9px] text-green-400 font-bold uppercase tracking-widest block leading-tight">Instant Deposit</span>
                 </div>
               </button>
 
               <button
                 onClick={() => setShowWithdrawModal(true)}
-                className="bg-[#1c1c1e] rounded-[24px] p-6 flex flex-col items-start border border-white/5 hover:bg-white/10 transition-all active:scale-[0.98] shadow-lg"
+                className="bg-[#1c1c1e] rounded-[24px] py-4 px-5 flex flex-col items-start border border-white/5 hover:bg-white/10 transition-all active:scale-[0.98] shadow-lg"
               >
                 <div className="text-left w-full">
-                  <span className="font-black text-[16px] text-white block mb-1">Withdraw</span>
-                  <span className="text-[10px] text-orange-400 font-bold uppercase tracking-widest block leading-tight">Bank Payout</span>
+                  <span className="font-black text-[15px] text-white block mb-0.5">Withdraw</span>
+                  <span className="text-[9px] text-orange-400 font-bold uppercase tracking-widest block leading-tight">Bank Payout</span>
                 </div>
               </button>
             </div>
