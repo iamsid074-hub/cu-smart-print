@@ -29,6 +29,7 @@ import { supabase } from "@/lib/supabase";
 import { VirtualCard } from "@/components/VirtualCard";
 import { VirtualCardUnboxing } from "@/components/VirtualCardUnboxing";
 import { Haptics, ImpactStyle } from "@capacitor/haptics";
+import { useSound } from "@/hooks/useSound";
 
 const triggerHaptic = async (style: ImpactStyle = ImpactStyle.Light) => {
   try {
@@ -60,11 +61,17 @@ function NumPad({
   subtitle?: string;
 }) {
   const keys = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "", "0", "⌫"];
+  const { play } = useSound();
 
   // Use useCallback so tap fn is never re-created on every render
   const tap = React.useCallback((k: string) => {
-    if (k === "⌫") { onChange(""); return; }  // instant clear for delete
+    if (k === "⌫") { 
+      play('tick');
+      onChange(""); 
+      return; 
+    }
     if (k === "") return;
+    play('tick');
     onChange((prev: string) => {
       if (prev.length >= 4) return prev;
       const next = prev + k;

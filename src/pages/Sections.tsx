@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ShoppingBag, Zap, Wallet, Settings, ArrowLeft, ChevronRight, ChevronLeft } from "lucide-react";
+import { useSound } from "@/hooks/useSound";
 
 // Import the existing pages
 import Grocery from "./Grocery";
@@ -23,6 +24,7 @@ export default function Sections() {
   const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState("grocery");
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const { play } = useSound();
 
   // Allow setting initial section via URL hash, e.g., /sections#wallet
   useEffect(() => {
@@ -34,6 +36,7 @@ export default function Sections() {
 
   // Close sidebar automatically when a section is selected
   const handleSelectSection = (id: string) => {
+    if (activeSection !== id) play('swipe');
     setActiveSection(id);
     navigate(`/sections#${id}`, { replace: true });
     setSidebarOpen(false); // collapse after selection
@@ -126,7 +129,7 @@ export default function Sections() {
 
       {/* ── Toggle Arrow Tab ── */}
       <motion.button
-        onClick={() => setSidebarOpen(prev => !prev)}
+        onClick={() => { play('swipe'); setSidebarOpen(prev => !prev); }}
         animate={{ x: sidebarOpen ? SIDEBAR_W : 0 }}
         transition={{ type: "spring", stiffness: 400, damping: 40 }}
         className="fixed top-24 left-0 z-[75] flex items-center justify-center"

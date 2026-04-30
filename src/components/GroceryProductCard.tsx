@@ -2,6 +2,8 @@ import { motion } from "framer-motion";
 import { Plus } from "lucide-react";
 import type { GroceryItem } from "@/config/groceryItems";
 
+import { useSound } from "@/hooks/useSound";
+
 interface Props {
   item: GroceryItem;
   idx: number;
@@ -19,6 +21,8 @@ export default function GroceryProductCard({
   btnColor,
   onAdd,
 }: Props) {
+  const { play } = useSound();
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 16 }}
@@ -74,6 +78,7 @@ export default function GroceryProductCard({
               whileTap={{ scale: 0.9 }}
               onClick={(e) => {
                 e.stopPropagation();
+                play('pop');
                 onAdd(item);
               }}
               className="w-10 h-10 rounded-2xl flex items-center justify-center text-white font-bold transition-all shadow-lg"

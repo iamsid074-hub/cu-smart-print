@@ -2,11 +2,13 @@ import { memo, useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Home, Layers, Gamepad2 } from "lucide-react";
+import { useSound } from "@/hooks/useSound";
 
 const BottomNav = () => {
   const location = useLocation();
   const [isVisible, setIsVisible] = useState(true);
   const lastScrollYRef = useRef(0);
+  const { play } = useSound();
 
   useEffect(() => {
     let ticking = false;
@@ -74,6 +76,7 @@ const BottomNav = () => {
         >
           <Link
             to="/home"
+            onClick={() => { if (location.pathname !== "/home") play('swipe'); }}
             className={`flex-1 flex flex-col items-center justify-center py-2.5 rounded-full transition-all ${
               location.pathname === "/home" || location.pathname === "/"
                 ? "bg-white/10 text-white shadow-inner"
@@ -88,6 +91,7 @@ const BottomNav = () => {
 
           <Link
             to="/sections"
+            onClick={() => { if (!location.pathname.startsWith("/sections")) play('swipe'); }}
             className={`flex-1 flex flex-col items-center justify-center py-2.5 rounded-full transition-all ${
               location.pathname.startsWith("/sections")
                 ? "bg-white/10 text-white shadow-inner"
@@ -101,6 +105,7 @@ const BottomNav = () => {
 
         <Link
           to="/games"
+          onClick={() => { if (!location.pathname.startsWith("/games")) play('swipe'); }}
           className="shrink-0 hover:bg-[#5210D8]/90 active:scale-95 text-white rounded-full px-6 py-2.5 flex flex-col items-center justify-center shadow-[0_8px_30px_rgba(99,32,238,0.5)] pointer-events-auto transition-all border border-[#7A3FFF]/30"
           style={{
             background: "rgba(99, 32, 238, 0.8)",
