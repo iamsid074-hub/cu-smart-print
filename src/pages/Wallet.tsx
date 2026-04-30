@@ -698,7 +698,7 @@ export default function Wallet() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed top-0 right-0 bottom-0 left-[80px] z-[9999] bg-black/95 flex flex-col items-center justify-center px-6"
+            className="fixed top-0 right-0 bottom-0 left-0 z-[9999] bg-black/95 flex flex-col items-center justify-center px-6"
           >
             <motion.div
               initial={{ scale: 0.8, y: 100, rotate: 5, opacity: 0 }}
@@ -806,7 +806,7 @@ export default function Wallet() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed top-0 right-0 bottom-0 left-[80px] z-[9999] bg-black/95 flex flex-col items-center justify-center px-6"
+            className="fixed top-0 right-0 bottom-0 left-0 z-[9999] bg-black/95 flex flex-col items-center justify-center px-6"
           >
             <motion.div
               initial={{ scale: 0.8, y: 100, rotate: 5, opacity: 0 }}

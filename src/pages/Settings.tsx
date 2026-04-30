@@ -436,7 +436,7 @@ function ModalOverlay({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed top-0 right-0 bottom-0 left-[80px] z-[110] flex items-end sm:items-center justify-center p-4 bg-black/85"
+      className="fixed top-0 right-0 bottom-0 left-0 z-[110] flex items-end sm:items-center justify-center p-4 bg-black/85"
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
     >
       <motion.div
