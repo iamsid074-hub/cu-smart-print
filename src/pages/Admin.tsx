@@ -2959,7 +2959,7 @@ export default function Admin() {
       badge:
         orders.filter(
           (o) =>
-            !isFoodOrder(o) && !isSubscriptionOrder(o) && o.status === "pending"
+            !isFoodOrder(o) && !isSubscriptionOrder(o) && ["pending", "seller_accepted"].includes(o.status)
         ).length || undefined,
     },
     {
@@ -2967,7 +2967,7 @@ export default function Admin() {
       label: "Food Orders",
       icon: UtensilsCrossed,
       badge:
-        orders.filter((o) => isFoodOrder(o) && o.status === "pending").length ||
+        orders.filter((o) => isFoodOrder(o) && ["pending", "seller_accepted"].includes(o.status)).length ||
         undefined,
     },
 
@@ -2976,7 +2976,7 @@ export default function Admin() {
       label: "Subscriptions",
       icon: Crown,
       badge:
-        orders.filter((o) => isSubscriptionOrder(o) && o.status === "pending")
+        orders.filter((o) => isSubscriptionOrder(o) && ["pending", "seller_accepted"].includes(o.status))
           .length || undefined,
     },
     {

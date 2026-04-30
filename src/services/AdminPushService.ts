@@ -184,8 +184,10 @@ export class AdminPushService {
     }
   }
 
+  private static notifiedOrderIds = new Set<string>();
+
   /**
-   * Start listening to Supabase real-time inserts on the orders table
+   * Start listening to Supabase real-time inserts and updates on the orders table
    */
   static startListening() {
     if (this.isListening) return;
@@ -195,7 +197,7 @@ export class AdminPushService {
 
     try {
       this.channelSubscription = supabase
-        .channel("admin_orders_push_v2")
+        .channel("admin_orders_push_v3")
         .on(
           "postgres_changes",
           {
@@ -206,7 +208,32 @@ export class AdminPushService {
           async (payload) => {
             console.log("[AdminPush] 🔔 NEW ORDER DETECTED!", payload.new);
             const order = payload.new;
-            await this.triggerNotification(order.id, order.total_price, order.delivery_location);
+            
+            // For COD orders, status is 'pending' immediately. 
+            // For Online orders, status is 'draft' initially (don't notify).
+            if (order.status !== "draft" && !this.notifiedOrderIds.has(order.id)) {
+              this.notifiedOrderIds.add(order.id);
+              await this.triggerNotification(order.id, order.total_price, order.delivery_location);
+            }
+          }
+        )
+        .on(
+          "postgres_changes",
+          {
+            event: "UPDATE",
+            schema: "public",
+            table: "orders",
+          },
+          async (payload) => {
+            console.log("[AdminPush] 🔔 ORDER UPDATE DETECTED!", payload.new);
+            const order = payload.new;
+            
+            // Notify if order just got paid (moves from draft to seller_accepted)
+            if (order.status === "seller_accepted" && !this.notifiedOrderIds.has(order.id)) {
+              console.log("[AdminPush] 💰 Order was just paid!");
+              this.notifiedOrderIds.add(order.id);
+              await this.triggerNotification(order.id, order.total_price, order.delivery_location);
+            }
           }
         )
         .subscribe((status: string) => {
@@ -270,7 +297,7 @@ export class AdminPushService {
     const { count, error } = await supabase
       .from("orders")
       .select("*", { count: "exact", head: true })
-      .in("status", ["pending"]);
+      .in("status", ["pending", "seller_accepted"]);
     
     if (error) {
        // Only log if not a network error which might happen during sleep
