@@ -47,57 +47,48 @@ export function useSound() {
 
     switch (type) {
       case 'pop':
-        // Apple Keyboard Click style (replacing bubble pop)
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(150, t);
-        osc.frequency.exponentialRampToValueAtTime(50, t + 0.03);
-        gain.gain.setValueAtTime(0, t);
-        gain.gain.linearRampToValueAtTime(0.3, t + 0.002);
-        gain.gain.exponentialRampToValueAtTime(0.01, t + 0.03);
-
-        const clickOscPop = ctx.createOscillator();
-        const clickGainPop = ctx.createGain();
-        clickOscPop.connect(clickGainPop);
-        clickGainPop.connect(ctx.destination);
-        clickOscPop.type = 'triangle';
-        clickOscPop.frequency.setValueAtTime(1200, t);
-        clickOscPop.frequency.exponentialRampToValueAtTime(800, t + 0.01);
-        clickGainPop.gain.setValueAtTime(0, t);
-        clickGainPop.gain.linearRampToValueAtTime(0.15, t + 0.001);
-        clickGainPop.gain.exponentialRampToValueAtTime(0.01, t + 0.01);
-
-        osc.start(t);
-        osc.stop(t + 0.03);
-        clickOscPop.start(t);
-        clickOscPop.stop(t + 0.01);
-        break;
-
       case 'tick':
-        // Apple Keyboard Click style (hollow, percussive)
-        // Primary "thud" component
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(150, t);
-        osc.frequency.exponentialRampToValueAtTime(50, t + 0.03);
-        gain.gain.setValueAtTime(0, t);
-        gain.gain.linearRampToValueAtTime(0.3, t + 0.002);
-        gain.gain.exponentialRampToValueAtTime(0.01, t + 0.03);
+        // Authentic iPhone "Tock" synthesis
+        // 1. Create a short burst of noise for the "hollow" character
+        const bufferSize = ctx.sampleRate * 0.05;
+        const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          data[i] = Math.random() * 2 - 1;
+        }
 
-        // High-frequency transient (the "click")
-        const clickOsc = ctx.createOscillator();
-        const clickGain = ctx.createGain();
-        clickOsc.connect(clickGain);
-        clickGain.connect(ctx.destination);
-        clickOsc.type = 'triangle';
-        clickOsc.frequency.setValueAtTime(1200, t);
-        clickOsc.frequency.exponentialRampToValueAtTime(800, t + 0.01);
-        clickGain.gain.setValueAtTime(0, t);
-        clickGain.gain.linearRampToValueAtTime(0.15, t + 0.001);
-        clickGain.gain.exponentialRampToValueAtTime(0.01, t + 0.01);
+        const noise = ctx.createBufferSource();
+        noise.buffer = buffer;
 
-        osc.start(t);
-        osc.stop(t + 0.03);
-        clickOsc.start(t);
-        clickOsc.stop(t + 0.01);
+        // 2. Filter the noise to get the wooden/hollow thud
+        const filter = ctx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(400, t);
+        filter.Q.setValueAtTime(1, t);
+
+        const noiseGain = ctx.createGain();
+        noiseGain.gain.setValueAtTime(0.4, t);
+        noiseGain.gain.exponentialRampToValueAtTime(0.01, t + 0.04);
+
+        noise.connect(filter);
+        filter.connect(noiseGain);
+        noiseGain.connect(ctx.destination);
+
+        // 3. Add a tiny high-frequency "snick" for the initial tap transient
+        const transient = ctx.createOscillator();
+        const transientGain = ctx.createGain();
+        transient.connect(transientGain);
+        transientGain.connect(ctx.destination);
+        transient.type = 'sine';
+        transient.frequency.setValueAtTime(2500, t);
+        transientGain.gain.setValueAtTime(0, t);
+        transientGain.gain.linearRampToValueAtTime(0.1, t + 0.001);
+        transientGain.gain.exponentialRampToValueAtTime(0.01, t + 0.005);
+
+        noise.start(t);
+        noise.stop(t + 0.05);
+        transient.start(t);
+        transient.stop(t + 0.01);
         break;
 
       case 'unlock':
