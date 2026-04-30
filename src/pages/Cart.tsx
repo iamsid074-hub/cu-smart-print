@@ -379,18 +379,6 @@ export default function Cart() {
     // Save location for future auto-fill
     saveLocation({ hostel, room, phone: phoneClean });
 
-    // Golden Ticket Referral Reward — silent check
-    // If this buyer was referred, and this order is ₹100+,
-    // credits ₹15 to the REFERRER only (one-time, never repeats)
-    try {
-      await supabase.rpc('process_referral_reward', {
-        p_buyer_id: user!.id,
-        p_order_amount: orderTotal,
-      });
-    } catch (err) {
-      console.log("Referral check skipped:", err);
-    }
-
     // Clean up UI and state
     clearCart();
     setShowCheckout(false);

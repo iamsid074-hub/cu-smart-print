@@ -35,7 +35,6 @@ export default function Login() {
   const [formError, setFormError] = useState<string | null>(null);
   const [forgotPassword, setForgotPassword] = useState(false);
   const [resetSent, setResetSent] = useState(false);
-  const [goldenTicket, setGoldenTicket] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -92,23 +91,6 @@ export default function Login() {
       return;
     }
 
-    if (!isLogin && goldenTicket.trim()) {
-      const { data: ticket, error: ticketError } = await supabase
-        .from("golden_tickets")
-        .select("id, is_used")
-        .eq("code", goldenTicket.trim().toUpperCase())
-        .single();
-        
-      if (ticketError || !ticket) {
-        setFormError("Invalid Golden Ticket code.");
-        return;
-      }
-      if (ticket.is_used) {
-        setFormError("This Golden Ticket has already been used.");
-        return;
-      }
-    }
-
     setLoading(true);
 
     try {
@@ -146,16 +128,6 @@ export default function Login() {
             full_name: parts[0],
           });
 
-          if (goldenTicket.trim()) {
-            try {
-              await supabase.rpc('claim_golden_ticket', { 
-                p_ticket_code: goldenTicket.trim().toUpperCase(), 
-                p_new_user_id: sessionData.session.user.id 
-              });
-            } catch (err) {
-              console.error("Failed to claim ticket:", err);
-            }
-          }
         }
         toast.success("Account created successfully! ✨");
       }
@@ -799,52 +771,7 @@ export default function Login() {
                     )}
                   </div>
 
-                  {/* Golden Ticket Code — signup only */}
-                  {!isLogin && (
-                    <div>
-                      <label
-                        className="block text-sm mb-1.5 font-medium flex items-center justify-between"
-                        style={{ color: "#d4af37" }}
-                      >
-                        <span>Golden Ticket Code</span>
-                        <span className="text-[10px] uppercase tracking-widest text-gray-400 font-bold border border-gray-200 px-1.5 py-0.5 rounded">Optional</span>
-                      </label>
-                      <div
-                        className="relative rounded-[1.2rem] transition-all duration-300"
-                        style={{
-                          boxShadow:
-                            focusedField === "ticket"
-                              ? "0 0 0 2px rgba(212,175,55,0.35), 0 0 16px rgba(212,175,55,0.08)"
-                              : "0 0 0 1px rgba(212,175,55,0.2)",
-                        }}
-                      >
-                        <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                          <Sparkles
-                            className="h-4 w-4 transition-colors duration-200"
-                            style={{
-                              color:
-                                focusedField === "ticket"
-                                  ? "#d4af37"
-                                  : "rgba(212,175,55,0.5)",
-                            }}
-                          />
-                        </div>
-                        <input
-                          type="text"
-                          value={goldenTicket}
-                          onChange={(e) => setGoldenTicket(e.target.value.toUpperCase())}
-                          onFocus={() => setFocusedField("ticket")}
-                          onBlur={() => setFocusedField(null)}
-                          className="w-full rounded-[1.2rem] pl-10 pr-4 h-[52px] text-[15px] focus:outline-none transition-colors uppercase placeholder:normal-case font-bold tracking-widest"
-                          style={{
-                            backgroundColor: "rgba(255,255,255,0.8)",
-                            color: "#d4af37",
-                          }}
-                          placeholder="e.g. TKT-ABCDEF"
-                        />
-                      </div>
-                    </div>
-                  )}
+
 
                   {/* T&C Accept Checkbox — signup only */}
                   {!isLogin && (

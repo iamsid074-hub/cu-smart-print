@@ -326,11 +326,6 @@ export default function Wallet() {
   const [revealMismatch, setRevealMismatch] = useState(false);
   const [revealError, setRevealError] = useState("");
 
-  // ── Referral Flow state ──
-  const [showReferralModal, setShowReferralModal] = useState(false);
-  const [referralCode, setReferralCode] = useState<string>("BAZZAR");
-  const [isGeneratingTicket, setIsGeneratingTicket] = useState(false);
-
   // ── Cashfree Payment State ──
   const [cashfree, setCashfree] = useState<any>(null);
   const [showAddMoneyModal, setShowAddMoneyModal] = useState(false);
@@ -433,88 +428,6 @@ export default function Wallet() {
       alert("Failed to submit withdrawal request.");
     } finally {
       setIsWithdrawing(false);
-    }
-  };
-
-  const openGoldenTicket = async () => {
-    if (!user) return;
-    setIsGeneratingTicket(true);
-
-    // Cryptographically random code generator — no confusable chars (0/O, 1/I/L)
-    const generateCode = () => {
-      const chars = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
-      const arr = new Uint8Array(8);
-      crypto.getRandomValues(arr);
-      return 'TKT-' + Array.from(arr).map(b => chars[b % chars.length]).join('');
-    };
-    
-    try {
-      // 1. Check if user already has an unused ticket
-      const { data: existingTickets, error: fetchError } = await supabase
-        .from('golden_tickets')
-        .select('code')
-        .eq('creator_id', user.id)
-        .eq('is_used', false)
-        .order('created_at', { ascending: false })
-        .limit(1);
-
-      if (!fetchError && existingTickets && existingTickets.length > 0) {
-        setReferralCode(existingTickets[0].code);
-        setShowReferralModal(true);
-        setIsGeneratingTicket(false);
-        return;
-      }
-
-      // 2. Generate a unique new code — retry up to 3 times on collision
-      let inserted = false;
-      for (let attempt = 0; attempt < 3; attempt++) {
-        const newCode = generateCode();
-        const { error: insertError } = await supabase
-          .from('golden_tickets')
-          .insert([{ creator_id: user.id, code: newCode }]);
-
-        if (!insertError) {
-          setReferralCode(newCode);
-          setShowReferralModal(true);
-          inserted = true;
-          break;
-        }
-
-        // If it's NOT a unique constraint error, stop retrying
-        if (!insertError.message?.includes('unique') && !insertError.message?.includes('duplicate')) {
-          console.error("Failed to generate ticket:", insertError);
-          alert("Could not generate Golden Ticket right now. Try again.");
-          break;
-        }
-        // Otherwise it's a collision — loop and try a new code
-      }
-
-      if (!inserted) {
-        alert("Could not generate a unique ticket. Please try again.");
-      }
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setIsGeneratingTicket(false);
-    }
-  };
-
-  const handleShare = async () => {
-    const shareData = {
-      title: 'CU Card Golden Ticket',
-      text: `I'm an Elite Member of BAZZAR. Use my code ${referralCode} to join and we both get ₹15 reward!`,
-      url: window.location.origin
-    };
-
-    try {
-      if (navigator.share) {
-        await navigator.share(shareData);
-      } else {
-        await navigator.clipboard.writeText(shareData.text);
-        alert("Referral link copied to clipboard!");
-      }
-    } catch (err) {
-      console.log('Error sharing:', err);
     }
   };
 
@@ -1042,23 +955,6 @@ export default function Wallet() {
               </button>
               
               <button
-                onClick={openGoldenTicket}
-                disabled={isGeneratingTicket}
-                className="w-full flex items-center gap-4 px-5 py-4 border-b border-white/5 hover:bg-white/5 transition-colors active:bg-white/10 disabled:opacity-50"
-              >
-                <div className="w-9 h-9 rounded-full bg-[#d4af37]/10 border border-[#d4af37]/20 flex items-center justify-center flex-shrink-0">
-                  <Gift className={`w-4 h-4 text-[#d4af37] ${isGeneratingTicket ? 'animate-pulse' : ''}`} />
-                </div>
-                <div className="flex-1 text-left">
-                  <span className="font-bold text-[15px] text-gray-300 block">The Golden Ticket</span>
-                  <span className="text-[10px] text-[#d4af37] font-bold uppercase tracking-widest">
-                    {isGeneratingTicket ? "Generating Ticket..." : "Invite & Earn ₹15"}
-                  </span>
-                </div>
-                <ChevronRight className="w-5 h-5 text-gray-500" />
-              </button>
-
-              <button
                 onClick={() => {
                   if (balanceLocked) {
                     navigate('/settings#security');
@@ -1133,104 +1029,6 @@ export default function Wallet() {
       <AnimatePresence>
         {showTxSheet && (
           <TransactionsSheet transactions={transactions} onClose={() => setShowTxSheet(false)} />
-        )}
-      </AnimatePresence>
-
-      {/* ── Golden Ticket Referral Modal ── */}
-      <AnimatePresence>
-        {showReferralModal && (
-          <div className="fixed inset-0 z-[110] flex items-center justify-center p-6">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setShowReferralModal(false)}
-              className="absolute inset-0 bg-black/90 backdrop-blur-md"
-            />
-            
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="relative w-full max-w-sm bg-[#111] rounded-[32px] border border-white/10 overflow-hidden shadow-2xl"
-            >
-              {/* Header */}
-              <div className="p-6 pb-2 flex justify-between items-start">
-                <div>
-                  <h3 className="text-2xl font-black text-white">Golden Ticket</h3>
-                  <p className="text-gray-400 text-sm">Elite Membership Invite</p>
-                </div>
-                <button 
-                  onClick={() => setShowReferralModal(false)}
-                  className="p-2 rounded-full bg-white/5 border border-white/10 text-gray-400"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-
-              {/* Ticket Content */}
-              <div className="p-6 pt-2">
-                <div className="relative group">
-                   {/* Glow effect */}
-                   <div className="absolute -inset-1 bg-gradient-to-r from-[#d4af37] to-[#f3e3a4] rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
-                   
-                   <div className="relative bg-[#000] border border-[#d4af37]/30 rounded-2xl p-4 overflow-hidden">
-                      {/* Blurred Card Preview */}
-                      <div className="opacity-40 blur-[2px] pointer-events-none mb-4">
-                        <VirtualCard 
-                          name={profileName || "CU USER"} 
-                          balance={walletBalance} 
-                          balanceHidden={true} 
-                        />
-                      </div>
-
-                      {/* Invite Text */}
-                      <div className="text-center space-y-2 mb-6">
-                        <p className="text-[#d4af37] font-black text-lg italic uppercase tracking-tighter">
-                          "I'm an Elite Member of BAZZAR"
-                        </p>
-                        <p className="text-white/60 text-[11px] font-bold">
-                          Join using my code & we both unlock a ₹15 Reward.
-                        </p>
-                      </div>
-
-                      {/* Code Box */}
-                      <div className="bg-[#1a1a1a] border border-white/5 rounded-xl p-3 flex items-center justify-between group/code">
-                        <div>
-                          <p className="text-[9px] uppercase tracking-widest text-gray-500 font-bold mb-1">Your Referral Code</p>
-                          <p className="text-xl font-black text-white tracking-[0.2em]">{referralCode}</p>
-                        </div>
-                        <button 
-                          onClick={() => {
-                            navigator.clipboard.writeText(referralCode);
-                            triggerHaptic(ImpactStyle.Medium);
-                          }}
-                          className="p-3 rounded-lg bg-[#d4af37] text-black active:scale-90 transition-all shadow-[0_0_15px_rgba(212,175,55,0.3)]"
-                        >
-                          <Copy className="w-4 h-4" />
-                        </button>
-                      </div>
-                   </div>
-                </div>
-
-                <div className="mt-8 flex flex-col gap-3">
-                  <button
-                    onClick={handleShare}
-                    className="w-full py-4 rounded-2xl bg-white text-black font-black text-[15px] flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(255,255,255,0.2)] active:scale-95 transition-all"
-                  >
-                    <Share className="w-4 h-4" />
-                    Share Golden Ticket
-                  </button>
-                  
-                  <div className="flex items-center justify-center gap-2 py-2">
-                    <Star className="w-3 h-3 text-[#d4af37]" />
-                    <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Limited Invitations Left</span>
-                    <Star className="w-3 h-3 text-[#d4af37]" />
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          </div>
         )}
       </AnimatePresence>
 
