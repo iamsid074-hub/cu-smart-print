@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   Moon,
@@ -33,17 +33,11 @@ function getIST() {
 }
 
 function isItemsOpen(): boolean {
-  const { hours, minutes } = getIST();
-  const totalMinutes = hours * 60 + minutes;
-
-  return totalMinutes >= 6 * 60 && totalMinutes < 22 * 60;
+  return true; // Site is now open 24/7
 }
 
 function isFoodOpen(): boolean {
-  const { hours, minutes } = getIST();
-  const totalMinutes = hours * 60 + minutes;
-
-  return totalMinutes >= 18 * 60 || totalMinutes < 30;
+  return true; // Site is now open 24/7
 }
 
 function getNextOpenTime(): string {
@@ -315,10 +309,6 @@ export function useSiteGate() {
   if (!loaded) return { gate: null, loaded: false };
 
   if (maintenance) return { gate: "maintenance" as const, loaded: true };
-
-  const itemsOpen = isItemsOpen();
-  const foodOpen = isFoodOpen();
-  if (!itemsOpen && !foodOpen) return { gate: "closed" as const, loaded: true };
 
   return { gate: null, loaded: true };
 }
