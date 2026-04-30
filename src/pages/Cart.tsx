@@ -619,15 +619,7 @@ export default function Cart() {
               </label>
               <button
                 disabled={!disclaimerAccepted}
-                onClick={() => {
-                  setShowDisclaimer(false);
-                  setSubmitting(true);
-                  setTimeout(() => {
-                    setShowCheckout(false);
-                    setTimeout(() => setShowUpiModal(true), 150);
-                    setSubmitting(false);
-                  }, 100);
-                }}
+                onClick={handleDisclaimerAccepted}
                 className={`w-full py-3.5 rounded-2xl font-bold text-[14px] transition-all ${
                   disclaimerAccepted
                     ? 'bg-emerald-500 text-white hover:bg-emerald-600 active:scale-95'
