@@ -92,51 +92,62 @@ export function useSound() {
         break;
 
       case 'unlock':
-        // Apple Pay / App Store Success Chime (Bright "Ding-Ding")
-        // Note 1: E6 (~1318 Hz)
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(1318.51, t);
-        gain.gain.setValueAtTime(0, t);
-        gain.gain.linearRampToValueAtTime(0.4, t + 0.02);
-        gain.gain.exponentialRampToValueAtTime(0.01, t + 0.3);
-        
-        // Add a triangle wave for metallic/bell harmonic richness
-        const oscHarm1 = ctx.createOscillator();
-        const gainHarm1 = ctx.createGain();
-        oscHarm1.connect(gainHarm1);
-        gainHarm1.connect(ctx.destination);
-        oscHarm1.type = 'triangle';
-        oscHarm1.frequency.setValueAtTime(2637.02, t); // Octave up
-        gainHarm1.gain.setValueAtTime(0, t);
-        gainHarm1.gain.linearRampToValueAtTime(0.1, t + 0.01);
-        gainHarm1.gain.exponentialRampToValueAtTime(0.01, t + 0.2);
+        // High-Fidelity Apple Pay / App Store Double-Chime
+        // Note 1: E6 (~1318Hz) - The first part of the glassy ping
+        const t1 = t;
+        const osc1 = ctx.createOscillator();
+        const g1 = ctx.createGain();
+        osc1.type = 'sine';
+        osc1.frequency.setValueAtTime(1318.51, t1);
+        g1.gain.setValueAtTime(0, t1);
+        g1.gain.linearRampToValueAtTime(0.4, t1 + 0.005);
+        g1.gain.exponentialRampToValueAtTime(0.01, t1 + 0.5);
+        osc1.connect(g1); g1.connect(ctx.destination);
 
-        // Note 2: G#6 (~1661 Hz)
-        const oscU2 = ctx.createOscillator();
-        const gainU2 = ctx.createGain();
-        oscU2.connect(gainU2);
-        gainU2.connect(ctx.destination);
-        oscU2.type = 'sine';
-        oscU2.frequency.setValueAtTime(1661.22, t + 0.15);
-        gainU2.gain.setValueAtTime(0, t + 0.15);
-        gainU2.gain.linearRampToValueAtTime(0.5, t + 0.17);
-        gainU2.gain.exponentialRampToValueAtTime(0.01, t + 0.5);
+        const harm1a = ctx.createOscillator();
+        const gh1a = ctx.createGain();
+        harm1a.type = 'sine';
+        harm1a.frequency.setValueAtTime(2637.02, t1); // E7
+        gh1a.gain.setValueAtTime(0, t1);
+        gh1a.gain.linearRampToValueAtTime(0.15, t1 + 0.005);
+        gh1a.gain.exponentialRampToValueAtTime(0.01, t1 + 0.3);
+        harm1a.connect(gh1a); gh1a.connect(ctx.destination);
 
-        // Harmonic for Note 2
-        const oscHarm2 = ctx.createOscillator();
-        const gainHarm2 = ctx.createGain();
-        oscHarm2.connect(gainHarm2);
-        gainHarm2.connect(ctx.destination);
-        oscHarm2.type = 'triangle';
-        oscHarm2.frequency.setValueAtTime(3322.44, t + 0.15);
-        gainHarm2.gain.setValueAtTime(0, t + 0.15);
-        gainHarm2.gain.linearRampToValueAtTime(0.15, t + 0.16);
-        gainHarm2.gain.exponentialRampToValueAtTime(0.01, t + 0.4);
-        
-        osc.start(t); osc.stop(t + 0.3);
-        oscHarm1.start(t); oscHarm1.stop(t + 0.2);
-        oscU2.start(t + 0.15); oscU2.stop(t + 0.5);
-        oscHarm2.start(t + 0.15); oscHarm2.stop(t + 0.4);
+        // Note 2: G#6 (~1661Hz) - The second part of the double-chime
+        const t2 = t + 0.12; // Precise 120ms delay
+        const osc2 = ctx.createOscillator();
+        const g2 = ctx.createGain();
+        osc2.type = 'sine';
+        osc2.frequency.setValueAtTime(1661.22, t2);
+        g2.gain.setValueAtTime(0, t2);
+        g2.gain.linearRampToValueAtTime(0.5, t2 + 0.005);
+        g2.gain.exponentialRampToValueAtTime(0.01, t2 + 0.6);
+        osc2.connect(g2); g2.connect(ctx.destination);
+
+        const harm2a = ctx.createOscillator();
+        const gh2a = ctx.createGain();
+        harm2a.type = 'sine';
+        harm2a.frequency.setValueAtTime(3322.44, t2); // G#7
+        gh2a.gain.setValueAtTime(0, t2);
+        gh2a.gain.linearRampToValueAtTime(0.2, t2 + 0.005);
+        gh2a.gain.exponentialRampToValueAtTime(0.01, t2 + 0.4);
+        harm2a.connect(gh2a); gh2a.connect(ctx.destination);
+
+        // Layer 5: Extremely high-frequency glassy "sparkle"
+        const sparkle = ctx.createOscillator();
+        const gSparkle = ctx.createGain();
+        sparkle.type = 'triangle';
+        sparkle.frequency.setValueAtTime(5274.04, t2); // E8
+        gSparkle.gain.setValueAtTime(0, t2);
+        gSparkle.gain.linearRampToValueAtTime(0.05, t2 + 0.005);
+        gSparkle.gain.exponentialRampToValueAtTime(0.01, t2 + 0.2);
+        sparkle.connect(gSparkle); gSparkle.connect(ctx.destination);
+
+        osc1.start(t1); osc1.stop(t1 + 0.5);
+        harm1a.start(t1); harm1a.stop(t1 + 0.3);
+        osc2.start(t2); osc2.stop(t2 + 0.6);
+        harm2a.start(t2); harm2a.stop(t2 + 0.4);
+        sparkle.start(t2); sparkle.stop(t2 + 0.2);
         break;
 
       case 'success':
