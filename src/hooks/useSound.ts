@@ -59,14 +59,31 @@ export function useSound() {
         break;
 
       case 'tick':
-        // Mechanical dry tick (numpad/passcode)
-        osc.type = 'square';
-        osc.frequency.setValueAtTime(800, t);
+        // Apple Keyboard Click style (hollow, percussive)
+        // Primary "thud" component
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(150, t);
+        osc.frequency.exponentialRampToValueAtTime(50, t + 0.03);
         gain.gain.setValueAtTime(0, t);
-        gain.gain.linearRampToValueAtTime(0.15, t + 0.005);
-        gain.gain.exponentialRampToValueAtTime(0.01, t + 0.05);
+        gain.gain.linearRampToValueAtTime(0.3, t + 0.002);
+        gain.gain.exponentialRampToValueAtTime(0.01, t + 0.03);
+
+        // High-frequency transient (the "click")
+        const clickOsc = ctx.createOscillator();
+        const clickGain = ctx.createGain();
+        clickOsc.connect(clickGain);
+        clickGain.connect(ctx.destination);
+        clickOsc.type = 'triangle';
+        clickOsc.frequency.setValueAtTime(1200, t);
+        clickOsc.frequency.exponentialRampToValueAtTime(800, t + 0.01);
+        clickGain.gain.setValueAtTime(0, t);
+        clickGain.gain.linearRampToValueAtTime(0.15, t + 0.001);
+        clickGain.gain.exponentialRampToValueAtTime(0.01, t + 0.01);
+
         osc.start(t);
-        osc.stop(t + 0.05);
+        osc.stop(t + 0.03);
+        clickOsc.start(t);
+        clickOsc.stop(t + 0.01);
         break;
 
       case 'unlock':
