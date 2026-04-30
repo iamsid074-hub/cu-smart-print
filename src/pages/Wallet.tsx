@@ -915,36 +915,37 @@ export default function Wallet() {
               />
             </div>
 
-            {/* ── Action Rows (iOS Style) ── */}
-            <div className="w-full max-w-[450px] bg-[#1c1c1e] rounded-3xl overflow-hidden mt-2 border border-white/5 shadow-xl">
+            {/* ── Horizontal Primary Actions ── */}
+            <div className="w-full max-w-[450px] grid grid-cols-2 gap-3 mt-2 mb-4">
               <button
                 onClick={() => setShowAddMoneyModal(true)}
-                className="w-full flex items-center gap-4 px-5 py-4 border-b border-white/5 hover:bg-white/5 transition-colors active:bg-white/10"
+                className="bg-[#1c1c1e] rounded-[24px] p-4 flex flex-col items-start gap-3 border border-white/5 hover:bg-white/10 transition-all active:scale-[0.98] shadow-lg"
               >
-                <div className="w-9 h-9 rounded-full bg-green-500/10 border border-green-500/20 flex items-center justify-center flex-shrink-0">
-                  <PlusCircle className="w-4 h-4 text-green-400" />
+                <div className="w-10 h-10 rounded-full bg-green-500/10 border border-green-500/20 flex items-center justify-center flex-shrink-0">
+                  <PlusCircle className="w-5 h-5 text-green-400" />
                 </div>
-                <div className="flex-1 text-left">
-                  <span className="font-bold text-[15px] text-gray-300 block">Add Money</span>
-                  <span className="text-[10px] text-green-400 font-bold uppercase tracking-widest">Instant UPI Deposit</span>
+                <div className="text-left w-full">
+                  <span className="font-black text-[15px] text-white block mb-0.5">Add Money</span>
+                  <span className="text-[9px] text-green-400 font-bold uppercase tracking-widest block leading-tight">Instant Deposit</span>
                 </div>
-                <ChevronRight className="w-5 h-5 text-gray-500" />
               </button>
 
               <button
                 onClick={() => setShowWithdrawModal(true)}
-                className="w-full flex items-center gap-4 px-5 py-4 border-b border-white/5 hover:bg-white/5 transition-colors active:bg-white/10"
+                className="bg-[#1c1c1e] rounded-[24px] p-4 flex flex-col items-start gap-3 border border-white/5 hover:bg-white/10 transition-all active:scale-[0.98] shadow-lg"
               >
-                <div className="w-9 h-9 rounded-full bg-orange-500/10 border border-orange-500/20 flex items-center justify-center flex-shrink-0">
-                  <ArrowDownCircle className="w-4 h-4 text-orange-400" />
+                <div className="w-10 h-10 rounded-full bg-orange-500/10 border border-orange-500/20 flex items-center justify-center flex-shrink-0">
+                  <ArrowDownCircle className="w-5 h-5 text-orange-400" />
                 </div>
-                <div className="flex-1 text-left">
-                  <span className="font-bold text-[15px] text-gray-300 block">Withdraw</span>
-                  <span className="text-[10px] text-orange-400 font-bold uppercase tracking-widest">Payout to Bank/UPI</span>
+                <div className="text-left w-full">
+                  <span className="font-black text-[15px] text-white block mb-0.5">Withdraw</span>
+                  <span className="text-[9px] text-orange-400 font-bold uppercase tracking-widest block leading-tight">Bank Payout</span>
                 </div>
-                <ChevronRight className="w-5 h-5 text-gray-500" />
               </button>
+            </div>
 
+            {/* ── Secondary Action Rows (iOS Style) ── */}
+            <div className="w-full max-w-[450px] bg-[#1c1c1e] rounded-[24px] overflow-hidden mb-6 border border-white/5 shadow-lg">
               <button
                 onClick={() => setShowTxSheet(true)}
                 className="w-full flex items-center gap-4 px-5 py-4 border-b border-white/5 hover:bg-white/5 transition-colors active:bg-white/10"
