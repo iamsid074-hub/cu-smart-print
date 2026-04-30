@@ -344,8 +344,7 @@ export default function Wallet() {
   useEffect(() => {
     const initCashfree = async () => {
       try {
-        const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
-        const cf = await load({ mode: isLocal ? "sandbox" : "production" });
+        const cf = await load({ mode: "production" }); // Switched to production
         setCashfree(cf);
       } catch (err) {
         console.error("Failed to load Cashfree SDK:", err);
@@ -377,9 +376,9 @@ export default function Wallet() {
       }
 
       // 3. Start Checkout
-      if (cashfree && data.order_token) {
+      if (cashfree && data.payment_session_id) {
         cashfree.checkout({
-          paymentSessionId: data.order_token,
+          paymentSessionId: data.payment_session_id,
           redirectTarget: "_self",
         });
       }

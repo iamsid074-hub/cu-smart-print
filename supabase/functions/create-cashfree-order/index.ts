@@ -70,10 +70,10 @@ serve(async (req) => {
       throw new Error(data.message || "Failed to create Cashfree order");
     }
 
-    // Return the payment session id (order_token) to the frontend
+    // Return the payment session id to the frontend
     return new Response(
       JSON.stringify({ 
-        order_token: data.payment_session_id, 
+        payment_session_id: data.payment_session_id, 
         order_id: data.order_id 
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
