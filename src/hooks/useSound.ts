@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef } from 'react';
 
-type SoundType = 'pop' | 'tick' | 'success' | 'error' | 'swipe';
+type SoundType = 'pop' | 'tick' | 'success' | 'error' | 'swipe' | 'unlock';
 
 let globalAudioCtx: AudioContext | null = null;
 
@@ -67,6 +67,31 @@ export function useSound() {
         gain.gain.exponentialRampToValueAtTime(0.01, t + 0.05);
         osc.start(t);
         osc.stop(t + 0.05);
+        break;
+
+      case 'unlock':
+        // Apple-style subtle mechanical "snick" or "clack"
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(1200, t);
+        osc.frequency.exponentialRampToValueAtTime(400, t + 0.03);
+        gain.gain.setValueAtTime(0, t);
+        gain.gain.linearRampToValueAtTime(0.5, t + 0.005);
+        gain.gain.exponentialRampToValueAtTime(0.01, t + 0.04);
+        
+        // Second tiny click to simulate mechanical snap
+        const oscU2 = ctx.createOscillator();
+        const gainU2 = ctx.createGain();
+        oscU2.connect(gainU2);
+        gainU2.connect(ctx.destination);
+        oscU2.type = 'square';
+        oscU2.frequency.setValueAtTime(800, t + 0.02);
+        oscU2.frequency.exponentialRampToValueAtTime(200, t + 0.05);
+        gainU2.gain.setValueAtTime(0, t + 0.02);
+        gainU2.gain.linearRampToValueAtTime(0.2, t + 0.025);
+        gainU2.gain.exponentialRampToValueAtTime(0.01, t + 0.06);
+        
+        osc.start(t); osc.stop(t + 0.05);
+        oscU2.start(t + 0.02); oscU2.stop(t + 0.06);
         break;
 
       case 'success':
