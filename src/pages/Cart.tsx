@@ -95,7 +95,7 @@ export default function Cart() {
 
   // Init Cashfree SDK
   useEffect(() => {
-    load({ mode: "sandbox" }).then(setCashfree).catch(console.error);
+    load({ mode: "production" }).then(setCashfree).catch(console.error);
   }, []);
 
   // Handle return from Cashfree redirect
