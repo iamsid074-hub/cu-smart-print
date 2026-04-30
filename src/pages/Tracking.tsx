@@ -255,6 +255,7 @@ export default function Tracking() {
     } else {
       query = query
         .eq("buyer_id", user.id)
+        .neq("status", "draft")
         .order("created_at", { ascending: false })
         .limit(1);
     }

@@ -275,6 +275,7 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
       )
       .eq("buyer_id", user.id)
       .not("status", "in", '("completed","cancelled","seller_rejected")')
+      .neq("status", "draft")
       .order("created_at", { ascending: false })
       .limit(1)
       .maybeSingle();
