@@ -65,8 +65,8 @@ const FAQ = lazy(() => import("./pages/FAQ"));
 const WalletPayment = lazy(() => import("./pages/WalletPayment"));
 const WalletReset = lazy(() => import("./pages/WalletReset"));
 const Games = lazy(() => import("./pages/Games"));
-const NumberBlitz = lazy(() => import("./pages/games/NumberBlitz"));
-const ColorRush = lazy(() => import("./pages/games/ColorRush"));
+const RealCrash = lazy(() => import("./pages/games/RealCrash"));
+const RealMines = lazy(() => import("./pages/games/RealMines"));
 const Sections = lazy(() => import("./pages/Sections"));
 
 import Navbar from "./components/Navbar";
@@ -343,18 +343,18 @@ function AppLayout() {
               }
             />
             <Route
-              path="/games/number-blitz"
+              path="/games/crash"
               element={
                 <ProtectedRoute>
-                  <NumberBlitz />
+                  <RealCrash />
                 </ProtectedRoute>
               }
             />
             <Route
-              path="/games/color-rush"
+              path="/games/mines"
               element={
                 <ProtectedRoute>
-                  <ColorRush />
+                  <RealMines />
                 </ProtectedRoute>
               }
             />

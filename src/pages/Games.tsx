@@ -5,31 +5,33 @@ import { ArrowLeft, Zap, Eye, ArrowUpRight, Trophy } from "lucide-react";
 const GAMES = [
   {
     index: "01",
-    id: "number-blitz",
-    title: "Number Blitz",
-    tag: "SPEED",
-    description: "Tap 1 through 9 in sequence before the clock runs out. 30 seconds, pure reflex.",
-    stat1: { label: "Duration", value: "30s" },
-    stat2: { label: "Target", value: "1→9" },
+    id: "crash",
+    title: "Crash",
+    tag: "MULTIPLIER",
+    description: "Watch the multiplier climb. Cash out before it crashes to secure your win. High risk, high reward.",
+    stat1: { label: "Max Win", value: "x100.0" },
+    stat2: { label: "Edge", value: "4.0%" },
     icon: Zap,
-    link: "/games/number-blitz",
-    accentColor: "#a78bfa",
-    accentDim: "rgba(167,139,250,0.08)",
-    accentBorder: "rgba(167,139,250,0.15)",
+    image: "/crash_banner.png",
+    link: "/games/crash",
+    accentColor: "#ef4444", // red-500
+    accentDim: "rgba(239,68,68,0.08)",
+    accentBorder: "rgba(239,68,68,0.15)",
   },
   {
     index: "02",
-    id: "color-rush",
-    title: "Color Rush",
-    tag: "MIND",
-    description: "Ignore what you read. Trust only the ink. 10 rounds of cognitive precision.",
-    stat1: { label: "Rounds", value: "10" },
-    stat2: { label: "Type", value: "Stroop" },
+    id: "mines",
+    title: "Mines",
+    tag: "STRATEGY",
+    description: "Clear the grid without hitting a mine. The more mines you add, the higher the payout.",
+    stat1: { label: "Grid", value: "5x5" },
+    stat2: { label: "Edge", value: "4.0%" },
     icon: Eye,
-    link: "/games/color-rush",
-    accentColor: "#c4b5fd",
-    accentDim: "rgba(196,181,253,0.07)",
-    accentBorder: "rgba(196,181,253,0.13)",
+    image: "/mines_banner.png",
+    link: "/games/mines",
+    accentColor: "#3b82f6", // blue-500
+    accentDim: "rgba(59,130,246,0.07)",
+    accentBorder: "rgba(59,130,246,0.13)",
   },
 ];
 
@@ -102,7 +104,7 @@ export default function Games() {
             </span>
           </h1>
           <p className="text-white/30 text-sm mt-3 max-w-[280px] leading-relaxed font-medium">
-            Two skill-based games. Your scores, your record.
+            Two provably fair betting games. Bet real money, win real money.
           </p>
         </motion.div>
 
@@ -158,25 +160,32 @@ export default function Games() {
                     {game.index}
                   </div>
 
-                  <div className="relative z-10 p-6">
-                    {/* Icon + Title row */}
-                    <div className="flex items-start justify-between mb-4">
-                      <div
-                        className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0"
-                        style={{
-                          background: `rgba(${game.accentColor === "#a78bfa" ? "167,139,250" : "196,181,253"},0.12)`,
-                          border: `1px solid ${game.accentBorder}`,
-                        }}
-                      >
-                        <Icon size={20} style={{ color: game.accentColor }} strokeWidth={2.2} />
-                      </div>
-                      <div
-                        className="w-8 h-8 rounded-full flex items-center justify-center"
-                        style={{ background: game.accentBorder }}
-                      >
-                        <ArrowUpRight size={15} style={{ color: game.accentColor }} strokeWidth={2.5} />
+                  <div className="relative z-10 p-0">
+                    {/* Real Image Banner */}
+                    <div className="w-full h-40 relative overflow-hidden">
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-10 pointer-events-none" />
+                      <img src={game.image} alt={game.title} className="w-full h-full object-cover transform transition-transform duration-700 hover:scale-105" />
+                      
+                      <div className="absolute top-4 left-4 z-20 flex items-center justify-between w-[calc(100%-2rem)]">
+                        <div
+                          className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 backdrop-blur-md"
+                          style={{
+                            background: `rgba(0,0,0,0.5)`,
+                            border: `1px solid ${game.accentBorder}`,
+                          }}
+                        >
+                          <Icon size={18} style={{ color: game.accentColor }} strokeWidth={2.2} />
+                        </div>
+                        <div
+                          className="w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-md"
+                          style={{ background: 'rgba(0,0,0,0.5)', border: `1px solid ${game.accentBorder}` }}
+                        >
+                          <ArrowUpRight size={15} style={{ color: game.accentColor }} strokeWidth={2.5} />
+                        </div>
                       </div>
                     </div>
+
+                    <div className="p-6 pt-5">
 
                     {/* Title */}
                     <h2
@@ -240,6 +249,7 @@ export default function Games() {
                     />
                     <span className="text-[10px] font-bold text-white/20 uppercase tracking-wider">Free</span>
                   </div>
+                </div>
                 </motion.button>
               </motion.div>
             );
@@ -255,7 +265,7 @@ export default function Games() {
         >
           <div className="flex-1 h-px bg-white/5" />
           <span className="text-[10px] text-white/15 uppercase tracking-widest font-bold">
-            High scores saved locally
+            Provably Fair • 100% Transparent
           </span>
           <div className="flex-1 h-px bg-white/5" />
         </motion.div>

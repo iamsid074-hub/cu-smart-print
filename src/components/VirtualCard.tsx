@@ -5,19 +5,17 @@ import { CreditCard, Zap, ShieldCheck, Eye, EyeOff, Diamond } from 'lucide-react
 interface VirtualCardProps {
   name: string;
   balance: number;
-  balanceHidden?: boolean;
+  winningsBalance?: number;
   className?: string;
   onFlip?: () => void;
-  onEyeClick?: (e: React.MouseEvent) => void;
 }
 
 export const VirtualCard: React.FC<VirtualCardProps> = ({
   name,
   balance,
-  balanceHidden = false,
+  winningsBalance = 0,
   className = '',
-  onFlip,
-  onEyeClick
+  onFlip
 }) => {
   const [isFlipped, setIsFlipped] = useState(false);
 
@@ -108,25 +106,14 @@ export const VirtualCard: React.FC<VirtualCardProps> = ({
               <p className="text-white font-bold tracking-widest uppercase text-xs sm:text-sm truncate drop-shadow-md">{name || 'ADMIN'}</p>
             </div>
             
-            <div className="text-right flex-shrink-0">
-              <p className="text-[8px] sm:text-[9px] text-white/40 uppercase tracking-[0.2em] font-black mb-0.5 sm:mb-1">Balance</p>
-              <div className="flex items-center justify-end gap-1.5 sm:gap-2">
-                {balanceHidden ? (
-                  <p className="text-white font-black text-base sm:text-lg tracking-[0.1em] mt-0.5">••••</p>
-                ) : (
-                  <p className="text-white font-black text-base sm:text-xl md:text-2xl drop-shadow-lg">₹{balance.toLocaleString('en-IN')}</p>
-                )}
-                {onEyeClick && (
-                  <button 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onEyeClick(e);
-                    }}
-                    className="p-1.5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-colors"
-                  >
-                    {balanceHidden ? <EyeOff className="w-3.5 h-3.5 text-[#d4af37]" /> : <Eye className="w-3.5 h-3.5 text-[#d4af37]" />}
-                  </button>
-                )}
+            <div className="text-right flex-shrink-0 flex items-center gap-3 sm:gap-4">
+              <div className="flex flex-col items-end">
+                <p className="text-[7px] sm:text-[8px] text-white/40 uppercase tracking-[0.2em] font-black mb-0.5 sm:mb-1">Deposit</p>
+                <p className="text-white font-black text-sm sm:text-base md:text-lg drop-shadow-lg">₹{balance.toLocaleString('en-IN')}</p>
+              </div>
+              <div className="flex flex-col items-end border-l border-white/10 pl-3 sm:pl-4">
+                <p className="text-[7px] sm:text-[8px] text-[#d4af37] uppercase tracking-[0.2em] font-black mb-0.5 sm:mb-1">Winnings</p>
+                <p className="text-[#d4af37] font-black text-sm sm:text-base md:text-lg drop-shadow-lg">₹{winningsBalance.toLocaleString('en-IN')}</p>
               </div>
             </div>
           </div>

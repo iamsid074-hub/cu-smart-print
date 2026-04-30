@@ -253,15 +253,14 @@ export default function Wallet() {
   const navigate = useNavigate();
   const { play } = useSound();
   const [walletBalance, setWalletBalance] = useState(0);
+  const [winningsBalance, setWinningsBalance] = useState(0);
   const [weeklyOrders, setWeeklyOrders] = useState(0);
   const [transactions, setTransactions] = useState<any[]>([]);
   const [isUnboxed, setIsUnboxed] = useState(false);
   const [profileName, setProfileName] = useState("");
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [passcode, setPasscode] = useState<string | null>(null);
-  const [balanceVisible, setBalanceVisible] = useState<boolean>(false);
-  const [revealPasscode, setRevealPasscode] = useState<string | null>(null);
-
+  
   // ── Setup/Unlock Modal flags ──
   const [showSetPassModal, setShowSetPassModal] = useState(false);
   const [showUnlockModal, setShowUnlockModal] = useState(false);
@@ -294,11 +293,9 @@ export default function Wallet() {
     if (user) {
       const savedUnboxed = localStorage.getItem(getUnboxedKey(user.id)) === "true";
       const savedPass = localStorage.getItem(getWalletLockKey(user.id));
-      const savedReveal = localStorage.getItem(getBalanceLockKey(user.id));
 
       setIsUnboxed(savedUnboxed);
       setPasscode(savedPass);
-      setRevealPasscode(savedReveal);
       setShowSetPassModal(!savedPass);
       setShowUnlockModal(!!savedPass && !isUnlocked);
       fetchWalletData();
@@ -319,14 +316,7 @@ export default function Wallet() {
   // ── Modal flags ──
   const [showTxSheet, setShowTxSheet] = useState(false);
 
-  // ── Balance Reveal Flow state ──
-  const [showRevealUnlockModal, setShowRevealUnlockModal] = useState(false);
-  const [showSetRevealModal, setShowSetRevealModal] = useState(false);
-  const [revealInput, setRevealInput] = useState("");
-  const [revealSetupStep, setRevealSetupStep] = useState<"set" | "confirm">("set");
-  const [revealFirstPass, setRevealFirstPass] = useState("");
-  const [revealMismatch, setRevealMismatch] = useState(false);
-  const [revealError, setRevealError] = useState("");
+
 
   // ── Cashfree Payment State ──
   const [cashfree, setCashfree] = useState<any>(null);
@@ -438,12 +428,13 @@ export default function Wallet() {
 
     const { data: profileList } = await supabase
       .from("profiles")
-      .select("wallet_balance, full_name")
+      .select("wallet_balance, winnings_balance, full_name")
       .eq("id", user.id);
       
     const profile = profileList?.[0];
     if (profile) {
       setWalletBalance(profile.wallet_balance || 0);
+      setWinningsBalance(profile.winnings_balance || 0);
       setProfileName(profile.full_name || user?.user_metadata?.full_name || "CU USER");
     }
 
@@ -490,7 +481,6 @@ export default function Wallet() {
       setPasscode(setupInput);
       window.dispatchEvent(new Event("wallet_lock_setup"));
       setTimeout(() => {
-        setBalanceVisible(false);
         setIsUnlocked(true);
         setShowSetPassModal(false);
         setSetupInput("");
@@ -512,7 +502,6 @@ export default function Wallet() {
     if (unlockInput === passcode) {
       window.dispatchEvent(new Event("wallet_unlock_success"));
       setTimeout(() => {
-        setBalanceVisible(false);
         setIsUnlocked(true);
         setShowUnlockModal(false);
         setUnlockInput("");
@@ -535,7 +524,6 @@ export default function Wallet() {
         setPasscode(passInput);
         window.dispatchEvent(new Event("wallet_lock_setup"));
         setTimeout(() => {
-          setBalanceVisible(false);
           setIsUnlocked(true);
           setShowSetPassModal(false);
           setPassInput("");
@@ -551,68 +539,6 @@ export default function Wallet() {
   };
 
   const handleForgotLockSubmit = () => handleSetPassSubmit();
-
-  // ── Eye button ──
-  const handleEyeClick = () => {
-    if (balanceVisible) {
-      setBalanceVisible(false);
-    } else {
-      if (!revealPasscode) {
-        // First time: set reveal passcode
-        setRevealInput("");
-        setRevealSetupStep("set");
-        setShowSetRevealModal(true);
-      } else {
-        // Unlock with reveal passcode
-        setRevealInput("");
-        setShowRevealUnlockModal(true);
-      }
-    }
-  };
-
-  const handleRevealSetupSubmit = () => {
-    if (revealSetupStep === "set") {
-      if (revealInput === passcode) {
-        setRevealError("Reveal passcode must be different from entrance passcode!");
-        setRevealInput("");
-        setTimeout(() => setRevealError(""), 3000);
-        return;
-      }
-      setRevealFirstPass(revealInput);
-      setRevealInput("");
-      setRevealSetupStep("confirm");
-      setRevealMismatch(false);
-    } else {
-      if (revealInput === revealFirstPass) {
-        localStorage.setItem(getBalanceLockKey(user!.id), revealInput);
-        setRevealPasscode(revealInput);
-        setBalanceVisible(true);
-        setShowSetRevealModal(false);
-        setRevealInput("");
-        setRevealFirstPass("");
-        setRevealSetupStep("set");
-      } else {
-        setRevealMismatch(true);
-        setRevealInput("");
-        setRevealFirstPass("");
-        setRevealSetupStep("set");
-        setTimeout(() => setRevealMismatch(false), 2000);
-      }
-    }
-  };
-
-  const handleRevealUnlockSubmit = () => {
-    if (revealInput === revealPasscode) {
-      window.dispatchEvent(new Event("play_wallet_sound"));
-      setBalanceVisible(true);
-      setShowRevealUnlockModal(false);
-      setRevealInput("");
-    } else {
-      play('error');
-      setRevealInput("");
-      window.dispatchEvent(new Event("cu_card_wrong_pass"));
-    }
-  };
 
   return (
     <div className="relative min-h-screen pb-32 overflow-hidden bg-[#000] text-white">
@@ -692,7 +618,6 @@ export default function Wallet() {
                               localStorage.setItem(getWalletLockKey(user!.id), next);
                               setPasscode(next);
                               setTimeout(() => {
-                                setBalanceVisible(false);
                                 setIsUnlocked(true);
                                 setShowSetPassModal(false);
                                 setSetupFirstPass("");
@@ -786,7 +711,6 @@ export default function Wallet() {
                         const savedPass = localStorage.getItem(getWalletLockKey(user!.id));
                         if (next === savedPass) {
                           setTimeout(() => {
-                            setBalanceVisible(false);
                             setIsUnlocked(true);
                             setShowUnlockModal(false);
                             setUnlockInput("");
@@ -822,31 +746,6 @@ export default function Wallet() {
               </button>
             </motion.div>
           </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* ── Balance Reveal Passcode Modals ── */}
-      <AnimatePresence>
-        {showSetRevealModal && (
-          <NumPad
-            value={revealInput}
-            onChange={setRevealInput}
-            onSubmit={handleRevealSetupSubmit}
-            onClose={() => setShowSetRevealModal(false)}
-            title={revealSetupStep === "set" ? "Set Reveal Pass" : "Confirm Reveal Pass"}
-            subtitle={revealError || (revealMismatch ? "Mismatch! Try again." : (revealSetupStep === "set" ? "Create a DIFFERENT passcode to reveal balance" : "Re-enter to confirm"))}
-          />
-        )}
-
-        {showRevealUnlockModal && (
-          <NumPad
-            value={revealInput}
-            onChange={setRevealInput}
-            onSubmit={handleRevealUnlockSubmit}
-            onClose={() => setShowRevealUnlockModal(false)}
-            title="Reveal Balance"
-            subtitle="Enter your reveal passcode"
-          />
         )}
       </AnimatePresence>
 
@@ -911,8 +810,7 @@ export default function Wallet() {
               <VirtualCard
                 name={profileName || "CU USER"}
                 balance={walletBalance}
-                balanceHidden={!balanceVisible}
-                onEyeClick={handleEyeClick}
+                winningsBalance={winningsBalance}
               />
             </div>
 
