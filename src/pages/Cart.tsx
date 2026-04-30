@@ -28,7 +28,6 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
 import PaymentSelector from "@/components/PaymentSelector";
-import UpiPaymentModal from "@/components/UpiPaymentModal";
 import RiskAlert, { RiskEvaluation } from "@/components/RiskAlert";
 import { evaluateOrderRisk } from "@/lib/risk";
 import { VirtualCardSwipePayment } from "@/components/VirtualCardSwipePayment";
@@ -92,7 +91,6 @@ export default function Cart() {
   );
   const floor = derivedFloor;
   const [submitting, setSubmitting] = useState(false);
-  const [showUpiModal, setShowUpiModal] = useState(false);
 
   // Risk Detection State
   const [riskEval, setRiskEval] = useState<RiskEvaluation | null>(null);
@@ -1030,33 +1028,7 @@ export default function Cart() {
         )}
       </div>
 
-      <UpiPaymentModal
-        isOpen={showUpiModal}
-        onClose={() => setShowUpiModal(false)}
-        amount={orderTotal}
-        orderIdText={`CART_${Date.now().toString().slice(-6)}`}
-        customerId={user?.id || 'guest'}
-        customerPhone={phone || '9999999999'}
-        onPaymentVerify={async (utr) => {
-          setSubmitting(true);
-          try {
-            await createOrder(utr);
-            toast({
-              title: 'Order submitted! 🎉',
-              description: `Your order has been placed.`,
-            });
-          } catch (err: any) {
-            toast({
-              title: 'Order failed',
-              description: err.message || 'Please try again.',
-              variant: 'destructive',
-            });
-            throw err;
-          } finally {
-            setSubmitting(false);
-          }
-        }}
-      />
+
     </div>
   );
 };
