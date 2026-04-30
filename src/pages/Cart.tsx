@@ -35,6 +35,7 @@ import { VirtualCardSwipePayment } from "@/components/VirtualCardSwipePayment";
 import { useUserLocation } from "@/hooks/useUserLocation";
 import { useMembership } from "@/hooks/useMembership";
 import MembershipUpsell from "@/components/MembershipUpsell";
+import { load } from "@cashfreepayments/cashfree-js";
 
 export default function Cart() {
   const {
@@ -101,6 +102,68 @@ export default function Cart() {
 
   const [showDisclaimer, setShowDisclaimer] = useState(false);
   const [disclaimerAccepted, setDisclaimerAccepted] = useState(false);
+
+  // ── Cashfree Payment State ──
+  const [cashfree, setCashfree] = useState<any>(null);
+  const [isPaying, setIsPaying] = useState(false);
+
+  useEffect(() => {
+    const initCashfree = async () => {
+      try {
+        const cf = await load({ mode: "production" });
+        setCashfree(cf);
+      } catch (err) {
+        console.error("Failed to load Cashfree SDK:", err);
+      }
+    };
+    initCashfree();
+  }, []);
+
+  // ── Handle return from Cashfree ──
+  useEffect(() => {
+    if (!user) return;
+    const params = new URLSearchParams(window.location.search);
+    const status = params.get("status");
+    const pendingOrderId = localStorage.getItem(`pending_cart_order_${user.id}`);
+
+    if (status === "success" && pendingOrderId) {
+      localStorage.removeItem(`pending_cart_order_${user.id}`);
+      // Clean URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+      
+      const finalizePaidOrder = async () => {
+        try {
+          setSubmitting(true);
+          // Verify payment first
+          const { data, error } = await supabase.functions.invoke("verify-payment", {
+            body: { orderId: pendingOrderId, userId: user.id },
+          });
+
+          if (error || !data?.success) {
+            throw new Error("Payment verification failed. If money was deducted, contact support.");
+          }
+
+          // Create the actual order in our system
+          await createOrder();
+          toast({
+            title: "Payment successful! 🎉",
+            description: "Your order has been placed successfully.",
+          });
+          navigate('/tracking');
+        } catch (err: any) {
+          toast({
+            title: "Verification failed",
+            description: err.message,
+            variant: "destructive",
+          });
+        } finally {
+          setSubmitting(false);
+        }
+      };
+      
+      finalizePaidOrder();
+    }
+  }, [user, navigate]);
 
   const [activeOrder, setActiveOrder] = useState<any>(null);
   const [loadingOrder, setLoadingOrder] = useState(true);
@@ -450,8 +513,40 @@ export default function Cart() {
   const handleDisclaimerAccepted = async () => {
     setShowDisclaimer(false);
     if (paymentMethod === "online" && orderTotal > 0) {
-      setShowCheckout(false);
-      setTimeout(() => setShowUpiModal(true), 150);
+      if (!user) return;
+      setIsPaying(true);
+      try {
+        const { data, error } = await supabase.functions.invoke('create-cashfree-order', {
+          body: { 
+            amount: orderTotal.toString(), 
+            userId: user.id,
+            customerPhone: phone || "9999999999",
+            customerName: user.user_metadata?.full_name || "CU User",
+            returnUrl: `${window.location.origin}/cart?status=success`
+          },
+        });
+
+        if (error) throw error;
+
+        if (data.order_id) {
+          localStorage.setItem(`pending_cart_order_${user.id}`, data.order_id);
+        }
+
+        if (cashfree && data.order_token) {
+          cashfree.checkout({
+            paymentSessionId: data.order_token,
+            redirectTarget: "_self",
+          });
+        }
+      } catch (err: any) {
+        toast({
+          title: "Payment error",
+          description: err.message || "Failed to initiate payment.",
+          variant: "destructive"
+        });
+      } finally {
+        setIsPaying(false);
+      }
     } else if (paymentMethod === "virtual_card") {
       // Virtual Card handles its own success in onSuccess callback
       // We do nothing here, the swipe UI is active
