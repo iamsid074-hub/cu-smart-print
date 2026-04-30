@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { 
   ArrowLeft, Search, Share2, MoreVertical, Star, 
@@ -24,7 +24,7 @@ export default function RestaurantPage() {
   const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
   const [isCategoryMenuOpen, setIsCategoryMenuOpen] = useState(false);
   const [isNavVisible, setIsNavVisible] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
+  const lastScrollYRef = useRef(0);
 
 
 
@@ -55,13 +55,13 @@ export default function RestaurantPage() {
       if (!ticking) {
         window.requestAnimationFrame(() => {
           const currentScrollY = window.scrollY;
-          if (Math.abs(currentScrollY - lastScrollY) > 25) {
-            if (currentScrollY > lastScrollY && currentScrollY > 150) {
+          if (Math.abs(currentScrollY - lastScrollYRef.current) > 25) {
+            if (currentScrollY > lastScrollYRef.current && currentScrollY > 150) {
               setIsNavVisible(false);
-            } else if (currentScrollY < lastScrollY - 10) {
+            } else if (currentScrollY < lastScrollYRef.current - 10) {
               setIsNavVisible(true);
             }
-            setLastScrollY(currentScrollY);
+            lastScrollYRef.current = currentScrollY;
           }
           ticking = false;
         });
@@ -70,7 +70,7 @@ export default function RestaurantPage() {
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [lastScrollY]);
+  }, []);
 
   // Merge live status into base shop data
   const shop = useMemo(() => {

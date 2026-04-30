@@ -3,31 +3,24 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { X, Gamepad2, Zap, CreditCard, IndianRupee } from "lucide-react";
 
-interface BlinkitAnnounceModalProps {
-  onCheck: () => void;
-}
-
 let dismissedThisSession = false;
 
 const PERKS = [
   {
     icon: IndianRupee,
-    text: "Earn up to ₹5,000/day by playing games",
-    highlight: "₹5,000/day",
+    text: "Earn up to Rs 5,000/day by playing games",
   },
   {
     icon: CreditCard,
     text: "Instant money transfer to your CU Card",
-    highlight: "Instant",
   },
   {
     icon: Zap,
-    text: "Start playing from just ₹10",
-    highlight: "₹10",
+    text: "Start playing from just Rs 10",
   },
 ];
 
-export default function BlinkitAnnounceModal({ onCheck }: BlinkitAnnounceModalProps) {
+export default function BlinkitAnnounceModal() {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -52,7 +45,6 @@ export default function BlinkitAnnounceModal({ onCheck }: BlinkitAnnounceModalPr
     <AnimatePresence>
       {isOpen && (
         <div className="fixed inset-0 z-[10001] flex items-end sm:items-center justify-center pointer-events-none px-0 sm:px-6">
-          {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -61,7 +53,6 @@ export default function BlinkitAnnounceModal({ onCheck }: BlinkitAnnounceModalPr
             className="absolute inset-0 bg-black/85 pointer-events-auto"
           />
 
-          {/* Card */}
           <motion.div
             initial={{ y: "100%", opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
@@ -76,19 +67,29 @@ export default function BlinkitAnnounceModal({ onCheck }: BlinkitAnnounceModalPr
               willChange: "transform",
             }}
           >
-            {/* Top glow */}
             <div
               className="absolute top-0 left-0 right-0 h-[2px] pointer-events-none"
-              style={{ background: "linear-gradient(90deg, transparent, #8b5cf6 40%, #ec4899 60%, transparent)" }}
+              style={{
+                background:
+                  "linear-gradient(90deg, transparent, #8b5cf6 40%, #ec4899 60%, transparent)",
+              }}
             />
 
-            {/* Background orbs */}
-            <div className="absolute top-[-60px] right-[-40px] w-52 h-52 rounded-full pointer-events-none"
-              style={{ background: "radial-gradient(circle, rgba(139,92,246,0.18) 0%, transparent 70%)" }} />
-            <div className="absolute bottom-[-40px] left-[-40px] w-44 h-44 rounded-full pointer-events-none"
-              style={{ background: "radial-gradient(circle, rgba(236,72,153,0.12) 0%, transparent 70%)" }} />
+            <div
+              className="absolute top-[-60px] right-[-40px] w-52 h-52 rounded-full pointer-events-none"
+              style={{
+                background:
+                  "radial-gradient(circle, rgba(139,92,246,0.18) 0%, transparent 70%)",
+              }}
+            />
+            <div
+              className="absolute bottom-[-40px] left-[-40px] w-44 h-44 rounded-full pointer-events-none"
+              style={{
+                background:
+                  "radial-gradient(circle, rgba(236,72,153,0.12) 0%, transparent 70%)",
+              }}
+            />
 
-            {/* Close */}
             <button
               onClick={handleClose}
               className="absolute top-4 right-4 z-20 w-9 h-9 rounded-full bg-white/8 flex items-center justify-center text-white/50 hover:text-white hover:bg-white/12 transition-all"
@@ -97,17 +98,21 @@ export default function BlinkitAnnounceModal({ onCheck }: BlinkitAnnounceModalPr
             </button>
 
             <div className="relative z-10 p-7 sm:p-10 flex flex-col gap-6">
-
-              {/* Badge */}
               <div className="flex items-center gap-2 w-fit">
-                <div className="flex items-center gap-1.5 px-3 py-1 rounded-full"
-                  style={{ background: "rgba(139,92,246,0.15)", border: "1px solid rgba(139,92,246,0.3)" }}>
+                <div
+                  className="flex items-center gap-1.5 px-3 py-1 rounded-full"
+                  style={{
+                    background: "rgba(139,92,246,0.15)",
+                    border: "1px solid rgba(139,92,246,0.3)",
+                  }}
+                >
                   <div className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse" />
-                  <span className="text-[10px] font-black tracking-widest uppercase text-purple-300">New Feature</span>
+                  <span className="text-[10px] font-black tracking-widest uppercase text-purple-300">
+                    New Feature
+                  </span>
                 </div>
               </div>
 
-              {/* Title */}
               <div className="flex items-center gap-4">
                 <motion.div
                   animate={{ rotate: [0, -10, 10, -5, 0] }}
@@ -124,12 +129,11 @@ export default function BlinkitAnnounceModal({ onCheck }: BlinkitAnnounceModalPr
                     Games Section
                   </h2>
                   <p className="text-white/40 text-xs font-semibold uppercase tracking-widest">
-                    Play · Earn · Win Real Cash
+                    Play | Earn | Win Real Cash
                   </p>
                 </div>
               </div>
 
-              {/* Perks */}
               <div className="flex flex-col gap-3">
                 {PERKS.map((perk, idx) => {
                   const Icon = perk.icon;
@@ -145,8 +149,14 @@ export default function BlinkitAnnounceModal({ onCheck }: BlinkitAnnounceModalPr
                         border: "1px solid rgba(255,255,255,0.07)",
                       }}
                     >
-                      <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
-                        style={{ background: "linear-gradient(135deg, rgba(124,58,237,0.3), rgba(236,72,153,0.2))", border: "1px solid rgba(139,92,246,0.2)" }}>
+                      <div
+                        className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
+                        style={{
+                          background:
+                            "linear-gradient(135deg, rgba(124,58,237,0.3), rgba(236,72,153,0.2))",
+                          border: "1px solid rgba(139,92,246,0.2)",
+                        }}
+                      >
                         <Icon size={17} className="text-purple-300" />
                       </div>
                       <span className="text-[13.5px] font-semibold text-white/80 leading-snug">
@@ -157,7 +167,6 @@ export default function BlinkitAnnounceModal({ onCheck }: BlinkitAnnounceModalPr
                 })}
               </div>
 
-              {/* CTAs */}
               <div className="flex gap-3 mt-1">
                 <button
                   onClick={handleClose}
@@ -174,22 +183,24 @@ export default function BlinkitAnnounceModal({ onCheck }: BlinkitAnnounceModalPr
                     background: "linear-gradient(135deg, #7c3aed 0%, #4f46e5 50%, #ec4899 100%)",
                   }}
                 >
-                  {/* Shimmer */}
                   <motion.div
                     animate={{ x: ["-100%", "200%"] }}
                     transition={{ duration: 2, repeat: Infinity, ease: "easeInOut", repeatDelay: 1.5 }}
                     className="absolute inset-0 pointer-events-none will-change-transform"
-                    style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent)", width: "60%" }}
+                    style={{
+                      background:
+                        "linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent)",
+                      width: "60%",
+                    }}
                   />
                   <Gamepad2 size={16} />
-                  Play Now ↗
+                  Play Now ->
                 </motion.button>
               </div>
 
               <p className="text-center text-[10px] text-white/20">
-                Tap outside to dismiss · Won't show again this session
+                Tap outside to dismiss | Won't show again this session
               </p>
-
             </div>
           </motion.div>
         </div>

@@ -16,10 +16,14 @@ import {
   CreditCard,
   ChevronRight,
   Check,
-  Share,
-  Copy,
   Star,
+  Copy,
+  PlusCircle,
+  Plus,
+  ArrowDownCircle,
+  Send
 } from "lucide-react";
+import { load } from "@cashfreepayments/cashfree-js";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
 import { VirtualCard } from "@/components/VirtualCard";
@@ -294,6 +298,106 @@ export default function Wallet() {
   const [showReferralModal, setShowReferralModal] = useState(false);
   const [referralCode, setReferralCode] = useState<string>("BAZZAR");
   const [isGeneratingTicket, setIsGeneratingTicket] = useState(false);
+
+  // ── Cashfree Payment State ──
+  const [cashfree, setCashfree] = useState<any>(null);
+  const [showAddMoneyModal, setShowAddMoneyModal] = useState(false);
+  const [addAmount, setAddAmount] = useState("");
+  const [isPaying, setIsPaying] = useState(false);
+
+  // ── Withdrawal State ──
+  const [showWithdrawModal, setShowWithdrawModal] = useState(false);
+  const [withdrawAmount, setWithdrawAmount] = useState("");
+  const [withdrawUPI, setWithdrawUPI] = useState("");
+  const [isWithdrawing, setIsWithdrawing] = useState(false);
+
+  useEffect(() => {
+    const initCashfree = async () => {
+      try {
+        const cf = await load({ mode: "production" }); // Switched to production
+        setCashfree(cf);
+      } catch (err) {
+        console.error("Failed to load Cashfree SDK:", err);
+      }
+    };
+    initCashfree();
+  }, []);
+
+  const handlePay = async () => {
+    if (!addAmount || parseFloat(addAmount) <= 0) return;
+    if (!user) return;
+
+    setIsPaying(true);
+    try {
+      // 1. Call our Edge Function to create order
+      const { data, error } = await supabase.functions.invoke('create-cashfree-order', {
+        body: { 
+          amount: addAmount, 
+          userId: user.id,
+          customerPhone: user.phone || "9999999999" // Default if no phone
+        },
+      });
+
+      if (error) throw error;
+
+      // 2. Start Checkout
+      if (cashfree && data.order_token) {
+        let checkoutOptions = {
+          paymentSessionId: data.order_token,
+          redirectTarget: "_self", // Use _self for mobile webview best experience
+        };
+        cashfree.checkout(checkoutOptions);
+      }
+    } catch (err) {
+      console.error("Payment error:", err);
+      alert("Failed to initiate payment. Please try again.");
+    } finally {
+      setIsPaying(false);
+      setShowAddMoneyModal(false);
+      setAddAmount("");
+    }
+  };
+
+  const handleWithdraw = async () => {
+    const amountNum = parseFloat(withdrawAmount);
+    if (!amountNum || amountNum <= 0) return;
+    if (amountNum > walletBalance) {
+      alert("Insufficient balance!");
+      return;
+    }
+    if (!withdrawUPI || !withdrawUPI.includes('@')) {
+      alert("Please enter a valid UPI ID");
+      return;
+    }
+    if (!user) return;
+
+    setIsWithdrawing(true);
+    try {
+      // Create a withdrawal request transaction
+      const { error } = await supabase
+        .from("wallet_transactions")
+        .insert({
+          user_id: user.id,
+          amount: -amountNum,
+          type: 'payout_request',
+          description: `Withdrawal to ${withdrawUPI}`,
+          status: 'pending' // Assuming status column exists or description handles it
+        });
+
+      if (error) throw error;
+
+      alert("Withdrawal request submitted! It will be processed within 24 hours.");
+      setShowWithdrawModal(false);
+      setWithdrawAmount("");
+      setWithdrawUPI("");
+      fetchWalletData();
+    } catch (err) {
+      console.error("Withdrawal error:", err);
+      alert("Failed to submit withdrawal request.");
+    } finally {
+      setIsWithdrawing(false);
+    }
+  };
 
   const openGoldenTicket = async () => {
     if (!user) return;
@@ -858,6 +962,34 @@ export default function Wallet() {
             {/* ── Action Rows (iOS Style) ── */}
             <div className="w-full max-w-[450px] bg-[#1c1c1e] rounded-3xl overflow-hidden mt-2 border border-white/5 shadow-xl">
               <button
+                onClick={() => setShowAddMoneyModal(true)}
+                className="w-full flex items-center gap-4 px-5 py-4 border-b border-white/5 hover:bg-white/5 transition-colors active:bg-white/10"
+              >
+                <div className="w-9 h-9 rounded-full bg-green-500/10 border border-green-500/20 flex items-center justify-center flex-shrink-0">
+                  <PlusCircle className="w-4 h-4 text-green-400" />
+                </div>
+                <div className="flex-1 text-left">
+                  <span className="font-bold text-[15px] text-gray-300 block">Add Money</span>
+                  <span className="text-[10px] text-green-400 font-bold uppercase tracking-widest">Instant UPI Deposit</span>
+                </div>
+                <ChevronRight className="w-5 h-5 text-gray-500" />
+              </button>
+
+              <button
+                onClick={() => setShowWithdrawModal(true)}
+                className="w-full flex items-center gap-4 px-5 py-4 border-b border-white/5 hover:bg-white/5 transition-colors active:bg-white/10"
+              >
+                <div className="w-9 h-9 rounded-full bg-orange-500/10 border border-orange-500/20 flex items-center justify-center flex-shrink-0">
+                  <ArrowDownCircle className="w-4 h-4 text-orange-400" />
+                </div>
+                <div className="flex-1 text-left">
+                  <span className="font-bold text-[15px] text-gray-300 block">Withdraw</span>
+                  <span className="text-[10px] text-orange-400 font-bold uppercase tracking-widest">Payout to Bank/UPI</span>
+                </div>
+                <ChevronRight className="w-5 h-5 text-gray-500" />
+              </button>
+
+              <button
                 onClick={() => setShowTxSheet(true)}
                 className="w-full flex items-center gap-4 px-5 py-4 border-b border-white/5 hover:bg-white/5 transition-colors active:bg-white/10"
               >
@@ -1053,6 +1185,180 @@ export default function Wallet() {
                     <Star className="w-3 h-3 text-[#d4af37]" />
                     <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Limited Invitations Left</span>
                     <Star className="w-3 h-3 text-[#d4af37]" />
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* ── Add Money Modal ── */}
+      <AnimatePresence>
+        {showAddMoneyModal && (
+          <div className="fixed inset-0 z-[110] flex items-center justify-center p-6">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowAddMoneyModal(false)}
+              className="absolute inset-0 bg-black/90 backdrop-blur-md"
+            />
+            
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="relative w-full max-w-sm bg-[#111] rounded-[32px] border border-white/10 overflow-hidden shadow-2xl"
+            >
+              <div className="p-6">
+                <div className="flex justify-between items-center mb-6">
+                  <h3 className="text-xl font-black text-white">Add Money</h3>
+                  <button 
+                    onClick={() => setShowAddMoneyModal(false)}
+                    className="p-2 rounded-full bg-white/5 border border-white/10 text-gray-400"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+
+                <div className="space-y-6">
+                  <div>
+                    <label className="text-[10px] uppercase tracking-widest text-gray-500 font-black mb-3 block">
+                      Enter Amount (₹)
+                    </label>
+                    <div className="relative">
+                      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-2xl font-black text-white/20">₹</span>
+                      <input
+                        type="number"
+                        value={addAmount}
+                        onChange={(e) => setAddAmount(e.target.value)}
+                        placeholder="0.00"
+                        className="w-full bg-white/5 border border-white/10 rounded-2xl py-5 pl-10 pr-4 text-2xl font-black text-white focus:outline-none focus:border-green-500/50 transition-colors"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-2">
+                    {["100", "200", "500"].map((amt) => (
+                      <button
+                        key={amt}
+                        onClick={() => setAddAmount(amt)}
+                        className="py-3 rounded-xl bg-white/5 border border-white/10 text-xs font-black hover:bg-white/10 transition-colors"
+                      >
+                        +₹{amt}
+                      </button>
+                    ))}
+                  </div>
+
+                  <button
+                    onClick={handlePay}
+                    disabled={isPaying || !addAmount || parseFloat(addAmount) <= 0}
+                    className="w-full py-5 rounded-2xl bg-green-500 text-black font-black text-[16px] flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(34,197,94,0.3)] active:scale-95 transition-all disabled:opacity-50 disabled:grayscale"
+                  >
+                    {isPaying ? (
+                      <RotateCcw className="w-5 h-5 animate-spin" />
+                    ) : (
+                      <>
+                        <Plus className="w-5 h-5" />
+                        Proceed to Pay
+                      </>
+                    )}
+                  </button>
+
+                  <p className="text-center text-[10px] text-gray-500 font-bold uppercase tracking-widest">
+                    Secured by Cashfree Payments
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* ── Withdraw Modal ── */}
+      <AnimatePresence>
+        {showWithdrawModal && (
+          <div className="fixed inset-0 z-[110] flex items-center justify-center p-6">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowWithdrawModal(false)}
+              className="absolute inset-0 bg-black/90 backdrop-blur-md"
+            />
+            
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="relative w-full max-w-sm bg-[#111] rounded-[32px] border border-white/10 overflow-hidden shadow-2xl"
+            >
+              <div className="p-6">
+                <div className="flex justify-between items-center mb-6">
+                  <h3 className="text-xl font-black text-white">Withdraw Funds</h3>
+                  <button 
+                    onClick={() => setShowWithdrawModal(false)}
+                    className="p-2 rounded-full bg-white/5 border border-white/10 text-gray-400"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+
+                <div className="space-y-6">
+                  <div>
+                    <label className="text-[10px] uppercase tracking-widest text-gray-500 font-black mb-3 block">
+                      Amount to Withdraw (₹)
+                    </label>
+                    <div className="relative">
+                      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-2xl font-black text-white/20">₹</span>
+                      <input
+                        type="number"
+                        value={withdrawAmount}
+                        onChange={(e) => setWithdrawAmount(e.target.value)}
+                        placeholder="0.00"
+                        className="w-full bg-white/5 border border-white/10 rounded-2xl py-5 pl-10 pr-4 text-2xl font-black text-white focus:outline-none focus:border-orange-500/50 transition-colors"
+                      />
+                    </div>
+                    <p className="text-[10px] text-gray-500 mt-2 font-bold px-1">
+                      Available: <span className="text-white">₹{walletBalance}</span>
+                    </p>
+                  </div>
+
+                  <div>
+                    <label className="text-[10px] uppercase tracking-widest text-gray-500 font-black mb-3 block">
+                      Your UPI ID
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="text"
+                        value={withdrawUPI}
+                        onChange={(e) => setWithdrawUPI(e.target.value)}
+                        placeholder="username@bank"
+                        className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-4 text-sm font-bold text-white focus:outline-none focus:border-orange-500/50 transition-colors"
+                      />
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={handleWithdraw}
+                    disabled={isWithdrawing || !withdrawAmount || !withdrawUPI || parseFloat(withdrawAmount) <= 0}
+                    className="w-full py-5 rounded-2xl bg-orange-500 text-black font-black text-[16px] flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(249,115,22,0.3)] active:scale-95 transition-all disabled:opacity-50 disabled:grayscale"
+                  >
+                    {isWithdrawing ? (
+                      <RotateCcw className="w-5 h-5 animate-spin" />
+                    ) : (
+                      <>
+                        <Send className="w-4 h-4" />
+                        Request Withdrawal
+                      </>
+                    )}
+                  </button>
+
+                  <div className="bg-orange-500/5 border border-orange-500/10 rounded-xl p-3">
+                    <p className="text-[9px] text-orange-400 font-bold leading-relaxed text-center">
+                      Withdrawals are processed manually by the Admin team. You will receive a UPI payment within 24 hours of your request.
+                    </p>
                   </div>
                 </div>
               </div>

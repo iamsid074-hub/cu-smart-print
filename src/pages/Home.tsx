@@ -1,43 +1,26 @@
-import { useEffect, useState, useRef } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Search,
-  MapPin,
-  ChevronDown,
-  Package,
-  Shield,
-  Ban,
-  ShieldCheck,
-  Headset,
-  ExternalLink,
   Loader2,
-  Compass,
-  ChevronRight,
-  TrendingUp,
-  Store,
   ArrowUpRight,
   Utensils,
   Clock,
   Flame,
-  BadgeCheck,
   Star,
-  Heart,
-  Share2,
-  MoreVertical
 } from "lucide-react";
 import { shops } from "@/config/shopMenus";
 import ProductCard from "@/components/ProductCard";
-import VendingMachine from "@/components/VendingMachine";
 import { supabase } from "@/lib/supabase";
-import MembershipBanner from "@/components/MembershipBanner";
-import HomeSpecialSections from "@/components/HomeSpecialSections";
-import { useAuth } from "@/contexts/AuthContext";
-import BlinkitZomatoTransition from "@/components/BlinkitZomatoTransition";
-import BlinkitAnnounceModal from "@/components/BlinkitAnnounceModal";
-import ThreeDStreet from "@/components/ThreeDStreet";
 import type { Database } from "@/types/supabase";
 import { LayoutGrid, Boxes } from "lucide-react";
+
+const VendingMachine = lazy(() => import("@/components/VendingMachine"));
+const HomeSpecialSections = lazy(() => import("@/components/HomeSpecialSections"));
+const BlinkitZomatoTransition = lazy(() => import("@/components/BlinkitZomatoTransition"));
+const BlinkitAnnounceModal = lazy(() => import("@/components/BlinkitAnnounceModal"));
+const ThreeDStreet = lazy(() => import("@/components/ThreeDStreet"));
 
 const categories = [
   { id: "All", label: "All" },
@@ -55,7 +38,10 @@ function HeroSpotlight() {
       <motion.img 
         src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?q=70&w=1200&auto=format&fit=crop" 
         alt="Spotlight" 
-        loading="lazy" decoding="async" style={{ willChange: "transform" }}
+        loading="eager"
+        fetchPriority="high"
+        decoding="async"
+        style={{ willChange: "transform" }}
         initial={{ scale: 1.1 }}
         animate={{ scale: 1 }}
         transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
@@ -90,7 +76,6 @@ function HeroSpotlight() {
 
 export default function Home() {
   const navigate = useNavigate();
-  const { user } = useAuth();
   const [products, setProducts] = useState<any[]>([]);
   const [productsLoading, setProductsLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState("All");
@@ -147,15 +132,6 @@ export default function Home() {
     return () => clearInterval(interval);
   }, []);
 
-  const fastCategories = [
-    { name: "Burger", img: "https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=200&h=200&auto=format&fit=crop" },
-    { name: "Pizza", img: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=200&h=200&auto=format&fit=crop" },
-    { name: "Pasta", img: "https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=200&h=200&auto=format&fit=crop" },
-    { name: "Noodles", img: "https://images.unsplash.com/photo-1585032226651-759b368d7246?w=200&h=200&auto=format&fit=crop" },
-    { name: "Rolls", img: "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=200&h=200&auto=format&fit=crop" },
-    { name: "Biryani", img: "https://images.unsplash.com/photo-1563379091339-03b2164bb3fe?w=200&h=200&auto=format&fit=crop" },
-  ];
-
   useEffect(() => {
     async function fetchProducts() {
       setProductsLoading(true);
@@ -177,23 +153,20 @@ export default function Home() {
     fetchProducts();
   }, [activeCategory]);
 
-  const modes = [
-    { id: "meal", label: "Full Meals", icon: Utensils },
-    { id: "quick", label: "Blinkit / Zwigato", icon: Flame },
-  ];
-
   return (
     <div className="min-h-screen bg-[#000000] text-white">
-      <AnimatePresence>
-        {showQuickTransition && (
-          <BlinkitZomatoTransition onComplete={() => {
-            setShowQuickTransition(false);
-            navigate('/quick-store');
-          }} />
-        )}
-      </AnimatePresence>
+      <Suspense fallback={null}>
+        <AnimatePresence>
+          {showQuickTransition && (
+            <BlinkitZomatoTransition onComplete={() => {
+              setShowQuickTransition(false);
+              navigate('/quick-store');
+            }} />
+          )}
+        </AnimatePresence>
 
-      <BlinkitAnnounceModal onCheck={() => setShowQuickTransition(true)} />
+        <BlinkitAnnounceModal />
+      </Suspense>
 
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <HeroSpotlight />
@@ -279,10 +252,12 @@ export default function Home() {
                 exit={{ opacity: 0, y: -30 }}
                 transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
               >
-                <HomeSpecialSections
-                  activeCat={activeFoodCat}
-                  onCatChange={setActiveFoodCat}
-                />
+                <Suspense fallback={<div className="h-24 rounded-[2rem] border border-white/5 bg-white/[0.02]" />}>
+                  <HomeSpecialSections
+                    activeCat={activeFoodCat}
+                    onCatChange={setActiveFoodCat}
+                  />
+                </Suspense>
 
                 {/* ═══ SHOP DISCOVERY FLOW (STRUCTURED CARDS) ═══ */}
                 {activeFoodCat === "all" && (
@@ -380,6 +355,8 @@ export default function Home() {
                                 <img 
                                   src={shop.heroImage} 
                                   alt={shop.name} 
+                                  loading="lazy"
+                                  decoding="async"
                                   className={`w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 ${!shop.isOpen ? 'grayscale opacity-40' : ''}`} 
                                 />
                                 
@@ -425,7 +402,9 @@ export default function Home() {
                           exit={{ opacity: 0, scale: 1.1 }}
                           transition={{ type: "spring", stiffness: 300, damping: 25 }}
                         >
-                          <ThreeDStreet shops={liveShops} />
+                          <Suspense fallback={<div className="h-[420px] rounded-[2.5rem] border border-white/5 bg-white/[0.02]" />}>
+                            <ThreeDStreet shops={liveShops} />
+                          </Suspense>
                         </motion.div>
                       )}
                     </AnimatePresence>
@@ -437,7 +416,9 @@ export default function Home() {
                         Real-time Vending Availability
                       </p>
                     </div>
-                    <VendingMachine />
+                    <Suspense fallback={<div className="h-[320px] rounded-[2.5rem] border border-white/5 bg-white/[0.02]" />}>
+                      <VendingMachine />
+                    </Suspense>
                   </div>
                 )}
                   </div>

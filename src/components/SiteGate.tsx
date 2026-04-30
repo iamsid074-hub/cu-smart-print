@@ -33,20 +33,26 @@ function getIST() {
 }
 
 function isItemsOpen(): boolean {
-  // Always open — no closing hours
-  return true;
+  const { hours, minutes } = getIST();
+  const totalMinutes = hours * 60 + minutes;
+
+  return totalMinutes >= 6 * 60 && totalMinutes < 22 * 60;
 }
 
 function isFoodOpen(): boolean {
-  // Always open — no closing hours
-  return true;
+  const { hours, minutes } = getIST();
+  const totalMinutes = hours * 60 + minutes;
+
+  return totalMinutes >= 18 * 60 || totalMinutes < 30;
 }
 
 function getNextOpenTime(): string {
-  const { hours } = getIST();
-  if (hours < 6) return "6:00 AM";
-  if (hours >= 22) return "6:00 AM tomorrow";
-  return "6:00 AM";
+  const { hours, minutes } = getIST();
+  const totalMinutes = hours * 60 + minutes;
+
+  if (totalMinutes < 6 * 60) return "6:00 AM";
+  if (totalMinutes >= 22 * 60 || totalMinutes < 30) return "6:00 AM";
+  return "6:00 PM";
 }
 
 // ─── Closed Screen ─────────────────────────────────────────────────────────────
