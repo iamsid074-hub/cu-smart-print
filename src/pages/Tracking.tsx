@@ -255,13 +255,19 @@ export default function Tracking() {
     } else {
       query = query
         .eq("buyer_id", user.id)
-        .neq("status", "draft")
         .order("created_at", { ascending: false })
         .limit(1);
     }
 
-    const { data } = await query.single();
-    setOrder(data || null);
+    const { data: orderList } = await query;
+    const data = orderList?.[0];
+    
+    // Hide orders that are awaiting online payment
+    if (data && data.payment_method === "cashfree" && data.payment_status === "pending") {
+      setOrder(null);
+    } else {
+      setOrder(data || null);
+    }
     setLoading(false);
   };
 

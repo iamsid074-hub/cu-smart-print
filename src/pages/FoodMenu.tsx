@@ -170,7 +170,7 @@ export default function FoodMenu() {
             ? `[FOOD] ${orderSnapshot.title}`
             : orderSnapshot.customNotes,
         buyer_phone: orderSnapshot.phone,
-        status: "draft",
+        status: "pending",
         payment_method: "cashfree",
         payment_status: "pending",
         seller_notified_at: new Date().toISOString(),

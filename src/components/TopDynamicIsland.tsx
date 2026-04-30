@@ -268,19 +268,26 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
   // Separate stable fetch fn that never depends on trackingOrder.id
   const fetchLatestActiveOrder = useCallback(async () => {
     if (!user) return;
-    const { data } = await supabase
+    const { data: orderList } = await supabase
       .from("orders")
       .select(
         "id, status, delivery_location, delivery_room, total_price, created_at, payment_method, payment_status, products(title, image_url)"
       )
       .eq("buyer_id", user.id)
       .not("status", "in", '("completed","cancelled","seller_rejected")')
-      .neq("status", "draft")
       .order("created_at", { ascending: false })
-      .limit(1)
-      .maybeSingle();
+      .limit(1);
+    
+    const data = orderList?.[0];
     if (data) {
-      setTrackingOrder(data);
+      // Hide orders that are awaiting online payment
+      if (data.payment_method === "cashfree" && data.payment_status === "pending") {
+        setTrackingOrder(null);
+      } else {
+        setTrackingOrder(data);
+      }
+    } else {
+      setTrackingOrder(null);
     }
   }, [user]);
 

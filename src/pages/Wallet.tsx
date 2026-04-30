@@ -436,11 +436,12 @@ export default function Wallet() {
   const fetchWalletData = async () => {
     if (!user) return;
 
-    const { data: profile } = await supabase
+    const { data: profileList } = await supabase
       .from("profiles")
       .select("wallet_balance, full_name")
-      .eq("id", user.id)
-      .single();
+      .eq("id", user.id);
+      
+    const profile = profileList?.[0];
     if (profile) {
       setWalletBalance(profile.wallet_balance || 0);
       setProfileName(profile.full_name || user?.user_metadata?.full_name || "CU USER");

@@ -204,7 +204,7 @@ export default function ProductDetail() {
         delivery_location: deliveryLocation,
         delivery_room: deliveryRoom || null,
         buyer_phone: phone.replace(/\D/g, ""),
-        status: method === "online" ? "draft" : "pending",
+        status: "pending",
         payment_method: method === "online" ? "cashfree" : "cod",
         payment_status: method === "online" ? "pending" : "pending",
         seller_notified_at: new Date().toISOString(),

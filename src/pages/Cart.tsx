@@ -142,11 +142,10 @@ export default function Cart() {
           "delivering",
         ])
         .order("created_at", { ascending: false })
-        .limit(1)
-        .single();
+        .limit(1);
 
-      if (!error && data) {
-        setActiveOrder(data);
+      if (!error && data && data.length > 0) {
+        setActiveOrder(data[0]);
       } else {
         setActiveOrder(null);
       }
@@ -154,11 +153,12 @@ export default function Cart() {
     };
 
     const fetchWallet = async () => {
-      const { data } = await supabase
+      const { data: profileList } = await supabase
         .from("profiles")
         .select("wallet_balance, total_orders, hostel_block, full_name")
-        .eq("id", user.id)
-        .single();
+        .eq("id", user.id);
+        
+      const data = profileList?.[0];
       if (data) {
         setWalletBalance(data.wallet_balance || 0);
         setTotalOrdersTracker(data.total_orders || 0);
@@ -309,11 +309,11 @@ export default function Cart() {
     // 1. Ensure Profile Exists (Auto-fix for missing profiles / Foreign Key error 23503)
     // IMPORTANT: Only update phone_number and hostel_block — NEVER overwrite full_name
     // because the user may have manually set their name in Profile settings.
-    const { data: existingProfile } = await supabase
+    const { data: profileList } = await supabase
       .from("profiles")
       .select("full_name")
-      .eq("id", user!.id)
-      .maybeSingle();
+      .eq("id", user!.id);
+    const existingProfile = profileList?.[0];
 
     await supabase.from("profiles").upsert(
       {
@@ -343,16 +343,17 @@ export default function Cart() {
       delivery_location: `${hostel} - Floor ${floor}`,
       delivery_room: `[ROOM:${room}] | [ITEMS:${fullItemsString}]`,
       buyer_phone: phoneClean,
-      status: isCashfreeCartOrder ? "draft" : "pending",
-      payment_method: paymentMethod === "online" ? "cashfree" : paymentMethod === "virtual_card" ? "virtual_card" : "cod",
+      status: "pending",
+      payment_method: paymentMethod === "online" ? "cashfree" : (paymentMethod === "virtual_card" ? "virtual_card" : "cod"),
       payment_status: isCashfreeCartOrder ? "pending" : (paymentMethod === "virtual_card" ? "paid" : "pending"),
-      razorpay_payment_id: paymentId || null,
+      razorpay_payment_id: null,
       is_quick: hasQuickItem,
       seller_notified_at: new Date().toISOString(),
     }).select("id");
 
     if (error) {
       console.error("Supabase Insert Error:", error);
+      alert(`DB Insert Error: ${error.message} (${error.code})`);
       throw error;
     }
 
@@ -409,11 +410,16 @@ export default function Cart() {
   const handleCashfreeCartCheckout = async () => {
     setSubmitting(true);
     try {
+      console.log("Starting Cashfree checkout flow...");
+      
       // 1. Create DB order first (payment_status: pending)
       const dbOrderId = await createOrder(undefined, true);
-      if (!dbOrderId) throw new Error("Failed to create order");
+      console.log("DB Order created:", dbOrderId);
+      
+      if (!dbOrderId) throw new Error("Failed to create database order record");
 
       // 2. Create Cashfree payment session
+      console.log("Invoking create-cashfree-order edge function...");
       const { data, error } = await supabase.functions.invoke("create-cashfree-order", {
         body: {
           amount: orderTotal.toFixed(2),
@@ -423,20 +429,32 @@ export default function Cart() {
         },
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Edge Function Error:", error);
+        throw error;
+      }
+      
+      console.log("Cashfree session data received:", data);
 
       // 3. Launch Cashfree checkout — will redirect the page
       if (cashfree && data.payment_session_id) {
+        console.log("Launching Cashfree checkout...");
         await cashfree.checkout({
           paymentSessionId: data.payment_session_id,
           redirectTarget: "_self",
         });
       } else {
-        throw new Error("Payment session not received. Please try again.");
+        if (!cashfree) console.error("Cashfree SDK not loaded");
+        if (!data.payment_session_id) console.error("Missing payment_session_id in response");
+        throw new Error("Payment gateway failed to initialize. Please try again.");
       }
     } catch (err: any) {
-      console.error("Cashfree checkout error:", err);
-      toast({ title: "Payment failed", description: err.message || "Please try again.", variant: "destructive" });
+      console.error("Final checkout error:", err);
+      toast({ 
+        title: "Payment initiation failed", 
+        description: err.message || "Something went wrong. Please check your connection.", 
+        variant: "destructive" 
+      });
       setSubmitting(false);
     }
   };
