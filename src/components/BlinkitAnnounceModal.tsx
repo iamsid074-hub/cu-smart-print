@@ -194,7 +194,7 @@ export default function BlinkitAnnounceModal() {
                     }}
                   />
                   <Gamepad2 size={16} />
-                  Play Now ->
+                  Play Now ›
                 </motion.button>
               </div>
 
