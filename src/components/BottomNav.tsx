@@ -109,7 +109,7 @@ const BottomNav = () => {
           }}
         >
           <Gamepad2 size={24} strokeWidth={2.5} className="mb-1" />
-          <span className="text-[12px] font-black tracking-tight leading-none italic uppercase">Games -></span>
+          <span className="text-[12px] font-black tracking-tight leading-none italic uppercase">Games ›</span>
         </Link>
       </div>
     </motion.div>
