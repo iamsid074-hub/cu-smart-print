@@ -78,7 +78,7 @@ function NumPad({
 
   return (
     <div
-      className="fixed top-0 right-0 bottom-0 left-[80px] z-[9999] bg-black/85 flex flex-col items-center justify-center px-6"
+      className="fixed top-0 right-0 bottom-0 left-0 z-[9999] bg-black/85 flex flex-col items-center justify-center px-6"
     >
       <div
         className="w-full max-w-[280px] bg-[#1c1c1e] rounded-[2rem] p-5 border border-white/10 shadow-2xl mx-auto"
@@ -156,7 +156,7 @@ function TransactionsSheet({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed top-0 right-0 bottom-0 left-[80px] z-[9990] bg-black/70 backdrop-blur-sm flex items-end"
+      className="fixed top-0 right-0 bottom-0 left-0 z-[9990] bg-black/70 backdrop-blur-sm flex items-end"
       onClick={onClose}
     >
       <motion.div
