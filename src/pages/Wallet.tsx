@@ -594,7 +594,6 @@ export default function Wallet() {
   // ── Unlock wallet ──
   const handleUnlockSubmit = () => {
     if (unlockInput === passcode) {
-      play('unlock');
       window.dispatchEvent(new Event("wallet_unlock_success"));
       setTimeout(() => {
         setBalanceVisible(false);
@@ -688,7 +687,6 @@ export default function Wallet() {
 
   const handleRevealUnlockSubmit = () => {
     if (revealInput === revealPasscode) {
-      play('unlock');
       window.dispatchEvent(new Event("play_wallet_sound"));
       setBalanceVisible(true);
       setShowRevealUnlockModal(false);
@@ -775,7 +773,6 @@ export default function Wallet() {
                           setSetupInput("");
                           setSetupFirstPass(prev => {
                             if (next === prev) {
-                              play('unlock');
                               localStorage.setItem(getWalletLockKey(user!.id), next);
                               setPasscode(next);
                               setTimeout(() => {
@@ -872,7 +869,6 @@ export default function Wallet() {
                       if (next.length === 4) {
                         const savedPass = localStorage.getItem(getWalletLockKey(user!.id));
                         if (next === savedPass) {
-                          play('unlock');
                           setTimeout(() => {
                             setBalanceVisible(false);
                             setIsUnlocked(true);
