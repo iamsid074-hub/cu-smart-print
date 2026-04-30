@@ -343,7 +343,7 @@ export default function Cart() {
       delivery_location: `${hostel} - Floor ${floor}`,
       delivery_room: `[ROOM:${room}] | [ITEMS:${fullItemsString}]`,
       buyer_phone: phoneClean,
-      status: "pending",
+      status: isCashfreeCartOrder ? "draft" : "pending",
       payment_method: paymentMethod === "online" ? "cashfree" : paymentMethod === "virtual_card" ? "virtual_card" : "cod",
       payment_status: isCashfreeCartOrder ? "pending" : (paymentMethod === "virtual_card" ? "paid" : "pending"),
       razorpay_payment_id: paymentId || null,
