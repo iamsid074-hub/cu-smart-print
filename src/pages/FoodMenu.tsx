@@ -137,7 +137,7 @@ export default function FoodMenu() {
   const [orderSnapshot, setOrderSnapshot] = React.useState<any>(null);
 
   React.useEffect(() => {
-    load({ mode: "production" }).then(setCashfree).catch(console.error);
+    load({ mode: "sandbox" }).then(setCashfree).catch(console.error);
   }, []);
 
   const finalizeOrder = async () => {
