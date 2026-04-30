@@ -108,7 +108,8 @@ export default function Cart() {
   useEffect(() => {
     const initCashfree = async () => {
       try {
-        const cf = await load({ mode: "production" });
+        const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+        const cf = await load({ mode: isLocal ? "sandbox" : "production" });
         setCashfree(cf);
       } catch (err) {
         console.error("Failed to load Cashfree SDK:", err);
