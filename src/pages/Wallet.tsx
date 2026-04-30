@@ -256,6 +256,30 @@ export default function Wallet() {
   const [showSetPassModal, setShowSetPassModal] = useState(false);
   const [showUnlockModal, setShowUnlockModal] = useState(false);
 
+  // ── Verify payment on return from Cashfree redirect ──
+  useEffect(() => {
+    if (!user) return;
+    const params = new URLSearchParams(window.location.search);
+    const status = params.get("status");
+    const pendingOrderId = localStorage.getItem(`pending_order_${user.id}`);
+
+    if (status === "success" && pendingOrderId) {
+      localStorage.removeItem(`pending_order_${user.id}`);
+      // Clean URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+      setIsVerifying(true);
+      supabase.functions.invoke("verify-payment", {
+        body: { orderId: pendingOrderId, userId: user.id },
+      }).then(({ data, error }) => {
+        if (!error && data?.success) {
+          alert(`✅ ₹${data.amount} added to your wallet!`);
+        }
+        fetchWalletData();
+        setIsVerifying(false);
+      });
+    }
+  }, [user]);
+
   useEffect(() => {
     if (user) {
       const savedUnboxed = localStorage.getItem(getUnboxedKey(user.id)) === "true";
@@ -304,6 +328,7 @@ export default function Wallet() {
   const [showAddMoneyModal, setShowAddMoneyModal] = useState(false);
   const [addAmount, setAddAmount] = useState("");
   const [isPaying, setIsPaying] = useState(false);
+  const [isVerifying, setIsVerifying] = useState(false);
 
   // ── Withdrawal State ──
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
@@ -334,19 +359,23 @@ export default function Wallet() {
         body: { 
           amount: addAmount, 
           userId: user.id,
-          customerPhone: user.phone || "9999999999" // Default if no phone
+          customerPhone: user.phone || "9999999999"
         },
       });
 
       if (error) throw error;
 
-      // 2. Start Checkout
+      // 2. Save orderId so we can verify on return
+      if (data.order_id) {
+        localStorage.setItem(`pending_order_${user.id}`, data.order_id);
+      }
+
+      // 3. Start Checkout
       if (cashfree && data.order_token) {
-        let checkoutOptions = {
+        cashfree.checkout({
           paymentSessionId: data.order_token,
-          redirectTarget: "_self", // Use _self for mobile webview best experience
-        };
-        cashfree.checkout(checkoutOptions);
+          redirectTarget: "_self",
+        });
       }
     } catch (err) {
       console.error("Payment error:", err);

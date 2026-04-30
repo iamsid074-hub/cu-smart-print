@@ -45,8 +45,7 @@ serve(async (req) => {
         customer_name: "CU BAZZAR User"
       },
       order_meta: {
-        // Return URL is required, though we handle it seamlessly via the SDK
-        return_url: "http://localhost:5173/wallet?status=success", // Update for production
+        return_url: "https://www.cubazzar.shop/wallet?status=success",
       }
     };
 
