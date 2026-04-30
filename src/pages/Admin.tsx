@@ -2498,16 +2498,15 @@ export default function Admin() {
 
   // ── Fetch Stats ──────────────────────────────────────────────────────────────
   const fetchStats = useCallback(async () => {
-    setLoadingStats(true);
     const [
       { count: productCount },
-      { count: orderCount },
+      { data: ordersData },
       { count: userCount },
     ] = await Promise.all([
       supabase.from("products").select("*", { count: "exact", head: true }),
       supabase
         .from("orders")
-        .select("*", { count: "exact", head: true })
+        .select("payment_method, payment_status")
         .in("status", [
           "pending",
           "seller_accepted",
@@ -2517,9 +2516,14 @@ export default function Admin() {
         ]),
       supabase.from("profiles").select("*", { count: "exact", head: true }),
     ]);
+
+    const activeOrderCount = (ordersData || []).filter(o => 
+      !(o.payment_method === 'cashfree' && o.payment_status === 'pending')
+    ).length;
+
     setStats({
       totalProducts: productCount || 0,
-      activeOrders: orderCount || 0,
+      activeOrders: activeOrderCount,
       totalUsers: userCount || 0,
     });
     setLoadingStats(false);
@@ -2555,7 +2559,8 @@ export default function Admin() {
       ...o,
       buyer: o.buyer,
       seller: o.seller,
-    }));
+    })).filter(o => !(o.payment_method === 'cashfree' && o.payment_status === 'pending'));
+    
     setOrders(mapped as Order[]);
     setRecentOrders(mapped.slice(0, 5) as Order[]);
     setLoadingOrders(false);

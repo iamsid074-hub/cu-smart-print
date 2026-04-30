@@ -145,7 +145,13 @@ export default function Cart() {
         .limit(1);
 
       if (!error && data && data.length > 0) {
-        setActiveOrder(data[0]);
+        const orderData = data[0];
+        // Hide if it's a pending online payment
+        if (orderData.payment_method === "cashfree" && orderData.payment_status === "pending") {
+          setActiveOrder(null);
+        } else {
+          setActiveOrder(orderData);
+        }
       } else {
         setActiveOrder(null);
       }
