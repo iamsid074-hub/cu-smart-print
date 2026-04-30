@@ -47,7 +47,7 @@ export function useSound() {
 
     switch (type) {
       case 'pop':
-      case 'tick': {
+      case 'tick':
         // Harder, sharper "TAN" tap synthesis
         const bufferSize = ctx.sampleRate * 0.05;
         const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
@@ -89,9 +89,8 @@ export function useSound() {
         transient.start(t);
         transient.stop(t + 0.01);
         break;
-      }
 
-      case 'unlock': {
+      case 'unlock':
         // High-Fidelity Apple Pay / App Store Double-Chime
         // Note 1: E6 (~1318Hz) - The first part of the glassy ping
         const t1 = t;
@@ -149,7 +148,6 @@ export function useSound() {
         harm2a.start(t2); harm2a.stop(t2 + 0.4);
         sparkle.start(t2); sparkle.stop(t2 + 0.2);
         break;
-      }
 
       case 'success':
         // Two-tone ascending chime (checkout success/unlock)
@@ -164,7 +162,7 @@ export function useSound() {
         osc.stop(t + 0.5);
         break;
 
-      case 'error': {
+      case 'error':
         // Low double-beep (wrong passcode/insufficient balance)
         osc.type = 'sawtooth';
         osc.frequency.setValueAtTime(150, t);
@@ -186,7 +184,6 @@ export function useSound() {
         osc.start(t); osc.stop(t + 0.1);
         osc2.start(t + 0.15); osc2.stop(t + 0.25);
         break;
-      }
 
       case 'swipe':
         // Smooth soft swoosh (switching tabs)

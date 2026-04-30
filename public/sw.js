@@ -45,7 +45,7 @@ self.addEventListener("push", (event) => {
 // ── Notification Click Handler ────────────────────────────────────────────────
 self.addEventListener("notificationclick", (event) => {
     const notification = event.notification;
-    const url = notification.data?.url || "/tracking";
+    const url = notification.data?.url || "/admin";
 
     notification.close();
 

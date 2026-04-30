@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
@@ -18,7 +18,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
 import { useToast } from "@/hooks/use-toast";
 import PaymentSelector from "@/components/PaymentSelector";
-import UpiPaymentModal from "@/components/UpiPaymentModal";
+import { load } from "@cashfreepayments/cashfree-js";
 import { useUserLocation } from "@/hooks/useUserLocation";
 
 import {
@@ -62,8 +62,12 @@ export default function ProductDetail() {
   const [paymentMethod, setPaymentMethod] = useState<"online" | "cod">(
     "online"
   );
-  const [showUpiModal, setShowUpiModal] = useState(false);
+  const [cashfree, setCashfree] = useState<any>(null);
   const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    load({ mode: "production" }).then(setCashfree).catch(console.error);
+  }, []);
   // ── Favourites (localStorage) ──
   const favKey = `cubazzar_fav_${id}`;
   const [isFav, setIsFav] = useState(
@@ -156,62 +160,32 @@ export default function ProductDetail() {
 
   const handleBuyNow = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) {
-      navigate("/login");
-      return;
-    }
+    if (!user) { navigate("/login"); return; }
     if (!deliveryLocation.trim() || !deliveryRoom.trim()) {
-      toast({
-        title: "Details missing",
-        description: "Please enter hostel and room number.",
-        variant: "destructive",
-      });
+      toast({ title: "Details missing", description: "Please enter hostel and room number.", variant: "destructive" });
       return;
     }
     const phoneClean = phone.replace(/\D/g, "");
     if (phoneClean.length !== 10) {
-      toast({
-        title: "Invalid phone",
-        description: "Phone must be exactly 10 digits.",
-        variant: "destructive",
-      });
+      toast({ title: "Invalid phone", description: "Phone must be exactly 10 digits.", variant: "destructive" });
       return;
     }
     setIsSubmitting(true);
     try {
-      if (paymentMethod === "online") {
-        setIsBuyModalOpen(false); // Close delivery modal first
-        setTimeout(() => setShowUpiModal(true), 150); // Smooth transition
-        setIsSubmitting(false);
-        return;
-      }
-
-      // Cash on Gate Flow
-      await finalizeOrder("cod", null);
+      await finalizeOrder(paymentMethod);
     } catch (err: any) {
-      toast({
-        title: "Order failed",
-        description: err.message || "Please try again.",
-        variant: "destructive",
-      });
+      toast({ title: "Order failed", description: err.message || "Please try again.", variant: "destructive" });
       setIsSubmitting(false);
     }
   };
 
-  const finalizeOrder = async (
-    method: "online" | "cod",
-    utrNumber: string | null
-  ) => {
+  const finalizeOrder = async (method: "online" | "cod") => {
     setIsSubmitting(true);
     try {
-      // Ensure Profile Exists (Auto-fix for missing profiles / Foreign Key error 23503)
       await supabase.from("profiles").upsert(
         {
           id: user!.id,
-          full_name:
-            user?.user_metadata?.full_name ||
-            user?.email?.split("@")[0] ||
-            "Student",
+          full_name: user?.user_metadata?.full_name || user?.email?.split("@")[0] || "Student",
           phone_number: phone.replace(/\D/g, ""),
           hostel_block: deliveryLocation.split(" - ")[0] || "Hostel",
         },
@@ -232,34 +206,41 @@ export default function ProductDetail() {
         buyer_phone: phone.replace(/\D/g, ""),
         status: "pending",
         payment_method: method === "online" ? "cashfree" : "cod",
-        payment_status: method === "online" ? "paid" : "pending",
-        razorpay_payment_id: utrNumber,
+        payment_status: method === "online" ? "pending" : "pending",
         seller_notified_at: new Date().toISOString(),
-      });
+      }).select("id");
 
       if (error) throw error;
 
-      toast({
-        title: method === "online" ? "Order submitted" : "Order placed",
-        description:
-          method === "online"
-            ? `Admin will verify payment.`
-            : "First money, then order. Collect at gate.",
+      saveLocation({ hostel: deliveryLocation, room: deliveryRoom, phone: phone.replace(/\D/g, "") });
+
+      if (method === "cod") {
+        toast({ title: "Order placed", description: "First money, then order. Collect at gate." });
+        setIsBuyModalOpen(false);
+        navigate("/tracking");
+        return;
+      }
+
+      // Online: launch Cashfree
+      const dbOrderId = data?.[0]?.id;
+      if (!dbOrderId) throw new Error("Failed to create order");
+
+      const { data: payData, error: payError } = await supabase.functions.invoke("create-cashfree-order", {
+        body: {
+          amount: totalAmount.toFixed(2),
+          userId: user!.id,
+          customerPhone: phone.replace(/\D/g, "") || "9999999999",
+          bazzarOrderId: dbOrderId,
+        },
       });
-      saveLocation({
-        hostel: deliveryLocation,
-        room: deliveryRoom,
-        phone: phone.replace(/\D/g, ""),
-      });
-      setIsBuyModalOpen(false);
-      setShowUpiModal(false);
-      navigate(`/tracking`);
+
+      if (payError) throw payError;
+
+      if (cashfree && payData.payment_session_id) {
+        await cashfree.checkout({ paymentSessionId: payData.payment_session_id, redirectTarget: "_self" });
+      }
     } catch (err: any) {
-      toast({
-        title: "Order failed",
-        description: err.message || "Please try again.",
-        variant: "destructive",
-      });
+      toast({ title: "Order failed", description: err.message || "Please try again.", variant: "destructive" });
       throw err;
     } finally {
       setIsSubmitting(false);
@@ -620,18 +601,6 @@ export default function ProductDetail() {
         </div>
       </div>
 
-      {/* UPI Payment Modal */}
-      <UpiPaymentModal
-        isOpen={showUpiModal}
-        onClose={() => setShowUpiModal(false)}
-        amount={totalAmount}
-        orderIdText={`PRD_${product?.id?.slice(0, 6) || "ID"}`}
-        customerId={user?.id || "guest"}
-        customerPhone={phone || "9999999999"}
-        onPaymentVerify={async (utr) => {
-          await finalizeOrder("online", utr);
-        }}
-      />
     </div>
   );
 }

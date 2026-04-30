@@ -13,7 +13,7 @@ serve(async (req) => {
   }
 
   try {
-    const { amount, userId, customerPhone = "9999999999" } = await req.json();
+    const { amount, userId, customerPhone = "9999999999", bazzarOrderId, returnUrl } = await req.json();
 
     if (!amount || !userId) {
       return new Response(
@@ -22,19 +22,23 @@ serve(async (req) => {
       );
     }
 
-    // Get Cashfree credentials from environment variables
-    const appId = Deno.env.get("CASHFREE_APP_ID") || "test_app_id"; // Replace with your test app id
-    const secretKey = Deno.env.get("CASHFREE_SECRET_KEY") || "test_secret_key"; // Replace with your test secret key
-    const env = Deno.env.get("CASHFREE_ENV") || "sandbox"; // "sandbox" or "production"
+    const appId = Deno.env.get("CASHFREE_APP_ID") ?? "";
+    const secretKey = Deno.env.get("CASHFREE_SECRET_KEY") ?? "";
+    const env = Deno.env.get("CASHFREE_ENV") || "sandbox";
     
     const baseUrl = env === "production" 
       ? "https://api.cashfree.com/pg/orders"
       : "https://sandbox.cashfree.com/pg/orders";
 
-    // Generate a unique order ID
-    const orderId = `order_${userId}_${Date.now()}`;
+    // Encode order type in the Cashfree order ID for webhook routing
+    const orderId = bazzarOrderId
+      ? `bazzar_cart_${bazzarOrderId}`
+      : `bazzar_wallet_${userId}_${Date.now()}`;
 
-    // Create the order payload
+    const defaultReturnUrl = bazzarOrderId
+      ? "https://www.cubazzar.shop/tracking?payment=success"
+      : "https://www.cubazzar.shop/wallet?status=success";
+
     const orderPayload = {
       order_id: orderId,
       order_amount: parseFloat(amount),
@@ -45,7 +49,7 @@ serve(async (req) => {
         customer_name: "CU BAZZAR User"
       },
       order_meta: {
-        return_url: "https://www.cubazzar.shop/wallet?status=success",
+        return_url: returnUrl || defaultReturnUrl,
       }
     };
 

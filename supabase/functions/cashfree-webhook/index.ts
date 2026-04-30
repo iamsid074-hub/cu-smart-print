@@ -1,6 +1,11 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.6";
 
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+};
+
 // Use native Web Crypto API for HMAC — no external imports needed
 async function verifySignature(
   secretKey: string,
@@ -25,7 +30,6 @@ async function verifySignature(
     encoder.encode(dataToSign)
   );
 
-  // Convert to Base64
   const computed = btoa(
     String.fromCharCode(...new Uint8Array(signatureBuffer))
   );
@@ -34,6 +38,10 @@ async function verifySignature(
 }
 
 serve(async (req) => {
+  if (req.method === "OPTIONS") {
+    return new Response("ok", { headers: corsHeaders });
+  }
+
   try {
     const rawBody = await req.text();
     const headers = req.headers;
@@ -46,8 +54,6 @@ serve(async (req) => {
     }
 
     const secretKey = Deno.env.get("CASHFREE_SECRET_KEY") ?? "";
-
-    // Verify signature using native Web Crypto
     const isValid = await verifySignature(secretKey, timestamp, rawBody, signature);
 
     if (!isValid) {
@@ -56,48 +62,116 @@ serve(async (req) => {
     }
 
     const payload = JSON.parse(rawBody);
-    console.log("Webhook payload verified:", payload);
+    console.log("Webhook payload verified:", payload.type, payload.data?.order?.order_id);
 
-    // Only process successful payments
+    const supabaseAdmin = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
+    );
+
     if (payload.type === "PAYMENT_SUCCESS_WEBHOOK") {
       const orderData = payload.data.order;
       const amount = orderData.order_amount;
+      const cashfreeOrderId = orderData.order_id;
       const customerId = payload.data.customer_details.customer_id;
+      const cfPaymentId = payload.data.payment?.cf_payment_id ?? null;
 
-      // Initialize Supabase Admin Client to bypass RLS
-      const supabaseAdmin = createClient(
-        Deno.env.get("SUPABASE_URL") ?? "",
-        Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
-      );
+      let pushTitle = "💰 New Order!";
+      let pushBody = `₹${amount} received`;
+      let pushUrl = "/admin";
 
-      // 1. Fetch current balance
-      const { data: profile, error: fetchError } = await supabaseAdmin
-        .from("profiles")
-        .select("wallet_balance")
-        .eq("id", customerId)
-        .single();
+      if (cashfreeOrderId.startsWith("bazzar_cart_")) {
+        // ── Cart order payment ───────────────────────────────────────────────
+        const dbOrderId = cashfreeOrderId.replace("bazzar_cart_", "");
+        console.log(`Cart order payment: updating order ${dbOrderId}`);
 
-      if (fetchError) throw fetchError;
+        const { error: updateError } = await supabaseAdmin
+          .from("orders")
+          .update({
+            payment_status: "paid",
+            status: "seller_accepted",
+            razorpay_payment_id: cfPaymentId,
+          })
+          .eq("id", dbOrderId);
 
-      const newBalance = (profile.wallet_balance || 0) + amount;
+        if (updateError) {
+          console.error("Failed to update cart order:", updateError);
+          throw updateError;
+        }
 
-      // 2. Update balance
-      const { error: updateError } = await supabaseAdmin
-        .from("profiles")
-        .update({ wallet_balance: newBalance })
-        .eq("id", customerId);
+        // Fetch order details for notification
+        const { data: orderRow } = await supabaseAdmin
+          .from("orders")
+          .select("total_price, delivery_room, delivery_location")
+          .eq("id", dbOrderId)
+          .single();
 
-      if (updateError) throw updateError;
+        const roomMatch = orderRow?.delivery_room?.match(/\[ROOM:([^\]]+)\]/);
+        const room = roomMatch?.[1] ?? "Unknown";
 
-      // 3. Record transaction
-      await supabaseAdmin.from("wallet_transactions").insert({
-        user_id: customerId,
-        amount: amount,
-        type: "deposit",
-        description: `Added via Cashfree (Order: ${orderData.order_id})`,
-      });
+        pushTitle = "🛒 New Order Received!";
+        pushBody = `₹${amount} • Room: ${room}`;
+        pushUrl = "/admin";
 
-      console.log(`Successfully added ₹${amount} to user ${customerId}`);
+        console.log(`Cart order ${dbOrderId} marked as paid`);
+
+      } else {
+        // ── Wallet top-up (existing logic) ──────────────────────────────────
+        const { data: profile, error: fetchError } = await supabaseAdmin
+          .from("profiles")
+          .select("wallet_balance")
+          .eq("id", customerId)
+          .single();
+
+        if (fetchError) throw fetchError;
+
+        const newBalance = (profile.wallet_balance || 0) + amount;
+
+        const { error: updateError } = await supabaseAdmin
+          .from("profiles")
+          .update({ wallet_balance: newBalance })
+          .eq("id", customerId);
+
+        if (updateError) throw updateError;
+
+        await supabaseAdmin.from("wallet_transactions").insert({
+          user_id: customerId,
+          amount: amount,
+          type: "deposit",
+          description: `Added via Cashfree (Order: ${cashfreeOrderId})`,
+        });
+
+        pushTitle = "💳 Wallet Top-Up";
+        pushBody = `₹${amount} added to user wallet`;
+        pushUrl = "/admin";
+
+        console.log(`Wallet: added ₹${amount} to user ${customerId}`);
+      }
+
+      // ── Send push notification to admin (for ALL payment types) ───────────
+      try {
+        const pushRes = await fetch(
+          `${Deno.env.get("SUPABASE_URL")}/functions/v1/send-push-notification`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")}`,
+            },
+            body: JSON.stringify({
+              title: pushTitle,
+              body: pushBody,
+              url: pushUrl,
+              tag: `payment-${cashfreeOrderId}`,
+            }),
+          }
+        );
+        const pushResult = await pushRes.json();
+        console.log("Push result:", pushResult);
+      } catch (pushErr) {
+        // Don't fail the webhook if push fails
+        console.error("Push notification failed (non-fatal):", pushErr);
+      }
     }
 
     return new Response("Webhook processed successfully", { status: 200 });

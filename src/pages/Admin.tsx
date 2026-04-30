@@ -236,18 +236,84 @@ function StatusBadge({ status }: { status: string }) {
 }
 
 // ─── Admin Service Status Component ──────────────────────────────────────────
+const VAPID_PUBLIC_KEY = "BAtRKos_0xlqYANkC06lfo4ykyLLd7RvBIKspFypsRL2e0iIrxtBXDlHuGFyOlFWCmylhnPER_q44XfmyQUdxT0";
+
+function urlBase64ToUint8Array(base64String: string): Uint8Array {
+  const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
+  const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
+  const rawData = window.atob(base64);
+  return Uint8Array.from([...rawData].map((c) => c.charCodeAt(0)));
+}
+
 function AdminServiceStatus() {
   const [pushStatus, setPushStatus] = useState(AdminPushService.getStatus());
   const [isTracking, setIsTracking] = useState(AdminPushService.isTrackingActive());
   const [testing, setTesting] = useState(false);
+  const [webPushState, setWebPushState] = useState<"idle" | "requesting" | "subscribed" | "error">("idle");
 
   useEffect(() => {
     const interval = setInterval(() => {
       setPushStatus(AdminPushService.getStatus());
       setIsTracking(AdminPushService.isTrackingActive());
     }, 2000);
+    // Check current browser permission on load
+    if ("Notification" in window && Notification.permission === "granted") {
+      setWebPushState("subscribed");
+    }
     return () => clearInterval(interval);
   }, []);
+
+  const handleEnableWebPush = async () => {
+    if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
+      toast.error("Push notifications are not supported in this browser.");
+      return;
+    }
+    setWebPushState("requesting");
+    try {
+      const permission = await Notification.requestPermission();
+      if (permission !== "granted") {
+        toast.error("Notification permission denied.");
+        setWebPushState("error");
+        return;
+      }
+      const swReg = await navigator.serviceWorker.ready;
+      let sub = await swReg.pushManager.getSubscription();
+      if (!sub) {
+        sub = await swReg.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
+        });
+      }
+      const subJSON = sub.toJSON() as any;
+      const { data: { user } } = await supabase.auth.getUser();
+      const { error } = await supabase.from("push_subscriptions").upsert(
+        { user_id: user?.id, endpoint: subJSON.endpoint, p256dh: subJSON.keys.p256dh, auth: subJSON.keys.auth },
+        { onConflict: "endpoint" }
+      );
+      if (error) throw error;
+      setWebPushState("subscribed");
+      toast.success("Push notifications enabled! You'll get alerts even when Chrome is closed.");
+    } catch (err: any) {
+      console.error("Push subscription error:", err);
+      toast.error("Failed to enable notifications: " + err.message);
+      setWebPushState("error");
+    }
+  };
+
+  const handleTestWebPush = async () => {
+    setTesting(true);
+    try {
+      const { error } = await supabase.functions.invoke("send-push-notification", {
+        body: { title: "Test Notification", body: "Push notifications are working!", url: "/admin", tag: "test" },
+      });
+      if (error) throw error;
+      toast.success("Test push sent!");
+    } catch (err: any) {
+      toast.error("Push test failed: " + err.message);
+    } finally {
+      setTimeout(() => setTesting(false), 1000);
+    }
+  };
 
   const handleTest = async () => {
     setTesting(true);
@@ -258,11 +324,8 @@ function AdminServiceStatus() {
   const handleToggleTracking = async () => {
     const active = await AdminPushService.toggleTracking();
     setIsTracking(active);
-    if (active) {
-      toast.success("Live GPS Tracking Started");
-    } else {
-      toast.error("Live GPS Tracking Stopped");
-    }
+    if (active) { toast.success("Live GPS Tracking Started"); }
+    else { toast.error("Live GPS Tracking Stopped"); }
   };
 
   const statusColors = {
@@ -275,42 +338,63 @@ function AdminServiceStatus() {
   const statusLabels = {
     inactive: "Push: Off",
     initializing: "Push: Setup...",
-    active: "Push: Live ●",
+    active: "Push: Live",
     error: "Push: Error!",
   };
 
   return (
     <div className="flex flex-wrap items-center gap-2">
-      {/* Push Status Badge */}
       <span className={`px-2 py-1 rounded-lg text-[10px] font-black border tracking-tighter uppercase ${statusColors[pushStatus]}`}>
         {statusLabels[pushStatus]}
       </span>
+
+      {/* Web Push Enable / Test Button */}
+      {webPushState !== "subscribed" ? (
+        <button
+          onClick={handleEnableWebPush}
+          disabled={webPushState === "requesting"}
+          className="flex items-center gap-1.5 px-3 py-1 bg-violet-500 hover:bg-violet-600 text-white border border-violet-600 rounded-lg text-[10px] font-black tracking-tighter uppercase transition-all active:scale-95 disabled:opacity-50 shadow-lg shadow-violet-500/20"
+        >
+          <Bell className={`w-3 h-3 ${webPushState === "requesting" ? "animate-pulse" : ""}`} />
+          {webPushState === "requesting" ? "Enabling..." : "Enable Push"}
+        </button>
+      ) : (
+        <button
+          onClick={handleTestWebPush}
+          disabled={testing}
+          className="flex items-center gap-1.5 px-3 py-1 bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 rounded-lg text-[10px] font-black tracking-tighter uppercase transition-all active:scale-95"
+        >
+          <Bell className={`w-3 h-3 ${testing ? "animate-bounce" : ""}`} />
+          {testing ? "Sending..." : "Push Active"}
+        </button>
+      )}
 
       {/* Live Tracking Toggle */}
       <button
         onClick={handleToggleTracking}
         className={`flex items-center gap-1.5 px-3 py-1 border rounded-lg text-[10px] font-black tracking-tighter uppercase transition-all active:scale-95 ${
-          isTracking 
-            ? "bg-emerald-500 text-white border-emerald-600 shadow-lg shadow-emerald-500/20" 
+          isTracking
+            ? "bg-emerald-500 text-white border-emerald-600 shadow-lg shadow-emerald-500/20"
             : "bg-white text-slate-400 border-slate-200 hover:bg-slate-50"
         }`}
       >
         <MapPin className={`w-3 h-3 ${isTracking ? 'animate-pulse' : ''}`} />
-        {isTracking ? "GPS Tracking: ON" : "GPS Tracking: OFF"}
+        {isTracking ? "GPS: ON" : "GPS: OFF"}
       </button>
 
-      {/* Test Button */}
+      {/* Legacy In-App Test */}
       <button
         onClick={handleTest}
         disabled={testing}
         className="flex items-center gap-1.5 px-3 py-1 bg-white hover:bg-slate-50 border border-slate-200 text-slate-600 rounded-lg text-[10px] font-black tracking-tighter uppercase transition-all active:scale-95"
       >
         <Bell className={`w-3 h-3 ${testing ? 'animate-bounce' : ''}`} />
-        {testing ? "Testing..." : "Test Notification"}
+        {testing ? "Testing..." : "In-App Test"}
       </button>
     </div>
   );
 }
+
 
 // ─── Confirm Dialog ────────────────────────────────────────────────────────────
 function ConfirmDialog({

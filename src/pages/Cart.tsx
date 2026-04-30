@@ -91,6 +91,19 @@ export default function Cart() {
   );
   const floor = derivedFloor;
   const [submitting, setSubmitting] = useState(false);
+  const [cashfree, setCashfree] = useState<any>(null);
+
+  // Init Cashfree SDK
+  useEffect(() => {
+    load({ mode: "production" }).then(setCashfree).catch(console.error);
+  }, []);
+
+  // Handle return from Cashfree redirect
+  useEffect(() => {
+    if (searchParams.get("payment") === "success") {
+      toast({ title: "Payment successful! 🎉", description: "Your order is confirmed and being prepared." });
+    }
+  }, [searchParams]);
 
   // Risk Detection State
   const [riskEval, setRiskEval] = useState<RiskEvaluation | null>(null);
@@ -100,69 +113,6 @@ export default function Cart() {
 
   const [showDisclaimer, setShowDisclaimer] = useState(false);
   const [disclaimerAccepted, setDisclaimerAccepted] = useState(false);
-
-  // ── Cashfree Payment State ──
-  const [cashfree, setCashfree] = useState<any>(null);
-  const [isPaying, setIsPaying] = useState(false);
-
-  useEffect(() => {
-    const initCashfree = async () => {
-      try {
-        const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
-        const cf = await load({ mode: isLocal ? "sandbox" : "production" });
-        setCashfree(cf);
-      } catch (err) {
-        console.error("Failed to load Cashfree SDK:", err);
-      }
-    };
-    initCashfree();
-  }, []);
-
-  // ── Handle return from Cashfree ──
-  useEffect(() => {
-    if (!user) return;
-    const params = new URLSearchParams(window.location.search);
-    const status = params.get("status");
-    const pendingOrderId = localStorage.getItem(`pending_cart_order_${user.id}`);
-
-    if (status === "success" && pendingOrderId) {
-      localStorage.removeItem(`pending_cart_order_${user.id}`);
-      // Clean URL
-      window.history.replaceState({}, document.title, window.location.pathname);
-      
-      const finalizePaidOrder = async () => {
-        try {
-          setSubmitting(true);
-          // Verify payment first
-          const { data, error } = await supabase.functions.invoke("verify-payment", {
-            body: { orderId: pendingOrderId, userId: user.id },
-          });
-
-          if (error || !data?.success) {
-            throw new Error("Payment verification failed. If money was deducted, contact support.");
-          }
-
-          // Create the actual order in our system
-          await createOrder();
-          toast({
-            title: "Payment successful! 🎉",
-            description: "Your order has been placed successfully.",
-          });
-          navigate('/tracking');
-        } catch (err: any) {
-          toast({
-            title: "Verification failed",
-            description: err.message,
-            variant: "destructive",
-          });
-        } finally {
-          setSubmitting(false);
-        }
-      };
-      
-      finalizePaidOrder();
-    }
-  }, [user, navigate]);
 
   const [activeOrder, setActiveOrder] = useState<any>(null);
   const [loadingOrder, setLoadingOrder] = useState(true);
@@ -345,7 +295,7 @@ export default function Cart() {
     hasLocation &&
     (hasVending ? isRoomCorrect : true);
 
-  const createOrder = async (paymentId?: string) => {
+  const createOrder = async (paymentId?: string, skipNavigate = false): Promise<string | undefined> => {
     const itemsSummary = items
       .map(
         (i) =>
@@ -379,6 +329,9 @@ export default function Cart() {
       { onConflict: "id" }
     );
 
+    // For Cashfree cart orders, set payment_status to 'pending' (webhook will update)
+    const isCashfreeCartOrder = paymentMethod === "online" && skipNavigate;
+
     const { data, error } = await supabase.from("orders").insert({
       product_id: null,
       buyer_id: user!.id,
@@ -392,11 +345,11 @@ export default function Cart() {
       buyer_phone: phoneClean,
       status: "pending",
       payment_method: paymentMethod === "online" ? "cashfree" : paymentMethod === "virtual_card" ? "virtual_card" : "cod",
-      payment_status: (paymentMethod === "online" || paymentMethod === "virtual_card") ? "paid" : "pending",
+      payment_status: isCashfreeCartOrder ? "pending" : (paymentMethod === "virtual_card" ? "paid" : "pending"),
       razorpay_payment_id: paymentId || null,
       is_quick: hasQuickItem,
       seller_notified_at: new Date().toISOString(),
-    });
+    }).select("id");
 
     if (error) {
       console.error("Supabase Insert Error:", error);
@@ -441,13 +394,51 @@ export default function Cart() {
     // Save location for future auto-fill
     saveLocation({ hostel, room, phone: phoneClean });
 
-    // Clean up UI and state
-    clearCart();
-    setShowCheckout(false);
-    setShowUpiModal(false);
+    const insertedId = data?.[0]?.id as string | undefined;
 
-    // Redirect to tracking
-    navigate(`/tracking`);
+    // For cashfree cart orders: don't clear cart or navigate yet (redirect will handle it)
+    if (!skipNavigate) {
+      clearCart();
+      setShowCheckout(false);
+      navigate("/tracking");
+    }
+
+    return insertedId;
+  };
+
+  const handleCashfreeCartCheckout = async () => {
+    setSubmitting(true);
+    try {
+      // 1. Create DB order first (payment_status: pending)
+      const dbOrderId = await createOrder(undefined, true);
+      if (!dbOrderId) throw new Error("Failed to create order");
+
+      // 2. Create Cashfree payment session
+      const { data, error } = await supabase.functions.invoke("create-cashfree-order", {
+        body: {
+          amount: orderTotal.toFixed(2),
+          userId: user!.id,
+          customerPhone: phone || "9999999999",
+          bazzarOrderId: dbOrderId,
+        },
+      });
+
+      if (error) throw error;
+
+      // 3. Launch Cashfree checkout — will redirect the page
+      if (cashfree && data.payment_session_id) {
+        await cashfree.checkout({
+          paymentSessionId: data.payment_session_id,
+          redirectTarget: "_self",
+        });
+      } else {
+        throw new Error("Payment session not received. Please try again.");
+      }
+    } catch (err: any) {
+      console.error("Cashfree checkout error:", err);
+      toast({ title: "Payment failed", description: err.message || "Please try again.", variant: "destructive" });
+      setSubmitting(false);
+    }
   };
 
   const handleProceedToCheckout = () => {
@@ -512,40 +503,8 @@ export default function Cart() {
   const handleDisclaimerAccepted = async () => {
     setShowDisclaimer(false);
     if (paymentMethod === "online" && orderTotal > 0) {
-      if (!user) return;
-      setIsPaying(true);
-      try {
-        const { data, error } = await supabase.functions.invoke('create-cashfree-order', {
-          body: { 
-            amount: orderTotal.toString(), 
-            userId: user.id,
-            customerPhone: phone || "9999999999",
-            customerName: user.user_metadata?.full_name || "CU User",
-            returnUrl: `${window.location.origin}/cart?status=success`
-          },
-        });
-
-        if (error) throw error;
-
-        if (data.order_id) {
-          localStorage.setItem(`pending_cart_order_${user.id}`, data.order_id);
-        }
-
-        if (cashfree && data.order_token) {
-          cashfree.checkout({
-            paymentSessionId: data.order_token,
-            redirectTarget: "_self",
-          });
-        }
-      } catch (err: any) {
-        toast({
-          title: "Payment error",
-          description: err.message || "Failed to initiate payment.",
-          variant: "destructive"
-        });
-      } finally {
-        setIsPaying(false);
-      }
+      // Launch Cashfree payment gateway
+      await handleCashfreeCartCheckout();
     } else if (paymentMethod === "virtual_card") {
       // Virtual Card handles its own success in onSuccess callback
       // We do nothing here, the swipe UI is active
@@ -660,7 +619,15 @@ export default function Cart() {
               </label>
               <button
                 disabled={!disclaimerAccepted}
-                onClick={handleDisclaimerAccepted}
+                onClick={() => {
+                  setShowDisclaimer(false);
+                  setSubmitting(true);
+                  setTimeout(() => {
+                    setShowCheckout(false);
+                    setTimeout(() => setShowUpiModal(true), 150);
+                    setSubmitting(false);
+                  }, 100);
+                }}
                 className={`w-full py-3.5 rounded-2xl font-bold text-[14px] transition-all ${
                   disclaimerAccepted
                     ? 'bg-emerald-500 text-white hover:bg-emerald-600 active:scale-95'
@@ -1020,7 +987,6 @@ export default function Cart() {
           </>
         )}
       </div>
-
 
     </div>
   );

@@ -14,7 +14,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
-import UpiPaymentModal from "@/components/UpiPaymentModal";
+import { load } from "@cashfreepayments/cashfree-js";
 import { shops } from "@/config/shopMenus";
 import { getFoodSuggestions, estimatePrice } from "@/utils/foodUtils";
 // import ComboHighlightSection from "@/components/ComboHighlightSection";
@@ -132,14 +132,17 @@ export default function FoodMenu() {
     recognition.start();
   };
 
-  // UPI Payment Snapshot
-  const [showUpiModal, setShowUpiModal] = useState(false);
-  const [upiSnapshot, setUpiSnapshot] = useState<any>(null);
+  // Cashfree payment state
+  const [cashfree, setCashfree] = React.useState<any>(null);
+  const [orderSnapshot, setOrderSnapshot] = React.useState<any>(null);
 
-  const finalizeOrder = async (utrNumber: string) => {
-    if (!user || !upiSnapshot) return;
+  React.useEffect(() => {
+    load({ mode: "production" }).then(setCashfree).catch(console.error);
+  }, []);
+
+  const finalizeOrder = async () => {
+    if (!user || !orderSnapshot) return;
     try {
-      // Ensure Profile Exists (Auto-fix for missing profiles / Foreign Key error 23503)
       await supabase.from("profiles").upsert(
         {
           id: user.id,
@@ -147,8 +150,8 @@ export default function FoodMenu() {
             user?.user_metadata?.full_name ||
             user?.email?.split("@")[0] ||
             "Student",
-          phone_number: upiSnapshot.phone,
-          hostel_block: upiSnapshot.location?.split(" - ")[0] || "Hostel",
+          phone_number: orderSnapshot.phone,
+          hostel_block: orderSnapshot.location?.split(" - ")[0] || "Hostel",
         },
         { onConflict: "id" }
       );
@@ -157,41 +160,46 @@ export default function FoodMenu() {
         product_id: null,
         buyer_id: user.id,
         seller_id: "7450c873-f51d-469e-a33d-c44ca80beb0c",
-        base_price: upiSnapshot.price,
+        base_price: orderSnapshot.price,
         commission: 0,
         delivery_charge: 20,
-        total_price: upiSnapshot.price + 20,
-        delivery_location: upiSnapshot.location,
+        total_price: orderSnapshot.price + 20,
+        delivery_location: orderSnapshot.location,
         delivery_room:
-          upiSnapshot.type === "snack"
-            ? `[FOOD] ${upiSnapshot.title}`
-            : upiSnapshot.customNotes,
-        buyer_phone: upiSnapshot.phone,
+          orderSnapshot.type === "snack"
+            ? `[FOOD] ${orderSnapshot.title}`
+            : orderSnapshot.customNotes,
+        buyer_phone: orderSnapshot.phone,
         status: "pending",
         payment_method: "cashfree",
-        payment_status: "paid",
-        razorpay_payment_id: utrNumber,
+        payment_status: "pending",
         seller_notified_at: new Date().toISOString(),
-      });
+      }).select("id");
 
       if (error) throw error;
 
-      toast({
-        title: "Order placed! 🎉",
-        description: "Payment verified. Admin will process your order shortly.",
-      });
-      setShowUpiModal(false);
-      setUpiSnapshot(null);
+      const dbOrderId = data?.[0]?.id;
+      if (!dbOrderId) throw new Error("Failed to create order");
 
-      // Redirect to the tracking page (automatically fetches latest order)
-      navigate(`/tracking`);
-    } catch (err: any) {
-      toast({
-        title: "Order failed",
-        description: err.message || "Please try again.",
-        variant: "destructive",
+      const { data: payData, error: payError } = await supabase.functions.invoke("create-cashfree-order", {
+        body: {
+          amount: (orderSnapshot.price + 20).toFixed(2),
+          userId: user.id,
+          customerPhone: orderSnapshot.phone || "9999999999",
+          bazzarOrderId: dbOrderId,
+        },
       });
-      throw err;
+
+      if (payError) throw payError;
+
+      if (cashfree && payData.payment_session_id) {
+        await cashfree.checkout({
+          paymentSessionId: payData.payment_session_id,
+          redirectTarget: "_self",
+        });
+      }
+    } catch (err: any) {
+      toast({ title: "Order failed", description: err.message || "Please try again.", variant: "destructive" });
     }
   };
 
@@ -365,20 +373,6 @@ export default function FoodMenu() {
           </DialogContent>
         </Dialog>
 
-        <UpiPaymentModal
-          isOpen={showUpiModal}
-          onClose={() => {
-            setShowUpiModal(false);
-            setUpiSnapshot(null);
-          }}
-          amount={(upiSnapshot?.price || 0) + 20}
-          orderIdText={`FOOD_${upiSnapshot?.foodId || "X"}`}
-          customerId={user?.id || "guest"}
-          customerPhone={upiSnapshot?.phone || phone || "9999999999"}
-          onPaymentVerify={async (utr) => {
-            await finalizeOrder(utr);
-          }}
-        />
       </div>
     </div>
   );
