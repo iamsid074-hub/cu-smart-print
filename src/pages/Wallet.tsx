@@ -249,6 +249,7 @@ function TransactionsSheet({
 export default function Wallet() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { play } = useSound();
   const [walletBalance, setWalletBalance] = useState(0);
   const [weeklyOrders, setWeeklyOrders] = useState(0);
   const [transactions, setTransactions] = useState<any[]>([]);
@@ -593,6 +594,7 @@ export default function Wallet() {
   // ── Unlock wallet ──
   const handleUnlockSubmit = () => {
     if (unlockInput === passcode) {
+      play('success');
       window.dispatchEvent(new Event("wallet_unlock_success"));
       setTimeout(() => {
         setBalanceVisible(false);
@@ -601,6 +603,7 @@ export default function Wallet() {
         setUnlockInput("");
       }, 200);
     } else {
+      play('error');
       setUnlockInput("");
       window.dispatchEvent(new Event("cu_card_wrong_pass"));
     }
@@ -685,11 +688,13 @@ export default function Wallet() {
 
   const handleRevealUnlockSubmit = () => {
     if (revealInput === revealPasscode) {
+      play('success');
       window.dispatchEvent(new Event("play_wallet_sound"));
       setBalanceVisible(true);
       setShowRevealUnlockModal(false);
       setRevealInput("");
     } else {
+      play('error');
       setRevealInput("");
       window.dispatchEvent(new Event("cu_card_wrong_pass"));
     }
