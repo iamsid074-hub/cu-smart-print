@@ -2,23 +2,31 @@ import { useCallback, useEffect, useRef } from 'react';
 
 type SoundType = 'pop' | 'tick' | 'success' | 'error' | 'swipe';
 
-export function useSound() {
-  const audioCtxRef = useRef<AudioContext | null>(null);
+let globalAudioCtx: AudioContext | null = null;
 
+function getAudioCtx() {
+  if (!globalAudioCtx) {
+    try {
+      globalAudioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+    } catch (e) {
+      return null;
+    }
+  }
+  if (globalAudioCtx.state === 'suspended') {
+    globalAudioCtx.resume().catch(() => {});
+  }
+  return globalAudioCtx;
+}
+
+export function useSound() {
   useEffect(() => {
-    // Initialize AudioContext lazily on first user interaction to comply with browser autoplay policies
+    // Initialize AudioContext lazily on first user interaction
     const initAudio = () => {
-      if (!audioCtxRef.current) {
-        audioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
-      }
-      // If it was suspended, try to resume it
-      if (audioCtxRef.current.state === 'suspended') {
-        audioCtxRef.current.resume();
-      }
+      getAudioCtx();
     };
 
-    window.addEventListener('touchstart', initAudio, { once: true });
-    window.addEventListener('click', initAudio, { once: true });
+    window.addEventListener('touchstart', initAudio, { once: true, passive: true });
+    window.addEventListener('click', initAudio, { once: true, capture: true });
 
     return () => {
       window.removeEventListener('touchstart', initAudio);
@@ -27,19 +35,8 @@ export function useSound() {
   }, []);
 
   const play = useCallback((type: SoundType) => {
-    if (!audioCtxRef.current) {
-      // Try to initialize immediately if play is called before general interaction
-      try {
-        audioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
-      } catch (e) {
-        return; // Audio completely blocked or unsupported
-      }
-    }
-
-    const ctx = audioCtxRef.current;
-    if (ctx.state === 'suspended') {
-      ctx.resume().catch(() => {});
-    }
+    const ctx = getAudioCtx();
+    if (!ctx) return;
 
     const t = ctx.currentTime;
     const osc = ctx.createOscillator();
