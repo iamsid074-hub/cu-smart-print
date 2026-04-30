@@ -132,7 +132,7 @@ export default function Cart() {
     const fetchActiveOrder = async () => {
       const { data, error } = await supabase
         .from("orders")
-        .select("id, status, products(title)")
+        .select("id, status, payment_method, payment_status, products(title)")
         .eq("buyer_id", user.id)
         .in("status", [
           "pending",
