@@ -62,14 +62,13 @@ export default function Sections() {
       {/* ── Left Sidebar ── */}
       <motion.div
         initial={false}
-        animate={{ width: sidebarOpen ? SIDEBAR_W : 0, opacity: sidebarOpen ? 1 : 0 }}
-        transition={{ type: "spring", stiffness: 380, damping: 36 }}
-        className="fixed left-0 top-0 bottom-0 z-[70] overflow-hidden"
-        style={{ willChange: "width" }}
+        animate={{ x: sidebarOpen ? 0 : -SIDEBAR_W }}
+        transition={{ type: "spring", stiffness: 400, damping: 40 }}
+        className="fixed left-0 top-0 bottom-0 z-[70] shadow-[10px_0_30px_rgba(0,0,0,0.8)]"
+        style={{ width: SIDEBAR_W, willChange: "transform" }}
       >
         <div
-          className="h-full bg-[#0a0a0b] shadow-[10px_0_30px_rgba(0,0,0,0.8)] flex flex-col items-center py-5 gap-4 overflow-y-auto hide-scrollbar rounded-r-[1.2rem]"
-          style={{ width: SIDEBAR_W }}
+          className="h-full w-full bg-[#0a0a0b] flex flex-col items-center py-5 gap-4 overflow-y-auto hide-scrollbar rounded-r-[1.2rem]"
         >
           {/* BACK TO HOME */}
           <button
@@ -128,9 +127,9 @@ export default function Sections() {
       {/* ── Toggle Arrow Tab ── */}
       <motion.button
         onClick={() => setSidebarOpen(prev => !prev)}
-        animate={{ left: sidebarOpen ? SIDEBAR_W : 0 }}
-        transition={{ type: "spring", stiffness: 380, damping: 36 }}
-        className="fixed top-1/2 z-[75] -translate-y-1/2 flex items-center justify-center"
+        animate={{ x: sidebarOpen ? SIDEBAR_W : 0 }}
+        transition={{ type: "spring", stiffness: 400, damping: 40 }}
+        className="fixed top-24 left-0 z-[75] flex items-center justify-center"
         style={{
           width: 20,
           height: 52,
@@ -139,6 +138,7 @@ export default function Sections() {
           boxShadow: "4px 0 16px rgba(0,0,0,0.5), inset -1px 0 0 rgba(255,255,255,0.06)",
           border: "1px solid rgba(255,255,255,0.08)",
           borderLeft: "none",
+          willChange: "transform"
         }}
         aria-label={sidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
       >
@@ -151,12 +151,7 @@ export default function Sections() {
       </motion.button>
 
       {/* ── Full-Screen Content Area ── */}
-      <motion.div
-        animate={{ marginLeft: sidebarOpen ? SIDEBAR_W : 0 }}
-        transition={{ type: "spring", stiffness: 380, damping: 36 }}
-        className="flex-1 w-full min-h-screen bg-black"
-        style={{ willChange: "margin-left" }}
-      >
+      <div className="flex-1 w-full min-h-screen bg-black">
         <AnimatePresence mode="wait">
           <motion.div
             key={activeSection}
@@ -169,7 +164,7 @@ export default function Sections() {
             <ActiveComponent />
           </motion.div>
         </AnimatePresence>
-      </motion.div>
+      </div>
     </div>
   );
 }
