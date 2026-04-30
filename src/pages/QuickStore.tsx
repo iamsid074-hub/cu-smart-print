@@ -69,17 +69,8 @@ export default function QuickStore() {
 
   // Check if store is open (10 PM - 2 AM)
   useEffect(() => {
-    const checkTime = () => {
-      const now = new Date();
-      const hour = now.getHours();
-      // Store open from 10 PM to 2 AM
-      setIsOpen(hour >= 22 || hour < 2);
-      // Squad always visible
-      setIsSquadTime(true);
-    };
-    checkTime();
-    const timer = setInterval(checkTime, 60000);
-    return () => clearInterval(timer);
+    setIsOpen(true);
+    setIsSquadTime(true);
   }, []);
 
   useEffect(() => {

@@ -92,11 +92,7 @@ export default function Home() {
     try {
       const { data, error } = await supabase.from("shops").select("id, is_open");
       
-      const now = new Date();
-      const hour = now.getHours();
-      const min = now.getMinutes();
-      const currentTotal = hour * 60 + min;
-      const isAutoOpen = currentTotal >= 10 * 60 && currentTotal <= 23 * 60 + 30;
+      const isAutoOpen = true; // Site is now open 24/7
 
       if (error) {
         console.warn("Shops table missing or RLS blocking:", error.message);

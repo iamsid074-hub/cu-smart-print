@@ -3432,15 +3432,7 @@ shops.forEach(shop => {
   const originalIsOpen = shop.isOpen;
   Object.defineProperty(shop, 'isOpen', {
     get() {
-      const now = new Date();
-      const hour = now.getHours();
-      const min = now.getMinutes();
-      const currentTotal = hour * 60 + min;
-      
-      const startTotal = 10 * 60; // 10:00 AM
-      const endTotal = 23 * 60 + 30; // 11:30 PM
-      
-      const isAutoOpen = currentTotal >= startTotal && currentTotal <= endTotal;
+      const isAutoOpen = true; // Site is now open 24/7
       return originalIsOpen && isAutoOpen;
     },
     enumerable: true,
