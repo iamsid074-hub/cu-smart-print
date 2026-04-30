@@ -48,8 +48,7 @@ export function useSound() {
     switch (type) {
       case 'pop':
       case 'tick':
-        // Authentic iPhone "Tock" synthesis
-        // 1. Create a short burst of noise for the "hollow" character
+        // Harder, sharper "TAN" tap synthesis
         const bufferSize = ctx.sampleRate * 0.05;
         const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
         const data = buffer.getChannelData(0);
@@ -60,29 +59,29 @@ export function useSound() {
         const noise = ctx.createBufferSource();
         noise.buffer = buffer;
 
-        // 2. Filter the noise to get the wooden/hollow thud
+        // 2. Higher filter frequency for a sharper "TAN" hit
         const filter = ctx.createBiquadFilter();
         filter.type = 'lowpass';
-        filter.frequency.setValueAtTime(400, t);
-        filter.Q.setValueAtTime(1, t);
+        filter.frequency.setValueAtTime(600, t); // Increased from 400
+        filter.Q.setValueAtTime(2, t); // Increased resonance for "TAN"
 
         const noiseGain = ctx.createGain();
-        noiseGain.gain.setValueAtTime(0.4, t);
+        noiseGain.gain.setValueAtTime(0.6, t); // Increased volume
         noiseGain.gain.exponentialRampToValueAtTime(0.01, t + 0.04);
 
         noise.connect(filter);
         filter.connect(noiseGain);
         noiseGain.connect(ctx.destination);
 
-        // 3. Add a tiny high-frequency "snick" for the initial tap transient
+        // 3. Sharper transient for immediate impact
         const transient = ctx.createOscillator();
         const transientGain = ctx.createGain();
         transient.connect(transientGain);
         transientGain.connect(ctx.destination);
-        transient.type = 'sine';
-        transient.frequency.setValueAtTime(2500, t);
+        transient.type = 'square'; // Sharper than sine
+        transient.frequency.setValueAtTime(1000, t);
         transientGain.gain.setValueAtTime(0, t);
-        transientGain.gain.linearRampToValueAtTime(0.1, t + 0.001);
+        transientGain.gain.linearRampToValueAtTime(0.15, t + 0.001);
         transientGain.gain.exponentialRampToValueAtTime(0.01, t + 0.005);
 
         noise.start(t);

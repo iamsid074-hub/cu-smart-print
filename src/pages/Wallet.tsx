@@ -67,11 +67,13 @@ function NumPad({
   const tap = React.useCallback((k: string) => {
     if (k === "⌫") { 
       play('tick');
+      triggerHaptic(ImpactStyle.Heavy);
       onChange(""); 
       return; 
     }
     if (k === "") return;
     play('tick');
+    triggerHaptic(ImpactStyle.Heavy);
     onChange((prev: string) => {
       if (prev.length >= 4) return prev;
       const next = prev + k;
@@ -81,7 +83,7 @@ function NumPad({
       }
       return next;
     });
-  }, [onChange, onSubmit]);
+  }, [onChange, onSubmit, play]);
 
   return (
     <div
