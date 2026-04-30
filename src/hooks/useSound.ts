@@ -47,15 +47,29 @@ export function useSound() {
 
     switch (type) {
       case 'pop':
-        // Soft bubble pop (adding to cart)
+        // Apple Keyboard Click style (replacing bubble pop)
         osc.type = 'sine';
-        osc.frequency.setValueAtTime(400, t);
-        osc.frequency.exponentialRampToValueAtTime(800, t + 0.1);
+        osc.frequency.setValueAtTime(150, t);
+        osc.frequency.exponentialRampToValueAtTime(50, t + 0.03);
         gain.gain.setValueAtTime(0, t);
-        gain.gain.linearRampToValueAtTime(0.4, t + 0.02);
-        gain.gain.exponentialRampToValueAtTime(0.01, t + 0.1);
+        gain.gain.linearRampToValueAtTime(0.3, t + 0.002);
+        gain.gain.exponentialRampToValueAtTime(0.01, t + 0.03);
+
+        const clickOscPop = ctx.createOscillator();
+        const clickGainPop = ctx.createGain();
+        clickOscPop.connect(clickGainPop);
+        clickGainPop.connect(ctx.destination);
+        clickOscPop.type = 'triangle';
+        clickOscPop.frequency.setValueAtTime(1200, t);
+        clickOscPop.frequency.exponentialRampToValueAtTime(800, t + 0.01);
+        clickGainPop.gain.setValueAtTime(0, t);
+        clickGainPop.gain.linearRampToValueAtTime(0.15, t + 0.001);
+        clickGainPop.gain.exponentialRampToValueAtTime(0.01, t + 0.01);
+
         osc.start(t);
-        osc.stop(t + 0.1);
+        osc.stop(t + 0.03);
+        clickOscPop.start(t);
+        clickOscPop.stop(t + 0.01);
         break;
 
       case 'tick':
