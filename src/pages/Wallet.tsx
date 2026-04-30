@@ -760,8 +760,9 @@ export default function Wallet() {
                     key={i}
                     onPointerDown={(e) => {
                       e.preventDefault();
-                      if (k === "⌫") { setSetupInput(prev => prev.slice(0, -1)); return; }
+                      if (k === "⌫") { play('tick'); setSetupInput(prev => prev.slice(0, -1)); return; }
                       if (k === "" || setupInput.length >= 4) return;
+                      play('tick');
                       const next = setupInput + k;
                       setSetupInput(next);
                       if (next.length === 4) {
@@ -774,9 +775,9 @@ export default function Wallet() {
                           setSetupInput("");
                           setSetupFirstPass(prev => {
                             if (next === prev) {
+                              play('success');
                               localStorage.setItem(getWalletLockKey(user!.id), next);
                               setPasscode(next);
-                              window.dispatchEvent(new Event("play_wallet_sound"));
                               setTimeout(() => {
                                 setBalanceVisible(false);
                                 setIsUnlocked(true);
@@ -786,6 +787,7 @@ export default function Wallet() {
                               }, 200);
                               setTimeout(() => { window.dispatchEvent(new Event("wallet_lock_setup")); }, 1000);
                             } else {
+                              play('error');
                               setSetupMismatch(true);
                               setSetupFirstPass("");
                               setSetupStep("set");
@@ -862,14 +864,15 @@ export default function Wallet() {
                     key={i}
                     onPointerDown={(e) => {
                       e.preventDefault();
-                      if (k === "⌫") { setUnlockInput(prev => prev.slice(0, -1)); return; }
+                      if (k === "⌫") { play('tick'); setUnlockInput(prev => prev.slice(0, -1)); return; }
                       if (k === "" || unlockInput.length >= 4) return;
+                      play('tick');
                       const next = unlockInput + k;
                       setUnlockInput(next);
                       if (next.length === 4) {
                         const savedPass = localStorage.getItem(getWalletLockKey(user!.id));
                         if (next === savedPass) {
-                          window.dispatchEvent(new Event("play_wallet_sound"));
+                          play('success');
                           setTimeout(() => {
                             setBalanceVisible(false);
                             setIsUnlocked(true);
@@ -878,6 +881,7 @@ export default function Wallet() {
                           }, 200);
                           setTimeout(() => { window.dispatchEvent(new Event("wallet_unlock_success")); }, 1000);
                         } else {
+                          play('error');
                           setUnlockInput("");
                           window.dispatchEvent(new Event("cu_card_wrong_pass"));
                         }
