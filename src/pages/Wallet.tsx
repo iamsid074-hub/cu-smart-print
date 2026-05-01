@@ -417,8 +417,8 @@ export default function Wallet() {
   const handleWithdraw = async () => {
     const amountNum = parseFloat(withdrawAmount);
     if (!amountNum || amountNum <= 0) return;
-    if (amountNum > walletBalance) {
-      alert("Insufficient balance!");
+    if (amountNum > winningsBalance) {
+      alert("Only winning amount can be withdrawn!");
       return;
     }
     if (!withdrawUPI || !withdrawUPI.includes('@')) {
@@ -430,14 +430,15 @@ export default function Wallet() {
     setIsWithdrawing(true);
     try {
       // Create a withdrawal request transaction
+      // Removed the 'status' column as it doesn't exist in wallet_transactions table
+      // It was causing a 400 Bad Request error
       const { error } = await supabase
         .from("wallet_transactions")
         .insert({
           user_id: user.id,
           amount: -amountNum,
           type: 'payout_request',
-          description: `Withdrawal to ${withdrawUPI}`,
-          status: 'pending' // Assuming status column exists or description handles it
+          description: `Withdrawal to ${withdrawUPI} (Pending)`
         });
 
       if (error) throw error;
@@ -1105,7 +1106,7 @@ export default function Wallet() {
                       />
                     </div>
                     <p className="text-[10px] text-gray-500 mt-2 font-bold px-1">
-                      Available: <span className="text-white">₹{walletBalance}</span>
+                      Withdrawable (Winnings): <span className="text-white">₹{winningsBalance}</span>
                     </p>
                   </div>
 
