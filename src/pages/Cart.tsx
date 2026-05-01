@@ -34,7 +34,7 @@ import { VirtualCardSwipePayment } from "@/components/VirtualCardSwipePayment";
 import { useUserLocation } from "@/hooks/useUserLocation";
 import { useMembership } from "@/hooks/useMembership";
 import MembershipUpsell from "@/components/MembershipUpsell";
-import { load } from "@cashfreepayments/cashfree-js";
+import UpiPaymentModal from "@/components/UpiPaymentModal";
 
 export default function Cart() {
   const {
@@ -59,6 +59,7 @@ export default function Cart() {
     useMembership();
 
   const [showCheckout, setShowCheckout] = useState(false);
+  const [showUpiModal, setShowUpiModal] = useState(false);
   const [showLocationPrompt, setShowLocationPrompt] = useState(false);
 
   // Auto-open checkout if returning from location setup
@@ -91,19 +92,7 @@ export default function Cart() {
   );
   const floor = derivedFloor;
   const [submitting, setSubmitting] = useState(false);
-  const [cashfree, setCashfree] = useState<any>(null);
 
-  // Init Cashfree SDK
-  useEffect(() => {
-    load({ mode: "production" }).then(setCashfree).catch(console.error);
-  }, []);
-
-  // Handle return from Cashfree redirect
-  useEffect(() => {
-    if (searchParams.get("payment") === "success") {
-      toast({ title: "Payment successful! 🎉", description: "Your order is confirmed and being prepared." });
-    }
-  }, [searchParams]);
 
   // Risk Detection State
   const [riskEval, setRiskEval] = useState<RiskEvaluation | null>(null);
@@ -147,7 +136,7 @@ export default function Cart() {
       if (!error && data && data.length > 0) {
         const orderData = data[0];
         // Hide if it's a pending online payment
-        if (orderData.payment_method === "cashfree" && orderData.payment_status === "pending") {
+        if (orderData.payment_method === "online" && orderData.payment_status === "pending") {
           setActiveOrder(null);
         } else {
           setActiveOrder(orderData);
@@ -335,8 +324,6 @@ export default function Cart() {
       { onConflict: "id" }
     );
 
-    // For Cashfree cart orders, set payment_status to 'pending' (webhook will update)
-    const isCashfreeCartOrder = paymentMethod === "online" && skipNavigate;
 
     const { data, error } = await supabase.from("orders").insert({
       product_id: null,
@@ -350,8 +337,8 @@ export default function Cart() {
       delivery_room: `[ROOM:${room}] | [ITEMS:${fullItemsString}]`,
       buyer_phone: phoneClean,
       status: "pending",
-      payment_method: paymentMethod === "online" ? "cashfree" : (paymentMethod === "virtual_card" ? "virtual_card" : "cod"),
-      payment_status: isCashfreeCartOrder ? "pending" : (paymentMethod === "virtual_card" ? "paid" : "pending"),
+      payment_method: paymentMethod === "online" ? "online" : (paymentMethod === "virtual_card" ? "virtual_card" : "cod"),
+      payment_status: paymentMethod === "cod" ? "pending" : "paid",
       razorpay_payment_id: null,
       is_quick: hasQuickItem,
       seller_notified_at: new Date().toISOString(),
@@ -403,7 +390,6 @@ export default function Cart() {
 
     const insertedId = data?.[0]?.id as string | undefined;
 
-    // For cashfree cart orders: don't clear cart or navigate yet (redirect will handle it)
     if (!skipNavigate) {
       clearCart();
       setShowCheckout(false);
@@ -413,54 +399,14 @@ export default function Cart() {
     return insertedId;
   };
 
-  const handleCashfreeCartCheckout = async () => {
+  const handleUpiPaymentVerify = async (paymentId: string) => {
     setSubmitting(true);
     try {
-      console.log("Starting Cashfree checkout flow...");
-      
-      // 1. Create DB order first (payment_status: pending)
-      const dbOrderId = await createOrder(undefined, true);
-      console.log("DB Order created:", dbOrderId);
-      
-      if (!dbOrderId) throw new Error("Failed to create database order record");
-
-      // 2. Create Cashfree payment session
-      console.log("Invoking create-cashfree-order edge function...");
-      const { data, error } = await supabase.functions.invoke("create-cashfree-order", {
-        body: {
-          amount: orderTotal.toFixed(2),
-          userId: user!.id,
-          customerPhone: phone || "9999999999",
-          bazzarOrderId: dbOrderId,
-        },
-      });
-
-      if (error) {
-        console.error("Edge Function Error:", error);
-        throw error;
-      }
-      
-      console.log("Cashfree session data received:", data);
-
-      // 3. Launch Cashfree checkout — will redirect the page
-      if (cashfree && data.payment_session_id) {
-        console.log("Launching Cashfree checkout...");
-        await cashfree.checkout({
-          paymentSessionId: data.payment_session_id,
-          redirectTarget: "_self",
-        });
-      } else {
-        if (!cashfree) console.error("Cashfree SDK not loaded");
-        if (!data.payment_session_id) console.error("Missing payment_session_id in response");
-        throw new Error("Payment gateway failed to initialize. Please try again.");
-      }
-    } catch (err: any) {
-      console.error("Final checkout error:", err);
-      toast({ 
-        title: "Payment initiation failed", 
-        description: err.message || "Something went wrong. Please check your connection.", 
-        variant: "destructive" 
-      });
+      await createOrder(paymentId, false);
+    } catch (error: any) {
+      console.error("Order creation failed after UPI payment:", error);
+      throw new Error("Failed to create order. " + error.message);
+    } finally {
       setSubmitting(false);
     }
   };
@@ -963,9 +909,9 @@ export default function Cart() {
                     />
                   </div>
                 ) : (
-                  <div className="pt-2">
+                   <div className="pt-2">
                      <button
-                       onClick={handleCheckout}
+                       onClick={paymentMethod === 'online' ? () => setShowUpiModal(true) : handleCheckout}
                        disabled={submitting || !isFormValid}
                        className={`w-full h-[60px] rounded-[18px] font-bold text-[16px] flex items-center justify-center gap-2 transition-all shadow-md ${
                          isFormValid ? 'bg-[#10B981] text-white hover:bg-[#059669]' : 'bg-slate-100 text-slate-400 cursor-not-allowed shadow-none'
@@ -974,7 +920,7 @@ export default function Cart() {
                        {submitting ? (
                          <Loader2 className="w-6 h-6 animate-spin" />
                        ) : (
-                         `Confirm & Pay ₹${orderTotal.toFixed(2)}`
+                         paymentMethod === 'online' ? `Pay ₹${orderTotal.toFixed(2)} via UPI` : `Confirm & Pay ₹${orderTotal.toFixed(2)}`
                        )}
                      </button>
                   </div>
@@ -1004,6 +950,13 @@ export default function Cart() {
         )}
       </div>
 
+      <UpiPaymentModal
+        isOpen={showUpiModal}
+        onClose={() => setShowUpiModal(false)}
+        amount={orderTotal}
+        orderIdText="Cart Order"
+        onPaymentVerify={handleUpiPaymentVerify}
+      />
     </div>
   );
 };

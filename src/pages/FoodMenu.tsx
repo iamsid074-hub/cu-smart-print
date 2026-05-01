@@ -14,7 +14,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
-import { load } from "@cashfreepayments/cashfree-js";
+import UpiPaymentModal from "@/components/UpiPaymentModal";
 import { shops } from "@/config/shopMenus";
 import { getFoodSuggestions, estimatePrice } from "@/utils/foodUtils";
 // import ComboHighlightSection from "@/components/ComboHighlightSection";
@@ -132,15 +132,10 @@ export default function FoodMenu() {
     recognition.start();
   };
 
-  // Cashfree payment state
-  const [cashfree, setCashfree] = React.useState<any>(null);
+  const [showUpiModal, setShowUpiModal] = useState(false);
   const [orderSnapshot, setOrderSnapshot] = React.useState<any>(null);
 
-  React.useEffect(() => {
-    load({ mode: "production" }).then(setCashfree).catch(console.error);
-  }, []);
-
-  const finalizeOrder = async () => {
+  const finalizeOrder = async (paymentId?: string) => {
     if (!user || !orderSnapshot) return;
     try {
       await supabase.from("profiles").upsert(
@@ -156,7 +151,7 @@ export default function FoodMenu() {
         { onConflict: "id" }
       );
 
-      const { data, error } = await supabase.from("orders").insert({
+      const { error } = await supabase.from("orders").insert({
         product_id: null,
         buyer_id: user.id,
         seller_id: "7450c873-f51d-469e-a33d-c44ca80beb0c",
@@ -171,33 +166,18 @@ export default function FoodMenu() {
             : orderSnapshot.customNotes,
         buyer_phone: orderSnapshot.phone,
         status: "pending",
-        payment_method: "cashfree",
-        payment_status: "pending",
+        payment_method: "online",
+        payment_status: "paid",
+        razorpay_payment_id: paymentId || null,
         seller_notified_at: new Date().toISOString(),
-      }).select("id");
-
-      if (error) throw error;
-
-      const dbOrderId = data?.[0]?.id;
-      if (!dbOrderId) throw new Error("Failed to create order");
-
-      const { data: payData, error: payError } = await supabase.functions.invoke("create-cashfree-order", {
-        body: {
-          amount: (orderSnapshot.price + 20).toFixed(2),
-          userId: user.id,
-          customerPhone: orderSnapshot.phone || "9999999999",
-          bazzarOrderId: dbOrderId,
-        },
       });
 
-      if (payError) throw payError;
-
-      if (cashfree && payData.payment_session_id) {
-        await cashfree.checkout({
-          paymentSessionId: payData.payment_session_id,
-          redirectTarget: "_self",
-        });
-      }
+      if (error) throw error;
+      
+      toast({ title: "Order Placed! 🎉", description: "Payment confirmed, your order is pending." });
+      setPreviewOrder(null);
+      setIsBuyModalOpen(false);
+      navigate("/tracking");
     } catch (err: any) {
       toast({ title: "Order failed", description: err.message || "Please try again.", variant: "destructive" });
     }

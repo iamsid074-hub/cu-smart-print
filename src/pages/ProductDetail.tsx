@@ -18,7 +18,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
 import { useToast } from "@/hooks/use-toast";
 import PaymentSelector from "@/components/PaymentSelector";
-import { load } from "@cashfreepayments/cashfree-js";
+import UpiPaymentModal from "@/components/UpiPaymentModal";
 import { useUserLocation } from "@/hooks/useUserLocation";
 
 import {
@@ -62,12 +62,9 @@ export default function ProductDetail() {
   const [paymentMethod, setPaymentMethod] = useState<"online" | "cod">(
     "online"
   );
-  const [cashfree, setCashfree] = useState<any>(null);
+  const [showUpiModal, setShowUpiModal] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  useEffect(() => {
-    load({ mode: "production" }).then(setCashfree).catch(console.error);
-  }, []);
   // ── Favourites (localStorage) ──
   const favKey = `cubazzar_fav_${id}`;
   const [isFav, setIsFav] = useState(
@@ -172,15 +169,17 @@ export default function ProductDetail() {
     }
     setIsSubmitting(true);
     try {
-      await finalizeOrder(paymentMethod);
+      if (paymentMethod === 'online') {
+        setShowUpiModal(true);
+      } else {
+        await finalizeOrder(paymentMethod);
+      }
     } catch (err: any) {
       toast({ title: "Order failed", description: err.message || "Please try again.", variant: "destructive" });
       setIsSubmitting(false);
     }
   };
 
-  const finalizeOrder = async (method: "online" | "cod") => {
-    setIsSubmitting(true);
     try {
       await supabase.from("profiles").upsert(
         {
@@ -193,7 +192,7 @@ export default function ProductDetail() {
       );
 
       const commission = Math.round(product.price * 0.05);
-      const { data, error } = await supabase.from("orders").insert({
+      const { error } = await supabase.from("orders").insert({
         product_id: product.id,
         buyer_id: user!.id,
         seller_id: product.seller_id,
@@ -205,10 +204,11 @@ export default function ProductDetail() {
         delivery_room: deliveryRoom || null,
         buyer_phone: phone.replace(/\D/g, ""),
         status: "pending",
-        payment_method: method === "online" ? "cashfree" : "cod",
-        payment_status: method === "online" ? "pending" : "pending",
+        payment_method: method === "online" ? "online" : "cod",
+        payment_status: method === "online" ? "paid" : "pending",
+        razorpay_payment_id: paymentId || null,
         seller_notified_at: new Date().toISOString(),
-      }).select("id");
+      });
 
       if (error) throw error;
 
@@ -216,32 +216,26 @@ export default function ProductDetail() {
 
       if (method === "cod") {
         toast({ title: "Order placed", description: "First money, then order. Collect at gate." });
-        setIsBuyModalOpen(false);
-        navigate("/tracking");
-        return;
+      } else {
+        toast({ title: "Order placed! 🎉", description: "Payment confirmed, your order is pending." });
       }
-
-      // Online: launch Cashfree
-      const dbOrderId = data?.[0]?.id;
-      if (!dbOrderId) throw new Error("Failed to create order");
-
-      const { data: payData, error: payError } = await supabase.functions.invoke("create-cashfree-order", {
-        body: {
-          amount: totalAmount.toFixed(2),
-          userId: user!.id,
-          customerPhone: phone.replace(/\D/g, "") || "9999999999",
-          bazzarOrderId: dbOrderId,
-        },
-      });
-
-      if (payError) throw payError;
-
-      if (cashfree && payData.payment_session_id) {
-        await cashfree.checkout({ paymentSessionId: payData.payment_session_id, redirectTarget: "_self" });
-      }
+      setIsBuyModalOpen(false);
+      navigate("/tracking");
     } catch (err: any) {
       toast({ title: "Order failed", description: err.message || "Please try again.", variant: "destructive" });
       throw err;
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleUpiPaymentVerify = async (paymentId: string) => {
+    setIsSubmitting(true);
+    try {
+      await finalizeOrder("online", paymentId);
+    } catch (error: any) {
+      console.error("Order creation failed after UPI payment:", error);
+      throw new Error("Failed to create order. " + error.message);
     } finally {
       setIsSubmitting(false);
     }
@@ -601,6 +595,13 @@ export default function ProductDetail() {
         </div>
       </div>
 
+      <UpiPaymentModal
+        isOpen={showUpiModal}
+        onClose={() => setShowUpiModal(false)}
+        amount={totalAmount}
+        orderIdText={product?.title || "Product Order"}
+        onPaymentVerify={handleUpiPaymentVerify}
+      />
     </div>
   );
 }
