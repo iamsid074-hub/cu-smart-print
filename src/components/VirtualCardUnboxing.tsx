@@ -6,12 +6,14 @@ import { VirtualCard } from './VirtualCard';
 interface VirtualCardUnboxingProps {
   name: string;
   balance: number;
+  winningsBalance?: number;
   onComplete: () => void;
 }
 
 export const VirtualCardUnboxing: React.FC<VirtualCardUnboxingProps> = ({
   name,
   balance,
+  winningsBalance = 0,
   onComplete
 }) => {
   const [step, setStep] = useState<'initial' | 'opening' | 'revealed'>('initial');
@@ -135,7 +137,7 @@ export const VirtualCardUnboxing: React.FC<VirtualCardUnboxingProps> = ({
             animate={{ y: 0, scale: 1, opacity: 1, rotateX: 0 }}
             transition={{ duration: 2, ease: [0.16, 1, 0.3, 1] }}
           >
-            <VirtualCard name={name} balance={balance} />
+            <VirtualCard name={name} balance={balance} winningsBalance={winningsBalance} />
             <motion.p 
               className="mt-8 text-[#d4af37] font-bold tracking-widest uppercase text-sm"
               initial={{ opacity: 0 }}

@@ -13,6 +13,7 @@ export default function RealMines() {
   const { user, profile } = useAuth();
   
   const [balance, setBalance] = useState<number>(profile?.wallet_balance || 0);
+  const [winningsBalance, setWinningsBalance] = useState<number>(profile?.winnings_balance || 0);
   const [betAmount, setBetAmount] = useState<string>("10");
   const [numMines, setNumMines] = useState<number>(3);
   const [balanceHidden, setBalanceHidden] = useState(false);
@@ -33,7 +34,10 @@ export default function RealMines() {
   const [showProvablyFair, setShowProvablyFair] = useState(false);
 
   useEffect(() => {
-    if (profile) setBalance(profile.wallet_balance);
+    if (profile) {
+      setBalance(profile.wallet_balance);
+      setWinningsBalance(profile.winnings_balance || 0);
+    }
   }, [profile]);
 
   // Math for Mines
@@ -127,8 +131,10 @@ export default function RealMines() {
     
     setGameState('cashed_out');
     
-    const newBalance = balance + win;
-    setBalance(newBalance);
+    // On win, the original bet amount is effectively returned to wallet (or stays in winnings depending on logic).
+    // Our RPC process_game_win adds the full `win` amount to winnings_balance. 
+    // To match locally without complex logic, we can just add the full win to winningsBalance.
+    setWinningsBalance(prev => prev + win);
 
     if (user) {
       supabase.rpc('process_game_win', { 
@@ -169,6 +175,7 @@ export default function RealMines() {
           <VirtualCard
             name={profile?.full_name || user?.email?.split('@')[0] || "USER"}
             balance={balance}
+            winningsBalance={winningsBalance}
             balanceHidden={balanceHidden}
             onEyeClick={(e) => {
               e.stopPropagation();

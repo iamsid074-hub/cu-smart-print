@@ -417,6 +417,12 @@ export default function Wallet() {
   const handleWithdraw = async () => {
     const amountNum = parseFloat(withdrawAmount);
     if (!amountNum || amountNum <= 0) return;
+    
+    if (amountNum < 1000) {
+      alert("Minimum withdrawal limit is ₹1000. Please enter a higher amount.");
+      return;
+    }
+
     if (amountNum > winningsBalance) {
       alert("Only winning amount can be withdrawn!");
       return;
@@ -436,7 +442,7 @@ export default function Wallet() {
 
       if (error) throw error;
 
-      alert("Withdrawal request submitted! It will be processed within 24 hours.");
+      alert(`Withdrawal request submitted! You'll get your ₹${amountNum} in 24 hours.`);
       setShowWithdrawModal(false);
       setWithdrawAmount("");
       setWithdrawUPI("");
@@ -835,6 +841,7 @@ export default function Wallet() {
             <VirtualCardUnboxing
               name={profileName || "CU USER"}
               balance={walletBalance}
+              winningsBalance={winningsBalance}
               onComplete={() => {
                 setIsUnboxed(true);
                 localStorage.setItem(getUnboxedKey(user!.id), "true");

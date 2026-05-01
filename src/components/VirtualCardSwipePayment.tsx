@@ -6,6 +6,7 @@ import { VirtualCard } from './VirtualCard';
 interface VirtualCardSwipePaymentProps {
   amount: number;
   balance: number;
+  winningsBalance?: number;
   onSuccess: () => void;
   onCancel: () => void;
   userName: string;
@@ -14,6 +15,7 @@ interface VirtualCardSwipePaymentProps {
 export const VirtualCardSwipePayment: React.FC<VirtualCardSwipePaymentProps> = ({
   amount,
   balance,
+  winningsBalance = 0,
   onSuccess,
   onCancel,
   userName
@@ -23,7 +25,8 @@ export const VirtualCardSwipePayment: React.FC<VirtualCardSwipePaymentProps> = (
   const [passcodeInput, setPasscodeInput] = useState('');
   const [isWrongPasscode, setIsWrongPasscode] = useState(false);
 
-  const isInsufficient = balance < amount;
+  const totalAvailable = balance + winningsBalance;
+  const isInsufficient = totalAvailable < amount;
 
   // Smooth dragging with framer-motion values (avoids React state lag)
   const x = useMotionValue(0);
@@ -54,7 +57,7 @@ export const VirtualCardSwipePayment: React.FC<VirtualCardSwipePaymentProps> = (
   const processPayment = () => {
     setStage('processing');
     setTimeout(() => {
-      if (balance >= amount) {
+      if (totalAvailable >= amount) {
         if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
         setStage('success');
         setTimeout(() => onSuccess(), 1500);
@@ -111,8 +114,8 @@ export const VirtualCardSwipePayment: React.FC<VirtualCardSwipePaymentProps> = (
              <div className="w-2 h-1.5 bg-[#d4af37] rounded-sm relative top-1 left-[-4px]" />
           </div>
           <div>
-            <p className="text-[10px] text-white/50 uppercase tracking-widest font-bold">Wallet Balance</p>
-            <p className="text-white font-bold text-sm">₹{balance.toLocaleString('en-IN')}</p>
+            <p className="text-[10px] text-white/50 uppercase tracking-widest font-bold">Available Balance</p>
+            <p className="text-white font-bold text-sm">₹{totalAvailable.toLocaleString('en-IN')}</p>
           </div>
         </div>
         <div className="text-right">
@@ -183,7 +186,7 @@ export const VirtualCardSwipePayment: React.FC<VirtualCardSwipePaymentProps> = (
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
               className="w-full max-w-[450px] px-4 pointer-events-none mb-10"
             >
-              <VirtualCard name={userName} balance={balance} balanceHidden={true} />
+              <VirtualCard name={userName} balance={balance} winningsBalance={winningsBalance} balanceHidden={true} />
             </motion.div>
 
             {/* Passcode UI */}

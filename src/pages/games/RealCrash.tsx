@@ -336,17 +336,13 @@ export default function RealCrash() {
       const currentWins = parseInt(sessionStorage.getItem('cr_session_wins') || '0');
       sessionStorage.setItem('cr_session_wins', (currentWins + 1).toString());
 
-      // Refund the original stake back to deposit balance
-      setBalance(b => {
-        const nb = b + panel.activeBet!;
-        if (user) supabase.from('profiles').update({ wallet_balance: nb }).eq('id', user.id).then();
-        return nb;
-      });
+      // Update local state: The full return (stake + profit) goes to winnings balance
+      setWinningsBalance(w => w + totalReturn);
 
-      // Add profit directly to winnings on server
+      // Add total return directly to winnings on server
       if (user) {
         supabase.rpc('process_game_win', {
-          win_amount: profit,
+          win_amount: totalReturn,
           game_name: `Crash (x${finalMulti.toFixed(2)})`
         }).then(({ error }) => {
           if (error) console.error("Error processing crash win:", error);

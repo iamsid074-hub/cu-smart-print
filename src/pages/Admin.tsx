@@ -2500,7 +2500,19 @@ function PayoutsSection({ payouts, onRefresh }: { payouts: any[], onRefresh: () 
                       <DollarSign className="w-6 h-6 text-orange-600" />
                     </div>
                     <div>
-                      <h3 className="font-bold text-slate-900">{tx.profiles?.full_name || 'Unknown User'}</h3>
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-bold text-slate-900">{tx.profiles?.full_name || 'Unknown User'}</h3>
+                        {tx.profiles?.phone_number && (
+                          <span className="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-mono">
+                            {tx.profiles.phone_number}
+                          </span>
+                        )}
+                        {(tx.profiles?.hostel_block || tx.profiles?.room_number) && (
+                          <span className="text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full font-bold">
+                            {tx.profiles?.hostel_block} {tx.profiles?.room_number}
+                          </span>
+                        )}
+                      </div>
                       <p className="text-sm text-slate-500 font-mono mt-1">{tx.description}</p>
                       <div className="flex items-center gap-2 mt-2">
                         <span className="text-xs font-bold px-2 py-1 bg-slate-100 text-slate-600 rounded-md border border-slate-200">
@@ -2703,7 +2715,7 @@ export default function Admin() {
       .from("wallet_transactions")
       .select(`
         *,
-        profiles!wallet_transactions_user_id_fkey(full_name, phone_number)
+        profiles!wallet_transactions_user_id_fkey(full_name, phone_number, hostel_block, room_number)
       `)
       .eq("type", "payout_request")
       .order("created_at", { ascending: false });

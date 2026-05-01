@@ -107,6 +107,7 @@ export default function Cart() {
   const [loadingOrder, setLoadingOrder] = useState(true);
 
   const [walletBalance, setWalletBalance] = useState(0);
+  const [winningsBalance, setWinningsBalance] = useState(0);
   const [profileName, setProfileName] = useState("");
   const [dailyWalletUsed, setDailyWalletUsed] = useState(0);
   const [useWalletBalance, setUseWalletBalance] = useState(false);
@@ -150,12 +151,13 @@ export default function Cart() {
     const fetchWallet = async () => {
       const { data: profileList } = await supabase
         .from("profiles")
-        .select("wallet_balance, total_orders, hostel_block, full_name")
+        .select("wallet_balance, winnings_balance, total_orders, hostel_block, full_name")
         .eq("id", user.id);
         
       const data = profileList?.[0];
       if (data) {
         setWalletBalance(data.wallet_balance || 0);
+        setWinningsBalance(data.winnings_balance || 0);
         setTotalOrdersTracker(data.total_orders || 0);
         setProfileName(data.full_name || user?.user_metadata?.full_name || "CU USER");
       }
@@ -355,34 +357,22 @@ export default function Cart() {
       await incrementUsage();
     }
 
-    // Wallet Deduction
+    // Wallet Deduction (partial)
     if (useWalletBalance && walletDiscount > 0) {
-      const newBalance = walletBalance - walletDiscount;
-      await supabase
-        .from("profiles")
-        .update({ wallet_balance: newBalance })
-        .eq("id", user!.id);
-      await supabase.from("wallet_transactions").insert({
-        user_id: user!.id,
-        amount: -walletDiscount,
-        type: "usage",
-        description: "Used balance for order",
+      const { error: rpcError } = await supabase.rpc('pay_from_wallet', {
+        amount: walletDiscount,
+        order_description: "Used balance for order"
       });
+      if (rpcError) throw new Error("Wallet deduction failed: " + rpcError.message);
     }
 
-    // Virtual Card Wallet Deduction
+    // Virtual Card Wallet Deduction (full payment)
     if (paymentMethod === "virtual_card") {
-      const newBalance = walletBalance - orderTotal;
-      await supabase
-        .from("profiles")
-        .update({ wallet_balance: newBalance })
-        .eq("id", user!.id);
-      await supabase.from("wallet_transactions").insert({
-        user_id: user!.id,
-        amount: -orderTotal,
-        type: "usage",
-        description: "Paid with Virtual Card",
+      const { error: rpcError } = await supabase.rpc('pay_from_wallet', {
+        amount: orderTotal,
+        order_description: "Paid with Virtual Card"
       });
+      if (rpcError) throw new Error("Virtual Card payment failed: " + rpcError.message);
     }
 
     // Save location for future auto-fill
@@ -903,6 +893,7 @@ export default function Cart() {
                     <VirtualCardSwipePayment 
                       amount={orderTotal} 
                       balance={walletBalance} 
+                      winningsBalance={winningsBalance}
                       userName={profileName || "CU USER"}
                       onSuccess={handleVirtualCardSuccess}
                       onCancel={() => {}}
