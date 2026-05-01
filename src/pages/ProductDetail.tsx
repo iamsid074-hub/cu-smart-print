@@ -179,7 +179,7 @@ export default function ProductDetail() {
       setIsSubmitting(false);
     }
   };
-
+  const finalizeOrder = async (method: "online" | "cod", paymentId?: string) => {
     try {
       await supabase.from("profiles").upsert(
         {
