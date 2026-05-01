@@ -37,23 +37,29 @@ serve(async (req) => {
     const userId = user.id;
     console.log(`[DELETE_ACCOUNT] Comprehensive wipe for: ${userId}`);
 
+    const storageAdmin = createClient(supabaseUrl, supabaseServiceKey, {
+      db: { schema: 'storage' }
+    });
+
     // 2. Perform deletions in a specific order to minimize constraint issues
+    // We also use storageAdmin for the storage.objects table
     const tables = [
-      { name: "messages", col: ["sender_id", "receiver_id"] },
-      { name: "wallet_transactions", col: ["user_id"] },
-      { name: "products", col: ["seller_id"] },
-      { name: "orders", col: ["buyer_id", "seller_id"] },
-      { name: "push_subscriptions", col: ["user_id"] },
-      { name: "profiles", col: ["id"] },
+      { name: "messages", col: ["sender_id", "receiver_id"], client: supabaseAdmin },
+      { name: "wallet_transactions", col: ["user_id"], client: supabaseAdmin },
+      { name: "products", col: ["seller_id"], client: supabaseAdmin },
+      { name: "orders", col: ["buyer_id", "seller_id"], client: supabaseAdmin },
+      { name: "push_subscriptions", col: ["user_id"], client: supabaseAdmin },
+      { name: "profiles", col: ["id"], client: supabaseAdmin },
+      { name: "objects", col: ["owner"], client: storageAdmin },
     ];
 
     for (const table of tables) {
       try {
         if (table.col.length === 1) {
-          await supabaseAdmin.from(table.name).delete().eq(table.col[0], userId);
+          await table.client.from(table.name).delete().eq(table.col[0], userId);
         } else {
           const filter = table.col.map(c => `${c}.eq.${userId}`).join(",");
-          await supabaseAdmin.from(table.name).delete().or(filter);
+          await table.client.from(table.name).delete().or(filter);
         }
         console.log(`[DELETE_ACCOUNT] Cleaned table: ${table.name}`);
       } catch (e: any) {
