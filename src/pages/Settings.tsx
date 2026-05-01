@@ -33,6 +33,7 @@ export default function Settings() {
   const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
   const [isComboModalOpen, setIsComboModalOpen] = useState(false);
   const [isDeliveryModalOpen, setIsDeliveryModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [comboText, setComboText] = useState("");
 
   // Try to get avatar url from user metadata
@@ -55,31 +56,26 @@ export default function Settings() {
   };
 
   const handleDeleteAccount = async () => {
-    if (
-      window.confirm(
-        "Are you absolutely sure you want to permanently delete your account? This action cannot be undone. All your data, including wallet balance and order history, will be lost forever."
-      )
-    ) {
-      const loadingToast = toast.loading("Deleting account...");
-      try {
-        const { data, error } = await supabase.functions.invoke("delete-user-account");
+    const loadingToast = toast.loading("Deleting account...");
+    setIsDeleteModalOpen(false);
+    try {
+      const { data, error } = await supabase.functions.invoke("delete-user-account");
 
-        if (error) throw error;
-        if (data?.error) throw new Error(data.error);
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
 
-        toast.success("Account deleted successfully.", { id: loadingToast });
-        
-        // Clear all local storage data
-        localStorage.clear();
+      toast.success("Account deleted successfully.", { id: loadingToast });
+      
+      // Clear all local storage data
+      localStorage.clear();
 
-        // Use window.location.href for a hard reset to ensure all auth state is purged
-        setTimeout(() => {
-          window.location.href = "/login";
-        }, 1000);
-      } catch (err: any) {
-        console.error("Deletion error:", err);
-        toast.error(err.message || "Failed to delete account. Please contact support.", { id: loadingToast });
-      }
+      // Use window.location.href for a hard reset to ensure all auth state is purged
+      setTimeout(() => {
+        window.location.href = "/login";
+      }, 1000);
+    } catch (err: any) {
+      console.error("Deletion error:", err);
+      toast.error(err.message || "Failed to delete account. Please contact support.", { id: loadingToast });
     }
   };
 
@@ -277,7 +273,7 @@ export default function Settings() {
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                handleDeleteAccount();
+                setIsDeleteModalOpen(true);
               }}
               className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-[#FF3B30]/10 active:bg-[#FF3B30]/20 transition-colors"
             >
@@ -438,6 +434,36 @@ export default function Settings() {
             >
               Apply to Partner Now
             </button>
+          </ModalOverlay>
+        )}
+
+        {isDeleteModalOpen && (
+          <ModalOverlay onClose={() => setIsDeleteModalOpen(false)}>
+            <div className="flex flex-col items-center pt-2">
+              <div className="w-16 h-16 rounded-[1.5rem] bg-[#FF3B30]/10 flex items-center justify-center mb-4">
+                <Trash2 className="w-8 h-8 text-[#FF3B30]" />
+              </div>
+              <h2 className="text-[20px] font-black text-white text-center tracking-tight leading-tight">
+                Delete Account
+              </h2>
+              <p className="text-gray-400 mt-2 font-medium text-[13px] text-center leading-relaxed">
+                Are you absolutely sure you want to permanently delete your account? This action cannot be undone. All your data, including wallet balance and order history, will be lost forever.
+              </p>
+            </div>
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={() => setIsDeleteModalOpen(false)}
+                className="flex-1 bg-white/5 hover:bg-white/10 text-white font-bold text-[14px] py-3.5 rounded-2xl active:scale-95 transition-transform"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteAccount}
+                className="flex-1 bg-[#FF3B30] hover:bg-[#ff2015] text-white font-bold text-[14px] py-3.5 rounded-2xl active:scale-95 transition-transform"
+              >
+                Delete Forever
+              </button>
+            </div>
           </ModalOverlay>
         )}
       </AnimatePresence>
