@@ -72,9 +72,10 @@ export default function Settings() {
         // Clear all local storage data
         localStorage.clear();
 
-        // Force sign out and redirect
-        await signOut();
-        navigate("/login");
+        // Use window.location.href for a hard reset to ensure all auth state is purged
+        setTimeout(() => {
+          window.location.href = "/login";
+        }, 1000);
       } catch (err: any) {
         console.error("Deletion error:", err);
         toast.error(err.message || "Failed to delete account. Please contact support.", { id: loadingToast });
@@ -273,7 +274,11 @@ export default function Settings() {
           </p>
           <div className="bg-[#1c1c1e] rounded-[1.5rem] overflow-hidden border border-[#FF3B30]/15 divide-y divide-[#FF3B30]/10">
             <button
-              onClick={handleDeleteAccount}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                handleDeleteAccount();
+              }}
               className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-[#FF3B30]/10 active:bg-[#FF3B30]/20 transition-colors"
             >
               <div className="w-8 h-8 rounded-xl bg-[#FF3B30]/10 flex items-center justify-center flex-shrink-0">
