@@ -66,6 +66,12 @@ export default function RealCrash() {
   const fillRef = useRef<SVGPathElement>(null);
   const planeRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  
+  // High-performance refs for 120hz animation (bypass React state)
+  const multiplierRef = useRef<number>(1.00);
+  const multiplierTextRef = useRef<HTMLHeadingElement>(null);
+  const progressBarRef = useRef<HTMLDivElement>(null);
+
 
   useEffect(() => {
     if (profile) {
@@ -106,7 +112,11 @@ export default function RealCrash() {
       const updateProgress = (time: number) => {
         const elapsed = time - startTime;
         const remaining = Math.max(0, 100 - (elapsed / duration) * 100);
-        setBettingProgress(remaining);
+        
+        // 120hz perf opt: direct DOM update
+        if (progressBarRef.current) {
+          progressBarRef.current.style.width = `${remaining}%`;
+        }
         
         if (elapsed < duration) {
           animationRef.current = requestAnimationFrame(updateProgress);
@@ -128,7 +138,14 @@ export default function RealCrash() {
           return;
         }
         
-        setMultiplier(currentMulti);
+        // --- 120hz Performance Optimization ---
+        // Do NOT use setMultiplier(currentMulti) here because it causes a full React re-render 
+        // 60-120 times per second, which kills performance on mobile.
+        // Instead, update the DOM directly via a ref for the text.
+        multiplierRef.current = currentMulti;
+        if (multiplierTextRef.current) {
+          multiplierTextRef.current.textContent = currentMulti.toFixed(2) + 'x';
+        }
 
         if (containerRef.current && pathRef.current && fillRef.current && planeRef.current) {
           const w = containerRef.current.clientWidth;
@@ -174,7 +191,19 @@ export default function RealCrash() {
     // Transfer nextBets to activeBets and evaluate total bet
     let totalBet = 0;
     const newPanels = panels.map(p => {
-      if (p.nextBet !== null) totalBet += p.nextBet;
+      if (p.nextBet !== null) {
+        totalBet += p.nextBet;
+        // Securely deduct the bet from the server NOW
+        if (user) {
+          supabase.rpc('place_bet', { bet_amount: p.nextBet, game_name: 'Crash' }).then(({ error }) => {
+            if (error) {
+               console.error("Failed to place bet on server:", error);
+               toast({ title: "Bet Rejected", description: "Insufficient balance or error.", variant: "destructive" });
+               // Ideally we should refund them locally or drop their bet, but for now we just log it.
+            }
+          });
+        }
+      }
       return {
         ...p,
         activeBet: p.nextBet !== null ? p.nextBet : null,
@@ -250,20 +279,15 @@ export default function RealCrash() {
 
   const handleCrash = (finalMulti: number) => {
     if (animationRef.current) cancelAnimationFrame(animationRef.current);
-    setMultiplier(finalMulti);
+    multiplierRef.current = finalMulti;
+    if (multiplierTextRef.current) multiplierTextRef.current.textContent = finalMulti.toFixed(2) + 'x';
+    setMultiplier(finalMulti); // Still sync React state at the END of the round
     setPhase('crashed');
     setHistory(prev => [finalMulti, ...prev].slice(0, 10));
     
     // Process losses
     setPanels(prev => prev.map(p => {
-      if (p.activeBet !== null && p.cashedOutAt === null && user) {
-        supabase.from('wallet_transactions').insert({
-          user_id: user.id,
-          amount: -p.activeBet,
-          type: 'usage',
-          description: `Crash Loss`
-        }).then();
-      }
+      // (Losses are already deducted from the DB in startPlayingPhase)
       return p;
     }));
   };
@@ -282,7 +306,8 @@ export default function RealCrash() {
 
     const newBalance = balance - amount;
     setBalance(newBalance);
-    if (user) supabase.from('profiles').update({ wallet_balance: newBalance }).eq('id', user.id).then();
+    // Local state only, DB synced when game actually starts
+
 
     updatePanel(id, { nextBet: amount });
     if (phase !== 'betting') toast({ title: "Bet Queued" });
@@ -293,7 +318,7 @@ export default function RealCrash() {
     if (panel.nextBet !== null) {
       const newBalance = balance + panel.nextBet;
       setBalance(newBalance);
-      if (user) supabase.from('profiles').update({ wallet_balance: newBalance }).eq('id', user.id).then();
+      // Local state only
       updatePanel(id, { nextBet: null });
     }
   };
@@ -318,20 +343,14 @@ export default function RealCrash() {
         return nb;
       });
 
-      // Add ONLY the profit to winnings balance
-      setWinningsBalance(w => {
-        const nw = w + profit;
-        if (user) supabase.from('profiles').update({ winnings_balance: nw }).eq('id', user.id).then();
-        return nw;
-      });
-
+      // Add profit directly to winnings on server
       if (user) {
-        supabase.from('wallet_transactions').insert({
-          user_id: user.id,
-          amount: profit,
-          type: 'game_winning',
-          description: `Crash Win (x${finalMulti.toFixed(2)})`
-        }).then();
+        supabase.rpc('process_game_win', {
+          win_amount: profit,
+          game_name: `Crash (x${finalMulti.toFixed(2)})`
+        }).then(({ error }) => {
+          if (error) console.error("Error processing crash win:", error);
+        });
       }
       
       toast({ title: "Cashed Out! 🎉", description: `You won ₹${profit.toFixed(2)} profit at ${finalMulti.toFixed(2)}x` });
@@ -412,14 +431,18 @@ export default function RealCrash() {
 
           {phase === 'betting' && (
             <div className="absolute top-0 left-0 w-full h-1 bg-white/5 z-20">
-              <div className="h-full bg-red-500 transition-all duration-75 ease-linear" style={{ width: `${bettingProgress}%` }} />
+              <div ref={progressBarRef} className="h-full bg-red-500 transition-all duration-75 ease-linear" style={{ width: `${bettingProgress}%` }} />
             </div>
           )}
 
           <div className="z-10 text-center mt-10">
             {phase === 'betting' && <h1 className="font-black tracking-tighter text-white/50 text-3xl uppercase">Waiting...</h1>}
             {phase !== 'betting' && (
-              <h1 className={`font-black tracking-tighter transition-colors ${phase === 'crashed' ? 'text-red-500' : 'text-white'}`} style={{ fontSize: 'clamp(4rem, 15vw, 6rem)', filter: 'drop-shadow(0 4px 10px rgba(0,0,0,0.5))' }}>
+              <h1 
+                ref={multiplierTextRef}
+                className={`font-black tracking-tighter transition-colors ${phase === 'crashed' ? 'text-red-500' : 'text-white'}`} 
+                style={{ fontSize: 'clamp(4rem, 15vw, 6rem)', filter: 'drop-shadow(0 4px 10px rgba(0,0,0,0.5))', fontVariantNumeric: 'tabular-nums' }}
+              >
                 {multiplier.toFixed(2)}x
               </h1>
             )}

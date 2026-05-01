@@ -55,7 +55,8 @@ type AdminSection =
   | "quick_store"
   | "shops"
   | "subscriptions"
-  | "notifications";
+  | "notifications"
+  | "payouts";
 
 interface Product {
   id: string;
@@ -2428,6 +2429,123 @@ function SubscriptionsSection({
     </div>
   );
 }
+// ─── Payouts Section ────────────────────────────────────────────────────────────
+function PayoutsSection({ payouts, onRefresh }: { payouts: any[], onRefresh: () => void }) {
+  const [processing, setProcessing] = useState<string | null>(null);
+
+  const handleApprove = async (tx: any) => {
+    setProcessing(tx.id);
+    try {
+      // 1. Update the transaction description to show it's completed
+      await supabase
+        .from('wallet_transactions')
+        .update({ description: tx.description.replace('(Pending)', '(Completed)') })
+        .eq('id', tx.id);
+      
+      onRefresh();
+      toast.success("Payout marked as completed.");
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to update payout.");
+    } finally {
+      setProcessing(null);
+    }
+  };
+
+  const handleReject = async (tx: any) => {
+    setProcessing(tx.id);
+    try {
+      // 1. Refund the user's winnings_balance
+      await supabase.rpc('process_game_win', {
+        win_amount: Math.abs(tx.amount),
+        game_name: 'Refund: Rejected Payout'
+      });
+
+      // 2. Mark the transaction as rejected
+      await supabase
+        .from('wallet_transactions')
+        .update({ description: tx.description.replace('(Pending)', '(Rejected - Refunded)') })
+        .eq('id', tx.id);
+      
+      onRefresh();
+      toast.success("Payout rejected and balance refunded.");
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to reject payout.");
+    } finally {
+      setProcessing(null);
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-xl font-black text-slate-900">Payout Requests</h2>
+        <button onClick={onRefresh} className="p-2 bg-white rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-600">
+          <RefreshCw className="w-5 h-5" />
+        </button>
+      </div>
+
+      <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+        {payouts.length === 0 ? (
+          <div className="p-8 text-center text-slate-500 font-medium">No payout requests found.</div>
+        ) : (
+          <div className="divide-y divide-slate-100">
+            {payouts.map(tx => {
+              const isPending = tx.description.includes('(Pending)');
+              return (
+                <div key={tx.id} className="p-4 sm:p-6 flex flex-col sm:flex-row gap-4 justify-between sm:items-center hover:bg-slate-50/50 transition-colors">
+                  <div className="flex items-start gap-4">
+                    <div className="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center flex-shrink-0">
+                      <DollarSign className="w-6 h-6 text-orange-600" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-slate-900">{tx.profiles?.full_name || 'Unknown User'}</h3>
+                      <p className="text-sm text-slate-500 font-mono mt-1">{tx.description}</p>
+                      <div className="flex items-center gap-2 mt-2">
+                        <span className="text-xs font-bold px-2 py-1 bg-slate-100 text-slate-600 rounded-md border border-slate-200">
+                          {new Date(tx.created_at).toLocaleString()}
+                        </span>
+                        {isPending && (
+                          <span className="text-xs font-bold px-2 py-1 bg-amber-100 text-amber-700 rounded-md border border-amber-200 animate-pulse">
+                            Action Required
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="flex flex-col sm:items-end gap-3 mt-4 sm:mt-0">
+                    <span className="text-2xl font-black text-slate-900">₹{Math.abs(tx.amount)}</span>
+                    
+                    {isPending && (
+                      <div className="flex gap-2 w-full sm:w-auto">
+                        <button
+                          onClick={() => handleReject(tx)}
+                          disabled={processing === tx.id}
+                          className="flex-1 sm:flex-none px-4 py-2 rounded-xl font-bold text-sm bg-red-50 text-red-600 hover:bg-red-100 border border-red-200 disabled:opacity-50 transition-colors"
+                        >
+                          Reject & Refund
+                        </button>
+                        <button
+                          onClick={() => handleApprove(tx)}
+                          disabled={processing === tx.id}
+                          className="flex-1 sm:flex-none px-4 py-2 rounded-xl font-bold text-sm bg-green-500 text-white hover:bg-green-600 shadow-[0_4px_0_#166534] active:shadow-none active:translate-y-1 transition-all"
+                        >
+                          {processing === tx.id ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : 'Mark Paid'}
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
 
 // ─── Main Admin Page ───────────────────────────────────────────────────────────
 export default function Admin() {
@@ -2448,6 +2566,7 @@ export default function Admin() {
   const [notifications, setNotifications] = useState<AdminNotification[]>([]);
   const [recentProducts, setRecentProducts] = useState<Product[]>([]);
   const [recentOrders, setRecentOrders] = useState<Order[]>([]);
+  const [payouts, setPayouts] = useState<any[]>([]);
 
   const [loadingStats, setLoadingStats] = useState(true);
   const [loadingProducts, setLoadingProducts] = useState(true);
@@ -2578,6 +2697,21 @@ export default function Admin() {
     setLoadingNotifs(false);
   }, []);
 
+  // ── Fetch Payouts ────────────────────────────────────────────────────────────
+  const fetchPayouts = useCallback(async () => {
+    const { data } = await supabase
+      .from("wallet_transactions")
+      .select(`
+        *,
+        profiles!wallet_transactions_user_id_fkey(full_name, phone_number)
+      `)
+      .eq("type", "payout_request")
+      .order("created_at", { ascending: false });
+    
+    // We filter pending locally based on description containing (Pending)
+    setPayouts(data || []);
+  }, []);
+
   // ── Initial Load ─────────────────────────────────────────────────────────────
   useEffect(() => {
     if (!isAdmin) return;
@@ -2585,6 +2719,7 @@ export default function Admin() {
     fetchProducts();
     fetchOrders();
     fetchNotifications();
+    fetchPayouts();
 
     // Start native push listening for orders
     AdminPushService.initialize();
@@ -2995,6 +3130,12 @@ export default function Admin() {
       icon: Bell,
       badge: unreadCount || undefined,
     },
+    {
+      id: "payouts",
+      label: "Payouts",
+      icon: DollarSign,
+      badge: payouts.filter(p => p.description.includes("(Pending)")).length || undefined,
+    },
   ];
 
   if (!isAdmin) {
@@ -3212,6 +3353,12 @@ export default function Admin() {
               )}
               {section === "shops" && (
                 <ShopsSection />
+              )}
+              {section === "payouts" && (
+                <PayoutsSection 
+                  payouts={payouts} 
+                  onRefresh={fetchPayouts} 
+                />
               )}
               {section === "notifications" && (
                 <NotificationsSection

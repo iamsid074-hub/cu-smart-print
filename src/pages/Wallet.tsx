@@ -429,17 +429,10 @@ export default function Wallet() {
 
     setIsWithdrawing(true);
     try {
-      // Create a withdrawal request transaction
-      // Removed the 'status' column as it doesn't exist in wallet_transactions table
-      // It was causing a 400 Bad Request error
-      const { error } = await supabase
-        .from("wallet_transactions")
-        .insert({
-          user_id: user.id,
-          amount: -amountNum,
-          type: 'payout_request',
-          description: `Withdrawal to ${withdrawUPI} (Pending)`
-        });
+      const { error } = await supabase.rpc('request_payout', {
+        payout_amount: amountNum,
+        upi_id: withdrawUPI
+      });
 
       if (error) throw error;
 

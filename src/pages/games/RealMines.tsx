@@ -57,9 +57,14 @@ export default function RealMines() {
     const newBalance = balance - amount;
     setBalance(newBalance);
     
-    // Attempt DB sync
+    // Attempt secure DB sync via RPC
     if (user) {
-      supabase.from('profiles').update({ wallet_balance: newBalance }).eq('id', user.id).then();
+      const { error } = await supabase.rpc('place_bet', { bet_amount: amount, game_name: 'Mines' });
+      if (error) {
+        toast({ title: "Bet Failed", description: error.message || "Failed to place bet.", variant: "destructive" });
+        setBalance(balance); // Revert optimistic update
+        return;
+      }
     }
 
     setGameState('playing');
@@ -99,14 +104,7 @@ export default function RealMines() {
       setRevealed(Array(25).fill(true));
       
       // Log loss
-      if (user) {
-        supabase.from('wallet_transactions').insert({
-          user_id: user.id,
-          amount: -parseFloat(betAmount),
-          type: 'usage',
-          description: `Mines Loss (${numMines} mines)`
-        }).then();
-      }
+      // (Loss is already accounted for because the bet was deducted in place_bet)
     } else {
       // Safe tile
       const revealedCount = newRevealed.filter(r => r).length;
@@ -133,13 +131,12 @@ export default function RealMines() {
     setBalance(newBalance);
 
     if (user) {
-      supabase.from('profiles').update({ wallet_balance: newBalance }).eq('id', user.id).then();
-      supabase.from('wallet_transactions').insert({
-        user_id: user.id,
-        amount: win - amount,
-        type: 'deposit',
-        description: `Mines Win (x${finalMulti.toFixed(2)})`
-      }).then();
+      supabase.rpc('process_game_win', { 
+        win_amount: win, 
+        game_name: `Mines (x${finalMulti.toFixed(2)})` 
+      }).then(({ error }) => {
+        if (error) console.error("Error processing win:", error);
+      });
     }
     
     // Reveal all remaining tiles but slightly dimmed
