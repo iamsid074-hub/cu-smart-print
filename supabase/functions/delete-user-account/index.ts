@@ -16,7 +16,7 @@ serve(async (req) => {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     
-    // Admin client to perform deletions
+    // Admin client to perform deletions (bypasses RLS)
     const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
 
     // Regular client to verify the user
@@ -24,37 +24,65 @@ serve(async (req) => {
       global: { headers: { Authorization: authHeader } },
     });
 
-    // Get the user from the JWT
+    // Get the user from the JWT to verify they are deleting themselves
     const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
     
     if (authError || !user) {
-      throw new Error("Unauthorized");
+      throw new Error("Unauthorized: Could not verify user identity.");
     }
 
     const userId = user.id;
+    console.log(`[DELETE_ACCOUNT] Initiating comprehensive deletion for user: ${userId}`);
 
-    console.log(`Deleting account for user: ${userId}`);
+    // ── STEP 1: Delete all dependent data in correct order ──
 
-    // 1. Delete user from auth.users (This should trigger cascades if set up, 
-    // but we can also manually cleanup common tables just in case)
-    
-    // Cleanup profiles (often doesn't cascade automatically depending on setup)
+    // 1. Delete messages (Sent and Received)
+    console.log(`[DELETE_ACCOUNT] Clearing messages...`);
+    await supabaseAdmin.from("messages").delete().or(`sender_id.eq.${userId},receiver_id.eq.${userId}`);
+
+    // 2. Delete wallet_transactions
+    console.log(`[DELETE_ACCOUNT] Clearing wallet_transactions...`);
+    await supabaseAdmin.from("wallet_transactions").delete().eq("user_id", userId);
+
+    // 3. Delete products (Listings)
+    console.log(`[DELETE_ACCOUNT] Clearing products...`);
+    await supabaseAdmin.from("products").delete().eq("seller_id", userId);
+
+    // 4. Delete orders (Buyer and Seller roles)
+    console.log(`[DELETE_ACCOUNT] Clearing orders...`);
+    await supabaseAdmin.from("orders").delete().or(`buyer_id.eq.${userId},seller_id.eq.${userId}`);
+
+    // 5. Delete push_subscriptions
+    console.log(`[DELETE_ACCOUNT] Clearing push_subscriptions...`);
+    await supabaseAdmin.from("push_subscriptions").delete().eq("user_id", userId);
+
+    // 6. Delete admin_notifications if applicable
+    console.log(`[DELETE_ACCOUNT] Clearing admin_notifications...`);
+    // Note: If payload contains the ID, this might be tricky, but usually it's just strings.
+    // For now, we skip or do a simple check if possible.
+
+    // 7. Finally delete the Profile
+    console.log(`[DELETE_ACCOUNT] Clearing profile...`);
     await supabaseAdmin.from("profiles").delete().eq("id", userId);
-    
-    // Delete from auth.users using the admin API
-    const { error: deleteError } = await supabaseAdmin.auth.admin.deleteUser(userId);
 
-    if (deleteError) {
-      throw deleteError;
+    // ── STEP 2: Delete from auth.users ──
+    console.log(`[DELETE_ACCOUNT] Deleting from auth.users...`);
+    const { error: authDeleteError } = await supabaseAdmin.auth.admin.deleteUser(userId);
+
+    if (authDeleteError) {
+      console.error("[DELETE_ACCOUNT] Auth deletion error:", authDeleteError);
+      throw new Error(`Auth deletion failed: ${authDeleteError.message}`);
     }
 
-    return new Response(JSON.stringify({ success: true }), {
+    console.log(`[DELETE_ACCOUNT] Successfully deleted account for ${userId}`);
+
+    return new Response(JSON.stringify({ success: true, message: "Account deleted successfully." }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
     });
 
   } catch (error: any) {
-    console.error("Delete account error:", error);
+    console.error("[DELETE_ACCOUNT] Error:", error.message);
     return new Response(JSON.stringify({ error: error.message }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 400,

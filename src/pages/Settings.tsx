@@ -69,6 +69,9 @@ export default function Settings() {
 
         toast.success("Account deleted successfully.", { id: loadingToast });
         
+        // Clear all local storage data
+        localStorage.clear();
+
         // Force sign out and redirect
         await signOut();
         navigate("/login");
