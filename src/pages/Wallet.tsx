@@ -268,22 +268,54 @@ export default function Wallet() {
   // ── Verify payment on return from Cashfree redirect ──
   useEffect(() => {
     if (!user) return;
+
     const params = new URLSearchParams(window.location.search);
-    const status = params.get("status");
+    const urlStatus = params.get("status");
     const pendingOrderId = localStorage.getItem(`pending_order_${user.id}`);
 
-    if (status === "success" && pendingOrderId) {
-      localStorage.removeItem(`pending_order_${user.id}`);
-      // Clean URL
-      window.history.replaceState({}, document.title, window.location.pathname);
+    // Run verification if we have a pending order (either from redirect OR leftover from previous session)
+    if (pendingOrderId) {
+      // Clean the URL so the status param doesn't trigger again
+      if (urlStatus) {
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+
       setIsVerifying(true);
+
       supabase.functions.invoke("verify-payment", {
         body: { orderId: pendingOrderId, userId: user.id },
       }).then(({ data, error }) => {
         if (!error && data?.success) {
-          alert(`✅ ₹${data.amount} added to your wallet!`);
+          // ✅ Only remove from localStorage AFTER successful verification
+          localStorage.removeItem(`pending_order_${user.id}`);
+          if (!data.alreadyProcessed) {
+            alert(`✅ ₹${data.amount} added to your wallet!`);
+          }
+          // Wait a moment for DB writes to propagate, then refresh
+          setTimeout(() => fetchWalletData(), 800);
+        } else if (error) {
+          console.error("Payment verification failed:", error);
+          // Don't remove the pendingOrderId — let the user retry by refreshing
+        } else if (data && !data.success) {
+          // Payment not yet successful on Cashfree's side, try again in 3 seconds
+          console.log("Payment not yet successful, retrying in 3s...");
+          setTimeout(() => {
+            supabase.functions.invoke("verify-payment", {
+              body: { orderId: pendingOrderId, userId: user.id },
+            }).then(({ data: retryData, error: retryError }) => {
+              if (!retryError && retryData?.success) {
+                localStorage.removeItem(`pending_order_${user.id}`);
+                if (!retryData.alreadyProcessed) {
+                  alert(`✅ ₹${retryData.amount} added to your wallet!`);
+                }
+                setTimeout(() => fetchWalletData(), 800);
+              } else {
+                // Still not verified — keep the orderId so next refresh retries
+                console.warn("Payment still not verified after retry. Will retry on next page load.");
+              }
+            });
+          }, 3000);
         }
-        fetchWalletData();
         setIsVerifying(false);
       });
     }
@@ -772,6 +804,23 @@ export default function Wallet() {
               <RotateCcw className="w-4 h-4" />
             </motion.button>
           </h1>
+
+          <AnimatePresence>
+            {isVerifying && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="absolute top-16 left-0 right-0 z-50 flex justify-center"
+              >
+                <div className="bg-white/10 backdrop-blur-xl border border-white/20 px-4 py-2 rounded-full flex items-center gap-3 shadow-2xl">
+                  <div className="w-4 h-4 border-2 border-[#d4af37] border-t-transparent rounded-full animate-spin" />
+                  <span className="text-[11px] font-black text-white uppercase tracking-widest">Verifying Payment...</span>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           <Link to="/profile">
             <motion.div
               whileTap={{ scale: 0.9 }}

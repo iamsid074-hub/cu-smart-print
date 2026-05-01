@@ -54,15 +54,28 @@ export default function Settings() {
     }
   };
 
-  const handleDeleteAccount = () => {
+  const handleDeleteAccount = async () => {
     if (
       window.confirm(
-        "Are you absolutely sure you want to permanently delete your account? This action cannot be undone."
+        "Are you absolutely sure you want to permanently delete your account? This action cannot be undone. All your data, including wallet balance and order history, will be lost forever."
       )
     ) {
-      toast.error(
-        "Account deletion requires admin approval. Please contact support."
-      );
+      const loadingToast = toast.loading("Deleting account...");
+      try {
+        const { data, error } = await supabase.functions.invoke("delete-user-account");
+
+        if (error) throw error;
+        if (data?.error) throw new Error(data.error);
+
+        toast.success("Account deleted successfully.", { id: loadingToast });
+        
+        // Force sign out and redirect
+        await signOut();
+        navigate("/login");
+      } catch (err: any) {
+        console.error("Deletion error:", err);
+        toast.error(err.message || "Failed to delete account. Please contact support.", { id: loadingToast });
+      }
     }
   };
 
