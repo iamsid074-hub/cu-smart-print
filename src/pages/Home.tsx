@@ -21,6 +21,8 @@ const HomeSpecialSections = lazy(() => import("@/components/HomeSpecialSections"
 const BlinkitZomatoTransition = lazy(() => import("@/components/BlinkitZomatoTransition"));
 const BlinkitAnnounceModal = lazy(() => import("@/components/BlinkitAnnounceModal"));
 const ThreeDStreet = lazy(() => import("@/components/ThreeDStreet"));
+const CombosSection = lazy(() => import("@/components/CombosSection"));
+const LiquidToggle = lazy(() => import("@/components/LiquidToggle"));
 
 const categories = [
   { id: "All", label: "All" },
@@ -82,7 +84,7 @@ export default function Home() {
   const [activeFoodCat, setActiveFoodCat] = useState("all");
   const [homeMode, setHomeMode] = useState<"meal" | "vending" | "quick">("meal");
   const [showQuickTransition, setShowQuickTransition] = useState(false);
-  const [deliveryMode, setDeliveryMode] = useState<"takeaway" | "delivery">("takeaway");
+  const [deliveryMode, setDeliveryMode] = useState<"takeaway" | "combos" | "delivery">("takeaway");
   const [viewMode, setViewMode] = useState<"grid" | "immersive">("grid");
 
   // ─── LIVE SHOPS STATE ───
@@ -258,43 +260,22 @@ export default function Home() {
                 {/* ═══ SHOP DISCOVERY FLOW (STRUCTURED CARDS) ═══ */}
                 {activeFoodCat === "all" && (
                   <div className="mt-8">
-                    {/* 2. Service Toggle — visually connected to the top bar */}
+                    {/* 2. Liquid Glass Service Toggle */}
                     <div className="flex justify-center mb-10 px-1">
-                      <div
-                        className="relative p-1.5 rounded-[2rem] flex items-center w-full max-w-[440px] overflow-hidden"
-                        style={{
-                          background: "linear-gradient(135deg, rgba(255,140,0,0.15) 0%, rgba(139,92,246,0.15) 100%)",
-                          border: "1px solid rgba(255,255,255,0.08)",
-                        }}
-                      >
-                        {/* Animated sliding background — white pill */}
-                        <motion.div
-                          className="absolute rounded-[1.6rem] top-1.5 bottom-1.5 bg-white shadow-lg"
-                          animate={{
-                            left: deliveryMode === "takeaway" ? "6px" : "50%",
-                            width: "calc(50% - 6px)",
-                          }}
-                          transition={{ type: "spring", stiffness: 400, damping: 35 }}
+                      <Suspense fallback={null}>
+                        <LiquidToggle
+                          options={[
+                            { id: "takeaway", label: "SHOPS" },
+                            { id: "combos", label: "COMBOS" },
+                            { id: "delivery", label: "VENDING" },
+                          ]}
+                          active={deliveryMode}
+                          onChange={(id) => setDeliveryMode(id as any)}
                         />
-
-                        <button
-                          onClick={() => setDeliveryMode("takeaway")}
-                          className="relative z-10 flex-1 py-3.5 rounded-[1.6rem] text-[13px] font-black uppercase tracking-widest transition-colors duration-200"
-                          style={{ color: deliveryMode === "takeaway" ? "#000" : "rgba(255,255,255,0.4)" }}
-                        >
-                          SHOPS
-                        </button>
-                        <button
-                          onClick={() => setDeliveryMode("delivery")}
-                          className="relative z-10 flex-1 py-3.5 rounded-[1.6rem] text-[13px] font-black uppercase tracking-widest transition-colors duration-200"
-                          style={{ color: deliveryMode === "delivery" ? "#000" : "rgba(255,255,255,0.4)" }}
-                        >
-                          VENDING
-                        </button>
-                      </div>
+                      </Suspense>
                     </div>
 
-                    {/* 3. Render Shops OR Vending Machine */}
+                    {/* 3. Render Shops OR Vending Machine OR Combos */}
                     {deliveryMode === "takeaway" ? (
                       <>
                         <div className="flex items-center justify-between mb-8 px-1">
@@ -405,6 +386,10 @@ export default function Home() {
                       )}
                     </AnimatePresence>
                   </>
+                ) : deliveryMode === "combos" ? (
+                  <Suspense fallback={<div className="h-[320px] rounded-[2.5rem] border border-white/5 bg-white/[0.02]" />}>
+                    <CombosSection />
+                  </Suspense>
                 ) : (
                   <div className="w-full pb-10">
                     <div className="text-center mb-8 px-4">
