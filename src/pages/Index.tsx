@@ -1,404 +1,370 @@
 import { useState, useEffect, useRef } from "react";
-import {
-  motion,
-  AnimatePresence,
-  useScroll,
-  useTransform,
-  useInView,
-  animate,
-} from "framer-motion";
+import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import { Link } from "react-router-dom";
-import {
-  ArrowRight,
-  ShieldCheck,
-  MessageCircle,
-  Heart,
-  Truck,
-  Star,
-} from "lucide-react";
+import { ArrowRight, ShieldCheck, Zap, Star, Store, ShoppingBag, ChevronDown } from "lucide-react";
 
-// ─── Animated counter ────────────────────────────────────────────────────────────
-function Counter({ target, suffix = "" }: { target: number; suffix?: string }) {
-  const ref = useRef<HTMLSpanElement>(null);
-  const inView = useInView(ref, { once: true });
-  useEffect(() => {
-    if (!inView || !ref.current) return;
-    const node = ref.current;
-    const controls = animate(0, target, {
-      duration: 1.5,
-      ease: "easeOut",
-      onUpdate(value) {
-        node.textContent = Math.round(value) + suffix;
-      },
-    });
-    return () => controls.stop();
-  }, [inView, target, suffix]);
-  return <span ref={ref}>0{suffix}</span>;
-}
+// ─── Google Font Import (Space Grotesk + Inter) ───────────────────────────────
+const fontDisplay: React.CSSProperties = {
+  fontFamily: "'Space Grotesk', 'Inter', sans-serif",
+  letterSpacing: "-0.04em",
+};
+const fontBody: React.CSSProperties = {
+  fontFamily: "'Inter', sans-serif",
+};
 
-// ─── Premium letter-by-letter reveal component ──────────────────────────────────
-function RevealText({
-  text,
-  delay = 0,
-  className = "",
-}: {
-  text: string;
-  delay?: number;
-  className?: string;
-}) {
-  const letters = text.split("");
+// ─── Feature Data ─────────────────────────────────────────────────────────────
+const features = [
+  {
+    icon: Store,
+    title: "17 Campus Shops",
+    desc: "From Chatori Chai to midnight snacks — everything your hostel craves, delivered.",
+    accent: "#FF6B35",
+    glow: "rgba(255, 107, 53, 0.15)",
+  },
+  {
+    icon: ShieldCheck,
+    title: "Eclipsed Wallet",
+    desc: "A secure, biometric-protected digital wallet. Pay, earn, and withdraw — all in one place.",
+    accent: "#7C3AED",
+    glow: "rgba(124, 58, 237, 0.15)",
+  },
+  {
+    icon: Zap,
+    title: "Instant Delivery",
+    desc: "Room-to-room delivery across all hostel blocks. Track in real-time, every time.",
+    accent: "#059669",
+    glow: "rgba(5, 150, 105, 0.15)",
+  },
+  {
+    icon: Star,
+    title: "Eclipsed Score",
+    desc: "Build your campus reputation. High scores unlock hidden menus and VIP perks.",
+    accent: "#D97706",
+    glow: "rgba(217, 119, 6, 0.15)",
+  },
+];
+
+// ─── Floating Orb ─────────────────────────────────────────────────────────────
+function FloatingOrb({ color, size, top, left, delay }: { color: string; size: number; top: string; left: string; delay: number }) {
   return (
-    <span className={`inline-flex ${className}`} aria-label={text}>
-      {letters.map((letter, i) => (
-        <span key={i} className="inline-block overflow-hidden">
-          <motion.span
-            className="inline-block"
-            initial={{ y: "110%" }}
-            animate={{ y: "0%" }}
-            transition={{
-              duration: 0.8,
-              delay: delay + i * 0.03,
-              ease: [0.16, 1, 0.3, 1], // Apple-like super smooth ease
-            }}
-          >
-            {letter === " " ? "\u00A0" : letter}
-          </motion.span>
-        </span>
-      ))}
-    </span>
+    <motion.div
+      className="absolute rounded-full pointer-events-none"
+      style={{
+        width: size,
+        height: size,
+        top,
+        left,
+        background: `radial-gradient(circle at 40% 40%, ${color}, transparent 70%)`,
+        filter: "blur(60px)",
+      }}
+      animate={{
+        scale: [1, 1.12, 1],
+        opacity: [0.5, 0.8, 0.5],
+      }}
+      transition={{
+        duration: 6 + delay,
+        repeat: Infinity,
+        ease: "easeInOut",
+        delay,
+      }}
+    />
   );
 }
 
+// ─── EOS v3 Loader ─────────────────────────────────────────────────────────────
+function EOSLoader() {
+  return (
+    <motion.div
+      className="fixed inset-0 z-[999] flex flex-col items-center justify-center overflow-hidden"
+      style={{ background: "linear-gradient(135deg, #f8faff 0%, #eef2ff 50%, #fdf4ff 100%)" }}
+      exit={{ opacity: 0, scale: 1.05, filter: "blur(20px)" }}
+      transition={{ duration: 0.7, ease: [0.76, 0, 0.24, 1] }}
+    >
+      {/* Ambient Orbs */}
+      <FloatingOrb color="rgba(124, 58, 237, 0.25)" size={400} top="-10%" left="-5%" delay={0} />
+      <FloatingOrb color="rgba(255, 107, 53, 0.2)" size={350} top="50%" left="60%" delay={1.5} />
+      <FloatingOrb color="rgba(5, 150, 105, 0.15)" size={300} top="70%" left="-10%" delay={3} />
+
+      {/* Logo */}
+      <motion.div
+        initial={{ scale: 0.5, opacity: 0, y: 20 }}
+        animate={{ scale: 1, opacity: 1, y: 0 }}
+        transition={{ type: "spring", damping: 18, stiffness: 220, delay: 0.1 }}
+        className="relative mb-8"
+      >
+        <div
+          className="w-28 h-28 rounded-[2.5rem] overflow-hidden shadow-2xl"
+          style={{
+            boxShadow: "0 30px 80px rgba(124, 58, 237, 0.25), 0 0 0 1px rgba(255,255,255,0.8)",
+          }}
+        >
+          <img src="/logo.webp" alt="CU Bazzar" className="w-full h-full object-cover" />
+        </div>
+        {/* Pulse ring */}
+        <motion.div
+          className="absolute inset-0 rounded-[2.5rem]"
+          animate={{ boxShadow: ["0 0 0 0px rgba(124,58,237,0.3)", "0 0 0 28px rgba(124,58,237,0)"] }}
+          transition={{ duration: 1.6, repeat: Infinity }}
+        />
+      </motion.div>
+
+      {/* Brand */}
+      <motion.p
+        initial={{ opacity: 0, y: 10, filter: "blur(8px)" }}
+        animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+        transition={{ duration: 0.8, delay: 0.4 }}
+        className="text-3xl font-black tracking-tight mb-1.5"
+        style={{ ...fontDisplay, color: "#0F0A1E" }}
+      >
+        CU BAZZAR
+      </motion.p>
+      <motion.p
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.7 }}
+        className="text-xs font-bold uppercase tracking-[0.3em] mb-12"
+        style={{ color: "#7C3AED" }}
+      >
+        Eclipsed Operating System v3
+      </motion.p>
+
+      {/* Loading bar */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.9 }}
+        className="relative w-48 h-1 rounded-full overflow-hidden"
+        style={{ background: "rgba(124, 58, 237, 0.12)" }}
+      >
+        <motion.div
+          className="absolute inset-y-0 left-0 rounded-full"
+          style={{ background: "linear-gradient(90deg, #7C3AED, #FF6B35)" }}
+          initial={{ width: "0%" }}
+          animate={{ width: "90%" }}
+          transition={{ duration: 1.8, delay: 1, ease: [0.4, 0, 0.2, 1] }}
+        />
+      </motion.div>
+    </motion.div>
+  );
+}
+
+// ─── Main Landing Page ─────────────────────────────────────────────────────────
 export default function Index() {
-  const [showContent, setShowContent] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const heroRef = useRef<HTMLDivElement>(null);
 
   const { scrollYProgress } = useScroll({
     target: heroRef,
     offset: ["start start", "end start"],
   });
-  const heroTextY = useTransform(scrollYProgress, [0, 1], [0, 150]);
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
-  const heroScale = useTransform(scrollYProgress, [0, 1], [1, 0.9]);
+  const heroY = useTransform(scrollYProgress, [0, 1], [0, 100]);
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
 
   useEffect(() => {
-    const t = setTimeout(() => setShowContent(true), 100);
+    const t = setTimeout(() => setIsLoading(false), 2400);
     return () => clearTimeout(t);
   }, []);
 
-  const features = [
-    {
-      icon: Truck,
-      title: "Room Delivery",
-      desc: "Food and products delivered straight to your hostel room. Seamless and fast.",
-      color: "#007AFF",
-    },
-    {
-      icon: ShieldCheck,
-      title: "Zero Fees",
-      desc: "No commission, no hidden charges. Keep 100% of your earnings.",
-      color: "#34C759",
-    },
-    {
-      icon: MessageCircle,
-      title: "Hot Food",
-      desc: "Order from campus shops like Chatori Chai and get hot food at your door.",
-      color: "#FF9500",
-    },
-    {
-      icon: Heart,
-      title: "Campus Trust",
-      desc: "Every user is a verified CU student. Trade with total confidence.",
-      color: "#FF3B30",
-    },
-  ];
-
-  const stats = [
-    { value: 500, suffix: "+", label: "Students" },
-    { value: 200, suffix: "+", label: "Listings" },
-    { value: 100, suffix: "%", label: "Campus Only" },
-  ];
-
   return (
     <div
-      className="relative overflow-x-hidden min-h-screen selection:bg-white selection:text-[#231942]"
-      style={{ backgroundColor: "#0F0A1E" }}
+      className="relative min-h-screen overflow-x-hidden"
+      style={{ background: "linear-gradient(135deg, #f8faff 0%, #eef2ff 50%, #fdf4ff 100%)" }}
     >
-      {/* â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”
-          HERO SECTION — Apple Product Style
-         â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â” */}
-      <section
-        ref={heroRef}
-        className="relative min-h-[95vh] flex flex-col items-center justify-center overflow-hidden pt-20"
-        style={{
-          background:
-            "radial-gradient(ellipse at 60% 40%, #3B1F6A 0%, #231942 40%, #0F0A1E 100%)",
-        }}
-      >
-        {/* Animated purple/pink orbs */}
-        <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden flex items-center justify-center">
-          <motion.div
-            animate={{ rotate: 360, scale: [1, 1.15, 1] }}
-            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-            className="absolute w-[700px] h-[700px] rounded-full opacity-40"
-            style={{
-              background: "radial-gradient(circle, #9B59B6, transparent 70%)",
-              transformOrigin: "38% 38%",
-            }}
-          />
-          <motion.div
-            animate={{ rotate: -360, scale: [1, 1.25, 1] }}
-            transition={{ duration: 27, repeat: Infinity, ease: "linear" }}
-            className="absolute w-[500px] h-[500px] rounded-full opacity-30"
-            style={{
-              background: "radial-gradient(circle, #FF6B6B, transparent 70%)",
-              transformOrigin: "65% 65%",
-            }}
-          />
-          <motion.div
-            animate={{ rotate: 180, scale: [1, 1.1, 1] }}
-            transition={{ duration: 35, repeat: Infinity, ease: "linear" }}
-            className="absolute w-[400px] h-[400px] rounded-full opacity-25"
-            style={{
-              background: "radial-gradient(circle, #4DB8AC, transparent 70%)",
-              transformOrigin: "50% 20%",
-            }}
-          />
-        </div>
-
-        {/* Floating Glass Logo Pill */}
-        <motion.div
-          initial={{ opacity: 0, y: -20, scale: 0.9 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-          className="absolute top-8 z-50 flex items-center gap-2 px-4 py-1.5 rounded-full"
-          style={{
-            background: "rgba(30,30,35,0.8)",
-            border: "1px solid rgba(255,255,255,0.15)",
-          }}
-        >
-          <img
-            src="/logo.webp"
-            alt="CU Bazzar"
-            loading="lazy" decoding="async"
-            className="w-5 h-5 rounded-md object-cover"
-          />
-          <span className="text-[11px] font-bold tracking-tight text-white/90">
-            CU BAZZAR
-          </span>
-        </motion.div>
-
-        {/* Hero content */}
-        <motion.div
-          style={{ y: heroTextY, opacity: heroOpacity, scale: heroScale }}
-          className="relative z-10 flex flex-col items-center text-center px-6 max-w-5xl mx-auto"
-        >
-          {showContent && (
-            <motion.div
-              className="flex items-center gap-3 mb-6"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.3 }}
-            >
-              <p
-                className="text-[12px] uppercase tracking-widest font-bold"
-                style={{ color: "rgba(255,255,255,0.45)" }}
-              >
-                Introducing the all-new
-              </p>
-            </motion.div>
-          )}
-
-          {/* ─── MAIN HEADING ─── */}
-          {showContent && (
-            <h1 className="font-bold leading-[1.05] tracking-tighter mb-6 select-none text-white text-5xl sm:text-[7rem] whitespace-nowrap drop-shadow-lg">
-              <RevealText text="CU Bazzar" delay={0.4} />
-            </h1>
-          )}
-
-          {/* Subtext */}
-          {showContent && (
-            <motion.p
-              className="text-lg sm:text-2xl max-w-2xl leading-snug mb-10 font-medium tracking-tight"
-              style={{ color: "rgba(255,255,255,0.65)" }}
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{
-                duration: 0.8,
-                delay: 0.9,
-                ease: [0.16, 1, 0.3, 1],
-              }}
-            >
-              The ultimate campus marketplace. Room delivery, zero fees, and
-              everything you need, engineered for Chandigarh University.
-            </motion.p>
-          )}
-
-          {/* CTA Buttons */}
-          {showContent && (
-            <motion.div
-              className="flex items-center gap-4 flex-wrap justify-center mt-4"
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 1.1 }}
-            >
-              <Link to="/login">
-                <button
-                  className="px-8 py-3.5 text-[15px] font-semibold tracking-tight shadow-xl flex items-center gap-2 rounded-full text-white transition-all hover:scale-105 active:scale-95"
-                  style={{
-                    background: "linear-gradient(135deg, #9B59B6, #7D3C98)",
-                    boxShadow: "0 8px 32px rgba(155,89,182,0.45)",
-                  }}
-                >
-                  Enter Marketplace
-                </button>
-              </Link>
-              <Link to="/login">
-                <button
-                  className="text-[15px] font-semibold tracking-tight hover:underline flex items-center gap-1"
-                  style={{ color: "rgba(255,255,255,0.7)" }}
-                >
-                  Sign in <ArrowRight className="w-4 h-4 ml-1" />
-                </button>
-              </Link>
-            </motion.div>
-          )}
-        </motion.div>
-
-        {/* Glass Scroll Indicator */}
-        {showContent && (
-          <motion.div
-            className="absolute bottom-10 left-1/2 -translate-x-1/2"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1.8, duration: 1 }}
-          >
-            <div
-              className="w-8 h-12 rounded-full flex justify-center p-1.5 shadow-sm"
-              style={{
-                background: "rgba(255,255,255,0.08)",
-                border: "1px solid rgba(255,255,255,0.15)",
-              }}
-            >
-              <motion.div
-                className="w-1.5 h-3 rounded-full"
-                style={{ background: "rgba(255,255,255,0.6)" }}
-                animate={{ y: [0, 12, 0], opacity: [1, 0.5, 1] }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-              />
-            </div>
+      {/* EOS v3 Loader */}
+      <AnimatePresence>
+        {isLoading && (
+          <motion.div key="loader" exit={{ opacity: 0, scale: 1.04, filter: "blur(20px)" }} transition={{ duration: 0.7 }}>
+            <EOSLoader />
           </motion.div>
         )}
-      </section>
+      </AnimatePresence>
 
-      {/* â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”
-          FEATURES BENTO GRID — Glass Cards
-         â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â” */}
-      <section
-        className="py-24 px-4 sm:px-6 max-w-6xl mx-auto relative z-10"
-        style={{ background: "transparent" }}
+      {/* ─── Ambient Background Orbs ─────────────────────────────── */}
+      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+        <FloatingOrb color="rgba(124, 58, 237, 0.18)" size={700} top="-15%" left="-10%" delay={0} />
+        <FloatingOrb color="rgba(255, 107, 53, 0.15)" size={600} top="30%" left="55%" delay={2} />
+        <FloatingOrb color="rgba(5, 150, 105, 0.12)" size={500} top="70%" left="5%" delay={4} />
+        <FloatingOrb color="rgba(217, 119, 6, 0.1)" size={400} top="80%" left="70%" delay={1} />
+      </div>
+
+      {/* ─── Top Navbar ──────────────────────────────────────────── */}
+      <motion.nav
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: isLoading ? 0 : 1, y: isLoading ? -20 : 0 }}
+        transition={{ duration: 0.6, delay: 0.2 }}
+        className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 sm:px-10"
       >
-        <motion.div
-          className="text-center mb-16"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-        >
-          <h2
-            className="text-4xl sm:text-6xl font-bold tracking-tighter mb-4"
-            style={{ color: "rgba(255,255,255,0.95)" }}
-          >
-            Pro features.
-            <br />
-            Standard.
-          </h2>
-          <p
-            className="text-xl tracking-tight"
-            style={{ color: "rgba(255,255,255,0.45)" }}
-          >
-            Everything you need, beautifully designed.
-          </p>
-        </motion.div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-          {features.map((f, i) => (
-            <motion.div
-              key={f.title}
-              initial={{ opacity: 0, y: 30, scale: 0.95 }}
-              whileInView={{ opacity: 1, y: 0, scale: 1 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{
-                duration: 0.7,
-                delay: i * 0.1,
-                ease: [0.16, 1, 0.3, 1],
-              }}
-              className="p-8 sm:p-10 rounded-[32px] sm:rounded-[40px] flex flex-col items-start card-hover cursor-default"
-              style={{
-                background: "rgba(30,30,35,0.6)",
-                border: "1px solid rgba(255,255,255,0.1)",
-              }}
-            >
-              <div
-                className="w-14 h-14 rounded-2xl flex items-center justify-center mb-6 shadow-sm"
-                style={{
-                  background: "rgba(255,255,255,0.08)",
-                  border: "1px solid rgba(255,255,255,0.12)",
-                }}
-              >
-                <f.icon className="w-7 h-7" style={{ color: f.color }} />
-              </div>
-              <h3
-                className="text-2xl font-bold tracking-tight mb-3"
-                style={{ color: "rgba(255,255,255,0.95)" }}
-              >
-                {f.title}
-              </h3>
-              <p
-                className="text-[15px] leading-relaxed font-medium"
-                style={{ color: "rgba(255,255,255,0.45)" }}
-              >
-                {f.desc}
-              </p>
-            </motion.div>
-          ))}
-        </div>
-      </section>
-
-      {/* â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”
-          STATS — Floating Glass Strip
-         â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â” */}
-      <section className="py-16 px-4">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-          className="max-w-4xl mx-auto rounded-[40px] p-10 flex flex-col md:flex-row justify-around items-center gap-10 text-center relative overflow-hidden"
+        <div
+          className="flex items-center gap-2.5 px-4 py-2 rounded-2xl"
           style={{
-            background: "rgba(30,30,35,0.6)",
-            border: "1px solid rgba(255,255,255,0.1)",
+            background: "rgba(255,255,255,0.7)",
+            backdropFilter: "blur(20px)",
+            WebkitBackdropFilter: "blur(20px)",
+            border: "1px solid rgba(255,255,255,0.9)",
+            boxShadow: "0 4px 20px rgba(0,0,0,0.06)",
           }}
         >
-          {/* subtle background flare inside stats */}
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent pointer-events-none" />
+          <img src="/logo.webp" alt="CU Bazzar" className="w-7 h-7 rounded-lg object-cover" />
+          <span className="text-sm font-black tracking-tight" style={{ ...fontDisplay, color: "#0F0A1E" }}>
+            CU BAZZAR
+          </span>
+        </div>
 
-          {stats.map((s, i) => (
-            <div key={s.label} className="relative z-10">
-              <p
-                className="font-bold text-5xl sm:text-6xl tracking-tighter mb-1"
-                style={{ color: "rgba(255,255,255,0.95)" }}
+        <Link to="/login">
+          <motion.button
+            whileHover={{ scale: 1.04 }}
+            whileTap={{ scale: 0.96 }}
+            className="px-5 py-2.5 rounded-2xl text-sm font-bold text-white"
+            style={{
+              background: "#0F0A1E",
+              boxShadow: "0 4px 16px rgba(15,10,30,0.18), inset 0 1px 0 rgba(255,255,255,0.08)",
+            }}
+          >
+            Sign In
+          </motion.button>
+        </Link>
+      </motion.nav>
+
+      {/* ─── Hero Section ────────────────────────────────────────── */}
+      <section
+        ref={heroRef}
+        className="relative min-h-screen flex flex-col items-center justify-center text-center px-6 pt-24 pb-20 z-10"
+      >
+        <motion.div style={{ y: heroY, opacity: heroOpacity }} className="flex flex-col items-center">
+          {/* EOS Badge */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: isLoading ? 0 : 1, scale: isLoading ? 0.8 : 1 }}
+            transition={{ duration: 0.6, delay: 0.5 }}
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-10"
+            style={{
+              background: "rgba(124, 58, 237, 0.08)",
+              border: "1px solid rgba(124, 58, 237, 0.2)",
+            }}
+          >
+            <div className="w-1.5 h-1.5 rounded-full bg-violet-500 animate-pulse" />
+            <span className="text-xs font-bold tracking-widest uppercase" style={{ color: "#7C3AED" }}>
+              Eclipsed Operating System v3
+            </span>
+          </motion.div>
+
+          {/* Main Headline */}
+          <motion.h1
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: isLoading ? 0 : 1, y: isLoading ? 30 : 0 }}
+            transition={{ duration: 0.9, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            className="text-[3.2rem] sm:text-[6rem] leading-[1] font-black tracking-tighter mb-6 max-w-5xl"
+            style={{ ...fontDisplay, color: "#0F0A1E" }}
+          >
+            Your campus.
+            <br />
+            <span
+              className="relative"
+              style={{
+                background: "linear-gradient(135deg, #7C3AED 0%, #FF6B35 100%)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+              }}
+            >
+              Reimagined.
+            </span>
+          </motion.h1>
+
+          {/* Subheadline */}
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: isLoading ? 0 : 1, y: isLoading ? 20 : 0 }}
+            transition={{ duration: 0.8, delay: 0.85, ease: [0.16, 1, 0.3, 1] }}
+            className="text-lg sm:text-2xl max-w-2xl leading-relaxed mb-12 font-medium"
+            style={{ ...fontBody, color: "rgba(15,10,30,0.5)" }}
+          >
+            17 campus shops, instant hostel delivery, biometric wallet,
+            and a campus-wide marketplace — all inside one fluid experience.
+          </motion.p>
+
+          {/* CTA Buttons */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: isLoading ? 0 : 1, y: isLoading ? 20 : 0 }}
+            transition={{ duration: 0.8, delay: 1.05, ease: [0.16, 1, 0.3, 1] }}
+            className="flex items-center gap-4 flex-wrap justify-center"
+          >
+            <Link to="/login">
+              <motion.button
+                whileHover={{ scale: 1.04, y: -2 }}
+                whileTap={{ scale: 0.96 }}
+                className="flex items-center gap-2.5 px-8 py-4 rounded-2xl text-white text-[15px] font-bold relative overflow-hidden group"
+                style={{
+                  background: "#0F0A1E",
+                  boxShadow: "0 4px 20px rgba(15,10,30,0.2), inset 0 1px 0 rgba(255,255,255,0.08)",
+                }}
               >
-                <Counter target={s.value} suffix={s.suffix} />
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ background: "rgba(255,255,255,0.05)" }} />
+                Enter Bazzar <ArrowRight className="w-4 h-4" />
+              </motion.button>
+            </Link>
+            <Link to="/login">
+              <motion.button
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+                className="flex items-center gap-2 px-6 py-4 rounded-2xl text-[15px] font-bold"
+                style={{
+                  background: "rgba(255,255,255,0.7)",
+                  backdropFilter: "blur(16px)",
+                  WebkitBackdropFilter: "blur(16px)",
+                  border: "1px solid rgba(255,255,255,0.9)",
+                  color: "#0F0A1E",
+                  boxShadow: "0 8px 30px rgba(0,0,0,0.06)",
+                }}
+              >
+                Sign In
+              </motion.button>
+            </Link>
+          </motion.div>
+
+          {/* Scroll indicator */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: isLoading ? 0 : 1 }}
+            transition={{ delay: 1.5 }}
+            className="mt-20 flex flex-col items-center gap-2"
+          >
+            <span className="text-xs font-semibold uppercase tracking-widest" style={{ color: "rgba(15,10,30,0.3)" }}>
+              Scroll
+            </span>
+            <motion.div animate={{ y: [0, 6, 0] }} transition={{ duration: 1.8, repeat: Infinity }}>
+              <ChevronDown className="w-5 h-5" style={{ color: "rgba(15,10,30,0.3)" }} />
+            </motion.div>
+          </motion.div>
+        </motion.div>
+      </section>
+
+      {/* ─── Floating Stats Strip ────────────────────────────────── */}
+      <section className="relative z-10 px-6 pb-16">
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          className="max-w-4xl mx-auto grid grid-cols-3 gap-4 p-6 sm:p-8 rounded-[2.5rem]"
+          style={{
+            background: "rgba(255,255,255,0.6)",
+            backdropFilter: "blur(30px)",
+            WebkitBackdropFilter: "blur(30px)",
+            border: "1px solid rgba(255,255,255,0.9)",
+            boxShadow: "0 20px 60px rgba(0,0,0,0.06)",
+          }}
+        >
+          {[
+            { val: "17", label: "Campus Shops" },
+            { val: "500+", label: "Students" },
+            { val: "24/7", label: "Delivery" },
+          ].map((s) => (
+            <div key={s.label} className="text-center py-2">
+              <p className="text-3xl sm:text-5xl font-black mb-1" style={{ ...fontDisplay, color: "#0F0A1E" }}>
+                {s.val}
               </p>
-              <p
-                className="text-[13px] font-semibold uppercase tracking-widest"
-                style={{ color: "rgba(255,255,255,0.4)" }}
-              >
+              <p className="text-xs sm:text-sm font-bold uppercase tracking-widest" style={{ color: "rgba(15,10,30,0.4)" }}>
                 {s.label}
               </p>
             </div>
@@ -406,95 +372,155 @@ export default function Index() {
         </motion.div>
       </section>
 
-      {/* â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”
-          FINAL CTA
-         â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â” */}
-      <section className="py-32 px-6 relative overflow-hidden flex justify-center">
+      {/* ─── Feature Cards ───────────────────────────────────────── */}
+      <section className="relative z-10 px-6 py-16 max-w-6xl mx-auto">
         <motion.div
-          className="max-w-3xl text-center relative z-10 p-12 sm:p-20 rounded-[48px]"
-          style={{
-            background: "rgba(30,30,35,0.6)",
-            border: "1px solid rgba(255,255,255,0.1)",
-          }}
-          initial={{ opacity: 0, y: 40 }}
+          initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+          className="text-center mb-16"
         >
-          <img
-            src="/logo.webp"
-            alt="Logo"
-            loading="lazy" decoding="async"
-            className="w-16 h-16 rounded-2xl mx-auto mb-8 shadow-md"
-          />
-          <h2 className="font-bold text-white text-4xl sm:text-6xl mb-6 tracking-tighter leading-tight">
-            Your campus.
-            <br /> Your marketplace.
-          </h2>
-          <p
-            className="text-[17px] leading-relaxed mb-10 max-w-md mx-auto font-medium"
-            style={{ color: "rgba(255,255,255,0.55)" }}
-          >
-            Join hundreds of Chandigarh University students already trading on
-            CU Bazzar.
+          <p className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: "#7C3AED" }}>
+            What EOS v3 brings
           </p>
+          <h2
+            className="text-4xl sm:text-6xl font-black tracking-tighter"
+            style={{ ...fontDisplay, color: "#0F0A1E" }}
+          >
+            Built different.
+          </h2>
+        </motion.div>
 
-          <Link to="/login">
-            <button
-              className="px-10 py-4 text-[17px] font-semibold tracking-tight rounded-full text-white transition-all hover:scale-105 active:scale-95"
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          {features.map((f, i) => (
+            <motion.div
+              key={f.title}
+              initial={{ opacity: 0, y: 40, scale: 0.96 }}
+              whileInView={{ opacity: 1, y: 0, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
+              whileHover={{ y: -5, scale: 1.01 }}
+              className="relative p-8 rounded-[2rem] overflow-hidden group cursor-default"
               style={{
-                background: "linear-gradient(135deg, #9B59B6, #7D3C98)",
-                boxShadow: "0 8px 32px rgba(155,89,182,0.45)",
+                background: "rgba(255,255,255,0.65)",
+                backdropFilter: "blur(20px)",
+                WebkitBackdropFilter: "blur(20px)",
+                border: "1px solid rgba(255,255,255,0.9)",
+                boxShadow: `0 12px 40px ${f.glow}`,
               }}
             >
-              Get Started for Free
-            </button>
+              {/* Glow orb */}
+              <div
+                className="absolute -top-10 -right-10 w-40 h-40 rounded-full pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                style={{ background: `radial-gradient(circle, ${f.glow}, transparent)`, filter: "blur(20px)" }}
+              />
+
+              <div
+                className="w-14 h-14 rounded-2xl flex items-center justify-center mb-6"
+                style={{ background: f.glow, border: `1px solid ${f.accent}22` }}
+              >
+                <f.icon className="w-7 h-7" style={{ color: f.accent }} />
+              </div>
+              <h3 className="text-xl font-black mb-3 tracking-tight" style={{ ...fontDisplay, color: "#0F0A1E" }}>
+                {f.title}
+              </h3>
+              <p className="text-[15px] leading-relaxed font-medium" style={{ ...fontBody, color: "rgba(15,10,30,0.5)" }}>
+                {f.desc}
+              </p>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* ─── Final CTA ───────────────────────────────────────────── */}
+      <section className="relative z-10 px-6 py-24 flex justify-center">
+        <motion.div
+          initial={{ opacity: 0, y: 40, scale: 0.96 }}
+          whileInView={{ opacity: 1, y: 0, scale: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+          className="text-center max-w-2xl p-12 sm:p-20 rounded-[3rem] relative overflow-hidden"
+          style={{
+            background: "rgba(255,255,255,0.6)",
+            backdropFilter: "blur(30px)",
+            WebkitBackdropFilter: "blur(30px)",
+            border: "1px solid rgba(255,255,255,0.9)",
+            boxShadow: "0 30px 80px rgba(124,58,237,0.1)",
+          }}
+        >
+          <FloatingOrb color="rgba(124,58,237,0.2)" size={300} top="-20%" left="-10%" delay={0} />
+          <FloatingOrb color="rgba(255,107,53,0.15)" size={250} top="50%" left="60%" delay={2} />
+
+          <img src="/logo.webp" alt="Logo" className="w-16 h-16 rounded-2xl mx-auto mb-8 shadow-xl object-cover" />
+          <h2
+            className="text-4xl sm:text-5xl font-black tracking-tighter mb-5"
+            style={{ ...fontDisplay, color: "#0F0A1E" }}
+          >
+            Ready to enter
+            <br />
+            <span style={{ color: "#0F0A1E" }}>
+              EOS v3?
+            </span>
+          </h2>
+          <p className="text-[16px] leading-relaxed mb-10" style={{ ...fontBody, color: "rgba(15,10,30,0.5)" }}>
+            Join hundreds of Chandigarh University students on the most premium campus experience ever built.
+          </p>
+          <Link to="/login">
+            <motion.button
+              whileHover={{ scale: 1.04, y: -2 }}
+              whileTap={{ scale: 0.96 }}
+              className="flex items-center gap-2.5 px-10 py-4 rounded-2xl text-white text-[16px] font-bold mx-auto relative overflow-hidden group"
+              style={{
+                background: "#0F0A1E",
+                boxShadow: "0 4px 24px rgba(15,10,30,0.2), inset 0 1px 0 rgba(255,255,255,0.08)",
+              }}
+            >
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ background: "rgba(255,255,255,0.05)" }} />
+              Get Started Free <ArrowRight className="w-5 h-5" />
+            </motion.button>
           </Link>
         </motion.div>
       </section>
 
-      {/* â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”
-          FOOTER
-         â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â” */}
+      {/* ─── Footer ──────────────────────────────────────────────── */}
       <footer
-        className="py-12 px-6"
-        style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}
+        className="relative z-10 px-6 py-10"
+        style={{ borderTop: "1px solid rgba(15,10,30,0.06)" }}
       >
         <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2.5">
+            <img src="/logo.webp" alt="CU Bazzar" className="w-7 h-7 rounded-lg object-cover" />
+            <span className="text-sm font-black tracking-tight" style={{ ...fontDisplay, color: "#0F0A1E" }}>
+              CU BAZZAR
+            </span>
             <span
-              className="text-[13px] font-medium"
-              style={{ color: "rgba(255,255,255,0.35)" }}
+              className="text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full"
+              style={{ background: "rgba(124,58,237,0.1)", color: "#7C3AED" }}
             >
-              &copy; 2026 CU BAZZAR INC.
+              EOS v3
             </span>
           </div>
           <div className="flex flex-wrap items-center justify-center sm:justify-end gap-x-6 gap-y-3">
-            <Link
-              to="/about-us"
-              className="text-[13px] font-medium hover:underline text-indigo-400"
-            >
-              About Us
-            </Link>
-            <Link
-              to="/privacy-policy"
-              className="text-[13px] font-medium hover:underline text-indigo-400"
-            >
-              Privacy Policy
-            </Link>
-            <Link
-              to="/terms"
-              className="text-[13px] font-medium hover:underline text-indigo-400"
-            >
-              Terms
-            </Link>
-            <Link
-              to="/help"
-              className="text-[13px] font-medium hover:underline text-indigo-400"
-            >
-              Contact Us
-            </Link>
+            {[
+              { to: "/about-us", label: "About" },
+              { to: "/privacy-policy", label: "Privacy" },
+              { to: "/terms", label: "Terms" },
+              { to: "/help", label: "Help" },
+            ].map((link) => (
+              <Link
+                key={link.to}
+                to={link.to}
+                className="text-sm font-semibold transition-colors"
+                style={{ color: "rgba(15,10,30,0.4)" }}
+              >
+                {link.label}
+              </Link>
+            ))}
           </div>
+          <p className="text-xs font-medium" style={{ color: "rgba(15,10,30,0.3)" }}>
+            © 2026 CU Bazzar
+          </p>
         </div>
       </footer>
     </div>

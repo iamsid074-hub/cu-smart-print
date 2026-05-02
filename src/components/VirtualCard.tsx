@@ -62,7 +62,7 @@ export const VirtualCard: React.FC<VirtualCardProps> = ({
 
               <div>
                 <span className="text-white font-black tracking-[0.2em] uppercase text-sm sm:text-base block leading-none">CU CARD</span>
-                <span className="text-[#d4af37] font-bold text-[8px] sm:text-[9px] uppercase tracking-widest mt-1 opacity-80">Elite Rewards</span>
+                <span className="text-[#d4af37] font-bold text-[8px] sm:text-[9px] uppercase tracking-widest mt-1 opacity-80">Eclipsed Rewards</span>
               </div>
             </div>
             <div className="bg-white/5 backdrop-blur-sm border border-white/10 p-1.5 rounded-lg shadow-inner">

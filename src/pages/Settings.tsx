@@ -467,6 +467,16 @@ export default function Settings() {
           </ModalOverlay>
         )}
       </AnimatePresence>
+      
+      {/* EOS v2 Branding */}
+      <div className="mt-12 pb-10 text-center opacity-30">
+        <p className="text-[10px] font-black tracking-[0.2em] uppercase text-white">
+          Eclipsed Operating System v2.0
+        </p>
+        <p className="text-[8px] font-bold text-white/50 mt-1 uppercase tracking-widest">
+          CU Bazzar Unified Interface
+        </p>
+      </div>
     </div>
   );
 }

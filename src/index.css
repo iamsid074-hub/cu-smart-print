@@ -7,46 +7,48 @@
 
 @layer base {
   :root {
-    /* ─── Luxury Dark System Colors ─── */
-    --background: 0 0% 0%; /* #000000 Pure Black */
-    --foreground: 0 0% 100%; /* #FFFFFF Primary Text */
-    
-    --card: 240 10% 4%; /* #0a0a0a Secondary Dark */
-    --card-foreground: 0 0% 100%;
-    
-    --popover: 240 10% 4%;
-    --popover-foreground: 0 0% 100%;
-    
-    --primary: 33 100% 50%; /* #FF9500 Market Orange */
-    --primary-foreground: 0 0% 0%;
-    
-    --secondary: 240 10% 11%; /* #1D1D1F Tertiary Dark */
-    --secondary-foreground: 0 0% 100%;
-    
-    --accent: 251 91% 65%; /* #6366f1 Indigo Accent */
+    /* ─── EOS v3 Ethereal Light System ─── */
+    --background: 220 30% 98%;       /* #F8FAFF Bright Canvas */
+    --foreground: 260 60% 6%;        /* #0F0A1E Deep Ink */
+
+    --card: 0 0% 100%;               /* Pure White Glass */
+    --card-foreground: 260 60% 6%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 260 60% 6%;
+
+    --primary: 263 68% 42%;          /* #7C3AED EOS Violet */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 220 30% 96%;
+    --secondary-foreground: 260 60% 6%;
+
+    --accent: 21 100% 57%;           /* #FF6B35 EOS Prism Orange */
     --accent-foreground: 0 0% 100%;
-    
-    --destructive: 0 100% 59%; /* #FF3B30 */
+
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-    
-    --muted: 240 10% 11%;
-    --muted-foreground: 240 4% 56%; /* #8E8E93 */
-    
-    --border: 0 0% 100% / 0.05;
-    --input: 0 0% 100% / 0.05;
-    --ring: 33 100% 50%;
-    
-    --radius: 1.5rem;
-    
-    /* Safe Area Variables provided by Capacitor/WebView */
+
+    --muted: 220 20% 95%;
+    --muted-foreground: 220 10% 55%;
+
+    --border: 260 30% 90%;
+    --input: 260 30% 95%;
+    --ring: 263 68% 42%;
+
+    --radius: 1.25rem;
+
+    /* Safe Area Variables */
     --sat: env(safe-area-inset-top, 0px);
     --sab: env(safe-area-inset-bottom, 0px);
     --sal: env(safe-area-inset-left, 0px);
     --sar: env(safe-area-inset-right, 0px);
-    
-    /* Luxury Gradients */
-    --luxury-orange: linear-gradient(135deg, #fb923c 0%, #f97316 100%);
-    --luxury-indigo: linear-gradient(135deg, #818cf8 0%, #6366f1 100%);
+
+    /* EOS v3 Prism Gradients */
+    --eos-primary: linear-gradient(135deg, #7C3AED 0%, #9F67FF 100%);
+    --eos-prism: linear-gradient(135deg, #7C3AED 0%, #FF6B35 100%);
+    --eos-warm: linear-gradient(135deg, #FF6B35 0%, #D97706 100%);
+    --eos-emerald: linear-gradient(135deg, #059669 0%, #34D399 100%);
   }
 }
 
@@ -61,26 +63,18 @@
 
   body {
     @apply text-foreground;
-    background-color: #000000;
-    font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'SF Pro Text', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background: linear-gradient(135deg, #f8faff 0%, #eef2ff 50%, #fdf4ff 100%);
+    font-family: 'Space Grotesk', 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Text', Roboto, sans-serif;
     overflow-x: hidden;
     overscroll-behavior-y: none;
     -webkit-overflow-scrolling: touch;
     min-height: 100vh;
     min-height: 100dvh;
     min-height: -webkit-fill-available;
-    /* Apply safe-area paddings globally to body, but also expose via classes for absolute elements */
     padding-top: var(--sat);
     padding-bottom: var(--sab);
     padding-left: var(--sal);
     padding-right: var(--sar);
-
-    /* Immersive dark mesh */
-    background-image: 
-      radial-gradient(circle at 15% 50%, rgba(251, 146, 60, 0.05) 0%, transparent 50%),
-      radial-gradient(circle at 85% 30%, rgba(99, 102, 241, 0.05) 0%, transparent 50%),
-      radial-gradient(circle at 50% 80%, rgba(255, 255, 255, 0.02) 0%, transparent 50%);
-    /* Removed background-attachment: fixed — was causing full-page repaints on every scroll frame */
   }
 
   html {
@@ -140,15 +134,17 @@
   }
 
   .luxury-card {
-    background: #1c1c1e;
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.9);
     border-radius: 1.5rem;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     @apply transition-all duration-300;
   }
 
   .luxury-card:hover {
-    border-color: rgba(255, 255, 255, 0.15);
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    border-color: rgba(124, 58, 237, 0.2);
+    box-shadow: 0 10px 40px rgba(124, 58, 237, 0.1);
   }
 
   /* ─── iOS Inner Shadow effects (Action Buttons) ─── */
