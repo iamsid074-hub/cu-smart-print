@@ -190,7 +190,17 @@ function ClosedScreen() {
           </p>
           <p className="text-xs text-slate-500">
             Opens at{" "}
-            <span className="text-brand f// ─── Maintenance Screen ─────────────────────────────────────────────────────────
+            <span className="text-brand font-semibold">
+              {getNextOpenTime()}
+            </span>
+          </p>
+        </div>
+      </motion.div>
+    </div>
+  );
+}
+
+// ─── Maintenance Screen ─────────────────────────────────────────────────────────
 function MaintenanceScreen() {
   return (
     <div className="min-h-screen flex items-center justify-center p-6 bg-[#090314] relative overflow-hidden">
