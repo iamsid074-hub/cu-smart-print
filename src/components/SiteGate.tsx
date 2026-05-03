@@ -7,6 +7,7 @@ import {
   Clock,
   ShoppingBag,
   UtensilsCrossed,
+  Sparkles,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
@@ -189,81 +190,49 @@ function ClosedScreen() {
           </p>
           <p className="text-xs text-slate-500">
             Opens at{" "}
-            <span className="text-brand font-semibold">
-              {getNextOpenTime()}
-            </span>
-          </p>
-        </div>
-      </motion.div>
-    </div>
-  );
-}
-
-// ─── Maintenance Screen ─────────────────────────────────────────────────────────
+            <span className="text-brand f// ─── Maintenance Screen ─────────────────────────────────────────────────────────
 function MaintenanceScreen() {
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 bg-slate-50">
+    <div className="min-h-screen flex items-center justify-center p-6 bg-[#090314] relative overflow-hidden">
+      {/* Deep purple atmospheric glows */}
+      <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] rounded-full bg-purple-700/30 blur-[120px] mix-blend-screen pointer-events-none" />
+      <div className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] rounded-full bg-violet-700/20 blur-[120px] mix-blend-screen pointer-events-none" />
+      
       <motion.div
-        initial={{ opacity: 0, scale: 0.9, y: 20 }}
+        initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: [0.34, 1.56, 0.64, 1] }}
-        className="max-w-md w-full text-center"
+        transition={{ duration: 0.8, ease: [0.34, 1.56, 0.64, 1] }}
+        className="max-w-md w-full text-center relative z-10"
       >
         <motion.div
-          animate={{ rotate: [0, 15, -15, 0] }}
-          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-          className="mb-6"
+          animate={{ y: [0, -10, 0] }}
+          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+          className="mb-8 flex justify-center"
         >
-          <Wrench className="w-20 h-20 mx-auto text-amber-500 drop-shadow-[0_0_30px_rgba(251,191,36,0.2)]" />
+          <div className="w-24 h-24 rounded-[28px] bg-gradient-to-tr from-[#6B21A8] to-[#D946EF] flex items-center justify-center shadow-[0_0_50px_rgba(168,85,247,0.4)] rotate-3">
+             <Sparkles className="w-12 h-12 text-white" />
+          </div>
         </motion.div>
-
-        <div className="flex items-center justify-center gap-2 mb-3">
-          <img
-            src="/logo.webp"
-            alt="CU Bazaar"
-            className="w-10 h-10 rounded-full"
-            onError={(e) => {
-              (e.target as HTMLImageElement).style.display = "none";
-            }}
-          />
-          <span className="text-2xl font-black">
-            <span className="text-brand">CU</span>{" "}
-            <span className="text-slate-900">BAZZAR</span>
-          </span>
-        </div>
-
-        <h1 className="text-3xl font-black text-slate-900 mb-2">
-          Under Maintenance
+        
+        <h1 className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-br from-white via-[#E9D5FF] to-[#A855F7] mb-4 drop-shadow-sm">
+          EOS V3
         </h1>
-        <p className="text-slate-500 mb-8">
-          We're making things better! Be back shortly.
+        
+        <p className="text-[#E9D5FF]/80 text-lg mb-12 leading-relaxed font-light px-4">
+          We are working on EOS V3<br/>
+          <span className="font-medium text-white">— new design —</span>
         </p>
 
-        <div className="rounded-2xl p-6 bg-amber-50 ring-1 ring-amber-200 shadow-sm">
-          <motion.div
-            className="flex justify-center gap-1.5 mb-3"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-          >
-            {[0, 1, 2].map((i) => (
-              <motion.div
-                key={i}
-                className="w-2.5 h-2.5 rounded-full bg-amber-500"
-                animate={{ opacity: [0.3, 1, 0.3], scale: [0.8, 1.2, 0.8] }}
-                transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.3 }}
-              />
-            ))}
-          </motion.div>
-          <p className="text-sm text-amber-800">
-            Our team is working on improvements.
-            <br />
-            Please check back in a few minutes.
-          </p>
+        <div className="rounded-[32px] p-[1px] bg-gradient-to-b from-[#C084FC]/50 to-[#581C87]/20 backdrop-blur-xl relative overflow-hidden shadow-2xl shadow-[#3B0764]/80 inline-block w-full max-w-[280px]">
+          <div className="absolute inset-0 bg-[#1e0a3c]/60" />
+          <div className="relative px-8 py-6 rounded-[31px] border border-white/5 bg-gradient-to-b from-white/10 to-transparent flex flex-col items-center">
+            <p className="text-[#D8B4FE]/80 text-xs uppercase tracking-widest mb-2 font-medium">Site will reopen on</p>
+            <p className="text-4xl font-black text-white tracking-tight drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]">15 JULY</p>
+          </div>
         </div>
       </motion.div>
     </div>
   );
-}
 
 // ─── SiteGate Hook ──────────────────────────────────────────────────────────────
 export function useSiteGate() {
