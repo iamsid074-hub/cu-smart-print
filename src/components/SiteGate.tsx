@@ -243,6 +243,7 @@ function MaintenanceScreen() {
       </motion.div>
     </div>
   );
+}
 
 // ─── SiteGate Hook ──────────────────────────────────────────────────────────────
 export function useSiteGate() {
