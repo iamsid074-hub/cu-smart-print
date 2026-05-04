@@ -15,7 +15,7 @@ export default function Navbar() {
   return (
     <>
       <TopDynamicIsland onSell={() => setSellOpen(true)} />
-      {!isSections && (
+      {!isSections && location.pathname !== "/home" && (
         <motion.div
           initial={{ y: 0 }}
           animate={{ y: isCart ? -120 : 0 }}

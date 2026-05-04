@@ -240,7 +240,7 @@ function AppLayout() {
       {!isLanding && !isLogin && !isAdminPath && !isDownload && !isDriverPage && (
         <>
           {location.pathname !== "/pasta-offer" && <Navbar />}
-          {location.pathname !== "/pasta-offer" && !isSections && <BottomNav />}
+          {location.pathname !== "/pasta-offer" && !isSections && location.pathname !== "/home" && <BottomNav />}
         </>
       )}
       <ErrorBoundary>
