@@ -18,36 +18,7 @@ const GLASS = {
 const OPEN_Y = 0;
 const getClosedY = () => -window.innerHeight;
 
-// Pure-JS spring (runs on rAF, never blocks React)
-function runSpring(
-  fromY: number,
-  toY: number,
-  onUpdate: (y: number) => void,
-  onDone?: () => void,
-) {
-  let pos = fromY;
-  let vel = 0;
-  const stiffness = 380;
-  const damping = 40;
-  let last = performance.now();
-  let id = 0;
-
-  const tick = (now: number) => {
-    const dt = Math.min((now - last) / 1000, 0.032);
-    last = now;
-    vel += (-stiffness * (pos - toY) - damping * vel) * dt;
-    pos += vel * dt;
-    onUpdate(pos);
-    if (Math.abs(pos - toY) < 0.8 && Math.abs(vel) < 0.8) {
-      onUpdate(toY);
-      onDone?.();
-      return;
-    }
-    id = requestAnimationFrame(tick);
-  };
-  id = requestAnimationFrame(tick);
-  return () => cancelAnimationFrame(id);
-}
+// Removed runSpring - switching to CSS transitions for 100% GPU accelerated smoothness
 
 // ─── Real-time iOS Status Bar ────────────────────────────────────────────────
 const IosStatusBar = () => {
@@ -81,36 +52,39 @@ const IosStatusBar = () => {
   const formattedTime = time.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }).replace(/\s?[AP]M/, '');
 
   return (
-    <div className="flex items-center justify-between px-3 pb-6 pt-1 w-full relative">
-      <div className="text-white font-semibold text-[15px] tracking-tight ml-2 mt-1 w-12 z-10">
+    <div className="flex items-center justify-between px-3 pb-6 pt-1 w-full relative h-10">
+      <div className="text-white font-semibold text-[15px] tracking-tight ml-2 mt-[2px] w-12 z-10 flex items-center">
         {formattedTime}
       </div>
 
       {/* Dynamic Island Hardware Cutout */}
       <div className="absolute left-1/2 top-0 -translate-x-1/2 w-[116px] h-[34px] bg-black rounded-full z-10 shadow-[inset_0_-1px_1px_rgba(255,255,255,0.05)]" />
 
-      <div className="flex items-center justify-end gap-[5px] mr-1 mt-1 w-16 z-10">
+      {/* Right Icons: Perfectly vertically aligned using a strict flex-center container */}
+      <div className="flex items-center justify-end gap-[6px] mr-1 mt-[2px] w-[70px] z-10 h-full">
         {/* Cellular Bars */}
-        <div className="flex items-end gap-[2px] h-[10px] pb-[1px]">
-          <div className="w-[3px] h-[4px] bg-white rounded-sm" />
-          <div className="w-[3px] h-[6px] bg-white rounded-sm" />
-          <div className="w-[3px] h-[8px] bg-white rounded-sm" />
-          <div className="w-[3px] h-[10px] bg-white rounded-sm" />
+        <div className="flex items-end gap-[1.5px] h-[11px] mb-[1px]">
+          <div className="w-[3px] h-[4px] bg-white rounded-[1px]" />
+          <div className="w-[3px] h-[6px] bg-white rounded-[1px]" />
+          <div className="w-[3px] h-[8px] bg-white rounded-[1px]" />
+          <div className="w-[3px] h-[11px] bg-white rounded-[1px]" />
         </div>
-        <Wifi className="w-[18px] h-[18px] text-white ml-[2px] stroke-[2.5] flex-shrink-0" />
+        
+        {/* WiFi */}
+        <Wifi className="w-[16px] h-[16px] text-white stroke-[2.5] flex-shrink-0" />
         
         {/* Battery */}
-        <div className="relative flex items-center ml-1">
-          <div className="w-[22px] h-[11px] border border-white/40 rounded-[4px] p-[1px] flex items-center relative overflow-hidden">
+        <div className="relative flex items-center">
+          <div className="w-[23px] h-[11.5px] border border-white/40 rounded-[4px] p-[1px] flex items-center relative overflow-hidden">
             <div 
               className={`h-full rounded-[1px] transition-all duration-300 ${batteryLevel <= 0.2 && !isCharging ? 'bg-[#FF453A]' : 'bg-white'}`} 
               style={{ width: `${Math.max(5, batteryLevel * 100)}%` }} 
             />
             {isCharging && (
-              <Zap className="w-2 h-2 text-black absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 fill-current drop-shadow-sm" />
+              <Zap className="w-2.5 h-2.5 text-black absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 fill-current drop-shadow-sm" />
             )}
           </div>
-          <div className="w-[1px] h-[4px] bg-white/40 rounded-r-sm ml-[1px]" />
+          <div className="w-[1.5px] h-[4px] bg-white/40 rounded-r-[1px] ml-[1px]" />
         </div>
       </div>
     </div>
@@ -123,7 +97,6 @@ export default function ControlCenter() {
 
   const panelRef = useRef<HTMLDivElement>(null);
   const backdropRef = useRef<HTMLDivElement>(null);
-  const cancelSpring = useRef<(() => void) | null>(null);
   const isOpenRef = useRef(false);
   const dragStartY = useRef(0);
   const dragStartPanelY = useRef(0);
@@ -131,37 +104,52 @@ export default function ControlCenter() {
   const currentPanelY = useRef(getClosedY());
   const isDragging = useRef(false);
 
+  // ── CSS Transition Config ──
+  const SPRING_OPEN = "transform 0.5s cubic-bezier(0.32, 0.72, 0, 1.05)";
+  const SPRING_CLOSE = "transform 0.4s cubic-bezier(0.32, 0.72, 0, 1)";
+  const FADE_TRANSITION = "opacity 0.4s cubic-bezier(0.32, 0.72, 0, 1)";
+
   // Direct DOM write — zero React overhead + Force GPU Acceleration
-  const setY = useCallback((y: number) => {
+  const setY = useCallback((y: number, useTransition: boolean = false) => {
     currentPanelY.current = y;
-    if (!panelRef.current) return;
-    // Use translate3d instead of translateY to force hardware acceleration on mobile
-    panelRef.current.style.transform = `translate3d(0, ${y}px, 0)`;
-    const pct = Math.max(0, Math.min(1, 1 + y / window.innerHeight));
-    if (backdropRef.current) {
-      backdropRef.current.style.opacity = String(pct);
+    if (!panelRef.current || !backdropRef.current) return;
+    
+    // Apply transitions if requested, otherwise disable them for instant 1:1 drag tracking
+    if (useTransition) {
+      panelRef.current.style.transition = y === OPEN_Y ? SPRING_OPEN : SPRING_CLOSE;
+      backdropRef.current.style.transition = FADE_TRANSITION;
+    } else {
+      panelRef.current.style.transition = "none";
+      backdropRef.current.style.transition = "none";
     }
+
+    panelRef.current.style.transform = `translate3d(0, ${y}px, 0)`;
+    
+    // Calculate opacity (1 when fully open, 0 when fully closed)
+    const pct = Math.max(0, Math.min(1, 1 + y / window.innerHeight));
+    backdropRef.current.style.opacity = String(pct);
   }, []);
 
   const open = useCallback(() => {
-    cancelSpring.current?.();
     isOpenRef.current = true;
     if (panelRef.current) panelRef.current.style.pointerEvents = "auto";
     if (backdropRef.current) backdropRef.current.style.pointerEvents = "auto";
     document.body.style.overflow = "hidden";
-    // Show cards immediately so they are visible as panel arrives
     setShowCards(true);
-    cancelSpring.current = runSpring(currentPanelY.current, OPEN_Y, setY);
+    
+    // Trigger CSS animation to open
+    setY(OPEN_Y, true);
   }, [setY]);
 
   const close = useCallback(() => {
-    cancelSpring.current?.();
     isOpenRef.current = false;
     setShowCards(false);
     if (panelRef.current) panelRef.current.style.pointerEvents = "none";
     if (backdropRef.current) backdropRef.current.style.pointerEvents = "none";
     document.body.style.overflow = "";
-    cancelSpring.current = runSpring(currentPanelY.current, getClosedY(), setY);
+    
+    // Trigger CSS animation to close
+    setY(getClosedY(), true);
   }, [setY]);
 
   // ── Pointer events (unified mouse + touch) ──────────────────────────────
@@ -173,16 +161,19 @@ export default function ControlCenter() {
     dragStartY.current = e.clientY;
     dragStartPanelY.current = currentPanelY.current;
     dragStartTime.current = performance.now();
-    cancelSpring.current?.();
+    
+    // Lock the current position and disable transition to start 1:1 drag
+    setY(currentPanelY.current, false);
+    
     (e.target as Element)?.setPointerCapture?.(e.pointerId);
-  }, []);
+  }, [setY]);
 
   const onPointerMove = useCallback((e: PointerEvent) => {
     if (!isDragging.current || isOpenRef.current) return;
     const dy = e.clientY - dragStartY.current;
     let newY = dragStartPanelY.current + dy;
     if (newY > 0) newY = newY * 0.08; // resistance
-    setY(newY);
+    setY(newY, false); // false = instant drag, no transition delay
   }, [setY]);
 
   const onPointerUp = useCallback((e: PointerEvent) => {
@@ -204,16 +195,18 @@ export default function ControlCenter() {
     dragStartY.current = e.clientY;
     dragStartPanelY.current = 0; // panel is at 0 when open
     dragStartTime.current = performance.now();
-    cancelSpring.current?.();
+    
+    setY(0, false); // lock instantly
+    
     (e.target as Element)?.setPointerCapture?.(e.pointerId);
-  }, []);
+  }, [setY]);
 
   const onPanelPointerMove = useCallback((e: PointerEvent) => {
     if (!isDragging.current || !isOpenRef.current) return;
     const dy = e.clientY - dragStartY.current;
     let newY = dy; // only upward (dy will be negative)
     if (newY > 0) newY = newY * 0.08; // resist downward
-    setY(newY);
+    setY(newY, false);
   }, [setY]);
 
   const onPanelPointerUp = useCallback((e: PointerEvent) => {
@@ -300,8 +293,8 @@ export default function ControlCenter() {
           opacity: 0,
           pointerEvents: "none",
           background: "rgba(0,0,0,0.5)",
-          backdropFilter: "blur(60px)",
-          WebkitBackdropFilter: "blur(60px)",
+          backdropFilter: "blur(40px)",
+          WebkitBackdropFilter: "blur(40px)",
           willChange: "opacity",
         }}
       />
