@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { motion, useAnimation, useMotionValue, useTransform, PanInfo } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { 
-  User, Wallet, ShoppingBag, Settings, Gamepad2, 
-  Search, Grid, Bell, Package 
-} from "lucide-react";
+import { Gamepad2, Search, Grid, Bell } from "lucide-react";
 
 export default function ControlCenter() {
   const [isOpen, setIsOpen] = useState(false);
@@ -120,12 +117,12 @@ export default function ControlCenter() {
           
           {/* Top Row: Two 2x2 Squares */}
           <div className="flex gap-4 h-[160px]">
-            {/* Nav Block 1 (Square) */}
+            {/* Nav Block 1 (Square) - Custom Image Icons */}
             <div className="flex-1 bg-[#2C2C2E]/80 backdrop-blur-3xl rounded-[32px] p-3 grid grid-cols-2 grid-rows-2 gap-2 shadow-2xl border border-white/10">
-              <NavIcon icon={User} color="bg-[#0A84FF]" onClick={() => {navigate('/profile'); closePanel()}} />
-              <NavIcon icon={Wallet} color="bg-[#30D158]" onClick={() => {navigate('/wallet'); closePanel()}} />
-              <NavIcon icon={ShoppingBag} color="bg-[#FF9F0A]" onClick={() => {navigate('/transactions'); closePanel()}} />
-              <NavIcon icon={Settings} color="bg-[#8E8E93]" onClick={() => {navigate('/settings'); closePanel()}} />
+              <ImgNavIcon src="/cc_profile.png" label="Profile" onClick={() => {navigate('/profile'); closePanel()}} />
+              <ImgNavIcon src="/cc_wallet.png" label="Wallet" onClick={() => {navigate('/wallet'); closePanel()}} />
+              <ImgNavIcon src="/cc_grocery.png" label="Grocery" onClick={() => {navigate('/grocery'); closePanel()}} />
+              <ImgNavIcon src="/cc_settings.png" label="Settings" onClick={() => {navigate('/settings'); closePanel()}} />
             </div>
 
             {/* Nav Block 2 (Square) */}
@@ -185,9 +182,12 @@ export default function ControlCenter() {
                className="flex-1 bg-[#2C2C2E]/80 backdrop-blur-3xl rounded-[32px] p-4 flex flex-col items-center justify-center gap-3 shadow-2xl border border-white/10 cursor-pointer active:scale-95 transition-transform"
                onClick={() => {navigate('/grocery'); closePanel()}}
              >
-                <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[#30D158] to-[#32ADE6] flex items-center justify-center shadow-lg">
-                  <Package className="w-7 h-7 text-white" />
-                </div>
+                <img
+                  src="/cc_grocery.png"
+                  alt="Grocery"
+                  className="w-14 h-14 object-contain drop-shadow-lg"
+                  style={{ mixBlendMode: 'normal' }}
+                />
                 <div className="text-center">
                   <p className="text-white font-semibold tracking-tight">Grocery</p>
                   <p className="text-white/50 text-xs font-medium">Essentials</p>
@@ -203,15 +203,18 @@ export default function ControlCenter() {
   );
 }
 
-function NavIcon({ icon: Icon, color, onClick }: { icon: any, color: string, onClick: () => void }) {
+function ImgNavIcon({ src, label, onClick, removeWhite }: { src: string, label: string, onClick: () => void, removeWhite?: boolean }) {
   return (
-    <div 
-      className="flex flex-col items-center justify-center gap-1 cursor-pointer w-full h-full"
+    <div
+      className="flex flex-col items-center justify-center gap-1 cursor-pointer w-full h-full active:scale-90 transition-transform rounded-2xl"
       onClick={onClick}
     >
-      <div className={`w-12 h-12 rounded-full flex items-center justify-center ${color} active:scale-90 transition-transform`}>
-        <Icon className="w-6 h-6 text-white" />
-      </div>
+      <img
+        src={src}
+        alt={label}
+        className="w-12 h-12 object-contain drop-shadow-md"
+        style={removeWhite ? { mixBlendMode: 'normal' } : undefined}
+      />
     </div>
   );
 }
