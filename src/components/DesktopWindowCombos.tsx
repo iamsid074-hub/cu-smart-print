@@ -3,9 +3,25 @@ import DesktopWindow from "./DesktopWindow";
 
 const CombosSection = lazy(() => import("./CombosSection"));
 
-export default function DesktopWindowCombos({ onClose }: { onClose: () => void }) {
+interface DesktopWindowCombosProps {
+  onClose: () => void;
+  onMinimize?: () => void;
+  onMaximize?: () => void;
+  isMinimized?: boolean;
+  isMaximized?: boolean;
+}
+
+export default function DesktopWindowCombos({ onClose, onMinimize, onMaximize, isMinimized, isMaximized }: DesktopWindowCombosProps) {
   return (
-    <DesktopWindow title="Curated Combos" onClose={onClose} size="md">
+    <DesktopWindow 
+      title="Curated Combos" 
+      onClose={onClose} 
+      onMinimize={onMinimize}
+      onMaximize={onMaximize}
+      isMinimized={isMinimized}
+      isMaximized={isMaximized}
+      size="lg"
+    >
       <div className="p-6 bg-gradient-to-b from-purple-50/50 to-transparent min-h-full">
         <Suspense fallback={
           <div className="flex items-center justify-center h-40">

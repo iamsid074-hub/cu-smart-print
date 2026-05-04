@@ -86,7 +86,10 @@ type WindowId = "Shops" | "Vending" | "Combos" | "Games" | "Cart" | "Profile" | 
 
 export default function Home() {
   const navigate = useNavigate();
-  const [openWindow, setOpenWindow] = useState<WindowId>(null);
+  // Keep track of which windows are mounted (active) and which are just hidden (minimized)
+  const [activeWindows, setActiveWindows] = useState<WindowId[]>([]);
+  const [minimizedWindows, setMinimizedWindows] = useState<WindowId[]>([]);
+  const [maximizedWindows, setMaximizedWindows] = useState<WindowId[]>([]);
 
   const handleOpenWindow = (id: string) => {
     // These navigate directly, no window needed
@@ -98,14 +101,41 @@ export default function Home() {
     };
     if (navItems[id]) {
       navigate(navItems[id]);
+      return;
+    }
+
+    const winId = id as WindowId;
+    
+    // If it's not mounted at all, add it to active
+    if (!activeWindows.includes(winId)) {
+      setActiveWindows((prev) => [...prev, winId]);
     } else {
-      setOpenWindow(id as WindowId);
+      // If it is active but minimized, restore it
+      if (minimizedWindows.includes(winId)) {
+        setMinimizedWindows((prev) => prev.filter((w) => w !== winId));
+      } else {
+        // Already active and not minimized, we could bring it to front here by re-ordering
+        setActiveWindows((prev) => [...prev.filter(w => w !== winId), winId]);
+      }
     }
   };
 
-  const handleNavigate = (path: string) => {
-    setOpenWindow(null);
-    navigate(path);
+  const handleCloseWindow = (id: WindowId) => {
+    setActiveWindows((prev) => prev.filter((w) => w !== id));
+    setMinimizedWindows((prev) => prev.filter((w) => w !== id));
+    setMaximizedWindows((prev) => prev.filter((w) => w !== id));
+  };
+
+  const handleMinimizeWindow = (id: WindowId) => {
+    if (!minimizedWindows.includes(id)) {
+      setMinimizedWindows((prev) => [...prev, id]);
+    }
+  };
+
+  const handleMaximizeWindow = (id: WindowId) => {
+    setMaximizedWindows((prev) => 
+      prev.includes(id) ? prev.filter((w) => w !== id) : [...prev, id]
+    );
   };
 
   return (
@@ -117,15 +147,49 @@ export default function Home() {
         <DesktopDock onOpenWindow={handleOpenWindow} />
         <Suspense fallback={null}>
           <AnimatePresence>
-            {openWindow === "Shops" && (
-              <DesktopWindowShops onClose={() => setOpenWindow(null)} />
-            )}
-            {openWindow === "Vending" && (
-              <DesktopWindowVending onClose={() => setOpenWindow(null)} />
-            )}
-            {openWindow === "Combos" && (
-              <DesktopWindowCombos onClose={() => setOpenWindow(null)} />
-            )}
+            {activeWindows.map((winId) => {
+              const isMinimized = minimizedWindows.includes(winId);
+              const isMaximized = maximizedWindows.includes(winId);
+
+              // Render the appropriate component
+              if (winId === "Shops") {
+                return (
+                  <DesktopWindowShops
+                    key="Shops"
+                    onClose={() => handleCloseWindow("Shops")}
+                    onMinimize={() => handleMinimizeWindow("Shops")}
+                    onMaximize={() => handleMaximizeWindow("Shops")}
+                    isMinimized={isMinimized}
+                    isMaximized={isMaximized}
+                  />
+                );
+              }
+              if (winId === "Vending") {
+                return (
+                  <DesktopWindowVending
+                    key="Vending"
+                    onClose={() => handleCloseWindow("Vending")}
+                    onMinimize={() => handleMinimizeWindow("Vending")}
+                    onMaximize={() => handleMaximizeWindow("Vending")}
+                    isMinimized={isMinimized}
+                    isMaximized={isMaximized}
+                  />
+                );
+              }
+              if (winId === "Combos") {
+                return (
+                  <DesktopWindowCombos
+                    key="Combos"
+                    onClose={() => handleCloseWindow("Combos")}
+                    onMinimize={() => handleMinimizeWindow("Combos")}
+                    onMaximize={() => handleMaximizeWindow("Combos")}
+                    isMinimized={isMinimized}
+                    isMaximized={isMaximized}
+                  />
+                );
+              }
+              return null;
+            })}
           </AnimatePresence>
         </Suspense>
       </div>

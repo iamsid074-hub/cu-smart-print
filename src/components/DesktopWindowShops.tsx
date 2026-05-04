@@ -5,7 +5,15 @@ import { shops } from "@/config/shopMenus";
 import DesktopWindow from "./DesktopWindow";
 import { useCart } from "@/contexts/CartContext";
 
-export default function DesktopWindowShops({ onClose }: { onClose: () => void }) {
+interface DesktopWindowShopsProps {
+  onClose: () => void;
+  onMinimize?: () => void;
+  onMaximize?: () => void;
+  isMinimized?: boolean;
+  isMaximized?: boolean;
+}
+
+export default function DesktopWindowShops({ onClose, onMinimize, onMaximize, isMinimized, isMaximized }: DesktopWindowShopsProps) {
   const [selectedShopId, setSelectedShopId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const { addItem } = useCart();
@@ -22,6 +30,10 @@ export default function DesktopWindowShops({ onClose }: { onClose: () => void })
     <DesktopWindow
       title={selectedShop ? selectedShop.name : "Shops"}
       onClose={onClose}
+      onMinimize={onMinimize}
+      onMaximize={onMaximize}
+      isMinimized={isMinimized}
+      isMaximized={isMaximized}
       onBack={selectedShopId ? () => setSelectedShopId(null) : undefined}
       size="xl"
     >
@@ -30,9 +42,10 @@ export default function DesktopWindowShops({ onClose }: { onClose: () => void })
           {!selectedShopId ? (
             <motion.div
               key="list"
-              initial={{ opacity: 0, x: -15 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 15 }}
+              initial={{ opacity: 0, y: 30, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -20, scale: 0.95 }}
+              transition={{ duration: 0.4, type: "spring", bounce: 0.3 }}
               className="space-y-5"
             >
               {/* Search */}
@@ -49,9 +62,12 @@ export default function DesktopWindowShops({ onClose }: { onClose: () => void })
 
               {/* Grid */}
               <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-                {filteredShops.map((shop) => (
+                {filteredShops.map((shop, i) => (
                   <motion.div
                     key={shop.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.05 + 0.1 }}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.97 }}
                     onClick={() => setSelectedShopId(shop.id)}

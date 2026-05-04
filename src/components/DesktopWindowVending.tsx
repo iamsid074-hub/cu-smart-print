@@ -3,9 +3,25 @@ import DesktopWindow from "./DesktopWindow";
 
 const VendingMachine = lazy(() => import("./VendingMachine"));
 
-export default function DesktopWindowVending({ onClose }: { onClose: () => void }) {
+interface DesktopWindowVendingProps {
+  onClose: () => void;
+  onMinimize?: () => void;
+  onMaximize?: () => void;
+  isMinimized?: boolean;
+  isMaximized?: boolean;
+}
+
+export default function DesktopWindowVending({ onClose, onMinimize, onMaximize, isMinimized, isMaximized }: DesktopWindowVendingProps) {
   return (
-    <DesktopWindow title="Smart Vending" onClose={onClose} size="md">
+    <DesktopWindow 
+      title="Smart Vending" 
+      onClose={onClose} 
+      onMinimize={onMinimize}
+      onMaximize={onMaximize}
+      isMinimized={isMinimized}
+      isMaximized={isMaximized}
+      size="md"
+    >
       <Suspense fallback={
         <div className="flex items-center justify-center h-full">
           <div className="w-6 h-6 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
