@@ -23,7 +23,7 @@ export const dockItems = [
   { name: "Settings", icon: Settings, color: "from-slate-400 to-slate-600", path: "/settings" },
 ];
 
-export default function DesktopDock() {
+export default function DesktopDock({ onOpenWindow }: { onOpenWindow?: (id: string) => void }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [hoverIndex, setHoverIndex] = useState<number | null>(null);
@@ -60,7 +60,13 @@ export default function DesktopDock() {
               key={item.name}
               className="relative group cursor-pointer flex flex-col items-center justify-end"
               onMouseEnter={() => setHoverIndex(index)}
-              onClick={() => navigate(item.path)}
+              onClick={() => {
+                if (item.name === "Shops" && onOpenWindow) {
+                  onOpenWindow("Shops");
+                } else {
+                  navigate(item.path);
+                }
+              }}
             >
               {/* Tooltip Name */}
               <div 

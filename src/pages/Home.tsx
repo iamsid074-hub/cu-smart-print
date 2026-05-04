@@ -2,6 +2,7 @@ import { lazy, Suspense, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import DesktopDock from "@/components/DesktopDock";
 import DesktopMenuBar from "@/components/DesktopMenuBar";
+import DesktopWindowShops from "@/components/DesktopWindowShops";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Search,
@@ -80,6 +81,7 @@ function HeroSpotlight() {
 
 export default function Home() {
   const navigate = useNavigate();
+  const [isShopsOpen, setIsShopsOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-black text-white bg-[url('/eos-v3-wallpaper-mobile.png')] md:bg-[url('/eos-v3-wallpaper-desktop.jpg')] bg-cover bg-center bg-no-repeat bg-fixed relative overflow-hidden">
@@ -87,7 +89,12 @@ export default function Home() {
       {/* EOS v3 Desktop UI Elements */}
       <div className="hidden md:block">
         <DesktopMenuBar />
-        <DesktopDock />
+        <DesktopDock onOpenWindow={(id) => id === "Shops" && setIsShopsOpen(true)} />
+        <AnimatePresence>
+          {isShopsOpen && (
+            <DesktopWindowShops onClose={() => setIsShopsOpen(false)} />
+          )}
+        </AnimatePresence>
       </div>
 
       {/* 
