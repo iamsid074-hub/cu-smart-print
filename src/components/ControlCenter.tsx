@@ -6,432 +6,375 @@ import {
   Gamepad2, Search, Grid, Bell, Package,
 } from "lucide-react";
 
-// ─── Spring physics (pure JS, no React re-renders during drag) ───────────────
-function springTo(
-  from: number,
-  to: number,
-  onUpdate: (v: number) => void,
-  onDone?: () => void,
-  stiffness = 300,
-  damping = 35,
-) {
-  let pos = from;
-  let vel = 0;
-  let rafId = 0;
-  let lastTime = performance.now();
+const TILE_BG = "rgba(44,44,46,0.92)";
+const OPEN_Y = 0;
+const getClosedY = () => -window.innerHeight;
 
-  const step = (now: number) => {
-    const dt = Math.min((now - lastTime) / 1000, 0.04); // cap at 40ms
-    lastTime = now;
-    const force = -stiffness * (pos - to) - damping * vel;
-    vel += force * dt;
+// Pure-JS spring (runs on rAF, never blocks React)
+function runSpring(
+  fromY: number,
+  toY: number,
+  onUpdate: (y: number) => void,
+  onDone?: () => void,
+) {
+  let pos = fromY;
+  let vel = 0;
+  const stiffness = 380;
+  const damping = 40;
+  let last = performance.now();
+  let id = 0;
+
+  const tick = (now: number) => {
+    const dt = Math.min((now - last) / 1000, 0.032);
+    last = now;
+    vel += (-stiffness * (pos - toY) - damping * vel) * dt;
     pos += vel * dt;
     onUpdate(pos);
-    if (Math.abs(pos - to) < 0.5 && Math.abs(vel) < 0.5) {
-      onUpdate(to);
+    if (Math.abs(pos - toY) < 0.8 && Math.abs(vel) < 0.8) {
+      onUpdate(toY);
       onDone?.();
       return;
     }
-    rafId = requestAnimationFrame(step);
+    id = requestAnimationFrame(tick);
   };
-  rafId = requestAnimationFrame(step);
-  return () => cancelAnimationFrame(rafId);
+  id = requestAnimationFrame(tick);
+  return () => cancelAnimationFrame(id);
 }
 
-// ─── Section tiles config ────────────────────────────────────────────────────
-const SECTIONS = [
-  // row 0: 2x2 icon grid
-  { id: "profile",      icon: User,       color: "#0A84FF", label: null,        to: "/profile"      },
-  { id: "wallet",       icon: Wallet,     color: "#30D158", label: null,        to: "/wallet"       },
-  { id: "orders",       icon: ShoppingBag,color: "#FF9F0A", label: null,        to: "/transactions" },
-  { id: "settings",     icon: Settings,   color: "#8E8E93", label: null,        to: "/settings"     },
-  // row 0 right: sections card
-  { id: "sections",     icon: Grid,       color: "#BF5AF2", label: "Sections",  sub: "All Categories", to: "/sections" },
-  // row 1: search pill + bell
-  { id: "search",       icon: Search,     color: "#FFFFFF80",label: "Search Items", to: "/search"  },
-  { id: "bell",         icon: Bell,       color: "#FF453A", label: null,        to: null            },
-  // row 2: games + grocery
-  { id: "games",        icon: Gamepad2,   gradient: ["#FF453A","#FF9F0A"], label: "Games",   sub: "Play & Win",  to: "/games"   },
-  { id: "grocery",      icon: Package,    gradient: ["#30D158","#32ADE6"], label: "Grocery", sub: "Essentials",  to: "/grocery" },
-];
-
-const TILE_BG = "rgba(44,44,46,0.85)";
-
 export default function ControlCenter() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [showCards, setShowCards] = useState(false);
   const navigate = useNavigate();
+  const [showCards, setShowCards] = useState(false);
 
-  // Refs for direct DOM manipulation (zero React overhead during drag)
   const panelRef = useRef<HTMLDivElement>(null);
   const backdropRef = useRef<HTMLDivElement>(null);
   const cancelSpring = useRef<(() => void) | null>(null);
-
-  // Touch state
-  const touchStart = useRef({ y: 0, time: 0 });
-  const currentY = useRef(-window.innerHeight);
-  const isDragging = useRef(false);
   const isOpenRef = useRef(false);
+  const dragStartY = useRef(0);
+  const dragStartPanelY = useRef(0);
+  const dragStartTime = useRef(0);
+  const currentPanelY = useRef(getClosedY());
+  const isDragging = useRef(false);
 
-  // ── Direct DOM update (no React state) ──────────────────────────────────
-  const applyY = useCallback((y: number) => {
-    currentY.current = y;
-    if (panelRef.current) {
-      panelRef.current.style.transform = `translateY(${y}px)`;
-    }
-    // Backdrop opacity: 0 when fully closed, 1 when fully open
-    const pct = Math.max(0, Math.min(1, (y + window.innerHeight) / window.innerHeight));
+  // Direct DOM write — zero React overhead
+  const setY = useCallback((y: number) => {
+    currentPanelY.current = y;
+    if (!panelRef.current) return;
+    panelRef.current.style.transform = `translateY(${y}px)`;
+    const pct = Math.max(0, Math.min(1, 1 + y / window.innerHeight));
     if (backdropRef.current) {
       backdropRef.current.style.opacity = String(pct);
-      backdropRef.current.style.pointerEvents = pct > 0.05 ? "auto" : "none";
     }
   }, []);
 
-  const openPanel = useCallback(() => {
-    isOpenRef.current = true;
-    setIsOpen(true);
-    if (panelRef.current) panelRef.current.style.pointerEvents = "auto";
-    document.body.style.overflow = "hidden";
+  const open = useCallback(() => {
     cancelSpring.current?.();
-    cancelSpring.current = springTo(
-      currentY.current, 0, applyY,
-      () => setShowCards(true),
-      320, 38
-    );
-  }, [applyY]);
+    isOpenRef.current = true;
+    if (panelRef.current) panelRef.current.style.pointerEvents = "auto";
+    if (backdropRef.current) backdropRef.current.style.pointerEvents = "auto";
+    document.body.style.overflow = "hidden";
+    // Show cards immediately so they are visible as panel arrives
+    setShowCards(true);
+    cancelSpring.current = runSpring(currentPanelY.current, OPEN_Y, setY);
+  }, [setY]);
 
-  const closePanel = useCallback(() => {
+  const close = useCallback(() => {
+    cancelSpring.current?.();
     isOpenRef.current = false;
     setShowCards(false);
-    setIsOpen(false);
     if (panelRef.current) panelRef.current.style.pointerEvents = "none";
-    document.body.style.overflow = "";
-    cancelSpring.current?.();
-    cancelSpring.current = springTo(
-      currentY.current, -window.innerHeight, applyY,
-      undefined, 320, 38
-    );
     if (backdropRef.current) backdropRef.current.style.pointerEvents = "none";
-  }, [applyY]);
+    document.body.style.overflow = "";
+    cancelSpring.current = runSpring(currentPanelY.current, getClosedY(), setY);
+  }, [setY]);
 
-  // ── Touch handlers on the hit area (top 50px, only when closed) ──────────
-  const handleHitTouchStart = useCallback((e: TouchEvent) => {
+  // ── Pointer events (unified mouse + touch) ──────────────────────────────
+  const onPointerDown = useCallback((e: PointerEvent) => {
+    // Only start from top 50px when closed
     if (isOpenRef.current) return;
-    const t = e.touches[0];
-    if (t.clientY > 50) return;
+    if (e.clientY > 50) return;
     isDragging.current = true;
-    touchStart.current = { y: t.clientY, time: performance.now() };
+    dragStartY.current = e.clientY;
+    dragStartPanelY.current = currentPanelY.current;
+    dragStartTime.current = performance.now();
     cancelSpring.current?.();
-    // Set panel visible with pointer-events but stay off-screen
-    if (panelRef.current) panelRef.current.style.pointerEvents = "none";
+    (e.target as Element)?.setPointerCapture?.(e.pointerId);
   }, []);
 
-  const handleHitTouchMove = useCallback((e: TouchEvent) => {
+  const onPointerMove = useCallback((e: PointerEvent) => {
     if (!isDragging.current || isOpenRef.current) return;
-    const dy = e.touches[0].clientY - touchStart.current.y;
-    if (dy < 0) return;
-    // Resistance beyond full open
-    const raw = -window.innerHeight + dy;
-    const clamped = raw > 0 ? raw * 0.1 : raw;
-    applyY(clamped);
-  }, [applyY]);
+    const dy = e.clientY - dragStartY.current;
+    let newY = dragStartPanelY.current + dy;
+    if (newY > 0) newY = newY * 0.08; // resistance
+    setY(newY);
+  }, [setY]);
 
-  const handleHitTouchEnd = useCallback((e: TouchEvent) => {
-    if (!isDragging.current || isOpenRef.current) return;
+  const onPointerUp = useCallback((e: PointerEvent) => {
+    if (!isDragging.current) return;
     isDragging.current = false;
-    const dy = e.changedTouches[0].clientY - touchStart.current.y;
-    const dt = performance.now() - touchStart.current.time;
-    const velocity = dy / dt; // px/ms
-    if (velocity > 0.3 || dy > 80) {
-      openPanel();
-    } else {
-      closePanel();
-    }
-  }, [openPanel, closePanel]);
+    const dy = e.clientY - dragStartY.current;
+    const dt = performance.now() - dragStartTime.current;
+    const vel = dy / dt;
+    if (vel > 0.25 || dy > 80) open(); else close();
+  }, [open, close]);
 
-  // ── Touch handlers on the panel itself (swipe up to close) ──────────────
-  const handlePanelTouchStart = useCallback((e: TouchEvent) => {
+  // ── Panel drag-up to close ──────────────────────────────────────────────
+  const onPanelPointerDown = useCallback((e: PointerEvent) => {
     if (!isOpenRef.current) return;
+    // Ignore taps on interactive elements
+    const tag = (e.target as HTMLElement).closest("button,[data-action]");
+    if (tag) return;
     isDragging.current = true;
-    touchStart.current = { y: e.touches[0].clientY, time: performance.now() };
-    setShowCards(false);
+    dragStartY.current = e.clientY;
+    dragStartPanelY.current = 0; // panel is at 0 when open
+    dragStartTime.current = performance.now();
     cancelSpring.current?.();
+    (e.target as Element)?.setPointerCapture?.(e.pointerId);
   }, []);
 
-  const handlePanelTouchMove = useCallback((e: TouchEvent) => {
+  const onPanelPointerMove = useCallback((e: PointerEvent) => {
     if (!isDragging.current || !isOpenRef.current) return;
-    e.preventDefault();
-    const dy = e.touches[0].clientY - touchStart.current.y;
-    // Only allow dragging up
-    const raw = dy;
-    const clamped = raw > 0 ? raw * 0.1 : raw;
-    applyY(clamped);
-  }, [applyY]);
+    const dy = e.clientY - dragStartY.current;
+    let newY = dy; // only upward (dy will be negative)
+    if (newY > 0) newY = newY * 0.08; // resist downward
+    setY(newY);
+  }, [setY]);
 
-  const handlePanelTouchEnd = useCallback((e: TouchEvent) => {
+  const onPanelPointerUp = useCallback((e: PointerEvent) => {
     if (!isDragging.current || !isOpenRef.current) return;
     isDragging.current = false;
-    const dy = e.changedTouches[0].clientY - touchStart.current.y;
-    const dt = performance.now() - touchStart.current.time;
-    const velocity = dy / dt;
-    if (velocity < -0.3 || dy < -80) {
-      closePanel();
-    } else {
-      openPanel();
-    }
-  }, [openPanel, closePanel]);
+    const dy = e.clientY - dragStartY.current;
+    const dt = performance.now() - dragStartTime.current;
+    const vel = dy / dt;
+    if (vel < -0.25 || dy < -80) close(); else open();
+  }, [open, close]);
 
-  // ── Mouse fallback for desktop testing ───────────────────────────────────
-  const handleHitMouseDown = useCallback((e: MouseEvent) => {
-    if (isOpenRef.current || e.clientY > 50) return;
-    isDragging.current = true;
-    touchStart.current = { y: e.clientY, time: performance.now() };
-    cancelSpring.current?.();
+  // ── Hit area ref ────────────────────────────────────────────────────────
+  const hitRef = useRef<HTMLDivElement>(null);
 
-    const onMove = (ev: MouseEvent) => {
-      if (!isDragging.current) return;
-      const dy = ev.clientY - touchStart.current.y;
-      const raw = -window.innerHeight + dy;
-      applyY(raw > 0 ? raw * 0.1 : raw);
-    };
-    const onUp = (ev: MouseEvent) => {
-      if (!isDragging.current) return;
-      isDragging.current = false;
-      const dy = ev.clientY - touchStart.current.y;
-      const dt = performance.now() - touchStart.current.time;
-      const velocity = dy / dt;
-      if (velocity > 0.3 || dy > 80) openPanel(); else closePanel();
-      window.removeEventListener("mousemove", onMove);
-      window.removeEventListener("mouseup", onUp);
-    };
-    window.addEventListener("mousemove", onMove);
-    window.addEventListener("mouseup", onUp);
-  }, [applyY, openPanel, closePanel]);
-
-  // ── ESC key ──────────────────────────────────────────────────────────────
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape" && isOpenRef.current) closePanel(); };
+    const hit = hitRef.current;
+    if (!hit) return;
+    hit.addEventListener("pointerdown", onPointerDown, { passive: true });
+    window.addEventListener("pointermove", onPointerMove, { passive: true });
+    window.addEventListener("pointerup", onPointerUp, { passive: true });
+    return () => {
+      hit.removeEventListener("pointerdown", onPointerDown);
+      window.removeEventListener("pointermove", onPointerMove);
+      window.removeEventListener("pointerup", onPointerUp);
+    };
+  }, [onPointerDown, onPointerMove, onPointerUp]);
+
+  useEffect(() => {
+    const panel = panelRef.current;
+    if (!panel) return;
+    panel.addEventListener("pointerdown", onPanelPointerDown, { passive: true });
+    window.addEventListener("pointermove", onPanelPointerMove, { passive: true });
+    window.addEventListener("pointerup", onPanelPointerUp, { passive: true });
+    return () => {
+      panel.removeEventListener("pointerdown", onPanelPointerDown);
+      window.removeEventListener("pointermove", onPanelPointerMove);
+      window.removeEventListener("pointerup", onPanelPointerUp);
+    };
+  }, [onPanelPointerDown, onPanelPointerMove, onPanelPointerUp]);
+
+  // ESC to close
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") close(); };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [closePanel]);
+  }, [close]);
 
-  // ── Register hit-area listeners ──────────────────────────────────────────
-  const hitRef = useRef<HTMLDivElement>(null);
+  // Initial position
   useEffect(() => {
-    const el = hitRef.current;
-    if (!el) return;
-    el.addEventListener("touchstart", handleHitTouchStart, { passive: true });
-    el.addEventListener("touchmove", handleHitTouchMove, { passive: true });
-    el.addEventListener("touchend", handleHitTouchEnd, { passive: true });
-    el.addEventListener("mousedown", handleHitMouseDown as any);
-    return () => {
-      el.removeEventListener("touchstart", handleHitTouchStart);
-      el.removeEventListener("touchmove", handleHitTouchMove);
-      el.removeEventListener("touchend", handleHitTouchEnd);
-      el.removeEventListener("mousedown", handleHitMouseDown as any);
-    };
-  }, [handleHitTouchStart, handleHitTouchMove, handleHitTouchEnd, handleHitMouseDown]);
+    setY(getClosedY());
+  }, [setY]);
 
-  // ── Register panel drag listeners ────────────────────────────────────────
-  useEffect(() => {
-    const el = panelRef.current;
-    if (!el) return;
-    el.addEventListener("touchstart", handlePanelTouchStart, { passive: true });
-    el.addEventListener("touchmove", handlePanelTouchMove, { passive: false });
-    el.addEventListener("touchend", handlePanelTouchEnd, { passive: true });
-    return () => {
-      el.removeEventListener("touchstart", handlePanelTouchStart);
-      el.removeEventListener("touchmove", handlePanelTouchMove);
-      el.removeEventListener("touchend", handlePanelTouchEnd);
-    };
-  }, [handlePanelTouchStart, handlePanelTouchMove, handlePanelTouchEnd]);
-
-  // ── Initial position ─────────────────────────────────────────────────────
-  useEffect(() => {
-    applyY(-window.innerHeight);
-  }, [applyY]);
-
-  // ── Navigate helper ──────────────────────────────────────────────────────
   const go = (to: string | null) => {
     if (!to) return;
-    closePanel();
-    setTimeout(() => navigate(to), 300);
+    close();
+    setTimeout(() => navigate(to), 250);
   };
 
-  // ── Stagger variants ─────────────────────────────────────────────────────
-  const cardVariants = {
-    hidden: { opacity: 0, scale: 0.85, y: 10 },
-    visible: (i: number) => ({
+  // Card variants — fast, simultaneous pop-in
+  const card = {
+    hidden: { opacity: 0, scale: 0.88, y: 8 },
+    show: (i: number) => ({
       opacity: 1, scale: 1, y: 0,
-      transition: { type: "spring", stiffness: 400, damping: 30, delay: i * 0.04 },
+      transition: { type: "spring" as const, stiffness: 500, damping: 32, delay: i * 0.03 },
     }),
-    exit: (i: number) => ({
-      opacity: 0, scale: 0.88, y: 6,
-      transition: { duration: 0.15, delay: i * 0.02 },
-    }),
+    hide: { opacity: 0, scale: 0.9, transition: { duration: 0.12 } },
   };
 
   return (
     <>
-      {/* Hit zone - top 50px, always mounted */}
+      {/* Hit zone — always present, top 50px */}
       <div
         ref={hitRef}
-        className="fixed top-0 inset-x-0 h-[50px] z-[100001]"
-        style={{ touchAction: "none" }}
+        className="fixed top-0 inset-x-0 z-[100001]"
+        style={{ height: 50, touchAction: "none", cursor: "ns-resize" }}
       />
 
       {/* Backdrop */}
       <div
         ref={backdropRef}
         className="fixed inset-0 z-[99997]"
+        onClick={close}
         style={{
           opacity: 0,
           pointerEvents: "none",
-          background: "rgba(0,0,0,0.45)",
-          backdropFilter: "blur(55px)",
-          WebkitBackdropFilter: "blur(55px)",
+          background: "rgba(0,0,0,0.5)",
+          backdropFilter: "blur(60px)",
+          WebkitBackdropFilter: "blur(60px)",
           willChange: "opacity",
         }}
-        onClick={closePanel}
       />
 
       {/* Panel */}
       <div
         ref={panelRef}
-        className="fixed inset-x-0 top-0 bottom-0 z-[99999] px-4 pb-8"
+        className="fixed inset-x-0 top-0 bottom-0 z-[99999]"
         style={{
-          paddingTop: "calc(env(safe-area-inset-top, 20px) + 48px)",
-          transform: `translateY(-${window.innerHeight}px)`,
+          paddingTop: "calc(env(safe-area-inset-top, 20px) + 44px)",
+          paddingLeft: 16,
+          paddingRight: 16,
+          paddingBottom: 32,
           pointerEvents: "none",
           willChange: "transform",
           touchAction: "none",
+          userSelect: "none",
         }}
       >
         <div className="w-full h-full max-w-sm mx-auto flex flex-col gap-3">
 
-          {/* ── Row 1: 2x2 icons + Sections ── */}
-          <div className="flex gap-3 h-[155px]">
+          {/* Row 1 */}
+          <div className="flex gap-3 h-[152px]">
             <AnimatePresence>
               {showCards && (
                 <>
-                  {/* 2×2 icon grid */}
                   <motion.div
                     key="grid"
                     custom={0}
-                    variants={cardVariants}
+                    variants={card}
                     initial="hidden"
-                    animate="visible"
-                    exit="exit"
+                    animate="show"
+                    exit="hide"
                     className="flex-1 rounded-[28px] p-3 grid grid-cols-2 grid-rows-2 gap-2"
-                    style={{ background: TILE_BG, backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.09)" }}
+                    style={{ background: TILE_BG, border: "1px solid rgba(255,255,255,0.09)" }}
                   >
-                    {[
-                      { icon: User,        color: "#0A84FF", to: "/profile"      },
-                      { icon: Wallet,      color: "#30D158", to: "/wallet"       },
-                      { icon: ShoppingBag, color: "#FF9F0A", to: "/transactions" },
-                      { icon: Settings,    color: "#8E8E93", to: "/settings"     },
-                    ].map(({ icon: Icon, color, to }) => (
+                    {([
+                      { icon: User,        bg: "#0A84FF", to: "/profile"      },
+                      { icon: Wallet,      bg: "#30D158", to: "/wallet"       },
+                      { icon: ShoppingBag, bg: "#FF9F0A", to: "/transactions" },
+                      { icon: Settings,    bg: "#8E8E93", to: "/settings"     },
+                    ] as const).map(({ icon: Icon, bg, to }) => (
                       <button
                         key={to}
+                        data-action="true"
                         onClick={() => go(to)}
-                        className="flex items-center justify-center rounded-full active:scale-90 transition-transform"
+                        className="flex items-center justify-center active:scale-90 transition-transform duration-100"
                       >
-                        <div className="w-12 h-12 rounded-full flex items-center justify-center shadow-md" style={{ background: color }}>
+                        <div
+                          className="w-12 h-12 rounded-full flex items-center justify-center shadow-md"
+                          style={{ background: bg }}
+                        >
                           <Icon className="w-6 h-6 text-white" />
                         </div>
                       </button>
                     ))}
                   </motion.div>
 
-                  {/* Sections card */}
-                  <motion.div
+                  <motion.button
                     key="sections"
                     custom={1}
-                    variants={cardVariants}
+                    variants={card}
                     initial="hidden"
-                    animate="visible"
-                    exit="exit"
-                    className="flex-1 rounded-[28px] p-4 flex flex-col justify-between cursor-pointer active:scale-95 transition-transform"
-                    style={{ background: TILE_BG, backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.09)" }}
+                    animate="show"
+                    exit="hide"
+                    data-action="true"
+                    className="flex-1 rounded-[28px] p-4 flex flex-col justify-between text-left active:scale-95 transition-transform duration-100"
+                    style={{ background: TILE_BG, border: "1px solid rgba(255,255,255,0.09)" }}
                     onClick={() => go("/sections")}
                   >
                     <div className="flex justify-end">
-                      <div className="w-9 h-9 rounded-full flex items-center justify-center" style={{ background: "rgba(191,90,242,0.18)" }}>
-                        <Grid className="w-4.5 h-4.5" style={{ color: "#BF5AF2" }} />
+                      <div className="w-9 h-9 rounded-full flex items-center justify-center" style={{ background: "rgba(191,90,242,0.2)" }}>
+                        <Grid className="w-4 h-4" style={{ color: "#BF5AF2" }} />
                       </div>
                     </div>
                     <div>
                       <p className="text-white font-semibold text-lg leading-tight tracking-tight">Sections</p>
                       <p className="text-white/50 text-sm font-medium">All Categories</p>
                     </div>
-                  </motion.div>
+                  </motion.button>
                 </>
               )}
             </AnimatePresence>
           </div>
 
-          {/* ── Row 2: Search + Bell ── */}
-          <div className="flex gap-3 h-[70px]">
+          {/* Row 2 */}
+          <div className="flex gap-3 h-[68px]">
             <AnimatePresence>
               {showCards && (
                 <>
-                  <motion.div
+                  <motion.button
                     key="search"
                     custom={2}
-                    variants={cardVariants}
+                    variants={card}
                     initial="hidden"
-                    animate="visible"
-                    exit="exit"
-                    className="flex-[2] rounded-[22px] px-4 flex items-center gap-3 cursor-pointer active:scale-95 transition-transform"
-                    style={{ background: TILE_BG, backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.09)" }}
+                    animate="show"
+                    exit="hide"
+                    data-action="true"
+                    className="flex-[2] rounded-[22px] px-4 flex items-center gap-3 active:scale-95 transition-transform duration-100"
+                    style={{ background: TILE_BG, border: "1px solid rgba(255,255,255,0.09)" }}
                     onClick={() => go("/search")}
                   >
-                    <Search className="w-5 h-5 text-white/60" />
+                    <Search className="w-5 h-5 text-white/60 flex-shrink-0" />
                     <span className="text-white font-semibold text-base tracking-tight">Search Items</span>
-                  </motion.div>
+                  </motion.button>
 
-                  <motion.div
+                  <motion.button
                     key="bell"
                     custom={3}
-                    variants={cardVariants}
+                    variants={card}
                     initial="hidden"
-                    animate="visible"
-                    exit="exit"
-                    className="flex-1 rounded-[22px] flex items-center justify-center cursor-pointer active:scale-95 transition-transform"
-                    style={{ background: TILE_BG, backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.09)" }}
+                    animate="show"
+                    exit="hide"
+                    data-action="true"
+                    className="flex-1 rounded-[22px] flex items-center justify-center active:scale-95 transition-transform duration-100"
+                    style={{ background: TILE_BG, border: "1px solid rgba(255,255,255,0.09)" }}
                   >
-                    <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ background: "rgba(255,69,58,0.18)" }}>
+                    <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ background: "rgba(255,69,58,0.2)" }}>
                       <Bell className="w-5 h-5" style={{ color: "#FF453A" }} />
                     </div>
-                  </motion.div>
+                  </motion.button>
                 </>
               )}
             </AnimatePresence>
           </div>
 
-          {/* ── Row 3: Games + Grocery ── */}
-          <div className="flex gap-3 h-[155px]">
+          {/* Row 3 */}
+          <div className="flex gap-3 h-[152px]">
             <AnimatePresence>
               {showCards && (
                 <>
                   {[
-                    { key: "games",   icon: Gamepad2, gradient: ["#FF453A","#FF9F0A"], label: "Games",   sub: "Play & Win",  to: "/games",   delay: 4 },
-                    { key: "grocery", icon: Package,  gradient: ["#30D158","#32ADE6"], label: "Grocery", sub: "Essentials",  to: "/grocery", delay: 5 },
-                  ].map(({ key, icon: Icon, gradient, label, sub, to, delay }) => (
-                    <motion.div
+                    { key: "games",   Icon: Gamepad2, g: ["#FF453A","#FF9F0A"], label: "Games",   sub: "Play & Win",  to: "/games",   i: 4 },
+                    { key: "grocery", Icon: Package,  g: ["#30D158","#32ADE6"], label: "Grocery", sub: "Essentials",  to: "/grocery", i: 5 },
+                  ].map(({ key, Icon, g, label, sub, to, i }) => (
+                    <motion.button
                       key={key}
-                      custom={delay}
-                      variants={cardVariants}
+                      custom={i}
+                      variants={card}
                       initial="hidden"
-                      animate="visible"
-                      exit="exit"
-                      className="flex-1 rounded-[28px] p-4 flex flex-col items-center justify-center gap-3 cursor-pointer active:scale-95 transition-transform"
-                      style={{ background: TILE_BG, backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.09)" }}
+                      animate="show"
+                      exit="hide"
+                      data-action="true"
+                      className="flex-1 rounded-[28px] p-4 flex flex-col items-center justify-center gap-3 active:scale-95 transition-transform duration-100"
+                      style={{ background: TILE_BG, border: "1px solid rgba(255,255,255,0.09)" }}
                       onClick={() => go(to)}
                     >
                       <div
                         className="w-14 h-14 rounded-full flex items-center justify-center shadow-lg"
-                        style={{ background: `linear-gradient(135deg, ${gradient[0]}, ${gradient[1]})` }}
+                        style={{ background: `linear-gradient(135deg,${g[0]},${g[1]})` }}
                       >
                         <Icon className="w-7 h-7 text-white" />
                       </div>
@@ -439,16 +382,16 @@ export default function ControlCenter() {
                         <p className="text-white font-semibold tracking-tight">{label}</p>
                         <p className="text-white/50 text-xs font-medium">{sub}</p>
                       </div>
-                    </motion.div>
+                    </motion.button>
                   ))}
                 </>
               )}
             </AnimatePresence>
           </div>
 
-          {/* Handle bar */}
+          {/* Handle */}
           <div className="flex justify-center mt-auto pt-2">
-            <div className="w-10 h-1 rounded-full bg-white/25" />
+            <div className="w-10 h-1 rounded-full bg-white/20" />
           </div>
         </div>
       </div>
