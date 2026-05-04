@@ -81,11 +81,15 @@ const IosStatusBar = () => {
   const formattedTime = time.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }).replace(/\s?[AP]M/, '');
 
   return (
-    <div className="flex items-center justify-between px-2 pb-6 pt-2 w-full">
-      <div className="text-white font-semibold text-[15px] tracking-tight ml-2">
+    <div className="flex items-center justify-between px-3 pb-6 pt-1 w-full relative">
+      <div className="text-white font-semibold text-[15px] tracking-tight ml-2 mt-1 w-12 z-10">
         {formattedTime}
       </div>
-      <div className="flex items-center gap-1.5 mr-1">
+
+      {/* Dynamic Island Hardware Cutout */}
+      <div className="absolute left-1/2 top-0 -translate-x-1/2 w-[116px] h-[34px] bg-black rounded-full z-10 shadow-[inset_0_-1px_1px_rgba(255,255,255,0.05)]" />
+
+      <div className="flex items-center justify-end gap-[5px] mr-1 mt-1 w-16 z-10">
         {/* Cellular Bars */}
         <div className="flex items-end gap-[2px] h-[10px] pb-[1px]">
           <div className="w-[3px] h-[4px] bg-white rounded-sm" />
