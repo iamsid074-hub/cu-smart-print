@@ -306,7 +306,7 @@ export default function ControlCenter() {
         }}
       />
 
-      {/* Backdrop */}
+      {/* Backdrop — semi-transparent overlay, no blur */}
       <div
         ref={backdropRef}
         className="fixed inset-0 z-[99997]"
@@ -314,18 +314,19 @@ export default function ControlCenter() {
         style={{
           opacity: 0,
           pointerEvents: "none",
-          background: "rgba(0,0,0,0.5)",
-          backdropFilter: "blur(40px)",
-          WebkitBackdropFilter: "blur(40px)",
+          background: "rgba(0,0,0,0.3)",
           willChange: "opacity",
         }}
       />
 
-      {/* Panel */}
+      {/* Panel — centred on mobile, right-anchored on desktop */}
       <div
         ref={panelRef}
-        className="fixed inset-x-0 top-0 bottom-0 z-[99999]"
+        className="fixed top-0 bottom-0 z-[99999]"
         style={{
+          // Mobile: full width. Desktop: fixed width anchored to the right
+          right: 0,
+          left: 0,
           paddingTop: "calc(env(safe-area-inset-top, 20px) + 44px)",
           paddingLeft: 16,
           paddingRight: 16,
@@ -337,15 +338,21 @@ export default function ControlCenter() {
           userSelect: "none",
         }}
       >
-        <div className="w-full h-full max-w-sm mx-auto flex flex-col gap-3">
+        {/* Inner: centred on mobile, right-aligned on desktop */}
+        <div className="w-full h-full flex flex-col gap-3 md:items-end">
+
+          {/* Cards wrapper — max-w-sm centred on mobile, right-aligned on desktop */}
+          <div className="w-full max-w-sm md:ml-auto flex flex-col gap-3">
 
           <AnimatePresence>
+            {/* Only show status bar on mobile (has real dynamic island) */}
             {showCards && (
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.2 }}
+                className="md:hidden"
               >
                 <IosStatusBar />
               </motion.div>
@@ -496,8 +503,10 @@ export default function ControlCenter() {
             </AnimatePresence>
           </div>
 
-          {/* Handle */}
-          <div className="flex justify-center mt-auto pt-2">
+          </div> {/* end cards wrapper */}
+
+          {/* Handle — mobile only */}
+          <div className="flex justify-center mt-auto pt-2 md:hidden">
             <div className="w-10 h-1 rounded-full bg-white/20" />
           </div>
         </div>
