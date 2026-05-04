@@ -94,20 +94,18 @@ export default function ControlCenter() {
         />
       )}
 
-      {/* Backdrop */}
+      {/* Main Full-Screen Backdrop */}
+      {/* CRITICAL FIX: opacity and backdropFilter must be on the EXACT SAME element for Webkit to blur the background rather than just the parent wrapper. */}
       <motion.div
-        className="fixed inset-0 z-[99998] pointer-events-none"
-        style={{ opacity: backdropOpacity }}
-      >
-        <div 
-          className={`absolute inset-0 bg-black/30 ${isOpen ? 'pointer-events-auto' : 'pointer-events-none'}`}
-          style={{
-            backdropFilter: "blur(40px)",
-            WebkitBackdropFilter: "blur(40px)",
-          }}
-          onClick={closePanel}
-        />
-      </motion.div>
+        className={`fixed inset-0 z-[99998] bg-black/40 ${isOpen ? 'pointer-events-auto' : 'pointer-events-none'}`}
+        style={{ 
+          opacity: backdropOpacity,
+          backdropFilter: "blur(50px)",
+          WebkitBackdropFilter: "blur(50px)",
+          transform: "translateZ(0)"
+        }}
+        onClick={closePanel}
+      />
 
       {/* Control Center Panel */}
       <motion.div
@@ -123,7 +121,7 @@ export default function ControlCenter() {
           {/* Top Row: Two 2x2 Squares */}
           <div className="flex gap-4 h-[160px]">
             {/* Nav Block 1 (Square) */}
-            <div className="flex-1 bg-white/10 backdrop-blur-3xl rounded-[28px] p-3 grid grid-cols-2 grid-rows-2 gap-2 shadow-2xl border border-white/20">
+            <div className="flex-1 bg-[#2C2C2E]/80 backdrop-blur-3xl rounded-[32px] p-3 grid grid-cols-2 grid-rows-2 gap-2 shadow-2xl border border-white/10">
               <NavIcon icon={User} color="bg-[#0A84FF]" onClick={() => {navigate('/profile'); closePanel()}} />
               <NavIcon icon={Wallet} color="bg-[#30D158]" onClick={() => {navigate('/wallet'); closePanel()}} />
               <NavIcon icon={ShoppingBag} color="bg-[#FF9F0A]" onClick={() => {navigate('/transactions'); closePanel()}} />
@@ -132,7 +130,7 @@ export default function ControlCenter() {
 
             {/* Nav Block 2 (Square) */}
             <div 
-              className="flex-1 bg-white/10 backdrop-blur-3xl rounded-[28px] p-4 flex flex-col justify-between shadow-2xl border border-white/20 cursor-pointer active:scale-95 transition-transform"
+              className="flex-1 bg-[#2C2C2E]/80 backdrop-blur-3xl rounded-[32px] p-4 flex flex-col justify-between shadow-2xl border border-white/10 cursor-pointer active:scale-95 transition-transform"
               onClick={() => {navigate('/sections'); closePanel()}}
             >
               <div className="flex justify-end">
@@ -141,8 +139,8 @@ export default function ControlCenter() {
                  </div>
               </div>
               <div>
-                <p className="text-white font-semibold text-xl leading-tight">Sections</p>
-                <p className="text-white/60 text-sm">All Categories</p>
+                <p className="text-white font-semibold text-xl leading-tight tracking-tight">Sections</p>
+                <p className="text-white/50 text-sm font-medium">All Categories</p>
               </div>
             </div>
           </div>
@@ -150,17 +148,17 @@ export default function ControlCenter() {
           {/* Middle Row: Pills */}
           <div className="flex gap-4 h-[80px]">
             <div 
-              className="flex-[2] bg-white/10 backdrop-blur-3xl rounded-[24px] p-4 flex items-center gap-4 shadow-2xl border border-white/20 cursor-pointer active:scale-95 transition-transform"
+              className="flex-[2] bg-[#2C2C2E]/80 backdrop-blur-3xl rounded-[32px] p-4 flex items-center gap-4 shadow-2xl border border-white/10 cursor-pointer active:scale-95 transition-transform"
               onClick={() => {navigate('/search'); closePanel()}}
             >
               <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
                 <Search className="w-5 h-5 text-white/80" />
               </div>
-              <span className="text-white font-medium text-lg">Search Items</span>
+              <span className="text-white font-semibold text-lg tracking-tight">Search Items</span>
             </div>
             
             <div 
-              className="flex-1 bg-white/10 backdrop-blur-3xl rounded-[24px] flex items-center justify-center shadow-2xl border border-white/20 cursor-pointer active:scale-95 transition-transform"
+              className="flex-1 bg-[#2C2C2E]/80 backdrop-blur-3xl rounded-[32px] flex items-center justify-center shadow-2xl border border-white/10 cursor-pointer active:scale-95 transition-transform"
             >
               <div className="w-10 h-10 rounded-full bg-[#FF453A]/20 flex items-center justify-center">
                 <Bell className="w-5 h-5 text-[#FF453A]" />
@@ -171,28 +169,28 @@ export default function ControlCenter() {
           {/* Bottom Row: Tall Rectangles */}
           <div className="flex gap-4 h-[160px]">
              <div 
-               className="flex-1 bg-white/10 backdrop-blur-3xl rounded-[28px] p-4 flex flex-col items-center justify-center gap-3 shadow-2xl border border-white/20 cursor-pointer active:scale-95 transition-transform"
+               className="flex-1 bg-[#2C2C2E]/80 backdrop-blur-3xl rounded-[32px] p-4 flex flex-col items-center justify-center gap-3 shadow-2xl border border-white/10 cursor-pointer active:scale-95 transition-transform"
                onClick={() => {navigate('/games'); closePanel()}}
              >
                 <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[#FF453A] to-[#FF9F0A] flex items-center justify-center shadow-lg">
                   <Gamepad2 className="w-7 h-7 text-white" />
                 </div>
                 <div className="text-center">
-                  <p className="text-white font-semibold">Games</p>
-                  <p className="text-white/50 text-xs">Play & Win</p>
+                  <p className="text-white font-semibold tracking-tight">Games</p>
+                  <p className="text-white/50 text-xs font-medium">Play & Win</p>
                 </div>
              </div>
 
              <div 
-               className="flex-1 bg-white/10 backdrop-blur-3xl rounded-[28px] p-4 flex flex-col items-center justify-center gap-3 shadow-2xl border border-white/20 cursor-pointer active:scale-95 transition-transform"
+               className="flex-1 bg-[#2C2C2E]/80 backdrop-blur-3xl rounded-[32px] p-4 flex flex-col items-center justify-center gap-3 shadow-2xl border border-white/10 cursor-pointer active:scale-95 transition-transform"
                onClick={() => {navigate('/grocery'); closePanel()}}
              >
                 <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[#30D158] to-[#32ADE6] flex items-center justify-center shadow-lg">
                   <Package className="w-7 h-7 text-white" />
                 </div>
                 <div className="text-center">
-                  <p className="text-white font-semibold">Grocery</p>
-                  <p className="text-white/50 text-xs">Essentials</p>
+                  <p className="text-white font-semibold tracking-tight">Grocery</p>
+                  <p className="text-white/50 text-xs font-medium">Essentials</p>
                 </div>
              </div>
           </div>
