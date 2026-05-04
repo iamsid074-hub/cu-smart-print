@@ -273,7 +273,7 @@ export default function ControlCenter() {
                       { icon: User,        bg: "#7B6FA8", to: "/profile",      label: "Profile"  },
                       { icon: Wallet,      bg: "#30A85A", to: "/wallet",       label: "Wallet"   },
                       { icon: ShoppingBag, bg: "#C97840", to: "/transactions", label: "Orders"   },
-                      { icon: Settings,    bg: "#3A3A3C", to: "/settings",     label: "Settings" },
+                      { icon: Settings,    bg: "#5C5C5E", to: "/settings",     label: "Settings" },
                     ] as const).map(({ icon: Icon, bg, to, label }) => (
                       <button
                         key={to}
