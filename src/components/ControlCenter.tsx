@@ -6,7 +6,15 @@ import {
   Gamepad2, Search, Grid, Bell, Package,
 } from "lucide-react";
 
-const TILE_BG = "rgba(44,44,46,0.92)";
+// Glassmorphic tile — translucent + blur, light gradient overlay
+const GLASS = {
+  background: "linear-gradient(145deg, rgba(255,255,255,0.13) 0%, rgba(255,255,255,0.06) 100%)",
+  backdropFilter: "blur(24px) saturate(1.6)",
+  WebkitBackdropFilter: "blur(24px) saturate(1.6)",
+  border: "1px solid rgba(255,255,255,0.18)",
+  boxShadow: "0 4px 32px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.15)",
+};
+
 const OPEN_Y = 0;
 const getClosedY = () => -window.innerHeight;
 
@@ -258,8 +266,8 @@ export default function ControlCenter() {
                     initial="hidden"
                     animate="show"
                     exit="hide"
-                    className="flex-1 rounded-[28px] p-3 grid grid-cols-2 grid-rows-2 gap-2"
-                    style={{ background: TILE_BG, border: "1px solid rgba(255,255,255,0.09)" }}
+                    className="flex-1 rounded-[36px] p-3 grid grid-cols-2 grid-rows-2 gap-2"
+                    style={GLASS}
                   >
                     {([
                       { icon: User,        bg: "#0A84FF", to: "/profile"      },
@@ -291,8 +299,8 @@ export default function ControlCenter() {
                     animate="show"
                     exit="hide"
                     data-action="true"
-                    className="flex-1 rounded-[28px] p-4 flex flex-col justify-between text-left active:scale-95 transition-transform duration-100"
-                    style={{ background: TILE_BG, border: "1px solid rgba(255,255,255,0.09)" }}
+                    className="flex-1 rounded-[36px] p-4 flex flex-col justify-between text-left active:scale-95 transition-transform duration-100"
+                    style={GLASS}
                     onClick={() => go("/sections")}
                   >
                     <div className="flex justify-end">
@@ -323,8 +331,8 @@ export default function ControlCenter() {
                     animate="show"
                     exit="hide"
                     data-action="true"
-                    className="flex-[2] rounded-[22px] px-4 flex items-center gap-3 active:scale-95 transition-transform duration-100"
-                    style={{ background: TILE_BG, border: "1px solid rgba(255,255,255,0.09)" }}
+                    className="flex-[2] rounded-[36px] px-5 flex items-center gap-3 active:scale-95 transition-transform duration-100"
+                    style={GLASS}
                     onClick={() => go("/search")}
                   >
                     <Search className="w-5 h-5 text-white/60 flex-shrink-0" />
@@ -339,8 +347,8 @@ export default function ControlCenter() {
                     animate="show"
                     exit="hide"
                     data-action="true"
-                    className="flex-1 rounded-[22px] flex items-center justify-center active:scale-95 transition-transform duration-100"
-                    style={{ background: TILE_BG, border: "1px solid rgba(255,255,255,0.09)" }}
+                    className="flex-1 rounded-[36px] flex items-center justify-center active:scale-95 transition-transform duration-100"
+                    style={GLASS}
                   >
                     <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ background: "rgba(255,69,58,0.2)" }}>
                       <Bell className="w-5 h-5" style={{ color: "#FF453A" }} />
@@ -368,8 +376,8 @@ export default function ControlCenter() {
                       animate="show"
                       exit="hide"
                       data-action="true"
-                      className="flex-1 rounded-[28px] p-4 flex flex-col items-center justify-center gap-3 active:scale-95 transition-transform duration-100"
-                      style={{ background: TILE_BG, border: "1px solid rgba(255,255,255,0.09)" }}
+                      className="flex-1 rounded-[36px] p-4 flex flex-col items-center justify-center gap-3 active:scale-95 transition-transform duration-100"
+                      style={GLASS}
                       onClick={() => go(to)}
                     >
                       <div
