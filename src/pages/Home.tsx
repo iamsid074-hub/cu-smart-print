@@ -2,8 +2,11 @@ import { lazy, Suspense, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import DesktopDock from "@/components/DesktopDock";
 import DesktopMenuBar from "@/components/DesktopMenuBar";
-import DesktopWindowShops from "@/components/DesktopWindowShops";
 import { motion, AnimatePresence } from "framer-motion";
+
+const DesktopWindowShops = lazy(() => import("@/components/DesktopWindowShops"));
+const DesktopWindowVending = lazy(() => import("@/components/DesktopWindowVending"));
+const DesktopWindowCombos = lazy(() => import("@/components/DesktopWindowCombos"));
 import {
   Search,
   Loader2,
@@ -79,9 +82,31 @@ function HeroSpotlight() {
   );
 }
 
+type WindowId = "Shops" | "Vending" | "Combos" | "Games" | "Cart" | "Profile" | "Settings" | null;
+
 export default function Home() {
   const navigate = useNavigate();
-  const [isShopsOpen, setIsShopsOpen] = useState(false);
+  const [openWindow, setOpenWindow] = useState<WindowId>(null);
+
+  const handleOpenWindow = (id: string) => {
+    // These navigate directly, no window needed
+    const navItems: Record<string, string> = {
+      Games: "/games",
+      Cart: "/cart",
+      Profile: "/profile",
+      Settings: "/settings",
+    };
+    if (navItems[id]) {
+      navigate(navItems[id]);
+    } else {
+      setOpenWindow(id as WindowId);
+    }
+  };
+
+  const handleNavigate = (path: string) => {
+    setOpenWindow(null);
+    navigate(path);
+  };
 
   return (
     <div className="min-h-screen bg-black text-white bg-[url('/eos-v3-wallpaper-mobile.png')] md:bg-[url('/eos-v3-wallpaper-desktop.jpg')] bg-cover bg-center bg-no-repeat bg-fixed relative overflow-hidden">
@@ -89,12 +114,20 @@ export default function Home() {
       {/* EOS v3 Desktop UI Elements */}
       <div className="hidden md:block">
         <DesktopMenuBar />
-        <DesktopDock onOpenWindow={(id) => id === "Shops" && setIsShopsOpen(true)} />
-        <AnimatePresence>
-          {isShopsOpen && (
-            <DesktopWindowShops onClose={() => setIsShopsOpen(false)} />
-          )}
-        </AnimatePresence>
+        <DesktopDock onOpenWindow={handleOpenWindow} />
+        <Suspense fallback={null}>
+          <AnimatePresence>
+            {openWindow === "Shops" && (
+              <DesktopWindowShops onClose={() => setOpenWindow(null)} />
+            )}
+            {openWindow === "Vending" && (
+              <DesktopWindowVending onClose={() => setOpenWindow(null)} />
+            )}
+            {openWindow === "Combos" && (
+              <DesktopWindowCombos onClose={() => setOpenWindow(null)} />
+            )}
+          </AnimatePresence>
+        </Suspense>
       </div>
 
       {/* 

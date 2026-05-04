@@ -61,8 +61,9 @@ export default function DesktopDock({ onOpenWindow }: { onOpenWindow?: (id: stri
               className="relative group cursor-pointer flex flex-col items-center justify-end"
               onMouseEnter={() => setHoverIndex(index)}
               onClick={() => {
-                if (item.name === "Shops" && onOpenWindow) {
-                  onOpenWindow("Shops");
+                const windowItems = ["Shops", "Vending", "Combos", "Games", "Cart", "Profile", "Settings"];
+                if (windowItems.includes(item.name) && onOpenWindow) {
+                  onOpenWindow(item.name);
                 } else {
                   navigate(item.path);
                 }
