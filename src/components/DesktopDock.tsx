@@ -31,7 +31,7 @@ export default function DesktopDock() {
   return (
     <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-end">
       <div 
-        className="flex items-end gap-3 px-4 pb-2 rounded-2xl border border-white/20 h-[68px]"
+        className="flex items-end gap-3 px-4 pb-[6px] rounded-2xl border border-white/20 h-[62px]"
         style={{
           background: "rgba(83, 83, 83, 0.25)",
           backdropFilter: "blur(13px)",
@@ -40,16 +40,16 @@ export default function DesktopDock() {
         onMouseLeave={() => setHoverIndex(null)}
       >
         {dockItems.map((item, index) => {
-          let size = 48; // Base size
+          let size = 44; // Base size (reduced)
 
           if (hoverIndex !== null) {
             const dist = hoverIndex - index;
             if (dist === 0) {
-              size = 72; // 1.5x
+              size = 64; // ~1.5x
             } else if (Math.abs(dist) === 1) {
-              size = 58; // ~1.2x
+              size = 54; // ~1.2x
             } else if (Math.abs(dist) === 2) {
-              size = 52; // ~1.1x
+              size = 48; // ~1.1x
             }
           }
 
@@ -81,7 +81,7 @@ export default function DesktopDock() {
               </motion.div>
               
               {/* Active Dot indicator below icon */}
-              <div className="h-[10px] w-full flex items-center justify-center">
+              <div className="h-[6px] w-full flex items-center justify-center pt-[2px]">
                 {isActive && (
                   <div className="w-[4px] h-[4px] rounded-full bg-white/70 shadow-[0_0_4px_rgba(255,255,255,0.5)]" />
                 )}
