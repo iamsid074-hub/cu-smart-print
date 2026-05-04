@@ -138,7 +138,7 @@ export default function DesktopWindowShops({ onClose }: DesktopWindowShopsProps)
                       >
                         <div className="space-y-1">
                           <h4 className="font-medium text-gray-900 dark:text-white">{item.name}</h4>
-                          <span className="text-sm font-bold text-blue-600 dark:text-blue-400">Ã¢â€šÂ¹{item.price}</span>
+                          <span className="text-sm font-bold text-blue-600 dark:text-blue-400">&#8377;{item.price}</span>
                         </div>
                         {item.image && (
                           <img src={item.image} alt={item.name} className="w-16 h-16 rounded-md object-cover" />
