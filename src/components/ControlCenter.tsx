@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import {
   User, Wallet, ShoppingBag, Settings,
-  Gamepad2, Search, Grid, Bell, Package,
+  Gamepad2, Search, Grid, Bell, Package, ShoppingCart,
 } from "lucide-react";
 
 // Glassmorphic tile — translucent + blur, light gradient overlay
@@ -366,8 +366,8 @@ export default function ControlCenter() {
               {showCards && (
                 <>
                   {[
-                    { key: "games",   Icon: Gamepad2, g: ["#FF453A","#FF9F0A"], label: "Games",   sub: "Play & Win",  to: "/games",   i: 4 },
-                    { key: "grocery", Icon: Package,  g: ["#30D158","#32ADE6"], label: "Grocery", sub: "Essentials",  to: "/grocery", i: 5 },
+                   { key: "games",   Icon: Gamepad2,     bg: "#D93B30",  label: "Games",   sub: "Play & Win",  to: "/games",   i: 4 },
+                    { key: "grocery", Icon: ShoppingCart, bg: "#34A853",  label: "Grocery", sub: "Essentials",  to: "/grocery", i: 5 },
                   ].map(({ key, Icon, g, label, sub, to, i }) => (
                     <motion.button
                       key={key}
@@ -377,13 +377,13 @@ export default function ControlCenter() {
                       animate="show"
                       exit="hide"
                       data-action="true"
-                      className="flex-1 rounded-[36px] p-4 flex flex-col items-center justify-center gap-3 active:scale-95 transition-transform duration-100"
+                      className="flex-1 rounded-[36px] p-4 flex flex-col items-center justify-center gap-2 active:scale-95 transition-transform duration-100"
                       style={GLASS}
                       onClick={() => go(to)}
                     >
                       <div
                         className="w-14 h-14 rounded-full flex items-center justify-center shadow-lg"
-                        style={{ background: `linear-gradient(135deg,${g[0]},${g[1]})` }}
+                        style={{ background: bg }}
                       >
                         <Icon className="w-7 h-7 text-white" />
                       </div>
