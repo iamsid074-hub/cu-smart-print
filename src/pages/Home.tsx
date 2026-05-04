@@ -1,5 +1,7 @@
 import { lazy, Suspense, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import DesktopDock from "@/components/DesktopDock";
+import DesktopMenuBar from "@/components/DesktopMenuBar";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Search,
@@ -80,7 +82,14 @@ export default function Home() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-black text-white bg-[url('/eos-v3-wallpaper-mobile.png')] md:bg-[url('/eos-v3-wallpaper-desktop.jpg')] bg-cover bg-center bg-no-repeat bg-fixed">
+    <div className="min-h-screen bg-black text-white bg-[url('/eos-v3-wallpaper-mobile.png')] md:bg-[url('/eos-v3-wallpaper-desktop.jpg')] bg-cover bg-center bg-no-repeat bg-fixed relative overflow-hidden">
+      
+      {/* EOS v3 Desktop UI Elements */}
+      <div className="hidden md:block">
+        <DesktopMenuBar />
+        <DesktopDock />
+      </div>
+
       {/* 
         Home page cleared for EOS v3 redesign. 
         Only the wallpaper and global components (like Dynamic Island rendered in App.tsx) will show.
