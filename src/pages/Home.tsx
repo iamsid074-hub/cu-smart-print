@@ -152,7 +152,7 @@ export default function Home() {
   }, [activeCategory]);
 
   return (
-    <div className="min-h-screen bg-[#000000] text-white">
+    <div className="min-h-screen bg-black text-white bg-[url('/eos-v3-wallpaper-mobile.png')] md:bg-[url('/eos-v3-wallpaper-desktop.jpg')] bg-cover bg-center bg-no-repeat bg-fixed">
       <Suspense fallback={null}>
         <AnimatePresence>
           {showQuickTransition && (
