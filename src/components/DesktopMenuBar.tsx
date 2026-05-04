@@ -30,18 +30,11 @@ export default function DesktopMenuBar() {
           CU
         </div>
         <span className="font-bold text-white cursor-default">Bazzar</span>
-        <span className="cursor-default hover:text-white transition-colors">File</span>
-        <span className="cursor-default hover:text-white transition-colors">Edit</span>
-        <span className="cursor-default hover:text-white transition-colors">View</span>
-        <span className="cursor-default hover:text-white transition-colors">Go</span>
-        <span className="cursor-default hover:text-white transition-colors">Window</span>
-        <span className="cursor-default hover:text-white transition-colors">Help</span>
       </div>
 
       <div className="flex items-center gap-4">
         <Wifi className="w-[14px] h-[14px]" />
         <BatteryMedium className="w-[16px] h-[16px]" />
-        <Search className="w-[14px] h-[14px]" />
         <div className="font-medium">{timeStr}</div>
       </div>
     </div>
