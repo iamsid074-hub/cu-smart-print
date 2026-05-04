@@ -88,7 +88,7 @@ export default function ControlCenter() {
       {/* 50px Top Edge Hit Area (Only active when closed) */}
       {!isOpen && (
         <motion.div
-          className="fixed top-0 inset-x-0 h-[50px] z-[9998] touch-none"
+          className="fixed top-0 inset-x-0 h-[50px] z-[100000] touch-none"
           onPan={handleHitAreaPan}
           onPanEnd={handleDragEnd}
         />
@@ -96,11 +96,15 @@ export default function ControlCenter() {
 
       {/* Backdrop */}
       <motion.div
-        className="fixed inset-0 z-[9998] pointer-events-none"
+        className="fixed inset-0 z-[99998] pointer-events-none"
         style={{ opacity: backdropOpacity }}
       >
         <div 
-          className={`absolute inset-0 bg-black/40 backdrop-blur-xl ${isOpen ? 'pointer-events-auto' : 'pointer-events-none'}`}
+          className={`absolute inset-0 bg-black/30 ${isOpen ? 'pointer-events-auto' : 'pointer-events-none'}`}
+          style={{
+            backdropFilter: "blur(40px)",
+            WebkitBackdropFilter: "blur(40px)",
+          }}
           onClick={closePanel}
         />
       </motion.div>
@@ -112,7 +116,7 @@ export default function ControlCenter() {
         animate={controls}
         initial={{ y: -2000 }} // fallback
         style={{ y, scale: panelScale }}
-        className={`fixed inset-x-0 top-0 bottom-0 z-[9999] px-4 pt-[60px] pb-8 touch-none ${isOpen ? 'pointer-events-auto' : 'pointer-events-none'}`}
+        className={`fixed inset-x-0 top-0 bottom-0 z-[99999] px-4 pt-[60px] pb-8 touch-none ${isOpen ? 'pointer-events-auto' : 'pointer-events-none'}`}
       >
         <div className="w-full h-full max-w-sm mx-auto flex flex-col gap-4">
           
