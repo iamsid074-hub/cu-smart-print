@@ -270,23 +270,24 @@ export default function ControlCenter() {
                     style={GLASS}
                   >
                     {([
-                      { icon: User,        bg: "#0A84FF", to: "/profile"      },
-                      { icon: Wallet,      bg: "#30D158", to: "/wallet"       },
-                      { icon: ShoppingBag, bg: "#FF9F0A", to: "/transactions" },
-                      { icon: Settings,    bg: "#8E8E93", to: "/settings"     },
-                    ] as const).map(({ icon: Icon, bg, to }) => (
+                      { icon: User,        bg: "#7B6FA8", to: "/profile",      label: "Profile"  },
+                      { icon: Wallet,      bg: "#30A85A", to: "/wallet",       label: "Wallet"   },
+                      { icon: ShoppingBag, bg: "#C97840", to: "/transactions", label: "Orders"   },
+                      { icon: Settings,    bg: "#3A3A3C", to: "/settings",     label: "Settings" },
+                    ] as const).map(({ icon: Icon, bg, to, label }) => (
                       <button
                         key={to}
                         data-action="true"
                         onClick={() => go(to)}
-                        className="flex items-center justify-center active:scale-90 transition-transform duration-100"
+                        className="flex flex-col items-center justify-center gap-1 active:scale-90 transition-transform duration-100"
                       >
                         <div
-                          className="w-12 h-12 rounded-full flex items-center justify-center shadow-md"
+                          className="w-11 h-11 rounded-full flex items-center justify-center shadow-md"
                           style={{ background: bg }}
                         >
-                          <Icon className="w-6 h-6 text-white" />
+                          <Icon className="w-5 h-5 text-white" />
                         </div>
+                        <span className="text-white/80 text-[10px] font-medium tracking-tight leading-none">{label}</span>
                       </button>
                     ))}
                   </motion.div>
