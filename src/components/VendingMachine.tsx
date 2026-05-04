@@ -232,7 +232,7 @@ const MemoizedVendingCard = memo(
         <div className="mt-4 flex flex-col items-center gap-0.5 pointer-events-none z-20">
           <div className="bg-[#1c1c1e] shadow-[0_2px_4px_rgba(0,0,0,0.5)] rounded-sm flex flex-col items-center px-2 py-0.5 shrink-0 border-b-2 border-white/5 min-w-[45px]">
              <span className="text-[6px] sm:text-[7px] font-bold text-gray-400 uppercase tracking-tighter truncate max-w-[50px] leading-tight">{item.name}</span>
-             <span className="text-[9px] sm:text-[10px] font-black text-white leading-tight">₹{item.price}</span>
+             <span className="text-[9px] sm:text-[10px] font-black text-white leading-tight">{item.price} rupees</span>
           </div>
         </div>
       </div>
@@ -346,7 +346,7 @@ export default function VendingMachine() {
 
       const itemsSummary = vendingCartItems
         .map(
-          (i) => `${i.quantity}x ${i.title} [IMG:${i.image}] (₹${i.price})`
+          (i) => `${i.quantity}x ${i.title} [IMG:${i.image}] (${i.price} rupees)`
         )
         .join("\n");
       const { data, error } = await supabase.from("orders").insert({
@@ -624,7 +624,7 @@ export default function VendingMachine() {
                               {item.title}
                             </p>
                             <p className="text-[10px] text-orange-400 font-bold mt-1">
-                              ₹{item.price} × {item.quantity}
+                              {item.price} rupees × {item.quantity}
                             </p>
                           </div>
                         </div>
@@ -750,7 +750,7 @@ export default function VendingMachine() {
                         Subtotal ({vendingCartItems.length})
                       </span>
                       <span className="text-white font-black">
-                        ₹{vendingSubtotal}
+                        {vendingSubtotal} rupees
                       </span>
                     </div>
                     <div className="flex justify-between items-center text-[10px]">
@@ -758,7 +758,7 @@ export default function VendingMachine() {
                         Floor Delivery
                       </span>
                       <span className="text-emerald-600 font-black">
-                        + ₹{deliveryCharge}
+                        + {deliveryCharge} rupees
                       </span>
                     </div>
                     <div className="pt-1.5 mt-1 border-t border-white/5 flex justify-between items-center">
@@ -766,7 +766,7 @@ export default function VendingMachine() {
                         Total
                       </span>
                       <span className="text-lg font-black text-white">
-                        ₹{totalAmount}
+                        {totalAmount} rupees
                       </span>
                     </div>
                   </div>
@@ -794,7 +794,7 @@ export default function VendingMachine() {
                       ? `Need Room ${floor}xx`
                       : phone.length !== 10
                       ? "Enter Phone"
-                      : `Pay ₹${totalAmount}`}
+                      : `Pay ${totalAmount} rupees`}
                     <Zap className="w-4 h-4 text-emerald-400" />
                   </button>
                 </div>

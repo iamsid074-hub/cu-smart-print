@@ -78,7 +78,7 @@ export default function CombosSection() {
                     Price
                   </span>
                   <span className="text-2xl font-black text-purple-950">
-                    ₹{combo.price}
+                    {combo.price} rupees
                   </span>
                 </div>
                 <button className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white px-5 py-3 rounded-xl font-bold text-sm transition-all shadow-[0_4px_14px_0_rgba(147,51,234,0.39)] hover:shadow-[0_6px_20px_rgba(147,51,234,0.23)] active:scale-95">

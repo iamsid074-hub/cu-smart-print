@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Star, Clock, MapPin, Search } from "lucide-react";
+import { Star, Clock, MapPin, Search, Plus } from "lucide-react";
 import { shops } from "@/config/shopMenus";
 import DesktopWindow from "./DesktopWindow";
+import { useCart } from "@/contexts/CartContext";
 
 export default function DesktopWindowShops({ onClose }: { onClose: () => void }) {
   const [selectedShopId, setSelectedShopId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const { addItem } = useCart();
 
   const selectedShop = shops.find((s) => s.id === selectedShopId);
 
@@ -109,12 +111,26 @@ export default function DesktopWindowShops({ onClose }: { onClose: () => void })
                         key={item.name}
                         className="flex justify-between items-center p-3 rounded-lg bg-white/50 border border-black/5"
                       >
-                        <div>
+                        <div className="flex-1">
                           <h4 className="font-medium text-gray-900 text-sm">{item.name}</h4>
-                          <span className="text-sm font-bold text-orange-600">&#8377;{item.price}</span>
+                          <div className="flex items-center justify-between mt-1">
+                            <span className="text-sm font-bold text-orange-600">{item.price} rupees</span>
+                            <button
+                              onClick={() => addItem({
+                                id: `${selectedShopId}-${item.name}`,
+                                title: item.name,
+                                price: item.price,
+                                image: item.image || ""
+                              })}
+                              className="flex items-center gap-1 px-3 py-1 bg-orange-500 hover:bg-orange-600 text-white rounded-full text-xs font-bold transition-colors shadow-sm active:scale-95"
+                            >
+                              <Plus className="w-3 h-3" />
+                              Add
+                            </button>
+                          </div>
                         </div>
                         {item.image && (
-                          <img src={item.image} alt={item.name} className="w-14 h-14 rounded-lg object-cover" />
+                          <img src={item.image} alt={item.name} className="w-14 h-14 rounded-lg object-cover ml-3" />
                         )}
                       </div>
                     ))}
