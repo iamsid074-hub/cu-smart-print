@@ -368,7 +368,7 @@ export default function ControlCenter() {
                   {[
                    { key: "games",   Icon: Gamepad2,     bg: "#D93B30",  label: "Games",   sub: "Play & Win",  to: "/games",   i: 4 },
                     { key: "grocery", Icon: ShoppingCart, bg: "#34A853",  label: "Grocery", sub: "Essentials",  to: "/grocery", i: 5 },
-                  ].map(({ key, Icon, g, label, sub, to, i }) => (
+                  ].map(({ key, Icon, bg, label, sub, to, i }) => (
                     <motion.button
                       key={key}
                       custom={i}
