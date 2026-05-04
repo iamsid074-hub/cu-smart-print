@@ -157,6 +157,9 @@ export default function ControlCenter() {
     // Only start from top 50px when closed
     if (isOpenRef.current) return;
     if (e.clientY > 50) return;
+    // On desktop (non-touch), only allow trigger from the right side (rightmost 220px)
+    const isTouch = e.pointerType === "touch";
+    if (!isTouch && e.clientX < window.innerWidth - 220) return;
     isDragging.current = true;
     dragStartY.current = e.clientY;
     dragStartPanelY.current = currentPanelY.current;
@@ -277,11 +280,30 @@ export default function ControlCenter() {
 
   return (
     <>
-      {/* Hit zone — always present, top 50px */}
+      {/* Hit zone — full width on mobile, right-side-only on desktop (md+) */}
       <div
         ref={hitRef}
-        className="fixed top-0 inset-x-0 z-[100001]"
-        style={{ height: 50, touchAction: "none", cursor: "ns-resize" }}
+        className="fixed top-0 z-[100001]"
+        style={{
+          height: 50,
+          touchAction: "none",
+          cursor: "ns-resize",
+          // On desktop: only occupy the right 220px (matching the system status icons)
+          right: 0,
+          left: "auto",
+          width: "clamp(50px, 100%, 220px)",
+        }}
+      />
+      {/* Mobile: additional full-width hit zone (pointer-events only for touch) */}
+      <div
+        className="fixed top-0 inset-x-0 z-[100000] md:hidden"
+        style={{ height: 50, touchAction: "none" }}
+        onPointerDown={(e) => {
+          if (e.pointerType !== "touch") return;
+          (hitRef.current as any)?.dispatchEvent(
+            new PointerEvent("pointerdown", e.nativeEvent)
+          );
+        }}
       />
 
       {/* Backdrop */}
