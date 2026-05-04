@@ -97,7 +97,7 @@ const IosStatusBar = () => {
           <div className="w-[3px] h-[8px] bg-white rounded-sm" />
           <div className="w-[3px] h-[10px] bg-white rounded-sm" />
         </div>
-        <Wifi className="w-[15px] h-[15px] text-white ml-0.5 stroke-[2.5]" />
+        <Wifi className="w-[18px] h-[18px] text-white ml-[2px] stroke-[2.5] flex-shrink-0" />
         
         {/* Battery */}
         <div className="relative flex items-center ml-1">
@@ -131,11 +131,12 @@ export default function ControlCenter() {
   const currentPanelY = useRef(getClosedY());
   const isDragging = useRef(false);
 
-  // Direct DOM write — zero React overhead
+  // Direct DOM write — zero React overhead + Force GPU Acceleration
   const setY = useCallback((y: number) => {
     currentPanelY.current = y;
     if (!panelRef.current) return;
-    panelRef.current.style.transform = `translateY(${y}px)`;
+    // Use translate3d instead of translateY to force hardware acceleration on mobile
+    panelRef.current.style.transform = `translate3d(0, ${y}px, 0)`;
     const pct = Math.max(0, Math.min(1, 1 + y / window.innerHeight));
     if (backdropRef.current) {
       backdropRef.current.style.opacity = String(pct);
@@ -316,6 +317,7 @@ export default function ControlCenter() {
           paddingBottom: 32,
           pointerEvents: "none",
           willChange: "transform",
+          transform: `translate3d(0, ${getClosedY()}px, 0)`,
           touchAction: "none",
           userSelect: "none",
         }}
