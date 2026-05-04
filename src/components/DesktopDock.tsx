@@ -29,9 +29,9 @@ export default function DesktopDock() {
   const [hoverIndex, setHoverIndex] = useState<number | null>(null);
 
   return (
-    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 h-[60px] flex items-center justify-center z-50">
+    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-end">
       <div 
-        className="flex items-end h-full gap-3 px-4 pb-2 pt-2 rounded-2xl border border-white/20"
+        className="flex items-end gap-3 px-4 pb-2 rounded-2xl border border-white/20 h-[68px]"
         style={{
           background: "rgba(83, 83, 83, 0.25)",
           backdropFilter: "blur(13px)",
@@ -81,7 +81,7 @@ export default function DesktopDock() {
               </motion.div>
               
               {/* Active Dot indicator below icon */}
-              <div className="h-[14px] flex items-center justify-center">
+              <div className="h-[10px] w-full flex items-center justify-center">
                 {isActive && (
                   <div className="w-[4px] h-[4px] rounded-full bg-white/70 shadow-[0_0_4px_rgba(255,255,255,0.5)]" />
                 )}
