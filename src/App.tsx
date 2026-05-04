@@ -76,6 +76,8 @@ import UsernameSetup from "./components/UsernameSetup";
 import ScrollToTop from "./components/ScrollToTop";
 import StickyStripBanner from "./components/StickyStripBanner";
 
+const ControlCenter = lazy(() => import("./components/ControlCenter"));
+
 
 // Lazy-load non-critical-path components
 const LiveOrderBanner = lazy(() => import("./components/LiveOrderBanner"));
@@ -232,6 +234,9 @@ function AppLayout() {
   return (
     <>
       <AppUpdater />
+      <Suspense fallback={null}>
+        <ControlCenter />
+      </Suspense>
       {!isLanding && !isLogin && !isAdminPath && !isDownload && !isDriverPage && (
         <>
           {location.pathname !== "/pasta-offer" && <Navbar />}
