@@ -33,18 +33,19 @@ export default function DesktopWindow({
   size = "lg",
 }: DesktopWindowProps) {
   
-  // Animation variants mimicking macOS Genie effect
+  // Animation variants mimicking macOS Genie effect (Wavy Bend)
   const variants = {
     initial: { 
       scale: 0.6, 
       opacity: 0, 
       y: "30vh", 
-      filter: "blur(15px)" 
+      filter: "blur(15px)",
+      rotateX: 0,
+      skewX: 0
     },
     open: isMaximized 
       ? { 
           scale: 1, 
-          scaleX: 1,
           opacity: 1, 
           y: 0, 
           width: "100vw", 
@@ -53,26 +54,31 @@ export default function DesktopWindow({
           maxHeight: "100vh", 
           borderRadius: "0px",
           filter: "blur(0px)",
+          rotateX: 0,
+          skewX: 0,
           transition: { type: "spring", stiffness: 200, damping: 25 }
         } 
       : { 
           scale: 1, 
-          scaleX: 1,
           opacity: 1, 
           y: 0, 
           borderRadius: "12px",
           filter: "blur(0px)",
+          rotateX: 0,
+          skewX: 0,
           transition: { type: "spring", stiffness: 250, damping: 25 }
         },
     minimized: { 
       scale: 0.05, 
-      scaleX: 0.01, // Compress extremely horizontally to simulate the "suck into dock" effect
-      y: "45vh",    // Move to bottom dock
-      opacity: 0, 
+      y: "48vh",    // Move to bottom dock
+      rotateX: 60,  // Tilts back to create a funnel/trapezoid shape
+      skewX: [0, -15, 5, 0], // Wavy bend back and forth
+      opacity: [1, 0.8, 0], 
       filter: "blur(10px)", 
       transition: { 
-        duration: 0.4, 
-        ease: [0.32, 0.72, 0, 1] // Swooping ease mimicking Apple's curve
+        duration: 0.5, 
+        ease: [0.32, 0.72, 0, 1], // Apple-like swoop ease
+        skewX: { duration: 0.5, ease: "easeInOut" }
       } 
     },
     exit: { 
@@ -80,6 +86,8 @@ export default function DesktopWindow({
       opacity: 0, 
       y: 40, 
       filter: "blur(5px)",
+      rotateX: 0,
+      skewX: 0,
       transition: { duration: 0.2, ease: "easeOut" } 
     },
   };
@@ -95,7 +103,11 @@ export default function DesktopWindow({
       dragElastic={0.05}
       dragConstraints={{ top: -300, left: -500, right: 500, bottom: 300 }}
       className={`fixed inset-0 m-auto ${isMaximized ? "w-full h-full" : sizeMap[size]} flex flex-col bg-white/70 backdrop-blur-3xl shadow-2xl overflow-hidden z-[100] ${isMaximized ? "border-0" : "rounded-xl border border-white/30"} ${isMinimized ? "pointer-events-none" : ""}`}
-      style={{ cursor: "default", transformOrigin: "bottom center" }}
+      style={{ 
+        cursor: "default", 
+        transformOrigin: "bottom center",
+        perspective: "1000px" // Required for the 3D funnel effect to work
+      }}
     >
       {/* macOS Title Bar — drag handle */}
       <div
