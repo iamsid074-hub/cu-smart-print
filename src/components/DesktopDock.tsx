@@ -7,13 +7,13 @@ type DockItemWithIcon = { name: string; path: string; icon: React.ElementType; c
 type DockItem = DockItemWithImg | DockItemWithIcon;
 
 const dockItemsRaw: DockItem[] = [
-  { name: "Home",     path: "/home",            img: "/dock-home.png" },
-  { name: "Shops",    path: "/sections/shops",  img: "/dock-shops.png" },
-  { name: "Combos",   path: "/sections/combos", img: "/dock-combos.png" },
-  { name: "Games",    path: "/games",            img: "/dock-games.png" },
-  { name: "Cart",     path: "/cart",             img: "/dock-cart.png" },
-  { name: "Profile",  path: "/profile",          img: "/dock-profile.png", imgClass: "scale-[1.15]" },
-  { name: "Settings", path: "/settings",         img: "/dock-settings-v2.png" },
+  { name: "Home",     path: "/home",            img: "/dock-home.webp" },
+  { name: "Shops",    path: "/sections/shops",  img: "/dock-shops.webp" },
+  { name: "Combos",   path: "/sections/combos", img: "/dock-combos.webp" },
+  { name: "Games",    path: "/games",            img: "/dock-games.webp" },
+  { name: "Cart",     path: "/cart",             img: "/dock-cart.webp" },
+  { name: "Profile",  path: "/profile",          img: "/dock-profile.webp", imgClass: "scale-[1.15]" },
+  { name: "Settings", path: "/settings",         img: "/dock-settings-v2.webp" },
 ];
 
 export const dockItems = dockItemsRaw;
