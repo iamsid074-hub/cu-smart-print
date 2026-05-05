@@ -509,8 +509,8 @@ export default function Cart() {
   };
 
     return (
-    <div className="min-h-screen bg-[#FAFAFA] text-slate-900 pb-32 px-4 sm:px-6 font-sans">
-      <div className="h-28" /> {/* Safe area for Dynamic Island */}
+    <div className="min-h-screen bg-[#FAFAFA] md:bg-[url('/eos-v3-wallpaper-desktop.png')] md:bg-cover md:bg-center md:bg-fixed text-slate-900 pb-32 md:pb-12 px-4 sm:px-6 font-sans relative">
+      <div className="h-28 md:h-12" /> {/* Safe area for Dynamic Island */}
       {/* Risk Detection Alert */}
       <RiskAlert
         isOpen={showRiskAlert}
@@ -593,12 +593,15 @@ export default function Cart() {
         </div>
       )}
       
-      <div className="max-w-xl mx-auto relative">
+      <div className="max-w-xl mx-auto relative md:bg-white/40 md:backdrop-blur-3xl md:border-[1.5px] md:border-white/60 md:shadow-[inset_0_1px_1px_rgba(255,255,255,0.9),0_20px_60px_-15px_rgba(0,0,0,0.5)] md:rounded-[2.5rem] md:p-8">
+        {/* Reflection Highlight */}
+        <div className="hidden md:block absolute top-0 left-0 right-0 h-1/2 bg-gradient-to-b from-white/20 to-transparent pointer-events-none rounded-t-[2.5rem]" />
+        
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8 flex items-center justify-between relative mt-2"
+          className="mb-8 flex items-center justify-between relative mt-2 md:mt-0 z-10"
         >
           <div className="w-6" /> {/* Spacer */}
           <h1 className="text-[19px] font-bold text-slate-900 absolute left-1/2 -translate-x-1/2 w-full text-center pointer-events-none">
@@ -619,7 +622,7 @@ export default function Cart() {
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-white rounded-3xl p-6 shadow-[0_2px_10px_rgba(0,0,0,0.03)] mb-6 flex flex-col group relative overflow-hidden"
+            className="bg-white md:bg-white/60 md:backdrop-blur-2xl md:border md:border-white/50 rounded-3xl p-6 shadow-[0_2px_10px_rgba(0,0,0,0.03)] md:shadow-lg mb-6 flex flex-col group relative overflow-hidden z-10"
           >
             <div className="flex justify-between items-start mb-4">
               <h2 className="text-3xl font-bold text-[#8B5CF6]">
@@ -635,7 +638,7 @@ export default function Cart() {
             </p>
             <Link
               to={`/tracking?order=${activeOrder?.id}`}
-              className="w-full bg-[#FAFAFA] hover:bg-slate-100 text-slate-800 py-3 rounded-2xl font-bold transition-all flex items-center justify-center gap-2 text-sm border border-slate-100"
+              className="w-full bg-[#FAFAFA] md:bg-white/50 hover:bg-slate-100 md:hover:bg-white/70 text-slate-800 py-3 rounded-2xl font-bold transition-all flex items-center justify-center gap-2 text-sm border border-slate-100 md:border-white/60 shadow-sm"
             >
               Track Order <ArrowRight className="w-4 h-4 text-slate-400" />
             </Link>
@@ -647,7 +650,7 @@ export default function Cart() {
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="rounded-3xl p-12 text-center bg-white shadow-[0_2px_10px_rgba(0,0,0,0.03)] mt-8"
+              className="rounded-3xl p-12 text-center bg-white md:bg-white/60 md:backdrop-blur-2xl md:border md:border-white/50 shadow-[0_2px_10px_rgba(0,0,0,0.03)] md:shadow-lg mt-8 relative z-10"
             >
               <ShoppingCart className="w-16 h-16 text-slate-200 mx-auto mb-4" />
               <h2 className="text-lg font-bold text-slate-900 mb-2">
@@ -659,7 +662,7 @@ export default function Cart() {
             </motion.div>
 
             {/* Apple-style fixed bottom action */}
-            <div className="fixed bottom-0 left-0 right-0 z-40 pb-10 pt-6 px-5 flex justify-center" style={{ background: 'linear-gradient(to top, #FAFAFA 80%, transparent)' }}>
+            <div className="fixed bottom-0 left-0 right-0 z-40 pb-10 pt-6 px-5 flex justify-center md:static md:p-0 md:pt-8 md:bg-transparent" style={{ background: typeof window !== 'undefined' && window.innerWidth < 768 ? 'linear-gradient(to top, #FAFAFA 80%, transparent)' : 'transparent' }}>
               <motion.button
                 onClick={() => navigate('/home')}
                 initial={{ y: 20, opacity: 0 }}
@@ -679,7 +682,7 @@ export default function Cart() {
         ) : (
           <>
             {/* Cart Items */}
-            <div className="bg-white rounded-3xl p-6 px-4 sm:px-6 shadow-[0_4px_20px_rgba(0,0,0,0.03)] mb-6 z-10 relative">
+            <div className="bg-white md:bg-white/60 md:backdrop-blur-2xl md:border md:border-white/50 rounded-3xl p-6 px-4 sm:px-6 shadow-[0_4px_20px_rgba(0,0,0,0.03)] md:shadow-lg mb-6 z-10 relative">
               <div className="flex items-center justify-between mb-5">
                 <h3 className="text-[17px] font-bold text-slate-900">Order Items</h3>
                 {hasQuickItem && (
@@ -768,7 +771,7 @@ export default function Cart() {
 
 
             {/* Payment Summary */}
-            <div className="bg-white rounded-3xl p-6 sm:p-7 shadow-[0_4px_20px_rgba(0,0,0,0.03)] mb-6">
+            <div className="bg-white md:bg-white/60 md:backdrop-blur-2xl md:border md:border-white/50 rounded-3xl p-6 sm:p-7 shadow-[0_4px_20px_rgba(0,0,0,0.03)] md:shadow-lg mb-6 relative z-10">
               <h3 className="text-[17px] font-bold text-slate-900 mb-5">Payment Summary</h3>
               
               <div className="space-y-3.5 mb-5">
@@ -860,7 +863,7 @@ export default function Cart() {
               <motion.div
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-white rounded-3xl p-6 sm:p-7 shadow-[0_4px_20px_rgba(0,0,0,0.03)] space-y-6 mb-8"
+                className="bg-white md:bg-white/60 md:backdrop-blur-2xl md:border md:border-white/50 rounded-3xl p-6 sm:p-7 shadow-[0_4px_20px_rgba(0,0,0,0.03)] md:shadow-lg space-y-6 mb-8 relative z-10"
               >
                 {/* Location Summary Card */}
                 <div className="bg-slate-50 rounded-2xl p-4 flex items-center justify-between border border-slate-100 mb-6 mt-4">
@@ -918,8 +921,8 @@ export default function Cart() {
                 )}
               </motion.div>
             ) : (
-              <div className="fixed bottom-0 left-0 right-0 z-40 bg-white/80 backdrop-blur-xl border-t border-slate-100 p-4 pb-8 flex justify-center">
-                  <div className="max-w-xl w-full flex flex-col gap-3">
+              <div className="fixed bottom-0 left-0 right-0 z-40 bg-white/80 backdrop-blur-xl border-t border-slate-100 p-4 pb-8 flex justify-center md:static md:bg-transparent md:border-none md:p-0 md:pt-4 md:shadow-none">
+                  <div className="max-w-xl w-full flex flex-col gap-3 relative z-10">
                     <motion.button
                       whileTap={{ scale: 0.98 }}
                       onClick={() => navigate('/home')}
