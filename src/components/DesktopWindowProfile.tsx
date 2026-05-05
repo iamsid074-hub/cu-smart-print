@@ -29,7 +29,7 @@ import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
 import DesktopWindow from "./DesktopWindow";
 import { useMembership } from "@/hooks/useMembership";
-import MembershipPlansModal from "@/components/MembershipPlansModal";
+import MembershipPlansAttached from "./MembershipPlansAttached";
 
 interface Props {
   onClose: () => void;
@@ -138,6 +138,7 @@ export default function DesktopWindowProfile({ onClose, onMinimize, onMaximize, 
       isMinimized={isMinimized}
       isMaximized={isMaximized}
       size="xl"
+      attachedView={isPlansOpen ? <MembershipPlansAttached onClose={() => setIsPlansOpen(false)} /> : null}
     >
       <div className="flex h-full bg-[#F9FAFB]">
         {/* Sidebar */}
@@ -410,7 +411,6 @@ export default function DesktopWindowProfile({ onClose, onMinimize, onMaximize, 
         </div>
       </div>
 
-      <MembershipPlansModal isOpen={isPlansOpen} onClose={() => setIsPlansOpen(false)} />
     </DesktopWindow>
   );
 }

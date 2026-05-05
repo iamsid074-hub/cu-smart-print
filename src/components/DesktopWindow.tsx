@@ -11,6 +11,7 @@ interface DesktopWindowProps {
   isMaximized?: boolean;
   onBack?: () => void;
   actions?: ReactNode;
+  attachedView?: ReactNode;
   children: ReactNode;
   /** optional size override */
   size?: "md" | "lg" | "xl";
@@ -31,6 +32,7 @@ export default function DesktopWindow({
   isMaximized = false,
   onBack,
   actions,
+  attachedView,
   children,
   size = "lg",
 }: DesktopWindowProps) {
@@ -208,9 +210,27 @@ export default function DesktopWindow({
         </div>
       </div>
 
-      {/* Scrollable Content */}
-      <div className="flex-1 overflow-y-auto overscroll-contain scrollbar-hide rounded-b-xl" style={{ cursor: "default" }}>
-        {children}
+      {/* Main Content Area with potential Side Panel */}
+      <div className="flex-1 flex overflow-hidden rounded-b-xl relative" style={{ cursor: "default" }}>
+        {/* Scrollable Main Content */}
+        <div className="flex-1 overflow-y-auto overscroll-contain scrollbar-hide">
+          {children}
+        </div>
+
+        {/* Attached Side View (Membership Plans, etc.) */}
+        <AnimatePresence>
+          {attachedView && (
+            <motion.div
+              initial={{ width: 0, opacity: 0 }}
+              animate={{ width: 420, opacity: 1 }}
+              exit={{ width: 0, opacity: 0 }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              className="border-l border-black/5 bg-gray-50/50 shrink-0 overflow-y-auto scrollbar-hide relative z-20"
+            >
+              {attachedView}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </motion.div>
   );
