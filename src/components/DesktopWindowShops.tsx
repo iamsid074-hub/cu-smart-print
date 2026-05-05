@@ -50,13 +50,13 @@ export default function DesktopWindowShops({ onClose, onMinimize, onMaximize, is
             >
               {/* Search */}
               <div className="relative max-w-sm mx-auto">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-black/60" />
                 <input
                   type="text"
                   placeholder="Search shops…"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-9 pr-4 py-2 bg-black/5 border border-black/10 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+                  className="w-full pl-9 pr-4 py-2 bg-white/50 border border-black/10 rounded-full text-sm text-black placeholder:text-black/50 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
                 />
               </div>
 
