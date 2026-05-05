@@ -1,5 +1,5 @@
 import { ReactNode, useRef, useEffect } from "react";
-import { motion, useDragControls } from "framer-motion";
+import { motion, useDragControls, AnimatePresence } from "framer-motion";
 import { X, ChevronLeft } from "lucide-react";
 
 interface DesktopWindowProps {
