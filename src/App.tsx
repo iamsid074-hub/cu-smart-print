@@ -69,7 +69,7 @@ const RealCrash = lazy(() => import("./pages/games/RealCrash"));
 const RealMines = lazy(() => import("./pages/games/RealMines"));
 const Sections = lazy(() => import("./pages/Sections"));
 
-// import Navbar from "./components/Navbar";
+import Navbar from "./components/Navbar";
 // import BottomNav from "./components/BottomNav";
 import AppUpdater from "./components/AppUpdater";
 import UsernameSetup from "./components/UsernameSetup";
@@ -237,7 +237,12 @@ function AppLayout() {
       <Suspense fallback={null}>
         <ControlCenter />
       </Suspense>
-      {/* Navigation bars removed permanently */}
+      {!isLanding && !isLogin && !isAdminPath && !isDownload && !isDriverPage && (
+        <>
+          {location.pathname !== "/pasta-offer" && <Navbar />}
+          {/* BottomNav removed permanently as requested */}
+        </>
+      )}
       <ErrorBoundary>
         <Suspense fallback={initialBootFinished ? null : <BrandedLoading />}>
           <Routes>
