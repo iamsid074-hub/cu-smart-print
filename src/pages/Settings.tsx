@@ -222,7 +222,7 @@ export default function Settings() {
                       <DetailRow label="Account Status" value="Active" />
                       <DetailRow label="Joined" value={new Date(user?.created_at || '').toLocaleDateString('en-US', { month: 'long', year: 'numeric' })} />
                       <DetailRow label="Role" value="Student" />
-                      <DetailRow label="Nationality" value="American" />
+                      <DetailRow label="Nationality" value="Indian" />
                     </div>
                   </div>
 
