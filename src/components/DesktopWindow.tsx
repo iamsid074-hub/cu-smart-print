@@ -62,7 +62,7 @@ export default function DesktopWindow({
       : { 
           scale: 1, 
           opacity: 1, 
-          y: 40, 
+          y: 80, 
           borderRadius: "12px",
           filter: "blur(0px)",
           rotateX: 0,
@@ -104,7 +104,7 @@ export default function DesktopWindow({
       dragControls={dragControls}
       dragMomentum={false}
       dragElastic={0.05}
-      dragConstraints={{ top: -300, left: -500, right: 500, bottom: 300 }}
+      dragConstraints={{ top: -50, left: -500, right: 500, bottom: 300 }}
       className={`fixed inset-0 m-auto ${isMaximized ? "w-full h-full" : sizeMap[size]} flex flex-col bg-white/70 backdrop-blur-3xl shadow-2xl overflow-hidden z-[100] ${isMaximized ? "border-0" : "rounded-xl border border-white/30"} ${isMinimized ? "pointer-events-none" : ""}`}
       style={{ 
         cursor: "default", 
