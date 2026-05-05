@@ -62,7 +62,7 @@ export default function DesktopWindow({
       : { 
           scale: 1, 
           opacity: 1, 
-          y: 0, 
+          y: 40, 
           borderRadius: "12px",
           filter: "blur(0px)",
           rotateX: 0,
