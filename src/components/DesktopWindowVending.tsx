@@ -27,7 +27,7 @@ export default function DesktopWindowVending({ onClose, onMinimize, onMaximize, 
           <div className="w-6 h-6 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
         </div>
       }>
-        <VendingMachine />
+        <VendingMachine isCompact={true} />
       </Suspense>
     </DesktopWindow>
   );

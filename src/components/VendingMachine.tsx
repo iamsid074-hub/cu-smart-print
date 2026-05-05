@@ -141,14 +141,16 @@ const MemoizedVendingCard = memo(
     isAnimating,
     isVending,
     onSelect,
+    isCompact,
   }: {
     item: VendingItem;
     isAnimating: boolean;
     isVending: boolean;
     onSelect: (item: VendingItem, e: React.MouseEvent) => void;
+    isCompact?: boolean;
   }) => {
     return (
-      <div className="relative group flex flex-col items-center justify-end h-24 sm:h-36">
+      <div className={`relative group flex flex-col items-center justify-end ${isCompact ? "h-16 sm:h-24" : "h-24 sm:h-36"}`}>
         <div className="relative w-full h-full flex items-center justify-center">
           {/* Simple top coil line — replaces heavy SVG per card */}
           <div
@@ -172,7 +174,7 @@ const MemoizedVendingCard = memo(
               alt=""
               loading="lazy"
               decoding="async"
-              className="w-10 h-14 sm:w-16 sm:h-20 object-contain"
+              className={`${isCompact ? "w-8 h-10 sm:w-10 sm:h-14" : "w-10 h-14 sm:w-16 sm:h-20"} object-contain`}
               style={{ filter: "brightness(0.5)" }}
             />
           </div>
@@ -211,7 +213,7 @@ const MemoizedVendingCard = memo(
               alt={item.name}
               loading="lazy"
               decoding="async"
-              className={`w-10 h-14 sm:w-16 sm:h-20 object-contain transition-all duration-300 ${
+              className={`${isCompact ? "w-8 h-10 sm:w-10 sm:h-14" : "w-10 h-14 sm:w-16 sm:h-20"} object-contain transition-all duration-300 ${
                 isAnimating
                   ? "brightness-125 contrast-125"
                   : "group-hover:brightness-110"
@@ -248,7 +250,7 @@ const MemoizedVendingCard = memo(
   }
 );
 
-export default function VendingMachine() {
+export default function VendingMachine({ isCompact = false }: { isCompact?: boolean }) {
   const { items, addItem, removeItem } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -393,10 +395,10 @@ export default function VendingMachine() {
   };
 
   return (
-    <section className="py-12 px-4 relative overflow-hidden">
+    <section className={`${isCompact ? "py-2 px-2" : "py-12 px-4"} relative overflow-hidden`}>
       <div className="max-w-4xl mx-auto">
-        <div className="flex flex-col items-center mb-6 text-center">
-          <h2 className="text-3xl sm:text-4xl font-black text-white tracking-tighter">
+        <div className={`flex flex-col items-center ${isCompact ? "mb-2" : "mb-6"} text-center`}>
+          <h2 className={`${isCompact ? "text-2xl sm:text-3xl" : "text-3xl sm:text-4xl"} font-black text-white tracking-tighter`}>
             Smart Vending
           </h2>
         </div>
@@ -407,7 +409,7 @@ export default function VendingMachine() {
           <div className="relative rounded-t-[20px] rounded-b-[10px] bg-gradient-to-b from-[#1c1d21] to-[#121316] p-3 sm:p-5 shadow-[0_40px_80px_rgba(0,0,0,0.6),inset_0_2px_0_rgba(255,255,255,0.1),inset_0_0_15px_rgba(0,0,0,0.8)] border-[3px] border-[#292a30]">
             
             {/* Top Payment / Control Panel */}
-            <div className="w-full h-16 sm:h-20 bg-gradient-to-b from-[#0f1013] to-[#1a1b1f] rounded-lg mb-4 flex items-center justify-between px-6 border-b-4 border-[#000] shadow-[inset_0_2px_15px_rgba(0,0,0,0.8)] relative">
+            <div className={`w-full ${isCompact ? "h-12 sm:h-16" : "h-16 sm:h-20"} bg-gradient-to-b from-[#0f1013] to-[#1a1b1f] rounded-lg ${isCompact ? "mb-2" : "mb-4"} flex items-center justify-between px-6 border-b-4 border-[#000] shadow-[inset_0_2px_15px_rgba(0,0,0,0.8)] relative`}>
                <div className="flex flex-col">
                   <span className="text-[8px] sm:text-[10px] text-slate-500 font-bold tracking-widest uppercase mb-1">Insert Payment</span>
                   <div className="flex gap-2">
@@ -429,7 +431,7 @@ export default function VendingMachine() {
             </div>
 
             {/* Inner Glass Display Area (Illuminated Fridge) */}
-            <div className="relative rounded-lg bg-[#0a0a0b] p-2 sm:p-4 border-[12px] border-[#000] flex flex-col justify-between overflow-hidden shadow-[inset_0_30px_60px_rgba(0,0,0,0.8)]">
+            <div className={`relative rounded-lg bg-[#0a0a0b] ${isCompact ? "p-1 sm:p-2" : "p-2 sm:p-4"} border-[12px] border-[#000] flex flex-col justify-between overflow-hidden shadow-[inset_0_30px_60px_rgba(0,0,0,0.8)]`}>
               
               {/* Inner ambient light from top */}
               <div className="absolute top-0 inset-x-0 h-40 bg-gradient-to-b from-white/10 to-transparent pointer-events-none z-0" />
@@ -439,10 +441,10 @@ export default function VendingMachine() {
               {/* Simplistic Glass Reflection */}
               <div className="absolute top-[-20%] left-[-50%] w-[200%] h-[200%] bg-gradient-to-tr from-transparent via-white/[0.15] to-transparent rotate-[30deg] pointer-events-none z-30" />
 
-              <div className="space-y-4">
+              <div className={isCompact ? "space-y-1" : "space-y-4"}>
                 {ROWS.map((row, ri) => (
                   <div key={ri} className="relative">
-                    <div className="grid grid-cols-4 gap-1 sm:gap-2 pb-4 sm:pb-6 px-1 relative z-10">
+                    <div className={`grid grid-cols-4 gap-1 sm:gap-2 ${isCompact ? "pb-2 sm:pb-3" : "pb-4 sm:pb-6"} px-1 relative z-10`}>
                       {row.items.map((item, ii) => (
                         <MemoizedVendingCard
                           key={`${ri}-${ii}-${item.id}`}
@@ -450,19 +452,20 @@ export default function VendingMachine() {
                           isAnimating={animatingItem?.id === item.id}
                           isVending={isVending}
                           onSelect={handleSelectItem}
+                          isCompact={isCompact}
                         />
                       ))}
                     </div>
                     {/* Metal Rack Line */}
-                    <div className="absolute bottom-4 sm:bottom-6 left-0 right-0 h-[6px] sm:h-[8px] bg-gradient-to-b from-[#cad3dd] via-[#94a3b8] to-[#475569] rounded-sm z-0 shadow-[0_5px_15px_rgba(0,0,0,0.2)] border-b border-[#334155]" />
+                    <div className={`absolute ${isCompact ? "bottom-2 sm:bottom-3" : "bottom-4 sm:bottom-6"} left-0 right-0 h-[6px] sm:h-[8px] bg-gradient-to-b from-[#cad3dd] via-[#94a3b8] to-[#475569] rounded-sm z-0 shadow-[0_5px_15px_rgba(0,0,0,0.2)] border-b border-[#334155]`} />
                   </div>
                 ))}
               </div>
 
               {/* Bottom Real Dispenser Bin */}
-              <div className="mt-4 pt-4 pb-2 relative z-20">
+              <div className={`${isCompact ? "mt-2 pt-2" : "mt-4 pt-4"} pb-2 relative z-20`}>
                 <div
-                  className="h-24 sm:h-28 bg-[#111] rounded-b-lg flex items-center justify-center relative overflow-hidden shadow-[inset_0_15px_25px_rgba(0,0,0,1)] border-t-[8px] border-black border-x-4 border-b-4 border-[#1c1d21] cursor-pointer group/bin transition-all active:scale-[0.98]"
+                  className={`${isCompact ? "h-16 sm:h-20" : "h-24 sm:h-28"} bg-[#111] rounded-b-lg flex items-center justify-center relative overflow-hidden shadow-[inset_0_15px_25px_rgba(0,0,0,1)] border-t-[8px] border-black border-x-4 border-b-4 border-[#1c1d21] cursor-pointer group/bin transition-all active:scale-[0.98]`}
                   onClick={() =>
                     vendingCartItems.length > 0 && setShowCheckout(true)
                   }
@@ -540,8 +543,8 @@ export default function VendingMachine() {
           </div>
 
           <div className="flex justify-between px-10 -mt-1 relative z-0">
-            <div className="w-10 h-16 bg-gradient-to-b from-[#111115] to-[#050508] shadow-2xl border-x-[2px] border-b-[2px] border-[#000]" />
-            <div className="w-10 h-16 bg-gradient-to-b from-[#111115] to-[#050508] shadow-2xl border-x-[2px] border-b-[2px] border-[#000]" />
+            <div className={`w-10 ${isCompact ? "h-8" : "h-16"} bg-gradient-to-b from-[#111115] to-[#050508] shadow-2xl border-x-[2px] border-b-[2px] border-[#000]`} />
+            <div className={`w-10 ${isCompact ? "h-8" : "h-16"} bg-gradient-to-b from-[#111115] to-[#050508] shadow-2xl border-x-[2px] border-b-[2px] border-[#000]`} />
           </div>
         </div>
       </div>
