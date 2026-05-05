@@ -4,7 +4,6 @@ import { motion } from "framer-motion";
 import {
   Home,
   Store,
-  Coffee,
   Package,
   Gamepad2,
   ShoppingCart,
@@ -15,7 +14,6 @@ import {
 export const dockItems = [
   { name: "Home", icon: Home, color: "from-blue-400 to-blue-600", path: "/home" },
   { name: "Shops", icon: Store, color: "from-orange-400 to-orange-600", path: "/sections/shops" },
-  { name: "Vending", icon: Coffee, color: "from-emerald-400 to-emerald-600", path: "/sections/vending" },
   { name: "Combos", icon: Package, color: "from-pink-400 to-pink-600", path: "/sections/combos" },
   { name: "Games", icon: Gamepad2, color: "from-purple-400 to-purple-600", path: "/games" },
   { name: "Cart", icon: ShoppingCart, color: "from-yellow-400 to-yellow-600", path: "/cart" },
@@ -61,7 +59,7 @@ export default function DesktopDock({ onOpenWindow }: { onOpenWindow?: (id: stri
               className="relative group cursor-pointer flex flex-col items-center justify-end"
               onMouseEnter={() => setHoverIndex(index)}
               onClick={() => {
-                const windowItems = ["Shops", "Vending", "Combos", "Games", "Cart", "Profile", "Settings"];
+                const windowItems = ["Shops", "Combos", "Games", "Cart", "Profile", "Settings"];
                 if (windowItems.includes(item.name) && onOpenWindow) {
                   onOpenWindow(item.name);
                 } else {
