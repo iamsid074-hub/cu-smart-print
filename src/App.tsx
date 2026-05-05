@@ -78,6 +78,7 @@ import StickyStripBanner from "./components/StickyStripBanner";
 
 const ControlCenter = lazy(() => import("./components/ControlCenter"));
 const TutorialSystem = lazy(() => import("./components/TutorialSystem"));
+const FloatingLocationWidget = lazy(() => import("./components/FloatingLocationWidget"));
 
 
 // Lazy-load non-critical-path components
@@ -238,6 +239,7 @@ function AppLayout() {
       <Suspense fallback={null}>
         <ControlCenter />
         <TutorialSystem />
+        <FloatingLocationWidget />
       </Suspense>
       {!isLanding && !isLogin && !isAdminPath && !isDownload && !isDriverPage && (
         <>
