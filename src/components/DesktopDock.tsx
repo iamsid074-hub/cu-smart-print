@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
-import { User, Settings } from "lucide-react";
 
 type DockItemWithImg = { name: string; path: string; img: string };
 type DockItemWithIcon = { name: string; path: string; icon: React.ElementType; color: string };
@@ -13,8 +12,8 @@ const dockItemsRaw: DockItem[] = [
   { name: "Combos",   path: "/sections/combos", img: "/dock-combos.png" },
   { name: "Games",    path: "/games",            img: "/dock-games.png" },
   { name: "Cart",     path: "/cart",             img: "/dock-cart.png" },
-  { name: "Profile",  path: "/profile",          icon: User,     color: "from-gray-400 to-gray-600" },
-  { name: "Settings", path: "/settings",         icon: Settings, color: "from-slate-400 to-slate-600" },
+  { name: "Profile",  path: "/profile",          img: "/dock-profile.png" },
+  { name: "Settings", path: "/settings",         img: "/dock-settings.png" },
 ];
 
 export const dockItems = dockItemsRaw;
