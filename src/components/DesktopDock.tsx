@@ -26,6 +26,7 @@ export default function DesktopDock({ onOpenWindow }: { onOpenWindow?: (id: stri
   return (
     <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-end">
       <div
+        id="desktop-dock"
         className="flex items-end gap-3 px-4 pb-[6px] rounded-2xl border border-white/20 h-[62px]"
         style={{
           background: "rgba(83, 83, 83, 0.25)",
@@ -49,6 +50,7 @@ export default function DesktopDock({ onOpenWindow }: { onOpenWindow?: (id: stri
           return (
             <div
               key={item.name}
+              id={`dock-app-${item.name}`}
               className="relative group cursor-pointer flex flex-col items-center justify-end"
               onMouseEnter={() => setHoverIndex(index)}
               onClick={() => {

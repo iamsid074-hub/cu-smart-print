@@ -968,6 +968,7 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
             <AnimatePresence mode="popLayout">
               {/* ── Main Pill ── */}
               <motion.div
+                id="dynamic-island-pill"
                 layout
                 key="main-pill"
                 animate={{ 

@@ -23,7 +23,7 @@ export default function DesktopMenuBar() {
   }, []);
 
   return (
-    <div className="fixed top-0 left-0 right-0 h-[30px] bg-[#535353]/40 backdrop-blur-[50px] flex items-center justify-between px-5 text-[14px] text-white/95 z-50 select-none cursor-default">
+    <div id="desktop-menu-bar" className="fixed top-0 left-0 right-0 h-[30px] bg-[#535353]/40 backdrop-blur-[50px] flex items-center justify-between px-5 text-[14px] text-white/95 z-50 select-none cursor-default">
       <div className="flex items-center gap-5">
       <div className="flex items-center gap-1.5 font-bold text-[16px] cursor-default select-none">
         <span className="tracking-tighter text-white">CU</span>
