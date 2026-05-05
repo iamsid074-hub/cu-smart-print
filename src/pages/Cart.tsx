@@ -482,7 +482,7 @@ export default function Cart() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA] md:bg-[url('/mobile-wallpaper-red-new.png')] md:bg-cover md:bg-center md:bg-no-repeat md:bg-fixed text-slate-900 pb-32 md:pb-12 px-4 sm:px-6 font-sans relative">
+    <div className="min-h-screen bg-[url('/mobile-wallpaper-red-new.png')] bg-cover bg-center bg-no-repeat bg-fixed md:bg-[url('/desktop-wallpaper-red-new.png')] md:bg-cover md:bg-center md:bg-fixed text-slate-900 pb-32 md:pb-12 px-4 sm:px-6 font-sans relative">
       <div className="h-28 md:h-12" /> {/* Safe area for Dynamic Island */}
       {/* Risk Detection Alert */}
       <RiskAlert
