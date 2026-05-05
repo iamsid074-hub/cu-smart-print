@@ -115,11 +115,15 @@ const ProductCard = memo(
       [id, title, price, toast]
     );
 
+    const [isAdding, setIsAdding] = useState(false);
+
     const handleAddToCart = useCallback(
       (e: React.MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
         addItem({ id, title, price, image: image || "", category: condition });
+        setIsAdding(true);
+        setTimeout(() => setIsAdding(false), 2000);
         toast({ title: `${title} added to cart` });
       },
       [id, title, price, image, condition, addItem, toast]
@@ -130,7 +134,78 @@ const ProductCard = memo(
     const displaySrc = imgError ? fallbackSrc : image || fallbackSrc;
 
     return (
-      <Link to={`/product/${id}`} className="block w-full h-full">
+      <Link to={`/product/${id}`} className="block w-full h-full relative">
+        <AnimatePresence>
+          {isAdding && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 z-[100] pointer-events-none rounded-[24px] overflow-hidden flex items-center justify-center"
+            >
+              {/* Colorful Lightning Flashes */}
+              <motion.div
+                animate={{ 
+                  opacity: [0, 1, 0, 0.8, 0, 1, 0],
+                  background: [
+                    "linear-gradient(45deg, #00f2fe 0%, #4facfe 100%)",
+                    "linear-gradient(45deg, #f093fb 0%, #f5576c 100%)",
+                    "linear-gradient(45deg, #5ee7df 0%, #b490ca 100%)"
+                  ]
+                }}
+                transition={{ duration: 0.6, times: [0, 0.1, 0.2, 0.4, 0.6, 0.8, 1], repeat: 2 }}
+                className="absolute inset-0 mix-blend-screen opacity-40 blur-xl"
+              />
+              
+              <div className="relative z-10 flex flex-col items-center">
+                <motion.div
+                  initial={{ scale: 0, rotate: -20 }}
+                  animate={{ 
+                    scale: [0, 1.4, 1], 
+                    rotate: [-20, 10, 0],
+                    filter: ["drop-shadow(0 0 0px #fff)", "drop-shadow(0 0 30px #fff)", "drop-shadow(0 0 10px #fff)"]
+                  }}
+                  transition={{ type: "spring", stiffness: 400, damping: 15 }}
+                  className="bg-white/10 backdrop-blur-md border border-white/30 px-6 py-2 rounded-2xl shadow-2xl"
+                >
+                  <span className="text-3xl font-black italic tracking-tighter text-white uppercase bg-gradient-to-r from-cyan-400 via-white to-rose-400 bg-clip-text text-transparent">
+                    ADDED
+                  </span>
+                </motion.div>
+                
+                {/* Secondary Sparkles */}
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: [0, 1, 0] }}
+                  transition={{ duration: 1, repeat: Infinity }}
+                  className="mt-2 text-[10px] font-bold text-cyan-300 uppercase tracking-[0.3em] drop-shadow-glow"
+                >
+                  Prism Sync Active
+                </motion.div>
+              </div>
+              
+              {/* Lightning Bolts (Visual representation) */}
+              <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-60">
+                <motion.path
+                  d="M 50,0 L 40,40 L 60,30 L 50,100"
+                  fill="none"
+                  stroke="#fff"
+                  strokeWidth="4"
+                  initial={{ pathLength: 0, opacity: 0 }}
+                  animate={{ 
+                    pathLength: [0, 1, 1], 
+                    opacity: [0, 1, 0],
+                    x: [0, 20, -20, 10, 0],
+                    stroke: ["#00f2fe", "#f093fb", "#5ee7df"]
+                  }}
+                  transition={{ duration: 0.4, repeat: 3 }}
+                  style={{ filter: "blur(2px)" }}
+                />
+              </svg>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         <motion.div
           initial={{ opacity: 0, y: 10, scale: 0.95 }}
           whileInView={{ opacity: 1, y: 0, scale: 1 }}
