@@ -885,8 +885,7 @@ export default function Cart() {
                 )}
               </motion.div>
             ) : (
-              <div className="fixed bottom-0 left-0 right-0 z-40 bg-white/80 backdrop-blur-xl border-t border-slate-100 p-4 pb-8 flex justify-center md:static md:bg-transparent md:border-none md:p-0 md:pt-4 md:shadow-none">
-                  <div className="max-w-xl w-full flex flex-col gap-3 relative z-10">
+              <div className="mt-4 md:mt-0 flex flex-col gap-3 relative z-10">
                     <motion.button
                       whileTap={{ scale: 0.98 }}
                       onClick={() => navigate('/home')}
@@ -901,7 +900,6 @@ export default function Cart() {
                     >
                       <ShoppingBag className="w-5 h-5" /> Proceed to Checkout
                     </motion.button>
-                  </div>
               </div>
             )}
             </div>
