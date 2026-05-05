@@ -483,7 +483,7 @@ export default function Cart() {
 
   return (
     <div className="min-h-screen bg-[url('/mobile-wallpaper-red-new.png')] bg-cover bg-center bg-no-repeat bg-fixed md:bg-[url('/desktop-wallpaper-red-new.png')] md:bg-cover md:bg-center md:bg-fixed text-slate-900 pb-32 md:pb-12 px-4 sm:px-6 font-sans relative">
-      <div className="h-28 md:h-12" /> {/* Safe area for Dynamic Island */}
+      <div className="h-28 md:h-48" /> {/* Safe area for Dynamic Island */}
       {/* Risk Detection Alert */}
       <RiskAlert
         isOpen={showRiskAlert}
@@ -566,7 +566,7 @@ export default function Cart() {
         </div>
       )}
       
-      <div className="max-w-xl md:max-w-7xl mx-auto relative md:bg-white/40 md:backdrop-blur-3xl md:border-[1.5px] md:border-white/60 md:shadow-[inset_0_1px_1px_rgba(255,255,255,0.9),0_20px_60px_-15px_rgba(0,0,0,0.5)] md:rounded-[2.5rem] md:p-8">
+      <div className="max-w-xl md:max-w-7xl mx-auto relative md:bg-white/40 md:backdrop-blur-3xl md:border-[1.5px] md:border-white/60 md:shadow-[inset_0_1px_1px_rgba(255,255,255,0.9),0_20px_60px_-15px_rgba(0,0,0,0.5)] md:rounded-[2.5rem] md:p-8 mt-12 md:mt-32">
         {/* Reflection Highlight */}
         <div className="hidden md:block absolute top-0 left-0 right-0 h-1/2 bg-gradient-to-b from-white/20 to-transparent pointer-events-none rounded-t-[2.5rem]" />
         
