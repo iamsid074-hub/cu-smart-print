@@ -1,5 +1,5 @@
 import { ReactNode, useRef, useEffect } from "react";
-import { motion, useDragControls, AnimatePresence } from "framer-motion";
+import { motion, useDragControls } from "framer-motion";
 import { X, ChevronLeft } from "lucide-react";
 
 interface DesktopWindowProps {
@@ -11,7 +11,6 @@ interface DesktopWindowProps {
   isMaximized?: boolean;
   onBack?: () => void;
   actions?: ReactNode;
-  attachedView?: ReactNode;
   children: ReactNode;
   /** optional size override */
   size?: "md" | "lg" | "xl";
@@ -32,7 +31,6 @@ export default function DesktopWindow({
   isMaximized = false,
   onBack,
   actions,
-  attachedView,
   children,
   size = "lg",
 }: DesktopWindowProps) {
@@ -127,117 +125,93 @@ export default function DesktopWindow({
   };
 
   return (
-    <div 
-      className={`fixed ${isMaximized ? "inset-0 w-full h-full" : "top-[160px] left-1/2"} flex items-start gap-4 z-[100] pointer-events-none`}
+    <motion.div
+      ref={windowRef}
+      variants={variants}
+      initial="initial"
+      animate={isMinimized ? "minimized" : "open"}
+      exit="exit"
+      drag={!isMaximized} // Disable dragging when maximized
+      dragListener={false}
+      dragControls={dragControls}
+      dragMomentum={false}
+      dragElastic={0.05}
+      className={`fixed ${isMaximized ? "inset-0 w-full h-full" : `top-[160px] left-1/2 ${sizeMap[size]}`} flex flex-col bg-white/70 backdrop-blur-3xl shadow-2xl overflow-visible z-[100] ${isMaximized ? "border-0" : "rounded-xl border border-white/30"} ${isMinimized ? "pointer-events-none" : ""}`}
+      onClick={(e) => e.stopPropagation()}
       style={{ 
-        transform: isMaximized ? "none" : "translateX(-50%)",
-        perspective: "1000px" 
+        cursor: "default", 
+        transformOrigin: "bottom center",
+        perspective: "1000px" // Required for the 3D funnel effect to work
       }}
     >
-      <motion.div
-        ref={windowRef}
-        variants={variants}
-        initial="initial"
-        animate={isMinimized ? "minimized" : "open"}
-        exit="exit"
-        drag={!isMaximized} // Disable dragging when maximized
-        dragListener={false}
-        dragControls={dragControls}
-        dragMomentum={false}
-        dragElastic={0.05}
-        className={`flex flex-col bg-white/70 backdrop-blur-3xl shadow-2xl overflow-visible pointer-events-auto ${isMaximized ? "w-full h-full border-0" : `${sizeMap[size]} rounded-xl border border-white/30`} ${isMinimized ? "pointer-events-none" : ""}`}
-        onClick={(e) => e.stopPropagation()}
-        style={{ 
-          cursor: "default", 
-          transformOrigin: "bottom center",
-          x: isMaximized ? 0 : "-50%" // Reset X translation because parent handles centering
+      {/* macOS Title Bar — drag handle */}
+      <div
+        onPointerDown={(e) => {
+          if (!isMaximized) dragControls.start(e);
         }}
+        className="h-12 flex items-center px-5 bg-white/20 border-b border-black/5 select-none shrink-0 backdrop-blur-sm z-[10]"
+        style={{ cursor: isMaximized ? "default" : "grab", touchAction: "none" }}
       >
-        {/* macOS Title Bar — drag handle */}
-        <div
-          onPointerDown={(e) => {
-            if (!isMaximized) dragControls.start(e);
-          }}
-          className="h-12 flex items-center px-5 bg-white/20 border-b border-black/5 select-none shrink-0 backdrop-blur-sm z-[10]"
-          style={{ cursor: isMaximized ? "default" : "grab", touchAction: "none" }}
-        >
-          {/* Traffic Lights */}
-          <div className="flex items-center gap-2.5">
-            {/* Close */}
-            <button
-              title="Close"
-              onClick={onClose}
-              className="w-4 h-4 rounded-full bg-[#ff5f56] hover:bg-[#e0443c] flex items-center justify-center group transition-all shadow-sm active:scale-90"
-            >
-              <X className="w-2.5 h-2.5 opacity-0 group-hover:opacity-100 transition-opacity text-[#7a1200] stroke-[3]" />
-            </button>
-            {/* Minimize */}
-            <button
-              title="Minimize"
-              onClick={onMinimize}
-              className="w-4 h-4 rounded-full bg-[#ffbd2e] hover:bg-[#e0a826] flex items-center justify-center group transition-all shadow-sm active:scale-90"
-            >
-              <div className="w-2 h-[2px] rounded-full bg-[#995700] opacity-0 group-hover:opacity-100 transition-opacity" />
-            </button>
-            {/* Maximize */}
-            <button
-              title={isMaximized ? "Restore" : "Maximize"}
-              onClick={onMaximize}
-              className="w-4 h-4 rounded-full bg-[#27c93f] hover:bg-[#1ea832] flex items-center justify-center group transition-all shadow-sm active:scale-90"
-            >
-              <div className="opacity-0 group-hover:opacity-100 transition-opacity relative w-2.5 h-2.5 flex items-center justify-center">
-                {isMaximized ? (
-                  <div className="w-2 h-2 border-[1.5px] border-[#006500] rounded-[1px]" />
-                ) : (
-                  <>
-                    <div className="w-[1.5px] h-2.5 bg-[#006500] absolute" />
-                    <div className="w-2.5 h-[1.5px] bg-[#006500] absolute" />
-                  </>
-                )}
-              </div>
-            </button>
-          </div>
-
-          {/* Title */}
-          <div className="flex-1 flex items-center justify-center gap-2">
-            {onBack && (
-              <button
-                onClick={onBack}
-                className="p-1 hover:bg-black/10 rounded-md transition-colors"
-              >
-                <ChevronLeft className="w-4 h-4 text-gray-600" />
-              </button>
-            )}
-            <span className="text-sm font-semibold text-gray-700 tracking-tight">{title}</span>
-          </div>
-
-          {/* Actions or Balance spacer */}
-          <div className="w-[120px] flex justify-end pr-2">
-            {actions}
-          </div>
-        </div>
-
-        {/* Scrollable Content Area */}
-        <div className="flex-1 overflow-y-auto overscroll-contain scrollbar-hide rounded-b-xl" style={{ cursor: "default" }}>
-          {children}
-        </div>
-      </motion.div>
-
-      {/* Side-Car Attached Window (e.g. Membership Plans) */}
-      <AnimatePresence>
-        {!isMinimized && !isMaximized && attachedView && (
-          <motion.div
-            initial={{ opacity: 0, x: -30, scale: 0.95 }}
-            animate={{ opacity: 1, x: 0, scale: 1 }}
-            exit={{ opacity: 0, x: -30, scale: 0.95 }}
-            transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="w-[380px] h-full max-h-[720px] bg-white/80 backdrop-blur-3xl rounded-xl border border-white/30 shadow-2xl overflow-hidden flex flex-col pointer-events-auto"
-            style={{ height: "100%", maxHeight: isMaximized ? "100vh" : "720px" }}
+        {/* Traffic Lights */}
+        <div className="flex items-center gap-2.5">
+          {/* Close */}
+          <button
+            title="Close"
+            onClick={onClose}
+            className="w-4 h-4 rounded-full bg-[#ff5f56] hover:bg-[#e0443c] flex items-center justify-center group transition-all shadow-sm active:scale-90"
           >
-            {attachedView}
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
+            <X className="w-2.5 h-2.5 opacity-0 group-hover:opacity-100 transition-opacity text-[#7a1200] stroke-[3]" />
+          </button>
+          {/* Minimize */}
+          <button
+            title="Minimize"
+            onClick={onMinimize}
+            className="w-4 h-4 rounded-full bg-[#ffbd2e] hover:bg-[#e0a826] flex items-center justify-center group transition-all shadow-sm active:scale-90"
+          >
+            <div className="w-2 h-[2px] rounded-full bg-[#995700] opacity-0 group-hover:opacity-100 transition-opacity" />
+          </button>
+          {/* Maximize */}
+          <button
+            title={isMaximized ? "Restore" : "Maximize"}
+            onClick={onMaximize}
+            className="w-4 h-4 rounded-full bg-[#27c93f] hover:bg-[#1ea832] flex items-center justify-center group transition-all shadow-sm active:scale-90"
+          >
+            <div className="opacity-0 group-hover:opacity-100 transition-opacity relative w-2.5 h-2.5 flex items-center justify-center">
+              {isMaximized ? (
+                <div className="w-2 h-2 border-[1.5px] border-[#006500] rounded-[1px]" />
+              ) : (
+                <>
+                  <div className="w-[1.5px] h-2.5 bg-[#006500] absolute" />
+                  <div className="w-2.5 h-[1.5px] bg-[#006500] absolute" />
+                </>
+              )}
+            </div>
+          </button>
+        </div>
+
+        {/* Title */}
+        <div className="flex-1 flex items-center justify-center gap-2">
+          {onBack && (
+            <button
+              onClick={onBack}
+              className="p-1 hover:bg-black/10 rounded-md transition-colors"
+            >
+              <ChevronLeft className="w-4 h-4 text-gray-600" />
+            </button>
+          )}
+          <span className="text-sm font-semibold text-gray-700 tracking-tight">{title}</span>
+        </div>
+
+        {/* Actions or Balance spacer */}
+        <div className="w-[120px] flex justify-end pr-2">
+          {actions}
+        </div>
+      </div>
+
+      {/* Scrollable Content */}
+      <div className="flex-1 overflow-y-auto overscroll-contain scrollbar-hide rounded-b-xl" style={{ cursor: "default" }}>
+        {children}
+      </div>
+    </motion.div>
   );
 }

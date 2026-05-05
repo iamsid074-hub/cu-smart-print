@@ -250,14 +250,16 @@ export default function ControlCenter() {
     };
   }, [onPanelPointerDown, onPanelPointerMove, onPanelPointerUp]);
 
-  // ESC and C to toggle
+  // ESC to close, C to toggle
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => { 
       if (e.key === "Escape") close(); 
-      // Only trigger if no input/textarea is focused
-      const isInput = ["INPUT", "TEXTAREA"].includes(document.activeElement?.tagName || "");
-      if (e.key.toLowerCase() === "c" && !isInput) {
-        if (isOpenRef.current) close(); else open();
+      if (e.key.toLowerCase() === "c") {
+        // Only toggle if not typing in an input
+        const target = e.target as HTMLElement;
+        if (target.tagName !== "INPUT" && target.tagName !== "TEXTAREA") {
+          if (isOpenRef.current) close(); else open();
+        }
       }
     };
     window.addEventListener("keydown", onKey);
