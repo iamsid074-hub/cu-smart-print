@@ -113,10 +113,27 @@ export default function DesktopWindowShops({ onClose, onMinimize, onMaximize, is
               initial={{ opacity: 0, x: 15 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -15 }}
-              className="space-y-8"
+              className="space-y-8 relative"
             >
+              {/* Sticky Category Navigator */}
+              <div className="sticky top-[-24px] z-20 bg-white/80 backdrop-blur-md -mx-6 px-6 py-3 border-b border-black/5 overflow-x-auto no-scrollbar">
+                <div className="flex items-center gap-2 min-w-max">
+                  {selectedShop!.categories.map((cat) => (
+                    <button
+                      key={cat.category}
+                      onClick={() => {
+                        document.getElementById(`cat-${cat.category}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                      }}
+                      className="px-4 py-1.5 rounded-full bg-black/5 hover:bg-orange-500 hover:text-white text-xs font-bold transition-all whitespace-nowrap active:scale-95"
+                    >
+                      {cat.category}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               {selectedShop!.categories.map((cat) => (
-                <div key={cat.category} className="space-y-3">
+                <div key={cat.category} id={`cat-${cat.category}`} className="space-y-3 scroll-mt-16">
                   <h2 className="text-base font-bold text-gray-900 flex items-center gap-2 border-b border-black/5 pb-2">
                     <span className="w-1 h-5 bg-orange-500 rounded-full" />
                     {cat.category}
