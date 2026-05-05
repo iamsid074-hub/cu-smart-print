@@ -13,7 +13,7 @@ const dockItemsRaw: DockItem[] = [
   { name: "Games",    path: "/games",            img: "/dock-games.png" },
   { name: "Cart",     path: "/cart",             img: "/dock-cart.png" },
   { name: "Profile",  path: "/profile",          img: "/dock-profile.png", imgClass: "scale-[1.15]" },
-  { name: "Settings", path: "/settings",         img: "/dock-settings.png" },
+  { name: "Settings", path: "/settings",         img: "/dock-settings-v2.png" },
 ];
 
 export const dockItems = dockItemsRaw;
