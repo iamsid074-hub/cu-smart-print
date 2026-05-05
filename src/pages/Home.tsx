@@ -9,6 +9,7 @@ const DesktopWindowVending = lazy(() => import("@/components/DesktopWindowVendin
 const DesktopWindowCombos = lazy(() => import("@/components/DesktopWindowCombos"));
 const DesktopWindowSettings = lazy(() => import("@/components/DesktopWindowSettings"));
 const DesktopWindowCart = lazy(() => import("@/components/DesktopWindowCart"));
+const DesktopWindowProfile = lazy(() => import("@/components/DesktopWindowProfile"));
 import {
   Search,
   Loader2,
@@ -97,7 +98,6 @@ export default function Home() {
     // These navigate directly, no window needed
     const navItems: Record<string, string> = {
       Games: "/games",
-      Profile: "/profile",
     };
     if (navItems[id]) {
       navigate(navItems[id]);
@@ -207,6 +207,18 @@ export default function Home() {
                     onClose={() => handleCloseWindow("Cart")}
                     onMinimize={() => handleMinimizeWindow("Cart")}
                     onMaximize={() => handleMaximizeWindow("Cart")}
+                    isMinimized={isMinimized}
+                    isMaximized={isMaximized}
+                  />
+                );
+              }
+              if (winId === "Profile") {
+                return (
+                  <DesktopWindowProfile
+                    key="Profile"
+                    onClose={() => handleCloseWindow("Profile")}
+                    onMinimize={() => handleMinimizeWindow("Profile")}
+                    onMaximize={() => handleMaximizeWindow("Profile")}
                     isMinimized={isMinimized}
                     isMaximized={isMaximized}
                   />
