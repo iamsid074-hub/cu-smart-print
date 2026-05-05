@@ -141,7 +141,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-black text-white relative overflow-hidden">
       {/* Optimized Background Wallpaper */}
-      <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
+      <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
         <picture>
           {/* Desktop Wallpaper */}
           <source 
@@ -177,7 +177,7 @@ export default function Home() {
       </div>
       
       {/* EOS v3 Desktop UI Elements */}
-      <div className="hidden md:block">
+      <div className="hidden md:block relative z-10">
         <DesktopMenuBar />
         <DesktopDock onOpenWindow={handleOpenWindow} />
         <Suspense fallback={null}>
