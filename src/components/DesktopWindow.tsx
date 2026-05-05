@@ -39,7 +39,7 @@ export default function DesktopWindow({
     initial: { 
       scale: 0.6, 
       opacity: 0, 
-      y: "30vh", 
+      y: 200, 
       filter: "blur(15px)",
       rotateX: 0,
       skewX: 0
@@ -85,8 +85,8 @@ export default function DesktopWindow({
     exit: { 
       scale: 0.8, 
       opacity: 0, 
-      y: 40, 
-      filter: "blur(5px)",
+      y: 100, 
+      filter: "blur(10px)",
       rotateX: 0,
       skewX: 0,
       transition: { duration: 0.2, ease: "easeOut" } 
