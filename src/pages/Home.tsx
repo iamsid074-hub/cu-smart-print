@@ -139,7 +139,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white bg-[url('/eos-v3-wallpaper-mobile.png')] md:bg-[url('/eos-v3-wallpaper-desktop.png')] bg-cover bg-center bg-no-repeat bg-fixed relative overflow-hidden">
+    <div className="min-h-screen bg-black text-white bg-[url('/mobile-wallpaper-red.png')] md:bg-[url('/eos-v3-wallpaper-desktop.png')] bg-cover bg-center bg-no-repeat bg-fixed relative overflow-hidden">
       
       {/* EOS v3 Desktop UI Elements */}
       <div className="hidden md:block">
