@@ -122,31 +122,43 @@ export default function DesktopWindow({
         onPointerDown={(e) => {
           if (!isMaximized) dragControls.start(e);
         }}
-        className="h-10 flex items-center px-4 bg-white/10 border-b border-black/5 select-none shrink-0"
+        className="h-12 flex items-center px-5 bg-white/20 border-b border-black/5 select-none shrink-0 backdrop-blur-sm"
         style={{ cursor: isMaximized ? "default" : "grab", touchAction: "none" }}
       >
         {/* Traffic Lights */}
-        <div className="flex gap-2 w-20">
+        <div className="flex items-center gap-2.5">
+          {/* Close */}
           <button
+            title="Close"
             onClick={onClose}
-            className="w-3 h-3 rounded-full bg-[#ff5f56] hover:brightness-90 flex items-center justify-center group transition-all"
+            className="w-4 h-4 rounded-full bg-[#ff5f56] hover:bg-[#e0443c] flex items-center justify-center group transition-all shadow-sm active:scale-90"
           >
-            <X className="w-2 h-2 opacity-0 group-hover:opacity-100 transition-opacity text-[#7a1200]" />
+            <X className="w-2.5 h-2.5 opacity-0 group-hover:opacity-100 transition-opacity text-[#7a1200] stroke-[3]" />
           </button>
-          <button 
+          {/* Minimize */}
+          <button
+            title="Minimize"
             onClick={onMinimize}
-            className="w-3 h-3 rounded-full bg-[#ffbd2e] hover:brightness-90 flex items-center justify-center group transition-all" 
+            className="w-4 h-4 rounded-full bg-[#ffbd2e] hover:bg-[#e0a826] flex items-center justify-center group transition-all shadow-sm active:scale-90"
           >
-            <div className="w-1.5 h-[1.5px] bg-[#995700] opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="w-2 h-[2px] rounded-full bg-[#995700] opacity-0 group-hover:opacity-100 transition-opacity" />
           </button>
-          <button 
+          {/* Maximize */}
+          <button
+            title={isMaximized ? "Restore" : "Maximize"}
             onClick={onMaximize}
-            className="w-3 h-3 rounded-full bg-[#27c93f] hover:brightness-90 flex items-center justify-center group transition-all" 
+            className="w-4 h-4 rounded-full bg-[#27c93f] hover:bg-[#1ea832] flex items-center justify-center group transition-all shadow-sm active:scale-90"
           >
-             <div className="w-1.5 h-1.5 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center relative">
-               <div className="w-[1px] h-[5px] bg-[#006500] absolute transform rotate-45" />
-               <div className="w-[5px] h-[1px] bg-[#006500] absolute transform rotate-45" />
-             </div>
+            <div className="opacity-0 group-hover:opacity-100 transition-opacity relative w-2.5 h-2.5 flex items-center justify-center">
+              {isMaximized ? (
+                <div className="w-2 h-2 border-[1.5px] border-[#006500] rounded-[1px]" />
+              ) : (
+                <>
+                  <div className="w-[1.5px] h-2.5 bg-[#006500] absolute" />
+                  <div className="w-2.5 h-[1.5px] bg-[#006500] absolute" />
+                </>
+              )}
+            </div>
           </button>
         </div>
 
@@ -160,11 +172,11 @@ export default function DesktopWindow({
               <ChevronLeft className="w-4 h-4 text-gray-600" />
             </button>
           )}
-          <span className="text-sm font-semibold text-gray-800">{title}</span>
+          <span className="text-sm font-semibold text-gray-700 tracking-tight">{title}</span>
         </div>
 
         {/* Balance spacer */}
-        <div className="w-20" />
+        <div className="w-[88px]" />
       </div>
 
       {/* Scrollable Content */}
