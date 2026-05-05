@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, useRef, useEffect } from "react";
 import { motion, useDragControls } from "framer-motion";
 import { X, ChevronLeft } from "lucide-react";
 
@@ -33,6 +33,30 @@ export default function DesktopWindow({
   size = "lg",
 }: DesktopWindowProps) {
   const dragControls = useDragControls();
+  const windowRef = useRef<HTMLDivElement>(null);
+
+  // Close on click outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        windowRef.current && 
+        !windowRef.current.contains(event.target as Node) &&
+        !isMinimized // Don't close if it's already minimized (to avoid conflicts with dock)
+      ) {
+        onClose();
+      }
+    };
+
+    // Use a small timeout to avoid capturing the click that opened the window
+    const timer = setTimeout(() => {
+      document.addEventListener("mousedown", handleClickOutside);
+    }, 100);
+
+    return () => {
+      clearTimeout(timer);
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [onClose, isMinimized]);
   
   // Animation variants mimicking macOS Genie effect (Wavy Bend)
   const variants = {
@@ -100,6 +124,7 @@ export default function DesktopWindow({
 
   return (
     <motion.div
+      ref={windowRef}
       variants={variants}
       initial="initial"
       animate={isMinimized ? "minimized" : "open"}
@@ -111,6 +136,7 @@ export default function DesktopWindow({
       dragElastic={0.05}
       dragConstraints={{ top: 0, left: -500, right: 500, bottom: 300 }}
       className={`fixed ${isMaximized ? "inset-0 w-full h-full" : `top-[160px] left-1/2 ${sizeMap[size]}`} flex flex-col bg-white/70 backdrop-blur-3xl shadow-2xl overflow-hidden z-[100] ${isMaximized ? "border-0" : "rounded-xl border border-white/30"} ${isMinimized ? "pointer-events-none" : ""}`}
+      onClick={(e) => e.stopPropagation()}
       style={{ 
         cursor: "default", 
         transformOrigin: "bottom center",
