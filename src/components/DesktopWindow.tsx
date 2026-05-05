@@ -39,6 +39,7 @@ export default function DesktopWindow({
     initial: { 
       scale: 0.6, 
       opacity: 0, 
+      x: "-50%",
       y: 200, 
       filter: "blur(15px)",
       rotateX: 0,
@@ -48,6 +49,7 @@ export default function DesktopWindow({
       ? { 
           scale: 1, 
           opacity: 1, 
+          x: 0,
           y: 0, 
           width: "100vw", 
           height: "100vh", 
@@ -62,7 +64,8 @@ export default function DesktopWindow({
       : { 
           scale: 1, 
           opacity: 1, 
-          y: 80, 
+          x: "-50%",
+          y: 0, 
           borderRadius: "12px",
           filter: "blur(0px)",
           rotateX: 0,
@@ -71,6 +74,7 @@ export default function DesktopWindow({
         },
     minimized: { 
       scale: 0.05, 
+      x: 0,
       y: "48vh",    // Move to bottom dock
       rotateX: 60,  // Tilts back to create a funnel/trapezoid shape
       skewX: [0, -15, 5, 0], // Wavy bend back and forth
@@ -85,6 +89,7 @@ export default function DesktopWindow({
     exit: { 
       scale: 0.8, 
       opacity: 0, 
+      x: "-50%",
       y: 100, 
       filter: "blur(10px)",
       rotateX: 0,
@@ -104,8 +109,8 @@ export default function DesktopWindow({
       dragControls={dragControls}
       dragMomentum={false}
       dragElastic={0.05}
-      dragConstraints={{ top: -50, left: -500, right: 500, bottom: 300 }}
-      className={`fixed inset-0 m-auto ${isMaximized ? "w-full h-full" : sizeMap[size]} flex flex-col bg-white/70 backdrop-blur-3xl shadow-2xl overflow-hidden z-[100] ${isMaximized ? "border-0" : "rounded-xl border border-white/30"} ${isMinimized ? "pointer-events-none" : ""}`}
+      dragConstraints={{ top: 0, left: -500, right: 500, bottom: 300 }}
+      className={`fixed ${isMaximized ? "inset-0 w-full h-full" : `top-[120px] left-1/2 ${sizeMap[size]}`} flex flex-col bg-white/70 backdrop-blur-3xl shadow-2xl overflow-hidden z-[100] ${isMaximized ? "border-0" : "rounded-xl border border-white/30"} ${isMinimized ? "pointer-events-none" : ""}`}
       style={{ 
         cursor: "default", 
         transformOrigin: "bottom center",
