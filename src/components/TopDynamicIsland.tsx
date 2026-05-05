@@ -443,7 +443,11 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
       effectiveState === "cart" ||
       effectiveState === "active_cart"
     ) {
-      navigate("/cart");
+      if (location.pathname === "/home") {
+        window.dispatchEvent(new CustomEvent("open-window", { detail: { id: "Cart" } }));
+      } else {
+        navigate("/cart");
+      }
     } else if (effectiveState === "tracking" || hasActiveTracking) {
       navigate("/tracking" + (trackingOrder?.id ? `?order=${trackingOrder.id}` : ""));
     }

@@ -138,6 +138,15 @@ export default function Home() {
     );
   };
 
+  useEffect(() => {
+    const handleOpenWindowEvent = (e: any) => {
+      const { id } = e.detail;
+      handleOpenWindow(id);
+    };
+    window.addEventListener("open-window", handleOpenWindowEvent);
+    return () => window.removeEventListener("open-window", handleOpenWindowEvent);
+  }, [activeWindows, minimizedWindows]);
+
   return (
     <div className="min-h-screen bg-black text-white bg-[url('/mobile-wallpaper-red-new.png')] md:bg-[url('/desktop-wallpaper-red-new.png')] bg-cover bg-center bg-no-repeat bg-fixed relative overflow-hidden">
       
