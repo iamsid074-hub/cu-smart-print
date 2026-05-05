@@ -55,6 +55,7 @@ export default function DesktopWindowProfile({ onClose, onMinimize, onMaximize, 
   const [roomNumber, setRoomNumber] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [username, setUsername] = useState("");
+  const [isEditing, setIsEditing] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -98,6 +99,7 @@ export default function DesktopWindowProfile({ onClose, onMinimize, onMaximize, 
       });
       if (error) throw error;
       toast.success("Profile updated successfully");
+      setIsEditing(false); // Back to read-only
     } catch (err: any) {
       toast.error(err.message || "Failed to update profile");
     } finally {
@@ -253,15 +255,16 @@ export default function DesktopWindowProfile({ onClose, onMinimize, onMaximize, 
                       <div>
                         <h4 className="text-sm font-black text-gray-900 uppercase tracking-widest mb-6">Contact Details</h4>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                           <InputField label="Full Name" value={fullName} onChange={setFullName} placeholder="Arafat Ahmed" />
-                           <InputField label="Username" value={username} onChange={setUsername} placeholder="arafat_07" />
-                           <InputField label="Phone Number" value={phoneNumber} onChange={setPhoneNumber} placeholder="+91 94661 66750" type="tel" />
+                           <InputField label="Full Name" value={fullName} onChange={setFullName} placeholder="Arafat Ahmed" readOnly={!isEditing} />
+                           <InputField label="Username" value={username} onChange={setUsername} placeholder="arafat_07" readOnly={!isEditing} />
+                           <InputField label="Phone Number" value={phoneNumber} onChange={setPhoneNumber} placeholder="+91 94661 66750" type="tel" readOnly={!isEditing} />
                            <div className="space-y-2">
                              <label className="text-[11px] font-black uppercase tracking-wider text-gray-400 px-1">Hostel Block</label>
                              <select 
+                               disabled={!isEditing}
                                value={hostelBlock} 
                                onChange={(e) => setHostelBlock(e.target.value)}
-                               className="w-full h-12 rounded-2xl border border-gray-200 bg-gray-50 px-4 font-bold text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all appearance-none cursor-pointer"
+                               className={`w-full h-12 rounded-2xl border border-gray-200 px-4 font-bold transition-all appearance-none ${!isEditing ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-gray-50 text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 cursor-pointer'}`}
                              >
                                <option value="">Select Hostel</option>
                                <option value="NC1">NC1</option>
@@ -273,18 +276,31 @@ export default function DesktopWindowProfile({ onClose, onMinimize, onMaximize, 
                                <option value="Zakir B">Zakir B</option>
                              </select>
                            </div>
-                           <InputField label="Room Number" value={roomNumber} onChange={setRoomNumber} placeholder="223" />
+                           <InputField label="Room Number" value={roomNumber} onChange={setRoomNumber} placeholder="223" readOnly={!isEditing} />
                         </div>
                       </div>
                    </div>
                    <div className="px-8 py-6 bg-gray-50 border-t border-gray-100 flex justify-end">
                       <button 
-                        onClick={handleSaveProfile}
+                        onClick={() => {
+                          if (isEditing) handleSaveProfile();
+                          else setIsEditing(true);
+                        }}
                         disabled={loading}
-                        className="bg-indigo-600 text-white px-8 py-3 rounded-2xl font-bold hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-600/20 active:scale-95 flex items-center gap-2"
+                        className={`px-8 py-3 rounded-2xl font-bold transition-all shadow-lg active:scale-95 flex items-center gap-2 ${
+                          isEditing 
+                            ? "bg-indigo-600 text-white hover:bg-indigo-700 shadow-indigo-600/20" 
+                            : "bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 shadow-gray-200/20"
+                        }`}
                       >
-                        {loading && <Loader2 size={18} className="animate-spin" />}
-                        Save Changes
+                        {loading ? (
+                          <Loader2 size={18} className="animate-spin" />
+                        ) : isEditing ? (
+                          <Check size={18} />
+                        ) : (
+                          <Edit2 size={16} />
+                        )}
+                        {isEditing ? "Save Changes" : "Edit Account"}
                       </button>
                    </div>
                 </div>
@@ -421,7 +437,7 @@ function SidebarItem({ icon, label, active, onClick, badge }: { icon: any, label
   );
 }
 
-function InputField({ label, value, onChange, placeholder, type = "text" }: { label: string, value: string, onChange: (v: string) => void, placeholder: string, type?: string }) {
+function InputField({ label, value, onChange, placeholder, type = "text", readOnly = false }: { label: string, value: string, onChange: (v: string) => void, placeholder: string, type?: string, readOnly?: boolean }) {
   return (
     <div className="space-y-2">
       <label className="text-[11px] font-black uppercase tracking-wider text-gray-400 px-1">{label}</label>
@@ -430,7 +446,12 @@ function InputField({ label, value, onChange, placeholder, type = "text" }: { la
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="w-full h-12 rounded-2xl border border-gray-200 bg-gray-50 px-4 font-bold text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all placeholder:text-gray-300 placeholder:font-medium"
+        readOnly={readOnly}
+        className={`w-full h-12 rounded-2xl border px-4 font-bold transition-all placeholder:font-medium ${
+          readOnly 
+            ? "bg-gray-100 border-gray-100 text-gray-400 cursor-default" 
+            : "bg-gray-50 border-gray-200 text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 placeholder:text-gray-300"
+        }`}
       />
     </div>
   );
