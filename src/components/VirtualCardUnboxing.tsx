@@ -95,14 +95,13 @@ export const VirtualCardUnboxing: React.FC<VirtualCardUnboxingProps> = ({
               </motion.div>
               
               <motion.div
-                style={{ x }}
+                style={{ x, zIndex: 10 }}
                 drag="x"
                 dragConstraints={{ left: 0, right: 256 }} // 320 - 64
                 dragElastic={0}
                 dragMomentum={false}
                 onDragEnd={handleDragEnd}
                 className="w-16 h-16 rounded-full bg-gradient-to-br from-white to-gray-200 flex items-center justify-center cursor-grab active:cursor-grabbing z-10 relative left-0 border border-gray-300 touch-none will-change-transform"
-                style={{ x, zIndex: 10 }}
               >
                 <Package className="w-6 h-6 text-[#1a1a1a]" />
               </motion.div>
