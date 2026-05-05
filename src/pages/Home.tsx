@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 const DesktopWindowShops = lazy(() => import("@/components/DesktopWindowShops"));
 const DesktopWindowVending = lazy(() => import("@/components/DesktopWindowVending"));
 const DesktopWindowCombos = lazy(() => import("@/components/DesktopWindowCombos"));
+const DesktopWindowSettings = lazy(() => import("@/components/DesktopWindowSettings"));
 import {
   Search,
   Loader2,
@@ -97,7 +98,6 @@ export default function Home() {
       Games: "/games",
       Cart: "/cart",
       Profile: "/profile",
-      Settings: "/settings",
     };
     if (navItems[id]) {
       navigate(navItems[id]);
@@ -183,6 +183,18 @@ export default function Home() {
                     onClose={() => handleCloseWindow("Combos")}
                     onMinimize={() => handleMinimizeWindow("Combos")}
                     onMaximize={() => handleMaximizeWindow("Combos")}
+                    isMinimized={isMinimized}
+                    isMaximized={isMaximized}
+                  />
+                );
+              }
+              if (winId === "Settings") {
+                return (
+                  <DesktopWindowSettings
+                    key="Settings"
+                    onClose={() => handleCloseWindow("Settings")}
+                    onMinimize={() => handleMinimizeWindow("Settings")}
+                    onMaximize={() => handleMaximizeWindow("Settings")}
                     isMinimized={isMinimized}
                     isMaximized={isMaximized}
                   />
