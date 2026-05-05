@@ -10,6 +10,7 @@ interface DesktopWindowProps {
   isMinimized?: boolean;
   isMaximized?: boolean;
   onBack?: () => void;
+  actions?: ReactNode;
   children: ReactNode;
   /** optional size override */
   size?: "md" | "lg" | "xl";
@@ -200,8 +201,10 @@ export default function DesktopWindow({
           <span className="text-sm font-semibold text-gray-700 tracking-tight">{title}</span>
         </div>
 
-        {/* Balance spacer */}
-        <div className="w-[88px]" />
+        {/* Actions or Balance spacer */}
+        <div className="w-[120px] flex justify-end pr-2">
+          {actions}
+        </div>
       </div>
 
       {/* Scrollable Content */}
