@@ -119,34 +119,7 @@ export default function Cart() {
       return;
     }
 
-    const fetchActiveOrder = async () => {
-      const { data, error } = await supabase
-        .from("orders")
-        .select("id, status, payment_method, payment_status, products(title)")
-        .eq("buyer_id", user.id)
-        .in("status", [
-          "pending",
-          "seller_accepted",
-          "confirmed",
-          "picked",
-          "delivering",
-        ])
-        .order("created_at", { ascending: false })
-        .limit(1);
-
-      if (!error && data && data.length > 0) {
-        const orderData = data[0];
-        // Hide if it's a pending online payment
-        if (orderData.payment_method === "online" && orderData.payment_status === "pending") {
-          setActiveOrder(null);
-        } else {
-          setActiveOrder(orderData);
-        }
-      } else {
-        setActiveOrder(null);
-      }
-      setLoadingOrder(false);
-    };
+    setLoadingOrder(false);
 
     const fetchWallet = async () => {
       const { data: profileList } = await supabase
@@ -180,7 +153,7 @@ export default function Cart() {
       }
     };
 
-    fetchActiveOrder();
+
     fetchWallet();
 
     const subscription = supabase
@@ -508,33 +481,6 @@ export default function Cart() {
     }
   };
 
-  const activeOrderNode = !loadingOrder && user && activeOrder && (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="bg-white md:bg-white/60 md:backdrop-blur-2xl md:border md:border-white/50 rounded-3xl p-6 shadow-[0_2px_10px_rgba(0,0,0,0.03)] md:shadow-lg mb-6 flex flex-col group relative overflow-hidden z-10"
-    >
-      <div className="flex justify-between items-start mb-4">
-        <h2 className="text-3xl font-bold text-[#8B5CF6]">
-           #ORD {activeOrder?.id?.toString().replace(/[^0-9]/g, '').slice(-4) || '9241'}
-        </h2>
-        <span className="px-3 py-1.5 bg-[#FFF7ED] text-[#EA580C] text-[11px] font-bold rounded-md capitalize">
-           {activeOrder?.status?.replace('_', ' ') || 'Pending'}
-        </span>
-      </div>
-      <p className="text-sm font-medium text-slate-500 mb-0.5">Estimated Arrival</p>
-      <p className="text-base font-bold text-slate-900 mb-5">
-         {activeOrder?.status === 'pending' ? 'Payment Pending' : 'Preparing Order'}
-      </p>
-      <Link
-        to={`/tracking?order=${activeOrder?.id}`}
-        className="w-full bg-[#FAFAFA] md:bg-white/50 hover:bg-slate-100 md:hover:bg-white/70 text-slate-800 py-3 rounded-2xl font-bold transition-all flex items-center justify-center gap-2 text-sm border border-slate-100 md:border-white/60 shadow-sm"
-      >
-        Track Order <ArrowRight className="w-4 h-4 text-slate-400" />
-      </Link>
-    </motion.div>
-  );
-
   return (
     <div className="min-h-screen bg-[#FAFAFA] md:bg-[url('/eos-v3-wallpaper-desktop.png')] md:bg-cover md:bg-center md:bg-fixed text-slate-900 pb-32 md:pb-12 px-4 sm:px-6 font-sans relative">
       <div className="h-28 md:h-12" /> {/* Safe area for Dynamic Island */}
@@ -646,7 +592,6 @@ export default function Cart() {
 
         {items.length === 0 ? (
           <div className="md:max-w-xl md:mx-auto">
-            {activeOrderNode}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -683,7 +628,6 @@ export default function Cart() {
           <div className="flex flex-col md:grid md:grid-cols-12 md:gap-8 relative z-10">
             {/* Left Column */}
             <div className="md:col-span-7 lg:col-span-8 flex flex-col">
-              {activeOrderNode}
             {/* Cart Items */}
             <div className="bg-white md:bg-white/60 md:backdrop-blur-2xl md:border md:border-white/50 rounded-3xl p-6 px-4 sm:px-6 shadow-[0_4px_20px_rgba(0,0,0,0.03)] md:shadow-lg mb-6 z-10 relative">
               <div className="flex items-center justify-between mb-5">
