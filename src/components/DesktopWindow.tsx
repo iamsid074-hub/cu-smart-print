@@ -30,6 +30,7 @@ export default function DesktopWindow({
   isMinimized = false,
   isMaximized = false,
   onBack,
+  actions,
   children,
   size = "lg",
 }: DesktopWindowProps) {
