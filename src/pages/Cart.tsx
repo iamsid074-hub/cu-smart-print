@@ -666,9 +666,12 @@ export default function Cart() {
                             {item.title || (item as any).name || "Unnamed Item"}
                           </h4>
                           
-                          <div className="flex items-center gap-2 mt-1">
-                            <span className="px-2 py-0.5 bg-slate-100 md:bg-white/60 text-slate-500 rounded-md text-[10px] md:text-[12px] font-bold uppercase tracking-wider">
-                               {item.category}
+                          <div className="flex flex-wrap items-center gap-2 mt-2">
+                            <span className="flex items-center gap-1 px-2 py-0.5 bg-slate-100 md:bg-white/60 text-slate-500 rounded-md text-[10px] md:text-[11px] font-bold uppercase tracking-wider">
+                               <Truck className="w-3 h-3" /> {item.category || "General Store"}
+                            </span>
+                            <span className="flex items-center gap-1 px-2 py-0.5 bg-blue-50 md:bg-blue-100/50 text-blue-600 rounded-md text-[10px] md:text-[11px] font-bold uppercase tracking-wider">
+                               <Package className="w-3 h-3" /> Qty: {item.quantity}
                             </span>
                           </div>
                           
