@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MapPin, Check, ChevronRight, Home, Building2, DoorOpen } from "lucide-react";
+import { MapPin, Check, ChevronRight, Building2, DoorOpen } from "lucide-react";
 import { useUserLocation } from "@/hooks/useUserLocation";
 import { toast } from "sonner";
 
@@ -9,6 +9,7 @@ export default function FloatingLocationWidget() {
   const [hostel, setHostel] = useState("");
   const [room, setRoom] = useState("");
   const [isExpanded, setIsExpanded] = useState(false);
+  const widgetRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (isLoaded && data) {
@@ -16,6 +17,21 @@ export default function FloatingLocationWidget() {
       setRoom(data.room || "");
     }
   }, [isLoaded, data]);
+
+  // Click outside listener
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (widgetRef.current && !widgetRef.current.contains(event.target as Node)) {
+        setIsExpanded(false);
+      }
+    };
+    if (isExpanded) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isExpanded]);
 
   const handleSave = () => {
     if (!hostel || !room) {
@@ -32,16 +48,25 @@ export default function FloatingLocationWidget() {
   return (
     <div className="fixed left-8 top-1/2 -translate-y-1/2 z-[100] hidden xl:block">
       <motion.div
+        ref={widgetRef}
         layout
         initial={{ x: -120, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
-        className="ios-glass p-2 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] border border-white/50 flex flex-col items-center"
-        style={{ width: isExpanded ? 260 : 72 }}
+        className="rounded-[2.5rem] shadow-[0_32px_64px_rgba(0,0,0,0.15)] flex flex-col items-center overflow-hidden"
+        style={{ 
+          width: isExpanded ? 280 : 72,
+          background: "rgba(255, 255, 255, 0.35)",
+          backdropFilter: "blur(40px) saturate(190%)",
+          WebkitBackdropFilter: "blur(40px) saturate(190%)",
+          border: "1px solid rgba(255, 255, 255, 0.45)",
+          boxShadow: "0 8px 40px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.5)",
+          padding: "8px"
+        }}
       >
         <button
           onClick={() => setIsExpanded(!isExpanded)}
           className={`w-14 h-14 rounded-[1.4rem] flex items-center justify-center transition-all duration-500 relative group overflow-hidden ${
-            isExpanded ? 'bg-blue-600 text-white shadow-lg' : 'hover:bg-white/40 text-gray-800'
+            isExpanded ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30' : 'bg-white/30 text-gray-800 hover:bg-white/50'
           }`}
         >
           <motion.div
@@ -63,9 +88,9 @@ export default function FloatingLocationWidget() {
               exit={{ opacity: 0, height: 0, y: 10 }}
               className="w-full px-5 py-6 space-y-6 overflow-hidden"
             >
-              <div>
+              <div className="text-center">
                 <h3 className="text-xl font-black text-gray-900 tracking-tight mb-1">Set Delivery</h3>
-                <p className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">Hostel & Room</p>
+                <p className="text-[11px] font-bold text-gray-500/60 uppercase tracking-widest">Hostel & Room</p>
               </div>
 
               <div className="space-y-4">
@@ -78,7 +103,7 @@ export default function FloatingLocationWidget() {
                     value={hostel}
                     onChange={(e) => setHostel(e.target.value)}
                     placeholder="Hostel (e.g. NC4)"
-                    className="w-full h-12 bg-white/60 border border-black/5 rounded-2xl pl-11 pr-4 text-sm font-bold text-gray-900 focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:bg-white transition-all placeholder:text-gray-400"
+                    className="w-full h-12 bg-white/30 border border-white/50 rounded-2xl pl-11 pr-4 text-sm font-bold text-gray-900 focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:bg-white/60 transition-all placeholder:text-gray-400"
                   />
                 </div>
 
@@ -91,7 +116,7 @@ export default function FloatingLocationWidget() {
                     value={room}
                     onChange={(e) => setRoom(e.target.value)}
                     placeholder="Room Number"
-                    className="w-full h-12 bg-white/60 border border-black/5 rounded-2xl pl-11 pr-4 text-sm font-bold text-gray-900 focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:bg-white transition-all placeholder:text-gray-400"
+                    className="w-full h-12 bg-white/30 border border-white/50 rounded-2xl pl-11 pr-4 text-sm font-bold text-gray-900 focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:bg-white/60 transition-all placeholder:text-gray-400"
                   />
                 </div>
               </div>
