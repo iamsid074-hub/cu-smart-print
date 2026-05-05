@@ -650,47 +650,49 @@ export default function Cart() {
                         exit={{ opacity: 0, scale: 0.95 }}
                         className={`flex gap-4 ${index !== items.length - 1 ? 'pb-6 border-b border-slate-50' : ''}`}
                       >
-                        <div className="w-[52px] h-[52px] md:w-32 md:h-32 md:rounded-3xl rounded-2xl bg-slate-50 overflow-hidden shrink-0 border border-slate-100 md:border-white/60 md:shadow-inner p-1 md:p-2 relative">
+                        <div className="w-[52px] h-[52px] md:w-48 md:h-48 md:rounded-3xl rounded-2xl bg-slate-50 overflow-hidden shrink-0 border border-slate-100 md:border-white/60 md:shadow-inner p-1 md:p-3 relative">
                           <img
                             src={item.image}
                             alt={item.title}
                             className="w-full h-full object-cover rounded-xl md:rounded-2xl"
                           />
                           {item.category === 'Vending Machine' && (
-                            <div className="absolute -top-1 -right-1 md:top-2 md:right-2 w-3 h-3 md:w-4 md:h-4 bg-blue-500 rounded-full border-2 border-white shadow-sm"></div>
+                            <div className="absolute -top-1 -right-1 md:top-3 md:right-3 w-3 h-3 md:w-5 md:h-5 bg-blue-500 rounded-full border-2 border-white shadow-sm"></div>
                           )}
                         </div>
                         
-                        <div className="flex-1 pt-0.5 md:flex md:flex-col md:justify-center">
-                          <h4 className="text-[15px] md:text-xl font-bold text-slate-900 leading-snug pr-2">
+                        <div className="flex-1 pt-0.5 md:flex md:flex-col md:justify-start md:pt-2">
+                          <h4 className="text-[15px] md:text-2xl font-black text-slate-900 leading-tight pr-2 tracking-tight">
                             {item.title || (item as any).name || "Unnamed Item"}
                           </h4>
                           
-                          {item.notes ? (
-                            <p className="text-[12px] md:text-sm text-slate-500 mt-1 leading-snug line-clamp-2 pr-4 font-medium">
-                              {item.notes}
-                            </p>
-                          ) : (
-                            <p className="text-[12px] md:text-sm text-slate-400 mt-0.5 font-medium">
-                              {item.category}
+                          <div className="flex items-center gap-2 mt-1">
+                            <span className="px-2 py-0.5 bg-slate-100 md:bg-white/60 text-slate-500 rounded-md text-[10px] md:text-[12px] font-bold uppercase tracking-wider">
+                               {item.category}
+                            </span>
+                          </div>
+                          
+                          {item.notes && (
+                            <p className="text-[12px] md:text-sm text-slate-500 mt-2 leading-relaxed line-clamp-3 pr-4 font-medium italic">
+                              "{item.notes}"
                             </p>
                           )}
                           
                           {/* Clean minimal controls */}
-                          <div className="flex items-center gap-4 mt-3 md:mt-4">
-                            <div className="flex items-center gap-3">
+                          <div className="flex items-center gap-4 mt-auto pt-4">
+                            <div className="flex items-center gap-3 bg-slate-50 md:bg-white/40 p-1 rounded-full border border-slate-100 md:border-white/40">
                               <button
                                 onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                                className="w-[28px] h-[28px] md:w-8 md:h-8 rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900 flex items-center justify-center transition-colors"
+                                className="w-[28px] h-[28px] md:w-9 md:h-9 rounded-full bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900 flex items-center justify-center transition-colors shadow-sm"
                               >
                                 <Minus className="w-[14px] h-[14px] md:w-4 md:h-4" strokeWidth={3} />
                               </button>
-                              <span className="text-[14px] md:text-base font-bold w-3 md:w-4 text-center text-slate-900">
+                              <span className="text-[14px] md:text-lg font-black w-3 md:w-6 text-center text-slate-900">
                                 {item.quantity}
                               </span>
                               <button
                                 onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                                className="w-[28px] h-[28px] md:w-8 md:h-8 rounded-full bg-[#10B981] text-white hover:bg-emerald-600 flex items-center justify-center transition-colors shadow-sm shadow-emerald-500/20"
+                                className="w-[28px] h-[28px] md:w-9 md:h-9 rounded-full bg-[#10B981] text-white hover:bg-emerald-600 flex items-center justify-center transition-colors shadow-md shadow-emerald-500/20"
                               >
                                 <Plus className="w-[14px] h-[14px] md:w-4 md:h-4" strokeWidth={3} />
                               </button>
@@ -874,14 +876,14 @@ export default function Cart() {
                     <motion.button
                       whileTap={{ scale: 0.98 }}
                       onClick={() => navigate('/home')}
-                      className="w-full h-[60px] rounded-[18px] font-bold text-white text-[16px] flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 shadow-[0_4px_14px_rgba(0,0,0,0.15)] transition-all"
+                      className="w-full h-[60px] rounded-[18px] font-bold text-slate-900 text-[16px] flex items-center justify-center gap-2 bg-white/80 hover:bg-white backdrop-blur-md border border-white/20 shadow-lg shadow-black/5 transition-all"
                     >
-                      <ArrowLeft className="w-5 h-5" /> Back to Home
+                      <ArrowLeft className="w-5 h-5 opacity-60" /> Back to Home
                     </motion.button>
                     <motion.button
                       whileTap={{ scale: 0.98 }}
                       onClick={handleProceedToCheckout}
-                      className="w-full h-[60px] rounded-[18px] font-bold text-white text-[16px] flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 shadow-[0_4px_14px_rgba(0,0,0,0.15)] transition-all"
+                      className="w-full h-[60px] rounded-[18px] font-black text-white text-[17px] flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-[0_10px_25px_-5px_rgba(37,99,235,0.4)] transition-all"
                     >
                       <ShoppingBag className="w-5 h-5" /> Proceed to Checkout
                     </motion.button>
