@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { motion } from "framer-motion";
+import { motion, useDragControls } from "framer-motion";
 import { X, ChevronLeft } from "lucide-react";
 
 interface DesktopWindowProps {
@@ -32,6 +32,7 @@ export default function DesktopWindow({
   children,
   size = "lg",
 }: DesktopWindowProps) {
+  const dragControls = useDragControls();
   
   // Animation variants mimicking macOS Genie effect (Wavy Bend)
   const variants = {
@@ -99,6 +100,8 @@ export default function DesktopWindow({
       animate={isMinimized ? "minimized" : "open"}
       exit="exit"
       drag={!isMaximized} // Disable dragging when maximized
+      dragListener={false}
+      dragControls={dragControls}
       dragMomentum={false}
       dragElastic={0.05}
       dragConstraints={{ top: -300, left: -500, right: 500, bottom: 300 }}
@@ -111,8 +114,11 @@ export default function DesktopWindow({
     >
       {/* macOS Title Bar — drag handle */}
       <div
+        onPointerDown={(e) => {
+          if (!isMaximized) dragControls.start(e);
+        }}
         className="h-10 flex items-center px-4 bg-white/10 border-b border-black/5 select-none shrink-0"
-        style={{ cursor: "grab" }}
+        style={{ cursor: isMaximized ? "default" : "grab", touchAction: "none" }}
       >
         {/* Traffic Lights */}
         <div className="flex gap-2 w-20">
