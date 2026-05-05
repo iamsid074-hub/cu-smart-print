@@ -19,6 +19,8 @@ import {
   CreditCard,
   CheckCircle2,
   User,
+  Layout,
+  Play,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
@@ -34,7 +36,7 @@ interface DesktopWindowSettingsProps {
   isMaximized?: boolean;
 }
 
-type TabType = "profile" | "wallet" | "combo" | "delivery" | "security";
+type TabType = "profile" | "wallet" | "combo" | "delivery" | "security" | "experience";
 
 export default function DesktopWindowSettings({ 
   onClose, 
@@ -149,6 +151,7 @@ export default function DesktopWindowSettings({
                 <SidebarItem id="combo" icon={Utensils} label="Combo Suggestion" isActive={activeTab === 'combo'} onClick={() => setActiveTab('combo')} />
                 <SidebarItem id="delivery" icon={Bike} label="Delivery Partner" isActive={activeTab === 'delivery'} onClick={() => setActiveTab('delivery')} />
                 <SidebarItem id="security" icon={Shield} label="Security & Access" isActive={activeTab === 'security'} onClick={() => setActiveTab('security')} />
+                <SidebarItem id="experience" icon={Layout} label="App Experience" isActive={activeTab === 'experience'} onClick={() => setActiveTab('experience')} />
               </div>
             </div>
 
@@ -319,6 +322,54 @@ export default function DesktopWindowSettings({
                     <SecurityAction icon={Lock} label="Appeal for Passcode Change" sub="Request admin to reset your wallet lock" onClick={() => navigate("/wallet-reset")} />
                     <SecurityAction icon={LogOut} label="Sign Out" sub="Log out of all sessions on this device" onClick={handleLogout} />
                     <SecurityAction icon={Trash2} label="Delete Account" sub="Permanently remove all your data" danger onClick={handleDeleteAccount} />
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 'experience' && (
+                <div className="space-y-8">
+                  <div>
+                    <h2 className="text-3xl font-black text-gray-900 tracking-tight mb-2">App Experience</h2>
+                    <p className="text-gray-500 font-medium">Customize how you interact with the EOS v3 desktop.</p>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div className="p-6 rounded-2xl bg-white border border-gray-100 flex items-center justify-between">
+                      <div className="flex gap-4">
+                        <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center">
+                          <Play className="w-6 h-6 text-blue-500" />
+                        </div>
+                        <div>
+                          <p className="font-bold text-gray-900">Show Tutorials</p>
+                          <p className="text-sm text-gray-500">Enable guided tours for new features</p>
+                        </div>
+                      </div>
+                      <button 
+                        onClick={() => {
+                          const current = localStorage.getItem("tutorial_disabled") === "true";
+                          localStorage.setItem("tutorial_disabled", (!current).toString());
+                          toast.success(`Tutorials ${!current ? 'disabled' : 'enabled'}`);
+                          window.location.reload(); // Reload to apply change
+                        }}
+                        className={`w-12 h-6 rounded-full p-1 transition-colors ${localStorage.getItem("tutorial_disabled") === "true" ? 'bg-gray-200' : 'bg-blue-500'}`}
+                      >
+                        <div className={`w-4 h-4 bg-white rounded-full transition-transform ${localStorage.getItem("tutorial_disabled") === "true" ? 'translate-x-0' : 'translate-x-6'}`} />
+                      </button>
+                    </div>
+
+                    <button 
+                      onClick={() => {
+                        localStorage.removeItem("tutorial_completed");
+                        localStorage.setItem("tutorial_disabled", "false");
+                        window.dispatchEvent(new CustomEvent("reset-tutorial"));
+                        onClose();
+                        toast.success("Tutorial restarted!");
+                      }}
+                      className="w-full p-5 rounded-2xl bg-blue-600 text-white font-black flex items-center justify-center gap-3 hover:bg-blue-700 active:scale-95 transition-all shadow-lg shadow-blue-600/20"
+                    >
+                      <Play className="w-5 h-5 fill-white" />
+                      Restart Guided Tour
+                    </button>
                   </div>
                 </div>
               )}

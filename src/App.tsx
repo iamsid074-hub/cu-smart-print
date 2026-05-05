@@ -77,6 +77,7 @@ import ScrollToTop from "./components/ScrollToTop";
 import StickyStripBanner from "./components/StickyStripBanner";
 
 const ControlCenter = lazy(() => import("./components/ControlCenter"));
+const TutorialSystem = lazy(() => import("./components/TutorialSystem"));
 
 
 // Lazy-load non-critical-path components
@@ -236,6 +237,7 @@ function AppLayout() {
       <AppUpdater />
       <Suspense fallback={null}>
         <ControlCenter />
+        <TutorialSystem />
       </Suspense>
       {!isLanding && !isLogin && !isAdminPath && !isDownload && !isDriverPage && (
         <>
