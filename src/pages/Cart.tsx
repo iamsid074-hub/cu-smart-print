@@ -663,12 +663,14 @@ export default function Cart() {
                         
                         <div className="flex-1 pt-0.5 md:flex md:flex-col md:justify-start md:pt-2">
                           <h4 className="text-[15px] md:text-2xl font-black text-slate-900 leading-tight pr-2 tracking-tight">
-                            {item.title || (item as any).name || "Unnamed Item"}
+                            {item.category === "shops" 
+                              ? item.title.replace(/\s*\(.*?\)$/, '') 
+                              : (item.title || (item as any).name || "Unnamed Item")}
                           </h4>
                           
                           <div className="flex flex-wrap items-center gap-2 mt-2">
                             <span className="flex items-center gap-1 px-2 py-0.5 bg-slate-100 md:bg-white/60 text-slate-500 rounded-md text-[10px] md:text-[11px] font-bold uppercase tracking-wider">
-                               <Truck className="w-3 h-3" /> {item.category || "General Store"}
+                               <Truck className="w-3 h-3" /> {item.category === "shops" ? (item.title.match(/\((.*?)\)$/)?.[1] || "Food Store") : (item.category || "General Store")}
                             </span>
                             <span className="flex items-center gap-1 px-2 py-0.5 bg-blue-50 md:bg-blue-100/50 text-blue-600 rounded-md text-[10px] md:text-[11px] font-bold uppercase tracking-wider">
                                <Package className="w-3 h-3" /> Qty: {item.quantity}
@@ -680,6 +682,15 @@ export default function Cart() {
                               "{item.notes}"
                             </p>
                           )}
+
+                          <div className="hidden md:block mt-4 pt-4 border-t border-slate-100/50">
+                            <div className="flex items-center gap-1.5 text-[12px] text-slate-500 font-medium">
+                              <MapPin className="w-3.5 h-3.5" /> Delivering to <strong className="text-slate-700">{hostel || "Select Location"} {room ? `- ${room}` : ''}</strong>
+                            </div>
+                            <div className="flex items-center gap-1.5 text-[12px] text-slate-500 font-medium mt-1">
+                              <Truck className="w-3.5 h-3.5" /> Estimated Delivery: <strong className="text-slate-700">{hasQuickItem ? "10-15 mins" : "20-30 mins"}</strong>
+                            </div>
+                          </div>
                           
                           {/* Clean minimal controls */}
                           <div className="flex items-center gap-4 mt-auto pt-4">
