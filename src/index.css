@@ -59,6 +59,14 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
+    caret-color: auto; /* Default */
+  }
+
+  /* Global fix for the vertical line (text caret) appearing on UI elements */
+  .select-none {
+    user-select: none !important;
+    -webkit-user-select: none !important;
+    caret-color: transparent !important;
   }
 
   body {

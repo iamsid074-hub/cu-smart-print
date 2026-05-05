@@ -979,7 +979,7 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
                 transition={displayState === "safy" ? safySpring : springTransition}
                 onPointerDown={handlePointerDown}
                 onPointerUp={handlePointerUp}
-                className={`pointer-events-auto flex items-center justify-center flex-shrink-0 ${
+                className={`pointer-events-auto flex items-center justify-center flex-shrink-0 select-none cursor-default ${
                   islandState === "added" ||
                   islandState === "updated" ||
                   islandState === "cart" ||
