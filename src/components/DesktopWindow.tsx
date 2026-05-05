@@ -136,7 +136,7 @@ export default function DesktopWindow({
       dragControls={dragControls}
       dragMomentum={false}
       dragElastic={0.05}
-      className={`fixed ${isMaximized ? "inset-0 w-full h-full" : `top-[160px] left-1/2 ${sizeMap[size]}`} flex flex-col bg-white/70 backdrop-blur-3xl shadow-2xl overflow-hidden z-[100] ${isMaximized ? "border-0" : "rounded-xl border border-white/30"} ${isMinimized ? "pointer-events-none" : ""}`}
+      className={`fixed ${isMaximized ? "inset-0 w-full h-full" : `top-[160px] left-1/2 ${sizeMap[size]}`} flex flex-col bg-white/70 backdrop-blur-3xl shadow-2xl overflow-visible z-[100] ${isMaximized ? "border-0" : "rounded-xl border border-white/30"} ${isMinimized ? "pointer-events-none" : ""}`}
       onClick={(e) => e.stopPropagation()}
       style={{ 
         cursor: "default", 
@@ -149,7 +149,7 @@ export default function DesktopWindow({
         onPointerDown={(e) => {
           if (!isMaximized) dragControls.start(e);
         }}
-        className="h-12 flex items-center px-5 bg-white/20 border-b border-black/5 select-none shrink-0 backdrop-blur-sm"
+        className="h-12 flex items-center px-5 bg-white/20 border-b border-black/5 select-none shrink-0 backdrop-blur-sm z-[10]"
         style={{ cursor: isMaximized ? "default" : "grab", touchAction: "none" }}
       >
         {/* Traffic Lights */}
@@ -209,7 +209,7 @@ export default function DesktopWindow({
       </div>
 
       {/* Scrollable Content */}
-      <div className="flex-1 overflow-y-auto overscroll-contain scrollbar-hide" style={{ cursor: "default" }}>
+      <div className="flex-1 overflow-y-auto overscroll-contain scrollbar-hide rounded-b-xl" style={{ cursor: "default" }}>
         {children}
       </div>
     </motion.div>

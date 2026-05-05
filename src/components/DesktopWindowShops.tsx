@@ -53,15 +53,18 @@ export default function DesktopWindowShops({ onClose, onMinimize, onMaximize, is
                 initial={{ opacity: 0, y: 10, scale: 0.95 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                className="absolute top-full right-0 mt-2 z-[101] w-64 max-h-80 bg-white/95 backdrop-blur-2xl rounded-2xl border border-black/10 shadow-2xl overflow-y-auto scrollbar-hide p-4 flex flex-col gap-1"
+                className="absolute top-full right-0 mt-2 z-[9999] w-64 max-h-[450px] bg-white backdrop-blur-2xl rounded-2xl border border-black/10 shadow-2xl overflow-y-auto p-4 flex flex-col gap-1"
               >
                 <h3 className="text-[10px] uppercase font-black text-gray-400 tracking-widest mb-2 px-2">Browse Categories</h3>
                 {selectedShop!.categories.map((cat) => (
                   <button
                     key={cat.category}
                     onClick={() => {
-                      document.getElementById(`cat-${cat.category}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                      setShowCategoryMenu(false);
+                      const el = document.getElementById(`cat-${cat.category}`);
+                      if (el) {
+                        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        setShowCategoryMenu(false);
+                      }
                     }}
                     className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-orange-50 text-sm font-bold text-gray-800 transition-colors flex items-center justify-between group"
                   >
