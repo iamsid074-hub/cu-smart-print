@@ -508,7 +508,34 @@ export default function Cart() {
     }
   };
 
-    return (
+  const activeOrderNode = !loadingOrder && user && activeOrder && (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="bg-white md:bg-white/60 md:backdrop-blur-2xl md:border md:border-white/50 rounded-3xl p-6 shadow-[0_2px_10px_rgba(0,0,0,0.03)] md:shadow-lg mb-6 flex flex-col group relative overflow-hidden z-10"
+    >
+      <div className="flex justify-between items-start mb-4">
+        <h2 className="text-3xl font-bold text-[#8B5CF6]">
+           #ORD {activeOrder?.id?.toString().replace(/[^0-9]/g, '').slice(-4) || '9241'}
+        </h2>
+        <span className="px-3 py-1.5 bg-[#FFF7ED] text-[#EA580C] text-[11px] font-bold rounded-md capitalize">
+           {activeOrder?.status?.replace('_', ' ') || 'Pending'}
+        </span>
+      </div>
+      <p className="text-sm font-medium text-slate-500 mb-0.5">Estimated Arrival</p>
+      <p className="text-base font-bold text-slate-900 mb-5">
+         {activeOrder?.status === 'pending' ? 'Payment Pending' : 'Preparing Order'}
+      </p>
+      <Link
+        to={`/tracking?order=${activeOrder?.id}`}
+        className="w-full bg-[#FAFAFA] md:bg-white/50 hover:bg-slate-100 md:hover:bg-white/70 text-slate-800 py-3 rounded-2xl font-bold transition-all flex items-center justify-center gap-2 text-sm border border-slate-100 md:border-white/60 shadow-sm"
+      >
+        Track Order <ArrowRight className="w-4 h-4 text-slate-400" />
+      </Link>
+    </motion.div>
+  );
+
+  return (
     <div className="min-h-screen bg-[#FAFAFA] md:bg-[url('/eos-v3-wallpaper-desktop.png')] md:bg-cover md:bg-center md:bg-fixed text-slate-900 pb-32 md:pb-12 px-4 sm:px-6 font-sans relative">
       <div className="h-28 md:h-12" /> {/* Safe area for Dynamic Island */}
       {/* Risk Detection Alert */}
@@ -593,7 +620,7 @@ export default function Cart() {
         </div>
       )}
       
-      <div className="max-w-xl mx-auto relative md:bg-white/40 md:backdrop-blur-3xl md:border-[1.5px] md:border-white/60 md:shadow-[inset_0_1px_1px_rgba(255,255,255,0.9),0_20px_60px_-15px_rgba(0,0,0,0.5)] md:rounded-[2.5rem] md:p-8">
+      <div className="max-w-xl md:max-w-7xl mx-auto relative md:bg-white/40 md:backdrop-blur-3xl md:border-[1.5px] md:border-white/60 md:shadow-[inset_0_1px_1px_rgba(255,255,255,0.9),0_20px_60px_-15px_rgba(0,0,0,0.5)] md:rounded-[2.5rem] md:p-8">
         {/* Reflection Highlight */}
         <div className="hidden md:block absolute top-0 left-0 right-0 h-1/2 bg-gradient-to-b from-white/20 to-transparent pointer-events-none rounded-t-[2.5rem]" />
         
@@ -617,36 +644,9 @@ export default function Cart() {
           )}
         </motion.div>
 
-        {/* Active Order Banner */}
-        {!loadingOrder && user && activeOrder && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-white md:bg-white/60 md:backdrop-blur-2xl md:border md:border-white/50 rounded-3xl p-6 shadow-[0_2px_10px_rgba(0,0,0,0.03)] md:shadow-lg mb-6 flex flex-col group relative overflow-hidden z-10"
-          >
-            <div className="flex justify-between items-start mb-4">
-              <h2 className="text-3xl font-bold text-[#8B5CF6]">
-                 #ORD {activeOrder?.id?.toString().replace(/[^0-9]/g, '').slice(-4) || '9241'}
-              </h2>
-              <span className="px-3 py-1.5 bg-[#FFF7ED] text-[#EA580C] text-[11px] font-bold rounded-md capitalize">
-                 {activeOrder?.status?.replace('_', ' ') || 'Pending'}
-              </span>
-            </div>
-            <p className="text-sm font-medium text-slate-500 mb-0.5">Estimated Arrival</p>
-            <p className="text-base font-bold text-slate-900 mb-5">
-               {activeOrder?.status === 'pending' ? 'Payment Pending' : 'Preparing Order'}
-            </p>
-            <Link
-              to={`/tracking?order=${activeOrder?.id}`}
-              className="w-full bg-[#FAFAFA] md:bg-white/50 hover:bg-slate-100 md:hover:bg-white/70 text-slate-800 py-3 rounded-2xl font-bold transition-all flex items-center justify-center gap-2 text-sm border border-slate-100 md:border-white/60 shadow-sm"
-            >
-              Track Order <ArrowRight className="w-4 h-4 text-slate-400" />
-            </Link>
-          </motion.div>
-        )}
-
         {items.length === 0 ? (
-          <>
+          <div className="md:max-w-xl md:mx-auto">
+            {activeOrderNode}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -678,9 +678,12 @@ export default function Cart() {
                 </span>
               </motion.button>
             </div>
-          </>
+          </div>
         ) : (
-          <>
+          <div className="flex flex-col md:grid md:grid-cols-12 md:gap-8 relative z-10">
+            {/* Left Column */}
+            <div className="md:col-span-7 lg:col-span-8 flex flex-col">
+              {activeOrderNode}
             {/* Cart Items */}
             <div className="bg-white md:bg-white/60 md:backdrop-blur-2xl md:border md:border-white/50 rounded-3xl p-6 px-4 sm:px-6 shadow-[0_4px_20px_rgba(0,0,0,0.03)] md:shadow-lg mb-6 z-10 relative">
               <div className="flex items-center justify-between mb-5">
@@ -703,56 +706,56 @@ export default function Cart() {
                         exit={{ opacity: 0, scale: 0.95 }}
                         className={`flex gap-4 ${index !== items.length - 1 ? 'pb-6 border-b border-slate-50' : ''}`}
                       >
-                        <div className="w-[52px] h-[52px] rounded-2xl bg-slate-50 overflow-hidden shrink-0 border border-slate-100 p-1 relative">
+                        <div className="w-[52px] h-[52px] md:w-32 md:h-32 md:rounded-3xl rounded-2xl bg-slate-50 overflow-hidden shrink-0 border border-slate-100 md:border-white/60 md:shadow-inner p-1 md:p-2 relative">
                           <img
                             src={item.image}
                             alt={item.title}
-                            className="w-full h-full object-cover rounded-xl"
+                            className="w-full h-full object-cover rounded-xl md:rounded-2xl"
                           />
                           {item.category === 'Vending Machine' && (
-                            <div className="absolute -top-1 -right-1 w-3 h-3 bg-blue-500 rounded-full border-2 border-white"></div>
+                            <div className="absolute -top-1 -right-1 md:top-2 md:right-2 w-3 h-3 md:w-4 md:h-4 bg-blue-500 rounded-full border-2 border-white shadow-sm"></div>
                           )}
                         </div>
                         
-                        <div className="flex-1 pt-0.5">
-                          <h4 className="text-[15px] font-bold text-slate-900 leading-snug pr-2">
+                        <div className="flex-1 pt-0.5 md:flex md:flex-col md:justify-center">
+                          <h4 className="text-[15px] md:text-xl font-bold text-slate-900 leading-snug pr-2">
                             {item.title || (item as any).name || "Unnamed Item"}
                           </h4>
                           
                           {item.notes ? (
-                            <p className="text-[12px] text-slate-500 mt-1 leading-snug line-clamp-2 pr-4 font-medium">
+                            <p className="text-[12px] md:text-sm text-slate-500 mt-1 leading-snug line-clamp-2 pr-4 font-medium">
                               {item.notes}
                             </p>
                           ) : (
-                            <p className="text-[12px] text-slate-400 mt-0.5 font-medium">
+                            <p className="text-[12px] md:text-sm text-slate-400 mt-0.5 font-medium">
                               {item.category}
                             </p>
                           )}
                           
                           {/* Clean minimal controls */}
-                          <div className="flex items-center gap-4 mt-3">
+                          <div className="flex items-center gap-4 mt-3 md:mt-4">
                             <div className="flex items-center gap-3">
                               <button
                                 onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                                className="w-[28px] h-[28px] rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900 flex items-center justify-center transition-colors"
+                                className="w-[28px] h-[28px] md:w-8 md:h-8 rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900 flex items-center justify-center transition-colors"
                               >
-                                <Minus className="w-[14px] h-[14px]" strokeWidth={3} />
+                                <Minus className="w-[14px] h-[14px] md:w-4 md:h-4" strokeWidth={3} />
                               </button>
-                              <span className="text-[14px] font-bold w-3 text-center text-slate-900">
+                              <span className="text-[14px] md:text-base font-bold w-3 md:w-4 text-center text-slate-900">
                                 {item.quantity}
                               </span>
                               <button
                                 onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                                className="w-[28px] h-[28px] rounded-full bg-[#10B981] text-white hover:bg-emerald-600 flex items-center justify-center transition-colors shadow-sm shadow-emerald-500/20"
+                                className="w-[28px] h-[28px] md:w-8 md:h-8 rounded-full bg-[#10B981] text-white hover:bg-emerald-600 flex items-center justify-center transition-colors shadow-sm shadow-emerald-500/20"
                               >
-                                <Plus className="w-[14px] h-[14px]" strokeWidth={3} />
+                                <Plus className="w-[14px] h-[14px] md:w-4 md:h-4" strokeWidth={3} />
                               </button>
                             </div>
                           </div>
                         </div>
 
-                        <div className="text-right flex flex-col justify-between items-end py-0.5">
-                           <p className="text-[15px] font-bold text-slate-900">
+                        <div className="text-right flex flex-col justify-between items-end py-0.5 md:py-2">
+                           <p className="text-[15px] md:text-xl font-bold text-slate-900">
                              ₹{(item.price * item.quantity).toFixed(2)}
                            </p>
                            <button
@@ -767,11 +770,12 @@ export default function Cart() {
                   </AnimatePresence>
               </div>
             </div>
+            </div>
 
-
-
-            {/* Payment Summary */}
-            <div className="bg-white md:bg-white/60 md:backdrop-blur-2xl md:border md:border-white/50 rounded-3xl p-6 sm:p-7 shadow-[0_4px_20px_rgba(0,0,0,0.03)] md:shadow-lg mb-6 relative z-10">
+            {/* Right Column (Sticky) */}
+            <div className="md:col-span-5 lg:col-span-4 flex flex-col md:sticky md:top-8 md:self-start">
+              {/* Payment Summary */}
+              <div className="bg-white md:bg-white/60 md:backdrop-blur-2xl md:border md:border-white/50 rounded-3xl p-6 sm:p-7 shadow-[0_4px_20px_rgba(0,0,0,0.03)] md:shadow-lg mb-6 relative z-10">
               <h3 className="text-[17px] font-bold text-slate-900 mb-5">Payment Summary</h3>
               
               <div className="space-y-3.5 mb-5">
@@ -940,7 +944,8 @@ export default function Cart() {
                   </div>
               </div>
             )}
-          </>
+            </div>
+          </div>
         )}
       </div>
 
