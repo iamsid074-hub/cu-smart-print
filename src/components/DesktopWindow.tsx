@@ -134,7 +134,6 @@ export default function DesktopWindow({
       dragControls={dragControls}
       dragMomentum={false}
       dragElastic={0.05}
-      dragConstraints={{ top: 0, left: -500, right: 500, bottom: 300 }}
       className={`fixed ${isMaximized ? "inset-0 w-full h-full" : `top-[160px] left-1/2 ${sizeMap[size]}`} flex flex-col bg-white/70 backdrop-blur-3xl shadow-2xl overflow-hidden z-[100] ${isMaximized ? "border-0" : "rounded-xl border border-white/30"} ${isMinimized ? "pointer-events-none" : ""}`}
       onClick={(e) => e.stopPropagation()}
       style={{ 
