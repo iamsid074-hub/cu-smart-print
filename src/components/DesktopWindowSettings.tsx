@@ -18,6 +18,7 @@ import {
   Plus,
   CreditCard,
   CheckCircle2,
+  User,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
