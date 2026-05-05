@@ -53,7 +53,7 @@ export default function DesktopWindowShops({ onClose, onMinimize, onMaximize, is
                 initial={{ opacity: 0, y: 10, scale: 0.95 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                className="absolute top-full right-0 mt-2 z-[101] w-64 max-h-80 bg-white/95 backdrop-blur-2xl rounded-2xl border border-black/10 shadow-2xl overflow-y-auto p-4 flex flex-col gap-1"
+                className="absolute top-full right-0 mt-2 z-[101] w-64 max-h-80 bg-white/95 backdrop-blur-2xl rounded-2xl border border-black/10 shadow-2xl overflow-y-auto scrollbar-hide p-4 flex flex-col gap-1"
               >
                 <h3 className="text-[10px] uppercase font-black text-gray-400 tracking-widest mb-2 px-2">Browse Categories</h3>
                 {selectedShop!.categories.map((cat) => (

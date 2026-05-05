@@ -209,7 +209,7 @@ export default function DesktopWindow({
       </div>
 
       {/* Scrollable Content */}
-      <div className="flex-1 overflow-y-auto overscroll-contain" style={{ cursor: "default" }}>
+      <div className="flex-1 overflow-y-auto overscroll-contain scrollbar-hide" style={{ cursor: "default" }}>
         {children}
       </div>
     </motion.div>
