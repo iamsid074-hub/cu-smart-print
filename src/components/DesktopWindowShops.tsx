@@ -16,6 +16,7 @@ interface DesktopWindowShopsProps {
 export default function DesktopWindowShops({ onClose, onMinimize, onMaximize, isMinimized, isMaximized }: DesktopWindowShopsProps) {
   const [selectedShopId, setSelectedShopId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [showCategoryMenu, setShowCategoryMenu] = useState(false);
   const { addItem } = useCart();
 
   const selectedShop = shops.find((s) => s.id === selectedShopId);
@@ -34,10 +35,10 @@ export default function DesktopWindowShops({ onClose, onMinimize, onMaximize, is
       onMaximize={onMaximize}
       isMinimized={isMinimized}
       isMaximized={isMaximized}
-      onBack={selectedShopId ? () => setSelectedShopId(null) : undefined}
+      onBack={selectedShopId ? () => { setSelectedShopId(null); setShowCategoryMenu(false); } : undefined}
       size="xl"
     >
-      <div className="p-6">
+      <div className="p-6 relative min-h-full">
         <AnimatePresence mode="wait">
           {!selectedShopId ? (
             <motion.div
@@ -113,27 +114,46 @@ export default function DesktopWindowShops({ onClose, onMinimize, onMaximize, is
               initial={{ opacity: 0, x: 15 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -15 }}
-              className="space-y-8 relative"
+              className="space-y-8 pb-20"
             >
-              {/* Sticky Category Navigator */}
-              <div className="sticky top-[-24px] z-20 bg-white/80 backdrop-blur-md -mx-6 px-6 py-3 border-b border-black/5 overflow-x-auto no-scrollbar">
-                <div className="flex items-center gap-2 min-w-max">
-                  {selectedShop!.categories.map((cat) => (
-                    <button
-                      key={cat.category}
-                      onClick={() => {
-                        document.getElementById(`cat-${cat.category}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                      }}
-                      className="px-4 py-1.5 rounded-full bg-black/5 hover:bg-orange-500 hover:text-white text-xs font-bold transition-all whitespace-nowrap active:scale-95"
-                    >
-                      {cat.category}
-                    </button>
-                  ))}
-                </div>
-              </div>
+              {/* Floating Menu Toggle Button */}
+              <button
+                onClick={() => setShowCategoryMenu(!showCategoryMenu)}
+                className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[101] bg-black text-white px-6 py-2.5 rounded-full flex items-center gap-2 shadow-2xl hover:scale-105 active:scale-95 transition-all text-xs font-bold uppercase tracking-wider"
+              >
+                <Plus className={`w-4 h-4 transition-transform duration-300 ${showCategoryMenu ? 'rotate-45' : ''}`} />
+                Menu
+              </button>
+
+              {/* Category Menu Overlay */}
+              <AnimatePresence>
+                {showCategoryMenu && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 50, scale: 0.9 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 50, scale: 0.9 }}
+                    className="fixed bottom-24 left-1/2 -translate-x-1/2 z-[101] w-64 max-h-80 bg-white/95 backdrop-blur-2xl rounded-2xl border border-black/10 shadow-2xl overflow-y-auto p-4 flex flex-col gap-1"
+                  >
+                    <h3 className="text-[10px] uppercase font-black text-gray-400 tracking-widest mb-2 px-2">Browse Categories</h3>
+                    {selectedShop!.categories.map((cat) => (
+                      <button
+                        key={cat.category}
+                        onClick={() => {
+                          document.getElementById(`cat-${cat.category}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                          setShowCategoryMenu(false);
+                        }}
+                        className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-orange-50 text-sm font-bold text-gray-800 transition-colors flex items-center justify-between group"
+                      >
+                        {cat.category}
+                        <Plus className="w-3 h-3 text-gray-300 group-hover:text-orange-500" />
+                      </button>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
               {selectedShop!.categories.map((cat) => (
-                <div key={cat.category} id={`cat-${cat.category}`} className="space-y-3 scroll-mt-16">
+                <div key={cat.category} id={`cat-${cat.category}`} className="space-y-3 scroll-mt-10">
                   <h2 className="text-base font-bold text-gray-900 flex items-center gap-2 border-b border-black/5 pb-2">
                     <span className="w-1 h-5 bg-orange-500 rounded-full" />
                     {cat.category}
