@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 
-type DockItemWithImg = { name: string; path: string; img: string };
+type DockItemWithImg = { name: string; path: string; img: string; imgClass?: string };
 type DockItemWithIcon = { name: string; path: string; icon: React.ElementType; color: string };
 type DockItem = DockItemWithImg | DockItemWithIcon;
 
@@ -12,8 +12,8 @@ const dockItemsRaw: DockItem[] = [
   { name: "Combos",   path: "/sections/combos", img: "/dock-combos.png" },
   { name: "Games",    path: "/games",            img: "/dock-games.png" },
   { name: "Cart",     path: "/cart",             img: "/dock-cart.png" },
-  { name: "Profile",  path: "/profile",          img: "/dock-profile.png" },
-  { name: "Settings", path: "/settings",         img: "/dock-settings.png" },
+  { name: "Profile",  path: "/profile",          img: "/dock-profile.png", imgClass: "scale-[1.15]" },
+  { name: "Settings", path: "/settings",         img: "/dock-settings.png", imgClass: "scale-[1.25] -translate-x-[4%] -translate-y-[4%]" },
 ];
 
 export const dockItems = dockItemsRaw;
@@ -79,7 +79,7 @@ export default function DesktopDock({ onOpenWindow }: { onOpenWindow?: (id: stri
                   <img
                     src={(item as DockItemWithImg).img}
                     alt={item.name}
-                    className="w-full h-full object-cover"
+                    className={`w-full h-full object-cover ${(item as DockItemWithImg).imgClass || ""}`}
                   />
                 ) : (
                   (() => {
