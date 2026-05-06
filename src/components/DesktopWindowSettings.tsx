@@ -370,11 +370,24 @@ export default function DesktopWindowSettings({
                       <Play className="w-5 h-5 fill-white" />
                       Restart Guided Tour
                     </button>
+
+                    <button
+                      onClick={() => {
+                        sessionStorage.removeItem("eos_booted");
+                        onClose();
+                        toast.success("Boot animation will replay on next visit to Home.");
+                      }}
+                      className="w-full p-5 rounded-2xl bg-white border border-purple-200 text-purple-700 font-black flex items-center justify-center gap-3 hover:bg-purple-50 active:scale-95 transition-all"
+                    >
+                      <span className="text-base">🌑</span>
+                      Replay EOS Boot Animation
+                    </button>
                   </div>
                 </div>
               )}
             </motion.div>
           </AnimatePresence>
+
         </div>
       </div>
     </DesktopWindow>

@@ -7,6 +7,19 @@ import { Capacitor } from "@capacitor/core";
 import { lazy, Suspense, useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 
+// ── Boot version stamp — bump this to force re-play of the animation ──────────
+const EOS_BOOT_VERSION = "v3.7";
+(function clearStaleBootFlag() {
+  try {
+    const stored = sessionStorage.getItem("eos_boot_version");
+    if (stored !== EOS_BOOT_VERSION) {
+      sessionStorage.removeItem("eos_booted");
+      sessionStorage.setItem("eos_boot_version", EOS_BOOT_VERSION);
+    }
+  } catch { /* storage unavailable */ }
+})();
+
+
 // Lazy-loaded pages for performance
 const Index = lazy(() => import("./pages/Index"));
 const Home = lazy(() => import("./pages/Home"));
@@ -78,7 +91,7 @@ import StickyStripBanner from "./components/StickyStripBanner";
 
 const ControlCenter = lazy(() => import("./components/ControlCenter"));
 const TutorialSystem = lazy(() => import("./components/TutorialSystem"));
-const FloatingLocationWidget = lazy(() => import("./components/FloatingLocationWidget"));
+
 
 
 // Lazy-load non-critical-path components
@@ -188,6 +201,7 @@ function AppLayout() {
   if (gate === "mobile") return <MobileBlockScreen />;
 
   if (
+    !authLoading &&
     gate &&
     !isAdminPath &&
     !isLogin &&
@@ -206,7 +220,6 @@ function AppLayout() {
       <Suspense fallback={null}>
         <ControlCenter />
         <TutorialSystem />
-        <FloatingLocationWidget />
       </Suspense>
       {!isLanding && !isLogin && !isAdminPath && !isDownload && !isDriverPage && (
         <>

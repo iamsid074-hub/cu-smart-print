@@ -4,6 +4,8 @@ import { MapPin, Check, ChevronRight, Building2, DoorOpen, X, Loader2, CheckCirc
 import { useUserLocation } from "@/hooks/useUserLocation";
 import { toast } from "sonner";
 
+import { useLocation } from "react-router-dom";
+
 const HOSTEL_GROUPS = [
   { 
     name: "North Campus Series", 
@@ -19,6 +21,7 @@ const HOSTEL_GROUPS = [
 
 export default function FloatingLocationWidget() {
   const { data, saveLocation, isLoaded } = useUserLocation();
+  const location = useLocation();
   const [hostel, setHostel] = useState("");
   const [room, setRoom] = useState("");
   const [isExpanded, setIsExpanded] = useState(false);
@@ -46,7 +49,7 @@ export default function FloatingLocationWidget() {
     }, 800);
   };
 
-  if (!isLoaded) return null;
+  if (!isLoaded || location.pathname !== "/home") return null;
 
   return (
     <>

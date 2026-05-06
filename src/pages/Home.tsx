@@ -10,6 +10,7 @@ const DesktopWindowCombos = lazy(() => import("@/components/DesktopWindowCombos"
 const DesktopWindowSettings = lazy(() => import("@/components/DesktopWindowSettings"));
 const DesktopWindowCart = lazy(() => import("@/components/DesktopWindowCart"));
 const DesktopWindowProfile = lazy(() => import("@/components/DesktopWindowProfile"));
+const FloatingLocationWidget = lazy(() => import("@/components/FloatingLocationWidget"));
 import {
   Search,
   Loader2,
@@ -87,154 +88,117 @@ function HeroSpotlight() {
 
 type WindowId = "Shops" | "Vending" | "Combos" | "Games" | "Cart" | "Profile" | "Settings" | null;
 
+const EOSBootAnimation = lazy(() => import("@/components/EOSBootAnimation"));
+
 export default function Home() {
   const navigate = useNavigate();
-  // Keep track of which windows are mounted (active) and which are just hidden (minimized)
   const [activeWindows, setActiveWindows] = useState<WindowId[]>([]);
   const [minimizedWindows, setMinimizedWindows] = useState<WindowId[]>([]);
   const [maximizedWindows, setMaximizedWindows] = useState<WindowId[]>([]);
 
-  const handleOpenWindow = (id: string) => {
-    // These navigate directly, no window needed
-    const navItems: Record<string, string> = {
-      Games: "/games",
-    };
-    if (navItems[id]) {
-      navigate(navItems[id]);
-      return;
-    }
+  // Boot animation: show once per browser tab session, desktop only
+  const [showBoot, setShowBoot] = useState(() => {
+    if (typeof window === "undefined") return false;
+    if (window.innerWidth <= 768) return false;
+    // Check flag set in this exact session
+    return !sessionStorage.getItem("eos_booted");
+  });
+  const [uiReady, setUiReady] = useState(() => {
+    if (typeof window === "undefined") return true;
+    return !!sessionStorage.getItem("eos_booted");
+  });
 
+  const handleBootComplete = () => {
+    sessionStorage.setItem("eos_booted", "1");
+    setShowBoot(false);
+    setUiReady(true);
+    // Signal tutorial system to show prompt after UI settles
+    setTimeout(() => window.dispatchEvent(new CustomEvent("eos-boot-complete")), 900);
+  };
+
+  const handleOpenWindow = (id: string) => {
+    const navItems: Record<string, string> = { Games: "/games" };
+    if (navItems[id]) { navigate(navItems[id]); return; }
     const winId = id as WindowId;
-    
-    // If it's not mounted at all, add it to active
     if (!activeWindows.includes(winId)) {
       setActiveWindows((prev) => [...prev, winId]);
     } else {
-      // If it is active but minimized, restore it
       if (minimizedWindows.includes(winId)) {
         setMinimizedWindows((prev) => prev.filter((w) => w !== winId));
       } else {
-        // Already active and not minimized, we could bring it to front here by re-ordering
         setActiveWindows((prev) => [...prev.filter(w => w !== winId), winId]);
       }
     }
   };
 
-  const handleCloseWindow = (id: WindowId) => {
-    setActiveWindows((prev) => prev.filter((w) => w !== id));
-    setMinimizedWindows((prev) => prev.filter((w) => w !== id));
-    setMaximizedWindows((prev) => prev.filter((w) => w !== id));
-  };
-
-  const handleMinimizeWindow = (id: WindowId) => {
-    if (!minimizedWindows.includes(id)) {
-      setMinimizedWindows((prev) => [...prev, id]);
-    }
-  };
-
-  const handleMaximizeWindow = (id: WindowId) => {
-    setMaximizedWindows((prev) => 
-      prev.includes(id) ? prev.filter((w) => w !== id) : [...prev, id]
-    );
-  };
+  const handleCloseWindow    = (id: WindowId) => { setActiveWindows(p => p.filter(w => w !== id)); setMinimizedWindows(p => p.filter(w => w !== id)); setMaximizedWindows(p => p.filter(w => w !== id)); };
+  const handleMinimizeWindow = (id: WindowId) => { if (!minimizedWindows.includes(id)) setMinimizedWindows(p => [...p, id]); };
+  const handleMaximizeWindow = (id: WindowId) => { setMaximizedWindows(p => p.includes(id) ? p.filter(w => w !== id) : [...p, id]); };
 
   return (
     <div className="min-h-screen bg-transparent text-white relative overflow-hidden">
-      {/* Background is now handled globally in index.css for consistency */}
-      
-      {/* EOS v3 Desktop UI Elements */}
+
+      {/* ─── Cinematic Boot Animation (desktop only, once per session) ─── */}
+      <AnimatePresence>
+        {showBoot && (
+          <Suspense fallback={null}>
+            <EOSBootAnimation onComplete={handleBootComplete} />
+          </Suspense>
+        )}
+      </AnimatePresence>
+
+      {/* ─── EOS v3 Desktop UI (hidden on mobile) ─────────────────────── */}
       <div className="hidden md:block relative z-10">
-        <DesktopMenuBar />
-        <DesktopDock onOpenWindow={handleOpenWindow} />
+        {/* Menu bar slides in from top */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={uiReady ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 }}
+          transition={{ duration: 0.55, delay: 0.05, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <DesktopMenuBar />
+        </motion.div>
+
+        {/* Dock springs up from bottom */}
+        <motion.div
+          initial={{ opacity: 0, y: 50, scale: 0.88 }}
+          animate={uiReady ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 50, scale: 0.88 }}
+          transition={{ duration: 0.65, delay: 0.22, type: "spring", stiffness: 240, damping: 22 }}
+        >
+          <DesktopDock onOpenWindow={handleOpenWindow} />
+        </motion.div>
+
+        {/* Desktop windows */}
         <Suspense fallback={null}>
           <AnimatePresence>
             {activeWindows.map((winId) => {
               const isMinimized = minimizedWindows.includes(winId);
               const isMaximized = maximizedWindows.includes(winId);
-
-              // Render the appropriate component
-              if (winId === "Shops") {
-                return (
-                  <DesktopWindowShops
-                    key="Shops"
-                    onClose={() => handleCloseWindow("Shops")}
-                    onMinimize={() => handleMinimizeWindow("Shops")}
-                    onMaximize={() => handleMaximizeWindow("Shops")}
-                    isMinimized={isMinimized}
-                    isMaximized={isMaximized}
-                  />
-                );
-              }
-              if (winId === "Vending") {
-                return (
-                  <DesktopWindowVending
-                    key="Vending"
-                    onClose={() => handleCloseWindow("Vending")}
-                    onMinimize={() => handleMinimizeWindow("Vending")}
-                    onMaximize={() => handleMaximizeWindow("Vending")}
-                    isMinimized={isMinimized}
-                    isMaximized={isMaximized}
-                  />
-                );
-              }
-              if (winId === "Combos") {
-                return (
-                  <DesktopWindowCombos
-                    key="Combos"
-                    onClose={() => handleCloseWindow("Combos")}
-                    onMinimize={() => handleMinimizeWindow("Combos")}
-                    onMaximize={() => handleMaximizeWindow("Combos")}
-                    isMinimized={isMinimized}
-                    isMaximized={isMaximized}
-                  />
-                );
-              }
-              if (winId === "Settings") {
-                return (
-                  <DesktopWindowSettings
-                    key="Settings"
-                    onClose={() => handleCloseWindow("Settings")}
-                    onMinimize={() => handleMinimizeWindow("Settings")}
-                    onMaximize={() => handleMaximizeWindow("Settings")}
-                    isMinimized={isMinimized}
-                    isMaximized={isMaximized}
-                  />
-                );
-              }
-              if (winId === "Cart") {
-                return (
-                  <DesktopWindowCart
-                    key="Cart"
-                    onClose={() => handleCloseWindow("Cart")}
-                    onMinimize={() => handleMinimizeWindow("Cart")}
-                    onMaximize={() => handleMaximizeWindow("Cart")}
-                    isMinimized={isMinimized}
-                    isMaximized={isMaximized}
-                  />
-                );
-              }
-              if (winId === "Profile") {
-                return (
-                  <DesktopWindowProfile
-                    key="Profile"
-                    onClose={() => handleCloseWindow("Profile")}
-                    onMinimize={() => handleMinimizeWindow("Profile")}
-                    onMaximize={() => handleMaximizeWindow("Profile")}
-                    isMinimized={isMinimized}
-                    isMaximized={isMaximized}
-                  />
-                );
-              }
+              if (winId === "Shops")    return <DesktopWindowShops    key="Shops"    onClose={() => handleCloseWindow("Shops")}    onMinimize={() => handleMinimizeWindow("Shops")}    onMaximize={() => handleMaximizeWindow("Shops")}    isMinimized={isMinimized} isMaximized={isMaximized} />;
+              if (winId === "Vending")  return <DesktopWindowVending  key="Vending"  onClose={() => handleCloseWindow("Vending")}  onMinimize={() => handleMinimizeWindow("Vending")}  onMaximize={() => handleMaximizeWindow("Vending")}  isMinimized={isMinimized} isMaximized={isMaximized} />;
+              if (winId === "Combos")   return <DesktopWindowCombos   key="Combos"   onClose={() => handleCloseWindow("Combos")}   onMinimize={() => handleMinimizeWindow("Combos")}   onMaximize={() => handleMaximizeWindow("Combos")}   isMinimized={isMinimized} isMaximized={isMaximized} />;
+              if (winId === "Settings") return <DesktopWindowSettings key="Settings" onClose={() => handleCloseWindow("Settings")} onMinimize={() => handleMinimizeWindow("Settings")} onMaximize={() => handleMaximizeWindow("Settings")} isMinimized={isMinimized} isMaximized={isMaximized} />;
+              if (winId === "Cart")     return <DesktopWindowCart     key="Cart"     onClose={() => handleCloseWindow("Cart")}     onMinimize={() => handleMinimizeWindow("Cart")}     onMaximize={() => handleMaximizeWindow("Cart")}     isMinimized={isMinimized} isMaximized={isMaximized} />;
+              if (winId === "Profile")  return <DesktopWindowProfile  key="Profile"  onClose={() => handleCloseWindow("Profile")}  onMinimize={() => handleMinimizeWindow("Profile")}  onMaximize={() => handleMaximizeWindow("Profile")}  isMinimized={isMinimized} isMaximized={isMaximized} />;
               return null;
             })}
           </AnimatePresence>
+
+          {/* Floating Location Widget (Desktop only, hidden when apps are open) */}
+          <AnimatePresence>
+            {activeWindows.length === 0 && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.3 }}
+              >
+                <FloatingLocationWidget />
+              </motion.div>
+            )}
+          </AnimatePresence>
         </Suspense>
       </div>
-
-      {/* 
-        Home page cleared for EOS v3 redesign. 
-        Only the wallpaper and global components (like Dynamic Island rendered in App.tsx) will show.
-      */}
     </div>
   );
 }
+

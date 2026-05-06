@@ -64,10 +64,23 @@ export default function TutorialSystem() {
     setIsEnabled(!disabled);
 
     if (!hasSeen && !disabled) {
-      const timer = setTimeout(() => {
-        setShowPrompt(true);
-      }, 4000);
-      return () => clearTimeout(timer);
+      // Listen for the boot animation to finish before showing tutorial
+      const onBootComplete = () => {
+        setTimeout(() => setShowPrompt(true), 600);
+      };
+      window.addEventListener("eos-boot-complete", onBootComplete);
+
+      // Fallback: if boot animation was already played (page revisit), show after delay
+      const alreadyBooted = sessionStorage.getItem("eos_booted");
+      let fallbackTimer: ReturnType<typeof setTimeout> | null = null;
+      if (alreadyBooted) {
+        fallbackTimer = setTimeout(() => setShowPrompt(true), 2500);
+      }
+
+      return () => {
+        window.removeEventListener("eos-boot-complete", onBootComplete);
+        if (fallbackTimer) clearTimeout(fallbackTimer);
+      };
     }
   }, []);
 
