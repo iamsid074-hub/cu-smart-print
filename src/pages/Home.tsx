@@ -139,33 +139,8 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white relative overflow-hidden">
-      {/* Optimized Background Wallpaper */}
-      <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
-        <picture>
-          {/* Desktop Wallpaper - Exact user-provided image */}
-          <source 
-            srcSet="/desktop-wallpaper-purple.png" 
-            type="image/png" 
-            media="(min-width: 768px)" 
-          />
-          
-          {/* Mobile Wallpaper - Exact user-provided vertical image integrated */}
-          <source 
-            srcSet="/mobile-wallpaper-purple.png" 
-            type="image/png" 
-          />
-          
-          {/* Fallback */}
-          <img 
-            src="/desktop-wallpaper-purple.png" 
-            alt="Wallpaper" 
-            className="w-full h-full object-cover" 
-          />
-        </picture>
-        {/* Subtle overlay for depth */}
-        <div className="absolute inset-0 bg-black/10" />
-      </div>
+    <div className="min-h-screen bg-transparent text-white relative overflow-hidden">
+      {/* Background is now handled globally in index.css for consistency */}
       
       {/* EOS v3 Desktop UI Elements */}
       <div className="hidden md:block relative z-10">

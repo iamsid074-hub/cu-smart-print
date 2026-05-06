@@ -108,12 +108,7 @@ export default function Index() {
   }, []);
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden" style={{ 
-      background: window.innerWidth >= 1024 
-        ? "url('/desktop-wallpaper-purple.png') no-repeat center center fixed" 
-        : "url('/mobile-wallpaper-purple.png') no-repeat center center fixed",
-      backgroundSize: "cover"
-    }}>
+    <div className="relative min-h-screen overflow-x-hidden bg-transparent">
       {/* Inject CSS keyframes */}
       <style>{orbStyles}</style>
       {/* Additional keyframe for pulse ring */}

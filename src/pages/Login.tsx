@@ -105,12 +105,7 @@ export default function Login() {
   });
 
   return (
-    <div className="min-h-screen relative overflow-hidden flex items-center justify-center p-4" style={{ 
-      background: window.innerWidth >= 1024 
-        ? "url('/desktop-wallpaper-purple.png') no-repeat center center fixed" 
-        : "url('/mobile-wallpaper-purple.png') no-repeat center center fixed",
-      backgroundSize: "cover"
-    }}>
+    <div className="min-h-screen relative overflow-hidden flex items-center justify-center p-4 bg-transparent">
       <style>{orbCSS}</style>
 
       {/* CSS Ambient orbs — no JS animation overhead */}
