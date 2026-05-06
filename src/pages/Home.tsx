@@ -143,19 +143,14 @@ export default function Home() {
       {/* Optimized Background Wallpaper */}
       <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
         <picture>
-          {/* Desktop Wallpaper */}
+          {/* Desktop Wallpaper - Updated to Purple Cosmic */}
           <source 
-            srcSet="/desktop-wallpaper-red-new.avif" 
-            type="image/avif" 
-            media="(min-width: 768px)" 
-          />
-          <source 
-            srcSet="/desktop-wallpaper-red-new.webp" 
+            srcSet="https://images.unsplash.com/photo-1462331940025-496dfbfc7564?q=80&w=2022&auto=format&fit=crop" 
             type="image/webp" 
             media="(min-width: 768px)" 
           />
           
-          {/* Mobile Wallpaper */}
+          {/* Mobile Wallpaper - Remains Red as requested */}
           <source 
             srcSet="/mobile-wallpaper-red-new.avif" 
             type="image/avif" 
@@ -167,7 +162,7 @@ export default function Home() {
           
           {/* Fallback */}
           <img 
-            src="/desktop-wallpaper-red-new.png" 
+            src="https://images.unsplash.com/photo-1462331940025-496dfbfc7564?q=80&w=2022&auto=format&fit=crop" 
             alt="" 
             className="w-full h-full object-cover" 
           />

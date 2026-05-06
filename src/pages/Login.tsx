@@ -105,7 +105,12 @@ export default function Login() {
   });
 
   return (
-    <div className="min-h-screen relative overflow-hidden flex items-center justify-center p-4" style={{ background: "linear-gradient(135deg, #f8faff 0%, #eef2ff 50%, #fdf4ff 100%)" }}>
+    <div className="min-h-screen relative overflow-hidden flex items-center justify-center p-4" style={{ 
+      background: window.innerWidth >= 1024 
+        ? "url('https://images.unsplash.com/photo-1462331940025-496dfbfc7564?q=80&w=2022&auto=format&fit=crop') no-repeat center center fixed" 
+        : "linear-gradient(135deg, #f8faff 0%, #eef2ff 50%, #fdf4ff 100%)",
+      backgroundSize: "cover"
+    }}>
       <style>{orbCSS}</style>
 
       {/* CSS Ambient orbs — no JS animation overhead */}
