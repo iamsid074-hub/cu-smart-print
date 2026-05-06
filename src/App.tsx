@@ -107,32 +107,7 @@ const queryClient = new QueryClient({
   },
 });
 
-const BrandedLoading = () => {
-  return (
-    <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[#000000] overflow-hidden">
-      <div className="flex flex-col items-center justify-center gap-[36px] p-[48px_32px]">
-        <div className="flex items-center justify-center leading-none">
-          <span className="cb-letter-c">C</span>
-          <span className="cb-letter-b">B</span>
-        </div>
-
-        <div className="flex flex-col items-center gap-[12px] w-[140px]">
-          <div className="w-full h-[2px] bg-white/5 rounded-full overflow-hidden">
-            <div className="h-full bg-[#7F77DD] rounded-full w-0 cb-progress-fill"></div>
-          </div>
-          <div className="flex items-center gap-[5px]">
-            <span className="font-['Cormorant_Garamond'] text-[13px] text-[#4e4880] tracking-[3px] uppercase">
-              loading
-            </span>
-            <span className="cb-dot cb-dot-1">.</span>
-            <span className="cb-dot cb-dot-2">.</span>
-            <span className="cb-dot cb-dot-3">.</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
+const BrandedLoading = () => null;
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, profile, loading } = useAuth();
@@ -173,19 +148,13 @@ function AppLayout() {
   const { user, isAdmin, loading: authLoading } = useAuth();
   const { gate, loaded: gateLoaded } = useSiteGate();
   
-  // Track if we've successfully finished the initial "boot" sequence
-  const [initialBootFinished, setInitialBootFinished] = useState(false);
+  // Initial boot is always finished for instant entry
+  const [initialBootFinished, setInitialBootFinished] = useState(true);
 
   useEffect(() => {
     if (!authLoading && gateLoaded) {
-      // Small delay to ensure smooth transition out of splash
-      const timer = setTimeout(() => {
-        setInitialBootFinished(true);
-        (window as any).hasBooted = true;
-        // Preload other sections when browser is idle
-        preloadCoreRoutes();
-      }, 200);
-      return () => clearTimeout(timer);
+      (window as any).hasBooted = true;
+      preloadCoreRoutes();
     }
   }, [authLoading, gateLoaded]);
 
@@ -193,14 +162,11 @@ function AppLayout() {
     posthog.capture("$pageview");
   }, [location]);
 
-  // ── Admin Push Notifications (app-wide, not just Admin page) ──────────────
-  // This initializes once for admin users and persists across ALL page navigations.
-  // It listens for new orders via real-time + polling and fires native notifications.
+  // Admin Push Notifications initialization remains the same...
   useEffect(() => {
     if (isAdmin && user && !authLoading) {
       AdminPushService.initialize(user.id);
     }
-    // Only stop on logout (user becomes null), NOT on page navigation
     if (!user && !authLoading) {
       AdminPushService.stopListening();
     }
@@ -214,10 +180,7 @@ function AppLayout() {
   const isDriverPage = location.pathname === "/driver";
   const isSections = location.pathname.startsWith("/sections");
 
-  // Show branded loading ONLY during initial boot
-  if (!initialBootFinished && !isLanding && !isLogin && !isAdminPath && !isDownload && !isResetPassword) {
-    return <BrandedLoading />;
-  }
+  // Removed BrandedLoading return for instant entry
 
   // Show gate screens for non-admin, non-login, non-landing pages
   if (
