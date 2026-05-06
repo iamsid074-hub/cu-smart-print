@@ -143,10 +143,10 @@ export default function Home() {
       {/* Optimized Background Wallpaper */}
       <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
         <picture>
-          {/* Desktop Wallpaper - Updated to Purple Cosmic */}
+          {/* Desktop Wallpaper - Exact user-provided image integrated */}
           <source 
-            srcSet="https://images.unsplash.com/photo-1462331940025-496dfbfc7564?q=80&w=2022&auto=format&fit=crop" 
-            type="image/webp" 
+            srcSet="/desktop-wallpaper-purple.png" 
+            type="image/png" 
             media="(min-width: 768px)" 
           />
           
@@ -162,8 +162,8 @@ export default function Home() {
           
           {/* Fallback */}
           <img 
-            src="https://images.unsplash.com/photo-1462331940025-496dfbfc7564?q=80&w=2022&auto=format&fit=crop" 
-            alt="" 
+            src="/desktop-wallpaper-purple.png" 
+            alt="Desktop Wallpaper" 
             className="w-full h-full object-cover" 
           />
         </picture>
