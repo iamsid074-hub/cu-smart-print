@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MapPin, Check, ChevronRight, Building2, DoorOpen } from "lucide-react";
+import { MapPin, Check, ChevronRight, Building2, DoorOpen, X } from "lucide-react";
 import { useUserLocation } from "@/hooks/useUserLocation";
 import { toast } from "sonner";
 
@@ -46,100 +46,101 @@ export default function FloatingLocationWidget() {
   if (!isLoaded) return null;
 
   return (
-    <div className="fixed left-8 top-1/2 -translate-y-1/2 z-[100] hidden xl:block">
-      <motion.div
-        ref={widgetRef}
-        layout
-        initial={{ x: -120, opacity: 0 }}
-        animate={{ x: 0, opacity: 1 }}
-        className="rounded-[2.5rem] shadow-[0_32px_64px_rgba(0,0,0,0.15)] flex flex-col items-center overflow-hidden"
-        style={{ 
-          width: isExpanded ? 280 : 72,
-          background: "rgba(255, 255, 255, 0.35)",
-          backdropFilter: "blur(40px) saturate(190%)",
-          WebkitBackdropFilter: "blur(40px) saturate(190%)",
-          border: "1px solid rgba(255, 255, 255, 0.45)",
-          boxShadow: "0 8px 40px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.5)",
-          padding: "8px"
-        }}
-      >
-        <button
-          onClick={() => setIsExpanded(!isExpanded)}
-          className={`w-14 h-14 rounded-[1.4rem] flex items-center justify-center transition-all duration-500 relative group overflow-hidden ${
-            isExpanded ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30' : 'bg-white/30 text-gray-800 hover:bg-white/50'
-          }`}
-        >
-          <motion.div
-            animate={{ scale: isExpanded ? 1.1 : 1, rotate: isExpanded ? 360 : 0 }}
-            transition={{ type: "spring", stiffness: 200 }}
+    <>
+      {/* Desktop Shortcut Style (Like Windows) */}
+      <div className="fixed left-8 top-12 z-[100] hidden xl:block">
+        <div ref={widgetRef} className="relative flex flex-col items-center">
+          <button
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="group relative flex flex-col items-center gap-1.5 p-2 rounded-lg hover:bg-white/10 transition-colors w-24 active:scale-95"
           >
-            <MapPin className="w-7 h-7" />
-          </motion.div>
-          {!isExpanded && (
-             <div className="absolute inset-0 bg-gradient-to-tr from-blue-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-          )}
-        </button>
+            {/* The "Icon" part */}
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg shadow-blue-500/30 group-hover:shadow-blue-500/50 transition-all">
+              <MapPin className="w-9 h-9 text-white drop-shadow-md" />
+              
+              {/* Shortcut Arrow (Windows style) */}
+              <div className="absolute bottom-1 left-3 bg-white w-4 h-4 rounded-sm flex items-center justify-center border border-gray-300">
+                 <div className="w-2.5 h-2.5 border-r-[1.5px] border-b-[1.5px] border-blue-600 rotate-[-135deg] translate-x-[1px] translate-y-[1px]" />
+              </div>
+            </div>
 
-        <AnimatePresence>
-          {isExpanded && (
-            <motion.div
-              initial={{ opacity: 0, height: 0, y: 10 }}
-              animate={{ opacity: 1, height: "auto", y: 0 }}
-              exit={{ opacity: 0, height: 0, y: 10 }}
-              className="w-full px-5 py-6 space-y-6 overflow-hidden"
+            {/* The "Label" part */}
+            <span 
+              className="text-[11px] font-bold text-white text-center leading-tight drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)] px-1"
+              style={{ textShadow: "0 1px 2px rgba(0,0,0,0.9)" }}
             >
-              <div className="text-center">
-                <h3 className="text-xl font-black text-gray-900 tracking-tight mb-1">Set Delivery</h3>
-                <p className="text-[11px] font-bold text-gray-500/60 uppercase tracking-widest">Hostel & Room</p>
-              </div>
+              Set Delivery Location
+            </span>
+          </button>
 
-              <div className="space-y-4">
-                <div className="relative">
-                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
-                    <Building2 className="w-4 h-4" />
-                  </div>
-                  <input
-                    type="text"
-                    value={hostel}
-                    onChange={(e) => setHostel(e.target.value)}
-                    placeholder="Hostel (e.g. NC4)"
-                    className="w-full h-12 bg-white/30 border border-white/50 rounded-2xl pl-11 pr-4 text-sm font-bold text-gray-900 focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:bg-white/60 transition-all placeholder:text-gray-400"
-                  />
-                </div>
-
-                <div className="relative">
-                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
-                    <DoorOpen className="w-4 h-4" />
-                  </div>
-                  <input
-                    type="text"
-                    value={room}
-                    onChange={(e) => setRoom(e.target.value)}
-                    placeholder="Room Number"
-                    className="w-full h-12 bg-white/30 border border-white/50 rounded-2xl pl-11 pr-4 text-sm font-bold text-gray-900 focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:bg-white/60 transition-all placeholder:text-gray-400"
-                  />
-                </div>
-              </div>
-
-              <button
-                onClick={handleSave}
-                className="w-full h-12 bg-blue-600 text-white rounded-2xl font-black text-[15px] flex items-center justify-center gap-3 hover:bg-blue-700 active:scale-95 transition-all shadow-lg shadow-blue-600/20 group"
+          {/* Expanded Widget (Floating near the shortcut) */}
+          <AnimatePresence>
+            {isExpanded && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9, x: 20 }}
+                animate={{ opacity: 1, scale: 1, x: 0 }}
+                exit={{ opacity: 0, scale: 0.9, x: 20 }}
+                className="absolute left-full ml-6 top-0 w-72 rounded-[2.5rem] shadow-[0_32px_64px_rgba(0,0,0,0.3)] overflow-hidden border border-white/40"
+                style={{ 
+                  background: "rgba(255, 255, 255, 0.4)",
+                  backdropFilter: "blur(40px) saturate(190%)",
+                  WebkitBackdropFilter: "blur(40px) saturate(190%)",
+                  boxShadow: "0 8px 40px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.5)",
+                }}
               >
-                <span>Confirm</span>
-                <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </button>
-            </motion.div>
-          )}
-        </AnimatePresence>
+                <div className="p-2 flex justify-end">
+                  <button onClick={() => setIsExpanded(false)} className="p-2 hover:bg-white/20 rounded-full text-gray-700">
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
 
-        {!isExpanded && (
-          <div className="py-4 flex flex-col gap-1.5 opacity-20 group-hover:opacity-40 transition-opacity">
-            <div className="w-1.5 h-1.5 rounded-full bg-gray-900" />
-            <div className="w-1.5 h-1.5 rounded-full bg-gray-900" />
-            <div className="w-1.5 h-1.5 rounded-full bg-gray-900" />
-          </div>
-        )}
-      </motion.div>
-    </div>
+                <div className="px-6 pb-8 space-y-6">
+                  <div className="text-center">
+                    <h3 className="text-2xl font-black text-gray-900 tracking-tight mb-1">Set Delivery</h3>
+                    <p className="text-[11px] font-bold text-gray-500/60 uppercase tracking-widest">Where are you today?</p>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div className="relative">
+                      <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+                        <Building2 className="w-4 h-4" />
+                      </div>
+                      <input
+                        type="text"
+                        value={hostel}
+                        onChange={(e) => setHostel(e.target.value)}
+                        placeholder="Hostel Block"
+                        className="w-full h-12 bg-white/40 border border-white/50 rounded-2xl pl-11 pr-4 text-sm font-bold text-gray-900 focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:bg-white/60 transition-all placeholder:text-gray-400"
+                      />
+                    </div>
+
+                    <div className="relative">
+                      <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+                        <DoorOpen className="w-4 h-4" />
+                      </div>
+                      <input
+                        type="text"
+                        value={room}
+                        onChange={(e) => setRoom(e.target.value)}
+                        placeholder="Room Number"
+                        className="w-full h-12 bg-white/40 border border-white/50 rounded-2xl pl-11 pr-4 text-sm font-bold text-gray-900 focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:bg-white/60 transition-all placeholder:text-gray-400"
+                      />
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={handleSave}
+                    className="w-full h-12 bg-blue-600 text-white rounded-2xl font-black text-[15px] flex items-center justify-center gap-3 hover:bg-blue-700 active:scale-95 transition-all shadow-lg shadow-blue-600/20 group"
+                  >
+                    <span>Confirm</span>
+                    <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </div>
+    </>
   );
 }
