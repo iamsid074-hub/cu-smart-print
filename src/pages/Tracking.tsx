@@ -359,14 +359,14 @@ export default function Tracking() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 pt-20 flex items-center justify-center">
+      <div className="min-h-screen bg-transparent pt-20 flex items-center justify-center">
         <Loader2 className="w-10 h-10 animate-spin text-brand-accent" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 pb-32 px-4 overflow-x-hidden">
+    <div className="min-h-screen bg-transparent pb-32 px-4 overflow-x-hidden">
       <div className="h-28" /> {/* Safe area for Dynamic Island */}
       <div className="max-w-2xl mx-auto">
         {/* Header removed for Dynamic Island */}

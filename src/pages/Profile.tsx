@@ -327,7 +327,7 @@ export default function Profile() {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-[#000000] pb-32 text-white">
+    <div className="min-h-screen bg-transparent pb-32 text-white">
       {/* ── IMMERSIVE HEADER ── */}
       <div className="relative h-48 sm:h-64 bg-[#1D1D1F] overflow-hidden">
         {/* Animated Background Gradient */}

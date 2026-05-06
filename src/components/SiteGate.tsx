@@ -66,7 +66,7 @@ function ClosedScreen() {
     .padStart(2, "0")} ${time.hours >= 12 ? "PM" : "AM"}`;
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 bg-slate-50">
+    <div className="min-h-screen flex items-center justify-center p-6 bg-transparent">
       <motion.div
         initial={{ opacity: 0, scale: 0.9, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -203,7 +203,7 @@ function ClosedScreen() {
 // ─── Maintenance Screen ─────────────────────────────────────────────────────────
 function MaintenanceScreen() {
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 bg-[#090314] relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center p-6 bg-transparent relative overflow-hidden">
       {/* Deep purple atmospheric glows */}
       <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] rounded-full bg-purple-700/30 blur-[120px] mix-blend-screen pointer-events-none" />
       <div className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] rounded-full bg-violet-700/20 blur-[120px] mix-blend-screen pointer-events-none" />

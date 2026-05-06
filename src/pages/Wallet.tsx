@@ -573,7 +573,7 @@ export default function Wallet() {
   const handleForgotLockSubmit = () => handleSetPassSubmit();
 
   return (
-    <div className="relative min-h-screen pb-32 overflow-hidden bg-[#000] text-white">
+    <div className="relative min-h-screen pb-32 overflow-hidden bg-transparent text-white">
       {/* ── Lock Overlays ── */}
       <AnimatePresence>
         {/* SETUP: First time - Enter then Confirm passcode */}
@@ -780,13 +780,6 @@ export default function Wallet() {
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* Background ambience (optimized for 60fps mobile) */}
-      <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
-        <div className="absolute top-0 right-0 w-[80vw] h-[80vw] max-w-[600px] max-h-[600px] rounded-full translate-x-1/4 -translate-y-1/4" style={{ background: "radial-gradient(circle, rgba(0,122,255,0.12) 0%, transparent 70%)" }} />
-        <div className="absolute top-[20%] left-0 w-[100vw] h-[100vw] max-w-[800px] max-h-[800px] rounded-full -translate-x-1/4" style={{ background: "radial-gradient(circle, rgba(255,149,0,0.06) 0%, transparent 70%)" }} />
-        <div className="absolute bottom-0 w-full h-[30vh] bg-gradient-to-t from-black to-transparent opacity-80" />
-      </div>
 
       <div className="relative z-10 container max-w-lg mx-auto px-4 pt-24">
         {/* Header */}

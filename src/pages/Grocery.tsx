@@ -48,7 +48,7 @@ export default function Grocery() {
   };
 
   return (
-    <div className="min-h-screen bg-[#000000] pb-32 overflow-x-hidden text-white">
+    <div className="min-h-screen bg-transparent pb-32 overflow-x-hidden text-white">
       {/* ── Sticky Premium Header ── */}
       <div className="sticky top-0 z-50 bg-black/40 backdrop-blur-3xl border-b border-white/5 pt-20 pb-6 px-4">
         <div className="max-w-xl mx-auto">

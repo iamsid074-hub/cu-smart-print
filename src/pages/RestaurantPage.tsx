@@ -112,7 +112,7 @@ export default function RestaurantPage() {
 
   if (!shop) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4 bg-[#0d0d0f]">
+      <div className="min-h-screen flex items-center justify-center p-4 bg-transparent">
         <div className="text-center">
           <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-6 border border-white/10">
             <X className="w-10 h-10 text-zinc-500" />
@@ -131,11 +131,11 @@ export default function RestaurantPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0d0d0f] text-white pb-32 font-sans overflow-x-hidden">
+    <div className="min-h-screen bg-transparent text-white pb-32 font-sans overflow-x-hidden">
 
 
       {/* ─── STICKY HEADER ─── */}
-      <div className="sticky top-0 z-50 bg-[#0d0d0f]/80 backdrop-blur-xl border-b border-white/5 flex items-center justify-between px-4 py-4">
+      <div className="sticky top-0 z-50 bg-[#0d0d0f]/60 backdrop-blur-xl border-b border-white/5 flex items-center justify-between px-4 py-4">
         <motion.button 
           whileTap={{ scale: 0.9 }}
           onClick={() => navigate(-1)} 

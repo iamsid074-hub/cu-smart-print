@@ -39,74 +39,9 @@ const features = [
 ];
 
 // ─── EOS v3 Loader ─────────────────────────────────────────────────────────────
-function EOSLoader() {
-  return (
-    <div
-      className="fixed inset-0 z-[999] flex flex-col items-center justify-center overflow-hidden"
-      style={{ background: "linear-gradient(135deg, #f8faff 0%, #eef2ff 50%, #fdf4ff 100%)", willChange: "opacity" }}
-    >
-      {/* CSS Orbs — no JS animation */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div style={{ position: "absolute", width: 400, height: 400, top: "-10%", left: "-5%", borderRadius: "50%", background: "radial-gradient(circle at 40% 40%, rgba(124,58,237,0.22), transparent 70%)", filter: "blur(60px)", animation: "orbFloat1 8s ease-in-out infinite", willChange: "transform, opacity" }} />
-        <div style={{ position: "absolute", width: 350, height: 350, top: "50%", left: "60%", borderRadius: "50%", background: "radial-gradient(circle at 40% 40%, rgba(255,107,53,0.18), transparent 70%)", filter: "blur(60px)", animation: "orbFloat2 9.5s ease-in-out infinite", willChange: "transform, opacity" }} />
-      </div>
-
-      {/* Logo */}
-      <motion.div
-        initial={{ scale: 0.6, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ type: "spring", damping: 20, stiffness: 250 }}
-        className="relative mb-8"
-        style={{ willChange: "transform, opacity" }}
-      >
-        <div className="w-28 h-28 rounded-[2.5rem] overflow-hidden" style={{ boxShadow: "0 30px 80px rgba(124,58,237,0.22), 0 0 0 1px rgba(255,255,255,0.8)" }}>
-          <img src="/logo.webp" alt="CU Bazzar" className="w-full h-full object-cover" />
-        </div>
-        {/* CSS pulse ring */}
-        <div style={{ position: "absolute", inset: 0, borderRadius: "2.5rem", animation: "pulseRing 1.6s ease-out infinite", pointerEvents: "none" }} />
-      </motion.div>
-
-      <motion.p
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.3 }}
-        className="text-3xl font-black tracking-tight mb-1.5"
-        style={{ ...fontDisplay, color: "#0F0A1E", willChange: "transform, opacity" }}
-      >
-        CU BAZZAR
-      </motion.p>
-      <motion.p
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.55 }}
-        className="text-xs font-bold uppercase tracking-[0.3em] mb-12"
-        style={{ color: "#7C3AED" }}
-      >
-        Eclipsed Operating System v3
-      </motion.p>
-
-      {/* Loading bar */}
-      <div className="relative w-48 h-1 rounded-full overflow-hidden" style={{ background: "rgba(124,58,237,0.12)" }}>
-        <motion.div
-          className="absolute inset-y-0 left-0 rounded-full"
-          style={{ background: "linear-gradient(90deg, #7C3AED, #FF6B35)", willChange: "width" }}
-          initial={{ width: "0%" }}
-          animate={{ width: "92%" }}
-          transition={{ duration: 1.7, delay: 0.8, ease: [0.4, 0, 0.2, 1] }}
-        />
-      </div>
-    </div>
-  );
-}
+// Component removed for instant-entry experience as requested.
 
 export default function Index() {
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const t = setTimeout(() => setIsLoading(false), 2200);
-    return () => clearTimeout(t);
-  }, []);
-
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-transparent">
       {/* Inject CSS keyframes */}
@@ -119,20 +54,6 @@ export default function Index() {
         }
       `}</style>
 
-      {/* EOS Loader */}
-      <AnimatePresence>
-        {isLoading && (
-          <motion.div
-            key="loader"
-            exit={{ opacity: 0, scale: 1.03 }}
-            transition={{ duration: 0.45, ease: [0.4, 0, 1, 1] }}
-            style={{ willChange: "transform, opacity" }}
-          >
-            <EOSLoader />
-          </motion.div>
-        )}
-      </AnimatePresence>
-
       {/* ─── Ambient Orbs — pure CSS, zero JS ──────────────────────── */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
         <div style={{ position: "absolute", width: 700, height: 700, top: "-15%", left: "-10%", borderRadius: "50%", background: "radial-gradient(circle at 40% 40%, rgba(124,58,237,0.16), transparent 70%)", filter: "blur(70px)", animation: "orbFloat1 10s ease-in-out infinite", willChange: "transform, opacity" }} />
@@ -143,7 +64,7 @@ export default function Index() {
       {/* ─── Navbar ────────────────────────────────────────────────── */}
       <motion.nav
         initial={{ opacity: 0, y: -16 }}
-        animate={{ opacity: isLoading ? 0 : 1, y: isLoading ? -16 : 0 }}
+        animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.15 }}
         className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 sm:px-10"
         style={{ willChange: "transform, opacity" }}
@@ -169,7 +90,7 @@ export default function Index() {
         <div className="flex flex-col items-center">
           <motion.div
             initial={{ opacity: 0, scale: 0.85 }}
-            animate={{ opacity: isLoading ? 0 : 1, scale: isLoading ? 0.85 : 1 }}
+            animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.55, delay: 0.4 }}
             className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-10"
             style={{ background: "rgba(124,58,237,0.08)", border: "1px solid rgba(124,58,237,0.2)", willChange: "transform, opacity" }}
@@ -180,7 +101,7 @@ export default function Index() {
 
           <motion.h1
             initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: isLoading ? 0 : 1, y: isLoading ? 24 : 0 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.75, delay: 0.52, ease: [0.16, 1, 0.3, 1] }}
             className="text-[3.2rem] sm:text-[6rem] leading-[1] font-black tracking-tighter mb-6 max-w-5xl"
             style={{ ...fontDisplay, color: "#0F0A1E", willChange: "transform, opacity" }}
@@ -194,7 +115,7 @@ export default function Index() {
 
           <motion.p
             initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: isLoading ? 0 : 1, y: isLoading ? 16 : 0 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.68, ease: [0.16, 1, 0.3, 1] }}
             className="text-lg sm:text-2xl max-w-2xl leading-relaxed mb-12 font-medium"
             style={{ ...fontBody, color: "rgba(15,10,30,0.5)", willChange: "transform, opacity" }}
@@ -204,7 +125,7 @@ export default function Index() {
 
           <motion.div
             initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: isLoading ? 0 : 1, y: isLoading ? 16 : 0 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.82, ease: [0.16, 1, 0.3, 1] }}
             className="flex items-center gap-4 flex-wrap justify-center"
             style={{ willChange: "transform, opacity" }}
@@ -233,7 +154,7 @@ export default function Index() {
 
           <motion.div
             initial={{ opacity: 0 }}
-            animate={{ opacity: isLoading ? 0 : 1 }}
+            animate={{ opacity: 1 }}
             transition={{ delay: 1.3 }}
             className="mt-20 flex flex-col items-center gap-2"
           >

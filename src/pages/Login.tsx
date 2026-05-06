@@ -32,7 +32,6 @@ const orbCSS = `
 
 export default function Login() {
   const { signInWithGoogle, signIn, signUp } = useAuth();
-  const [showIntro, setShowIntro] = useState(Capacitor.isNativePlatform());
   const [isLogin, setIsLogin] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -44,11 +43,6 @@ export default function Login() {
   const [forgotPassword, setForgotPassword] = useState(false);
   const [resetSent, setResetSent] = useState(false);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const t = setTimeout(() => setShowIntro(false), 1800);
-    return () => clearTimeout(t);
-  }, []);
 
   useEffect(() => { setFormError(null); }, [email, password, acceptedTerms, isLogin]);
 
@@ -114,51 +108,6 @@ export default function Login() {
         <div style={{ position: "absolute", width: 400, height: 400, top: "60%", left: "55%", borderRadius: "50%", background: "radial-gradient(circle at 40% 40%, rgba(255,107,53,0.18), transparent 70%)", filter: "blur(65px)", animation: "loginOrbB 12s ease-in-out infinite 2s", willChange: "transform, opacity" }} />
         <div style={{ position: "absolute", width: 350, height: 350, top: "80%", left: "-5%", borderRadius: "50%", background: "radial-gradient(circle at 40% 40%, rgba(5,150,105,0.13), transparent 70%)", filter: "blur(65px)", animation: "loginOrbC 14s ease-in-out infinite 4s", willChange: "transform, opacity" }} />
       </div>
-
-      {/* Native Splash — only on native, no blur exit */}
-      <AnimatePresence>
-        {showIntro && (
-          <motion.div
-            key="splash"
-            exit={{ opacity: 0, scale: 1.03 }}
-            transition={{ duration: 0.4, ease: [0.4, 0, 1, 1] }}
-            className="fixed inset-0 z-[60] flex flex-col items-center justify-center"
-            style={{ background: "linear-gradient(135deg, #f8faff 0%, #eef2ff 50%, #fdf4ff 100%)", willChange: "transform, opacity" }}
-          >
-            <motion.div
-              initial={{ scale: 0.6, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ type: "spring", damping: 20, stiffness: 260 }}
-              className="relative"
-              style={{ willChange: "transform, opacity" }}
-            >
-              <div className="w-24 h-24 rounded-[2rem] overflow-hidden" style={{ boxShadow: "0 20px 60px rgba(124,58,237,0.28)" }}>
-                <img src="/logo.webp" alt="CU Bazzar" className="w-full h-full object-cover" />
-              </div>
-              {/* CSS pulse ring */}
-              <div style={{ position: "absolute", inset: 0, borderRadius: "2rem", animation: "loginPulse 1.5s ease-out infinite", pointerEvents: "none" }} />
-            </motion.div>
-            <motion.p
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.35 }}
-              className="mt-6 text-2xl font-black"
-              style={{ ...fontDisplay, color: "#0F0A1E" }}
-            >
-              CU BAZZAR
-            </motion.p>
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.55 }}
-              className="text-[10px] font-bold uppercase tracking-[0.3em] mt-1"
-              style={{ color: "#7C3AED" }}
-            >
-              EOS v3
-            </motion.p>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       {/* ─── Main Card ──────────────────────────────────────────────── */}
       <motion.div

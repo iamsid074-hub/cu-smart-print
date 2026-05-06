@@ -129,12 +129,12 @@ export default function Settings() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f3f4f6] md:p-8 flex items-center justify-center font-sans antialiased">
+    <div className="min-h-screen bg-transparent md:p-8 flex items-center justify-center font-sans antialiased">
       {/* Main Window */}
-      <div className="w-full max-w-6xl h-full md:h-[800px] bg-white md:rounded-[20px] shadow-2xl flex flex-col md:flex-row overflow-hidden border border-[#e5e7eb]">
+      <div className="w-full max-w-6xl h-full md:h-[800px] bg-white/60 backdrop-blur-3xl md:rounded-[20px] shadow-2xl flex flex-col md:flex-row overflow-hidden border border-[#e5e7eb]">
         
         {/* Sidebar */}
-        <div className="w-full md:w-[280px] bg-[#f9fafb] border-r border-[#e5e7eb] flex flex-col p-6 overflow-y-auto">
+        <div className="w-full md:w-[280px] bg-[#f9fafb]/60 backdrop-blur-md border-r border-[#e5e7eb] flex flex-col p-6 overflow-y-auto">
           {/* Header dots */}
           <div className="flex gap-2 mb-8 items-center">
             <div className="w-3 h-3 rounded-full bg-[#ff5f57]" />
@@ -186,7 +186,7 @@ export default function Settings() {
         </div>
 
         {/* Content Area */}
-        <div className="flex-1 bg-white overflow-y-auto relative p-8 md:p-12">
+        <div className="flex-1 bg-transparent overflow-y-auto relative p-8 md:p-12">
           <AnimatePresence mode="wait">
             <motion.div
               key={activeTab}

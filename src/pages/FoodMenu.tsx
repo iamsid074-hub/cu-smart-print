@@ -184,7 +184,7 @@ export default function FoodMenu() {
   };
 
   return (
-    <div className="min-h-screen bg-[#000000] pb-28 overflow-x-hidden font-sans text-white">
+    <div className="min-h-screen bg-transparent pb-28 overflow-x-hidden font-sans text-white">
       <div className="max-w-xl mx-auto relative z-10">
 
         {/* ── Sticky Header ── */}
