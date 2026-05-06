@@ -91,6 +91,7 @@ import {
   useSiteGate,
   ClosedScreen,
   MaintenanceScreen,
+  MobileBlockScreen,
 } from "./components/SiteGate";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { CartProvider } from "./contexts/CartContext";
@@ -183,6 +184,9 @@ function AppLayout() {
   // Removed BrandedLoading return for instant entry
 
   // Show gate screens for non-admin, non-login, non-landing pages
+  // Also, mobile block should be shown on all pages for mobile users.
+  if (gate === "mobile") return <MobileBlockScreen />;
+
   if (
     gate &&
     !isAdminPath &&

@@ -245,11 +245,74 @@ function MaintenanceScreen() {
   );
 }
 
+// ─── Mobile Block Screen ────────────────────────────────────────────────────────
+function MobileBlockScreen() {
+  return (
+    <div className="min-h-screen flex items-center justify-center p-6 bg-transparent relative overflow-hidden">
+      <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] rounded-full bg-purple-700/30 blur-[120px] mix-blend-screen pointer-events-none" />
+      <div className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] rounded-full bg-violet-700/20 blur-[120px] mix-blend-screen pointer-events-none" />
+      
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: [0.34, 1.56, 0.64, 1] }}
+        className="max-w-md w-full text-center relative z-10"
+      >
+        <motion.div
+          animate={{ y: [0, -10, 0] }}
+          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+          className="mb-8 flex justify-center"
+        >
+          <div className="w-24 h-24 rounded-[28px] bg-gradient-to-tr from-[#FF6B35] to-[#7C3AED] flex items-center justify-center shadow-[0_0_50px_rgba(124,58,237,0.4)] rotate-3">
+             <Wrench className="w-12 h-12 text-white" />
+          </div>
+        </motion.div>
+        
+        <h1 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-br from-white via-[#E9D5FF] to-[#A855F7] mb-4 drop-shadow-sm leading-tight">
+          Desktop Only
+        </h1>
+        
+        <p className="text-[#E9D5FF]/80 text-[15px] mb-8 leading-relaxed font-light px-4">
+          Please use <strong className="text-white">CU Bazzar on a laptop</strong>.<br/>
+          We are currently working on the mobile experience.
+        </p>
+
+        <div className="rounded-[32px] p-[1px] bg-gradient-to-b from-[#C084FC]/50 to-[#581C87]/20 backdrop-blur-xl relative overflow-hidden shadow-2xl shadow-[#3B0764]/80 inline-block w-full max-w-[280px]">
+          <div className="absolute inset-0 bg-[#1e0a3c]/60" />
+          <div className="relative px-8 py-6 rounded-[31px] border border-white/5 bg-gradient-to-b from-white/10 to-transparent flex flex-col items-center">
+            <p className="text-[#D8B4FE]/80 text-[11px] uppercase tracking-widest mb-2 font-medium">Estimated Mobile Reopening</p>
+            <p className="text-3xl font-black text-white tracking-tight drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]">15 JULY</p>
+          </div>
+        </div>
+      </motion.div>
+    </div>
+  );
+}
+
 // ─── SiteGate Hook ──────────────────────────────────────────────────────────────
 export function useSiteGate() {
   const { isAdmin } = useAuth();
   const [maintenance, setMaintenance] = useState(false);
   const [loaded, setLoaded] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      const userAgent = navigator.userAgent || navigator.vendor || (window as any).opera;
+      if (/android|ipad|playbook|silk/i.test(userAgent)) {
+        setIsMobile(true);
+      } else if (/iphone|ipod/i.test(userAgent)) {
+        setIsMobile(true);
+      } else if (window.innerWidth <= 768) {
+        setIsMobile(true);
+      } else {
+        setIsMobile(false);
+      }
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Check maintenance flag from Supabase
   useEffect(() => {
@@ -283,6 +346,8 @@ export function useSiteGate() {
     return () => clearInterval(id);
   }, []);
 
+  if (isMobile) return { gate: "mobile" as const, loaded: true };
+
   // Admins bypass everything
   if (isAdmin) return { gate: null, loaded: true };
 
@@ -293,4 +358,4 @@ export function useSiteGate() {
   return { gate: null, loaded: true };
 }
 
-export { ClosedScreen, MaintenanceScreen };
+export { ClosedScreen, MaintenanceScreen, MobileBlockScreen };
