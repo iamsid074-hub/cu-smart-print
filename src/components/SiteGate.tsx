@@ -353,8 +353,7 @@ export function useSiteGate() {
 
   if (!loaded) return { gate: null, loaded: false };
 
-  if (maintenance) return { gate: "maintenance" as const, loaded: true };
-
+  // Desktop is always open, bypass maintenance mode completely
   return { gate: null, loaded: true };
 }
 
