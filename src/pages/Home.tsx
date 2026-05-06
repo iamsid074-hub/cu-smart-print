@@ -143,27 +143,23 @@ export default function Home() {
       {/* Optimized Background Wallpaper */}
       <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
         <picture>
-          {/* Desktop Wallpaper - Exact user-provided image integrated */}
+          {/* Desktop Wallpaper - Exact user-provided image */}
           <source 
             srcSet="/desktop-wallpaper-purple.png" 
             type="image/png" 
             media="(min-width: 768px)" 
           />
           
-          {/* Mobile Wallpaper - Remains Red as requested */}
+          {/* Mobile Wallpaper - Exact user-provided vertical image integrated */}
           <source 
-            srcSet="/mobile-wallpaper-red-new.avif" 
-            type="image/avif" 
-          />
-          <source 
-            srcSet="/mobile-wallpaper-red-new.webp" 
-            type="image/webp" 
+            srcSet="/mobile-wallpaper-purple.png" 
+            type="image/png" 
           />
           
           {/* Fallback */}
           <img 
             src="/desktop-wallpaper-purple.png" 
-            alt="Desktop Wallpaper" 
+            alt="Wallpaper" 
             className="w-full h-full object-cover" 
           />
         </picture>

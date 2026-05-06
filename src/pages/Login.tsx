@@ -108,7 +108,7 @@ export default function Login() {
     <div className="min-h-screen relative overflow-hidden flex items-center justify-center p-4" style={{ 
       background: window.innerWidth >= 1024 
         ? "url('/desktop-wallpaper-purple.png') no-repeat center center fixed" 
-        : "linear-gradient(135deg, #f8faff 0%, #eef2ff 50%, #fdf4ff 100%)",
+        : "url('/mobile-wallpaper-purple.png') no-repeat center center fixed",
       backgroundSize: "cover"
     }}>
       <style>{orbCSS}</style>
