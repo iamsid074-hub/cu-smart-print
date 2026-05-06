@@ -43,7 +43,7 @@ const features = [
 
 export default function Index() {
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-transparent">
+    <div className="relative min-h-screen overflow-x-hidden bg-[#F8FAFF]">
       {/* Inject CSS keyframes */}
       <style>{orbStyles}</style>
       {/* Additional keyframe for pulse ring */}

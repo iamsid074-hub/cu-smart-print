@@ -99,7 +99,7 @@ export default function Login() {
   });
 
   return (
-    <div className="min-h-screen relative overflow-hidden flex items-center justify-center p-4 bg-transparent">
+    <div className="min-h-screen relative overflow-hidden flex items-center justify-center p-4 bg-[#F8FAFF]">
       <style>{orbCSS}</style>
 
       {/* CSS Ambient orbs — no JS animation overhead */}
