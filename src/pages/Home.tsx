@@ -111,14 +111,43 @@ export default function Home() {
     return !!sessionStorage.getItem("eos_booted");
   });
 
+  const [shopStatusMsg, setShopStatusMsg] = useState<string | null>(null);
+
+  // Time check helper
+  const isShopOpen = () => {
+    const now = new Date();
+    const hours = now.getHours();
+    const minutes = now.getMinutes();
+    const totalMinutes = hours * 60 + minutes;
+    
+    // 11:30 AM (690 mins) to 11:30 PM (1410 mins)
+    return totalMinutes >= 690 && totalMinutes < 1410;
+  };
+
   // Global window opener listener
   useEffect(() => {
     const handleGlobalOpen = (e: any) => {
-      if (e.detail) handleOpenWindow(e.detail);
+      const id = e.detail;
+      if (id === "Shops" && !isShopOpen()) {
+        setShopStatusMsg("all shops are closed, will open at 11 : 30 am");
+        setTimeout(() => setShopStatusMsg(null), 4000);
+        return;
+      }
+      if (id) handleOpenWindow(id);
     };
     window.addEventListener("open-window", handleGlobalOpen);
     return () => window.removeEventListener("open-window", handleGlobalOpen);
   }, [activeWindows, minimizedWindows]); // Re-bind to capture current state
+
+  // Internal opener needs check too
+  const safeOpenWindow = (id: string) => {
+    if (id === "Shops" && !isShopOpen()) {
+      setShopStatusMsg("all shops are closed, will open at 11 : 30 am");
+      setTimeout(() => setShopStatusMsg(null), 4000);
+      return;
+    }
+    handleOpenWindow(id);
+  };
 
   const handleBootComplete = () => {
     sessionStorage.setItem("eos_booted", "1");
@@ -174,7 +203,7 @@ export default function Home() {
           animate={uiReady ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 }}
           transition={{ duration: 0.55, delay: 0.05, ease: [0.16, 1, 0.3, 1] }}
         >
-          <DesktopMenuBar />
+          <DesktopMenuBar notification={shopStatusMsg} />
         </motion.div>
 
         {/* Dock springs up from bottom */}
@@ -183,7 +212,7 @@ export default function Home() {
           animate={uiReady ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 50, scale: 0.88 }}
           transition={{ duration: 0.65, delay: 0.22, type: "spring", stiffness: 240, damping: 22 }}
         >
-          <DesktopDock onOpenWindow={handleOpenWindow} />
+          <DesktopDock onOpenWindow={safeOpenWindow} />
         </motion.div>
         <div className="flex-1 relative">
           {/* Stage Manager (Desktop Only) */}
