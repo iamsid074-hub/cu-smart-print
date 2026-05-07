@@ -22,11 +22,12 @@ interface Props {
   onClose: () => void;
   onMinimize?: () => void;
   onMaximize?: () => void;
-  isMinimized?: boolean;
   isMaximized?: boolean;
+  onFocus?: () => void;
+  zIndex?: number;
 }
 
-export default function DesktopWindowCart({ onClose, onMinimize, onMaximize, isMinimized, isMaximized }: Props) {
+export default function DesktopWindowCart({ onClose, onMinimize, onMaximize, isMinimized, isMaximized, onFocus, zIndex }: Props) {
   const { items, removeItem, updateQuantity, clearCart, totalPrice, rapidAddDetected } = useCart();
   const { user, profile } = useAuth();
   const navigate = useNavigate();
@@ -180,6 +181,8 @@ export default function DesktopWindowCart({ onClose, onMinimize, onMaximize, isM
       onMaximize={onMaximize}
       isMinimized={isMinimized}
       isMaximized={isMaximized}
+      onFocus={onFocus}
+      zIndex={zIndex}
       size="xl"
     >
       <RiskAlert

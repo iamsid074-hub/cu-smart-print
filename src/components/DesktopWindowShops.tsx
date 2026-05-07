@@ -11,9 +11,11 @@ interface DesktopWindowShopsProps {
   onMaximize?: () => void;
   isMinimized?: boolean;
   isMaximized?: boolean;
+  onFocus?: () => void;
+  zIndex?: number;
 }
 
-export default function DesktopWindowShops({ onClose, onMinimize, onMaximize, isMinimized, isMaximized }: DesktopWindowShopsProps) {
+export default function DesktopWindowShops({ onClose, onMinimize, onMaximize, isMinimized, isMaximized, onFocus, zIndex }: DesktopWindowShopsProps) {
   const [selectedShopId, setSelectedShopId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [showCategoryMenu, setShowCategoryMenu] = useState(false);
@@ -35,6 +37,8 @@ export default function DesktopWindowShops({ onClose, onMinimize, onMaximize, is
       onMaximize={onMaximize}
       isMinimized={isMinimized}
       isMaximized={isMaximized}
+      onFocus={onFocus}
+      zIndex={zIndex}
       onBack={selectedShopId ? () => { setSelectedShopId(null); setShowCategoryMenu(false); } : undefined}
       size="xl"
       actions={selectedShopId ? (

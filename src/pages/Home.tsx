@@ -10,6 +10,8 @@ const DesktopWindowCombos = lazy(() => import("@/components/DesktopWindowCombos"
 const DesktopWindowSettings = lazy(() => import("@/components/DesktopWindowSettings"));
 const DesktopWindowCart = lazy(() => import("@/components/DesktopWindowCart"));
 const DesktopWindowProfile = lazy(() => import("@/components/DesktopWindowProfile"));
+import DesktopStageManager from "@/components/DesktopStageManager";
+import DesktopWidgetSpace from "@/components/DesktopWidgetSpace";
 const FloatingLocationWidget = lazy(() => import("@/components/FloatingLocationWidget"));
 import {
   Search,
@@ -93,6 +95,7 @@ const EOSBootAnimation = lazy(() => import("@/components/EOSBootAnimation"));
 export default function Home() {
   const navigate = useNavigate();
   const [activeWindows, setActiveWindows] = useState<WindowId[]>([]);
+  const [zStack, setZStack] = useState<WindowId[]>([]); // New state for focus order
   const [minimizedWindows, setMinimizedWindows] = useState<WindowId[]>([]);
   const [maximizedWindows, setMaximizedWindows] = useState<WindowId[]>([]);
 
@@ -108,6 +111,15 @@ export default function Home() {
     return !!sessionStorage.getItem("eos_booted");
   });
 
+  // Global window opener listener
+  useEffect(() => {
+    const handleGlobalOpen = (e: any) => {
+      if (e.detail) handleOpenWindow(e.detail);
+    };
+    window.addEventListener("open-window", handleGlobalOpen);
+    return () => window.removeEventListener("open-window", handleGlobalOpen);
+  }, [activeWindows, minimizedWindows]); // Re-bind to capture current state
+
   const handleBootComplete = () => {
     sessionStorage.setItem("eos_booted", "1");
     setShowBoot(false);
@@ -122,18 +134,25 @@ export default function Home() {
     const winId = id as WindowId;
     if (!activeWindows.includes(winId)) {
       setActiveWindows((prev) => [...prev, winId]);
+      setZStack((prev) => [...prev, winId]);
     } else {
       if (minimizedWindows.includes(winId)) {
         setMinimizedWindows((prev) => prev.filter((w) => w !== winId));
-      } else {
-        setActiveWindows((prev) => [...prev.filter(w => w !== winId), winId]);
       }
+      // Focus it either way
+      setZStack((prev) => [...prev.filter(w => w !== winId), winId]);
     }
   };
 
-  const handleCloseWindow    = (id: WindowId) => { setActiveWindows(p => p.filter(w => w !== id)); setMinimizedWindows(p => p.filter(w => w !== id)); setMaximizedWindows(p => p.filter(w => w !== id)); };
+  const handleCloseWindow    = (id: WindowId) => { 
+    setActiveWindows(p => p.filter(w => w !== id)); 
+    setZStack(p => p.filter(w => w !== id));
+    setMinimizedWindows(p => p.filter(w => w !== id)); 
+    setMaximizedWindows(p => p.filter(w => w !== id)); 
+  };
   const handleMinimizeWindow = (id: WindowId) => { if (!minimizedWindows.includes(id)) setMinimizedWindows(p => [...p, id]); };
   const handleMaximizeWindow = (id: WindowId) => { setMaximizedWindows(p => p.includes(id) ? p.filter(w => w !== id) : [...p, id]); };
+  const handleFocusWindow    = (id: WindowId) => { setZStack(p => [...p.filter(w => w !== id), id]); };
 
   return (
     <div className="min-h-screen bg-transparent text-white relative overflow-hidden">
@@ -166,39 +185,53 @@ export default function Home() {
         >
           <DesktopDock onOpenWindow={handleOpenWindow} />
         </motion.div>
+        <div className="flex-1 relative">
+          {/* Stage Manager (Desktop Only) */}
+          <div className="hidden md:block">
+            <DesktopStageManager 
+              activeWindows={activeWindows} 
+              zStack={zStack} 
+              onFocus={handleFocusWindow} 
+            />
+          </div>
 
-        {/* Desktop windows */}
-        <Suspense fallback={null}>
-          <AnimatePresence>
-            {activeWindows.map((winId) => {
-              const isMinimized = minimizedWindows.includes(winId);
-              const isMaximized = maximizedWindows.includes(winId);
-              if (winId === "Shops")    return <DesktopWindowShops    key="Shops"    onClose={() => handleCloseWindow("Shops")}    onMinimize={() => handleMinimizeWindow("Shops")}    onMaximize={() => handleMaximizeWindow("Shops")}    isMinimized={isMinimized} isMaximized={isMaximized} />;
-              if (winId === "Vending")  return <DesktopWindowVending  key="Vending"  onClose={() => handleCloseWindow("Vending")}  onMinimize={() => handleMinimizeWindow("Vending")}  onMaximize={() => handleMaximizeWindow("Vending")}  isMinimized={isMinimized} isMaximized={isMaximized} />;
-              if (winId === "Combos")   return <DesktopWindowCombos   key="Combos"   onClose={() => handleCloseWindow("Combos")}   onMinimize={() => handleMinimizeWindow("Combos")}   onMaximize={() => handleMaximizeWindow("Combos")}   isMinimized={isMinimized} isMaximized={isMaximized} />;
-              if (winId === "Settings") return <DesktopWindowSettings key="Settings" onClose={() => handleCloseWindow("Settings")} onMinimize={() => handleMinimizeWindow("Settings")} onMaximize={() => handleMaximizeWindow("Settings")} isMinimized={isMinimized} isMaximized={isMaximized} />;
-              if (winId === "Cart")     return <DesktopWindowCart     key="Cart"     onClose={() => handleCloseWindow("Cart")}     onMinimize={() => handleMinimizeWindow("Cart")}     onMaximize={() => handleMaximizeWindow("Cart")}     isMinimized={isMinimized} isMaximized={isMaximized} />;
-              if (winId === "Profile")  return <DesktopWindowProfile  key="Profile"  onClose={() => handleCloseWindow("Profile")}  onMinimize={() => handleMinimizeWindow("Profile")}  onMaximize={() => handleMaximizeWindow("Profile")}  isMinimized={isMinimized} isMaximized={isMaximized} />;
-              return null;
-            })}
-          </AnimatePresence>
+          {/* Desktop windows */}
+          <Suspense fallback={null}>
+            <AnimatePresence>
+              {activeWindows.map((winId) => {
+                const isMinimized = minimizedWindows.includes(winId);
+                const isMaximized = maximizedWindows.includes(winId);
+                const zIndex = (zStack.indexOf(winId) + 1) * 10 + 100; // Base z-index 100, stack by 10s
+                
+                if (winId === "Shops")    return <DesktopWindowShops    key="Shops"    onClose={() => handleCloseWindow("Shops")}    onMinimize={() => handleMinimizeWindow("Shops")}    onMaximize={() => handleMaximizeWindow("Shops")}    onFocus={() => handleFocusWindow("Shops")}    zIndex={zIndex} isMinimized={isMinimized} isMaximized={isMaximized} />;
+                if (winId === "Vending")  return <DesktopWindowVending  key="Vending"  onClose={() => handleCloseWindow("Vending")}  onMinimize={() => handleMinimizeWindow("Vending")}  onMaximize={() => handleMaximizeWindow("Vending")}  onFocus={() => handleFocusWindow("Vending")}  zIndex={zIndex} isMinimized={isMinimized} isMaximized={isMaximized} />;
+                if (winId === "Combos")   return <DesktopWindowCombos   key="Combos"    onClose={() => handleCloseWindow("Combos")}   onMinimize={() => handleMinimizeWindow("Combos")}   onMaximize={() => handleMaximizeWindow("Combos")}   onFocus={() => handleFocusWindow("Combos")}   zIndex={zIndex} isMinimized={isMinimized} isMaximized={isMaximized} />;
+                if (winId === "Settings") return <DesktopWindowSettings key="Settings" onClose={() => handleCloseWindow("Settings")} onMinimize={() => handleMinimizeWindow("Settings")} onMaximize={() => handleMaximizeWindow("Settings")} onFocus={() => handleFocusWindow("Settings")} zIndex={zIndex} isMinimized={isMinimized} isMaximized={isMaximized} />;
+                if (winId === "Cart")     return <DesktopWindowCart     key="Cart"     onClose={() => handleCloseWindow("Cart")}     onMinimize={() => handleMinimizeWindow("Cart")}     onMaximize={() => handleMaximizeWindow("Cart")}     onFocus={() => handleFocusWindow("Cart")}     zIndex={zIndex} isMinimized={isMinimized} isMaximized={isMaximized} />;
+                if (winId === "Profile")  return <DesktopWindowProfile  key="Profile"  onClose={() => handleCloseWindow("Profile")}  onMinimize={() => handleMinimizeWindow("Profile")}  onMaximize={() => handleMaximizeWindow("Profile")}  onFocus={() => handleFocusWindow("Profile")}  zIndex={zIndex} isMinimized={isMinimized} isMaximized={isMaximized} />;
+                return null;
+              })}
+            </AnimatePresence>
 
-          {/* Floating Location Widget (Desktop only, hidden when apps are open) */}
-          <AnimatePresence>
-            {activeWindows.length === 0 && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ duration: 0.3 }}
-              >
-                <FloatingLocationWidget />
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </Suspense>
+            {/* Floating Location Widget (Desktop only, hidden when apps are open) */}
+            <AnimatePresence>
+              {activeWindows.length === 0 && (
+                <>
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <FloatingLocationWidget />
+                  </motion.div>
+                  <DesktopWidgetSpace />
+                </>
+              )}
+            </AnimatePresence>
+          </Suspense>
+        </div>
       </div>
     </div>
   );
 }
-

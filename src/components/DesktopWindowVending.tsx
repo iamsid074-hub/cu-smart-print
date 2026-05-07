@@ -7,11 +7,12 @@ interface DesktopWindowVendingProps {
   onClose: () => void;
   onMinimize?: () => void;
   onMaximize?: () => void;
-  isMinimized?: boolean;
   isMaximized?: boolean;
+  onFocus?: () => void;
+  zIndex?: number;
 }
 
-export default function DesktopWindowVending({ onClose, onMinimize, onMaximize, isMinimized, isMaximized }: DesktopWindowVendingProps) {
+export default function DesktopWindowVending({ onClose, onMinimize, onMaximize, isMinimized, isMaximized, onFocus, zIndex }: DesktopWindowVendingProps) {
   return (
     <DesktopWindow 
       title="Smart Vending" 
@@ -20,6 +21,8 @@ export default function DesktopWindowVending({ onClose, onMinimize, onMaximize, 
       onMaximize={onMaximize}
       isMinimized={isMinimized}
       isMaximized={isMaximized}
+      onFocus={onFocus}
+      zIndex={zIndex}
       size="md"
     >
       <Suspense fallback={

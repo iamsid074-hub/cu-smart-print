@@ -34,6 +34,8 @@ interface DesktopWindowSettingsProps {
   onMaximize?: () => void;
   isMinimized?: boolean;
   isMaximized?: boolean;
+  onFocus?: () => void;
+  zIndex?: number;
 }
 
 type TabType = "profile" | "wallet" | "combo" | "delivery" | "security" | "experience";
@@ -43,7 +45,9 @@ export default function DesktopWindowSettings({
   onMinimize, 
   onMaximize, 
   isMinimized, 
-  isMaximized 
+  isMaximized,
+  onFocus,
+  zIndex
 }: DesktopWindowSettingsProps) {
   const { signOut, user } = useAuth();
   const navigate = useNavigate();
@@ -137,11 +141,19 @@ export default function DesktopWindowSettings({
       onMaximize={onMaximize}
       isMinimized={isMinimized}
       isMaximized={isMaximized}
+      onFocus={onFocus}
+      zIndex={zIndex}
       size="xl"
     >
       <div className="flex h-full min-h-[600px] bg-white">
         {/* Left Sidebar */}
         <div className="w-[260px] bg-[#f9fafb] border-r border-[#e5e7eb] flex flex-col p-6 overflow-y-auto shrink-0">
+          {/* Logo Section */}
+          <div className="flex items-center gap-3 mb-8 px-2">
+            <img src="/logo.webp" alt="CU Bazzar" className="w-8 h-8 rounded-lg shadow-sm" />
+            <span className="text-sm font-black text-gray-900 tracking-tight">CU BAZZAR</span>
+          </div>
+
           <div className="space-y-6">
             <div>
               <p className="px-3 text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-2">My Account</p>
@@ -170,8 +182,8 @@ export default function DesktopWindowSettings({
           </div>
 
           <div className="mt-auto pt-6 flex items-center gap-3 px-3 border-t border-gray-100">
-             <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-200">
-                {avatarUrl ? <img src={avatarUrl} className="w-full h-full object-cover" /> : <img src="/3d_backpack_v2.webp" className="w-full h-full object-cover" />}
+             <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-200 border border-gray-100">
+                {avatarUrl ? <img src={avatarUrl} className="w-full h-full object-cover" /> : <img src="/cb_logo_final.webp" className="w-full h-full object-cover p-1.5" />}
              </div>
              <div className="min-w-0">
                 <p className="text-xs font-bold text-gray-900 truncate">{displayName}</p>
@@ -198,7 +210,7 @@ export default function DesktopWindowSettings({
                 <div className="space-y-8">
                   <div className="flex items-center gap-6">
                     <div className="w-24 h-24 rounded-3xl overflow-hidden bg-gray-100 border-4 border-white shadow-xl flex-shrink-0 relative">
-                       {avatarUrl ? <img src={avatarUrl} className="w-full h-full object-cover" /> : <img src="/3d_backpack_v2.webp" className="w-full h-full object-cover" />}
+                       {avatarUrl ? <img src={avatarUrl} className="w-full h-full object-cover" /> : <img src="/cb_logo_final.webp" className="w-full h-full object-cover p-4 opacity-50" />}
                        <div className="absolute inset-0 bg-black/5 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer">
                           <Plus className="w-6 h-6 text-white" />
                        </div>

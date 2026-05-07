@@ -1,5 +1,5 @@
-import { ReactNode, useRef, useEffect } from "react";
-import { motion, useDragControls } from "framer-motion";
+import { ReactNode, useRef, useEffect, useState } from "react";
+import { motion, useDragControls, AnimatePresence } from "framer-motion";
 import { X, ChevronLeft } from "lucide-react";
 
 interface DesktopWindowProps {
@@ -12,6 +12,8 @@ interface DesktopWindowProps {
   onBack?: () => void;
   actions?: ReactNode;
   children: ReactNode;
+  onFocus?: () => void;
+  zIndex?: number;
   /** optional size override */
   size?: "md" | "lg" | "xl";
 }
@@ -32,33 +34,34 @@ export default function DesktopWindow({
   onBack,
   actions,
   children,
+  onFocus,
+  zIndex,
   size = "lg",
 }: DesktopWindowProps) {
   const dragControls = useDragControls();
   const windowRef = useRef<HTMLDivElement>(null);
+  const [snapPreview, setSnapPreview] = useState<"left" | "right" | "top" | null>(null);
+  const [snapState, setSnapState] = useState<"left" | "right" | "top" | null>(null);
+
+  // Constants for snapping
+  const SNAP_THRESHOLD = 40; // Pixels from edge to trigger snap preview
+  const SNAP_WIDTH = "50vw";
+  const SNAP_HEIGHT = "calc(100vh - 40px)"; // Subtract menu bar height if any
 
   // Close on click outside
+  // Removed "Close on click outside" to allow multiple windows to be open simultaneously.
+  // Users now explicitly close windows using the traffic light buttons.
+  // Sound Effects
+  const playSound = (type: "click" | "woosh") => {
+    const audio = new Audio(type === "click" ? "/sounds/click.wav" : "/sounds/woosh.wav");
+    audio.volume = 0.2;
+    audio.play().catch(() => {}); // Ignore errors if user hasn't interacted yet
+  };
+
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        windowRef.current && 
-        !windowRef.current.contains(event.target as Node) &&
-        !isMinimized // Don't close if it's already minimized (to avoid conflicts with dock)
-      ) {
-        onClose();
-      }
-    };
-
-    // Use a small timeout to avoid capturing the click that opened the window
-    const timer = setTimeout(() => {
-      document.addEventListener("mousedown", handleClickOutside);
-    }, 100);
-
-    return () => {
-      clearTimeout(timer);
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [onClose, isMinimized]);
+    // Initial open sound
+    playSound("click");
+  }, []);
   
   // Animation variants mimicking macOS Genie effect (Wavy Bend)
   const variants = {
@@ -91,13 +94,23 @@ export default function DesktopWindow({
           scale: 1, 
           opacity: 1, 
           x: "-50%",
-          y: 0, 
-          borderRadius: "12px",
+          y: 30, // Force spawn exactly below the grey stripe
+          borderRadius: "20px",
           filter: "blur(0px)",
           rotateX: 0,
           skewX: 0,
           transition: { type: "spring", stiffness: 250, damping: 25 }
         },
+    snap: {
+      scale: 1,
+      opacity: 1,
+      x: 0,
+      y: 0,
+      filter: "blur(0px)",
+      rotateX: 0,
+      skewX: 0,
+      transition: { type: "spring", stiffness: 300, damping: 30 }
+    },
     minimized: { 
       scale: 0.05, 
       x: 0,
@@ -129,27 +142,62 @@ export default function DesktopWindow({
       ref={windowRef}
       variants={variants}
       initial="initial"
-      animate={isMinimized ? "minimized" : "open"}
+      animate={isMinimized ? "minimized" : (isMaximized || snapState) ? "snap" : "open"}
       exit="exit"
       drag={!isMaximized} // Disable dragging when maximized
       dragListener={false}
       dragControls={dragControls}
       dragMomentum={false}
-      dragElastic={0.05}
-      className={`fixed ${isMaximized ? "inset-0 w-full h-full" : `top-[160px] left-1/2 ${sizeMap[size]}`} flex flex-col bg-white/70 backdrop-blur-3xl shadow-2xl overflow-visible z-[100] ${isMaximized ? "border-0" : "rounded-xl border border-white/30"} ${isMinimized ? "pointer-events-none" : ""}`}
+      dragElastic={0}
+      dragConstraints={{ top: 0 }} // Since we are forced at 30px offset already, 0 is the limit
+      onDrag={(event, info) => {
+        if (isMaximized) return;
+        const x = info.point.x;
+        const y = info.point.y;
+        
+        if (y < SNAP_THRESHOLD + 20) setSnapPreview("top");
+        else if (x < SNAP_THRESHOLD + 10) setSnapPreview("left");
+        else if (x > window.innerWidth - (SNAP_THRESHOLD + 10)) setSnapPreview("right");
+        else setSnapPreview(null);
+      }}
+      onDragEnd={(event, info) => {
+        if (isMaximized) return;
+        const x = info.point.x;
+        const y = info.point.y;
+
+        if (y < SNAP_THRESHOLD + 20) setSnapState("top");
+        else if (x < SNAP_THRESHOLD + 10) setSnapState("left");
+        else if (x > window.innerWidth - (SNAP_THRESHOLD + 10)) setSnapState("right");
+        else setSnapState(null);
+        
+        setSnapPreview(null);
+      }}
+      className={`fixed ${isMaximized || snapState === "top" ? "top-[30px] left-0 right-0 bottom-0 w-full h-[calc(100vh-30px)]" : 
+        snapState === "left" ? "top-[30px] left-0 w-[50vw] h-[calc(100vh-30px)]" :
+        snapState === "right" ? "top-[30px] right-0 left-auto w-[50vw] h-[calc(100vh-30px)]" :
+        `top-[30px] left-1/2 -translate-x-1/2 ${sizeMap[size]}`} 
+        flex flex-col bg-white/70 backdrop-blur-3xl shadow-2xl overflow-hidden z-[100] 
+        ${isMaximized || snapState ? "border-0 rounded-none" : "rounded-[20px] border border-white/30"} 
+        ${isMinimized ? "pointer-events-none" : ""} 
+        transition-[width,height,top,left,right,border-radius] duration-300 ease-out`}
       onClick={(e) => e.stopPropagation()}
       style={{ 
         cursor: "default", 
         transformOrigin: "bottom center",
-        perspective: "1000px" // Required for the 3D funnel effect to work
+        perspective: "1000px", // Required for the 3D funnel effect to work
+        zIndex: zIndex ?? 100
       }}
     >
       {/* macOS Title Bar — drag handle */}
       <div
         onPointerDown={(e) => {
+          if (onFocus) {
+            onFocus();
+            playSound("click");
+          }
           if (!isMaximized) dragControls.start(e);
         }}
-        className="h-12 flex items-center px-5 bg-white/20 border-b border-black/5 select-none shrink-0 backdrop-blur-sm z-[10]"
+        className="h-12 flex items-center px-5 bg-white/20 border-b border-black/5 select-none shrink-0 z-[10]"
         style={{ cursor: isMaximized ? "default" : "grab", touchAction: "none" }}
       >
         {/* Traffic Lights */}
@@ -157,7 +205,10 @@ export default function DesktopWindow({
           {/* Close */}
           <button
             title="Close"
-            onClick={onClose}
+            onClick={() => {
+              onClose();
+              playSound("woosh");
+            }}
             className="w-4 h-4 rounded-full bg-[#ff5f56] hover:bg-[#e0443c] flex items-center justify-center group transition-all shadow-sm active:scale-90"
           >
             <X className="w-2.5 h-2.5 opacity-0 group-hover:opacity-100 transition-opacity text-[#7a1200] stroke-[3]" />
@@ -165,7 +216,10 @@ export default function DesktopWindow({
           {/* Minimize */}
           <button
             title="Minimize"
-            onClick={onMinimize}
+            onClick={() => {
+              if (onMinimize) onMinimize();
+              playSound("woosh");
+            }}
             className="w-4 h-4 rounded-full bg-[#ffbd2e] hover:bg-[#e0a826] flex items-center justify-center group transition-all shadow-sm active:scale-90"
           >
             <div className="w-2 h-[2px] rounded-full bg-[#995700] opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -212,6 +266,22 @@ export default function DesktopWindow({
       <div className="flex-1 overflow-y-auto overscroll-contain scrollbar-hide rounded-b-xl" style={{ cursor: "default" }}>
         {children}
       </div>
+
+      {/* Snap Preview Overlay */}
+      <AnimatePresence>
+        {snapPreview && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className={`fixed pointer-events-none bg-blue-500/10 border-2 border-blue-500/30 backdrop-blur-md z-[200] ${
+              snapPreview === "top" ? "top-[30px] left-0 right-0 bottom-0 h-[calc(100vh-30px)]" :
+              snapPreview === "left" ? "top-[30px] left-0 w-[50vw] h-[calc(100vh-30px)]" :
+              "top-[30px] right-0 w-[50vw] h-[calc(100vh-30px)]"
+            }`}
+          />
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }

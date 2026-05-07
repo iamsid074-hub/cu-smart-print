@@ -37,11 +37,13 @@ interface Props {
   onMaximize?: () => void;
   isMinimized?: boolean;
   isMaximized?: boolean;
+  onFocus?: () => void;
+  zIndex?: number;
 }
 
 type TabType = "account" | "membership" | "listings" | "orders" | "saved";
 
-export default function DesktopWindowProfile({ onClose, onMinimize, onMaximize, isMinimized, isMaximized }: Props) {
+export default function DesktopWindowProfile({ onClose, onMinimize, onMaximize, isMinimized, isMaximized, onFocus, zIndex }: Props) {
   const { user, isAdmin, signOut } = useAuth();
   const membership = useMembership();
   const [activeTab, setActiveTab] = useState<TabType>("account");
@@ -137,11 +139,19 @@ export default function DesktopWindowProfile({ onClose, onMinimize, onMaximize, 
       onMaximize={onMaximize}
       isMinimized={isMinimized}
       isMaximized={isMaximized}
+      onFocus={onFocus}
+      zIndex={zIndex}
       size="xl"
     >
       <div className="flex h-full bg-[#F9FAFB]">
         {/* Sidebar */}
         <div className="w-[260px] border-r border-gray-200 bg-white flex flex-col p-6 shrink-0">
+          {/* Logo Section */}
+          <div className="flex items-center gap-3 mb-10 px-2">
+            <img src="/logo.webp" alt="CU Bazzar" className="w-8 h-8 rounded-lg shadow-sm" />
+            <span className="text-sm font-black text-gray-900 tracking-tight">CU BAZZAR</span>
+          </div>
+
           {/* User Brief */}
           <div className="flex items-center gap-3 mb-10">
             <div className="w-12 h-12 rounded-xl bg-indigo-50 flex items-center justify-center overflow-hidden border border-indigo-100 shadow-sm">
@@ -229,11 +239,11 @@ export default function DesktopWindowProfile({ onClose, onMinimize, onMaximize, 
                       <div className="w-24 h-24 rounded-full border-4 border-white shadow-xl overflow-hidden bg-white ring-1 ring-gray-100">
                          {profile?.avatar_url ? (
                            <img src={profile.avatar_url} alt="" className="w-full h-full object-cover" />
-                         ) : (
-                           <div className="w-full h-full flex items-center justify-center bg-gray-50">
-                             <User className="w-10 h-10 text-gray-300" />
-                           </div>
-                         )}
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center bg-gray-50">
+                              <img src="/cb_logo_final.webp" className="w-12 h-12 opacity-30 p-2" />
+                            </div>
+                          )}
                       </div>
                       <button 
                         onClick={() => fileInputRef.current?.click()}

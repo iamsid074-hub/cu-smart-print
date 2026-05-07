@@ -24,7 +24,7 @@ export default function DesktopDock({ onOpenWindow }: { onOpenWindow?: (id: stri
   const [hoverIndex, setHoverIndex] = useState<number | null>(null);
 
   return (
-    <div id="desktop-dock" className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-end">
+    <div id="desktop-dock" className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[2000] flex items-end">
       <div
         className="flex items-end gap-3 px-4 pb-[6px] rounded-2xl border border-white/20 h-[62px]"
         style={{
