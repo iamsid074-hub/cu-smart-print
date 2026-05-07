@@ -246,7 +246,7 @@ export default function DesktopWindowCart({ onClose, onMinimize, onMaximize, isM
                     <Zap className="w-3 h-3 fill-orange-600" /> Quick
                   </span>
                 )}
-                <button onClick={clearCart} className="text-xs text-slate-400 hover:text-red-500 transition-colors font-semibold">Clear All</button>
+                <button onClick={clearCart} className="text-[10px] uppercase tracking-wider text-red-500 bg-red-500/10 border border-red-500/20 px-3 py-1 rounded-full hover:bg-red-500/20 transition-all font-black">Clear All</button>
               </div>
 
               {items.map(item => (
@@ -264,7 +264,7 @@ export default function DesktopWindowCart({ onClose, onMinimize, onMaximize, isM
                         <button onClick={() => updateQuantity(item.id, item.quantity - 1)} className="w-6 h-6 rounded-full bg-white text-slate-600 flex items-center justify-center shadow-sm">
                           <Minus className="w-3 h-3" strokeWidth={3} />
                         </button>
-                        <span className="text-sm font-black w-4 text-center">{item.quantity}</span>
+                        <span className="text-sm font-black w-4 text-center text-slate-900">{item.quantity}</span>
                         <button onClick={() => updateQuantity(item.id, item.quantity + 1)} className="w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow-sm">
                           <Plus className="w-3 h-3" strokeWidth={3} />
                         </button>
