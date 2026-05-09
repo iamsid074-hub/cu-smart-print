@@ -240,6 +240,14 @@ function MaintenanceScreen() {
             <p className="text-4xl font-black text-white tracking-tight drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]">15 JULY</p>
           </div>
         </div>
+
+        {/* Admin access link */}
+        <a
+          href="/login"
+          className="mt-10 block text-white/20 text-xs hover:text-white/50 transition-colors tracking-widest uppercase"
+        >
+          Admin Access →
+        </a>
       </motion.div>
     </div>
   );
@@ -294,27 +302,7 @@ export function useSiteGate() {
   const { isAdmin } = useAuth();
   const [maintenance, setMaintenance] = useState(false);
   const [loaded, setLoaded] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
 
-  useEffect(() => {
-    const checkMobile = () => {
-      const userAgent = navigator.userAgent || navigator.vendor || (window as any).opera;
-      if (/android|ipad|playbook|silk/i.test(userAgent)) {
-        setIsMobile(true);
-      } else if (/iphone|ipod/i.test(userAgent)) {
-        setIsMobile(true);
-      } else if (window.innerWidth <= 768) {
-        setIsMobile(true);
-      } else {
-        setIsMobile(false);
-      }
-    };
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  // Check maintenance flag from Supabase
   useEffect(() => {
     const cacheKey = "cubazzar_maintenance_mode";
     const cached = localStorage.getItem(cacheKey);
@@ -334,26 +322,27 @@ export function useSiteGate() {
         setMaintenance(isMaint);
         localStorage.setItem(cacheKey, String(isMaint));
       } catch {
-        // Table might not exist yet — assume not in maintenance
         setMaintenance(false);
       }
       setLoaded(true);
     };
     check();
 
-    // Poll every 60s instead of 30s
-    const id = setInterval(check, 60000);
+    // Poll every 30s so the maintenance toggle is near-instant
+    const id = setInterval(check, 30_000);
     return () => clearInterval(id);
   }, []);
 
-  if (isMobile) return { gate: "mobile" as const, loaded: true };
 
   // Admins bypass everything
   if (isAdmin) return { gate: null, loaded: true };
 
   if (!loaded) return { gate: null, loaded: false };
 
-  // Desktop is always open, bypass maintenance mode completely
+  // ② Maintenance blocks ALL devices (mobile + desktop)
+  if (maintenance) return { gate: "maintenance" as const, loaded: true };
+
+  // ③ Site is open
   return { gate: null, loaded: true };
 }
 
