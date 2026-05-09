@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
 import { ChevronUp } from "lucide-react";
 
@@ -11,9 +11,10 @@ export default function MobileLockScreen({ onUnlock }: MobileLockScreenProps) {
   const { user } = useAuth();
   const [time, setTime]       = useState(new Date());
   const [isDismissing, setIsDismissing] = useState(false);
+  const dragY = useMotionValue(0);
 
-  const touchStartY  = useRef(0);
-  const touchStartT  = useRef(0);
+  // Morph corners from 0 to 44px as user swipes up (first 100px of travel)
+  const borderRadiusValue = useTransform(dragY, [0, -100], [0, 44]);
 
   const firstName = user?.user_metadata?.full_name?.split(" ")[0] ||
                     user?.user_metadata?.name?.split(" ")[0] || "";
@@ -33,19 +34,6 @@ export default function MobileLockScreen({ onUnlock }: MobileLockScreenProps) {
     setTimeout(onUnlock, 520);
   };
 
-  const handleTouchStart = (e: React.TouchEvent) => {
-    touchStartY.current = e.touches[0].clientY;
-    touchStartT.current = Date.now();
-  };
-
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    const dy = touchStartY.current - e.changedTouches[0].clientY;
-    const dt = Date.now() - touchStartT.current;
-    const velocity = dy / dt;
-    // Swipe up: either fast flick or >100px drag upward
-    if (dy > 100 || velocity > 0.5) dismiss();
-  };
-
   return (
     <AnimatePresence>
       {!isDismissing && (
@@ -54,10 +42,17 @@ export default function MobileLockScreen({ onUnlock }: MobileLockScreenProps) {
           initial={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: "-100%" }}
           transition={{ duration: 0.48, ease: [0.4, 0, 0.2, 1] }}
-          className="fixed inset-0 z-[50000] overflow-hidden"
-          onTouchStart={handleTouchStart}
-          onTouchEnd={handleTouchEnd}
-          onClick={dismiss}
+          drag="y"
+          dragConstraints={{ top: -window.innerHeight, bottom: 0 }}
+          dragElastic={{ top: 0.1, bottom: 0 }}
+          onDragEnd={(_, info) => {
+            // Unlock if swiped up more than 150px or high upward velocity
+            if (info.offset.y < -150 || info.velocity.y < -500) {
+              dismiss();
+            }
+          }}
+          style={{ y: dragY, borderBottomLeftRadius: borderRadiusValue, borderBottomRightRadius: borderRadiusValue }}
+          className="fixed inset-0 z-[50000] overflow-hidden touch-none"
         >
           {/* Wallpaper */}
           <img
@@ -83,7 +78,7 @@ export default function MobileLockScreen({ onUnlock }: MobileLockScreenProps) {
             >
               <p className="text-white/60 text-sm font-medium tracking-wide mb-2">{dateStr}</p>
               <p
-                className="text-white font-extralight tracking-tight"
+                className="text-white font-bold tracking-tighter"
                 style={{ fontSize: "clamp(88px, 22vw, 120px)", lineHeight: 1 }}
               >
                 {timeStr}

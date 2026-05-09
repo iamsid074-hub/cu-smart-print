@@ -81,6 +81,7 @@ const Games = lazy(() => import("./pages/Games"));
 const RealCrash = lazy(() => import("./pages/games/RealCrash"));
 const RealMines = lazy(() => import("./pages/games/RealMines"));
 const Sections = lazy(() => import("./pages/Sections"));
+const MobileFoodPortal = lazy(() => import("./components/MobileFoodPortal"));
 
 import Navbar from "./components/Navbar";
 // import BottomNav from "./components/BottomNav";
@@ -325,6 +326,14 @@ function AppLayout() {
               element={
                 <ProtectedRoute>
                   <Sections />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/shops"
+              element={
+                <ProtectedRoute>
+                  <MobileFoodPortal />
                 </ProtectedRoute>
               }
             />

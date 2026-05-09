@@ -921,7 +921,7 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
         className="fixed top-0 left-0 right-0 z-[9997] pointer-events-none overflow-hidden"
         style={{
           height: `calc(var(--sat,env(safe-area-inset-top,20px)) + 120px)`,
-          background: "linear-gradient(to bottom, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 30%, rgba(0,0,0,0.1) 60%, transparent 100%)",
+          background: "linear-gradient(to bottom, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.4) 30%, rgba(255,255,255,0.1) 60%, transparent 100%)",
           backdropFilter: "blur(16px)",
           WebkitBackdropFilter: "blur(16px)",
           maskImage: "linear-gradient(to bottom, black 0%, black 25%, transparent 100%)",

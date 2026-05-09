@@ -3,8 +3,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import {
   User, Wallet, ShoppingBag, Settings,
-  Gamepad2, Search, Grid, Bell, Package, ShoppingCart, Wifi, Zap
+  Gamepad2, Search, Grid, Bell, Package, ShoppingCart, Wifi, Zap,
+  ShieldAlert
 } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 // Glassmorphic tile — translucent + blur, light gradient overlay
 const GLASS = {
@@ -93,6 +95,8 @@ const IosStatusBar = () => {
 
 export default function ControlCenter() {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const isSuperAdmin = user?.email === "iamsid074@gmail.com";
   const [showCards, setShowCards] = useState(false);
 
   const panelRef = useRef<HTMLDivElement>(null);
@@ -380,7 +384,7 @@ export default function ControlCenter() {
                     initial="hidden"
                     animate="show"
                     exit="hide"
-                    className="flex-1 rounded-[36px] p-3 grid grid-cols-2 grid-rows-2 gap-2"
+                    className={`flex-1 rounded-[36px] p-3 grid ${isSuperAdmin ? 'grid-cols-3' : 'grid-cols-2'} gap-2`}
                     style={GLASS}
                   >
                     {([
@@ -388,6 +392,7 @@ export default function ControlCenter() {
                       { icon: Wallet,      bg: "#30A85A", to: "/wallet",       label: "Wallet"   },
                       { icon: ShoppingBag, bg: "#C97840", to: "/transactions", label: "Orders"   },
                       { icon: Settings,    bg: "#5C5C5E", to: "/settings",     label: "Settings" },
+                      ...(isSuperAdmin ? [{ icon: ShieldAlert, bg: "#E11D48", to: "/admin", label: "Admin" }] : [])
                     ] as const).map(({ icon: Icon, bg, to, label }) => (
                       <button
                         key={to}

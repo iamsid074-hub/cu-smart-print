@@ -114,10 +114,11 @@ export default function Home() {
     return !!sessionStorage.getItem("eos_booted");
   });
 
-  // Mobile lock screen: show every time the Home page mounts on mobile
-  const [showLock, setShowLock] = useState(() =>
-    typeof window !== "undefined" && window.innerWidth <= 768
-  );
+  // Mobile lock screen: show only once per session
+  const [showLock, setShowLock] = useState(() => {
+    if (typeof window === "undefined" || window.innerWidth > 768) return false;
+    return !sessionStorage.getItem("mobile_unlocked");
+  });
 
   const [shopStatusMsg, setShopStatusMsg] = useState<string | null>(null);
 
@@ -215,9 +216,12 @@ export default function Home() {
 
       {/* ─── EOS v3 Mobile Springboard (hidden on desktop) ────────────── */}
       <div className="block md:hidden">
-        {/* Lock Screen — shown every time on mobile */}
+        {/* Lock Screen — shown once per session on mobile */}
         <Suspense fallback={null}>
-          {showLock && <MobileLockScreen onUnlock={() => setShowLock(false)} />}
+          {showLock && <MobileLockScreen onUnlock={() => {
+            sessionStorage.setItem("mobile_unlocked", "1");
+            setShowLock(false);
+          }} />}
         </Suspense>
         {/* Springboard underneath */}
         <Suspense fallback={null}>

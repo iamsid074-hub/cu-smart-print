@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
-import { Coffee, Wallet as WalletIcon } from "lucide-react";
+import { Coffee, Wallet as WalletIcon, ShieldAlert } from "lucide-react";
 
 interface AppDef {
   name: string;
@@ -16,9 +16,9 @@ interface AppDef {
 }
 
 const GRID_APPS: AppDef[] = [
-  { name: "Shops",    img: "/dock-shops.webp",       path: "/sections/shops",   wiggleDelay: 0,    wiggleDuration: 0.18 },
-  { name: "Combos",   img: "/dock-combos.webp",      path: "/sections/combos",  wiggleDelay: 0.04, wiggleDuration: 0.20 },
-  { name: "Vending",  icon: Coffee,   iconBg: "#0d2d25", iconColor: "#10B981",   path: "/sections", wiggleDelay: 0.08, wiggleDuration: 0.17 },
+  { name: "Shops",    img: "/dock-shops.webp",       path: "/shops",            wiggleDelay: 0,    wiggleDuration: 0.18 },
+  { name: "Combos",   img: "/dock-combos.webp",      path: "/search",           wiggleDelay: 0.04, wiggleDuration: 0.20 },
+  { name: "Vending",  icon: Coffee,   iconBg: "#0d2d25", iconColor: "#10B981",   path: "/search",   wiggleDelay: 0.08, wiggleDuration: 0.17 },
   { name: "Grocery",  img: "/cc_grocery.png",        path: "/grocery",          wiggleDelay: 0.03, wiggleDuration: 0.21 },
   { name: "Cart",     img: "/dock-cart.webp",        path: "/cart",             wiggleDelay: 0.07, wiggleDuration: 0.19 },
   { name: "Games",    img: "/dock-games.webp",       path: "/games",            wiggleDelay: 0.02, wiggleDuration: 0.18 },
@@ -27,32 +27,50 @@ const GRID_APPS: AppDef[] = [
   { name: "Wallet",   img: "/cc_wallet.png",         path: "/wallet",           wiggleDelay: 0.05, wiggleDuration: 0.18 },
 ];
 
-const DOCK_APPS: AppDef[] = [
+const ADMIN_APP: AppDef = { 
+  name: "Admin",    
+  icon: ShieldAlert, 
+  iconBg: "#E11D48", 
+  iconColor: "#fff", 
+  path: "/admin", 
+  wiggleDelay: 0.05, 
+  wiggleDuration: 0.20 
+};
+
+
+const DOCK_APPS_BASE: AppDef[] = [
   { name: "Home",     img: "/dock-home.webp",        path: "/home",     wiggleDelay: 0, wiggleDuration: 0.18 },
   { name: "Sections", img: "/dock-shops.webp",       path: "/sections", wiggleDelay: 0, wiggleDuration: 0.18 },
   { name: "Cart",     img: "/dock-cart.webp",        path: "/cart",     wiggleDelay: 0, wiggleDuration: 0.18 },
   { name: "Profile",  img: "/dock-profile.webp",     path: "/profile",  wiggleDelay: 0, wiggleDuration: 0.18 },
 ];
 
-function getGreeting(name: string) {
-  const h = new Date().getHours();
-  if (h < 5)  return `Night owl, ${name} 🦉`;
-  if (h < 12) return `Good morning, ${name} ☀️`;
-  if (h < 17) return `Good afternoon, ${name} 👋`;
-  if (h < 21) return `Good evening, ${name} 🌆`;
-  return `Good night, ${name} 🌙`;
-}
+
+
+import MobileAppLibrary from "./MobileAppLibrary";
 
 export default function MobileSpringboard() {
   const navigate   = useNavigate();
   const { user }   = useAuth();
-  const [isWiggling, setIsWiggling] = useState(false);
-  const [time, setTime]             = useState(new Date());
-  const longPressRef                = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const touchStartY                 = useRef(0);
+  const isSuperAdmin = user?.email === "iamsid074@gmail.com";
+  
+  const [currentPage, setCurrentPage] = useState(0);
+  const [isWiggling, setIsWiggling]   = useState(false);
+  const [time, setTime]               = useState(new Date());
+  
+  const longPressRef                  = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const touchStartY                   = useRef(0);
 
-  const firstName = user?.user_metadata?.full_name?.split(" ")[0] ||
-                    user?.user_metadata?.name?.split(" ")[0] || "there";
+  // Chunk apps into pages of 9 (3x3 grid looks best)
+  const allApps = [...GRID_APPS, ...(isSuperAdmin ? [ADMIN_APP] : [])];
+  const APPS_PER_PAGE = 9;
+  const contentPages = [];
+  for (let i = 0; i < allApps.length; i += APPS_PER_PAGE) {
+    contentPages.push(allApps.slice(i, i + APPS_PER_PAGE));
+  }
+
+  // Add the App Library as the final "extreme" page
+  const totalPageCount = contentPages.length + 1;
 
   useEffect(() => {
     const t = setInterval(() => setTime(new Date()), 10_000);
@@ -84,7 +102,7 @@ export default function MobileSpringboard() {
 
   return (
     <div
-      className="fixed inset-0 overflow-hidden select-none"
+      className="fixed inset-0 overflow-hidden select-none touch-none"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
@@ -104,33 +122,78 @@ export default function MobileSpringboard() {
         className="relative flex flex-col h-full"
         style={{ paddingTop: "env(safe-area-inset-top, 44px)" }}
       >
-        {/* ── Time & Greeting ──────────────────────────────── */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          className="px-8 pt-10 pb-6"
-        >
-          <p className="text-white/55 text-sm font-medium tracking-wide mb-1">{dateStr}</p>
-          <p
-            className="text-white font-extralight tracking-tight"
-            style={{ fontSize: "clamp(68px, 18vw, 88px)", lineHeight: 1 }}
+        {/* ── Paged Content ───────────────────────────────── */}
+        <div className="flex-1 relative overflow-hidden">
+          <motion.div
+            className="flex h-full"
+            drag="x"
+            dragConstraints={{ left: -(totalPageCount - 1) * window.innerWidth, right: 0 }}
+            dragElastic={0.2}
+            onDragEnd={(_, info) => {
+              const threshold = 50;
+              if (info.offset.x < -threshold && currentPage < totalPageCount - 1) {
+                setCurrentPage(prev => prev + 1);
+              } else if (info.offset.x > threshold && currentPage > 0) {
+                setCurrentPage(prev => prev - 1);
+              }
+            }}
+            animate={{ x: -currentPage * window.innerWidth }}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
           >
-            {timeStr}
-          </p>
-          <p className="text-white/65 text-base font-medium mt-4">{getGreeting(firstName)}</p>
-        </motion.div>
+            {/* Standard App Pages */}
+            {contentPages.map((pageApps, pageIdx) => (
+              <div
+                key={pageIdx}
+                className="w-screen flex-shrink-0 flex flex-col h-full"
+              >
+                {/* Time widget only on the first page */}
+                {pageIdx === 0 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                    className="px-8 pt-24 pb-4"
+                  >
+                    <p className="text-white/55 text-sm font-medium tracking-wide mb-1">{dateStr}</p>
+                    <p
+                      className="text-white font-bold tracking-tighter"
+                      style={{ fontSize: "clamp(68px, 18vw, 88px)", lineHeight: 1 }}
+                    >
+                      {timeStr}
+                    </p>
+                  </motion.div>
+                )}
 
-        {/* ── App Grid ─────────────────────────────────────── */}
-        <div className="flex-1 grid grid-cols-3 gap-y-8 gap-x-2 px-6 pt-2 content-start overflow-hidden">
-          {GRID_APPS.map((app, i) => (
-            <AppIcon
-              key={app.name}
-              app={app}
-              index={i}
-              isWiggling={isWiggling}
-              onTap={handleAppTap}
-              size={72}
+                <div className={`grid grid-cols-3 gap-y-10 gap-x-2 px-6 ${pageIdx === 0 ? 'pt-8' : 'pt-32'} content-start`}>
+                  {pageApps.map((app, i) => (
+                    <AppIcon
+                      key={app.name}
+                      app={app}
+                      index={i}
+                      isWiggling={isWiggling}
+                      onTap={handleAppTap}
+                      size={64}
+                    />
+                  ))}
+                </div>
+              </div>
+            ))}
+
+            {/* Final Page: App Library */}
+            <div className="w-screen flex-shrink-0 h-full overflow-hidden">
+              <MobileAppLibrary apps={allApps} onTap={handleAppTap} />
+            </div>
+          </motion.div>
+        </div>
+
+        {/* ── Page Indicators ─────────────────────────────── */}
+        <div className="flex justify-center gap-2 pb-6">
+          {Array.from({ length: totalPageCount }).map((_, i) => (
+            <div
+              key={i}
+              className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${
+                i === currentPage ? "bg-white w-3" : "bg-white/30"
+              }`}
             />
           ))}
         </div>
@@ -151,14 +214,15 @@ export default function MobileSpringboard() {
               WebkitBackdropFilter: "blur(30px)",
             }}
           >
-            {DOCK_APPS.map((app, i) => (
+            {/* Dock items */}
+            {[...DOCK_APPS_BASE, ...(isSuperAdmin ? [ADMIN_APP] : [])].map((app, i) => (
               <AppIcon
                 key={app.name}
                 app={app}
                 index={i}
                 isWiggling={false}
                 onTap={handleAppTap}
-                size={58}
+                size={52}
                 showLabel={false}
               />
             ))}

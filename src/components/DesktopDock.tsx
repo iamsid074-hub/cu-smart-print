@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useAuth } from "@/contexts/AuthContext";
+import { ShieldAlert } from "lucide-react";
 
 type DockItemWithImg = { name: string; path: string; img: string; imgClass?: string };
 type DockItemWithIcon = { name: string; path: string; icon: React.ElementType; color: string };
@@ -8,20 +10,32 @@ type DockItem = DockItemWithImg | DockItemWithIcon;
 
 const dockItemsRaw: DockItem[] = [
   { name: "Home",     path: "/home",            img: "/dock-home.webp" },
-  { name: "Shops",    path: "/sections/shops",  img: "/dock-shops.webp" },
-  { name: "Combos",   path: "/sections/combos", img: "/dock-combos.webp" },
+  { name: "Shops",    path: "/shops",  img: "/dock-shops.webp" },
+  { name: "Combos",   path: "/search", img: "/dock-combos.webp" },
   { name: "Games",    path: "/games",            img: "/dock-games.webp" },
   { name: "Cart",     path: "/cart",             img: "/dock-cart.webp" },
   { name: "Profile",  path: "/profile",          img: "/dock-profile.webp", imgClass: "scale-[1.15]" },
   { name: "Settings", path: "/settings",         img: "/dock-settings-v2.webp" },
 ];
 
+const ADMIN_DOCK_ITEM: DockItem = { 
+  name: "Admin",    
+  path: "/admin",   
+  icon: ShieldAlert, 
+  color: "from-red-500 to-rose-600" 
+};
+
+
 export const dockItems = dockItemsRaw;
 
 export default function DesktopDock({ onOpenWindow }: { onOpenWindow?: (id: string) => void }) {
   const navigate  = useNavigate();
   const location  = useLocation();
+  const { user } = useAuth();
+  const isSuperAdmin = user?.email === "iamsid074@gmail.com";
   const [hoverIndex, setHoverIndex] = useState<number | null>(null);
+
+  const currentDockItems = [...dockItemsRaw, ...(isSuperAdmin ? [ADMIN_DOCK_ITEM] : [])];
 
   return (
     <div id="desktop-dock" className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[2000] flex items-end">
@@ -34,7 +48,7 @@ export default function DesktopDock({ onOpenWindow }: { onOpenWindow?: (id: stri
         }}
         onMouseLeave={() => setHoverIndex(null)}
       >
-        {dockItemsRaw.map((item, index) => {
+        {currentDockItems.map((item, index) => {
           let size = 44;
           if (hoverIndex !== null) {
             const dist = hoverIndex - index;

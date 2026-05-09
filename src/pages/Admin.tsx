@@ -3255,45 +3255,48 @@ export default function Admin() {
             </h1>
           </div>
 
-          {/* Notification bell in topbar */}
-          <button
-            onClick={() => setSection("notifications")}
-            className="relative p-2.5 rounded-full bg-slate-50  border border-slate-200 hover:border-slate-300 transition-colors"
-          >
-            <Bell className="w-5 h-5 text-slate-500" />
-            {unreadCount > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] rounded-full bg-neon-orange text-white text-[10px] font-black flex items-center justify-center px-1 shadow-[0_0_10px_rgba(255,100,0,0.8)]">
-                {unreadCount > 9 ? "9+" : unreadCount}
-              </span>
-            )}
-          </button>
+          {/* Centered Actions — Moved here to avoid Control Center blocking zones on the right */}
+          <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-3">
+            {/* Notification bell */}
+            <button
+              onClick={() => setSection("notifications")}
+              className="relative p-2.5 rounded-full bg-slate-50 border border-slate-200 hover:border-slate-300 transition-all active:scale-95 shadow-sm"
+            >
+              <Bell className="w-5 h-5 text-slate-500" />
+              {unreadCount > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] rounded-full bg-neon-orange text-white text-[10px] font-black flex items-center justify-center px-1 shadow-[0_0_10px_rgba(255,100,0,0.8)]">
+                  {unreadCount > 9 ? "9+" : unreadCount}
+                </span>
+              )}
+            </button>
 
-          {/* Maintenance Toggle */}
-          <button
-            onClick={toggleMaintenance}
-            disabled={togglingMaintenance}
-            title={
-              maintenanceMode
-                ? "Maintenance ON — click to disable"
-                : "Site is live — click to enable maintenance"
-            }
-            className={`relative p-2.5 rounded-full border transition-all ${
-              maintenanceMode
-                ? "bg-amber-500/20 border-amber-500/40 hover:bg-amber-500/30"
-                : "bg-slate-50  border-slate-200 hover:border-slate-300"
-            }`}
-          >
-            <Wrench
-              className={`w-4 h-4 ${
-                maintenanceMode ? "text-amber-400" : "text-slate-500"
+            {/* Maintenance Toggle */}
+            <button
+              onClick={toggleMaintenance}
+              disabled={togglingMaintenance}
+              title={
+                maintenanceMode
+                  ? "Maintenance ON — click to disable"
+                  : "Site is live — click to enable maintenance"
+              }
+              className={`relative p-2.5 rounded-full border transition-all active:scale-95 shadow-sm ${
+                maintenanceMode
+                  ? "bg-amber-500/20 border-amber-500/40 hover:bg-amber-500/30"
+                  : "bg-slate-50 border-slate-200 hover:border-slate-300"
               }`}
-            />
-            {maintenanceMode && (
-              <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse shadow-[0_0_8px_rgba(251,191,36,0.8)]" />
-            )}
-          </button>
+            >
+              <Wrench
+                className={`w-4 h-4 ${
+                  maintenanceMode ? "text-amber-400" : "text-slate-500"
+                }`}
+              />
+              {maintenanceMode && (
+                <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse shadow-[0_0_8px_rgba(251,191,36,0.8)]" />
+              )}
+            </button>
+          </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 ml-auto">
             <div className="w-8 h-8 rounded-full bg-white border border-slate-200 overflow-hidden flex items-center justify-center p-1.5">
               <img
                 src="/logo.webp"
