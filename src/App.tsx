@@ -196,6 +196,10 @@ function AppLayout() {
 
   // Removed BrandedLoading return for instant entry
 
+  // Show gate screens for non-admin, non-login, non-landing pages
+  // Also, mobile block should be shown on all pages for mobile users.
+  if (gate === "mobile") return <MobileBlockScreen />;
+
   if (
     !authLoading &&
     gate &&
@@ -213,7 +217,6 @@ function AppLayout() {
   return (
     <>
       <AppUpdater />
-      <StickyStripBanner />
       <Suspense fallback={null}>
         <ControlCenter />
         <TutorialSystem />

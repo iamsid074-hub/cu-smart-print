@@ -65,9 +65,6 @@ type IslandState =
   | "sell"
   | "tracking"
   | "active_cart"
-  | "detecting"
-  | "detected"
-  | "not_detected"
   | "wrong_pass";
 
 // ── Tracking status configuration ───────────────────────────────────────────
@@ -249,21 +246,9 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
       triggerState("wallet_lock_setup");
     };
 
-    const onScanStart = () => triggerState("detecting");
-    const onScanEnd = () => {
-      // If we're not in a persistent success/wallet state, go back to default
-      setIslandState("default");
-    };
-    const onNoFace = () => setIslandState("not_detected");
-    const onFaceFound = () => setIslandState("detecting");
-
     window.addEventListener("cu_card_wrong_pass", wrongPassHandler);
     window.addEventListener("wallet_unlock_success", unlockSuccessHandler);
     window.addEventListener("wallet_lock_setup", lockSetupHandler);
-    window.addEventListener("face_id_scan_start", onScanStart);
-    window.addEventListener("face_id_scan_end", onScanEnd);
-    window.addEventListener("face_id_no_face", onNoFace);
-    window.addEventListener("face_id_face_found", onFaceFound);
     window.addEventListener("play_wallet_sound", () => {
       play('unlock');
     });
@@ -272,10 +257,6 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
       window.removeEventListener("cu_card_wrong_pass", wrongPassHandler);
       window.removeEventListener("wallet_unlock_success", unlockSuccessHandler);
       window.removeEventListener("wallet_lock_setup", lockSetupHandler);
-      window.removeEventListener("face_id_scan_start", onScanStart);
-      window.removeEventListener("face_id_scan_end", onScanEnd);
-      window.removeEventListener("face_id_no_face", onNoFace);
-      window.removeEventListener("face_id_face_found", onFaceFound);
     };
   }, []);
 
@@ -598,85 +579,56 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
       );
       break;
 
-    case "detecting":
-      width = 180;
-      content = (
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-semibold tracking-wide text-white">Face ID</span>
-          <motion.span 
-            animate={{ opacity: [0.6, 1, 0.6] }} 
-            transition={{ duration: 1.5, repeat: Infinity }}
-            className="text-sm font-medium text-white/50"
-          >
-            detecting...
-          </motion.span>
-        </div>
-      );
-      break;
-
-    case "detected":
-      width = 160;
-      content = (
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-semibold tracking-wide text-white">Face ID</span>
-          <span className="text-sm font-bold text-blue-400" style={{ textShadow: '0 0 10px rgba(96,165,250,0.5)' }}>detected</span>
-        </div>
-      );
-      break;
-
-    case "not_detected":
-      width = 190;
-      content = (
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-semibold tracking-wide text-white">Face ID</span>
-          <span className="text-sm font-bold text-red-400">not detected</span>
-        </div>
-      );
-      break;
-
     case "wallet_unlock_success":
-      const userNameMob = user?.user_metadata?.full_name?.split(' ')[0] || "User";
-      width = 260;
-      height = 44;
+      width = 110;
+      height = 110;
       content = (
-        <motion.div 
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="flex items-center justify-center gap-2 relative w-full h-full px-4"
-        >
-          {/* Symmetrical Sparkles — Mobile Scaled */}
-          <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
-            {[...Array(12)].map((_, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, scale: 0 }}
-                animate={{ 
-                  opacity: [0, 1, 0], 
-                  scale: [0, 1, 0.5],
-                  x: i < 6 ? -(40 + Math.random() * 50) : (40 + Math.random() * 50),
-                  y: (Math.random() - 0.5) * 30
-                }}
-                transition={{ 
-                  duration: 1.8 + Math.random(), 
-                  repeat: Infinity,
-                  delay: i * 0.1
-                }}
-                className="absolute w-1 h-1 rounded-full"
-                style={{ 
-                  background: i % 2 === 0 ? '#ff9e7a' : '#ff6b6b',
-                  boxShadow: `0 0 8px ${i % 2 === 0 ? '#ff9e7a' : '#ff6b6b'}`
-                }}
+        <div className="flex items-center justify-center w-full h-full relative">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.2, type: "spring", stiffness: 500, damping: 25 }}
+            className="absolute inset-0 flex items-center justify-center bg-[rgba(15,15,15,0.98)]"
+          >
+            <svg
+              width="90" height="90" viewBox="0 0 90 90"
+              fill="none" xmlns="http://www.w3.org/2000/svg"
+            >
+              {/* Fast drawing green circle - Native SVG rotation avoids CSS transform bugs */}
+              <motion.g 
+                initial={{ rotate: -90 }}
+                animate={{ rotate: 270 }}
+                transition={{ delay: 0.2, duration: 0.5, ease: "anticipate" }}
+                style={{ transformOrigin: "45px 45px" }}
+              >
+                <motion.circle
+                  cx="45" cy="45" r="34"
+                  stroke="#10b981"
+                  strokeWidth="5"
+                  strokeLinecap="round"
+                  fill="none"
+                  initial={{ pathLength: 0 }}
+                  animate={{ pathLength: 1 }}
+                  transition={{ delay: 0.2, duration: 0.4, ease: "easeOut" }}
+                  style={{ filter: "drop-shadow(0 0 6px rgba(16,185,129,0.9))" }}
+                />
+              </motion.g>
+              {/* Checkmark draws in */}
+              <motion.path
+                d="M30 46 L42 58 L62 34"
+                stroke="#10b981"
+                strokeWidth="6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                fill="none"
+                initial={{ pathLength: 0 }}
+                animate={{ pathLength: 1 }}
+                transition={{ delay: 0.4, duration: 0.3, ease: "easeOut" }}
+                style={{ filter: "drop-shadow(0 0 4px rgba(16,185,129,0.8))" }}
               />
-            ))}
-          </div>
-
-          <span className="text-[15px] font-semibold text-white/90 tracking-tight">
-            Welcome back,
-          </span>
-          <span className="text-[15px] font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#ff9e7a] to-[#ff6b6b] tracking-tight">
-            {userNameMob}
-          </span>
-        </motion.div>
+            </svg>
+          </motion.div>
+        </div>
       );
       break;
 
