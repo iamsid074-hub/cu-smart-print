@@ -22,6 +22,7 @@ import {
   Bike,
   Check,
   Lock,
+  X,
 } from "lucide-react";
 import { Haptics, ImpactStyle } from "@capacitor/haptics";
 
@@ -140,6 +141,7 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
   }, []);
 
   const [islandState, setIslandState] = useState<IslandState>("default");
+  const [isExpanded, setIsExpanded] = useState(false);
   const [prevItemsCount, setPrevItemsCount] = useState(
     items.reduce((acc, item) => acc + item.quantity, 0)
   );
@@ -459,13 +461,15 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
   const handlePointerUp = () => {
     const elapsed = Date.now() - pointerDownTimeRef.current;
     if (elapsed < 300) {
-      // Tap (Navigate safely)
       triggerHaptic(ImpactStyle.Light);
+      // Tracking state: toggle Live Activity expanded card
+      if (displayState === "tracking" && trackingOrder) {
+        setIsExpanded(prev => !prev);
+        return;
+      }
       handleIslandClick();
     } else {
-      // Long press (Expand widget logic / Navigate to active context)
       triggerHaptic(ImpactStyle.Medium);
-      // If we are showing something like "added" and user long presses, route deeply
       navigate(trackingOrder && islandState !== "added" ? `/tracking?order=${trackingOrder.id}` : "/cart");
     }
   };
@@ -479,6 +483,9 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
     (trackingOrder.status === "cancelled" ||
       trackingOrder.status === "seller_rejected");
   const isTrackingDone = trackingOrder?.status === "completed";
+  // Hoisted for use in both the island and the expanded Live Activity card
+  const stepIndex = trackingStatus?.stepIndex ?? 0;
+  const pct = Math.max(0, Math.min(100, (stepIndex / 4) * 100));
 
   let width: number | string = 160;
   let height = 40;
@@ -790,10 +797,6 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
       width = trackingOrder ? 200 : 160;
       height = 40; // Default pill height for perfect vertical centering
       
-      const stepIndex = trackingStatus?.stepIndex ?? 0;
-      // Calculate realistic width progression (0% at pending to 100% at completed)
-      const pct = Math.max(0, Math.min(100, (stepIndex / 4) * 100));
-
       if (trackingOrder && trackingStatus) {
         content = (
           <div className="flex flex-col w-full h-full justify-center px-1 relative"> 
@@ -1103,6 +1106,84 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
           </motion.div>
         </div>
       </div>
+
+      {/* ── Live Activity backdrop ── */}
+      {isExpanded && (
+        <div className="fixed inset-0 z-[9996]" onClick={() => setIsExpanded(false)} />
+      )}
+
+      {/* ── Live Activity Expanded Card ── */}
+      <AnimatePresence>
+        {isExpanded && displayState === "tracking" && trackingOrder && (
+          <motion.div
+            initial={{ opacity: 0, y: -20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -20, scale: 0.95 }}
+            transition={{ type: "spring", stiffness: 500, damping: 36 }}
+            className="fixed left-3 right-3 z-[9998] pointer-events-auto"
+            style={{ top: "calc(var(--sat, env(safe-area-inset-top, 20px)) + 60px)" }}
+          >
+            <div
+              className="rounded-[28px] p-5 border border-white/10 shadow-2xl"
+              style={{ background: "rgba(10,10,13,0.97)", backdropFilter: "blur(40px)", WebkitBackdropFilter: "blur(40px)" }}
+            >
+              {/* Header */}
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-11 h-11 rounded-2xl overflow-hidden bg-white/8 flex items-center justify-center flex-shrink-0">
+                    {trackingOrder.products?.image_url
+                      ? <img src={trackingOrder.products.image_url} alt="" className="w-full h-full object-cover" />
+                      : <Package className="w-5 h-5 text-white/40" />}
+                  </div>
+                  <div>
+                    <p className="text-white font-bold text-sm">{trackingOrder.products?.title || "Your Order"}</p>
+                    <p className="text-white/40 text-xs">₹{trackingOrder.total_price}</p>
+                  </div>
+                </div>
+                <button onClick={() => setIsExpanded(false)} className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center">
+                  <X className="w-3.5 h-3.5 text-white/60" />
+                </button>
+              </div>
+
+              {/* Status badge */}
+              <div className="flex items-center gap-2.5 px-4 py-2.5 rounded-2xl mb-4" style={{ background: `${trackingStatus?.color}18`, border: `1px solid ${trackingStatus?.color}30` }}>
+                <motion.div animate={{ opacity: [0.4, 1, 0.4] }} transition={{ repeat: Infinity, duration: 1.4 }} className="w-2.5 h-2.5 rounded-full" style={{ background: trackingStatus?.color, boxShadow: `0 0 8px ${trackingStatus?.color}` }} />
+                <span className="text-white font-bold text-sm">{trackingStatus?.label}</span>
+                {isTrackingDone && <CheckCircle2 className="ml-auto w-4 h-4 text-emerald-400" />}
+              </div>
+
+              {/* Progress steps */}
+              <div className="relative flex items-start justify-between mb-5">
+                <div className="absolute left-3.5 right-3.5 top-3 h-[2px] bg-white/10 rounded-full" />
+                <motion.div className="absolute left-3.5 top-3 h-[2px] rounded-full" style={{ background: trackingStatus?.color, boxShadow: `0 0 8px ${trackingStatus?.color}`, width: `calc((100% - 28px) * ${pct / 100})` }} initial={{ width: 0 }} animate={{ width: `calc((100% - 28px) * ${pct / 100})` }} transition={{ type: "spring", stiffness: 50, damping: 16 }} />
+                {STEP_KEYS.map((key, i) => {
+                  const done = i <= stepIndex;
+                  return (
+                    <div key={key} className="flex flex-col items-center gap-1.5 z-10">
+                      <div className="w-7 h-7 rounded-full flex items-center justify-center transition-all duration-500" style={{ background: done ? trackingStatus?.color : "rgba(255,255,255,0.1)", boxShadow: done ? `0 0 12px ${trackingStatus?.color}60` : "none" }}>
+                        {done ? <Check className="w-3.5 h-3.5 text-black" /> : <div className="w-2 h-2 rounded-full bg-white/30" />}
+                      </div>
+                      <span className="text-white/40 text-[9px] font-bold uppercase tracking-wide">{TRACKING_STATUSES[key]?.label?.split(" ")[0]}</span>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {trackingOrder.delivery_room && (
+                <p className="text-white/35 text-xs font-medium mb-4">📍 {trackingOrder.delivery_location} · Room {trackingOrder.delivery_room}</p>
+              )}
+
+              <button
+                onClick={() => { setIsExpanded(false); navigate("/tracking" + (trackingOrder?.id ? `?order=${trackingOrder.id}` : "")); }}
+                className="w-full py-3 rounded-2xl text-sm font-black text-black"
+                style={{ background: trackingStatus?.color }}
+              >
+                View Full Details →
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 });

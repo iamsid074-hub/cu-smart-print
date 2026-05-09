@@ -3,6 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import DesktopDock from "@/components/DesktopDock";
 import DesktopMenuBar from "@/components/DesktopMenuBar";
 import { motion, AnimatePresence } from "framer-motion";
+const MobileSpringboard = lazy(() => import("@/components/MobileSpringboard"));
+const MobileLockScreen   = lazy(() => import("@/components/MobileLockScreen"));
 
 const DesktopWindowShops = lazy(() => import("@/components/DesktopWindowShops"));
 const DesktopWindowVending = lazy(() => import("@/components/DesktopWindowVending"));
@@ -105,13 +107,17 @@ export default function Home() {
   const [showBoot, setShowBoot] = useState(() => {
     if (typeof window === "undefined") return false;
     if (window.innerWidth <= 768) return false;
-    // Check flag set in this exact session
     return !sessionStorage.getItem("eos_booted");
   });
   const [uiReady, setUiReady] = useState(() => {
     if (typeof window === "undefined") return true;
     return !!sessionStorage.getItem("eos_booted");
   });
+
+  // Mobile lock screen: show every time the Home page mounts on mobile
+  const [showLock, setShowLock] = useState(() =>
+    typeof window !== "undefined" && window.innerWidth <= 768
+  );
 
   const [shopStatusMsg, setShopStatusMsg] = useState<string | null>(null);
 
@@ -206,6 +212,18 @@ export default function Home() {
           </Suspense>
         )}
       </AnimatePresence>
+
+      {/* ─── EOS v3 Mobile Springboard (hidden on desktop) ────────────── */}
+      <div className="block md:hidden">
+        {/* Lock Screen — shown every time on mobile */}
+        <Suspense fallback={null}>
+          {showLock && <MobileLockScreen onUnlock={() => setShowLock(false)} />}
+        </Suspense>
+        {/* Springboard underneath */}
+        <Suspense fallback={null}>
+          <MobileSpringboard />
+        </Suspense>
+      </div>
 
       {/* ─── EOS v3 Desktop UI (hidden on mobile) ─────────────────────── */}
       <div className="hidden md:block relative z-10">
