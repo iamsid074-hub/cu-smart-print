@@ -77,7 +77,6 @@ export default function DesktopMenuBar({ notification }: DesktopMenuBarProps) {
       window.removeEventListener("face_id_no_face", onNoFace);
       window.removeEventListener("face_id_face_found", onFaceFound);
       if (collapseTimer.current) clearTimeout(collapseTimer.current);
-      if (detectedTimer.current) clearTimeout(detectedTimer.current);
     };
   }, []);
 

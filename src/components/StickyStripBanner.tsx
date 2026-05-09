@@ -1,4 +1,4 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -17,7 +17,8 @@ export default function StickyStripBanner() {
         transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
         className="fixed top-[3.5rem] left-0 right-0 z-40 overflow-hidden"
         style={{
-          background: "linear-gradient(90deg, #FF6B00, #FF4500, #FF6B00)",
+          background: "linear-gradient(90deg, #1A1A1A, #2D2D2D, #1A1A1A)",
+          borderBottom: "1px solid rgba(255,255,255,0.1)"
         }}
       >
         <Link to="/pasta-offer" className="block relative">
@@ -31,14 +32,16 @@ export default function StickyStripBanner() {
               {[...Array(6)].map((_, i) => (
                 <span
                   key={i}
-                  className="text-[11px] sm:text-xs font-black text-white tracking-wider flex items-center gap-2"
+                  className="text-[11px] sm:text-xs font-bold text-white tracking-wider flex items-center gap-3"
                 >
-                  <span className="text-sm">{"\uD83D\uDD25"}</span>
-                  Pasta @ {"₹"}99 {"–"} Limited Time Offer!
-                  <span className="w-1 h-1 rounded-full bg-white/40" />
-                  Flavour Factory Special
-                  <span className="w-1 h-1 rounded-full bg-white/40" />
-                  Red {"•"} White {"•"} Mixed Sauce
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse" />
+                    WORK IN PROGRESS
+                  </span>
+                  <span className="opacity-60">•</span>
+                  MOBILE EXPERIENCE UNDER DEVELOPMENT
+                  <span className="opacity-60">•</span>
+                  STAY TUNED FOR EOS v3 MOBILE
                 </span>
               ))}
             </motion.div>

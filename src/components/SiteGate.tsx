@@ -346,7 +346,7 @@ export function useSiteGate() {
     return () => clearInterval(id);
   }, []);
 
-  if (isMobile) return { gate: "mobile" as const, loaded: true };
+  if (isMobile) return { gate: null, loaded: true, isMobile: true };
 
   // Admins bypass everything
   if (isAdmin) return { gate: null, loaded: true };
