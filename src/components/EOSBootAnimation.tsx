@@ -21,6 +21,7 @@ interface Props {
 export default function EOSBootAnimation({ onComplete }: Props) {
   const [phase, setPhase] = useState<"eclipse" | "text" | "exit" | "done">("eclipse");
   const timerRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const audioRef = useRef<HTMLAudioElement>(null);
 
   const addTimer = (fn: () => void, ms: number) => {
     const t = setTimeout(fn, ms);
@@ -28,6 +29,12 @@ export default function EOSBootAnimation({ onComplete }: Props) {
   };
 
   useEffect(() => {
+    // Play startup sound
+    if (audioRef.current) {
+      audioRef.current.volume = 0.6;
+      audioRef.current.play().catch(err => console.log("Audio autoplay blocked or failed:", err));
+    }
+
     // Phase timeline
     addTimer(() => setPhase("text"),   1600);
     addTimer(() => setPhase("exit"),   4800);
@@ -51,6 +58,9 @@ export default function EOSBootAnimation({ onComplete }: Props) {
         className="fixed inset-0 z-[99999] flex items-center justify-center overflow-hidden"
         style={{ background: "#000000" }}
       >
+        {/* Startup Sound Source */}
+        <audio ref={audioRef} src="/sound.mp4.mp3" preload="auto" />
+
         {/* ── Subtle starfield ─────────────────────────────────────────── */}
         <StarField />
 
@@ -104,24 +114,95 @@ export default function EOSBootAnimation({ onComplete }: Props) {
   );
 }
 
-/* ─── Real Planet Image ──────────────────────────────────────────────────────── */
+/* ─── Real Planet Image with Burning Effects ───────────────────────────────── */
 function RealPlanet() {
   return (
     <motion.div 
-      initial={{ scale: 1.2, opacity: 0 }}
+      initial={{ scale: 1.1, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
-      transition={{ duration: 3, ease: "easeOut" }}
+      transition={{ duration: 4, ease: "easeOut" }}
       className="relative flex items-center justify-center w-full max-w-[800px] aspect-video"
     >
-      {/* The realistic generated image */}
-      <img 
-        src="/eos-eclipse.png" 
-        alt="EOS Eclipse" 
-        className="w-[400px] h-auto object-contain drop-shadow-[0_0_80px_rgba(168,85,247,0.3)]"
-        style={{
-          maskImage: "radial-gradient(circle at center, black 40%, transparent 70%)",
-          WebkitMaskImage: "radial-gradient(circle at center, black 40%, transparent 70%)"
+      {/* ── LIVE HEATING WAVES (Concentric ripples) ── */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        {[...Array(3)].map((_, i) => (
+          <motion.div
+            key={i}
+            animate={{ 
+              scale: [1, 1.8], 
+              opacity: [0, 0.4, 0],
+              borderWidth: ["2px", "8px"]
+            }}
+            transition={{ 
+              duration: 3, 
+              repeat: Infinity, 
+              delay: i * 1,
+              ease: "easeOut" 
+            }}
+            className="absolute rounded-full border-purple-500/30 shadow-[0_0_50px_rgba(168,85,247,0.3)]"
+            style={{ width: 380, height: 380, filter: "blur(8px)" }}
+          />
+        ))}
+      </div>
+
+      {/* 1. Heat Distortion Layer */}
+      <motion.div
+        animate={{ 
+          scale: [1, 1.05, 1],
+          opacity: [0.3, 0.5, 0.3],
+          filter: ["blur(20px)", "blur(40px)", "blur(20px)"]
         }}
+        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute w-[450px] h-[450px] rounded-full bg-purple-600/20 mix-blend-screen"
+      />
+
+      {/* 2. Burning Flame Particles */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        {[...Array(24)].map((_, i) => (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, scale: 0 }}
+            animate={{ 
+              opacity: [0, 1, 0],
+              scale: [0, 1.5, 0],
+              x: Math.cos(i * 15 * (Math.PI / 180)) * (180 + Math.random() * 60),
+              y: Math.sin(i * 15 * (Math.PI / 180)) * (180 + Math.random() * 60),
+              rotate: 360
+            }}
+            transition={{ 
+              duration: 2 + Math.random() * 2, 
+              repeat: Infinity, 
+              delay: Math.random() * 2,
+              ease: "easeOut"
+            }}
+            className="absolute w-1.5 h-1.5 rounded-full bg-purple-400"
+            style={{ 
+              boxShadow: "0 0 15px #a855f7, 0 0 30px #d8b4fe",
+              filter: "blur(1px)"
+            }}
+          />
+        ))}
+      </div>
+
+      {/* 3. The Central realistic eclipse — Static and Solid */}
+      <div className="relative z-10">
+        <img 
+          src="/eos-eclipse.png" 
+          alt="EOS Eclipse" 
+          className="w-[400px] h-auto object-contain"
+          style={{
+            filter: "drop-shadow(0 0 100px rgba(168,85,247,0.6))",
+            maskImage: "radial-gradient(circle at center, black 40%, transparent 70%)",
+            WebkitMaskImage: "radial-gradient(circle at center, black 40%, transparent 70%)"
+          }}
+        />
+      </div>
+
+      {/* 4. Swirling Corona Glow */}
+      <motion.div
+        animate={{ rotate: 360 }}
+        transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+        className="absolute w-[500px] h-[500px] border-[20px] border-purple-500/10 rounded-full blur-[60px]"
       />
     </motion.div>
   );

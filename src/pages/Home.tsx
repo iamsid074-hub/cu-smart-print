@@ -13,6 +13,8 @@ const DesktopWindowProfile = lazy(() => import("@/components/DesktopWindowProfil
 import DesktopStageManager from "@/components/DesktopStageManager";
 import DesktopWidgetSpace from "@/components/DesktopWidgetSpace";
 const FloatingLocationWidget = lazy(() => import("@/components/FloatingLocationWidget"));
+const FloatingGroceryWidget = lazy(() => import("@/components/FloatingGroceryWidget"));
+const FloatingWalletWidget = lazy(() => import("@/components/FloatingWalletWidget"));
 import {
   Search,
   Loader2,
@@ -135,8 +137,18 @@ export default function Home() {
       }
       if (id) handleOpenWindow(id);
     };
+    const handleReplayBoot = () => {
+      sessionStorage.removeItem("eos_booted");
+      setShowBoot(true);
+      setUiReady(false);
+    };
+
     window.addEventListener("open-window", handleGlobalOpen);
-    return () => window.removeEventListener("open-window", handleGlobalOpen);
+    window.addEventListener("replay-boot", handleReplayBoot);
+    return () => {
+      window.removeEventListener("open-window", handleGlobalOpen);
+      window.removeEventListener("replay-boot", handleReplayBoot);
+    };
   }, [activeWindows, minimizedWindows]); // Re-bind to capture current state
 
   // Internal opener needs check too
@@ -253,6 +265,8 @@ export default function Home() {
                     transition={{ duration: 0.3 }}
                   >
                     <FloatingLocationWidget />
+                    <FloatingGroceryWidget />
+                    <FloatingWalletWidget />
                   </motion.div>
                   <DesktopWidgetSpace />
                 </>

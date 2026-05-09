@@ -34,11 +34,13 @@ import {
   Zap,
   Puzzle,
   CheckCircle2,
+  ScanFace,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { AnimatePresence, motion } from "framer-motion";
 import { supabase } from "@/lib/supabase";
+import WalletSecurity from "@/components/WalletSecurity";
 
 type TabType = "profile" | "wallet" | "combo" | "delivery" | "security";
 
@@ -49,6 +51,7 @@ export default function Settings() {
   const [activeTab, setActiveTab] = useState<TabType>("profile");
   const [comboText, setComboText] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
+  const [showSecuritySetup, setShowSecuritySetup] = useState(false);
 
   // User metadata
   const avatarUrl = user?.user_metadata?.avatar_url || user?.user_metadata?.picture || null;
@@ -77,6 +80,24 @@ export default function Settings() {
       setTimeout(() => { window.location.href = "/login"; }, 1000);
     } catch (err: any) {
       toast.error(err.message || "Failed to delete account.", { id: loadingToast });
+    }
+  };
+
+  const handleResetFaceId = async () => {
+    if (!user) return;
+    const loadingToast = toast.loading("Preparing security setup...");
+    try {
+      // Clear existing biometric data to force setup mode
+      const { error } = await supabase.from("profiles").update({
+        biometric_enabled: false,
+        face_embedding: null
+      }).eq("id", user.id);
+      
+      if (error) throw error;
+      toast.success("Ready for new Face ID", { id: loadingToast });
+      setShowSecuritySetup(true);
+    } catch (err: any) {
+      toast.error("Failed to prepare Face ID setup", { id: loadingToast });
     }
   };
 
@@ -339,6 +360,7 @@ export default function Settings() {
                   </div>
 
                   <div className="space-y-3">
+                    <SecurityAction icon={ScanFace} label="Change Face ID" sub="Set up a new face for authentication" onClick={handleResetFaceId} />
                     <SecurityAction icon={Lock} label="Appeal for Passcode Change" sub="Request admin to reset your wallet lock" onClick={() => navigate("/wallet-reset")} />
                     <SecurityAction icon={LogOut} label="Sign Out" sub="Log out of all sessions on this device" onClick={handleLogout} />
                     <SecurityAction icon={Trash2} label="Delete Account" sub="Permanently remove all your data" danger onClick={handleDeleteAccount} />
@@ -354,6 +376,13 @@ export default function Settings() {
           </div>
         </div>
       </div>
+      
+      {showSecuritySetup && (
+        <WalletSecurity 
+          onUnlock={() => setShowSecuritySetup(false)} 
+          onClose={() => setShowSecuritySetup(false)} 
+        />
+      )}
     </div>
   );
 }

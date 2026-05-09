@@ -21,6 +21,7 @@ import {
   User,
   Layout,
   Play,
+  ScanFace,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
@@ -82,6 +83,27 @@ export default function DesktopWindowSettings({
       setTimeout(() => { window.location.href = "/login"; }, 1000);
     } catch (err: any) {
       toast.error(err.message || "Failed to delete account.", { id: loadingToast });
+    }
+  };
+
+  const handleResetFaceId = async () => {
+    if (!user) return;
+    const confirm = window.confirm("Are you sure you want to reset your Wallet PIN and Face ID? You will need to set them up again on the next wallet open.");
+    if (!confirm) return;
+
+    const loadingToast = toast.loading("Resetting security settings...");
+    try {
+      const { error } = await supabase.from("profiles").update({
+        biometric_enabled: false,
+        face_embedding: null,
+        wallet_pin: null,
+        failed_attempts: 0
+      }).eq("id", user.id);
+      
+      if (error) throw error;
+      toast.success("Face ID and PIN have been reset. Open your wallet to set them up again.", { id: loadingToast });
+    } catch (err: any) {
+      toast.error(err.message || "Failed to reset security settings.", { id: loadingToast });
     }
   };
 
@@ -331,6 +353,7 @@ export default function DesktopWindowSettings({
                   </div>
 
                   <div className="space-y-3">
+                    <SecurityAction icon={ScanFace} label="Reset Face ID & PIN" sub="Delete your current biometric data and set it up again" onClick={handleResetFaceId} />
                     <SecurityAction icon={Lock} label="Appeal for Passcode Change" sub="Request admin to reset your wallet lock" onClick={() => navigate("/wallet-reset")} />
                     <SecurityAction icon={LogOut} label="Sign Out" sub="Log out of all sessions on this device" onClick={handleLogout} />
                     <SecurityAction icon={Trash2} label="Delete Account" sub="Permanently remove all your data" danger onClick={handleDeleteAccount} />
@@ -385,9 +408,9 @@ export default function DesktopWindowSettings({
 
                     <button
                       onClick={() => {
-                        sessionStorage.removeItem("eos_booted");
+                        window.dispatchEvent(new CustomEvent("replay-boot"));
                         onClose();
-                        toast.success("Boot animation will replay on next visit to Home.");
+                        toast.success("Restarting EOS System...");
                       }}
                       className="w-full p-5 rounded-2xl bg-white border border-purple-200 text-purple-700 font-black flex items-center justify-center gap-3 hover:bg-purple-50 active:scale-95 transition-all"
                     >
