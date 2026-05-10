@@ -298,7 +298,7 @@ export default function ControlCenter() {
         ref={hitRef}
         className="fixed top-0 z-[100001]"
         style={{
-          height: 5,
+          height: 35,
           touchAction: "none",
           cursor: "ns-resize",
           // On desktop: only occupy the right 220px (matching the system status icons)
@@ -310,7 +310,7 @@ export default function ControlCenter() {
       {/* Mobile: additional full-width hit zone (pointer-events only for touch) */}
       <div
         className="fixed top-0 inset-x-0 z-[100000] md:hidden"
-        style={{ height: 5, touchAction: "none" }}
+        style={{ height: 35, touchAction: "none" }}
         onPointerDown={(e) => {
           if (e.pointerType !== "touch") return;
           (hitRef.current as any)?.dispatchEvent(

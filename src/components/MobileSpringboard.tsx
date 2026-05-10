@@ -17,13 +17,10 @@ interface AppDef {
 
 const GRID_APPS: AppDef[] = [
   { name: "Shops",    img: "/dock-shops.webp",       path: "/shops",            wiggleDelay: 0,    wiggleDuration: 0.18 },
-  { name: "Combos",   img: "/dock-combos.webp",      path: "/search",           wiggleDelay: 0.04, wiggleDuration: 0.20 },
   { name: "Vending",  icon: Coffee,   iconBg: "#0d2d25", iconColor: "#10B981",   path: "/search",   wiggleDelay: 0.08, wiggleDuration: 0.17 },
   { name: "Grocery",  img: "/cc_grocery.png",        path: "/grocery",          wiggleDelay: 0.03, wiggleDuration: 0.21 },
   { name: "Cart",     img: "/dock-cart.webp",        path: "/cart",             wiggleDelay: 0.07, wiggleDuration: 0.19 },
   { name: "Games",    img: "/dock-games.webp",       path: "/games",            wiggleDelay: 0.02, wiggleDuration: 0.18 },
-  { name: "Profile",  img: "/dock-profile.webp",     path: "/profile",          wiggleDelay: 0.06, wiggleDuration: 0.20 },
-  { name: "Settings", img: "/dock-settings-v2.webp", path: "/settings",         wiggleDelay: 0.01, wiggleDuration: 0.19 },
   { name: "Wallet",   img: "/cc_wallet.png",         path: "/wallet",           wiggleDelay: 0.05, wiggleDuration: 0.18 },
 ];
 
@@ -40,9 +37,9 @@ const ADMIN_APP: AppDef = {
 
 const DOCK_APPS_BASE: AppDef[] = [
   { name: "Home",     img: "/dock-home.webp",        path: "/home",     wiggleDelay: 0, wiggleDuration: 0.18 },
-  { name: "Sections", img: "/dock-shops.webp",       path: "/sections", wiggleDelay: 0, wiggleDuration: 0.18 },
-  { name: "Cart",     img: "/dock-cart.webp",        path: "/cart",     wiggleDelay: 0, wiggleDuration: 0.18 },
+  { name: "Combos",   img: "/dock-combos.webp",      path: "/search",   wiggleDelay: 0, wiggleDuration: 0.18 },
   { name: "Profile",  img: "/dock-profile.webp",     path: "/profile",  wiggleDelay: 0, wiggleDuration: 0.18 },
+  { name: "Settings", img: "/dock-settings-v2.webp", path: "/settings", wiggleDelay: 0, wiggleDuration: 0.18 },
 ];
 
 
@@ -172,7 +169,7 @@ export default function MobileSpringboard() {
                       index={i}
                       isWiggling={isWiggling}
                       onTap={handleAppTap}
-                      size={64}
+                      size={58}
                     />
                   ))}
                 </div>
@@ -214,15 +211,15 @@ export default function MobileSpringboard() {
               WebkitBackdropFilter: "blur(30px)",
             }}
           >
-            {/* Dock items */}
-            {[...DOCK_APPS_BASE, ...(isSuperAdmin ? [ADMIN_APP] : [])].map((app, i) => (
+            {/* Dock items - strictly 4 icons */}
+            {DOCK_APPS_BASE.map((app, i) => (
               <AppIcon
                 key={app.name}
                 app={app}
                 index={i}
                 isWiggling={false}
                 onTap={handleAppTap}
-                size={52}
+                size={50}
                 showLabel={false}
               />
             ))}
@@ -280,10 +277,10 @@ function AppIcon({ app, index, isWiggling, onTap, size = 72, showLabel = true }:
         }
       >
         <motion.div
-          className="rounded-[18px] overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.5)]"
+          className="rounded-[18px] overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.5)] cursor-pointer"
           style={{ width: size, height: size }}
           whileTap={{ scale: isWiggling ? 1 : 0.85 }}
-          onTouchEnd={(e) => { e.stopPropagation(); onTap(app.path); }}
+          onClick={(e) => { e.stopPropagation(); onTap(app.path); }}
         >
           {app.img ? (
             <img src={app.img} alt={app.name} className="w-full h-full object-cover" draggable={false} />
