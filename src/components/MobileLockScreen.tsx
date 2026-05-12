@@ -31,7 +31,8 @@ export default function MobileLockScreen({ onUnlock }: MobileLockScreenProps) {
   const dismiss = () => {
     if (isDismissing) return;
     setIsDismissing(true);
-    setTimeout(onUnlock, 520);
+    // call immediately — the exit animation runs in parallel, no setTimeout needed
+    onUnlock();
   };
 
   return (
@@ -41,22 +42,21 @@ export default function MobileLockScreen({ onUnlock }: MobileLockScreenProps) {
           key="lockscreen"
           initial={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: "-100%" }}
-          transition={{ duration: 0.48, ease: [0.4, 0, 0.2, 1] }}
+          transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
           drag="y"
           dragConstraints={{ top: -window.innerHeight, bottom: 0 }}
           dragElastic={{ top: 0.1, bottom: 0 }}
           onDragEnd={(_, info) => {
-            // Unlock if swiped up more than 150px or high upward velocity
-            if (info.offset.y < -150 || info.velocity.y < -500) {
+            if (info.offset.y < -100 || info.velocity.y < -400) {
               dismiss();
             }
           }}
-          style={{ y: dragY, borderBottomLeftRadius: borderRadiusValue, borderBottomRightRadius: borderRadiusValue }}
+          style={{ y: dragY, borderBottomLeftRadius: borderRadiusValue, borderBottomRightRadius: borderRadiusValue, willChange: "transform, opacity" }}
           className="fixed inset-0 z-[50000] overflow-hidden touch-none"
         >
           {/* Wallpaper */}
           <img
-            src="/eos-v3-wallpaper-mobile.png"
+            src="/eos-v3-wallpaper-mobile.webp"
             alt=""
             className="absolute inset-0 w-full h-full object-cover"
             draggable={false}

@@ -107,7 +107,7 @@ export default function MobileSpringboard() {
     >
       {/* Wallpaper */}
       <img
-        src="/eos-v3-wallpaper-mobile.png"
+        src="/eos-v3-wallpaper-mobile.webp"
         alt=""
         className="absolute inset-0 w-full h-full object-cover"
         draggable={false}
@@ -143,25 +143,9 @@ export default function MobileSpringboard() {
                 key={pageIdx}
                 className="w-screen flex-shrink-0 flex flex-col h-full"
               >
-                {/* Time widget only on the first page */}
-                {pageIdx === 0 && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                    className="px-8 pt-24 pb-4"
-                  >
-                    <p className="text-white/55 text-sm font-medium tracking-wide mb-1">{dateStr}</p>
-                    <p
-                      className="text-white font-bold tracking-tighter"
-                      style={{ fontSize: "clamp(68px, 18vw, 88px)", lineHeight: 1 }}
-                    >
-                      {timeStr}
-                    </p>
-                  </motion.div>
-                )}
 
-                <div className={`grid grid-cols-3 gap-y-10 gap-x-2 px-6 ${pageIdx === 0 ? 'pt-8' : 'pt-32'} content-start`}>
+
+                <div className={`grid grid-cols-3 gap-y-10 gap-x-2 px-6 ${pageIdx === 0 ? 'pt-28' : 'pt-32'} content-start`}>
                   {pageApps.map((app, i) => (
                     <AppIcon
                       key={app.name}
@@ -255,17 +239,21 @@ interface AppIconProps {
 }
 
 function AppIcon({ app, index, isWiggling, onTap, size = 72, showLabel = true }: AppIconProps) {
+  // Responsive size: on a real phone use viewport-relative sizing, fallback to prop
+  const iconSize = `min(${size}px, calc((100vw - 96px) / 3))`;
+
   return (
     <motion.div
       className="flex flex-col items-center gap-[6px]"
-      initial={{ opacity: 0, scale: 0.4 }}
+      initial={{ opacity: 0, scale: 0.5 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{
-        delay: index * 0.04,
+        delay: index * 0.02,           // cut stagger in half — feels instant
         type: "spring",
-        stiffness: 500,
-        damping: 26,
+        stiffness: 700,
+        damping: 30,
       }}
+      style={{ willChange: "transform" }}
     >
       {/* Wiggle wrapper */}
       <motion.div
@@ -273,17 +261,38 @@ function AppIcon({ app, index, isWiggling, onTap, size = 72, showLabel = true }:
         transition={
           isWiggling
             ? { repeat: Infinity, repeatType: "mirror", duration: app.wiggleDuration, delay: app.wiggleDelay }
-            : { duration: 0.15 }
+            : { duration: 0.12 }
         }
       >
-        <motion.div
-          className="rounded-[18px] overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.5)] cursor-pointer"
-          style={{ width: size, height: size }}
-          whileTap={{ scale: isWiggling ? 1 : 0.85 }}
-          onClick={(e) => { e.stopPropagation(); onTap(app.path); }}
+        {/* Icon shell — CSS active scale for zero-lag tap feedback */}
+        <div
+          className="relative overflow-hidden cursor-pointer select-none"
+          style={{
+            width: iconSize,
+            height: iconSize,
+            borderRadius: "22%",          // squircle proportional to size
+            boxShadow: "0 1px 0px rgba(255,255,255,0.22) inset, 0 0 0 0.5px rgba(0,0,0,0.15)",
+            transform: "translateZ(0)",   // GPU layer
+            WebkitTransform: "translateZ(0)",
+            touchAction: "manipulation",  // kills 300ms tap delay on mobile
+            transition: "transform 0.1s ease",
+          }}
+          onClick={(e) => { e.stopPropagation(); if (!isWiggling) onTap(app.path); }}
+          onPointerDown={(e) => { (e.currentTarget as HTMLDivElement).style.transform = "translateZ(0) scale(0.84)"; }}
+          onPointerUp={(e)   => { (e.currentTarget as HTMLDivElement).style.transform = "translateZ(0) scale(1)"; }}
+          onPointerLeave={(e)=> { (e.currentTarget as HTMLDivElement).style.transform = "translateZ(0) scale(1)"; }}
         >
           {app.img ? (
-            <img src={app.img} alt={app.name} className="w-full h-full object-cover" draggable={false} />
+            <div className="w-full h-full bg-white">
+              <img
+                src={app.img}
+                alt={app.name}
+                className="w-full h-full object-cover"
+                draggable={false}
+                loading="eager"
+                decoding="async"
+              />
+            </div>
           ) : (
             <div
               className="w-full h-full flex items-center justify-center"
@@ -291,18 +300,31 @@ function AppIcon({ app, index, isWiggling, onTap, size = 72, showLabel = true }:
             >
               {app.icon && (
                 <app.icon
-                  style={{ color: app.iconColor || "#fff", width: size * 0.44, height: size * 0.44 }}
+                  style={{ color: app.iconColor || "#fff", width: "44%", height: "44%" }}
                 />
               )}
             </div>
           )}
-        </motion.div>
+
+          {/* iOS specular top-glass sheen */}
+          <div
+            className="absolute inset-x-0 top-0 pointer-events-none"
+            style={{
+              height: "45%",
+              borderRadius: "22% 22% 0 0",
+              background: "linear-gradient(to bottom, rgba(255,255,255,0.26) 0%, rgba(255,255,255,0.03) 100%)",
+            }}
+          />
+        </div>
       </motion.div>
 
       {showLabel && (
         <span
-          className="text-white text-[11px] font-semibold text-center truncate max-w-[76px]"
-          style={{ textShadow: "0 1px 6px rgba(0,0,0,0.9)" }}
+          className="text-white text-[11px] font-semibold text-center truncate"
+          style={{
+            maxWidth: iconSize,
+            textShadow: "0 1px 4px rgba(0,0,0,0.8)",
+          }}
         >
           {app.name}
         </span>
