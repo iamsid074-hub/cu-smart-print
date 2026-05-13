@@ -887,7 +887,7 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
         return "diTrackingDelivery 2s ease-in-out infinite";
       return "diTrackingGlow 3s ease-in-out infinite";
     }
-    return "diGlow 4s ease-in-out infinite";
+    return "none";
   };
 
   return (
@@ -908,7 +908,10 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
         @keyframes diTrackingPulse {
           0% { box-shadow: 0 0 0 0.5px rgba(16,185,129,0.2); transform: scale(1); }
           30% { box-shadow: 0 0 0 3px rgba(16,185,129,0.5), 0 0 40px rgba(16,185,129,0.3); transform: scale(1.03); }
-          100% { box-shadow: 0 0 0 0.5px rgba(16,185,129,0.2); transform: scale(1); }
+        }
+        @keyframes diGreenBreath {
+          0%, 100% { opacity: 0.2; }
+          50% { opacity: 1; }
         }
       `}</style>
 
@@ -918,7 +921,7 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
         animate={{
           opacity: scrolled ? 1 : 0,
         }}
-        className="fixed top-0 left-0 right-0 z-[9997] pointer-events-none overflow-hidden"
+        className="fixed top-0 left-0 right-0 z-[89998] pointer-events-none overflow-hidden"
         style={{
           height: `calc(var(--sat,env(safe-area-inset-top,20px)) + 120px)`,
           background: "linear-gradient(to bottom, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.4) 30%, rgba(255,255,255,0.1) 60%, transparent 100%)",
@@ -958,7 +961,7 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
       </motion.div>
 
       <div
-        className="w-full flex justify-center fixed top-0 left-0 right-0 z-[9999] pointer-events-none px-4 pt-[calc(var(--sat,env(safe-area-inset-top,20px))+12px)] sm:pt-[calc(var(--sat,env(safe-area-inset-top,20px))+16px)]"
+        className="w-full flex justify-center fixed top-0 left-0 right-0 z-[90000] pointer-events-none px-4 pt-[calc(var(--sat,env(safe-area-inset-top,20px))+12px)] sm:pt-[calc(var(--sat,env(safe-area-inset-top,20px))+16px)]"
         style={{ willChange: "transform, width" }}
       >
         <div className="flex items-center gap-3 max-w-md w-full justify-center">
@@ -978,7 +981,7 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
                   width, 
                   height,
                   borderRadius: (displayState === "wallet_unlock_success" || displayState === "wallet_lock_setup") ? 26 : 50,
-                  backgroundColor: "rgba(15, 15, 15, 0.98)"
+                  backgroundColor: "#000000"
                 }}
                 transition={displayState === "safy" ? safySpring : springTransition}
                 onPointerDown={handlePointerDown}
@@ -992,7 +995,7 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
                     : ""
                 }`}
                 style={{
-                  border: (displayState === "wallet_unlock_success" || displayState === "wallet_lock_setup") ? "none" : "1px solid rgba(255, 255, 255, 0.12)",
+                  border: "none",
                   animation: getAnimation(),
                   position: "relative",
                   zIndex: 100,
@@ -1005,13 +1008,7 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
 
                 {/* Green camera indicator dot */}
                 {!(displayState === "wallet_unlock_success" || displayState === "wallet_lock_setup") && (
-                  <motion.div
-                    animate={{ opacity: [0.5, 1, 0.5] }}
-                    transition={{
-                      duration: 3,
-                      repeat: Infinity,
-                      ease: "easeInOut",
-                    }}
+                  <div
                     style={{
                       position: "absolute",
                       left: 12,
@@ -1022,6 +1019,21 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
                       borderRadius: "50%",
                       background: "#30D158",
                       boxShadow: "0 0 8px rgba(48,209,88,0.9)",
+                      zIndex: 10,
+                      animation: "diGreenBreath 8s ease-in-out infinite",
+                    }}
+                  />
+                )}
+                
+                {/* Hardware Camera Lens Simulation */}
+                {!(displayState === "wallet_unlock_success" || displayState === "wallet_lock_setup") && (
+                  <div
+                    className="absolute right-[12px] top-1/2 -translate-y-1/2 rounded-full pointer-events-none"
+                    style={{
+                      width: "12px",
+                      height: "12px",
+                      background: "radial-gradient(circle at 35% 35%, #1a1a2e 0%, #07070a 40%, #000000 80%)",
+                      boxShadow: "inset 0 1px 1px rgba(255,255,255,0.07), inset 0 -1px 2px rgba(0,0,0,1)",
                       zIndex: 10,
                     }}
                   />

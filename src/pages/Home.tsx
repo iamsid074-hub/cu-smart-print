@@ -5,6 +5,7 @@ import DesktopMenuBar from "@/components/DesktopMenuBar";
 import { motion, AnimatePresence } from "framer-motion";
 const MobileSpringboard = lazy(() => import("@/components/MobileSpringboard"));
 const MobileLockScreen   = lazy(() => import("@/components/MobileLockScreen"));
+import MobileStatusBar from "@/components/MobileStatusBar";
 
 const DesktopWindowShops = lazy(() => import("@/components/DesktopWindowShops"));
 const DesktopWindowVending = lazy(() => import("@/components/DesktopWindowVending"));
@@ -149,12 +150,18 @@ export default function Home() {
       setShowBoot(true);
       setUiReady(false);
     };
+    const handleTriggerLock = () => {
+      sessionStorage.removeItem("mobile_unlocked");
+      setShowLock(true);
+    };
 
     window.addEventListener("open-window", handleGlobalOpen);
     window.addEventListener("replay-boot", handleReplayBoot);
+    window.addEventListener("trigger-lock", handleTriggerLock);
     return () => {
       window.removeEventListener("open-window", handleGlobalOpen);
       window.removeEventListener("replay-boot", handleReplayBoot);
+      window.removeEventListener("trigger-lock", handleTriggerLock);
     };
   }, [activeWindows, minimizedWindows]); // Re-bind to capture current state
 
@@ -216,6 +223,9 @@ export default function Home() {
 
       {/* ─── EOS v3 Mobile Springboard (hidden on desktop) ────────────── */}
       <div className="block md:hidden">
+        {/* iOS Status Bar */}
+        <MobileStatusBar />
+
         {/* Lock Screen — shown once per session on mobile */}
         <Suspense fallback={null}>
           {showLock && <MobileLockScreen onUnlock={() => {

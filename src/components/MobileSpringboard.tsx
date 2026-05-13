@@ -2,7 +2,9 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
-import { Coffee, Wallet as WalletIcon, ShieldAlert } from "lucide-react";
+import { Coffee, Wallet as WalletIcon, ShieldAlert, Lock, Search, Image as ImageIcon } from "lucide-react";
+import { useWallpaper } from "../hooks/useWallpaper";
+import { IosHomeIcon, IosCombosIcon, IosProfileIcon, IosSettingsIcon } from "./HighFidelityIcons";
 
 interface AppDef {
   name: string;
@@ -22,6 +24,8 @@ const GRID_APPS: AppDef[] = [
   { name: "Cart",     img: "/dock-cart.webp",        path: "/cart",             wiggleDelay: 0.07, wiggleDuration: 0.19 },
   { name: "Games",    img: "/dock-games.webp",       path: "/games",            wiggleDelay: 0.02, wiggleDuration: 0.18 },
   { name: "Wallet",   img: "/cc_wallet.png",         path: "/wallet",           wiggleDelay: 0.05, wiggleDuration: 0.18 },
+  { name: "Lock",      icon: Lock,      iconBg: "#1e293b",  iconColor: "#fff",      path: "lock",       wiggleDelay: 0.04, wiggleDuration: 0.19 },
+  { name: "Wallpaper", icon: ImageIcon,  iconBg: "#4c1d95",  iconColor: "#c4b5fd",  path: "/wallpaper", wiggleDelay: 0.06, wiggleDuration: 0.20 },
 ];
 
 const ADMIN_APP: AppDef = { 
@@ -36,10 +40,10 @@ const ADMIN_APP: AppDef = {
 
 
 const DOCK_APPS_BASE: AppDef[] = [
-  { name: "Home",     img: "/dock-home.webp",        path: "/home",     wiggleDelay: 0, wiggleDuration: 0.18 },
-  { name: "Combos",   img: "/dock-combos.webp",      path: "/search",   wiggleDelay: 0, wiggleDuration: 0.18 },
-  { name: "Profile",  img: "/dock-profile.webp",     path: "/profile",  wiggleDelay: 0, wiggleDuration: 0.18 },
-  { name: "Settings", img: "/dock-settings-v2.webp", path: "/settings", wiggleDelay: 0, wiggleDuration: 0.18 },
+  { name: "Home",     icon: IosHomeIcon,    path: "/home",     wiggleDelay: 0,    wiggleDuration: 0.18 },
+  { name: "Combos",   icon: IosCombosIcon,  path: "/search",   wiggleDelay: 0.05, wiggleDuration: 0.18 },
+  { name: "Profile",  icon: IosProfileIcon, path: "/profile",  wiggleDelay: 0.02, wiggleDuration: 0.18 },
+  { name: "Settings", icon: IosSettingsIcon,path: "/settings", wiggleDelay: 0.07, wiggleDuration: 0.18 },
 ];
 
 
@@ -51,6 +55,7 @@ export default function MobileSpringboard() {
   const { user }   = useAuth();
   const isSuperAdmin = user?.email === "iamsid074@gmail.com";
   
+  const wallpaper = useWallpaper();
   const [currentPage, setCurrentPage] = useState(0);
   const [isWiggling, setIsWiggling]   = useState(false);
   const [time, setTime]               = useState(new Date());
@@ -58,9 +63,9 @@ export default function MobileSpringboard() {
   const longPressRef                  = useRef<ReturnType<typeof setTimeout> | null>(null);
   const touchStartY                   = useRef(0);
 
-  // Chunk apps into pages of 9 (3x3 grid looks best)
+  // Chunk apps into pages of 24 (4x6 grid looks best for iOS)
   const allApps = [...GRID_APPS, ...(isSuperAdmin ? [ADMIN_APP] : [])];
-  const APPS_PER_PAGE = 9;
+  const APPS_PER_PAGE = 24;
   const contentPages = [];
   for (let i = 0; i < allApps.length; i += APPS_PER_PAGE) {
     contentPages.push(allApps.slice(i, i + APPS_PER_PAGE));
@@ -94,6 +99,10 @@ export default function MobileSpringboard() {
 
   const handleAppTap = useCallback((path: string) => {
     if (isWiggling) { setIsWiggling(false); return; }
+    if (path === "lock") {
+      window.dispatchEvent(new CustomEvent("trigger-lock"));
+      return;
+    }
     navigate(path);
   }, [isWiggling, navigate]);
 
@@ -105,9 +114,8 @@ export default function MobileSpringboard() {
       onTouchEnd={handleTouchEnd}
       onClick={() => isWiggling && setIsWiggling(false)}
     >
-      {/* Wallpaper */}
       <img
-        src="/eos-v3-wallpaper-mobile.webp"
+        src={wallpaper}
         alt=""
         className="absolute inset-0 w-full h-full object-cover"
         draggable={false}
@@ -145,7 +153,7 @@ export default function MobileSpringboard() {
               >
 
 
-                <div className={`grid grid-cols-3 gap-y-10 gap-x-2 px-6 ${pageIdx === 0 ? 'pt-28' : 'pt-32'} content-start`}>
+                <div className={`grid grid-cols-4 gap-y-7 gap-x-2 px-5 ${pageIdx === 0 ? 'pt-28' : 'pt-32'} content-start`}>
                   {pageApps.map((app, i) => (
                     <AppIcon
                       key={app.name}
@@ -153,7 +161,7 @@ export default function MobileSpringboard() {
                       index={i}
                       isWiggling={isWiggling}
                       onTap={handleAppTap}
-                      size={58}
+                      size={60}
                     />
                   ))}
                 </div>
@@ -168,15 +176,26 @@ export default function MobileSpringboard() {
         </div>
 
         {/* ── Page Indicators ─────────────────────────────── */}
-        <div className="flex justify-center gap-2 pb-6">
+        <div className="flex justify-center gap-2 pb-3 relative z-10">
           {Array.from({ length: totalPageCount }).map((_, i) => (
             <div
               key={i}
               className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${
-                i === currentPage ? "bg-white w-3" : "bg-white/30"
+                i === currentPage ? "bg-white" : "bg-white/40"
               }`}
             />
           ))}
+        </div>
+
+        {/* ── Search Pill ── */}
+        <div className="flex justify-center mb-3 relative z-10">
+          <div 
+            className="flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-white/20 backdrop-blur-md shadow-sm cursor-pointer active:scale-95 transition-transform" 
+            onClick={() => navigate("/search")}
+          >
+            <Search size={14} className="text-white drop-shadow-md" />
+            <span className="text-white text-[13px] font-medium drop-shadow-md">Search</span>
+          </div>
         </div>
 
         {/* ── Dock ──────────────────────────────────────────── */}
@@ -203,7 +222,7 @@ export default function MobileSpringboard() {
                 index={i}
                 isWiggling={false}
                 onTap={handleAppTap}
-                size={50}
+                size={60}
                 showLabel={false}
               />
             ))}
@@ -238,9 +257,10 @@ interface AppIconProps {
   showLabel?: boolean;
 }
 
-function AppIcon({ app, index, isWiggling, onTap, size = 72, showLabel = true }: AppIconProps) {
+function AppIcon({ app, index, isWiggling, onTap, size = 60, showLabel = true }: AppIconProps) {
   // Responsive size: on a real phone use viewport-relative sizing, fallback to prop
-  const iconSize = `min(${size}px, calc((100vw - 96px) / 3))`;
+  // 4 columns padding adjustment
+  const iconSize = `min(${size}px, calc((100vw - 88px) / 4))`;
 
   return (
     <motion.div
@@ -296,11 +316,15 @@ function AppIcon({ app, index, isWiggling, onTap, size = 72, showLabel = true }:
           ) : (
             <div
               className="w-full h-full flex items-center justify-center"
-              style={{ background: app.iconBg || "#1a1a2e" }}
+              style={{ background: app.iconBg || "transparent" }}
             >
               {app.icon && (
                 <app.icon
-                  style={{ color: app.iconColor || "#fff", width: "44%", height: "44%" }}
+                  style={{ 
+                    color: app.iconColor || "#fff", 
+                    width: app.name === "Shops" || app.name === "Home" || app.name === "Combos" || app.name === "Profile" || app.name === "Settings" ? "100%" : "44%", 
+                    height: app.name === "Shops" || app.name === "Home" || app.name === "Combos" || app.name === "Profile" || app.name === "Settings" ? "100%" : "44%" 
+                  }}
                 />
               )}
             </div>

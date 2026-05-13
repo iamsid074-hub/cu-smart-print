@@ -14,7 +14,7 @@ export default function Navbar() {
   return (
     <>
       {/* Dynamic Island — always visible, always on top (mobile only) */}
-      <div className="relative z-[9999] md:hidden">
+      <div className="relative z-[90000] md:hidden">
         <TopDynamicIsland onSell={() => setSellOpen(true)} />
       </div>
 

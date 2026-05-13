@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
 import { ChevronUp } from "lucide-react";
+import { useWallpaper } from "../hooks/useWallpaper";
 
 interface MobileLockScreenProps {
   onUnlock: () => void;
@@ -9,6 +10,7 @@ interface MobileLockScreenProps {
 
 export default function MobileLockScreen({ onUnlock }: MobileLockScreenProps) {
   const { user } = useAuth();
+  const wallpaper = useWallpaper();
   const [time, setTime]       = useState(new Date());
   const [isDismissing, setIsDismissing] = useState(false);
   const dragY = useMotionValue(0);
@@ -54,20 +56,18 @@ export default function MobileLockScreen({ onUnlock }: MobileLockScreenProps) {
           style={{ y: dragY, borderBottomLeftRadius: borderRadiusValue, borderBottomRightRadius: borderRadiusValue, willChange: "transform, opacity" }}
           className="fixed inset-0 z-[50000] overflow-hidden touch-none"
         >
-          {/* Wallpaper */}
           <img
-            src="/eos-v3-wallpaper-mobile.webp"
+            src={wallpaper}
             alt=""
             className="absolute inset-0 w-full h-full object-cover"
             draggable={false}
           />
-          {/* Dark vignette */}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/20 to-black/60" />
+          <div className="absolute inset-0 bg-black/20" />
 
           {/* Content */}
           <div
             className="relative flex flex-col items-center justify-between h-full"
-            style={{ paddingTop: "calc(env(safe-area-inset-top, 44px) + 48px)", paddingBottom: "calc(env(safe-area-inset-bottom, 20px) + 32px)" }}
+            style={{ paddingTop: "calc(env(safe-area-inset-top, 44px) + 90px)", paddingBottom: "calc(env(safe-area-inset-bottom, 20px) + 32px)" }}
           >
             {/* ── Top: Time ── */}
             <motion.div
@@ -76,23 +76,15 @@ export default function MobileLockScreen({ onUnlock }: MobileLockScreenProps) {
               transition={{ delay: 0.1, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
               className="flex flex-col items-center"
             >
-              <p className="text-white/60 text-sm font-medium tracking-wide mb-2">{dateStr}</p>
+              <p className="text-white font-medium text-[19px] tracking-wide mb-[-4px]" style={{ textShadow: "0 1px 4px rgba(0,0,0,0.4)" }}>
+                {dateStr}
+              </p>
               <p
-                className="text-white font-bold tracking-tighter"
-                style={{ fontSize: "clamp(88px, 22vw, 120px)", lineHeight: 1 }}
+                className="text-white font-[800] tracking-tight"
+                style={{ fontSize: "clamp(80px, 22vw, 100px)", lineHeight: 1, textShadow: "0 1px 12px rgba(0,0,0,0.3)" }}
               >
                 {timeStr}
               </p>
-              {firstName && (
-                <motion.p
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.4 }}
-                  className="text-white/50 text-lg font-light mt-4 tracking-wide"
-                >
-                  {firstName}'s iPhone
-                </motion.p>
-              )}
             </motion.div>
 
             {/* ── Notification area (empty, extends the lock screen feel) ── */}
