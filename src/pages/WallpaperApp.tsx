@@ -14,28 +14,28 @@ interface WallpaperOption {
 
 const WALLPAPERS: WallpaperOption[] = [
   {
-    id: "ethereal",
+    id: "liquid-glass",
     url: "/mobile-ethereal-v3.webp",
-    name: "Ethereal",
-    accent: "#7c3aed",
+    name: "Liquid Glass",
+    accent: "#a855f7",
   },
   {
-    id: "violet-planet",
+    id: "golden-wave",
     url: "/wallpapers/wallpaper-1.webp",
-    name: "Violet Planet",
-    accent: "#8b5cf6",
+    name: "Golden Wave",
+    accent: "#d4af37",
   },
   {
-    id: "crimson-planet",
+    id: "silk-aurora",
     url: "/wallpapers/wallpaper-2.webp",
-    name: "Crimson Planet",
-    accent: "#dc2626",
+    name: "Silk Aurora",
+    accent: "#c084fc",
   },
   {
-    id: "scarlet-arc",
+    id: "luminance",
     url: "/wallpapers/wallpaper-3.webp",
-    name: "Scarlet Arc",
-    accent: "#ef4444",
+    name: "Luminance",
+    accent: "#818cf8",
   },
 ];
 

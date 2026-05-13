@@ -6,6 +6,8 @@ import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { Capacitor } from "@capacitor/core";
 import { lazy, Suspense, useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
+import { AnimatePresence } from "framer-motion";
+import PageTransition from "./components/PageTransition";
 
 // ── Boot version stamp — bump this to force re-play of the animation ──────────
 const EOS_BOOT_VERSION = "v3.7";
@@ -228,255 +230,256 @@ function AppLayout() {
       )}
       <ErrorBoundary>
         <Suspense fallback={initialBootFinished ? null : <BrandedLoading />}>
-          <Routes>
-            <Route
-              path="/"
-              element={
-                Capacitor.isNativePlatform() ? (
-                  user ? (
-                    <Navigate to="/home" replace />
-                  ) : (
-                    <Login />
-                  )
-                ) : (
-                  <Index />
-                )
-              }
-            />
-            <Route
-              path="/home"
-              element={
-                <ProtectedRoute>
-                  <Home />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/search"
-              element={
-                <ProtectedRoute>
-                  <SearchPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/search/results"
-              element={
-                <ProtectedRoute>
-                  <SearchResultsPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/shop/:id"
-              element={
-                <ProtectedRoute>
-                  <RestaurantPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/login"
-              element={user ? <Navigate to="/home" replace /> : <Login />}
-            />
-            <Route path="/reset-password" element={<ResetPassword />} />
-
-            <Route
-              path="/list"
-              element={
-                <ProtectedRoute>
-                  <ListProduct />
-                </ProtectedRoute>
-              }
-            />
-            <Route path="/sell" element={<Navigate to="/list" replace />} />
-            <Route
-              path="/tracking"
-              element={
-                <ProtectedRoute>
-                  <Tracking />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/profile"
-              element={
-                <ProtectedRoute>
-                  <Profile />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/wallet"
-              element={
-                <ProtectedRoute>
-                  <Wallet />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/games"
-              element={
-                <ProtectedRoute>
-                  <Games />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/sections"
-              element={
-                <ProtectedRoute>
-                  <Sections />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/shops"
-              element={
-                <ProtectedRoute>
-                  <MobileFoodPortal />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/games/crash"
-              element={
-                <ProtectedRoute>
-                  <RealCrash />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/games/mines"
-              element={
-                <ProtectedRoute>
-                  <RealMines />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/wallet-payment"
-              element={
-                <ProtectedRoute>
-                  <WalletPayment />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/wallet-reset"
-              element={
-                <ProtectedRoute>
-                  <WalletReset />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/browse"
-              element={
-                <ProtectedRoute>
-                  <Browse />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/grocery"
-              element={
-                <ProtectedRoute>
-                  <Grocery />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/product/:id"
-              element={
-                <ProtectedRoute>
-                  <ProductDetail />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/quick-store"
-              element={
-                <ProtectedRoute>
-                  <QuickStore />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/food-search"
-              element={<Navigate to="/search" replace />}
-            />
-            <Route
-              path="/pasta-offer"
-              element={
-                <ProtectedRoute>
-                  <PastaOfferPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/cart"
-              element={
-                <ProtectedRoute>
-                  <Cart />
-                </ProtectedRoute>
-              }
-            />
-
-            <Route
-              path="/admin"
-              element={
-                <AdminRoute>
-                  <Admin />
-                </AdminRoute>
-              }
-            />
-
-            <Route 
-              path="/driver" 
-              element={
-                <ProtectedRoute>
-                  <DriverDashboard />
-                </ProtectedRoute>
-              } 
-            />
-
-            <Route
-              path="/settings"
-              element={
-                <ProtectedRoute>
-                  <Settings />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/transactions"
-              element={
-                <ProtectedRoute>
-                  <Transactions />
-                </ProtectedRoute>
-              }
-            />
-
-            <Route path="/terms" element={<TermsAndConditions />} />
-            <Route path="/help" element={<HelpCenter />} />
-            <Route path="/download" element={<Download />} />
-            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-            <Route path="/about-us" element={<AboutUs />} />
-            <Route path="/shipping-policy" element={<ShippingPolicy />} />
-            <Route path="/faq" element={<FAQ />} />
-
-            <Route
-              path="/wallpaper"
-              element={
-                <ProtectedRoute>
-                  <WallpaperApp />
-                </ProtectedRoute>
-              }
-            />
-
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
+          {/* position:relative + overflow:hidden so AnimatePresence absolute children stack correctly */}
+          <div style={{ position: "relative", width: "100%", height: "100dvh", overflow: "hidden" }}>
+            <AnimatePresence mode="wait" initial={false}>
+              <Routes location={location} key={location.key}>
+              <Route
+                path="/"
+                element={
+                  <PageTransition locationKey="/">
+                    {Capacitor.isNativePlatform() ? (
+                      user ? (
+                        <Navigate to="/home" replace />
+                      ) : (
+                        <Login />
+                      )
+                    ) : (
+                      <Index />
+                    )}
+                  </PageTransition>
+                }
+              />
+              <Route
+                path="/home"
+                element={
+                  <PageTransition locationKey="/home">
+                    <ProtectedRoute><Home /></ProtectedRoute>
+                  </PageTransition>
+                }
+              />
+              <Route
+                path="/search"
+                element={
+                  <PageTransition locationKey="/search">
+                    <ProtectedRoute><SearchPage /></ProtectedRoute>
+                  </PageTransition>
+                }
+              />
+              <Route
+                path="/search/results"
+                element={
+                  <PageTransition locationKey="/search/results">
+                    <ProtectedRoute><SearchResultsPage /></ProtectedRoute>
+                  </PageTransition>
+                }
+              />
+              <Route
+                path="/shop/:id"
+                element={
+                  <PageTransition locationKey="/shop">
+                    <ProtectedRoute><RestaurantPage /></ProtectedRoute>
+                  </PageTransition>
+                }
+              />
+              <Route
+                path="/login"
+                element={
+                  <PageTransition locationKey="/login">
+                    {user ? <Navigate to="/home" replace /> : <Login />}
+                  </PageTransition>
+                }
+              />
+              <Route path="/reset-password" element={<PageTransition locationKey="/reset-password"><ResetPassword /></PageTransition>} />
+              <Route
+                path="/list"
+                element={
+                  <PageTransition locationKey="/list">
+                    <ProtectedRoute><ListProduct /></ProtectedRoute>
+                  </PageTransition>
+                }
+              />
+              <Route path="/sell" element={<Navigate to="/list" replace />} />
+              <Route
+                path="/tracking"
+                element={
+                  <PageTransition locationKey="/tracking">
+                    <ProtectedRoute><Tracking /></ProtectedRoute>
+                  </PageTransition>
+                }
+              />
+              <Route
+                path="/profile"
+                element={
+                  <PageTransition locationKey="/profile">
+                    <ProtectedRoute><Profile /></ProtectedRoute>
+                  </PageTransition>
+                }
+              />
+              <Route
+                path="/wallet"
+                element={
+                  <PageTransition locationKey="/wallet">
+                    <ProtectedRoute><Wallet /></ProtectedRoute>
+                  </PageTransition>
+                }
+              />
+              <Route
+                path="/games"
+                element={
+                  <PageTransition locationKey="/games">
+                    <ProtectedRoute><Games /></ProtectedRoute>
+                  </PageTransition>
+                }
+              />
+              <Route
+                path="/sections"
+                element={
+                  <PageTransition locationKey="/sections">
+                    <ProtectedRoute><Sections /></ProtectedRoute>
+                  </PageTransition>
+                }
+              />
+              <Route
+                path="/shops"
+                element={
+                  <PageTransition locationKey="/shops">
+                    <ProtectedRoute><MobileFoodPortal /></ProtectedRoute>
+                  </PageTransition>
+                }
+              />
+              <Route
+                path="/games/crash"
+                element={
+                  <PageTransition locationKey="/games/crash">
+                    <ProtectedRoute><RealCrash /></ProtectedRoute>
+                  </PageTransition>
+                }
+              />
+              <Route
+                path="/games/mines"
+                element={
+                  <PageTransition locationKey="/games/mines">
+                    <ProtectedRoute><RealMines /></ProtectedRoute>
+                  </PageTransition>
+                }
+              />
+              <Route
+                path="/wallet-payment"
+                element={
+                  <PageTransition locationKey="/wallet-payment">
+                    <ProtectedRoute><WalletPayment /></ProtectedRoute>
+                  </PageTransition>
+                }
+              />
+              <Route
+                path="/wallet-reset"
+                element={
+                  <PageTransition locationKey="/wallet-reset">
+                    <ProtectedRoute><WalletReset /></ProtectedRoute>
+                  </PageTransition>
+                }
+              />
+              <Route
+                path="/browse"
+                element={
+                  <PageTransition locationKey="/browse">
+                    <ProtectedRoute><Browse /></ProtectedRoute>
+                  </PageTransition>
+                }
+              />
+              <Route
+                path="/grocery"
+                element={
+                  <PageTransition locationKey="/grocery">
+                    <ProtectedRoute><Grocery /></ProtectedRoute>
+                  </PageTransition>
+                }
+              />
+              <Route
+                path="/product/:id"
+                element={
+                  <PageTransition locationKey="/product">
+                    <ProtectedRoute><ProductDetail /></ProtectedRoute>
+                  </PageTransition>
+                }
+              />
+              <Route
+                path="/quick-store"
+                element={
+                  <PageTransition locationKey="/quick-store">
+                    <ProtectedRoute><QuickStore /></ProtectedRoute>
+                  </PageTransition>
+                }
+              />
+              <Route path="/food-search" element={<Navigate to="/search" replace />} />
+              <Route
+                path="/pasta-offer"
+                element={
+                  <PageTransition locationKey="/pasta-offer">
+                    <ProtectedRoute><PastaOfferPage /></ProtectedRoute>
+                  </PageTransition>
+                }
+              />
+              <Route
+                path="/cart"
+                element={
+                  <PageTransition locationKey="/cart">
+                    <ProtectedRoute><Cart /></ProtectedRoute>
+                  </PageTransition>
+                }
+              />
+              <Route
+                path="/admin"
+                element={
+                  <PageTransition locationKey="/admin">
+                    <AdminRoute><Admin /></AdminRoute>
+                  </PageTransition>
+                }
+              />
+              <Route
+                path="/driver"
+                element={
+                  <PageTransition locationKey="/driver">
+                    <ProtectedRoute><DriverDashboard /></ProtectedRoute>
+                  </PageTransition>
+                }
+              />
+              <Route
+                path="/settings"
+                element={
+                  <PageTransition locationKey="/settings">
+                    <ProtectedRoute><Settings /></ProtectedRoute>
+                  </PageTransition>
+                }
+              />
+              <Route
+                path="/transactions"
+                element={
+                  <PageTransition locationKey="/transactions">
+                    <ProtectedRoute><Transactions /></ProtectedRoute>
+                  </PageTransition>
+                }
+              />
+              <Route path="/terms" element={<PageTransition locationKey="/terms"><TermsAndConditions /></PageTransition>} />
+              <Route path="/help" element={<PageTransition locationKey="/help"><HelpCenter /></PageTransition>} />
+              <Route path="/download" element={<PageTransition locationKey="/download"><Download /></PageTransition>} />
+              <Route path="/privacy-policy" element={<PageTransition locationKey="/privacy-policy"><PrivacyPolicy /></PageTransition>} />
+              <Route path="/about-us" element={<PageTransition locationKey="/about-us"><AboutUs /></PageTransition>} />
+              <Route path="/shipping-policy" element={<PageTransition locationKey="/shipping-policy"><ShippingPolicy /></PageTransition>} />
+              <Route path="/faq" element={<PageTransition locationKey="/faq"><FAQ /></PageTransition>} />
+              <Route
+                path="/wallpaper"
+                element={
+                  <PageTransition locationKey="/wallpaper">
+                    <ProtectedRoute><WallpaperApp /></ProtectedRoute>
+                  </PageTransition>
+                }
+              />
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </AnimatePresence>
+          </div>
         </Suspense>
       </ErrorBoundary>
     </>
