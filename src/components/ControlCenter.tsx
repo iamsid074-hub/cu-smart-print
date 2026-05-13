@@ -25,30 +25,11 @@ const getClosedY = () => -window.innerHeight;
 // ─── Real-time iOS Status Bar ────────────────────────────────────────────────
 const IosStatusBar = () => {
   const [time, setTime] = useState(new Date());
-  const [batteryLevel, setBatteryLevel] = useState(1);
-  const [isCharging, setIsCharging] = useState(false);
+  const { batteryLevel, isCharging, isOnline } = useSystemStatus();
 
   useEffect(() => {
     const timer = setInterval(() => setTime(new Date()), 1000);
     return () => clearInterval(timer);
-  }, []);
-
-  useEffect(() => {
-    const getBattery = async () => {
-      if ('getBattery' in navigator) {
-        try {
-          const battery: any = await (navigator as any).getBattery();
-          setBatteryLevel(battery.level);
-          setIsCharging(battery.charging);
-
-          battery.addEventListener('levelchange', () => setBatteryLevel(battery.level));
-          battery.addEventListener('chargingchange', () => setIsCharging(battery.charging));
-        } catch (e) {
-          console.error("Battery API not supported:", e);
-        }
-      }
-    };
-    getBattery();
   }, []);
 
   const formattedTime = time.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }).replace(/\s?[AP]M/, '');
@@ -66,27 +47,32 @@ const IosStatusBar = () => {
       <div className="flex items-center justify-end gap-[6px] mr-1 mt-[2px] w-[70px] z-10 h-full">
         {/* Cellular Bars */}
         <div className="flex items-end gap-[1.5px] h-[11px] mb-[1px]">
-          <div className="w-[3px] h-[4px] bg-white rounded-[1px]" />
-          <div className="w-[3px] h-[6px] bg-white rounded-[1px]" />
-          <div className="w-[3px] h-[8px] bg-white rounded-[1px]" />
-          <div className="w-[3px] h-[11px] bg-white rounded-[1px]" />
+          <div className={`w-[3px] h-[4px] rounded-[1px] ${isOnline ? 'bg-white' : 'bg-white/40'}`} />
+          <div className={`w-[3px] h-[6px] rounded-[1px] ${isOnline ? 'bg-white' : 'bg-white/40'}`} />
+          <div className={`w-[3px] h-[8px] rounded-[1px] ${isOnline ? 'bg-white' : 'bg-white/40'}`} />
+          <div className={`w-[3px] h-[11px] rounded-[1px] ${isOnline ? 'bg-white' : 'bg-white/40'}`} />
         </div>
         
         {/* WiFi */}
-        <Wifi className="w-[16px] h-[16px] text-white stroke-[2.5] flex-shrink-0" />
+        {isOnline && (
+          <Wifi className="w-[16px] h-[16px] text-white stroke-[2.5] flex-shrink-0" />
+        )}
         
         {/* Battery */}
         <div className="relative flex items-center">
-          <div className="w-[23px] h-[11.5px] border border-white/40 rounded-[4px] p-[1px] flex items-center relative overflow-hidden">
+          <div className="w-[23.5px] h-[11px] border border-white/35 rounded-[3.5px] relative overflow-hidden">
+            {/* Fill — anchored left/top/bottom, reduces from right */}
             <div 
-              className={`h-full rounded-[1px] transition-all duration-300 ${batteryLevel <= 0.2 && !isCharging ? 'bg-[#FF453A]' : 'bg-white'}`} 
+              className={`absolute left-0 top-0 bottom-0 transition-all duration-300 ${
+                isCharging ? 'bg-[#34C759]' : (batteryLevel <= 0.2 ? 'bg-[#FF453A]' : 'bg-white')
+              }`} 
               style={{ width: `${Math.max(5, batteryLevel * 100)}%` }} 
             />
             {isCharging && (
-              <Zap className="w-2.5 h-2.5 text-black absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 fill-current drop-shadow-sm" />
+              <Zap className="w-[9px] h-[9px] text-white absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 fill-current drop-shadow-sm" />
             )}
           </div>
-          <div className="w-[1.5px] h-[4px] bg-white/40 rounded-r-[1px] ml-[1px]" />
+          <div className="w-[1.2px] h-[3.5px] bg-white/35 rounded-r-[1px] ml-[1px]" />
         </div>
       </div>
     </div>

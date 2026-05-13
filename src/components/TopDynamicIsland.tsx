@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
+import { useSystemStatus } from "@/hooks/useSystemStatus";
 import { supabase } from "@/lib/supabase";
 import { useSound } from "@/hooks/useSound";
 import {
@@ -23,6 +24,7 @@ import {
   Check,
   Lock,
   X,
+  Zap,
 } from "lucide-react";
 import { Haptics, ImpactStyle } from "@capacitor/haptics";
 
@@ -66,6 +68,7 @@ type IslandState =
   | "sell"
   | "tracking"
   | "active_cart"
+  | "charging"
   | "wrong_pass";
 
 // ── Tracking status configuration ───────────────────────────────────────────
@@ -129,6 +132,8 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
   const location = useLocation();
   const { items } = useCart();
   const { user } = useAuth();
+  const { batteryLevel, isCharging } = useSystemStatus();
+  const prevIsCharging = useRef(isCharging);
 
   const [scrolled, setScrolled] = useState(false);
 
@@ -168,6 +173,10 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
     if (data) setLatestAddedItem(data);
     setIslandState(newState);
 
+    if (newState === "charging") {
+      window.dispatchEvent(new CustomEvent("di_charging_start"));
+    }
+
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
 
     // "explore", "tracking", "grocery", "sell", "wallet" states persist — no auto-dismiss
@@ -198,6 +207,7 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
         } else {
           setIslandState("default");
         }
+        window.dispatchEvent(new CustomEvent("di_charging_end"));
       }, newState === "wallet_unlock_success" || newState === "wallet_lock_setup" ? 1800 : 2000);
     }
   };
@@ -261,6 +271,15 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
       window.removeEventListener("wallet_lock_setup", lockSetupHandler);
     };
   }, []);
+
+  // ── Charging Notification Detection ───────────────────────────────────
+  useEffect(() => {
+    if (isCharging && !prevIsCharging.current) {
+      triggerState("charging");
+      triggerHaptic(ImpactStyle.Medium);
+    }
+    prevIsCharging.current = isCharging;
+  }, [isCharging]);
 
 
 
@@ -582,6 +601,34 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
           <span className="text-sm font-semibold tracking-wide text-white/90">
             Wallet
           </span>
+        </div>
+      );
+      break;
+
+    case "charging":
+      width = "calc(100vw - 16px)";
+      height = 46;
+      content = (
+        <div className="flex items-center justify-between w-full px-5">
+          <div className="flex items-center gap-2.5">
+            <span className="text-[15px] font-bold text-white/90 tracking-tight">Charging</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="text-[15px] font-bold text-[#34C759] tabular-nums">
+              {Math.round(batteryLevel * 100)}%
+            </span>
+            {/* Battery icon — fill anchored left/top/bottom */}
+            <div className="relative flex items-center">
+              <div className="w-[30px] h-[14px] border border-[#34C759]/50 rounded-[4.5px] relative overflow-hidden bg-black/20">
+                <div 
+                  className="absolute left-0 top-0 bottom-0 bg-[#34C759] transition-all duration-700" 
+                  style={{ width: `${Math.max(4, batteryLevel * 100)}%` }} 
+                />
+                <Zap className="w-[11px] h-[11px] text-white absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 fill-current z-10" />
+              </div>
+              <div className="w-[2px] h-[5px] bg-[#34C759]/40 rounded-r-[1.5px] ml-[1px]" />
+            </div>
+          </div>
         </div>
       );
       break;
