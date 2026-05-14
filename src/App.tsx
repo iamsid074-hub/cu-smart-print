@@ -96,7 +96,6 @@ import AppUpdater from "./components/AppUpdater";
 import UsernameSetup from "./components/UsernameSetup";
 import ScrollToTop from "./components/ScrollToTop";
 import StickyStripBanner from "./components/StickyStripBanner";
-import DynamicWallpaper from "./components/DynamicWallpaper";
 
 const ControlCenter = lazy(() => import("./components/ControlCenter"));
 const TutorialSystem = lazy(() => import("./components/TutorialSystem"));
@@ -117,7 +116,7 @@ import {
 } from "./components/SiteGate";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { CartProvider } from "./contexts/CartContext";
-import { WallpaperProvider } from "./contexts/WallpaperContext";
+import { WallpaperProvider, useWallpaper } from "./contexts/WallpaperContext";
 import { posthog } from "./lib/posthog";
 
 const queryClient = new QueryClient({
@@ -221,9 +220,21 @@ function AppLayout() {
     if (gate === "closed") return <ClosedScreen />;
   }
 
+  const wallpaper = useWallpaper();
+
   return (
     <>
-      <DynamicWallpaper />
+      {/* Global Background Layer */}
+      <div 
+        className="fixed inset-0 z-[-5] transition-all duration-700" 
+        style={{
+          backgroundImage: `url(${wallpaper})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center center",
+          backgroundAttachment: "fixed",
+          backgroundColor: "#0a0a0f",
+        }}
+      />
       <AppUpdater />
       <Suspense fallback={null}>
         <ControlCenter />
