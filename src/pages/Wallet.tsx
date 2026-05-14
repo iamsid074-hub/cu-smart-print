@@ -1206,9 +1206,8 @@ export default function Wallet() {
             <p className="text-[13px] text-slate-500 font-medium mt-0.5">Manage your balance and rewards</p>
           </div>
           <div className="flex items-center gap-3">
-            <button className="relative w-11 h-11 bg-white rounded-full flex items-center justify-center shadow-sm border border-slate-100 active:scale-95 transition-transform">
-               <Bell className="w-5 h-5 text-slate-600" />
-               <div className="absolute top-3 right-3 w-2.5 h-2.5 bg-[#D99C4B] rounded-full border-2 border-white" />
+            <button onClick={() => navigate('/home')} className="relative w-11 h-11 bg-white rounded-full flex items-center justify-center shadow-sm border border-slate-100 active:scale-95 transition-transform">
+               <ArrowLeft className="w-5 h-5 text-slate-600" />
             </button>
             <Link to="/profile">
                <div className="w-11 h-11 rounded-full bg-white border border-slate-100 shadow-sm overflow-hidden p-0.5 active:scale-95 transition-transform">
@@ -1229,24 +1228,24 @@ export default function Wallet() {
           <div className="absolute -bottom-1/2 -left-1/4 w-[150%] h-[150%] bg-[radial-gradient(circle_at_center,rgba(217,156,75,0.08)_0%,transparent_50%)]" />
           <div className="absolute top-0 right-0 w-full h-full opacity-20 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(255,255,255,0.05) 1px, transparent 0)', backgroundSize: '24px 24px' }} />
 
-          <div className="relative h-full p-6 flex flex-col justify-between text-white">
+          <div className="relative h-full p-5 sm:p-6 flex flex-col justify-between text-white">
             <div className="flex justify-between items-start">
                <div className="space-y-1">
-                  <h3 className="text-[14px] font-black tracking-widest text-white/90">CU CARD</h3>
+                  <h3 className="text-[12px] sm:text-[14px] font-black tracking-widest text-white/90">CU CARD</h3>
                   <div className="inline-flex items-center px-2 py-0.5 rounded-md bg-[#D99C4B]/20 border border-[#D99C4B]/30">
-                    <span className="text-[9px] font-bold text-[#D99C4B] uppercase tracking-widest">Eclipsed Rewards</span>
+                    <span className="text-[8px] sm:text-[9px] font-bold text-[#D99C4B] uppercase tracking-widest">Eclipsed Rewards</span>
                   </div>
                </div>
                <div className="flex items-center gap-3">
-                  <Wifi className="w-5 h-5 text-white/40 rotate-90" />
-                  <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center border border-white/10">
-                    <Shield className="w-4 h-4 text-[#D99C4B]" />
+                  <Wifi className="w-4 h-4 sm:w-5 sm:h-5 text-white/40 rotate-90" />
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/10 flex items-center justify-center border border-white/10">
+                    <Shield className="w-3 h-3 sm:w-4 sm:h-4 text-[#D99C4B]" />
                   </div>
                </div>
             </div>
 
-            <div className="mt-4">
-               <div className="w-12 h-9 bg-gradient-to-br from-[#f1d2a4] to-[#c7a46d] rounded-md relative overflow-hidden shadow-inner flex items-center justify-center">
+            <div className="mt-2 sm:mt-4">
+               <div className="w-10 h-7 sm:w-12 sm:h-9 bg-gradient-to-br from-[#f1d2a4] to-[#c7a46d] rounded-md relative overflow-hidden shadow-inner flex items-center justify-center">
                   <div className="w-full h-0.5 bg-black/10 absolute top-1/4" />
                   <div className="w-full h-0.5 bg-black/10 absolute top-1/2" />
                   <div className="w-full h-0.5 bg-black/10 absolute top-3/4" />
@@ -1254,67 +1253,67 @@ export default function Wallet() {
                   <div className="h-full w-0.5 bg-black/10 absolute left-1/2" />
                   <div className="h-full w-0.5 bg-black/10 absolute left-3/4" />
                </div>
-               <div className="mt-6 flex flex-col">
+               <div className="mt-3 sm:mt-6 flex flex-col">
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="text-[10px] font-bold text-white/50 uppercase tracking-widest">Total Balance</span>
-                    <Eye className="w-3.5 h-3.5 text-white/30" />
+                    <span className="text-[9px] sm:text-[10px] font-bold text-white/50 uppercase tracking-widest">Total Balance</span>
+                    <Eye className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-white/30" />
                   </div>
-                  <span className="text-[32px] font-black tracking-tight leading-none">
+                  <span className="text-[24px] sm:text-[32px] font-black tracking-tight leading-none truncate">
                     ₹{walletBalance.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                   </span>
-                  <p className="text-[14px] font-medium text-white/40 mt-3 tracking-[0.2em]">•••• •••• •••• 8834</p>
+                  <p className="text-[12px] sm:text-[14px] font-medium text-white/40 mt-2 sm:mt-3 tracking-[0.2em]">•••• •••• •••• 8834</p>
                </div>
             </div>
 
             <div className="flex justify-between items-end mt-auto">
-               <div className="space-y-0.5">
-                  <p className="text-[9px] font-bold text-white/30 uppercase tracking-widest">Cardholder</p>
-                  <p className="text-[13px] font-black uppercase tracking-tight">{profileName || "Admin"}</p>
+               <div className="space-y-0.5 overflow-hidden pr-2">
+                  <p className="text-[8px] sm:text-[9px] font-bold text-white/30 uppercase tracking-widest">Cardholder</p>
+                  <p className="text-[11px] sm:text-[13px] font-black uppercase tracking-tight truncate">{profileName || "Admin"}</p>
                </div>
-               <div className="text-right space-y-0.5">
-                  <p className="text-[9px] font-bold text-white/30 uppercase tracking-widest">Valid Thru</p>
-                  <p className="text-[13px] font-black tracking-tight">12/30</p>
+               <div className="text-right space-y-0.5 shrink-0">
+                  <p className="text-[8px] sm:text-[9px] font-bold text-white/30 uppercase tracking-widest">Valid Thru</p>
+                  <p className="text-[11px] sm:text-[13px] font-black tracking-tight">12/30</p>
                </div>
             </div>
           </div>
         </motion.div>
 
         {/* Quick Actions Bar */}
-        <div className="mt-8 bg-white rounded-[24px] p-2 flex items-center justify-around shadow-sm border border-slate-100">
-           <button onClick={() => setShowAddMoneyModal(true)} className="flex flex-col items-center gap-1.5 p-3 active:scale-95 transition-transform">
-              <div className="w-12 h-12 bg-[#fcf8f2] rounded-full flex items-center justify-center">
+        <div className="mt-8 bg-white rounded-[24px] p-2 flex items-start justify-around shadow-sm border border-slate-100">
+           <button onClick={() => setShowAddMoneyModal(true)} className="flex flex-col items-center gap-1.5 p-2 flex-1 active:scale-95 transition-transform">
+              <div className="w-12 h-12 bg-[#fcf8f2] rounded-full flex items-center justify-center shrink-0">
                 <Plus className="w-6 h-6 text-[#D99C4B]" />
               </div>
-              <div className="text-center">
-                 <p className="text-[11px] font-bold text-slate-900 leading-tight">Add Money</p>
-                 <p className="text-[8px] font-medium text-slate-400 mt-0.5">Instant Deposit</p>
+              <div className="text-center w-full">
+                 <p className="text-[10px] sm:text-[11px] font-bold text-slate-900 leading-tight truncate">Add Money</p>
+                 <p className="text-[8px] font-medium text-slate-400 mt-0.5 truncate">Instant</p>
               </div>
            </button>
-           <button onClick={() => setShowWithdrawModal(true)} className="flex flex-col items-center gap-1.5 p-3 active:scale-95 transition-transform">
-              <div className="w-12 h-12 bg-[#fcf8f2] rounded-full flex items-center justify-center">
+           <button onClick={() => setShowWithdrawModal(true)} className="flex flex-col items-center gap-1.5 p-2 flex-1 active:scale-95 transition-transform">
+              <div className="w-12 h-12 bg-[#fcf8f2] rounded-full flex items-center justify-center shrink-0">
                 <ArrowUpRight className="w-6 h-6 text-[#D99C4B]" />
               </div>
-              <div className="text-center">
-                 <p className="text-[11px] font-bold text-slate-900 leading-tight">Withdraw</p>
-                 <p className="text-[8px] font-medium text-slate-400 mt-0.5">Bank Payout</p>
+              <div className="text-center w-full">
+                 <p className="text-[10px] sm:text-[11px] font-bold text-slate-900 leading-tight truncate">Withdraw</p>
+                 <p className="text-[8px] font-medium text-slate-400 mt-0.5 truncate">Bank Payout</p>
               </div>
            </button>
-           <button className="flex flex-col items-center gap-1.5 p-3 active:scale-95 transition-transform">
-              <div className="w-12 h-12 bg-[#fcf8f2] rounded-full flex items-center justify-center">
+           <button className="flex flex-col items-center gap-1.5 p-2 flex-1 active:scale-95 transition-transform">
+              <div className="w-12 h-12 bg-[#fcf8f2] rounded-full flex items-center justify-center shrink-0">
                 <CreditCard className="w-6 h-6 text-[#D99C4B]" />
               </div>
-              <div className="text-center">
-                 <p className="text-[11px] font-bold text-slate-900 leading-tight">Card Details</p>
-                 <p className="text-[8px] font-medium text-slate-400 mt-0.5">View & Manage</p>
+              <div className="text-center w-full">
+                 <p className="text-[10px] sm:text-[11px] font-bold text-slate-900 leading-tight truncate">Card</p>
+                 <p className="text-[8px] font-medium text-slate-400 mt-0.5 truncate">View Details</p>
               </div>
            </button>
-           <button className="flex flex-col items-center gap-1.5 p-3 active:scale-95 transition-transform">
-              <div className="w-12 h-12 bg-[#fcf8f2] rounded-full flex items-center justify-center">
+           <button className="flex flex-col items-center gap-1.5 p-2 flex-1 active:scale-95 transition-transform">
+              <div className="w-12 h-12 bg-[#fcf8f2] rounded-full flex items-center justify-center shrink-0">
                 <MoreHorizontal className="w-6 h-6 text-[#D99C4B]" />
               </div>
-              <div className="text-center">
-                 <p className="text-[11px] font-bold text-slate-900 leading-tight">More</p>
-                 <p className="text-[8px] font-medium text-slate-400 mt-0.5">Options</p>
+              <div className="text-center w-full">
+                 <p className="text-[10px] sm:text-[11px] font-bold text-slate-900 leading-tight truncate">More</p>
+                 <p className="text-[8px] font-medium text-slate-400 mt-0.5 truncate">Options</p>
               </div>
            </button>
         </div>

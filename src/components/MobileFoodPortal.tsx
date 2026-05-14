@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, ShoppingCart, ArrowLeft, Heart, Clock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useCart } from "@/contexts/CartContext";
 
 const FOOD_ITEMS = [
   { id: 1, name: "Kurkure Momos Veg", price: 120, originalPrice: 150, image: "https://images.unsplash.com/photo-1534422298391-e4f8c170db76?q=80&w=400&auto=format&fit=crop", time: "15 mins" },
@@ -18,11 +19,21 @@ const FOOD_ITEMS = [
 
 export default function MobileFoodPortal() {
   const navigate = useNavigate();
+  const { addItem, items } = useCart();
   const [headlineIdx, setHeadlineIdx] = useState(0);
   const headlines = [
     { top: "CELEBRATE", bottom: "new session" },
     { top: "POWERED BY", bottom: "flavour factory" }
   ];
+
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
+    }
+  };
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -39,14 +50,24 @@ export default function MobileFoodPortal() {
           <ArrowLeft className="w-6 h-6 text-[#5e1e2d]" />
         </button>
         <div className="flex-1 px-4">
-           <div className="bg-white rounded-xl h-10 flex items-center px-4 gap-2 border border-black/10 shadow-sm">
+           <form onSubmit={handleSearch} className="bg-white rounded-xl h-10 flex items-center px-4 gap-2 border border-black/10 shadow-sm">
              <Search className="w-4 h-4 text-[#5e1e2d]/40" />
-             <input type="text" placeholder="Search gifts..." className="bg-transparent border-none focus:outline-none text-sm w-full placeholder:text-[#5e1e2d]/30 text-[#5e1e2d]" />
-           </div>
+             <input 
+               type="text" 
+               value={searchQuery}
+               onChange={(e) => setSearchQuery(e.target.value)}
+               placeholder="Search food..." 
+               className="bg-transparent border-none focus:outline-none text-sm w-full placeholder:text-[#5e1e2d]/30 text-[#5e1e2d]" 
+             />
+           </form>
         </div>
-        <button className="p-2 -mr-2 relative">
+        <button onClick={() => navigate('/cart')} className="p-2 -mr-2 relative active:scale-95 transition-transform">
           <ShoppingCart className="w-6 h-6 text-[#5e1e2d]" />
-          <span className="absolute top-1 right-0 w-4 h-4 bg-[#ff6b6b] rounded-full text-[10px] flex items-center justify-center font-bold text-white shadow-sm">2</span>
+          {items.length > 0 && (
+            <span className="absolute top-1 right-0 w-4 h-4 bg-[#ff6b6b] rounded-full text-[10px] flex items-center justify-center font-bold text-white shadow-sm">
+              {items.reduce((acc, item) => acc + item.quantity, 0)}
+            </span>
+          )}
         </button>
       </div>
 
@@ -110,7 +131,16 @@ export default function MobileFoodPortal() {
                 <div className="relative px-1">
                   <div className="flex justify-between items-center mb-3">
                     <span className="text-[11px] font-semibold text-[#5e1e2d]/60">1 pc</span>
-                    <button className="px-4 py-2 bg-transparent text-black font-bold text-[10px] tracking-wider rounded-xl active:scale-95 transition-all border border-black/80">
+                    <button 
+                      onClick={() => addItem({
+                        id: `shop-${product.id}`,
+                        title: product.name,
+                        price: product.price,
+                        image: product.image,
+                        category: "Food"
+                      })}
+                      className="px-4 py-2 bg-transparent text-black font-bold text-[10px] tracking-wider rounded-xl active:scale-95 transition-all border border-black/80"
+                    >
                       ADD
                     </button>
                   </div>

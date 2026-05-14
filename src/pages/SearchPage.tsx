@@ -120,7 +120,7 @@ export default function SearchPage() {
       </div>
 
       {/* ── HEADER ─────────────────────────────────────────────────────────── */}
-      <div className="px-5 pt-4 pb-4 flex items-center gap-3 bg-white/80 backdrop-blur-md border-b border-pink-100/50">
+      <div className="px-5 pt-16 pb-4 flex items-center gap-3 bg-white/80 backdrop-blur-md border-b border-pink-100/50">
         <motion.button
           whileTap={{ scale: 0.9 }}
           onClick={() => navigate(-1)}

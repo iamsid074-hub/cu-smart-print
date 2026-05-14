@@ -75,9 +75,16 @@ export default function Cart() {
     }
   }, [searchParams, locationLoaded, locationData]);
 
-  // Derive hostel/room/phone from location data
-  const hostel = locationData?.hostel || profile?.hostel_block || '';
-  const room = locationData?.room || profile?.room_number || '';
+  const [savedAddresses] = useState<any[]>(() => {
+    try { return JSON.parse(localStorage.getItem("bazzar_user_addresses") || "[]"); } catch { return []; }
+  });
+  const [selectedAddressId, setSelectedAddressId] = useState<number | null>(null);
+  
+  const selectedSavedAddress = savedAddresses.find(a => a.id === selectedAddressId);
+
+  // Derive hostel/room/phone from location data or selected address
+  const hostel = selectedSavedAddress ? selectedSavedAddress.text : (locationData?.hostel || profile?.hostel_block || '');
+  const room = selectedSavedAddress ? "" : (locationData?.room || profile?.room_number || '');
   const phone = locationData?.phone || profile?.phone_number || '';
 
 
@@ -1019,12 +1026,43 @@ export default function Cart() {
                     <MapPin className="w-5 h-5 text-slate-700" />
                  </div>
                  <div>
-                    <p className="text-[14px] font-bold text-slate-900">Delivering to {hostel} - {room}</p>
+                    <p className="text-[14px] font-bold text-slate-900">Delivering to {hostel} {room ? `- ${room}` : ''}</p>
                     <p className="text-[12px] text-slate-500 font-medium mt-0.5">{phone}</p>
                  </div>
               </div>
               <button onClick={() => navigate('/home?openLocation=true&returnTo=cart')} className="text-[#D99C4B] text-[13px] font-bold px-3 py-1.5 bg-[#fcf8f2] rounded-full active:scale-95 transition-transform">Change</button>
            </div>
+           
+           {savedAddresses.length > 0 && (
+             <div className="mb-6 -mx-5 px-5">
+               <h3 className="font-bold text-slate-900 text-[14px] mb-3">Saved Addresses</h3>
+               <div className="flex gap-3 overflow-x-auto pb-4 scrollbar-hide snap-x">
+                 <button 
+                   onClick={() => setSelectedAddressId(null)}
+                   className={`shrink-0 w-[200px] p-4 rounded-2xl border text-left snap-start transition-all ${!selectedAddressId ? 'border-[#D99C4B] bg-[#fcf8f2] shadow-sm' : 'border-slate-100 bg-white'}`}
+                 >
+                   <div className="flex items-center gap-2 mb-2">
+                     <MapPin className={`w-4 h-4 ${!selectedAddressId ? 'text-[#D99C4B]' : 'text-slate-400'}`} />
+                     <span className={`text-[13px] font-bold ${!selectedAddressId ? 'text-[#D99C4B]' : 'text-slate-900'}`}>Current</span>
+                   </div>
+                   <p className="text-[13px] text-slate-600 font-medium line-clamp-2">{locationData?.hostel || profile?.hostel_block || 'Default'}</p>
+                 </button>
+                 {savedAddresses.map(addr => (
+                   <button 
+                     key={addr.id}
+                     onClick={() => setSelectedAddressId(addr.id)}
+                     className={`shrink-0 w-[200px] p-4 rounded-2xl border text-left snap-start transition-all ${selectedAddressId === addr.id ? 'border-[#D99C4B] bg-[#fcf8f2] shadow-sm' : 'border-slate-100 bg-white'}`}
+                   >
+                     <div className="flex items-center gap-2 mb-2">
+                       <MapPin className={`w-4 h-4 ${selectedAddressId === addr.id ? 'text-[#D99C4B]' : 'text-slate-400'}`} />
+                       <span className={`text-[13px] font-bold ${selectedAddressId === addr.id ? 'text-[#D99C4B]' : 'text-slate-900'}`}>Saved</span>
+                     </div>
+                     <p className="text-[13px] text-slate-600 font-medium line-clamp-2">{addr.text}</p>
+                   </button>
+                 ))}
+               </div>
+             </div>
+           )}
            
            <div className="pt-4 border-t border-slate-100">
              <h3 className="font-bold text-slate-900 text-[16px] mb-4">Payment Method</h3>

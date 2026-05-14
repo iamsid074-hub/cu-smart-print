@@ -29,7 +29,7 @@ export default function MobileStatusBar() {
     // pointer-events-none so the island below can receive touches
     // z-index matches island wrapper so neither overlaps the other
     <div
-      className="fixed top-0 left-0 right-0 z-[89999] pointer-events-none flex justify-between items-center text-black font-semibold text-[15px] px-6 h-[40px]"
+      className="fixed top-0 left-0 right-0 z-[89999] pointer-events-none flex justify-between items-center text-black font-semibold text-[15px] pl-[32px] pr-[16px] h-[40px]"
       style={{ marginTop: "calc(var(--sat, env(safe-area-inset-top, 20px)) + 12px)" }}
     >
       {/* ── Time (left) ── */}

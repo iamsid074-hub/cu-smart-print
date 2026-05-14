@@ -42,6 +42,15 @@ export default function Profile() {
   const [myProducts, setMyProducts] = useState<any[]>([]);
   const [loadingListings, setLoadingListings] = useState(true);
 
+  const [addresses, setAddresses] = useState<any[]>(() => {
+    try {
+      return JSON.parse(localStorage.getItem("bazzar_user_addresses") || "[]");
+    } catch {
+      return [];
+    }
+  });
+  const [newAddress, setNewAddress] = useState("");
+
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const activeView = searchParams.get("view") || "main";
@@ -115,6 +124,22 @@ export default function Profile() {
     } else toast.error("Failed");
   };
 
+  const handleAddAddress = () => {
+    if (!newAddress.trim()) return;
+    const updated = [...addresses, { id: Date.now(), text: newAddress }];
+    setAddresses(updated);
+    localStorage.setItem("bazzar_user_addresses", JSON.stringify(updated));
+    setNewAddress("");
+    toast.success("Address saved");
+  };
+
+  const handleDeleteAddress = (id: number) => {
+    const updated = addresses.filter(a => a.id !== id);
+    setAddresses(updated);
+    localStorage.setItem("bazzar_user_addresses", JSON.stringify(updated));
+    toast.success("Address removed");
+  };
+
   const openView = (view: string) => setSearchParams({ view });
   const closeView = () => setSearchParams({});
 
@@ -145,19 +170,8 @@ export default function Profile() {
               </defs>
             </svg>
 
-            {/* Header */}
-            <div className="relative z-10 flex justify-end items-center px-6 pt-12 pb-2 gap-5">
-              <button className="relative transition-transform active:scale-95">
-                <Bell className="w-6 h-6 text-black" strokeWidth={2} />
-                <span className="absolute top-0 right-0 w-2.5 h-2.5 bg-yellow-500 rounded-full border-2 border-[#f9f8f6]" />
-              </button>
-              <button onClick={() => navigate('/settings')} className="transition-transform active:scale-95">
-                <Settings className="w-6 h-6 text-black" strokeWidth={2} />
-              </button>
-            </div>
-
             {/* Profile Identity Block */}
-            <div className="relative z-10 px-6 mt-2 flex items-center gap-5">
+            <div className="relative z-10 px-6 pt-16 flex items-center gap-5">
               <div className="relative shrink-0">
                  <div className="w-24 h-24 rounded-full p-1 bg-gradient-to-br from-[#e6c875] to-[#c8922c] shadow-lg">
                    <div className="w-full h-full rounded-full bg-white overflow-hidden">
@@ -182,10 +196,17 @@ export default function Profile() {
                 <p className="text-[13px] font-medium text-gray-500 mb-2 truncate">
                   @{profile?.username || "user"} <span className="mx-1 text-gray-300">|</span> {user.email}
                 </p>
-                <div className="inline-flex items-center gap-1.5 bg-[#1a1a1c] px-3 py-1.5 rounded-full shadow-md">
-                  <Crown className="w-3.5 h-3.5 text-yellow-400 fill-yellow-400" />
-                  <span className="text-[10px] font-bold text-yellow-400 tracking-wider">CB MEMBER</span>
-                </div>
+                {membership.isPremium ? (
+                  <div className="inline-flex items-center gap-1.5 bg-[#1a1a1c] px-3 py-1.5 rounded-full shadow-md">
+                    <Crown className="w-3.5 h-3.5 text-yellow-400 fill-yellow-400" />
+                    <span className="text-[10px] font-bold text-yellow-400 tracking-wider">CB MEMBER</span>
+                  </div>
+                ) : (
+                  <button onClick={() => setIsPlansOpen(true)} className="inline-flex items-center gap-1.5 bg-[#fcf8f2] border border-[#f3e3c1] px-3 py-1.5 rounded-full shadow-sm active:scale-95 transition-transform">
+                    <Crown className="w-3.5 h-3.5 text-[#c8922c]" />
+                    <span className="text-[10px] font-bold text-[#c8922c] tracking-wider">BECOME MEMBER</span>
+                  </button>
+                )}
               </div>
             </div>
 
@@ -306,7 +327,7 @@ export default function Profile() {
                 <MenuItem icon={<Box className="w-5 h-5 text-gray-700"/>} title="My Listings" subtitle="Manage your products" onClick={() => openView('listings')} />
                 <MenuItem icon={<Crown className="w-5 h-5 text-gray-700"/>} title="Membership Plans" subtitle="Explore and manage plans" onClick={() => setIsPlansOpen(true)} />
                 <MenuItem icon={<WalletIcon className="w-5 h-5 text-gray-700"/>} title="Wallet" subtitle="Manage balance & transactions" onClick={() => navigate("/wallet")} />
-                <MenuItem icon={<MapPin className="w-5 h-5 text-gray-700"/>} title="Addresses" subtitle="Saved delivery addresses" onClick={() => navigate("/settings")} />
+                <MenuItem icon={<MapPin className="w-5 h-5 text-gray-700"/>} title="Addresses" subtitle="Saved delivery addresses" onClick={() => openView('addresses')} />
                 <MenuItem icon={<Headphones className="w-5 h-5 text-gray-700"/>} title="Help & Support" subtitle="Get help and support" onClick={() => navigate("/help")} hideBorder />
               </div>
             </div>
@@ -340,15 +361,16 @@ export default function Profile() {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 20 }}
-            className="min-h-screen bg-[#1c1c1e] text-white pb-32"
+            className="min-h-screen bg-[#f9f8f6] text-black pb-32"
           >
-            <div className="p-4 flex items-center gap-4 bg-[#1c1c1e] sticky top-0 z-50 border-b border-white/5">
-               <button onClick={closeView} className="p-2 bg-white/5 rounded-full hover:bg-white/10 text-white">
+            <div className="px-4 pb-3 pt-16 flex items-center gap-4 bg-[#fdfdfd] sticky top-0 z-50 border-b border-gray-100 shadow-sm">
+               <button onClick={closeView} className="p-2 bg-gray-50 rounded-full hover:bg-gray-100 text-black">
                  <ArrowLeft className="w-5 h-5" />
                </button>
-               <h2 className="text-lg font-bold">
+               <h2 className="text-lg font-bold text-gray-900">
                  {activeView === 'listings' && 'My Listings'}
                  {activeView === 'saved' && 'Saved Items'}
+                 {activeView === 'addresses' && 'Manage Addresses'}
                </h2>
             </div>
             
@@ -357,22 +379,22 @@ export default function Profile() {
                 <div className="space-y-4">
                   {loadingListings ? (
                     <div className="flex justify-center py-20">
-                      <Loader2 className="w-8 h-8 animate-spin text-[#8E8E93]" />
+                      <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
                     </div>
                   ) : myProducts.length === 0 ? (
-                    <div className="py-20 text-center bg-[#1c1c1e] rounded-[2.5rem] border border-white/5 border-dashed shadow-sm">
-                      <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-white/5">
-                        <Package className="w-8 h-8 text-gray-500" />
+                    <div className="py-20 text-center bg-white rounded-[2.5rem] border border-gray-100 border-dashed shadow-sm">
+                      <div className="w-16 h-16 bg-gray-50 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-gray-100">
+                        <Package className="w-8 h-8 text-gray-400" />
                       </div>
-                      <h3 className="text-[18px] font-bold text-white tracking-tight">
+                      <h3 className="text-[18px] font-bold text-gray-900 tracking-tight">
                         No active listings
                       </h3>
-                      <p className="text-[14px] text-gray-400 mt-1 mb-8 font-medium">
+                      <p className="text-[14px] text-gray-500 mt-1 mb-8 font-medium">
                         Ready to turn your stuff into cash?
                       </p>
                       <button
                         onClick={() => navigate("/list")}
-                        className="px-6 py-3 rounded-full bg-white text-black text-[15px] font-bold shadow-lg shadow-white/10 hover:scale-105 active:scale-95 transition-all"
+                        className="px-6 py-3 rounded-full bg-black text-white text-[15px] font-bold shadow-lg shadow-black/10 hover:scale-105 active:scale-95 transition-all"
                       >
                         Start Selling
                       </button>
@@ -382,9 +404,9 @@ export default function Profile() {
                       {myProducts.map((item) => (
                         <div
                           key={item.id}
-                          className="group bg-[#2c2c2e] p-4 rounded-3xl border border-white/5 shadow-xl flex items-center gap-4"
+                          className="group bg-white p-4 rounded-3xl border border-gray-100 shadow-sm flex items-center gap-4"
                         >
-                          <div className="w-20 h-20 rounded-[1.2rem] overflow-hidden bg-black flex-shrink-0">
+                          <div className="w-20 h-20 rounded-[1.2rem] overflow-hidden bg-gray-50 flex-shrink-0">
                             <img
                               src={item.image_url || "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=120"}
                               alt=""
@@ -392,18 +414,18 @@ export default function Profile() {
                             />
                           </div>
                           <div className="flex-1 min-w-0">
-                            <h4 className="text-[15px] font-bold text-white truncate mb-1 tracking-tight">
+                            <h4 className="text-[15px] font-bold text-gray-900 truncate mb-1 tracking-tight">
                               {item.title}
                             </h4>
                             <div className="flex items-center gap-2.5">
-                              <span className="text-[17px] font-black tracking-tight text-white">
+                              <span className="text-[17px] font-black tracking-tight text-gray-900">
                                 ₹{item.price}
                               </span>
                               <span
                                 className={`text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-widest ${
                                   item.status === "sold"
-                                    ? "bg-black/5 text-[#8E8E93]"
-                                    : "bg-[#34C759]/10 text-[#34C759]"
+                                    ? "bg-gray-100 text-gray-500"
+                                    : "bg-green-50 text-green-600"
                                 }`}
                               >
                                 {item.status === "sold" ? "Sold" : "Active"}
@@ -414,14 +436,14 @@ export default function Profile() {
                             {item.status !== "sold" && (
                               <button
                                 onClick={() => handleMarkSold(item.id)}
-                                className="w-10 h-10 rounded-full flex items-center justify-center bg-white/5 border border-white/10 text-gray-400 hover:bg-green-500 hover:text-white transition-all shadow-sm"
+                                className="w-10 h-10 rounded-full flex items-center justify-center bg-gray-50 border border-gray-100 text-gray-400 hover:bg-green-500 hover:text-white transition-all shadow-sm"
                               >
                                 <Check className="w-4 h-4" />
                               </button>
                             )}
                             <button
                               onClick={() => handleDeleteListing(item.id)}
-                              className="w-10 h-10 rounded-full flex items-center justify-center bg-white/5 border border-white/10 text-gray-400 hover:bg-red-500 hover:text-white transition-all shadow-sm"
+                              className="w-10 h-10 rounded-full flex items-center justify-center bg-gray-50 border border-gray-100 text-gray-400 hover:bg-red-500 hover:text-white transition-all shadow-sm"
                             >
                               <Trash2 className="w-4 h-4" />
                             </button>
@@ -430,6 +452,58 @@ export default function Profile() {
                       ))}
                     </div>
                   )}
+                </div>
+              )}
+
+              {activeView === 'addresses' && (
+                <div className="space-y-6">
+                  <div className="bg-white rounded-3xl p-5 shadow-sm border border-gray-100">
+                     <h3 className="text-[14px] font-bold text-gray-900 mb-4 tracking-tight">Add New Address</h3>
+                     <div className="flex gap-2">
+                       <input 
+                         type="text" 
+                         value={newAddress}
+                         onChange={(e) => setNewAddress(e.target.value)}
+                         placeholder="E.g., B3, 404, CU Hostel"
+                         className="flex-1 bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-sm font-semibold text-gray-900 focus:outline-none focus:border-black transition-colors"
+                       />
+                       <button 
+                         onClick={handleAddAddress}
+                         className="px-6 py-3 bg-black text-white rounded-xl text-sm font-bold active:scale-95 transition-transform shrink-0"
+                       >
+                         Save
+                       </button>
+                     </div>
+                  </div>
+
+                  <div>
+                     <h3 className="text-[14px] font-bold text-gray-900 mb-4 tracking-tight px-1">Saved Addresses</h3>
+                     {addresses.length === 0 ? (
+                        <div className="text-center py-10">
+                          <MapPin className="w-8 h-8 text-gray-300 mx-auto mb-2" />
+                          <p className="text-sm font-bold text-gray-400">No saved addresses</p>
+                        </div>
+                     ) : (
+                        <div className="space-y-3">
+                          {addresses.map((addr) => (
+                            <div key={addr.id} className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between group">
+                               <div className="flex items-center gap-3">
+                                 <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center">
+                                   <MapPin className="w-4 h-4 text-gray-500" />
+                                 </div>
+                                 <p className="text-[14px] font-bold text-gray-900">{addr.text}</p>
+                               </div>
+                               <button 
+                                 onClick={() => handleDeleteAddress(addr.id)}
+                                 className="w-8 h-8 rounded-full flex items-center justify-center bg-gray-50 text-gray-400 hover:bg-red-50 hover:text-red-500 transition-colors"
+                               >
+                                 <Trash2 className="w-4 h-4" />
+                               </button>
+                            </div>
+                          ))}
+                        </div>
+                     )}
+                  </div>
                 </div>
               )}
             </div>

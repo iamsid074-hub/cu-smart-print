@@ -215,7 +215,7 @@ export default function Settings() {
             exit={{ opacity: 0, x: 20 }}
             className="min-h-screen bg-[#fdfdfd] pb-32 relative z-50"
           >
-            <div className="px-4 py-3 flex items-center gap-4 bg-[#fdfdfd] sticky top-0 z-50 border-b border-gray-100 shadow-sm">
+            <div className="px-4 pb-3 pt-16 flex items-center gap-4 bg-[#fdfdfd] sticky top-0 z-50 border-b border-gray-100 shadow-sm">
                <button onClick={closeView} className="p-2 bg-gray-50 rounded-full hover:bg-gray-100 text-black transition-colors">
                  <ArrowLeft className="w-5 h-5" />
                </button>

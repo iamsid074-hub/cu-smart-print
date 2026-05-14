@@ -23,17 +23,17 @@ export const ease = {
 // ── Durations (seconds) ────────────────────────────────────────────────────
 export const duration = {
   /** Button press / touch feedback — imperceptible but felt */
-  tap: 0.15,
+  tap: 0.10,
   /** Hover lift — responds before the user even consciously notices */
-  hover: 0.20,
+  hover: 0.15,
   /** Modal, dialog, popover open/close */
-  modal: 0.25,
+  modal: 0.18,
   /** Bottom sheet slide */
-  sheet: 0.30,
+  sheet: 0.22,
   /** Page / route transition */
-  page: 0.32,
+  page: 0.18,
   /** Slow hero entrance or card unboxing */
-  slow: 0.45,
+  slow: 0.35,
 };
 
 // ── Spring Configs ─────────────────────────────────────────────────────────

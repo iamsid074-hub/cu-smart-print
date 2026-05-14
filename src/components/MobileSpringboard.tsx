@@ -20,7 +20,6 @@ interface AppDef {
 
 const GRID_APPS: AppDef[] = [
   { name: "Shops",    img: "/dock-shops.webp",       path: "/shops",            wiggleDelay: 0,    wiggleDuration: 0.18 },
-  { name: "Vending",  icon: Coffee,   iconBg: "#0d2d25", iconColor: "#10B981",   path: "/search",   wiggleDelay: 0.08, wiggleDuration: 0.17 },
   { name: "Grocery",  img: "/cc_grocery.png",        path: "/grocery",          wiggleDelay: 0.03, wiggleDuration: 0.21 },
   { name: "Cart",     img: "/dock-cart.webp",        path: "/cart",             wiggleDelay: 0.07, wiggleDuration: 0.19 },
   { name: "Games",    img: "/dock-games.webp",       path: "/games",            wiggleDelay: 0.02, wiggleDuration: 0.18 },
@@ -130,17 +129,17 @@ export default function MobileSpringboard() {
             className="flex h-full"
             drag="x"
             dragConstraints={{ left: -(totalPageCount - 1) * screenWidth.current, right: 0 }}
-            dragElastic={0.18}
+            dragElastic={0.1}
             onDragEnd={(_, info) => {
-              const threshold = 50;
-              if (info.offset.x < -threshold && currentPage < totalPageCount - 1) {
+              const swipePower = info.offset.x + info.velocity.x * 0.2;
+              if (swipePower < -50 && currentPage < totalPageCount - 1) {
                 setCurrentPage(prev => prev + 1);
-              } else if (info.offset.x > threshold && currentPage > 0) {
+              } else if (swipePower > 50 && currentPage > 0) {
                 setCurrentPage(prev => prev - 1);
               }
             }}
             animate={{ x: -currentPage * screenWidth.current }}
-            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            transition={{ type: "tween", ease: "easeOut", duration: 0.2 }}
           >
             {/* Standard App Pages */}
             {contentPages.map((pageApps, pageIdx) => (
