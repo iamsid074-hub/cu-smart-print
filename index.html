@@ -81,6 +81,24 @@
   }
   </script>
 
+  <!-- Early Wallpaper Injection Script -->
+  <script>
+    (function() {
+      try {
+        var key = "cu_bazzar_wallpaper";
+        var defaultWallpaper = "/mobile-ethereal-v3.webp";
+        var wallpaper = localStorage.getItem(key) || defaultWallpaper;
+        
+        // Create CSS rule to set background on body
+        var style = document.createElement('style');
+        style.innerHTML = 'body { background: url("' + wallpaper + '") no-repeat center center fixed !important; background-size: cover !important; }';
+        document.head.appendChild(style);
+        console.log('Early wallpaper injection:', wallpaper);
+      } catch (e) {
+        console.error('Wallpaper injection failed:', e);
+      }
+    })();
+  </script>
 </head>
 
 <body>

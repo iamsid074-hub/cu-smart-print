@@ -1,10 +1,11 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, memo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
 import { Coffee, Wallet as WalletIcon, ShieldAlert, Lock, Search, Image as ImageIcon } from "lucide-react";
 import { useWallpaper } from "../hooks/useWallpaper";
 import { IosHomeIcon, IosCombosIcon, IosProfileIcon, IosSettingsIcon } from "./HighFidelityIcons";
+import { ease, spring as motionSpring } from "@/lib/motion";
 
 interface AppDef {
   name: string;
@@ -62,6 +63,8 @@ export default function MobileSpringboard() {
   
   const longPressRef                  = useRef<ReturnType<typeof setTimeout> | null>(null);
   const touchStartY                   = useRef(0);
+  // Cache window.innerWidth to avoid layout reads during drag gestures
+  const screenWidth                   = useRef(typeof window !== 'undefined' ? window.innerWidth : 390);
 
   // Chunk apps into pages of 24 (4x6 grid looks best for iOS)
   const allApps = [...GRID_APPS, ...(isSuperAdmin ? [ADMIN_APP] : [])];
@@ -108,19 +111,13 @@ export default function MobileSpringboard() {
 
   return (
     <div
-      className="fixed inset-0 overflow-hidden select-none touch-none"
+      className="fixed inset-0 overflow-hidden select-none touch-pan-y"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
       onClick={() => isWiggling && setIsWiggling(false)}
     >
-      <img
-        src={wallpaper}
-        alt=""
-        className="absolute inset-0 w-full h-full object-cover"
-        draggable={false}
-      />
-      <div className="absolute inset-0 bg-black/35" />
+      <div className="absolute inset-0 bg-black/0" />
 
       {/* Safe-area aware content column */}
       <div
@@ -132,8 +129,8 @@ export default function MobileSpringboard() {
           <motion.div
             className="flex h-full"
             drag="x"
-            dragConstraints={{ left: -(totalPageCount - 1) * window.innerWidth, right: 0 }}
-            dragElastic={0.2}
+            dragConstraints={{ left: -(totalPageCount - 1) * screenWidth.current, right: 0 }}
+            dragElastic={0.18}
             onDragEnd={(_, info) => {
               const threshold = 50;
               if (info.offset.x < -threshold && currentPage < totalPageCount - 1) {
@@ -142,17 +139,15 @@ export default function MobileSpringboard() {
                 setCurrentPage(prev => prev - 1);
               }
             }}
-            animate={{ x: -currentPage * window.innerWidth }}
+            animate={{ x: -currentPage * screenWidth.current }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
           >
             {/* Standard App Pages */}
             {contentPages.map((pageApps, pageIdx) => (
               <div
                 key={pageIdx}
-                className="w-screen flex-shrink-0 flex flex-col h-full"
+                className="w-screen flex-shrink-0 flex flex-col h-full overflow-y-auto pb-[150px]"
               >
-
-
                 <div className={`grid grid-cols-4 gap-y-7 gap-x-2 px-5 ${pageIdx === 0 ? 'pt-28' : 'pt-32'} content-start`}>
                   {pageApps.map((app, i) => (
                     <AppIcon
@@ -180,7 +175,7 @@ export default function MobileSpringboard() {
           {Array.from({ length: totalPageCount }).map((_, i) => (
             <div
               key={i}
-              className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${
+              className={`w-1.5 h-1.5 rounded-full transition-colors duration-200 ${
                 i === currentPage ? "bg-white" : "bg-white/40"
               }`}
             />
@@ -200,9 +195,9 @@ export default function MobileSpringboard() {
 
         {/* ── Dock ──────────────────────────────────────────── */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.55, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 0.45, delay: 0.25, ease: ease.apple }}
           className="px-5 pb-6"
           style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 20px) + 16px)" }}
         >
@@ -257,7 +252,7 @@ interface AppIconProps {
   showLabel?: boolean;
 }
 
-function AppIcon({ app, index, isWiggling, onTap, size = 60, showLabel = true }: AppIconProps) {
+const AppIcon = memo(function AppIcon({ app, index, isWiggling, onTap, size = 60, showLabel = true }: AppIconProps) {
   // Responsive size: on a real phone use viewport-relative sizing, fallback to prop
   // 4 columns padding adjustment
   const iconSize = `min(${size}px, calc((100vw - 88px) / 4))`;
@@ -265,13 +260,11 @@ function AppIcon({ app, index, isWiggling, onTap, size = 60, showLabel = true }:
   return (
     <motion.div
       className="flex flex-col items-center gap-[6px]"
-      initial={{ opacity: 0, scale: 0.5 }}
+      initial={{ opacity: 0, scale: 0.6 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{
-        delay: index * 0.02,           // cut stagger in half — feels instant
-        type: "spring",
-        stiffness: 700,
-        damping: 30,
+        delay: index * 0.018,
+        ...motionSpring.dock,
       }}
       style={{ willChange: "transform" }}
     >
@@ -295,10 +288,10 @@ function AppIcon({ app, index, isWiggling, onTap, size = 60, showLabel = true }:
             transform: "translateZ(0)",   // GPU layer
             WebkitTransform: "translateZ(0)",
             touchAction: "manipulation",  // kills 300ms tap delay on mobile
-            transition: "transform 0.1s ease",
+            transition: "transform 0.15s cubic-bezier(0.22, 1, 0.36, 1)",
           }}
           onClick={(e) => { e.stopPropagation(); if (!isWiggling) onTap(app.path); }}
-          onPointerDown={(e) => { (e.currentTarget as HTMLDivElement).style.transform = "translateZ(0) scale(0.84)"; }}
+          onPointerDown={(e) => { (e.currentTarget as HTMLDivElement).style.transform = "translateZ(0) scale(0.92)"; }}
           onPointerUp={(e)   => { (e.currentTarget as HTMLDivElement).style.transform = "translateZ(0) scale(1)"; }}
           onPointerLeave={(e)=> { (e.currentTarget as HTMLDivElement).style.transform = "translateZ(0) scale(1)"; }}
         >
@@ -355,4 +348,4 @@ function AppIcon({ app, index, isWiggling, onTap, size = 60, showLabel = true }:
       )}
     </motion.div>
   );
-}
+});

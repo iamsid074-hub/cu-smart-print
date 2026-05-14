@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Heart, Star, BadgeCheck, ShoppingCart, Share2 } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { useToast } from "@/hooks/use-toast";
+import { cardHover, tapFeedback, iconTap, hoverTransition, tapTransition, ease } from "@/lib/motion";
 
 const CATEGORY_FALLBACKS: Record<string, string> = {
   Electronics:
@@ -132,16 +133,17 @@ const ProductCard = memo(
     return (
       <Link to={`/product/${id}`} className="block w-full h-full">
         <motion.div
-          initial={{ opacity: 0, y: 10, scale: 0.95 }}
-          whileInView={{ opacity: 1, y: 0, scale: 1 }}
-          viewport={{ once: true, margin: "-50px" }}
+          initial={{ opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-30px" }}
           transition={{
-            duration: 0.3,
-            delay: Math.min(delay, 0.05),
-            ease: "easeOut",
+            duration: 0.25,
+            delay: Math.min(delay, 0.04),
+            ease: ease.apple,
           }}
-          className="relative flex flex-col bg-[#1c1c1e] rounded-[24px] overflow-hidden group cursor-pointer h-full border border-white/5 shadow-xl hover:border-white/10 transition-all duration-300 card-hover"
-          style={{ willChange: "transform" }}
+          whileHover={cardHover}
+          className="relative flex flex-col bg-[#1c1c1e] rounded-[24px] overflow-hidden group cursor-pointer h-full border border-white/5 shadow-xl hover:border-white/10 transition-colors duration-200 card-hover"
+          // No permanent willChange — framer-motion sets it automatically during animation
         >
           {badge && (
             <div className="absolute top-3 left-3 z-10 px-2.5 py-1 rounded-full text-[10px] font-bold bg-[#1D1D1F] text-white shadow-sm uppercase tracking-wider">
@@ -152,7 +154,8 @@ const ProductCard = memo(
           <div className="absolute top-3 right-3 z-10 flex gap-1.5 opacity-0 sm:opacity-100 sm:group-hover:opacity-100 transition-opacity duration-300">
             <motion.button
               onClick={handleFav}
-              whileTap={{ scale: 0.75 }}
+              whileTap={iconTap}
+              transition={tapTransition}
               className={`w-8 h-8 rounded-full flex items-center justify-center shadow-sm transition-all duration-300 ${
                 isFav
                   ? "bg-[#FF3B30]/20 text-[#FF3B30] border border-[#FF3B30]/30"
@@ -167,7 +170,8 @@ const ProductCard = memo(
             </motion.button>
             <motion.button
               onClick={handleShare}
-              whileTap={{ scale: 0.75 }}
+              whileTap={iconTap}
+              transition={tapTransition}
               className="w-8 h-8 rounded-full flex items-center justify-center bg-black/60 border border-white/10 text-[#8E8E93] hover:text-[#007AFF] hover:bg-black shadow-sm transition-colors duration-300"
             >
               <Share2 className="w-3.5 h-3.5" />
@@ -181,7 +185,7 @@ const ProductCard = memo(
             <img
               src={displaySrc}
               alt={title}
-              className={`w-full h-full object-cover transition-all duration-500 group-hover:scale-105 ${
+              className={`w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.03] ${
                 imgLoaded ? "opacity-100" : "opacity-0"
               }`}
               onLoad={() => setImgLoaded(true)}
@@ -217,7 +221,8 @@ const ProductCard = memo(
 
               <motion.button
                 onClick={handleAddToCart}
-                whileTap={{ scale: 0.9 }}
+                whileTap={tapFeedback}
+              transition={tapTransition}
                 className="w-9 h-9 sm:w-10 sm:h-10 bg-[#007AFF] text-white rounded-full flex shrink-0 items-center justify-center shadow-md hover:bg-[#0066CC] transition-colors"
               >
                 <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5" />

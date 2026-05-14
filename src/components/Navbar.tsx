@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import TopDynamicIsland from "./TopDynamicIsland";
+import MobileStatusBar from "./MobileStatusBar";
 import SellModal from "./SellModal";
 import UserLocationCard from "./UserLocationCard";
 
@@ -15,6 +16,7 @@ export default function Navbar() {
     <>
       {/* Dynamic Island — always visible, always on top (mobile only) */}
       <div className="relative z-[90000] md:hidden">
+        <MobileStatusBar />
         <TopDynamicIsland onSell={() => setSellOpen(true)} />
       </div>
 

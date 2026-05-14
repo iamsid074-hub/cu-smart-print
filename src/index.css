@@ -71,8 +71,7 @@
 
   body {
     @apply text-foreground;
-    background: url('/mobile-ethereal-v3.png?v=3') no-repeat center center fixed !important;
-    background-size: cover !important;
+    background-color: #0A0A0F !important;
     font-family: 'Space Grotesk', 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Text', Roboto, sans-serif;
     overflow-x: hidden;
     overscroll-behavior-y: none;
@@ -88,8 +87,7 @@
 
   @media (min-width: 1024px) {
     body {
-      background: url('/desktop-ethereal-v3.png?v=3') no-repeat center center fixed !important;
-      background-size: cover !important;
+      background-color: #0A0A0F !important;
     }
   }
 
@@ -101,51 +99,69 @@
     font-weight: 700;
     letter-spacing: -0.03em; /* iOS tight tracking for headers */
   }
+
+  /* ─── Apple-Smooth Interactive Defaults ─── */
+  /* Every button gets consistent tap feedback without JS */
+  button, [role="button"] {
+    touch-action: manipulation; /* Eliminates 300ms tap delay on mobile */
+  }
+
+  /* Smooth scrolling on ALL scrollable containers */
+  .overflow-y-auto, .overflow-y-scroll, .overflow-auto, .overflow-scroll {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+  }
+
+  /* Prevent image drag interference on touch */
+  img, svg {
+    -webkit-user-drag: none;
+    user-select: none;
+  }
 }
 
 @layer utilities {
-  /* ─── GPU Offload Configuration (144Hz Lock) ─── */
-  .backdrop-blur-sm,
-  .backdrop-blur-md,
-  .backdrop-blur-lg,
-  .backdrop-blur-xl,
-  .backdrop-blur-2xl,
-  .backdrop-blur-3xl {
-    will-change: backdrop-filter, transform;
+  /* ─── GPU Offload Configuration ─── */
+  /* NOTE: will-change is NOT applied globally to backdrop-blur classes.
+     Applying it everywhere causes massive GPU texture memory usage on mobile.
+     Instead, use .will-animate only on elements that are actively transitioning. */
+  .will-animate {
+    will-change: transform, opacity;
+  }
+  /* Force GPU layer only for elements that actually move */
+  .gpu-layer {
+    transform: translateZ(0);
     -webkit-transform: translateZ(0);
-            transform: translateZ(0);
+    backface-visibility: hidden;
   }
 
   /* ─── iOS Liquid Glass Utilities ─── */
   
   .ios-glass {
     background: rgba(255, 255, 255, 0.65);
-    backdrop-filter: blur(28px) saturate(180%);
-    -webkit-backdrop-filter: blur(28px) saturate(180%);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
     border: 1px solid rgba(255, 255, 255, 0.5);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.8);
-    will-change: backdrop-filter, transform;
     transform: translateZ(0);
   }
 
   .ios-glass-heavy {
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(40px) saturate(200%);
-    -webkit-backdrop-filter: blur(40px) saturate(200%);
+    background: rgba(255, 255, 255, 0.88);
+    /* Reduced from blur(40px) — 40px is the most expensive blur value on mobile */
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
     border: 1px solid rgba(255, 255, 255, 0.7);
     box-shadow: 0 12px 48px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.9);
-    will-change: backdrop-filter, transform;
     transform: translateZ(0);
   }
 
   .ios-glass-dark {
-    background: rgba(28, 28, 30, 0.7);
-    backdrop-filter: blur(32px) saturate(180%);
-    -webkit-backdrop-filter: blur(32px) saturate(180%);
+    background: rgba(28, 28, 30, 0.72);
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
     border: 1px solid rgba(255, 255, 255, 0.06);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
     color: #ffffff;
-    will-change: backdrop-filter, transform;
     transform: translateZ(0);
   }
 
@@ -153,9 +169,10 @@
     background: rgba(255, 255, 255, 0.7);
     border: 1px solid rgba(255, 255, 255, 0.9);
     border-radius: 1.5rem;
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    @apply transition-all duration-300;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    /* Use specific properties instead of transition-all to avoid layout recalcs */
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
   }
 
   .luxury-card:hover {
@@ -196,17 +213,18 @@
   .text-ios-red { color: #FF3B30; }
   .text-ios-gray { color: #8E8E93; }
 
-  /* iOS card float on hover */
+  /* iOS card float on hover — framer-motion whileHover handles this in JS
+     This CSS rule is kept as a no-JS fallback only */
   .card-hover:hover {
-    transform: translateY(-2px) scale(1.002) translateZ(0);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
   }
 
+  /* GPU layer for absolutely necessary compositor hints only */
   .smooth-gpu {
     transform: translate3d(0, 0, 0);
     backface-visibility: hidden;
     perspective: 1000px;
-    will-change: transform, opacity;
+    /* Note: will-change removed — only set dynamically when element is about to animate */
   }
 
   /* ─── 3D Utilities for Virtual Card ─── */
@@ -219,6 +237,41 @@
   .backface-hidden {
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
+  }
+
+  /* ─── Apple Motion Utilities ─── */
+  /* Pure-CSS tap compression — zero JS, zero delay */
+  .apple-tap:active {
+    transform: scale(0.97) translateZ(0);
+    transition: transform 0.15s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /* Icon tap — slightly more aggressive */
+  .apple-tap-icon:active {
+    transform: scale(0.92) translateZ(0);
+    transition: transform 0.15s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /* Subtle lift on hover */
+  .apple-hover:hover {
+    transform: translateY(-2px) translateZ(0);
+    transition: transform 0.20s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /* Full button feel: lift on hover, compress on tap */
+  .apple-btn {
+    transition: transform 0.15s cubic-bezier(0.22, 1, 0.36, 1),
+                box-shadow 0.15s cubic-bezier(0.22, 1, 0.36, 1),
+                background-color 0.15s ease;
+    touch-action: manipulation;
+  }
+  .apple-btn:hover {
+    transform: translateY(-1px) translateZ(0);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  }
+  .apple-btn:active {
+    transform: scale(0.97) translateZ(0);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
 }
 
@@ -299,13 +352,14 @@
 
 .animate-glow-pulse {
   animation: glow-pulse 3s ease-in-out infinite;
-  will-change: box-shadow;
+  /* box-shadow is NOT GPU-composited — will-change here causes paint, not composite */
+  /* Use opacity animation instead for truly smooth pulsing */
 }
 
 .animate-aurora {
   background-size: 200% 200%;
   animation: aurora-shift 4s ease infinite;
-  will-change: background-position;
+  /* background-position is also not composited — removed will-change */
 }
 
 @keyframes bell-ring {
@@ -354,7 +408,8 @@
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  /* transition-all triggers layout on every frame — use specific props */
+  transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), background 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), border-color 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   color: rgba(232, 222, 212, 0.9);
   font-weight: 600;
 }

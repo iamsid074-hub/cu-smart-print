@@ -1,11 +1,10 @@
-import { lazy, Suspense, useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import DesktopDock from "@/components/DesktopDock";
 import DesktopMenuBar from "@/components/DesktopMenuBar";
 import { motion, AnimatePresence } from "framer-motion";
 const MobileSpringboard = lazy(() => import("@/components/MobileSpringboard"));
 const MobileLockScreen   = lazy(() => import("@/components/MobileLockScreen"));
-import MobileStatusBar from "@/components/MobileStatusBar";
 
 const DesktopWindowShops = lazy(() => import("@/components/DesktopWindowShops"));
 const DesktopWindowVending = lazy(() => import("@/components/DesktopWindowVending"));
@@ -104,6 +103,13 @@ export default function Home() {
   const [minimizedWindows, setMinimizedWindows] = useState<WindowId[]>([]);
   const [maximizedWindows, setMaximizedWindows] = useState<WindowId[]>([]);
 
+  // Refs to hold latest state values so the event listener effect
+  // doesn't need to re-register on every window state change
+  const activeWindowsRef   = useRef<WindowId[]>([]);
+  const minimizedWindowsRef = useRef<WindowId[]>([]);
+  useEffect(() => { activeWindowsRef.current = activeWindows; }, [activeWindows]);
+  useEffect(() => { minimizedWindowsRef.current = minimizedWindows; }, [minimizedWindows]);
+
   // Boot animation: show once per browser tab session, desktop only
   const [showBoot, setShowBoot] = useState(() => {
     if (typeof window === "undefined") return false;
@@ -163,7 +169,7 @@ export default function Home() {
       window.removeEventListener("replay-boot", handleReplayBoot);
       window.removeEventListener("trigger-lock", handleTriggerLock);
     };
-  }, [activeWindows, minimizedWindows]); // Re-bind to capture current state
+  }, []); // Empty dep array: state is read via refs inside handlers
 
   // Internal opener needs check too
   const safeOpenWindow = (id: string) => {
@@ -223,8 +229,6 @@ export default function Home() {
 
       {/* ─── EOS v3 Mobile Springboard (hidden on desktop) ────────────── */}
       <div className="block md:hidden">
-        {/* iOS Status Bar */}
-        <MobileStatusBar />
 
         {/* Lock Screen — shown once per session on mobile */}
         <Suspense fallback={null}>

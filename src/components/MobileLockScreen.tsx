@@ -56,13 +56,7 @@ export default function MobileLockScreen({ onUnlock }: MobileLockScreenProps) {
           style={{ y: dragY, borderBottomLeftRadius: borderRadiusValue, borderBottomRightRadius: borderRadiusValue, willChange: "transform, opacity" }}
           className="fixed inset-0 z-[50000] overflow-hidden touch-none"
         >
-          <img
-            src={wallpaper}
-            alt=""
-            className="absolute inset-0 w-full h-full object-cover"
-            draggable={false}
-          />
-          <div className="absolute inset-0 bg-black/20" />
+          <div className="absolute inset-0 bg-black/0" />
 
           {/* Content */}
           <div

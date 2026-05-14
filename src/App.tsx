@@ -42,15 +42,19 @@ const DriverDashboard = lazy(() => import("./pages/DriverDashboard"));
 // Core pages to preload for flawless switching
 const preloadCoreRoutes = () => {
   const doPreload = () => {
-    // Bottom Nav items
-    import("./pages/Home");
-    import("./pages/Grocery");
-    import("./pages/Wallet");
-    import("./pages/Settings");
-    // Frequent interactions
-    import("./pages/SearchPage");
-    import("./pages/Profile");
-    import("./pages/QuickStore");
+    // Bottom Nav items — Home is already the entry route, no need to preload
+    import("./pages/Grocery");     // ~10KB, frequent
+    import("./pages/Cart");        // ~57KB, very frequent  
+    import("./pages/Settings");    // ~21KB, moderate
+    // Frequent interactions after initial load
+    import("./pages/SearchPage");  // ~24KB, very frequent
+    import("./pages/QuickStore");  // ~18KB, frequent
+    // Defer large pages until user has settled
+    // Profile (47KB) and Wallet (71KB) are preloaded lazily after 5s
+    setTimeout(() => {
+      import("./pages/Profile");
+      import("./pages/Wallet");
+    }, 5000);
   };
   // Use requestIdleCallback to avoid blocking initial render
   if ('requestIdleCallback' in window) {
@@ -92,6 +96,7 @@ import AppUpdater from "./components/AppUpdater";
 import UsernameSetup from "./components/UsernameSetup";
 import ScrollToTop from "./components/ScrollToTop";
 import StickyStripBanner from "./components/StickyStripBanner";
+import DynamicWallpaper from "./components/DynamicWallpaper";
 
 const ControlCenter = lazy(() => import("./components/ControlCenter"));
 const TutorialSystem = lazy(() => import("./components/TutorialSystem"));
@@ -217,17 +222,13 @@ function AppLayout() {
 
   return (
     <>
+      <DynamicWallpaper />
       <AppUpdater />
       <Suspense fallback={null}>
         <ControlCenter />
         <TutorialSystem />
       </Suspense>
-      {!isLanding && !isLogin && !isAdminPath && !isDownload && !isDriverPage && (
-        <>
-          {location.pathname !== "/pasta-offer" && <Navbar />}
-          {/* BottomNav removed permanently as requested */}
-        </>
-      )}
+      <Navbar />
       <ErrorBoundary>
         <Suspense fallback={initialBootFinished ? null : <BrandedLoading />}>
           {/* position:relative + overflow:hidden so AnimatePresence absolute children stack correctly */}
