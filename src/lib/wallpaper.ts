@@ -2,9 +2,14 @@
 const WALLPAPER_KEY = "cu_bazzar_wallpaper";
 const DEFAULT_WALLPAPER = "/mobile-ethereal-v3.webp";
 
+let cachedWallpaper: string | null = null;
+
 export function getWallpaper(): string {
+  if (cachedWallpaper) return cachedWallpaper;
   try {
-    return localStorage.getItem(WALLPAPER_KEY) || DEFAULT_WALLPAPER;
+    const val = localStorage.getItem(WALLPAPER_KEY) || DEFAULT_WALLPAPER;
+    cachedWallpaper = val;
+    return val;
   } catch {
     return DEFAULT_WALLPAPER;
   }
@@ -12,6 +17,7 @@ export function getWallpaper(): string {
 
 export function setWallpaper(url: string): void {
   try {
+    cachedWallpaper = url; // Update memory cache synchronously
     localStorage.setItem(WALLPAPER_KEY, url);
     window.dispatchEvent(new CustomEvent("wallpaper-changed", { detail: url }));
   } catch {
