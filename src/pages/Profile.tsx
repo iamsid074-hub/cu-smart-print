@@ -2,294 +2,82 @@ import { useEffect, useState, useRef } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
 import {
-  LogOut,
-  Navigation2,
-  User,
+  Bell,
+  Settings,
   MapPin,
   Phone,
-  Package,
-  Heart,
-  Edit2,
-  Check,
-  Loader2,
   Camera,
-  ShoppingCart,
   CheckCircle,
-  XCircle,
-  Clock,
-  Bell,
-  Plus,
-  Trash2,
-  Tag,
-  X,
-  Mail,
-  Globe,
-  Shield,
-  ArrowLeft,
   Crown,
+  Box,
+  Wallet as WalletIcon,
+  Headphones,
+  ChevronRight,
+  Package,
+  Truck,
+  ShoppingBag,
+  DoorClosed,
+  Loader2,
+  ArrowLeft,
+  Trash2,
+  Check,
+  Heart
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import { useMembership } from "@/hooks/useMembership";
 import MembershipPlansModal from "@/components/MembershipPlansModal";
-import BazzarPass from "@/components/BazzarPass";
-
-type TabId = "listings" | "orders" | "saved" | "membership";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function Profile() {
-  const { user, isAdmin, signOut } = useAuth();
+  const { user, signOut } = useAuth();
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const fontH = { fontFamily: "'Outfit', sans-serif" };
-
+  const [searchParams, setSearchParams] = useSearchParams();
   const membership = useMembership();
+  
   const [isPlansOpen, setIsPlansOpen] = useState(false);
-
   const [profile, setProfile] = useState<any>(null);
-  const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
-
-  const [fullName, setFullName] = useState("");
-  const [hostelBlock, setHostelBlock] = useState("");
-  const [roomNumber, setRoomNumber] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-
-  // Hostel Options
-  const HOSTEL_GROUPS = [
-    { name: "NC Series", options: ["NC1", "NC2", "NC3", "NC4", "NC5", "NC6"] },
-    {
-      name: "Zakir Series",
-      options: ["Zakir A", "Zakir B", "Zakir C", "Zakir D"],
-    },
-  ];
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
+  
   const [myProducts, setMyProducts] = useState<any[]>([]);
   const [loadingListings, setLoadingListings] = useState(true);
 
-  const [incomingOrders, setIncomingOrders] = useState<any[]>([]);
-  const [loadingOrders, setLoadingOrders] = useState(true);
-  const [processingOrderId, setProcessingOrderId] = useState<string | null>(
-    null
-  );
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const [activeTab, setActiveTab] = useState<TabId>(
-    (searchParams.get("tab") as TabId) || "membership"
-  );
-
-  // Sync tab with URL
-  useEffect(() => {
-    const tabParam = searchParams.get("tab") as TabId;
-    if (tabParam && ["listings", "orders", "saved", "membership"].includes(tabParam)) {
-      setActiveTab(tabParam);
-    }
-  }, [searchParams]);
+  const activeView = searchParams.get("view") || "main";
 
   useEffect(() => {
-    async function fetchProfileAndListings() {
+    async function fetchProfileAndData() {
       if (!user) return;
       const { data } = await supabase
         .from("profiles")
         .select("*")
         .eq("id", user.id)
         .single();
-      if (data) {
-        setProfile(data);
-        setFullName(data.full_name || "");
-        setHostelBlock(data.hostel_block || "");
-        setRoomNumber(data.room_number || "");
-        setPhoneNumber(data.phone_number || "");
-      }
+      if (data) setProfile(data);
 
       const { data: listings } = await supabase
         .from("products")
         .select("*")
         .eq("seller_id", user.id)
         .order("created_at", { ascending: false });
-
       setMyProducts(listings || []);
       setLoadingListings(false);
     }
-    fetchProfileAndListings();
+    fetchProfileAndData();
   }, [user]);
 
-  const fetchIncomingOrders = async () => {
-    if (!user) return;
-    const { data } = await supabase
-      .from("orders")
-      .select(
-        `*, products(title, image_url, price), buyer:profiles!orders_buyer_id_fkey(full_name, phone_number, hostel_block)`
-      )
-      .eq("seller_id", user.id)
-      .in("status", ["pending", "seller_accepted", "seller_rejected"])
-      .order("created_at", { ascending: false });
-
-    const orders = (data || []) as any[];
-    const now = Date.now();
-    for (const o of orders) {
-      if (o.status === "pending") {
-        const placedAt = new Date(
-          o.seller_notified_at || o.created_at
-        ).getTime();
-        if ((now - placedAt) / 60000 > 8) {
-          await supabase
-            .from("orders")
-            .update({
-              status: "confirmed",
-              accepted_at: new Date().toISOString(),
-            })
-            .eq("id", o.id);
-          o.status = "confirmed";
-        }
-      }
-    }
-    setIncomingOrders(
-      orders.filter((o: any) =>
-        ["pending", "seller_accepted", "seller_rejected"].includes(o.status)
-      )
-    );
-    setLoadingOrders(false);
-  };
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => {
-    fetchIncomingOrders();
-  }, [user]);
-
-  useEffect(() => {
-    if (!user) return;
-    const channel = supabase
-      .channel("seller_orders_rt")
-      .on(
-        "postgres_changes",
-        {
-          event: "INSERT",
-          schema: "public",
-          table: "orders",
-          filter: `seller_id=eq.${user.id}`,
-        },
-        () => {
-          fetchIncomingOrders();
-          toast.success("📦 New order received!");
-        }
-      )
-      .subscribe();
-    return () => {
-      supabase.removeChannel(channel);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
-
-  const handleAcceptOrder = async (orderId: string) => {
-    setProcessingOrderId(orderId);
-    const { error } = await supabase
-      .from("orders")
-      .update({
-        status: "seller_accepted",
-        accepted_at: new Date().toISOString(),
-      })
-      .eq("id", orderId);
-    if (error) toast.error("Failed to accept order");
-    else {
-      toast.success("Order accepted!");
-      fetchIncomingOrders();
-    }
-    setProcessingOrderId(null);
-  };
-
-  const handleRejectOrder = async (orderId: string) => {
-    if (!confirm("Reject this order?")) return;
-    setProcessingOrderId(orderId);
-    const { error } = await supabase
-      .from("orders")
-      .update({ status: "seller_rejected" })
-      .eq("id", orderId);
-    if (error) toast.error("Failed to reject order");
-    else {
-      toast.warning("Order rejected.");
-      fetchIncomingOrders();
-    }
-    setProcessingOrderId(null);
-  };
-
-  const handleMarkSold = async (id: string) => {
-    const { error } = await supabase
-      .from("products")
-      .update({ status: "sold" })
-      .eq("id", id);
-    if (!error) {
-      setMyProducts((prev) =>
-        prev.map((p) => (p.id === id ? { ...p, status: "sold" } : p))
-      );
-      toast.success("Marked as sold");
-    } else toast.error("Failed");
-  };
-
-  const handleDeleteListing = async (id: string) => {
-    if (!confirm("Delete this listing?")) return;
-    const { error } = await supabase.from("products").delete().eq("id", id);
-    if (!error) {
-      setMyProducts((prev) => prev.filter((p) => p.id !== id));
-      toast.success("Deleted");
-    } else toast.error("Failed");
-  };
-
-  const handleSaveProfile = async () => {
-    if (!user) return;
-    setLoading(true);
-    try {
-      const formattedUsername = profile.username?.toLowerCase().trim();
-      if (formattedUsername && !/^[a-zA-Z0-9_]{3,20}$/.test(formattedUsername))
-        throw new Error("Username: 3-20 chars, no spaces.");
-      const payload: any = {
-        id: user.id,
-        full_name: fullName || user.email?.split("@")[0] || "Student",
-        hostel_block: hostelBlock,
-        room_number: roomNumber,
-        phone_number: phoneNumber,
-      };
-      if (formattedUsername) payload.username = formattedUsername;
-      const { data, error } = await supabase
-        .from("profiles")
-        .upsert(payload, { onConflict: "id" })
-        .select();
-      if (error) {
-        if (error.code === "23505") throw new Error("Username taken");
-        throw error;
-      }
-      if (!data?.length) throw new Error("Update failed");
-      setProfile(data[0]);
-      toast.success("Profile saved");
-      setIsEditing(false);
-    } catch (err: any) {
-      toast.error(err.message || "Failed");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleAvatarUpload = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleAvatarUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     try {
       setLoading(true);
       if (!event.target.files?.length) return;
       const file = event.target.files[0];
-      const filePath = `${user?.id}-${Math.random()}.${file.name
-        .split(".")
-        .pop()}`;
-      const { error: uploadError } = await supabase.storage
-        .from("avatars")
-        .upload(filePath, file);
+      const filePath = `${user?.id}-${Math.random()}.${file.name.split(".").pop()}`;
+      const { error: uploadError } = await supabase.storage.from("avatars").upload(filePath, file);
       if (uploadError) {
-        const { error: fb } = await supabase.storage
-          .from("product-images")
-          .upload(filePath, file);
+        const { error: fb } = await supabase.storage.from("product-images").upload(filePath, file);
         if (fb) throw fb;
-        const { data } = supabase.storage
-          .from("product-images")
-          .getPublicUrl(filePath);
+        const { data } = supabase.storage.from("product-images").getPublicUrl(filePath);
         await updateAvatarUrl(data.publicUrl);
         return;
       }
@@ -304,342 +92,269 @@ export default function Profile() {
 
   const updateAvatarUrl = async (url: string) => {
     if (!user) return;
-    const { error } = await supabase
-      .from("profiles")
-      .update({ avatar_url: url })
-      .eq("id", user.id);
+    const { error } = await supabase.from("profiles").update({ avatar_url: url }).eq("id", user.id);
     if (error) throw error;
     setProfile({ ...profile, avatar_url: url });
     toast.success("Avatar updated");
   };
 
-  const pendingCount = incomingOrders.filter(
-    (o) => o.status === "pending"
-  ).length;
+  const handleMarkSold = async (id: string) => {
+    const { error } = await supabase.from("products").update({ status: "sold" }).eq("id", id);
+    if (!error) {
+      setMyProducts((prev) => prev.map((p) => (p.id === id ? { ...p, status: "sold" } : p)));
+      toast.success("Marked as sold");
+    } else toast.error("Failed");
+  };
 
-  const tabs: { id: TabId; label: string; count?: number }[] = [
-    { id: "membership", label: "Membership" },
-    { id: "listings", label: "Listings", count: myProducts.length },
-    { id: "orders", label: "Orders", count: pendingCount || undefined },
-    { id: "saved", label: "Saved" },
-  ];
+  const handleDeleteListing = async (id: string) => {
+    if (!confirm("Delete this listing?")) return;
+    const { error } = await supabase.from("products").delete().eq("id", id);
+    if (!error) {
+      setMyProducts((prev) => prev.filter((p) => p.id !== id));
+      toast.success("Deleted");
+    } else toast.error("Failed");
+  };
+
+  const openView = (view: string) => setSearchParams({ view });
+  const closeView = () => setSearchParams({});
 
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-transparent pb-32 text-white">
-      {/* ── IMMERSIVE HEADER ── */}
-      <div className="relative h-48 sm:h-64 bg-[#1D1D1F] overflow-hidden">
-        {/* Animated Background Gradient */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[#007AFF] via-[#5856D6] to-[#AF52DE] opacity-80" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_30%,rgba(255,255,255,0.15),transparent_70%)]" />
-        <div className="absolute inset-0 bg-white/5 backdrop-blur-[100px]" />
-
-        {/* Back Button */}
-        <div className="absolute top-20 left-4 z-20">
-          <button
-            onClick={() => navigate(-1)}
-            className="p-2.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-white/20 transition-all active:scale-90"
+    <div className="min-h-screen bg-[#f9f8f6] font-sans relative overflow-x-hidden">
+      
+      <AnimatePresence mode="wait">
+        {activeView === "main" ? (
+          <motion.div 
+            key="main"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            className="pb-32"
           >
-            <ArrowLeft className="w-5 h-5" />
-          </button>
-        </div>
+            {/* Background Golden Wave SVG */}
+            <svg className="absolute top-0 right-0 w-full h-[400px] pointer-events-none z-0" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+              <path d="M0 150 C 200 250, 250 50, 400 150 L 400 0 L 0 0 Z" fill="url(#goldGradient)" opacity="0.05"/>
+              <path d="M0 160 C 200 260, 250 60, 400 160" stroke="url(#goldGradient)" strokeWidth="2" fill="none" opacity="0.3"/>
+              <path d="M0 170 C 200 270, 250 70, 400 170" stroke="url(#goldGradient)" strokeWidth="6" fill="none" opacity="0.1" filter="blur(4px)"/>
+              <defs>
+                <linearGradient id="goldGradient" x1="0" y1="0" x2="400" y2="400" gradientUnits="userSpaceOnUse">
+                  <stop stopColor="#D4AF37" />
+                  <stop offset="1" stopColor="#F3E5AB" />
+                </linearGradient>
+              </defs>
+            </svg>
 
-        {/* Cover Actions */}
-        <div className="absolute top-20 right-4 z-20 flex gap-2">
-          {isAdmin && (
-            <>
-              <button
-                onClick={() => navigate("/driver")}
-                className="p-2.5 rounded-full bg-emerald-500/20 backdrop-blur-md border border-emerald-500/40 text-emerald-400 hover:bg-emerald-500/30 transition-all flex items-center gap-2 px-4 shadow-[0_0_15px_rgba(16,185,129,0.3)]"
-              >
-                <Navigation2 className="w-4 h-4 fill-emerald-500" />
-                <span className="text-xs font-black uppercase tracking-wider hidden sm:inline">
-                  Driver
-                </span>
+            {/* Header */}
+            <div className="relative z-10 flex justify-end items-center px-6 pt-12 pb-2 gap-5">
+              <button className="relative transition-transform active:scale-95">
+                <Bell className="w-6 h-6 text-black" strokeWidth={2} />
+                <span className="absolute top-0 right-0 w-2.5 h-2.5 bg-yellow-500 rounded-full border-2 border-[#f9f8f6]" />
               </button>
-              <button
-                onClick={() => navigate("/admin")}
-                className="p-2.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-white/20 transition-all flex items-center gap-2 px-4"
-              >
-                <Shield className="w-4 h-4" />
-                <span className="text-xs font-black uppercase tracking-wider hidden sm:inline">
-                  Admin
-                </span>
+              <button onClick={() => navigate('/settings')} className="transition-transform active:scale-95">
+                <Settings className="w-6 h-6 text-black" strokeWidth={2} />
               </button>
-            </>
-          )}
-          <button
-            onClick={async () => {
-              await signOut();
-              navigate("/login");
-            }}
-            className="p-2.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-red-500/30 transition-all"
-          >
-            <LogOut className="w-5 h-5" />
-          </button>
-        </div>
-      </div>
+            </div>
 
-      <div className="max-w-3xl mx-auto px-4 -mt-24 relative z-10">
-        {/* ── IDENTITY CARD ── */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ type: "spring", damping: 25, stiffness: 300 }}
-          className="bg-[#1c1c1e] backdrop-blur-3xl rounded-[2.5rem] p-6 sm:p-8 shadow-2xl border border-white/5"
-        >
-          <div className="flex flex-col sm:flex-row items-center sm:items-end gap-6 sm:gap-8">
-            {/* Avatar */}
-            <div className="relative group -mt-16 sm:-mt-20">
-              <div className="w-32 h-32 sm:w-40 sm:h-40 rounded-[2.5rem] p-1.5 bg-[#1c1c1e] backdrop-blur-md shadow-lg border border-white/10 relative z-10">
-                <div
-                  className="w-full h-full rounded-[2.2rem] overflow-hidden bg-[#0a0a0a] cursor-pointer relative"
-                  onClick={() => {
-                    if (isEditing) fileInputRef.current?.click();
-                  }}
-                >
-                  {profile?.avatar_url ? (
-                    <img
-                      src={profile.avatar_url}
-                      alt=""
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center">
-                      <User className="w-12 h-12 text-[#8E8E93]" />
-                    </div>
-                  )}
-                  {isEditing && (
-                    <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm">
-                      <Camera className="w-6 h-6 text-white drop-shadow-md" />
-                    </div>
-                  )}
+            {/* Profile Identity Block */}
+            <div className="relative z-10 px-6 mt-2 flex items-center gap-5">
+              <div className="relative shrink-0">
+                 <div className="w-24 h-24 rounded-full p-1 bg-gradient-to-br from-[#e6c875] to-[#c8922c] shadow-lg">
+                   <div className="w-full h-full rounded-full bg-white overflow-hidden">
+                     <img src={profile?.avatar_url || "https://i.pravatar.cc/150"} alt="Profile" className="w-full h-full object-cover" />
+                   </div>
+                 </div>
+                 {/* Camera Badge */}
+                 <button 
+                   onClick={() => fileInputRef.current?.click()}
+                   className="absolute bottom-0 right-0 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md border border-gray-100 hover:scale-105 active:scale-95 transition-all"
+                 >
+                   {loading ? <Loader2 className="w-4 h-4 text-black animate-spin" /> : <Camera className="w-4 h-4 text-black" />}
+                 </button>
+                 <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleAvatarUpload} />
+              </div>
+              
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-1.5 mb-1">
+                  <h1 className="text-2xl font-extrabold text-black tracking-tight truncate">{profile?.full_name || "Admin"}</h1>
+                  <CheckCircle className="w-5 h-5 text-orange-500 fill-orange-500/20 shrink-0" />
+                </div>
+                <p className="text-[13px] font-medium text-gray-500 mb-2 truncate">
+                  @{profile?.username || "user"} <span className="mx-1 text-gray-300">|</span> {user.email}
+                </p>
+                <div className="inline-flex items-center gap-1.5 bg-[#1a1a1c] px-3 py-1.5 rounded-full shadow-md">
+                  <Crown className="w-3.5 h-3.5 text-yellow-400 fill-yellow-400" />
+                  <span className="text-[10px] font-bold text-yellow-400 tracking-wider">CB MEMBER</span>
                 </div>
               </div>
-              {/* Status Indicator */}
-              <div className="absolute bottom-4 right-4 w-6 h-6 rounded-full bg-[#34C759] border-4 border-white z-20 shadow-sm" />
-              <input
-                type="file"
-                ref={fileInputRef}
-                className="hidden"
-                accept="image/*"
-                onChange={handleAvatarUpload}
-              />
             </div>
 
-            {/* Name & Basic Info */}
-            <div className="flex-1 text-center sm:text-left">
-              {isEditing ? (
-                <div className="space-y-3 pt-2">
-                  <input
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                    placeholder="Full Name"
-                    className="text-2xl font-black w-full rounded-2xl px-4 py-3 focus:outline-none bg-white/5 border border-white/10 shadow-sm text-white placeholder:text-gray-500"
-                  />
-                  <div className="flex gap-3">
-                    <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl flex-1 bg-white/5 border border-white/10 shadow-sm">
-                      <span className="text-gray-500 font-bold">@</span>
-                      <input
-                        value={profile?.username || ""}
-                        onChange={(e) =>
-                          setProfile({
-                            ...profile,
-                            username: e.target.value.toLowerCase().trim(),
-                          })
-                        }
-                        className="bg-transparent outline-none font-bold text-white w-full"
-                        placeholder="username"
-                        maxLength={20}
-                      />
-                    </div>
-                  </div>
+            {/* Info Card */}
+            <div className="relative z-10 px-4 mt-8">
+              <div className="bg-white rounded-[20px] py-4 flex items-center justify-between shadow-sm border border-gray-100">
+                
+                <div className="flex-1 flex flex-col sm:flex-row items-center gap-1 sm:gap-2.5 justify-center border-r border-gray-100 last:border-0 px-2 text-center sm:text-left">
+                   <div className="w-9 h-9 rounded-full bg-gray-50 flex items-center justify-center text-gray-700 shrink-0">
+                     <MapPin className="w-4 h-4" />
+                   </div>
+                   <div className="min-w-0">
+                     <p className="text-[13px] sm:text-[14px] font-extrabold text-black truncate">{profile?.hostel_block || "NC1"}</p>
+                     <p className="text-[9px] sm:text-[10px] text-gray-400 font-semibold uppercase tracking-wider">Location</p>
+                   </div>
                 </div>
-              ) : (
-                <div className="pt-2">
-                  <div className="flex items-center justify-center sm:justify-start gap-2 mb-1">
-                    <h1 className="text-[28px] tracking-tight font-black text-white">
-                      {profile?.full_name || "Student"}
-                    </h1>
-                    <CheckCircle className="w-5 h-5 text-[#007AFF] fill-[#007AFF]/10" />
-                  </div>
-                  <p className="text-gray-400 font-bold text-sm tracking-wide">
-                    @{profile?.username || "user"} <span className="mx-1.5 opacity-30">|</span> {user.email}
-                  </p>
+
+                <div className="flex-1 flex flex-col sm:flex-row items-center gap-1 sm:gap-2.5 justify-center border-r border-gray-100 last:border-0 px-2 text-center sm:text-left">
+                   <div className="w-9 h-9 rounded-full bg-gray-50 flex items-center justify-center text-gray-700 shrink-0">
+                     <Phone className="w-4 h-4" />
+                   </div>
+                   <div className="min-w-0">
+                     <p className="text-[13px] sm:text-[14px] font-extrabold text-black truncate">{profile?.phone_number || "9466166750"}</p>
+                     <p className="text-[9px] sm:text-[10px] text-gray-400 font-semibold uppercase tracking-wider">Phone</p>
+                   </div>
                 </div>
-              )}
+
+                <div className="flex-1 flex flex-col sm:flex-row items-center gap-1 sm:gap-2.5 justify-center px-2 text-center sm:text-left">
+                   <div className="w-9 h-9 rounded-full bg-gray-50 flex items-center justify-center text-gray-700 shrink-0">
+                     <DoorClosed className="w-4 h-4" />
+                   </div>
+                   <div className="min-w-0">
+                     <p className="text-[13px] sm:text-[14px] font-extrabold text-black truncate">Room: {profile?.room_number || "223"}</p>
+                     <p className="text-[9px] sm:text-[10px] text-gray-400 font-semibold uppercase tracking-wider">Room No.</p>
+                   </div>
+                </div>
+
+              </div>
             </div>
 
-            {/* Right Actions */}
-            <div className="flex flex-col gap-3 flex-shrink-0 items-center sm:items-end">
-              {/* Membership Badge */}
-              {membership.isActive ? (
-                <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-br from-zinc-800 to-black border border-yellow-500/30 shadow-[0_4px_15px_rgba(212,175,55,0.15)]">
-                  <Crown className="w-4 h-4 text-yellow-400" />
-                  <span className="text-[11px] font-black uppercase tracking-[0.2em] text-yellow-400">ELITE MEMBER</span>
+            {/* CB Member Banner */}
+            <div className="relative z-10 px-4 mt-5">
+              <div className="bg-[#1a1a1c] rounded-[24px] p-5 flex items-center gap-4 shadow-xl">
+                <div className="w-12 h-12 rounded-full bg-purple-500 flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(168,85,247,0.4)]">
+                  <Crown className="w-6 h-6 text-white" />
                 </div>
-              ) : (
-                <button
-                  onClick={() => setIsPlansOpen(true)}
-                  className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-br from-yellow-500/10 to-yellow-600/5 border border-yellow-500/20 text-yellow-400 hover:border-yellow-500/40 transition-all"
-                >
-                  <Crown className="w-4 h-4" />
-                  <span className="text-[11px] font-black uppercase tracking-[0.2em]">Get Membership</span>
+                <div className="flex-1">
+                  <h3 className="text-white font-bold text-[14px] sm:text-[15px] flex items-center gap-1.5">You're a CB Member! 🎉</h3>
+                  <p className="text-gray-400 text-[10px] sm:text-[11px] leading-snug mt-0.5">Enjoy exclusive benefits and special perks.</p>
+                </div>
+                <button onClick={() => setIsPlansOpen(true)} className="bg-white text-black px-3 py-2 sm:px-4 sm:py-2.5 rounded-xl text-[11px] sm:text-[12px] font-bold shadow-md hover:scale-105 transition-transform active:scale-95 shrink-0">
+                  View Benefits
                 </button>
-              )}
-
-              {/* Edit Profile Button */}
-              <button
-                onClick={() => {
-                  if (isEditing) handleSaveProfile();
-                  else setIsEditing(true);
-                }}
-                disabled={loading}
-                className={`px-6 py-3 rounded-full font-black text-[15px] transition-all flex items-center gap-2 duration-300 ${
-                  isEditing
-                    ? "bg-[#34C759] text-white shadow-lg shadow-[#34C759]/30 hover:bg-[#32B853]"
-                    : "bg-[#007AFF] text-white shadow-md hover:shadow-lg hover:bg-[#0071e3]"
-                }`}
-              >
-                {loading ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : isEditing ? (
-                  <><Check className="w-4 h-4" /> Done</>
-                ) : (
-                  <><Edit2 className="w-4 h-4" /> Edit Profile</>
-                )}
-              </button>
-            </div>
-          </div>
-
-          {/* Edit Mode — Location/Phone fields */}
-          {isEditing && (
-            <div className="mt-8 pt-6 border-t border-white/5 grid grid-cols-1 gap-4">
-              <div className="bg-white/5 rounded-2xl p-4 border border-white/10">
-                <div className="flex items-center gap-2 mb-3">
-                  <MapPin className="w-3.5 h-3.5 text-[#007AFF]" />
-                  <span className="text-[10px] font-black uppercase tracking-widest text-[#8E8E93]">Hostel Block</span>
-                </div>
-                <div className="space-y-3">
-                  {HOSTEL_GROUPS.map((group) => (
-                    <div key={group.name} className="space-y-1.5">
-                      <p className="text-[10px] font-bold text-[#8E8E93] px-1 tracking-tight">{group.name}</p>
-                      <div className="flex flex-wrap gap-1.5">
-                        {group.options.map((opt) => (
-                          <button
-                            key={opt}
-                            onClick={() => setHostelBlock(opt)}
-                            className={`py-1.5 px-3 rounded-full text-[12px] font-bold transition-all border ${
-                              hostelBlock === opt
-                                ? "bg-white text-black border-white shadow-md scale-[1.02]"
-                                : "bg-white/5 text-gray-400 border-white/10 hover:text-white hover:bg-white/10"
-                            }`}
-                          >
-                            {opt}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div className="flex items-center gap-2 px-4 py-3 rounded-[1.2rem] bg-white/5 border border-white/10">
-                <Phone className="w-4 h-4 text-gray-500" />
-                <input
-                  value={phoneNumber}
-                  onChange={(e) => setPhoneNumber(e.target.value)}
-                  placeholder="Phone Number"
-                  className="bg-transparent text-[14px] font-bold outline-none w-full text-white placeholder:font-medium placeholder:text-gray-500"
-                />
-              </div>
-              <div className="flex items-center gap-2 px-4 py-3 rounded-[1.2rem] bg-white/5 border border-white/10">
-                <MapPin className="w-4 h-4 text-gray-500" />
-                <input
-                  value={roomNumber}
-                  onChange={(e) => setRoomNumber(e.target.value)}
-                  placeholder="Room Number (e.g. 502, G-12)"
-                  className="bg-transparent text-[14px] font-bold outline-none w-full text-white placeholder:font-medium placeholder:text-gray-500"
-                />
               </div>
             </div>
-          )}
 
-          {/* View-mode location strip */}
-          {!isEditing && (
-            <div className="mt-6 pt-5 border-t border-white/5 flex flex-wrap items-center justify-center sm:justify-start gap-4">
-              {profile?.hostel_block && (
-                <div className="flex items-center gap-2 text-sm text-gray-400">
-                  <MapPin className="w-3.5 h-3.5 text-orange-500" />
-                  <span className="font-semibold">{profile.hostel_block}</span>
+            {/* My Orders Card */}
+            <div className="relative z-10 px-4 mt-6">
+              <div className="bg-white rounded-[24px] p-5 shadow-sm border border-gray-100">
+                <div className="flex justify-between items-center mb-5">
+                  <h2 className="text-[16px] sm:text-[17px] font-extrabold text-black tracking-tight">My Orders</h2>
+                  <button onClick={() => navigate('/orders')} className="text-orange-500 text-[12px] sm:text-[13px] font-bold">View All</button>
                 </div>
-              )}
-              {profile?.phone_number && (
-                <div className="flex items-center gap-2 text-sm text-gray-400">
-                  <Phone className="w-3.5 h-3.5 text-orange-500" />
-                  <span className="font-semibold">{profile.phone_number}</span>
+                
+                <div className="flex justify-between items-center px-1">
+                   <div onClick={() => navigate('/orders')} className="flex flex-col items-center gap-2 relative group cursor-pointer">
+                     <div className="relative">
+                       <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-gray-50 flex items-center justify-center text-gray-700 transition-transform group-hover:scale-105">
+                         <Package className="w-5 h-5 sm:w-6 sm:h-6" strokeWidth={1.5} />
+                       </div>
+                       <span className="absolute -top-1.5 -right-1.5 w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-[#f6c07a] text-white text-[9px] sm:text-[10px] font-bold flex items-center justify-center border-[2px] border-white">2</span>
+                     </div>
+                     <span className="text-[10px] sm:text-[11px] font-bold text-gray-600">Pending</span>
+                   </div>
+                   
+                   <div className="w-px h-8 bg-gray-100" />
+                   
+                   <div onClick={() => navigate('/orders')} className="flex flex-col items-center gap-2 relative group cursor-pointer">
+                     <div className="relative">
+                       <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-gray-50 flex items-center justify-center text-gray-700 transition-transform group-hover:scale-105">
+                         <Box className="w-5 h-5 sm:w-6 sm:h-6" strokeWidth={1.5} />
+                       </div>
+                       <span className="absolute -top-1.5 -right-1.5 w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-[#f6c07a] text-white text-[9px] sm:text-[10px] font-bold flex items-center justify-center border-[2px] border-white">3</span>
+                     </div>
+                     <span className="text-[10px] sm:text-[11px] font-bold text-gray-600">Confirmed</span>
+                   </div>
+
+                   <div className="w-px h-8 bg-gray-100" />
+                   
+                   <div onClick={() => navigate('/orders')} className="flex flex-col items-center gap-2 relative group cursor-pointer">
+                     <div className="relative">
+                       <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-gray-50 flex items-center justify-center text-gray-700 transition-transform group-hover:scale-105">
+                         <Truck className="w-5 h-5 sm:w-6 sm:h-6" strokeWidth={1.5} />
+                       </div>
+                       <span className="absolute -top-1.5 -right-1.5 w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-[#f6c07a] text-white text-[9px] sm:text-[10px] font-bold flex items-center justify-center border-[2px] border-white">1</span>
+                     </div>
+                     <span className="text-[10px] sm:text-[11px] font-bold text-gray-600">Shipped</span>
+                   </div>
+
+                   <div className="w-px h-8 bg-gray-100" />
+
+                   <div onClick={() => navigate('/orders')} className="flex flex-col items-center gap-2 relative group cursor-pointer">
+                     <div className="relative">
+                       <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-gray-50 flex items-center justify-center text-gray-700 transition-transform group-hover:scale-105">
+                         <ShoppingBag className="w-5 h-5 sm:w-6 sm:h-6" strokeWidth={1.5} />
+                       </div>
+                       <span className="absolute -top-1.5 -right-1.5 w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-[#f6c07a] text-white text-[9px] sm:text-[10px] font-bold flex items-center justify-center border-[2px] border-white">8</span>
+                     </div>
+                     <span className="text-[10px] sm:text-[11px] font-bold text-gray-600">Delivered</span>
+                   </div>
                 </div>
-              )}
-              {profile?.room_number && (
-                <div className="flex items-center gap-2 text-sm text-gray-400">
-                  <MapPin className="w-3.5 h-3.5 text-orange-500" />
-                  <span className="font-semibold">Room: {profile.room_number}</span>
-                </div>
-              )}
+              </div>
             </div>
-          )}
-        </motion.div>
 
-        {/* ── TABS ── */}
-        <div className="mt-12">
-          <div className="flex gap-8 border-b border-white/5 px-2 overflow-x-auto hide-scroll">
-            {tabs.map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`relative pb-4 text-[15px] sm:text-[16px] font-bold tracking-tight transition-all flex items-center gap-2.5 whitespace-nowrap ${
-                  activeTab === tab.id
-                    ? "text-white"
-                    : "text-gray-500 hover:text-gray-400"
-                }`}
-              >
-                {tab.id === "listings" && <Package className="w-4 h-4" />}
-                {tab.id === "orders" && <ShoppingCart className="w-4 h-4" />}
-                {tab.id === "saved" && <Heart className="w-4 h-4" />}
-                {tab.id === "membership" && <Crown className="w-4 h-4" />}
-                {tab.label}
-                {tab.count !== undefined && tab.count > 0 && (
-                  <span
-                    className={`text-[11px] px-2 py-0.5 rounded-full font-black shadow-sm ${
-                      tab.id === "orders"
-                        ? "bg-[#FF9500] text-white"
-                        : "bg-[#007AFF] text-white"
-                    }`}
-                  >
-                    {tab.count}
-                  </span>
-                )}
-                {activeTab === tab.id && (
-                  <motion.div
-                    layoutId="active-tab"
-                    className="absolute bottom-0 left-0 right-0 h-1 bg-white rounded-t-full shadow-[0_0_10px_rgba(255,255,255,0.3)]"
-                  />
-                )}
-              </button>
-            ))}
-          </div>
+            {/* Navigation Menu */}
+            <div className="relative z-10 px-4 mt-6">
+              <div className="bg-white rounded-[24px] p-2 shadow-sm border border-gray-100">
+                <MenuItem icon={<Box className="w-5 h-5 text-gray-700"/>} title="My Listings" subtitle="Manage your products" onClick={() => openView('listings')} />
+                <MenuItem icon={<Crown className="w-5 h-5 text-gray-700"/>} title="Membership Plans" subtitle="Explore and manage plans" onClick={() => setIsPlansOpen(true)} />
+                <MenuItem icon={<WalletIcon className="w-5 h-5 text-gray-700"/>} title="Wallet" subtitle="Manage balance & transactions" onClick={() => navigate("/wallet")} />
+                <MenuItem icon={<MapPin className="w-5 h-5 text-gray-700"/>} title="Addresses" subtitle="Saved delivery addresses" onClick={() => navigate("/settings")} />
+                <MenuItem icon={<Headphones className="w-5 h-5 text-gray-700"/>} title="Help & Support" subtitle="Get help and support" onClick={() => navigate("/help")} hideBorder />
+              </div>
+            </div>
 
-          <div className="mt-8">
-            <AnimatePresence mode="wait">
-              {/* LISTINGS */}
-              {activeTab === "listings" && (
-                <motion.div
-                  key="listings"
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 10 }}
-                  className="space-y-4"
-                >
+            {/* Promotional Banner */}
+            <div className="relative z-10 px-4 mt-6">
+              <div className="bg-[#fcf7ed] rounded-[24px] p-5 flex items-center gap-4 border border-[#f3e3c1]">
+                <div className="w-12 h-12 rounded-full bg-[#f6eccf] flex items-center justify-center shrink-0">
+                  <Crown className="w-6 h-6 text-[#c8922c]" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-[#c8922c] font-bold text-[13px] sm:text-[14px]">Unlock Free Deliveries</h3>
+                  <p className="text-gray-600 text-[10px] sm:text-[11px] leading-tight mt-0.5 font-medium">Get CB Membership for exclusive perks and free deliveries.</p>
+                </div>
+                <button onClick={() => setIsPlansOpen(true)} className="bg-[#c8922c] text-white px-3 py-2 sm:px-4 sm:py-2.5 rounded-[12px] text-[10px] sm:text-[11px] font-bold shadow-md hover:bg-[#b07f25] transition-colors whitespace-nowrap shrink-0">
+                  Explore Plans
+                </button>
+              </div>
+            </div>
+
+            {/* Logout button - hidden but accessible for debugging */}
+            <div className="mt-8 flex justify-center pb-8 relative z-10">
+               <button onClick={async () => { await signOut(); navigate('/login'); }} className="text-gray-400 text-sm font-bold hover:text-red-500 transition-colors px-6 py-2">
+                 Sign Out
+               </button>
+            </div>
+          </motion.div>
+        ) : (
+          <motion.div
+            key="subview"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 20 }}
+            className="min-h-screen bg-[#1c1c1e] text-white pb-32"
+          >
+            <div className="p-4 flex items-center gap-4 bg-[#1c1c1e] sticky top-0 z-50 border-b border-white/5">
+               <button onClick={closeView} className="p-2 bg-white/5 rounded-full hover:bg-white/10 text-white">
+                 <ArrowLeft className="w-5 h-5" />
+               </button>
+               <h2 className="text-lg font-bold">
+                 {activeView === 'listings' && 'My Listings'}
+                 {activeView === 'saved' && 'Saved Items'}
+               </h2>
+            </div>
+            
+            <div className="p-4">
+              {activeView === 'listings' && (
+                <div className="space-y-4">
                   {loadingListings ? (
                     <div className="flex justify-center py-20">
                       <Loader2 className="w-8 h-8 animate-spin text-[#8E8E93]" />
@@ -665,19 +380,15 @@ export default function Profile() {
                   ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       {myProducts.map((item) => (
-                        <motion.div
-                          layout
+                        <div
                           key={item.id}
-                          className="group bg-[#1c1c1e] p-4 rounded-3xl border border-white/5 shadow-xl hover:shadow-2xl transition-all flex items-center gap-4"
+                          className="group bg-[#2c2c2e] p-4 rounded-3xl border border-white/5 shadow-xl flex items-center gap-4"
                         >
-                          <div className="w-20 h-20 rounded-[1.2rem] overflow-hidden bg-black shadow-inner flex-shrink-0">
+                          <div className="w-20 h-20 rounded-[1.2rem] overflow-hidden bg-black flex-shrink-0">
                             <img
-                              src={
-                                item.image_url ||
-                                "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=120"
-                              }
+                              src={item.image_url || "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=120"}
                               alt=""
-                              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                              className="w-full h-full object-cover"
                             />
                           </div>
                           <div className="flex-1 min-w-0">
@@ -704,7 +415,6 @@ export default function Profile() {
                               <button
                                 onClick={() => handleMarkSold(item.id)}
                                 className="w-10 h-10 rounded-full flex items-center justify-center bg-white/5 border border-white/10 text-gray-400 hover:bg-green-500 hover:text-white transition-all shadow-sm"
-                                title="Mark Sold"
                               >
                                 <Check className="w-4 h-4" />
                               </button>
@@ -712,320 +422,38 @@ export default function Profile() {
                             <button
                               onClick={() => handleDeleteListing(item.id)}
                               className="w-10 h-10 rounded-full flex items-center justify-center bg-white/5 border border-white/10 text-gray-400 hover:bg-red-500 hover:text-white transition-all shadow-sm"
-                              title="Delete"
                             >
                               <Trash2 className="w-4 h-4" />
                             </button>
                           </div>
-                        </motion.div>
+                        </div>
                       ))}
                     </div>
                   )}
-                </motion.div>
+                </div>
               )}
-
-              {/* ORDERS */}
-              {activeTab === "orders" && (
-                <motion.div
-                  key="orders"
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 10 }}
-                  className="space-y-4"
-                >
-                  {loadingOrders ? (
-                    <div className="flex justify-center py-20">
-                      <Loader2 className="w-8 h-8 animate-spin text-[#8E8E93]" />
-                    </div>
-                  ) : incomingOrders.length === 0 ? (
-                    <div className="py-20 text-center bg-[#1c1c1e] rounded-[2.5rem] border border-white/5 border-dashed shadow-sm">
-                      <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm border border-white/5">
-                        <ShoppingCart className="w-8 h-8 text-gray-500" />
-                      </div>
-                      <h3 className="text-[18px] font-bold text-white tracking-tight">
-                        No incoming orders
-                      </h3>
-                      <p className="text-[14px] text-gray-400 font-medium mt-1">
-                        Orders from buyers will appear here.
-                      </p>
-                    </div>
-                  ) : (
-                    <div className="space-y-4">
-                      {incomingOrders.map((order) => (
-                        <motion.div
-                          layout
-                          key={order.id}
-                          className="bg-[#1c1c1e] backdrop-blur-3xl rounded-[2rem] p-6 border border-white/5 shadow-xl hover:shadow-2xl transition-all"
-                        >
-                          <div className="flex items-start gap-4 mb-6">
-                            <div className="w-16 h-16 rounded-[1.2rem] overflow-hidden bg-black shadow-inner flex-shrink-0">
-                              <img
-                                src={
-                                  order.products?.image_url ||
-                                  "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=100"
-                                }
-                                alt=""
-                                className="w-full h-full object-cover"
-                              />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <p className="text-[10px] font-black uppercase tracking-widest text-gray-500 mb-1">
-                                Incoming Order
-                              </p>
-                              <h4 className="text-[16px] font-bold text-white truncate tracking-tight">
-                                {order.products?.title || "Product"}
-                              </h4>
-                              <div className="flex items-center gap-3 mt-1">
-                                <span className="text-[18px] font-black text-white">
-                                  ₹{order.total_price}
-                                </span>
-                                <span
-                                  className={`text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-widest shadow-sm ${
-                                    order.status === "pending"
-                                      ? "bg-[#FF9500]/10 text-[#FF9500]"
-                                      : order.status === "seller_accepted"
-                                      ? "bg-[#34C759]/10 text-[#34C759]"
-                                      : "bg-[#FF3B30]/10 text-[#FF3B30]"
-                                  }`}
-                                >
-                                  {order.status}
-                                </span>
-                              </div>
-                            </div>
-                            <div className="text-right">
-                              <p className="text-[10px] font-black text-[#8E8E93] uppercase tracking-widest">
-                                Date
-                              </p>
-                              <p className="text-[12px] font-bold text-[#1D1D1F] mt-[1px]">
-                                {new Date(
-                                  order.created_at
-                                ).toLocaleDateString()}
-                              </p>
-                            </div>
-                          </div>
-
-                          <div className="bg-white/5 border border-white/5 rounded-[1.2rem] p-4 flex flex-col sm:flex-row gap-4 mb-6 shadow-[inset_0_2px_10px_rgba(0,0,0,0.2)]">
-                            <div className="flex-1 flex items-center gap-3">
-                              <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-400 border border-white/5 shadow-sm">
-                                <User className="w-4 h-4" />
-                              </div>
-                              <div>
-                                <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest">
-                                  Buyer
-                                </p>
-                                <p className="text-[13px] font-bold text-white">
-                                  {order.buyer?.full_name}
-                                </p>
-                              </div>
-                            </div>
-                            <div className="flex-1 flex items-center gap-3">
-                              <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-400 border border-white/5 shadow-sm">
-                                <Phone className="w-4 h-4" />
-                              </div>
-                              <div>
-                                <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest">
-                                  Contact
-                                </p>
-                                <p className="text-[13px] font-bold text-white">
-                                  {order.buyer_phone}
-                                </p>
-                              </div>
-                            </div>
-                            <div className="flex-1 flex items-center gap-3">
-                              <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-400 border border-white/5 shadow-sm">
-                                <MapPin className="w-4 h-4" />
-                              </div>
-                              <div>
-                                <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest">
-                                  Location
-                                </p>
-                                <p className="text-[13px] font-bold text-white">
-                                  {order.delivery_location}
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-
-                          {order.status === "pending" && (
-                            <div className="flex gap-3">
-                              <button
-                                onClick={() => handleAcceptOrder(order.id)}
-                                disabled={processingOrderId === order.id}
-                                className="flex-1 h-12 rounded-full ios-action-button text-[14px] font-bold bg-[#34C759] text-white hover:bg-[#32B853] flex items-center justify-center gap-2"
-                              >
-                                {processingOrderId === order.id ? (
-                                  <Loader2 className="w-5 h-5 animate-spin" />
-                                ) : (
-                                  <>
-                                    <CheckCircle className="w-5 h-5" /> Accept
-                                    Order
-                                  </>
-                                )}
-                              </button>
-                              <button
-                                onClick={() => handleRejectOrder(order.id)}
-                                disabled={processingOrderId === order.id}
-                                className="h-12 w-12 rounded-full bg-[#FF3B30]/10 text-[#FF3B30] flex items-center justify-center hover:bg-[#FF3B30] hover:text-white transition-all active:scale-95"
-                              >
-                                <XCircle className="w-5 h-5" />
-                              </button>
-                            </div>
-                          )}
-                        </motion.div>
-                      ))}
-                    </div>
-                  )}
-                </motion.div>
-              )}
-
-              {activeTab === "saved" && (
-                <motion.div
-                  key="saved"
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 10 }}
-                  className="py-20 text-center bg-[#1c1c1e] rounded-[2.5rem] border border-white/5 border-dashed shadow-sm"
-                >
-                  <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-white/5">
-                    <Heart className="w-8 h-8 text-red-500/40" />
-                  </div>
-                  <h3 className="text-[18px] font-bold text-white tracking-tight">
-                    Your wishlist is empty
-                  </h3>
-                  <p className="text-[14px] text-gray-400 mt-1 mb-8 font-medium">
-                    Save items you like for later!
-                  </p>
-                  <button
-                    onClick={() => navigate("/browse")}
-                    className="px-6 py-3 rounded-full bg-white text-black text-[15px] font-bold shadow-lg shadow-white/10 hover:scale-105 active:scale-95 transition-all flex items-center gap-2 mx-auto"
-                  >
-                    Explore Items
-                  </button>
-                </motion.div>
-              )}
-
-              {/* MEMBERSHIP */}
-              {activeTab === "membership" && (
-                <motion.div
-                  key="membership"
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 10 }}
-                  className="space-y-4"
-                >
-                  {membership.isPendingApproval ? (
-                    <div className="py-20 text-center bg-[#1c1c1e] rounded-[2.5rem] border border-orange-500/30 shadow-[0_4px_24px_rgba(249,115,22,0.1)] relative overflow-hidden">
-                      <div className="w-16 h-16 bg-gradient-to-br from-orange-400 to-amber-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm animate-pulse border border-orange-500/20">
-                        <Clock className="w-8 h-8 text-white" />
-                      </div>
-                      <h3 className="text-[18px] font-bold text-white tracking-tight mb-2">
-                        Verification Pending
-                      </h3>
-                      <p className="text-[14px] text-gray-400 font-medium px-4">
-                        Your payment for{" "}
-                        <span className="text-orange-500 font-bold">
-                          {membership.pendingPlan || "CB Membership"}
-                        </span>{" "}
-                        is verifying.
-                      </p>
-                      <p className="text-[12px] text-gray-500 font-medium px-4 mt-2">
-                        Our admin will approve it shortly!
-                      </p>
-                    </div>
-                  ) : !membership.isActive ? (
-                    <div className="py-20 text-center bg-[#1c1c1e] rounded-[2.5rem] border border-white/5 border-dashed shadow-sm">
-                      <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-indigo-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm">
-                        <Crown className="w-8 h-8 text-white" />
-                      </div>
-                      <h3 className="text-[18px] font-bold text-white tracking-tight">
-                        Unlock free deliveries
-                      </h3>
-                      <p className="text-[14px] text-gray-400 mt-1 mb-8 font-medium">
-                        Get CB Membership for exclusive perks.
-                      </p>
-                      <button
-                        onClick={() => setIsPlansOpen(true)}
-                        className="px-6 py-3 rounded-full bg-white text-black text-[15px] font-bold shadow-lg shadow-white/10 hover:scale-105 active:scale-95 transition-all"
-                      >
-                        Explore Plans
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="flex flex-col items-center">
-                       <BazzarPass 
-                          userName={profile?.full_name || "MEMBER"} 
-                          userId={user.id}
-                          tier={membership.plan?.replace("_", " ").toUpperCase() || "ELITE"} 
-                          points={Math.floor(user.id.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0) / 1.5)} 
-                       />
-                       
-                       <div className="w-full bg-[#1c1c1e] backdrop-blur-3xl rounded-[2.5rem] p-8 border border-white/5 shadow-2xl relative overflow-hidden -mt-8">
-                          <div className="absolute top-0 right-0 w-48 h-48 bg-purple-500/5 blur-[50px] rounded-full pointer-events-none" />
-                          
-                          <div className="bg-white/5 border border-white/5 rounded-[1.5rem] p-5 mb-6 shadow-sm relative z-10">
-                            <div className="flex justify-between items-end mb-3">
-                              <div>
-                                <p className="text-[13px] font-bold text-gray-400 tracking-tight mb-1">
-                                  Weekly Free Deliveries Remaining
-                                </p>
-                                <p className="text-[16px] font-black text-white">
-                                  {membership.remainingDeliveries}{" "}
-                                  <span className="text-gray-500">
-                                    / {membership.totalDeliveriesLimit}
-                                  </span>
-                                </p>
-                              </div>
-                              <div className="text-right">
-                                <span className="text-[12px] font-bold text-[#34C759] bg-[#34C759]/10 px-3 py-1.5 rounded-full border border-[#34C759]/20">
-                                   RESET IN 3 DAYS
-                                </span>
-                              </div>
-                            </div>
-                            <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden">
-                              <motion.div
-                                initial={{ width: 0 }}
-                                animate={{
-                                  width: `${
-                                    (membership.remainingDeliveries /
-                                      membership.totalDeliveriesLimit) *
-                                    100
-                                  }%`,
-                                }}
-                                className="h-full bg-gradient-to-r from-[#34C759] to-emerald-400 rounded-full"
-                                transition={{ duration: 1, type: "spring" }}
-                              />
-                            </div>
-                          </div>
-
-                          <div className="grid grid-cols-2 gap-4 text-center">
-                             <div className="p-4 rounded-2xl bg-white/5 border border-white/5">
-                                <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-1">Status</p>
-                                <p className="text-[14px] font-bold text-[#34C759]">VERIFIED</p>
-                             </div>
-                             <div className="p-4 rounded-2xl bg-white/5 border border-white/5">
-                                <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-1">Since</p>
-                                <p className="text-[14px] font-bold text-white">{new Date(membership.startDate!).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</p>
-                             </div>
-                          </div>
-                       </div>
-                    </div>
-                  )}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-        </div>
-      </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <MembershipPlansModal
         isOpen={isPlansOpen}
         onClose={() => setIsPlansOpen(false)}
       />
-
-      <style>{`
-                .hide-scroll::-webkit-scrollbar { display: none; }
-                .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
-            `}</style>
     </div>
   );
 }
+
+const MenuItem = ({ icon, title, subtitle, onClick, hideBorder = false }: any) => (
+  <button onClick={onClick} className={`w-full flex items-center gap-3 sm:gap-4 p-3 hover:bg-gray-50 active:bg-gray-100 transition-colors rounded-2xl ${!hideBorder && 'border-b border-gray-50'}`}>
+    <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-gray-50 flex items-center justify-center shrink-0 border border-gray-100 shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]">
+      {icon}
+    </div>
+    <div className="flex-1 text-left min-w-0">
+      <h4 className="text-[14px] sm:text-[15px] font-extrabold text-gray-900 truncate">{title}</h4>
+      <p className="text-[11px] sm:text-[12px] text-gray-500 font-semibold truncate">{subtitle}</p>
+    </div>
+    <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 text-gray-300 shrink-0" />
+  </button>
+)
