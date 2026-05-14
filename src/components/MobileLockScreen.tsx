@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
 import { ChevronUp } from "lucide-react";
-import { useWallpaper } from "../hooks/useWallpaper";
+import { useWallpaper } from "../contexts/WallpaperContext";
 
 interface MobileLockScreenProps {
   onUnlock: () => void;

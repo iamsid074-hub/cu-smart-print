@@ -2,8 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, Check } from "lucide-react";
 import { useState } from "react";
-import { useWallpaper } from "../hooks/useWallpaper";
-import { setWallpaper } from "../lib/wallpaper";
+import { useWallpaper, useSetWallpaper } from "../contexts/WallpaperContext";
 
 interface WallpaperOption {
   id: string;
@@ -42,6 +41,7 @@ const WALLPAPERS: WallpaperOption[] = [
 export default function WallpaperApp() {
   const navigate = useNavigate();
   const currentWallpaper = useWallpaper();
+  const setWallpaper = useSetWallpaper();
   const [selected, setSelected] = useState<string>(currentWallpaper);
   const [applied, setApplied] = useState<string>(currentWallpaper);
 

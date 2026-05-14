@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
 import { Coffee, Wallet as WalletIcon, ShieldAlert, Lock, Search, Image as ImageIcon } from "lucide-react";
-import { useWallpaper } from "../hooks/useWallpaper";
+import { useWallpaper } from "../contexts/WallpaperContext";
 import { IosHomeIcon, IosCombosIcon, IosProfileIcon, IosSettingsIcon } from "./HighFidelityIcons";
 import { ease, spring as motionSpring } from "@/lib/motion";
 

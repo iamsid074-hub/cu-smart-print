@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useWallpaper } from "../hooks/useWallpaper";
+import { useWallpaper } from "../contexts/WallpaperContext";
 
 /**
  * Syncs the global wallpaper state to the document body.

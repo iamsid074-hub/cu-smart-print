@@ -117,6 +117,7 @@ import {
 } from "./components/SiteGate";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { CartProvider } from "./contexts/CartContext";
+import { WallpaperProvider } from "./contexts/WallpaperContext";
 import { posthog } from "./lib/posthog";
 
 const queryClient = new QueryClient({
@@ -492,10 +493,12 @@ const App = () => (
     <BrowserRouter>
       <AuthProvider>
         <CartProvider>
+          <WallpaperProvider>
             <TooltipProvider>
               <ScrollToTop />
               <AppLayout />
             </TooltipProvider>
+          </WallpaperProvider>
         </CartProvider>
       </AuthProvider>
     </BrowserRouter>
