@@ -56,8 +56,15 @@ export default function MobileLockScreen({ onUnlock }: MobileLockScreenProps) {
           style={{ y: dragY, borderBottomLeftRadius: borderRadiusValue, borderBottomRightRadius: borderRadiusValue, willChange: "transform, opacity" }}
           className="fixed inset-0 z-[50000] overflow-hidden touch-none"
         >
-          <div className="absolute inset-0 bg-black/0" />
-
+          {/* Solid background to hide underlying apps */}
+          <div className="absolute inset-0 bg-black" />
+          <img 
+            src={wallpaper} 
+            alt="lock screen wallpaper" 
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+          {/* Subtle dimming for text readability */}
+          <div className="absolute inset-0 bg-black/20" />
           {/* Content */}
           <div
             className="relative flex flex-col items-center justify-between h-full"
