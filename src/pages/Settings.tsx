@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import {
   Wallet,
   Utensils,
@@ -35,6 +35,8 @@ import {
   Puzzle,
   CheckCircle2,
   ScanFace,
+  Headphones,
+  Award,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
@@ -42,13 +44,13 @@ import { AnimatePresence, motion } from "framer-motion";
 import { supabase } from "@/lib/supabase";
 import WalletSecurity from "@/components/WalletSecurity";
 
-type TabType = "profile" | "wallet" | "combo" | "delivery" | "security";
-
 export default function Settings() {
   const { signOut, user } = useAuth();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const [activeTab, setActiveTab] = useState<TabType>("profile");
+  const activeView = searchParams.get("view") || "main";
+
   const [comboText, setComboText] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
   const [showSecuritySetup, setShowSecuritySetup] = useState(false);
@@ -87,7 +89,6 @@ export default function Settings() {
     if (!user) return;
     const loadingToast = toast.loading("Preparing security setup...");
     try {
-      // Clear existing biometric data to force setup mode
       const { error } = await supabase.from("profiles").update({
         biometric_enabled: false,
         face_embedding: null
@@ -123,101 +124,107 @@ export default function Settings() {
     }
   };
 
-  const SidebarItem = ({ 
-    id, 
-    icon: Icon, 
-    label, 
-    isActive, 
-    onClick,
-    to
-  }: { 
-    id?: TabType, 
-    icon: any, 
-    label: string, 
-    isActive?: boolean, 
-    onClick?: () => void,
-    to?: string 
-  }) => {
-    const content = (
-      <div className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 group ${isActive ? 'bg-[#f3f4f6] text-[#1a1a1a]' : 'text-[#6b7280] hover:bg-[#f9fafb] hover:text-[#1a1a1a]'}`}>
-        <Icon className={`w-4 h-4 ${isActive ? 'text-[#1a1a1a]' : 'text-[#9ca3af] group-hover:text-[#1a1a1a]'}`} />
-        <span className="text-sm font-medium">{label}</span>
-      </div>
-    );
-
-    if (to) return <Link to={to} className="block">{content}</Link>;
-    return <button onClick={onClick} className="w-full text-left block">{content}</button>;
-  };
+  const openView = (view: string) => setSearchParams({ view });
+  const closeView = () => setSearchParams({});
 
   return (
-    <div className="min-h-screen bg-transparent md:p-8 flex items-center justify-center font-sans antialiased">
-      {/* Main Window */}
-      <div className="w-full max-w-6xl h-full md:h-[800px] bg-white/60 backdrop-blur-3xl md:rounded-[20px] shadow-2xl flex flex-col md:flex-row overflow-hidden border border-[#e5e7eb]">
-        
-        {/* Sidebar */}
-        <div className="w-full md:w-[280px] bg-[#f9fafb]/60 backdrop-blur-md border-r border-[#e5e7eb] flex flex-col p-6 overflow-y-auto">
-          {/* Header dots */}
-          <div className="flex gap-2 mb-8 items-center">
-            <div className="w-3 h-3 rounded-full bg-[#ff5f57]" />
-            <div className="w-3 h-3 rounded-full bg-[#febc2e]" />
-            <div className="w-3 h-3 rounded-full bg-[#28c840]" />
-            <button onClick={() => navigate(-1)} className="ml-auto p-1.5 hover:bg-gray-200 rounded-lg transition-colors">
-              <ArrowLeft className="w-4 h-4 text-gray-500" />
-            </button>
-          </div>
+    <div className="min-h-screen bg-[#fdfdfd] font-sans antialiased relative overflow-x-hidden">
+      
+      <AnimatePresence mode="wait">
+        {activeView === "main" ? (
+          <motion.div 
+            key="main"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            className="pb-32"
+          >
+            {/* Background SVG */}
+            <svg className="absolute top-0 right-0 w-full h-[400px] pointer-events-none z-0" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+              <path d="M0 150 C 200 250, 250 50, 400 150 L 400 0 L 0 0 Z" fill="url(#goldGradient)" opacity="0.05"/>
+              <path d="M0 160 C 200 260, 250 60, 400 160" stroke="url(#goldGradient)" strokeWidth="2" fill="none" opacity="0.3"/>
+              <path d="M0 170 C 200 270, 250 70, 400 170" stroke="url(#goldGradient)" strokeWidth="6" fill="none" opacity="0.1" filter="blur(4px)"/>
+              <defs>
+                <linearGradient id="goldGradient" x1="0" y1="0" x2="400" y2="400" gradientUnits="userSpaceOnUse">
+                  <stop stopColor="#e8b965" />
+                  <stop offset="1" stopColor="#f4dfb6" />
+                </linearGradient>
+              </defs>
+            </svg>
 
-          <div className="space-y-6">
-            <div>
-              <p className="px-3 text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-2">My Account</p>
-              <div className="space-y-1">
-                <SidebarItem id="profile" icon={User} label="Profile" isActive={activeTab === 'profile'} onClick={() => setActiveTab('profile')} />
-                <SidebarItem id="wallet" icon={Wallet} label="Wallet Limits" isActive={activeTab === 'wallet'} onClick={() => setActiveTab('wallet')} />
-                <SidebarItem id="combo" icon={Utensils} label="Combo Suggestion" isActive={activeTab === 'combo'} onClick={() => setActiveTab('combo')} />
-                <SidebarItem id="delivery" icon={Bike} label="Delivery Partner" isActive={activeTab === 'delivery'} onClick={() => setActiveTab('delivery')} />
-                <SidebarItem id="security" icon={Shield} label="Security & Access" isActive={activeTab === 'security'} onClick={() => setActiveTab('security')} />
+            {/* Header */}
+            <div className="relative z-10 px-6 pt-16 flex items-start justify-between">
+              <div>
+                <h1 className="text-[32px] font-extrabold text-[#1a1a1c] tracking-tight leading-tight">Settings</h1>
+                <p className="text-[13px] text-gray-500 font-medium mt-1">Manage your account and preferences</p>
               </div>
+              <button className="w-11 h-11 rounded-full bg-white flex items-center justify-center shadow-[0_2px_8px_rgba(0,0,0,0.04)] border border-gray-100 transition-transform active:scale-95">
+                <Search className="w-5 h-5 text-gray-600" strokeWidth={1.5} />
+              </button>
             </div>
 
-            <div>
-              <p className="px-3 text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-2">Assistance & Legal</p>
-              <div className="space-y-1">
-                <SidebarItem icon={ReceiptText} label="Transactions" to="/transactions" />
-                <SidebarItem icon={LifeBuoy} label="Support" to="/help" />
-                <SidebarItem icon={Info} label="About Us" to="/about-us" />
-                <SidebarItem icon={FileText} label="Terms & Conditions" to="/terms" />
-                <SidebarItem icon={Shield} label="Privacy Policy" to="/privacy-policy" />
-                <SidebarItem icon={Truck} label="Shipping Policy" to="/shipping-policy" />
-                <SidebarItem icon={HelpCircle} label="CU Bazzar FAQ" to="/faq" />
+            <div className="relative z-10 mt-6">
+              <SectionTitle title="ACCOUNT" />
+              <div className="mx-4 bg-white rounded-[24px] p-2 shadow-sm border border-gray-100">
+                <SettingItem icon={<User strokeWidth={1.5}/>} title="Profile" subtitle="Manage personal information" onClick={() => openView('profile')} theme="orange" />
+                <SettingItem icon={<Wallet strokeWidth={1.5}/>} title="Wallet Limits" subtitle="View and manage your wallet limits" onClick={() => openView('wallet')} theme="orange" />
+                <SettingItem icon={<Award strokeWidth={1.5}/>} title="Combo Suggestion" subtitle="Get personalized combo recommendations" onClick={() => openView('combo')} theme="orange" />
+                <SettingItem icon={<Bike strokeWidth={1.5}/>} title="Delivery Partner" subtitle="Delivery partner and related settings" onClick={() => openView('delivery')} theme="orange" />
+                <SettingItem icon={<Shield strokeWidth={1.5}/>} title="Security & Access" subtitle="Password, biometrics and security" onClick={() => openView('security')} theme="orange" hideBorder />
               </div>
+
+              <SectionTitle title="ASSISTANCE & LEGAL" />
+              <div className="mx-4 bg-white rounded-[24px] p-2 shadow-sm border border-gray-100">
+                <SettingItem icon={<ReceiptText strokeWidth={1.5}/>} title="Transactions" subtitle="View your transaction history" onClick={() => navigate('/transactions')} theme="purple" />
+                <SettingItem icon={<Headphones strokeWidth={1.5}/>} title="Support" subtitle="Get help and contact support" onClick={() => navigate('/help')} theme="purple" />
+                <SettingItem icon={<Info strokeWidth={1.5}/>} title="About Us" subtitle="Learn more about CU Bazzar" onClick={() => navigate('/about-us')} theme="purple" />
+                <SettingItem icon={<FileText strokeWidth={1.5}/>} title="Terms & Conditions" subtitle="Read our terms and conditions" onClick={() => navigate('/terms')} theme="purple" />
+                <SettingItem icon={<Lock strokeWidth={1.5}/>} title="Privacy Policy" subtitle="Learn how we protect your data" onClick={() => navigate('/privacy-policy')} theme="purple" />
+                <SettingItem icon={<Truck strokeWidth={1.5}/>} title="Shipping Policy" subtitle="Shipping and delivery information" onClick={() => navigate('/shipping-policy')} theme="purple" />
+                <SettingItem icon={<HelpCircle strokeWidth={1.5}/>} title="CU Bazzar FAQ" subtitle="Find answers to common questions" onClick={() => navigate('/faq')} theme="purple" hideBorder />
+              </div>
+
+              {/* Promotional Banner */}
+              <div className="px-4 mt-8 pb-10">
+                <div className="bg-gradient-to-r from-[#fdf6ea] to-[#fcf1d8] rounded-[24px] p-5 flex items-center gap-4 border border-[#f5dfb8]">
+                  <div className="w-12 h-12 rounded-full bg-[#fdfdfd] flex items-center justify-center shrink-0 shadow-sm border border-[#f5dfb8]">
+                    <Headphones className="w-6 h-6 text-[#d48c26]" strokeWidth={2} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-[#3a2811] font-bold text-[15px]">Need Help?</h3>
+                    <p className="text-[#a6742a] text-[11px] leading-tight mt-0.5 font-semibold">Our support team is here for you</p>
+                  </div>
+                  <button onClick={() => navigate('/help')} className="bg-[#cd8623] text-white px-4 py-2.5 rounded-full text-[12px] font-bold shadow-md hover:bg-[#b5761e] transition-colors shrink-0 flex items-center gap-1.5">
+                    Contact Support <ChevronRight className="w-3.5 h-3.5" strokeWidth={3} />
+                  </button>
+                </div>
+              </div>
+
             </div>
-          </div>
-
-          <div className="mt-auto pt-6 flex items-center gap-3 px-3">
-             <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-200">
-                {avatarUrl ? <img src={avatarUrl} className="w-full h-full object-cover" /> : <img src="/3d_backpack_v2.webp" className="w-full h-full object-cover" />}
-             </div>
-             <div className="min-w-0">
-                <p className="text-xs font-bold text-gray-900 truncate">{displayName}</p>
-                <p className="text-[10px] text-gray-500 truncate">{email}</p>
-             </div>
-             <button onClick={handleLogout} className="ml-auto p-1.5 hover:bg-gray-200 rounded-lg text-gray-400 hover:text-red-500 transition-colors">
-                <LogOut className="w-4 h-4" />
-             </button>
-          </div>
-        </div>
-
-        {/* Content Area */}
-        <div className="flex-1 bg-transparent overflow-y-auto relative p-8 md:p-12">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={activeTab}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.2 }}
-              className="max-w-3xl mx-auto w-full"
-            >
-              {activeTab === 'profile' && (
+          </motion.div>
+        ) : (
+          <motion.div
+            key="subview"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 20 }}
+            className="min-h-screen bg-[#fdfdfd] pb-32 relative z-50"
+          >
+            <div className="px-4 py-3 flex items-center gap-4 bg-[#fdfdfd] sticky top-0 z-50 border-b border-gray-100 shadow-sm">
+               <button onClick={closeView} className="p-2 bg-gray-50 rounded-full hover:bg-gray-100 text-black transition-colors">
+                 <ArrowLeft className="w-5 h-5" />
+               </button>
+               <h2 className="text-lg font-bold text-gray-900">
+                 {activeView === 'profile' && 'Profile Details'}
+                 {activeView === 'wallet' && 'Wallet Limits'}
+                 {activeView === 'combo' && 'Combo Suggestion'}
+                 {activeView === 'delivery' && 'Delivery Partner'}
+                 {activeView === 'security' && 'Security & Access'}
+               </h2>
+            </div>
+            
+            <div className="p-6">
+              {activeView === 'profile' && (
                 <div className="space-y-8">
                   <div className="flex items-center gap-6">
                     <div className="w-24 h-24 rounded-3xl overflow-hidden bg-gray-100 border-4 border-white shadow-xl flex-shrink-0 relative">
@@ -228,7 +235,7 @@ export default function Settings() {
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
-                        <h2 className="text-3xl font-black text-gray-900 tracking-tight">{displayName}</h2>
+                        <h2 className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight">{displayName}</h2>
                         <CheckCircle2 className="w-5 h-5 text-blue-500 fill-blue-500" />
                       </div>
                       <p className="text-gray-500 font-medium">{email}</p>
@@ -267,10 +274,10 @@ export default function Settings() {
                 </div>
               )}
 
-              {activeTab === 'wallet' && (
+              {activeView === 'wallet' && (
                 <div className="space-y-8">
                   <div>
-                    <h2 className="text-3xl font-black text-gray-900 tracking-tight mb-2">Increase Daily Wallet Limit</h2>
+                    <h2 className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight mb-2">Increase Daily Wallet Limit</h2>
                     <p className="text-gray-500 font-medium">Purchase an offer to securely increase your daily spending limit.</p>
                   </div>
                   
@@ -293,10 +300,10 @@ export default function Settings() {
                 </div>
               )}
 
-              {activeTab === 'combo' && (
+              {activeView === 'combo' && (
                 <div className="space-y-8">
                   <div>
-                    <h2 className="text-3xl font-black text-gray-900 tracking-tight mb-2">Suggest Us a Combo</h2>
+                    <h2 className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight mb-2">Suggest Us a Combo</h2>
                     <p className="text-gray-500 font-medium">Have a great snack combination in mind? We'd love to hear it.</p>
                   </div>
 
@@ -307,17 +314,17 @@ export default function Settings() {
                       placeholder="e.g. Burger + Fries + Drink"
                       className="w-full h-40 bg-[#f9fafb] border border-[#e5e7eb] rounded-2xl p-6 text-sm font-medium text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all resize-none"
                     />
-                    <button type="submit" className="px-8 py-3.5 bg-amber-500 text-black font-black rounded-xl hover:bg-amber-600 active:scale-95 transition-all">
+                    <button type="submit" className="w-full py-4 bg-amber-500 text-black font-black rounded-xl hover:bg-amber-600 active:scale-95 transition-all text-center shadow-lg shadow-amber-500/20">
                       Send Suggestion
                     </button>
                   </form>
                 </div>
               )}
 
-              {activeTab === 'delivery' && (
+              {activeView === 'delivery' && (
                 <div className="space-y-8">
                   <div>
-                    <h2 className="text-3xl font-black text-gray-900 tracking-tight mb-2">Be Our Delivery Partner</h2>
+                    <h2 className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight mb-2">Be Our Delivery Partner</h2>
                     <p className="text-gray-500 font-medium">Earn money by delivering orders to peers within your hostel block.</p>
                   </div>
 
@@ -352,10 +359,10 @@ export default function Settings() {
                 </div>
               )}
 
-              {activeTab === 'security' && (
+              {activeView === 'security' && (
                 <div className="space-y-8">
                   <div>
-                    <h2 className="text-3xl font-black text-gray-900 tracking-tight mb-2">Security & Access</h2>
+                    <h2 className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight mb-2">Security & Access</h2>
                     <p className="text-gray-500 font-medium">Manage your account security and authentication settings.</p>
                   </div>
 
@@ -367,16 +374,11 @@ export default function Settings() {
                   </div>
                 </div>
               )}
-            </motion.div>
-          </AnimatePresence>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-          {/* Footer Branding */}
-          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 opacity-20 pointer-events-none text-center w-full">
-            <p className="text-[9px] font-black tracking-[0.3em] uppercase text-black">Eclipsed OS v3.0 Ethereal</p>
-          </div>
-        </div>
-      </div>
-      
       {showSecuritySetup && (
         <WalletSecurity 
           onUnlock={() => setShowSecuritySetup(false)} 
@@ -385,6 +387,26 @@ export default function Settings() {
       )}
     </div>
   );
+}
+
+const SectionTitle = ({ title }: { title: string }) => (
+  <h3 className="text-[11px] font-extrabold text-gray-400 uppercase tracking-widest px-8 mt-8 mb-3">{title}</h3>
+);
+
+const SettingItem = ({ icon, title, subtitle, onClick, hideBorder = false, theme = 'orange' }: any) => {
+  const isOrange = theme === 'orange';
+  return (
+    <button onClick={onClick} className={`w-full flex items-center gap-4 p-3.5 sm:p-4 hover:bg-gray-50 active:bg-gray-100 transition-colors rounded-[16px] ${!hideBorder && 'border-b border-gray-50'}`}>
+      <div className={`w-11 h-11 rounded-full flex items-center justify-center shrink-0 border shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] ${isOrange ? 'bg-[#fff4eb] border-[#ffe8d6] text-[#ff8c00]' : 'bg-[#f8f5ff] border-[#f2ebff] text-[#9b51e0]'}`}>
+        {icon}
+      </div>
+      <div className="flex-1 text-left min-w-0">
+        <h4 className="text-[14px] sm:text-[15px] font-bold text-gray-900 truncate">{title}</h4>
+        <p className="text-[11px] sm:text-[12px] text-gray-500 font-medium truncate">{subtitle}</p>
+      </div>
+      <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 text-gray-300 shrink-0" />
+    </button>
+  )
 }
 
 function DetailRow({ label, value }: { label: string, value: string }) {
