@@ -158,9 +158,14 @@ export default function Settings() {
                 <h1 className="text-[32px] font-extrabold text-[#1a1a1c] tracking-tight leading-tight">Settings</h1>
                 <p className="text-[13px] text-gray-500 font-medium mt-1">Manage your account and preferences</p>
               </div>
-              <button className="w-11 h-11 rounded-full bg-white flex items-center justify-center shadow-[0_2px_8px_rgba(0,0,0,0.04)] border border-gray-100 transition-transform active:scale-95">
-                <Search className="w-5 h-5 text-gray-600" strokeWidth={1.5} />
-              </button>
+              <div className="flex items-center gap-2">
+                <button className="w-11 h-11 rounded-full bg-white flex items-center justify-center shadow-[0_2px_8px_rgba(0,0,0,0.04)] border border-gray-100 transition-transform active:scale-95">
+                  <Search className="w-5 h-5 text-gray-600" strokeWidth={1.5} />
+                </button>
+                <button onClick={() => navigate('/')} className="w-11 h-11 rounded-full bg-white flex items-center justify-center shadow-[0_2px_8px_rgba(0,0,0,0.04)] border border-gray-100 transition-transform active:scale-95">
+                  <ArrowLeft className="w-5 h-5 text-gray-600" strokeWidth={1.5} />
+                </button>
+              </div>
             </div>
 
             <div className="relative z-10 mt-6">
