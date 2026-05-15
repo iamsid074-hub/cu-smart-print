@@ -32,7 +32,8 @@ import {
   HelpCircle,
   Home,
   User,
-  Scan
+  Scan,
+  ArrowLeft
 } from "lucide-react";
 import { load } from "@cashfreepayments/cashfree-js";
 import { useAuth } from "@/contexts/AuthContext";
