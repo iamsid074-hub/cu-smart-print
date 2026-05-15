@@ -1,4 +1,4 @@
-﻿export interface GroceryItem {
+export interface GroceryItem {
   id: string;
   name: string;
   quantity: string;
@@ -13,7 +13,7 @@ export const groceryItems: GroceryItem[] = [
     id: "grocery-amul-taaza",
     name: "Amul Taaza (Toned Milk)",
     quantity: "500ml",
-    price: 27,
+    price: 26,
     image: "/grocery/amul-taaza.webp",
     category: "Milk",
     isFresh: true,

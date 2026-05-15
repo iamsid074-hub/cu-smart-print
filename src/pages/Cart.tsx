@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useMotionValue, useTransform, animate } from "framer-motion";
 import {
   ShoppingCart,
   Minus,
@@ -41,6 +41,58 @@ import { useUserLocation } from "@/hooks/useUserLocation";
 import { useMembership } from "@/hooks/useMembership";
 import MembershipUpsell from "@/components/MembershipUpsell";
 import UpiPaymentModal from "@/components/UpiPaymentModal";
+
+const SwipeToCheckout: React.FC<{ onComplete: () => void; disabled: boolean }> = ({ onComplete, disabled }) => {
+  const x = useMotionValue(0);
+  const opacity = useTransform(x, [0, 100], [1, 0]);
+  const textX = useTransform(x, [0, 100], [0, 20]);
+  
+  const successOpacity = useTransform(x, [80, 160], [0, 1]);
+  const successX = useTransform(x, [80, 160], [-10, 0]);
+  
+  const handleDragEnd = () => {
+    if (x.get() > 140) {
+      animate(x, 180, { type: "spring", stiffness: 400, damping: 30 });
+      setTimeout(onComplete, 200);
+      setTimeout(() => animate(x, 0), 500);
+    } else {
+      animate(x, 0, { type: "spring", stiffness: 300, damping: 25 });
+    }
+  };
+
+  return (
+    <div className={`relative w-full h-[60px] max-w-[240px] bg-slate-100 rounded-full overflow-hidden flex items-center p-1.5 transition-opacity ${disabled ? 'opacity-50 pointer-events-none' : ''}`}>
+      <motion.div 
+        style={{ opacity: successOpacity, x: successX }}
+        className="absolute inset-y-0 left-6 flex items-center pointer-events-none"
+      >
+        <span className="text-[14px] font-bold text-[#D99C4B] uppercase tracking-tight">Thank You!</span>
+      </motion.div>
+
+      <motion.div 
+        style={{ opacity, x: textX }}
+        className="absolute inset-0 flex items-center justify-center pl-10 pointer-events-none"
+      >
+        <span className="text-[14px] font-bold text-slate-400 uppercase tracking-tight">Swipe to Checkout</span>
+      </motion.div>
+      
+      <motion.div
+        drag="x"
+        dragConstraints={{ left: 0, right: 180 }}
+        dragElastic={0.1}
+        onDragEnd={handleDragEnd}
+        style={{ x }}
+        className="w-[50px] h-[50px] bg-gradient-to-r from-[#D99C4B] to-[#c78b3a] rounded-full flex items-center justify-center cursor-grab active:cursor-grabbing shadow-lg z-10"
+      >
+        <Lock className="w-5 h-5 text-white" />
+      </motion.div>
+      
+      <motion.div style={{ opacity }} className="absolute right-6 pointer-events-none">
+        <ChevronLeft className="w-4 h-4 text-slate-300 rotate-180 animate-pulse" />
+      </motion.div>
+    </div>
+  );
+};
 
 export default function Cart() {
   const {
@@ -237,11 +289,14 @@ export default function Cart() {
     return calculateVendingDelivery(floor);
   }, [hasQuickItem, hasFoodShopItem, floor]);
 
-  const deliveryFee = useMemo(() => (items.length === 0 ? 0 : hasFreeDelivery
+  const isCartFreeShipping = totalPrice >= 200;
+  const isDeliveryFree = hasFreeDelivery || isCartFreeShipping;
+
+  const deliveryFee = useMemo(() => (items.length === 0 ? 0 : isDeliveryFree
     ? 0
     : paymentMethod === "cod"
     ? 49
-    : baseDelivery), [items.length, hasFreeDelivery, paymentMethod, baseDelivery]);
+    : baseDelivery), [items.length, isDeliveryFree, paymentMethod, baseDelivery]);
 
   const displayedDeliveryFee = useMemo(() => (items.length === 0 ? 0 :
     paymentMethod === "cod"
@@ -260,7 +315,7 @@ export default function Cart() {
 
   // Wallet Logic
   const { walletDiscount, orderTotal } = useMemo(() => {
-    let rawT = totalPrice + deliveryFee;
+    let rawT = items.length > 0 ? totalPrice + deliveryFee + 4.71 : 0;
     let wd = 0;
     let ot = rawT;
 
@@ -760,28 +815,30 @@ export default function Cart() {
                 <h3 className="text-[17px] font-bold text-slate-900 mb-5">Payment Summary</h3>
                 
                 <div className="space-y-3.5 mb-5">
-                  <div className="flex justify-between items-center text-[14.5px]">
-                    <span className="text-slate-500 font-medium">Subtotal</span>
-                    <span className="text-slate-900 font-bold">₹{totalPrice.toFixed(2)}</span>
+                  <div className="flex justify-between items-center text-[13.5px]">
+                    <span className="text-slate-400 font-normal">MRP</span>
+                    <span className="text-slate-900 font-semibold">₹{totalPrice.toFixed(2)}</span>
                   </div>
-                  <div className="flex justify-between items-center text-[14.5px]">
-                    <span className="text-slate-500 font-medium">Delivery Fee</span>
-                    <span className="text-slate-900 font-bold">₹{displayedDeliveryFee.toFixed(2)}</span>
+                  <div className="flex justify-between items-center text-[13.5px]">
+                    <span className="text-slate-400 font-normal">Handling Fee</span>
+                    <span className="text-slate-900 font-semibold">₹4.71</span>
                   </div>
-
-                  {hasFreeDelivery && (
-                    <div className="flex justify-between items-center text-[14.5px]">
-                      <span className="text-emerald-500 font-medium">
-                        CB Membership
+                  <div className="flex justify-between items-center text-[13.5px]">
+                    <span className="text-slate-400 font-normal">Delivery Fee</span>
+                    <div className="flex items-center gap-2">
+                      {isDeliveryFree && displayedDeliveryFee > 0 && (
+                        <span className="text-slate-300 line-through text-[12px]">₹{displayedDeliveryFee.toFixed(2)}</span>
+                      )}
+                      <span className={isDeliveryFree ? "text-emerald-500 font-semibold" : "text-slate-900 font-semibold"}>
+                        {isDeliveryFree ? "FREE" : `₹${displayedDeliveryFee.toFixed(2)}`}
                       </span>
-                      <span className="font-bold text-emerald-500">-₹{displayedDeliveryFee.toFixed(2)}</span>
                     </div>
-                  )}
+                  </div>
 
                   {paymentMethod !== 'cod' && paymentMethod !== 'virtual_card' && !hasFreeDelivery && hasFlavourCombo && (
-                    <div className="flex justify-between items-center text-[14.5px]">
-                      <span className="text-violet-500 font-medium">Flavour Factory Promo</span>
-                      <span className="font-bold text-violet-500">-₹7.00</span>
+                    <div className="flex justify-between items-center text-[13.5px]">
+                      <span className="text-violet-400 font-normal">Flavour Factory Promo</span>
+                      <span className="font-semibold text-violet-500">-₹7.00</span>
                     </div>
                   )}
                 </div>
@@ -789,8 +846,8 @@ export default function Cart() {
                 {/* Seamless Wallet Integration directly above total is removed */}
 
                 <div className="border-t border-slate-100 pt-5 mt-2 flex justify-between items-center">
-                  <span className="font-bold text-slate-900 text-lg">Total</span>
-                  <span className="text-[26px] font-black text-slate-900 tracking-tight">
+                  <span className="font-semibold text-slate-900 text-lg">Total</span>
+                  <span className="text-[24px] font-bold text-slate-900 tracking-tight">
                      ₹{orderTotal.toFixed(2)}
                   </span>
                 </div>
@@ -1009,7 +1066,7 @@ export default function Cart() {
       </div>
 
       <div className="mt-6 mb-8">
-        <h1 className="text-[32px] font-bold text-slate-900 tracking-tight">Your Cart</h1>
+        <h1 className="text-[32px] font-bold text-slate-900 tracking-tight">{showCheckout ? "Checkout" : "Your Cart"}</h1>
         <div className="flex items-center gap-1.5 mt-1 opacity-70">
           <ShieldCheck className="w-4 h-4 text-[#D99C4B]" />
           <span className="text-[13px] font-medium text-slate-600">Secure • Fast • Easy Payments</span>
@@ -1092,10 +1149,12 @@ export default function Cart() {
                   <Sparkles className="w-5 h-5 text-[#D99C4B]" />
                 </div>
                 <div className="text-[13px] leading-[1.3]">
-                  {hasFreeDelivery ? (
+                  {isCartFreeShipping ? (
+                    <span>You unlocked <strong className="text-[#D99C4B] font-bold">free shipping!</strong></span>
+                  ) : hasFreeDelivery ? (
                     <span>You have <strong className="text-slate-900 font-bold">{remainingDeliveries}</strong> free deliveries left!</span>
                   ) : (
-                    <span>You are <strong className="text-slate-900 font-bold">₹{Math.max(0, 199 - totalPrice).toFixed(2)}</strong> away from<br/><strong className="text-[#D99C4B] font-bold">free shipping!</strong></span>
+                    <span>You are <strong className="text-slate-900 font-bold">₹{Math.max(0, 200 - totalPrice).toFixed(2)}</strong> away from<br/><strong className="text-[#D99C4B] font-bold">free shipping!</strong></span>
                   )}
                 </div>
               </div>
@@ -1105,7 +1164,7 @@ export default function Cart() {
               </div>
             </div>
             <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden mt-1">
-               <div className="h-full bg-[#D99C4B] rounded-full transition-all duration-500" style={{ width: hasFreeDelivery ? '100%' : `${Math.min(100, (totalPrice / 199) * 100)}%` }} />
+               <div className="h-full bg-[#D99C4B] rounded-full transition-all duration-500" style={{ width: isCartFreeShipping ? '100%' : `${Math.min(100, (totalPrice / 200) * 100)}%` }} />
             </div>
           </div>
 
@@ -1163,15 +1222,7 @@ export default function Cart() {
                 <span className="text-[9px] font-medium text-slate-500 mt-0.5">Your data is safe</span>
               </div>
             </div>
-            <div className="w-[1px] h-8 bg-slate-100" />
-            <div className="flex gap-2.5 items-center">
-              <RefreshCcw className="w-[22px] h-[22px] text-[#D99C4B] shrink-0" strokeWidth={1.5} />
-              <div className="flex flex-col leading-tight">
-                <span className="text-[11px] font-bold text-slate-900">Easy Returns</span>
-                <span className="text-[9px] font-medium text-slate-500 mt-0.5">30-day return</span>
-              </div>
-            </div>
-            <div className="w-[1px] h-8 bg-slate-100" />
+
             <div className="flex gap-2.5 items-center">
               <Clock className="w-[22px] h-[22px] text-[#D99C4B] shrink-0" strokeWidth={1.5} />
               <div className="flex flex-col leading-tight">
@@ -1181,25 +1232,46 @@ export default function Cart() {
             </div>
           </div>
 
+          {/* Mobile Payment Summary */}
+          <div className="mt-4 bg-white rounded-2xl p-5 shadow-sm border border-slate-100 mb-6 md:hidden">
+             <div className="flex justify-between items-center mb-2.5">
+               <span className="text-slate-400 font-normal text-[13px]">MRP</span>
+               <span className="text-slate-900 font-semibold text-[13px]">₹{totalPrice.toFixed(2)}</span>
+             </div>
+             <div className="flex justify-between items-center mb-2.5">
+               <span className="text-slate-400 font-normal text-[13px]">Handling Fee</span>
+               <span className="text-slate-900 font-semibold text-[13px]">₹4.71</span>
+             </div>
+             <div className="flex justify-between items-center mb-2.5">
+                <span className="text-slate-400 font-normal text-[13px]">Delivery Fee</span>
+                <div className="flex items-center gap-2">
+                  {isDeliveryFree && displayedDeliveryFee > 0 && (
+                    <span className="text-slate-300 line-through text-[11px]">₹{displayedDeliveryFee.toFixed(2)}</span>
+                  )}
+                  <span className={isDeliveryFree ? "text-emerald-500 font-semibold text-[13px]" : "text-slate-900 font-semibold text-[13px]"}>
+                    {isDeliveryFree ? "FREE" : `₹${displayedDeliveryFee.toFixed(2)}`}
+                  </span>
+                </div>
+             </div>
+             <div className="border-t border-slate-100 pt-3 mt-1 flex justify-between items-center">
+               <span className="font-semibold text-slate-900 text-[14px]">Total to Pay</span>
+               <span className="text-[19px] font-bold text-slate-900 tracking-tight">₹{orderTotal.toFixed(2)}</span>
+             </div>
+          </div>
+
 
         </>
       )}
 
       {/* Sticky Bottom Bar (Only visible when not checking out) */}
       {!showCheckout && (
-        <div className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-xl border-t border-slate-100 p-5 pb-8 z-50 flex items-center justify-between shadow-[0_-10px_40px_rgba(0,0,0,0.03)]">
-          <div className="flex flex-col justify-center">
+        <div className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-xl border-t border-slate-100 p-5 pb-8 z-50 flex items-center justify-between shadow-[0_-10px_40px_rgba(0,0,0,0.03)] gap-5">
+          <div className="flex flex-col justify-center shrink-0">
             <span className="text-[13px] font-medium text-slate-500">Total ({totalItems} items)</span>
             <span className="text-[26px] font-black text-slate-900 leading-none mt-1">₹{orderTotal.toFixed(2)}</span>
-            <span className="text-[10px] font-medium text-slate-400 mt-1.5">Taxes & shipping calculated at checkout</span>
           </div>
-          <button 
-            onClick={handleProceedToCheckout}
-            disabled={items.length === 0}
-            className={`flex items-center gap-2 px-6 py-4 rounded-[20px] font-bold text-[16px] active:scale-[0.98] transition-all ${items.length > 0 ? 'bg-gradient-to-r from-[#D99C4B] to-[#c78b3a] text-white shadow-[0_8px_20px_-6px_rgba(217,156,75,0.5)]' : 'bg-slate-100 text-slate-400 cursor-not-allowed'}`}
-          >
-            <Lock className="w-4 h-4" /> Secure Checkout <ChevronLeft className="w-4 h-4 ml-0.5 rotate-180" />
-          </button>
+          
+          <SwipeToCheckout onComplete={handleProceedToCheckout} disabled={items.length === 0} />
         </div>
       )}
     </div>

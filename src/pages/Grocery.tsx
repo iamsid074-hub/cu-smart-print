@@ -13,7 +13,8 @@ import {
   ShieldCheck,
   RefreshCcw,
   Clock,
-  SlidersHorizontal
+  SlidersHorizontal,
+  Check
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { groceryItems, type GroceryItem } from "@/config/groceryItems";
@@ -24,6 +25,14 @@ import GroceryProductCard from "@/components/GroceryProductCard";
 
 // --- MOBILE COMPONENTS ---
 const MobileGroceryCard = ({ item, onAdd }: { item: GroceryItem, onAdd: (item: GroceryItem) => void }) => {
+  const [isAdded, setIsAdded] = useState(false);
+
+  const handleAdd = () => {
+    onAdd(item);
+    setIsAdded(true);
+    setTimeout(() => setIsAdded(false), 1500);
+  };
+
   return (
     <div className="min-w-[140px] w-[140px] bg-white rounded-2xl p-3 border border-gray-100 shadow-[0_4px_15px_rgba(0,0,0,0.03)] flex flex-col relative snap-start">
       {item.isFresh && (
@@ -36,14 +45,26 @@ const MobileGroceryCard = ({ item, onAdd }: { item: GroceryItem, onAdd: (item: G
         <img src={item.image} alt={item.name} className="max-w-full max-h-full object-contain drop-shadow-sm" />
       </div>
       <h3 className="text-[12px] font-bold text-gray-800 leading-tight line-clamp-2 min-h-[34px]">{item.name}</h3>
-      <p className="text-[10px] text-gray-400 font-medium mt-1">{item.quantity || "500 ml"}</p>
-      <div className="flex items-center justify-between mt-3">
-        <span className="text-[14px] font-black text-gray-900">₹{item.price}</span>
+      <p className="text-[10px] text-gray-400 font-medium mt-1 mb-3">{item.quantity || "500 ml"}</p>
+      
+      <div className="mt-auto">
         <button 
-          onClick={() => onAdd(item)}
-          className="w-7 h-7 rounded-full bg-green-600 text-white flex items-center justify-center active:scale-90 transition-transform shadow-md shadow-green-600/20"
+          onClick={handleAdd}
+          disabled={isAdded}
+          className={`w-full h-9 rounded-full flex items-center transition-all duration-300 font-bold text-[13px] shadow-sm overflow-hidden border ${isAdded ? 'bg-[#109c41] text-white justify-center border-[#109c41]' : 'bg-gray-50 border-gray-200 text-[#109c41] justify-between pl-3 pr-1 hover:bg-green-50 hover:border-green-200'}`}
         >
-          <Plus className="w-4 h-4" strokeWidth={3} />
+          {isAdded ? (
+            <span className="flex items-center gap-1 animate-in fade-in zoom-in duration-200">
+              Added <Check className="w-4 h-4" strokeWidth={3} />
+            </span>
+          ) : (
+            <div className="flex items-center justify-between w-full">
+              <span className="text-gray-900 font-black">₹{item.price}</span>
+              <span className="w-7 h-7 rounded-full bg-[#109c41] text-white flex items-center justify-center shadow-md">
+                <Plus className="w-4 h-4" strokeWidth={3} />
+              </span>
+            </div>
+          )}
         </button>
       </div>
     </div>
@@ -317,7 +338,7 @@ export default function Grocery() {
       {/* ── MOBILE VIEW (Reference Image Layout) ── */}
       <div className="block md:hidden min-h-screen bg-[#fcfcfc] pb-32 overflow-x-hidden font-sans">
         {/* Header */}
-        <div className="px-4 pt-14 pb-4 bg-white sticky top-0 z-50">
+        <div className="px-4 pt-20 pb-4 bg-white sticky top-0 z-50">
           <div className="flex items-center justify-between mb-4">
             <div>
               <h1 className="text-[24px] font-black text-black tracking-tight leading-tight">
@@ -327,14 +348,19 @@ export default function Grocery() {
                 Fresh groceries in minutes <span className="text-[#109c41] text-sm">🌱</span>
               </p>
             </div>
-            <button onClick={() => navigate('/cart')} className="w-10 h-10 bg-gray-50 rounded-[14px] flex items-center justify-center border border-gray-100 relative active:scale-95 transition-transform">
-              <ShoppingBag className="w-5 h-5 text-gray-800" />
-              {totalItems > 0 && (
-                <span className="absolute -top-2 -right-2 w-[18px] h-[18px] bg-[#109c41] text-white text-[10px] font-bold rounded-full flex items-center justify-center border-[2px] border-white shadow-sm">
-                  {totalItems}
-                </span>
-              )}
-            </button>
+            <div className="flex items-center gap-2">
+              <button onClick={() => navigate('/home')} className="w-10 h-10 bg-gray-50 rounded-full flex items-center justify-center border border-gray-100 relative active:scale-95 transition-transform">
+                <ArrowLeft className="w-5 h-5 text-gray-800" />
+              </button>
+              <button onClick={() => navigate('/cart')} className="w-10 h-10 bg-gray-50 rounded-full flex items-center justify-center border border-gray-100 relative active:scale-95 transition-transform">
+                <ShoppingBag className="w-5 h-5 text-gray-800" />
+                {totalItems > 0 && (
+                  <span className="absolute -top-2 -right-2 w-[18px] h-[18px] bg-[#109c41] text-white text-[10px] font-bold rounded-full flex items-center justify-center border-[2px] border-white shadow-sm">
+                    {totalItems}
+                  </span>
+                )}
+              </button>
+            </div>
           </div>
           
           <div className="flex items-center gap-2 relative">
@@ -393,8 +419,33 @@ export default function Grocery() {
           <div>
             {/* Banner */}
             <div className="px-4 mt-2 mb-6">
-              <div className="w-full rounded-3xl overflow-hidden shadow-lg shadow-black/5 relative aspect-[2.2/1]">
-                <img src="/groceryimage.png" className="w-full h-full object-cover" alt="Groceries delivered fresh" />
+              <div className="bg-[#0b2818] rounded-[24px] p-5 relative overflow-hidden flex items-center shadow-md min-h-[160px]">
+                {/* Background Image with Gradient Fade */}
+                <div className="absolute right-0 top-0 bottom-0 w-[55%]">
+                  <div className="absolute inset-0 bg-gradient-to-r from-[#0b2818] via-[#0b2818]/80 to-transparent z-10" />
+                  <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=400&auto=format&fit=crop" className="w-full h-full object-cover object-left" alt="Vegetables" />
+                </div>
+
+                <div className="relative z-20 w-[75%]">
+                  <div className="inline-flex items-center gap-1 bg-[#1a3824] text-[#a0c1a8] text-[9px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wide mb-3">
+                    <Zap className="w-3 h-3 fill-current" /> 10 MIN DELIVERY
+                  </div>
+                  <h2 className="text-white text-[24px] font-black leading-[1.1] mb-1.5 tracking-tight">
+                    Groceries<br/>
+                    <span className="text-[#84d632]">delivered fresh 🌱</span>
+                  </h2>
+                  <p className="text-gray-400 text-[11px] font-medium mb-4">Quick. Fresh. Reliable.</p>
+                  <button className="bg-white text-black text-[12px] font-bold pl-4 pr-1.5 py-1.5 rounded-full flex items-center gap-2 active:scale-95 transition-transform w-fit shadow-md">
+                    Shop Now <div className="bg-[#4d862f] rounded-full p-1"><ArrowRight className="w-3 h-3 text-white" strokeWidth={3} /></div>
+                  </button>
+                </div>
+                
+                {/* 10-15 Min Badge */}
+                <div className="absolute bottom-2 right-2 bg-white w-[75px] h-[75px] rounded-full flex flex-col items-center justify-center text-center shadow-xl z-30">
+                  <span className="text-black font-black text-[16px] leading-none mt-1">10-15</span>
+                  <span className="text-[#3b571e] font-black text-[10px] leading-none mt-0.5">MIN</span>
+                  <span className="text-gray-500 text-[8px] font-bold leading-none mt-0.5 mb-1">Delivery</span>
+                </div>
               </div>
             </div>
 

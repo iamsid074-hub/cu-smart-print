@@ -238,6 +238,13 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
     }
   }, [location.pathname]);
 
+  // ── Dispatch elongation events for MobileStatusBar time animation ─────────
+  useEffect(() => {
+    // Only shift time for transient pop-up notifications, not persistent states
+    const isTransient = islandState === "added" || islandState === "updated";
+    window.dispatchEvent(new CustomEvent(isTransient ? "di_elongated" : "di_default"));
+  }, [islandState, items]);
+
   // ── Listen for wallet events ───────────────────────────────────────────
   useEffect(() => {
     const wrongPassHandler = () => triggerState("wrong_pass");
@@ -708,70 +715,51 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
       );
       break;
     case "active_cart":
-      width = 280;
+      width = 220;
       height = 44;
       const totalAmount = items.reduce((acc, item) => acc + item.price * item.quantity, 0);
       content = (
-        <div className="flex items-center justify-between w-full h-full pr-0.5">
-          <div className="flex items-center gap-2.5 ml-1">
-             <div className="relative">
-               <ShoppingBag className="w-4.5 h-4.5 text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.5)]" />
-               <motion.div 
-                 animate={{ opacity: [0.4, 0.8, 0.4] }}
-                 transition={{ duration: 2, repeat: Infinity }}
-                 className="absolute inset-0 bg-emerald-400/20 blur-md rounded-full"
-               />
-             </div>
-             <div className="flex flex-col items-start leading-none">
-                <span className="text-[13px] font-black text-white">
-                   {currentCount}
-                </span>
-                <span className="text-[9px] font-bold text-white/50 uppercase tracking-tighter">
-                   ITEM{currentCount !== 1 ? 'S' : ''}
-                </span>
-             </div>
-          </div>
+        <div className="flex items-center justify-between w-full h-full pr-1 pl-2">
+           <div className="flex flex-col items-start leading-none ml-1">
+              <span className="text-[11px] font-bold text-white/50 uppercase tracking-wider">
+                 Total
+              </span>
+              <span className="text-[15px] font-black text-emerald-400 tabular-nums">
+                 ₹{totalAmount}
+              </span>
+           </div>
           
-          <div className="flex items-center gap-3">
-             <span className="text-[15px] font-black text-white tabular-nums">
-                ₹{totalAmount}
-             </span>
-             <div 
-               onClick={() => {
-                 triggerHaptic(ImpactStyle.Light);
-                 navigate("/cart");
-               }}
-               className="bg-zinc-800/80 hover:bg-zinc-700/80 px-4 py-2 rounded-xl flex items-center justify-center active:scale-95 transition-all cursor-pointer border border-white/10 shadow-lg"
-               style={{
-                 backdropFilter: "blur(8px)",
-                 WebkitBackdropFilter: "blur(8px)"
-               }}
-             >
-                <span className="text-[10px] font-black text-white uppercase tracking-[0.15em] leading-none">VIEW</span>
-             </div>
+          <div 
+             onClick={() => {
+               triggerHaptic(ImpactStyle.Light);
+               navigate("/cart");
+             }}
+             className="bg-white hover:bg-gray-100 text-black px-4 py-2 rounded-full flex items-center justify-center active:scale-95 transition-all cursor-pointer shadow-lg"
+          >
+             <span className="text-[11px] font-black uppercase tracking-wider leading-none">Cart</span>
           </div>
         </div>
       );
       break;
     case "added":
       width = 300;
-      height = 60;
+      height = 44;
       content = (
-        <div className="flex items-center justify-between w-full px-2">
-          <div className="flex items-center gap-3 overflow-hidden">
-            <div className="w-9 h-9 rounded-full bg-emerald-500 flex items-center justify-center flex-shrink-0 shadow-[0_0_15px_rgba(16,185,129,0.3)]">
-              <CheckCircle2 className="w-5 h-5 text-white" />
+        <div className="flex items-center justify-between w-full h-full px-1">
+          <div className="flex items-center gap-2.5 overflow-hidden h-full ml-1">
+            <div className="w-[22px] h-[22px] rounded-full bg-emerald-500 flex items-center justify-center flex-shrink-0 shadow-[0_0_10px_rgba(16,185,129,0.3)]">
+              <CheckCircle2 className="w-3.5 h-3.5 text-white" />
             </div>
-            <div className="flex flex-col items-start overflow-hidden pt-0.5">
+            <div className="flex items-center gap-2 overflow-hidden mt-[1px]">
               <span className="text-[10px] font-black text-emerald-400 uppercase tracking-widest">
                 Added
               </span>
-              <span className="text-[13px] font-bold text-white whitespace-nowrap overflow-hidden text-ellipsis max-w-[140px] leading-tight mt-0.5">
+              <span className="text-[13px] font-bold text-white whitespace-nowrap overflow-hidden text-ellipsis max-w-[140px] leading-none">
                 {latestAddedItem?.name || "Item"}
               </span>
             </div>
           </div>
-          <div className="font-black text-[15px] text-white flex-shrink-0 tracking-tight">
+          <div className="font-black text-[14px] text-white flex-shrink-0 tracking-tight pr-3">
             ₹{latestAddedItem?.price || 0}
           </div>
         </div>
@@ -1073,7 +1061,7 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
                 )}
                 
                 {/* Hardware Camera Lens Simulation */}
-                {!(displayState === "wallet_unlock_success" || displayState === "wallet_lock_setup") && (
+                {displayState === "default" && (
                   <div
                     className="absolute right-[12px] top-1/2 -translate-y-1/2 rounded-full pointer-events-none"
                     style={{
@@ -1113,54 +1101,7 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
                 </div>
               </motion.div>
 
-              {/* ── Secondary Navigation Pill ── */}
-              {displayState === "tracking" && currentCount > 0 ? (
-                <motion.div
-                  layout
-                  key="split-pill-tracking"
-                  initial={{ opacity: 0, scale: 0, x: -20 }}
-                  animate={{ opacity: 1, scale: 1, x: 0 }}
-                  exit={{ opacity: 0, scale: 0, x: -20 }}
-                  transition={springTransition}
-                  onPointerDown={(e) => { e.stopPropagation(); triggerHaptic(ImpactStyle.Light); }}
-                  onPointerUp={(e) => { e.stopPropagation(); triggerHaptic(ImpactStyle.Light); navigate("/cart"); }}
-                  className="pointer-events-auto flex items-center justify-center overflow-hidden flex-shrink-0 cursor-pointer hover:bg-zinc-900 shadow-xl"
-                  style={{
-                    background: "rgba(15, 15, 15, 0.98)",
-                    width: 44,
-                    height: 44,
-                    borderRadius: "50%",
-                    border: "1px solid rgba(255, 255, 255, 0.12)",
-                    zIndex: 101,
-                  }}
-                >
-                  <ShoppingBag className="w-5 h-5 text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.4)]" />
-                </motion.div>
-              ) : displayState === "active_cart" && islandState !== "default" ? (
-                <motion.div
-                  layout
-                  key="split-pill-context"
-                  initial={{ opacity: 0, scale: 0, x: -20 }}
-                  animate={{ opacity: 1, scale: 1, x: 0 }}
-                  exit={{ opacity: 0, scale: 0, x: -20 }}
-                  transition={springTransition}
-                  className="pointer-events-auto flex items-center justify-center overflow-hidden flex-shrink-0 shadow-lg"
-                  style={{
-                    background: "rgba(15, 15, 15, 0.98)",
-                    width: 44,
-                    height: 44,
-                    borderRadius: "50%",
-                    border: "1px solid rgba(255, 255, 255, 0.12)",
-                    zIndex: 101,
-                  }}
-                >
-                  {islandState === "explore" ? <Search size={16} color="#3b82f6" /> :
-                   islandState === "sell" ? <Tag size={16} color="#8b5cf6" /> :
-                   islandState === "grocery" ? <ShoppingBag size={16} color="#10b981" /> :
-                   islandState === "wallet" ? <Wallet size={16} color="#f59e0b" /> :
-                   islandState === "profile" ? <User size={16} color="#ec4899" /> : null}
-                </motion.div>
-              ) : null}
+
             </AnimatePresence>
           </motion.div>
         </div>

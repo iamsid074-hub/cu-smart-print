@@ -8,16 +8,24 @@ export default function MobileStatusBar() {
   const { batteryLevel, isCharging, isOnline, isBatteryAvailable } = useSystemStatus();
   const [isChargingAlert, setIsChargingAlert] = useState(false);
 
+  const [isElongated, setIsElongated] = useState(false);
+
   useEffect(() => {
     const t = setInterval(() => setTime(new Date()), 1000);
     const handleStart = () => setIsChargingAlert(true);
     const handleEnd   = () => setIsChargingAlert(false);
+    const handleElongated = () => setIsElongated(true);
+    const handleDefault = () => setIsElongated(false);
     window.addEventListener("di_charging_start", handleStart);
     window.addEventListener("di_charging_end",   handleEnd);
+    window.addEventListener("di_elongated", handleElongated);
+    window.addEventListener("di_default", handleDefault);
     return () => {
       clearInterval(t);
       window.removeEventListener("di_charging_start", handleStart);
       window.removeEventListener("di_charging_end",   handleEnd);
+      window.removeEventListener("di_elongated", handleElongated);
+      window.removeEventListener("di_default", handleDefault);
     };
   }, []);
 
@@ -34,11 +42,16 @@ export default function MobileStatusBar() {
     >
       {/* ── Time (left) ── */}
       <span
-        className="tracking-wide transition-all duration-500"
+        className="tracking-wide"
         style={{
-          transform: isChargingAlert ? "scale(0.75)" : "scale(1)",
+          transform: isChargingAlert
+            ? "scale(0.75)"
+            : isElongated
+            ? "translateX(-24px) scale(0.9)"
+            : "translateX(0px) scale(1)",
           transformOrigin: "left center",
           display: "inline-block",
+          transition: "transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1)",
         }}
       >
         {timeStr}
@@ -47,8 +60,8 @@ export default function MobileStatusBar() {
       {/* ── Right icons ── */}
       <div className="flex items-center gap-[6px]">
 
-        {/* Cellular bars — hidden during charging alert, dims when offline */}
-        {!isChargingAlert && (
+        {/* Cellular bars — hidden during charging alert or elongation */}
+        {!isChargingAlert && !isElongated && (
           <svg
             width="17" height="12" viewBox="0 0 18 12"
             fill="currentColor" xmlns="http://www.w3.org/2000/svg"
@@ -61,8 +74,8 @@ export default function MobileStatusBar() {
           </svg>
         )}
 
-        {/* Wi-Fi — hidden during charging alert OR when offline */}
-        {isOnline && !isChargingAlert && (
+        {/* Wi-Fi — hidden during charging alert, elongation, or when offline */}
+        {isOnline && !isChargingAlert && !isElongated && (
           <svg
             width="16" height="12" viewBox="0 0 17 12"
             fill="none" xmlns="http://www.w3.org/2000/svg"
@@ -75,10 +88,11 @@ export default function MobileStatusBar() {
 
         {/* Battery — ALWAYS visible; scales up prominently during charging alert */}
         <div
-          className="relative flex items-center transition-all duration-500"
+          className="relative flex items-center"
           style={{
-            transform: isChargingAlert ? "scale(0.75)" : "scale(1)",
+            transform: isChargingAlert ? "scale(0.75)" : isElongated ? "scale(1.15)" : "scale(1)",
             transformOrigin: "right center",
+            transition: "transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1)",
           }}
         >
           {isBatteryAvailable ? (
