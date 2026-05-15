@@ -7,24 +7,27 @@ export default function MobileStatusBar() {
   const [time, setTime] = useState(new Date());
   const { batteryLevel, isCharging, isOnline, isBatteryAvailable } = useSystemStatus();
   const [isChargingAlert, setIsChargingAlert] = useState(false);
-
   const [isElongated, setIsElongated] = useState(false);
+  const [isPartialElongated, setIsPartialElongated] = useState(false);
 
   useEffect(() => {
     const t = setInterval(() => setTime(new Date()), 1000);
     const handleStart = () => setIsChargingAlert(true);
     const handleEnd   = () => setIsChargingAlert(false);
-    const handleElongated = () => setIsElongated(true);
-    const handleDefault = () => setIsElongated(false);
+    const handleElongated = () => { setIsElongated(true); setIsPartialElongated(false); };
+    const handlePartial   = () => { setIsElongated(false); setIsPartialElongated(true); };
+    const handleDefault   = () => { setIsElongated(false); setIsPartialElongated(false); };
     window.addEventListener("di_charging_start", handleStart);
     window.addEventListener("di_charging_end",   handleEnd);
     window.addEventListener("di_elongated", handleElongated);
+    window.addEventListener("di_partial_elongated", handlePartial);
     window.addEventListener("di_default", handleDefault);
     return () => {
       clearInterval(t);
       window.removeEventListener("di_charging_start", handleStart);
       window.removeEventListener("di_charging_end",   handleEnd);
       window.removeEventListener("di_elongated", handleElongated);
+      window.removeEventListener("di_partial_elongated", handlePartial);
       window.removeEventListener("di_default", handleDefault);
     };
   }, []);
@@ -34,11 +37,13 @@ export default function MobileStatusBar() {
     .replace(/ am| pm| AM| PM/gi, "");
 
   return (
-    // pointer-events-none so the island below can receive touches
-    // z-index matches island wrapper so neither overlaps the other
     <div
       className="fixed top-0 left-0 right-0 z-[89999] pointer-events-none flex justify-between items-center text-black font-semibold text-[15px] pl-[32px] pr-[16px] h-[40px]"
-      style={{ marginTop: "calc(var(--sat, env(safe-area-inset-top, 20px)) + 12px)" }}
+      style={{
+        marginTop: "calc(var(--sat, env(safe-area-inset-top, 20px)) + 12px)",
+        opacity: isElongated ? 0 : 1,
+        transition: "opacity 0.25s ease-in-out",
+      }}
     >
       {/* ── Time (left) ── */}
       <span
@@ -46,8 +51,8 @@ export default function MobileStatusBar() {
         style={{
           transform: isChargingAlert
             ? "scale(0.75)"
-            : isElongated
-            ? "translateX(-24px) scale(0.9)"
+            : isPartialElongated
+            ? "translateX(-20px) scale(0.9)"
             : "translateX(0px) scale(1)",
           transformOrigin: "left center",
           display: "inline-block",
@@ -60,8 +65,8 @@ export default function MobileStatusBar() {
       {/* ── Right icons ── */}
       <div className="flex items-center gap-[6px]">
 
-        {/* Cellular bars — hidden during charging alert or elongation */}
-        {!isChargingAlert && !isElongated && (
+        {/* Cellular bars — hidden during charging alert */}
+        {!isChargingAlert && (
           <svg
             width="17" height="12" viewBox="0 0 18 12"
             fill="currentColor" xmlns="http://www.w3.org/2000/svg"
@@ -74,8 +79,8 @@ export default function MobileStatusBar() {
           </svg>
         )}
 
-        {/* Wi-Fi — hidden during charging alert, elongation, or when offline */}
-        {isOnline && !isChargingAlert && !isElongated && (
+        {/* Wi-Fi — hidden during charging alert OR when offline */}
+        {isOnline && !isChargingAlert && (
           <svg
             width="16" height="12" viewBox="0 0 17 12"
             fill="none" xmlns="http://www.w3.org/2000/svg"
@@ -86,11 +91,15 @@ export default function MobileStatusBar() {
           </svg>
         )}
 
-        {/* Battery — ALWAYS visible; scales up prominently during charging alert */}
+        {/* Battery — scales up during charging alert or partial elongation */}
         <div
           className="relative flex items-center"
           style={{
-            transform: isChargingAlert ? "scale(0.75)" : isElongated ? "scale(1.15)" : "scale(1)",
+            transform: isChargingAlert
+              ? "scale(0.75)"
+              : isPartialElongated
+              ? "scale(1.15)"
+              : "scale(1)",
             transformOrigin: "right center",
             transition: "transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1)",
           }}

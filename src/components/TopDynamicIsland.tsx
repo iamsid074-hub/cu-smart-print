@@ -238,11 +238,22 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
     }
   }, [location.pathname]);
 
-  // ── Dispatch elongation events for MobileStatusBar time animation ─────────
+  // ── Dispatch elongation events for MobileStatusBar ────────────────────────
   useEffect(() => {
-    // Only shift time for transient pop-up notifications, not persistent states
-    const isTransient = islandState === "added" || islandState === "updated";
-    window.dispatchEvent(new CustomEvent(isTransient ? "di_elongated" : "di_default"));
+    const currentCount = items.reduce((acc, item) => acc + item.quantity, 0);
+    const isFullElongated = islandState === "added" || islandState === "updated";
+    const isPartialElongated = !isFullElongated && (
+      islandState === "active_cart" ||
+      islandState === "tracking" ||
+      (currentCount > 0 && islandState === "default")
+    );
+    if (isFullElongated) {
+      window.dispatchEvent(new CustomEvent("di_elongated"));
+    } else if (isPartialElongated) {
+      window.dispatchEvent(new CustomEvent("di_partial_elongated"));
+    } else {
+      window.dispatchEvent(new CustomEvent("di_default"));
+    }
   }, [islandState, items]);
 
   // ── Listen for wallet events ───────────────────────────────────────────

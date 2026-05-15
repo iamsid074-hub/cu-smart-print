@@ -1213,7 +1213,8 @@ export default function Cart() {
             )}
           </div>
 
-          {/* Trust Badges */}
+          {/* Trust Badges — only when cart has items */}
+          {items.length > 0 && (
           <div className="mt-6 flex items-center justify-between bg-white rounded-2xl p-4 shadow-sm border border-slate-100">
             <div className="flex gap-2.5 items-center">
               <ShieldCheck className="w-[22px] h-[22px] text-[#D99C4B] shrink-0" strokeWidth={1.5} />
@@ -1231,8 +1232,10 @@ export default function Cart() {
               </div>
             </div>
           </div>
+          )}
 
-          {/* Mobile Payment Summary */}
+          {/* Mobile Payment Summary — only when cart has items */}
+          {items.length > 0 && (
           <div className="mt-4 bg-white rounded-2xl p-5 shadow-sm border border-slate-100 mb-6 md:hidden">
              <div className="flex justify-between items-center mb-2.5">
                <span className="text-slate-400 font-normal text-[13px]">MRP</span>
@@ -1258,13 +1261,14 @@ export default function Cart() {
                <span className="text-[19px] font-bold text-slate-900 tracking-tight">₹{orderTotal.toFixed(2)}</span>
              </div>
           </div>
+          )}
 
 
         </>
       )}
 
-      {/* Sticky Bottom Bar (Only visible when not checking out) */}
-      {!showCheckout && (
+      {/* Sticky Bottom Bar (Only visible when not checking out AND cart has items) */}
+      {!showCheckout && items.length > 0 && (
         <div className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-xl border-t border-slate-100 p-5 pb-8 z-50 flex items-center justify-between shadow-[0_-10px_40px_rgba(0,0,0,0.03)] gap-5">
           <div className="flex flex-col justify-center shrink-0">
             <span className="text-[13px] font-medium text-slate-500">Total ({totalItems} items)</span>
