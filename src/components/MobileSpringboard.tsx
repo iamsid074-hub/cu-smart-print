@@ -41,7 +41,7 @@ const ADMIN_APP: AppDef = {
 
 const DOCK_APPS_BASE: AppDef[] = [
   { name: "Home",     icon: IosHomeIcon,    path: "/home",     wiggleDelay: 0,    wiggleDuration: 0.18 },
-  { name: "Combos",   icon: IosCombosIcon,  path: "/search",   wiggleDelay: 0.05, wiggleDuration: 0.18 },
+  { name: "Combos",   icon: IosCombosIcon,  path: "/combos",   wiggleDelay: 0.05, wiggleDuration: 0.18 },
   { name: "Profile",  icon: IosProfileIcon, path: "/profile",  wiggleDelay: 0.02, wiggleDuration: 0.18 },
   { name: "Settings", icon: IosSettingsIcon,path: "/settings", wiggleDelay: 0.07, wiggleDuration: 0.18 },
 ];

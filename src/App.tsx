@@ -89,6 +89,7 @@ const RealMines = lazy(() => import("./pages/games/RealMines"));
 const Sections = lazy(() => import("./pages/Sections"));
 const MobileFoodPortal = lazy(() => import("./components/MobileFoodPortal"));
 const WallpaperApp = lazy(() => import("./pages/WallpaperApp"));
+const ComboStore = lazy(() => import("./pages/ComboStore"));
 
 import Navbar from "./components/Navbar";
 // import BottomNav from "./components/BottomNav";
@@ -439,6 +440,14 @@ function AppLayout() {
                 element={
                   <PageTransition locationKey="/cart">
                     <ProtectedRoute><Cart /></ProtectedRoute>
+                  </PageTransition>
+                }
+              />
+              <Route
+                path="/combos"
+                element={
+                  <PageTransition locationKey="/combos">
+                    <ProtectedRoute><ComboStore /></ProtectedRoute>
                   </PageTransition>
                 }
               />

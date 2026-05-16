@@ -18,7 +18,7 @@ interface SpotlightResult {
 
 const QUICK_LINKS: SpotlightResult[] = [
   { id: "shops",    type: "page", title: "Shops",    subtitle: "Browse all campus stores",     icon: ShoppingBag, iconColor: "#f97316", iconBg: "#3b1a0a", path: "/sections/shops" },
-  { id: "combos",   type: "page", title: "Combos",   subtitle: "Curated meal combinations",    icon: Utensils,    iconColor: "#a855f7", iconBg: "#2a1040", path: "/sections/combos" },
+  { id: "combos",   type: "page", title: "Combos",   subtitle: "Curated meal combinations",    icon: Utensils,    iconColor: "#a855f7", iconBg: "#2a1040", path: "/combos" },
   { id: "grocery",  type: "page", title: "Grocery",  subtitle: "Daily essentials delivered",   icon: ShoppingCart,iconColor: "#22c55e", iconBg: "#0d2a18", path: "/grocery" },
   { id: "wallet",   type: "page", title: "Wallet",   subtitle: "Check balance & transactions", icon: Wallet,      iconColor: "#eab308", iconBg: "#2a2008", path: "/wallet" },
   { id: "games",    type: "page", title: "Games",    subtitle: "Play & win rewards",           icon: Gamepad2,    iconColor: "#ef4444", iconBg: "#2a0a0a", path: "/games" },
