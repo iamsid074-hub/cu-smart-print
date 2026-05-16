@@ -34,6 +34,7 @@ export default function SearchPage() {
   const [searchParams] = useSearchParams();
   const { addItem } = useCart();
   const [query, setQuery] = useState(searchParams.get("q") || "");
+  const [selectedShopFilter, setSelectedShopFilter] = useState<string | null>(null);
   const [recentSearches, setRecentSearches] = useState<string[]>(getRecent);
   const inputRef = useRef<HTMLInputElement>(null);
   const allFoods = useMemo(() => getAllFoodItems(), []);
@@ -91,23 +92,34 @@ export default function SearchPage() {
 
   // ── Filtered results for inline display ───────────────────────────────────
   const results = useMemo(() => {
-    if (!query.trim()) return { dishes: [], shops: [] };
+    if (!query.trim()) return { dishes: [], shops: [], availableShops: [] };
     const term = query.toLowerCase();
     const dishSet = new Set<string>();
-    const dishes: any[] = [];
+    const allMatchingDishes: any[] = [];
+    const availableShopNames = new Set<string>();
 
     allFoods.forEach(item => {
       const name = (item.name || item.title || "").toLowerCase();
       if (name.includes(term) || item.category?.toLowerCase().includes(term)) {
-        if (!dishSet.has(name)) { dishSet.add(name); dishes.push(item); }
+        if (!dishSet.has(name)) { 
+          dishSet.add(name); 
+          allMatchingDishes.push(item);
+          if (item.shopName) availableShopNames.add(item.shopName);
+        }
       }
     });
 
     const shops = SHOP_DIRECTORY.filter(s =>
       s.name.toLowerCase().includes(term) || s.aliases.some(a => a.includes(term))
     );
-    return { dishes, shops };
-  }, [query, allFoods]);
+
+    const isFilterValid = selectedShopFilter && availableShopNames.has(selectedShopFilter);
+    const filteredDishes = isFilterValid 
+      ? allMatchingDishes.filter(d => d.shopName === selectedShopFilter)
+      : allMatchingDishes;
+
+    return { dishes: filteredDishes, shops, availableShops: Array.from(availableShopNames) };
+  }, [query, allFoods, selectedShopFilter]);
 
   const isEmpty = !query.trim();
 
@@ -349,10 +361,36 @@ export default function SearchPage() {
                   ))}
                 </div>
               )}
+              {/* Shop Filter UI */}
+              {results.availableShops.length > 0 && (
+                <div className="px-5 pt-6">
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className="w-1 h-4 bg-[#FF4D94] rounded-full" />
+                    <span className="text-[13px] font-black tracking-widest text-[#FF4D94] uppercase">Filter by Shop</span>
+                  </div>
+                  <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-2">
+                    <button
+                      onClick={() => setSelectedShopFilter(null)}
+                      className={`px-4 py-2 rounded-2xl text-[13px] font-bold whitespace-nowrap border transition-all ${!selectedShopFilter || !results.availableShops.includes(selectedShopFilter) ? "bg-[#FF4D94] text-white border-[#FF4D94] shadow-md shadow-pink-500/20" : "bg-white text-[#1A1A1A] border-pink-100"}`}
+                    >
+                      All Shops
+                    </button>
+                    {results.availableShops.map(shop => (
+                      <button
+                        key={shop}
+                        onClick={() => setSelectedShopFilter(shop)}
+                        className={`px-4 py-2 rounded-2xl text-[13px] font-bold whitespace-nowrap border transition-all ${selectedShopFilter === shop ? "bg-[#FF4D94] text-white border-[#FF4D94] shadow-md shadow-pink-500/20" : "bg-white text-[#1A1A1A] border-pink-100"}`}
+                      >
+                        {shop}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
               
               {/* Full Results: Dishes */}
               {results.dishes.length > 0 && (
-                <div className="px-5 pt-8">
+                <div className="px-5 pt-6">
                   <div className="flex items-center gap-2 mb-5">
                     <div className="w-1 h-4 bg-[#FF4D94] rounded-full" />
                     <span className="text-[13px] font-black tracking-widest text-[#FF4D94] uppercase">{results.dishes.length} Dishes</span>

@@ -5,15 +5,15 @@ import { useNavigate } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
 
 const FOOD_ITEMS = [
-  { id: 1, name: "Kurkure Momos Veg", price: 120, originalPrice: 150, image: "https://images.unsplash.com/photo-1534422298391-e4f8c170db76?q=80&w=400&auto=format&fit=crop", time: "15 mins" },
-  { id: 2, name: "Vada Pav", price: 40, originalPrice: 50, image: "https://images.unsplash.com/photo-1567333465893-6c841bb2ab39?q=80&w=400&auto=format&fit=crop", time: "10 mins" },
-  { id: 3, name: "Chole Bhature", price: 110, originalPrice: 130, image: "https://images.unsplash.com/photo-1626132646529-5003375a95d2?q=80&w=400&auto=format&fit=crop", time: "20 mins" },
-  { id: 4, name: "Baked Pizza Sandwich", price: 149, originalPrice: 180, image: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?q=80&w=400&auto=format&fit=crop", time: "20 mins" },
+  { id: 1, name: "Kurkure Momos Veg", price: 120, originalPrice: 150, image: "/kurkure_opt.webp", time: "15 mins" },
+  { id: 2, name: "Vada Pav", price: 40, originalPrice: 50, image: "/vadapav_opt.webp", time: "10 mins" },
+  { id: 3, name: "Chole Bhature", price: 110, originalPrice: 130, image: "/cholebature_opt.webp", time: "20 mins" },
+  { id: 4, name: "Baked Pizza Sandwich", price: 149, originalPrice: 180, image: "/sandwitchbaked_opt.webp", time: "20 mins" },
   { id: 5, name: "Veg Crispy Burger", price: 89, originalPrice: 110, image: "https://images.unsplash.com/photo-1571091718767-18b5b1457add?q=80&w=400&auto=format&fit=crop", time: "10 mins" },
-  { id: 6, name: "Single Egg Roll", price: 50, originalPrice: 65, image: "https://images.unsplash.com/photo-1565557623262-b51c2513a641?q=80&w=400&auto=format&fit=crop", time: "12 mins" },
-  { id: 7, name: "Double Egg Roll", price: 70, originalPrice: 85, image: "https://images.unsplash.com/photo-1565557623262-b51c2513a641?q=80&w=400&auto=format&fit=crop", time: "15 mins" },
-  { id: 8, name: "Afgani Momos", price: 140, originalPrice: 160, image: "https://images.unsplash.com/photo-1625220194771-7ebdea0b70b9?q=80&w=400&auto=format&fit=crop", time: "20 mins" },
-  { id: 9, name: "Paneer Tikka Roll", price: 130, originalPrice: 150, image: "https://images.unsplash.com/photo-1565557623262-b51c2513a641?q=80&w=400&auto=format&fit=crop", time: "18 mins" },
+  { id: 6, name: "Single Egg Roll", price: 50, originalPrice: 65, image: "/singleegg_opt.webp", time: "12 mins" },
+  { id: 7, name: "Double Egg Roll", price: 70, originalPrice: 85, image: "/doubleegg_opt.webp", time: "15 mins" },
+  { id: 8, name: "Afgani Momos", price: 140, originalPrice: 160, image: "/afganimomos_opt.webp", time: "20 mins" },
+  { id: 9, name: "Paneer Tikka Roll", price: 130, originalPrice: 150, image: "/paneertikka_opt.webp", time: "18 mins" },
   { id: 10, name: "Cold Coffee Shake", price: 90, originalPrice: 120, image: "https://images.unsplash.com/photo-1572490122747-3968b75cc699?q=80&w=400&auto=format&fit=crop", time: "5 mins" },
 ];
 
@@ -50,16 +50,10 @@ export default function MobileFoodPortal() {
           <ArrowLeft className="w-6 h-6 text-[#5e1e2d]" />
         </button>
         <div className="flex-1 px-4">
-           <form onSubmit={handleSearch} className="bg-white rounded-xl h-10 flex items-center px-4 gap-2 border border-black/10 shadow-sm">
+           <div onClick={() => navigate('/search')} className="bg-white rounded-xl h-10 flex items-center px-4 gap-2 border border-black/10 shadow-sm cursor-pointer">
              <Search className="w-4 h-4 text-[#5e1e2d]/40" />
-             <input 
-               type="text" 
-               value={searchQuery}
-               onChange={(e) => setSearchQuery(e.target.value)}
-               placeholder="Search food..." 
-               className="bg-transparent border-none focus:outline-none text-sm w-full placeholder:text-[#5e1e2d]/30 text-[#5e1e2d]" 
-             />
-           </form>
+             <span className="text-sm text-[#5e1e2d]/40">Search food...</span>
+           </div>
         </div>
         <button onClick={() => navigate('/cart')} className="p-2 -mr-2 relative active:scale-95 transition-transform">
           <ShoppingCart className="w-6 h-6 text-[#5e1e2d]" />
@@ -211,8 +205,7 @@ export default function MobileFoodPortal() {
              >
                 <h3 className="text-[16px] font-bold text-[#5e1e2d] mb-4 leading-tight">Juices<br/>& Shakes</h3>
                 <div className="bg-white/40 backdrop-blur-sm px-4 py-1.5 rounded-full mb-6">
-                   <span className="text-white line-through text-xs mr-2 font-medium">₹149</span>
-                   <span className="text-[#5e1e2d] font-bold text-sm">₹89</span>
+                   <span className="text-[#5e1e2d] font-bold text-[12px]">Starting from ₹60</span>
                 </div>
                 <div className="relative z-10 w-32 h-32 transform group-hover:scale-105 transition-transform duration-500 mt-auto">
                   <img src="https://images.unsplash.com/photo-1572490122747-3968b75cc699?q=80&w=300&auto=format&fit=crop" className="w-full h-full object-cover rounded-2xl shadow-lg border-2 border-white/20" alt="shakes" />
@@ -227,11 +220,10 @@ export default function MobileFoodPortal() {
              >
                 <h3 className="text-[16px] font-bold text-[#5e1e2d] mb-4 leading-tight">Quick Snacks<br/>& Rolls</h3>
                 <div className="bg-white/40 backdrop-blur-sm px-4 py-1.5 rounded-full mb-6">
-                   <span className="text-white line-through text-xs mr-2 font-medium">₹199</span>
-                   <span className="text-[#5e1e2d] font-bold text-sm">₹129</span>
+                   <span className="text-[#5e1e2d] font-bold text-[12px]">Starting from ₹60</span>
                 </div>
                 <div className="relative z-10 w-32 h-32 transform group-hover:scale-105 transition-transform duration-500 mt-auto">
-                  <img src="https://images.unsplash.com/photo-1601050690597-df056fb17796?q=80&w=300&auto=format&fit=crop" className="w-full h-full object-cover rounded-2xl shadow-lg border-2 border-white/20" alt="snacks" />
+                  <img src="/readd_opt.webp" className="w-full h-full object-cover rounded-2xl shadow-lg border-2 border-white/20" alt="snacks" />
                 </div>
              </motion.div>
 
@@ -243,11 +235,10 @@ export default function MobileFoodPortal() {
              >
                 <h3 className="text-[16px] font-bold text-[#5e1e2d] mb-4 leading-tight">Main Meals<br/>& Combos</h3>
                 <div className="bg-white/40 backdrop-blur-sm px-4 py-1.5 rounded-full mb-6">
-                   <span className="text-white line-through text-xs mr-2 font-medium">₹299</span>
-                   <span className="text-[#5e1e2d] font-bold text-sm">₹199</span>
+                   <span className="text-[#5e1e2d] font-bold text-[12px]">Starting from ₹49</span>
                 </div>
                 <div className="relative z-10 w-32 h-32 transform group-hover:scale-105 transition-transform duration-500 mt-auto">
-                  <img src="https://images.unsplash.com/photo-1626132646529-5003375a95d2?q=80&w=300&auto=format&fit=crop" className="w-full h-full object-cover rounded-2xl shadow-lg border-2 border-white/20" alt="meals" />
+                  <img src="/3combo_opt.webp" className="w-full h-full object-cover rounded-2xl shadow-lg border-2 border-white/20" alt="meals" />
                 </div>
              </motion.div>
            </div>

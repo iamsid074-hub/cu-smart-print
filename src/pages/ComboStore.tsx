@@ -148,34 +148,73 @@ const ALL_COMBOS = [
     themeId: "orange"
   },
   {
-    id: "combo-ultimate-party",
-    name: "Ultimate Party Pack",
-    items: "2× Smoked Chicken Burger + Peri Peri Fries + Coke 1L",
-    price: 349,
-    originalPrice: 400,
-    save: 51,
-    image: "/food_premium/party_pack.jpg",
+    id: "combo-party-chicken",
+    name: "Chicken Party Pack",
+    items: "2 smoked chicken burgers + peri peri fries + coke 750 ml",
+    price: 341,
+    originalPrice: 390,
+    save: 49,
+    image: "",
+    images: ["/combo/best1_opt.webp"],
+    fullCover: true,
     category: "bestseller",
     badge: "BESTSELLER",
     shop: "Flavour Factory",
     isVeg: false,
-    emoji: "🎉",
+    emoji: "🍔",
     themeId: "pink"
   },
   {
-    id: "combo-snack-attack",
-    name: "Snack Attack",
-    items: "Peri Peri Fries + Crispy Paneer Roll + Sprite",
-    price: 149,
-    originalPrice: 175,
-    save: 26,
-    image: "/food_premium/snack.jpg",
+    id: "combo-crispy-veg",
+    name: "Crispy Veg Deal",
+    items: "crispy veg burger + pepsi 400 ml",
+    price: 82,
+    originalPrice: 100,
+    save: 18,
+    image: "",
+    images: ["/combo/best2_opt.webp"],
+    fullCover: true,
     category: "bestseller",
     badge: "BESTSELLER",
     shop: "Flavour Factory",
     isVeg: true,
-    emoji: "🍟",
-    themeId: "pink"
+    emoji: "🥤",
+    themeId: "orange"
+  },
+
+  {
+    id: "combo-pizza-sandwich",
+    name: "Pizza Burger Combo",
+    items: "baked pizza sandwitch + crispy veg burger + mountain dew / pepsi (400ml)",
+    price: 234,
+    originalPrice: 270,
+    save: 36,
+    image: "",
+    images: ["/combo/best3_opt.webp"],
+    fullCover: true,
+    category: "bestseller",
+    badge: "BESTSELLER",
+    shop: "Flavour Factory",
+    isVeg: true,
+    emoji: "🍕",
+    themeId: "purple"
+  },
+  {
+    id: "combo-mumbai-vada",
+    name: "Mumbai Vada Pav Meal",
+    items: "mumbai aloo vada pav (2) + pepsi 400ml",
+    price: 91,
+    originalPrice: 110,
+    save: 19,
+    image: "",
+    images: ["/combo/best4_opt.webp"],
+    fullCover: true,
+    category: "bestseller",
+    badge: "BESTSELLER",
+    shop: "Flavour Factory",
+    isVeg: true,
+    emoji: "🌶️",
+    themeId: "green"
   },
 ];
 
@@ -183,7 +222,7 @@ const CATEGORIES = [
   { id: "all", label: "All Combos", count: ALL_COMBOS.length },
   { id: "dairy", label: "Dairy", count: ALL_COMBOS.filter(c => c.category === "dairy").length },
   { id: "beverages", label: "Beverages", count: ALL_COMBOS.filter(c => c.category === "beverages").length },
-  { id: "bestseller", label: "Snacks", count: ALL_COMBOS.filter(c => c.category === "bestseller").length },
+  { id: "bestseller", label: "Best Seller", count: ALL_COMBOS.filter(c => c.category === "bestseller").length },
   { id: "more", label: "More", count: 0 },
 ];
 
@@ -378,7 +417,7 @@ export default function ComboStore() {
 
   return (
     <div className="min-h-screen bg-white pb-28 md:hidden">
-      <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-xl pt-14 pb-4 px-4 shadow-[0_10px_30px_rgba(0,0,0,0.04)]">
+      <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-xl pt-14 pb-4 px-4 border-b border-slate-100">
         <div className="flex items-start justify-between mb-2 mt-2">
           <div className="flex flex-col">
             <h1 className="text-[32px] font-black text-slate-900 leading-[1.1] tracking-tight">
@@ -400,7 +439,7 @@ export default function ComboStore() {
                 onClick={() => cat.id !== "more" && setActiveCategory(cat.id)}
                 className={`flex-shrink-0 flex items-center justify-center px-5 py-2.5 rounded-full transition-all active:scale-95 ${
                   isActive
-                    ? "bg-purple-600 text-white shadow-lg shadow-purple-200"
+                    ? "bg-purple-600 text-white"
                     : "bg-slate-50 text-slate-500 border border-slate-100"
                 }`}
               >
@@ -426,7 +465,7 @@ export default function ComboStore() {
               animate={{ opacity: 1, y: 0 }} 
               whileTap={{ scale: 0.97 }}
               onClick={() => setActiveCategory("all")}
-              className="relative rounded-[24px] overflow-hidden shadow-[0_8px_30px_rgba(30,27,75,0.12)] cursor-pointer"
+              className="relative rounded-[24px] overflow-hidden cursor-pointer"
             >
               <img 
                 src="/comboimage1.webp" 
