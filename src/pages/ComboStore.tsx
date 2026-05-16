@@ -1,23 +1,7 @@
 import { useState, useMemo, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Plus,
-  CheckCircle2,
-  Heart,
-  ChevronRight,
-  Tag,
-  Clock,
-  Sparkles,
-  Star,
-  ShoppingCart,
-  Zap,
-  Gift,
-  Coffee,
-  Utensils,
-  LayoutGrid,
-  ArrowRight,
-  Percent,
-  Crown
+  ArrowLeft
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
@@ -38,12 +22,12 @@ const ALL_COMBOS = [
   {
     id: "combo-amul-milk",
     name: "Amul Milk Special",
-    items: "Amool milk 500ml (2)",
+    items: "Get 2 packets of Amul Milk 500ml",
     price: 49,
     originalPrice: 60,
     save: 11,
     image: "",
-    images: ["/combo/amullmilk_hq.webp"],
+    images: ["/combo/amullmilk_opt.webp"],
     fullCover: true,
     category: "new",
     badge: "NEW",
@@ -60,7 +44,7 @@ const ALL_COMBOS = [
     originalPrice: 80,
     save: 14,
     image: "",
-    images: ["/combo/snacksimage.webp"],
+    images: ["/combo/snacksimage_opt.webp"],
     fullCover: true,
     category: "new",
     badge: "NEW",
@@ -77,7 +61,7 @@ const ALL_COMBOS = [
     originalPrice: 120,
     save: 25,
     image: "",
-    images: ["/combo/chocolates.webp"],
+    images: ["/combo/chocolates_opt.webp"],
     fullCover: true,
     category: "new",
     badge: "NEW",
@@ -94,7 +78,7 @@ const ALL_COMBOS = [
     originalPrice: 70,
     save: 14,
     image: "",
-    images: ["/combo/dahiimage.webp"],
+    images: ["/combo/dahiimage_opt.webp"],
     fullCover: true,
     category: "new",
     badge: "NEW",
@@ -196,18 +180,18 @@ const ALL_COMBOS = [
 ];
 
 const CATEGORIES = [
-  { id: "all", label: "All Combos", count: ALL_COMBOS.length, icon: Sparkles },
-  { id: "dairy", label: "Dairy", count: ALL_COMBOS.filter(c => c.category === "dairy").length, icon: Utensils },
-  { id: "beverages", label: "Beverages", count: ALL_COMBOS.filter(c => c.category === "beverages").length, icon: Coffee },
-  { id: "bestseller", label: "Snacks", count: ALL_COMBOS.filter(c => c.category === "bestseller").length, icon: Star },
-  { id: "more", label: "More", count: 0, icon: LayoutGrid },
+  { id: "all", label: "All Combos", count: ALL_COMBOS.length },
+  { id: "dairy", label: "Dairy", count: ALL_COMBOS.filter(c => c.category === "dairy").length },
+  { id: "beverages", label: "Beverages", count: ALL_COMBOS.filter(c => c.category === "beverages").length },
+  { id: "bestseller", label: "Snacks", count: ALL_COMBOS.filter(c => c.category === "bestseller").length },
+  { id: "more", label: "More", count: 0 },
 ];
 
 const BENEFITS = [
-  { icon: Tag, title: "Best Prices", subtitle: "Guaranteed" },
-  { icon: Gift, title: "Curated", subtitle: "With Care" },
-  { icon: Percent, title: "Big Savings", subtitle: "Up to 40% Off" },
-  { icon: Clock, title: "Time Saver", subtitle: "Everything together" },
+  { title: "Best Prices", subtitle: "Guaranteed" },
+  { title: "Curated", subtitle: "With Care" },
+  { title: "Big Savings", subtitle: "Up to 40% Off" },
+  { title: "Time Saver", subtitle: "Everything together" },
 ];
 
 function ComboCard({
@@ -229,7 +213,7 @@ function ComboCard({
     <motion.div
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-white rounded-[24px] overflow-hidden flex-shrink-0 w-[220px] border border-slate-100 shadow-[0_4px_24px_rgba(0,0,0,0.04)] pb-4"
+      className="bg-white rounded-[24px] overflow-hidden flex-shrink-0 w-[220px] border border-slate-100 shadow-[0_4px_24px_rgba(0,0,0,0.04)] pb-4 flex flex-col"
     >
       <div 
         className="relative w-full h-[150px] flex flex-col justify-between p-3"
@@ -239,12 +223,6 @@ function ComboCard({
           <span className={`px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wide shadow-sm ${theme.badgeBg} ${theme.badgeText}`}>
             {combo.badge}
           </span>
-          <button
-            onClick={(e) => { e.stopPropagation(); onLike(); }}
-            className="w-7 h-7 rounded-full bg-white/60 backdrop-blur-md flex items-center justify-center shadow-sm active:scale-90 transition-transform"
-          >
-            <Heart className={`w-3.5 h-3.5 ${liked ? "fill-red-500 text-red-500" : "text-slate-500"}`} strokeWidth={2} />
-          </button>
         </div>
         <div className={`absolute inset-0 flex items-center justify-center ${combo.fullCover ? '' : 'pt-5'}`}>
           {combo.images && combo.images.length > 0 ? (
@@ -284,9 +262,9 @@ function ComboCard({
         </div>
       </div>
 
-      <div className="px-4 pt-3 pb-1">
+      <div className="px-4 pt-3 pb-1 flex-1 flex flex-col">
         <h3 className="text-[14px] font-black text-slate-900 leading-tight mb-0.5">{combo.name}</h3>
-        <p className="text-[11px] text-slate-500 font-medium line-clamp-1 mb-2 leading-snug">{combo.items}</p>
+        <p className="text-[11px] text-slate-500 font-medium mb-2 leading-snug">{combo.items}</p>
 
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-baseline gap-1.5">
@@ -302,7 +280,7 @@ function ComboCard({
         <motion.button
           onClick={onAdd}
           whileTap={{ scale: 0.97 }}
-          className="relative w-full h-11 rounded-2xl overflow-hidden flex items-center justify-center font-black text-[13px] tracking-wide"
+          className="relative w-full h-11 rounded-2xl overflow-hidden flex items-center justify-center font-black text-[13px] tracking-wide mt-auto"
           style={{
             background: "linear-gradient(90deg, #16a34a, #22c55e)"
           }}
@@ -330,7 +308,6 @@ function ComboCard({
                 transition={{ duration: 0.25 }}
                 className="flex items-center gap-2 text-white relative z-10"
               >
-                <CheckCircle2 className="w-4 h-4" strokeWidth={2.5} />
                 Added to Cart!
               </motion.div>
             ) : (
@@ -342,7 +319,6 @@ function ComboCard({
                 transition={{ duration: 0.2 }}
                 className="flex items-center gap-2 text-white relative z-10"
               >
-                <Plus className="w-4 h-4" strokeWidth={3} />
                 Add to Cart
               </motion.div>
             )}
@@ -377,7 +353,7 @@ export default function ComboStore() {
       id: combo.id,
       title: `${combo.name} (${combo.shop})`,
       price: combo.price,
-      image: theme.bg,
+      image: combo.images?.[0] || "",
       category: "shops",
     });
     toast.success(`${combo.name} added!`);
@@ -402,23 +378,16 @@ export default function ComboStore() {
 
   return (
     <div className="min-h-screen bg-white pb-28 md:hidden">
-      <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-xl pt-14 pb-4 px-4">
-        <div className="flex items-start justify-between mb-2">
+      <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-xl pt-14 pb-4 px-4 shadow-[0_10px_30px_rgba(0,0,0,0.04)]">
+        <div className="flex items-start justify-between mb-2 mt-2">
           <div className="flex flex-col">
-            <h1 className="text-[28px] font-black text-slate-900 leading-tight tracking-tight">Smarter Combos,</h1>
-            <div className="flex items-center gap-1.5">
-              <h1 className="text-[28px] font-black text-purple-600 leading-tight tracking-tight">Better Savings</h1>
-              <Sparkles className="w-5 h-5 text-purple-400" fill="#c084fc" />
-            </div>
-            <p className="text-[13px] text-slate-500 font-medium mt-1.5">Curated combos of your daily essentials</p>
+            <h1 className="text-[32px] font-black text-slate-900 leading-[1.1] tracking-tight">
+              Smarter Combos<br />
+              <span className="text-purple-600">Better Savings</span>
+            </h1>
           </div>
-          <button onClick={() => navigate("/cart")} className="relative w-12 h-12 rounded-[18px] bg-slate-50 flex items-center justify-center border border-slate-100 shadow-sm active:scale-95 transition-transform">
-            <ShoppingCart className="w-5 h-5 text-slate-700" strokeWidth={2} />
-            {totalItems > 0 && (
-              <span className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-purple-600 text-white text-[10px] font-black rounded-full flex items-center justify-center border-2 border-white shadow-sm">
-                {totalItems}
-              </span>
-            )}
+          <button onClick={() => navigate("/home")} className="w-12 h-12 rounded-full bg-slate-50 flex items-center justify-center border border-slate-100 shadow-sm active:scale-95 transition-transform text-slate-700">
+            <ArrowLeft className="w-6 h-6" strokeWidth={2.5} />
           </button>
         </div>
 
@@ -429,20 +398,19 @@ export default function ComboStore() {
               <button
                 key={cat.id}
                 onClick={() => cat.id !== "more" && setActiveCategory(cat.id)}
-                className={`flex-shrink-0 flex items-center gap-2.5 p-1.5 pr-4 rounded-[20px] transition-all active:scale-95 ${
+                className={`flex-shrink-0 flex items-center justify-center px-5 py-2.5 rounded-full transition-all active:scale-95 ${
                   isActive
-                    ? "bg-gradient-to-br from-[#7e22ce] to-[#6d28d9] text-white shadow-lg shadow-purple-600/30 border border-purple-500/50"
-                    : "bg-white border border-slate-100 text-slate-700 shadow-[0_2px_10px_rgba(0,0,0,0.03)]"
+                    ? "bg-purple-600 text-white shadow-lg shadow-purple-200"
+                    : "bg-slate-50 text-slate-500 border border-slate-100"
                 }`}
               >
-                <div className={`w-9 h-9 rounded-[14px] flex items-center justify-center ${isActive ? "bg-white/20" : "bg-slate-50 border border-slate-100"}`}>
-                  <cat.icon className={`w-4 h-4 ${isActive ? "text-white" : "text-slate-500"}`} />
-                </div>
-                <div className="flex flex-col items-start justify-center">
-                  <span className={`text-[12px] font-extrabold leading-tight ${isActive ? "text-white" : "text-slate-700"}`}>{cat.label}</span>
-                  {cat.count > 0 ? (
-                    <span className={`text-[10px] font-semibold leading-none mt-0.5 ${isActive ? "text-purple-200" : "text-slate-400"}`}>{cat.count}</span>
-                  ) : null}
+                <div className="flex items-center gap-2">
+                  <span className="text-[13px] font-black">{cat.label}</span>
+                  {cat.count > 0 && (
+                    <span className={`text-[10px] font-black px-1.5 py-0.5 rounded-md ${isActive ? "bg-white/20 text-white" : "bg-slate-200 text-slate-500"}`}>
+                      {cat.count}
+                    </span>
+                  )}
                 </div>
               </button>
             )
@@ -461,20 +429,22 @@ export default function ComboStore() {
               className="relative rounded-[24px] overflow-hidden shadow-[0_8px_30px_rgba(30,27,75,0.12)] cursor-pointer"
             >
               <img 
-                src="/comboimage1.png" 
+                src="/comboimage1.webp" 
                 alt="More Together, More Savings. Up to 40% OFF" 
                 className="w-full h-auto object-cover block" 
+                loading="eager"
+                decoding="async"
               />
             </motion.div>
 
             <section>
               <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2">
-                  <Sparkles className="w-5 h-5 text-purple-600" fill="#c084fc" />
-                  <h2 className="text-[18px] font-black text-slate-900 tracking-tight">New Combos</h2>
+                <div className="flex items-center gap-2.5">
+                  <div className="w-1 h-6 bg-purple-600 rounded-full" />
+                  <h2 className="text-[20px] font-black text-slate-900 tracking-tight">New Combos</h2>
                 </div>
-                <button onClick={() => setActiveCategory("new")} className="flex items-center gap-1 text-[13px] font-bold text-purple-600">
-                  View all <ArrowRight className="w-3.5 h-3.5" strokeWidth={2.5} />
+                <button onClick={() => setActiveCategory("new")} className="px-3.5 py-1.5 rounded-full bg-purple-50 text-[11px] font-black text-purple-600 active:scale-95 transition-transform">
+                  VIEW ALL
                 </button>
               </div>
               <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2 -mx-4 px-4">
@@ -484,15 +454,13 @@ export default function ComboStore() {
               </div>
             </section>
 
-            <div className="flex items-center justify-between py-4 px-1 my-4">
+            <div className="grid grid-cols-2 gap-3 my-6">
               {BENEFITS.map((b, i) => (
-                <div key={i} className="flex flex-col items-center gap-1.5 flex-1 text-center">
-                  <div className="w-10 h-10 rounded-full bg-purple-50 flex items-center justify-center border border-purple-100/50 mb-1">
-                    <b.icon className="w-4 h-4 text-purple-600" />
-                  </div>
+                <div key={i} className="flex items-center gap-3 p-3 rounded-[18px] bg-slate-50 border border-slate-100">
+                  <div className="w-1.5 h-1.5 rounded-full bg-purple-400" />
                   <div>
-                    <p className="text-[10px] font-bold text-slate-800">{b.title}</p>
-                    <p className="text-[8px] font-medium text-slate-500 leading-tight mt-0.5">{b.subtitle}</p>
+                    <p className="text-[11px] font-black text-slate-800 leading-none">{b.title}</p>
+                    <p className="text-[9px] font-semibold text-slate-400 leading-none mt-1.5">{b.subtitle}</p>
                   </div>
                 </div>
               ))}
@@ -500,12 +468,12 @@ export default function ComboStore() {
 
             <section>
               <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2">
-                  <Crown className="w-5 h-5 text-amber-500" fill="#f59e0b" />
-                  <h2 className="text-[18px] font-black text-slate-900 tracking-tight">Best Selling Combos</h2>
+                <div className="flex items-center gap-2.5">
+                  <div className="w-1 h-6 bg-amber-500 rounded-full" />
+                  <h2 className="text-[20px] font-black text-slate-900 tracking-tight">Best Selling Combos</h2>
                 </div>
-                <button onClick={() => setActiveCategory("bestseller")} className="flex items-center gap-1 text-[13px] font-bold text-purple-600">
-                  View all <ArrowRight className="w-3.5 h-3.5" strokeWidth={2.5} />
+                <button onClick={() => setActiveCategory("bestseller")} className="px-3.5 py-1.5 rounded-full bg-amber-50 text-[11px] font-black text-amber-600 active:scale-95 transition-transform">
+                  VIEW ALL
                 </button>
               </div>
               <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2 -mx-4 px-4">
@@ -517,12 +485,12 @@ export default function ComboStore() {
             
             <section>
               <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2">
-                  <Utensils className="w-5 h-5 text-blue-500" />
-                  <h2 className="text-[18px] font-black text-slate-900 tracking-tight">Dairy Combos</h2>
+                <div className="flex items-center gap-2.5">
+                  <div className="w-1 h-6 bg-blue-500 rounded-full" />
+                  <h2 className="text-[20px] font-black text-slate-900 tracking-tight">Dairy Combos</h2>
                 </div>
-                <button onClick={() => setActiveCategory("dairy")} className="flex items-center gap-1 text-[13px] font-bold text-purple-600">
-                  View all <ArrowRight className="w-3.5 h-3.5" strokeWidth={2.5} />
+                <button onClick={() => setActiveCategory("dairy")} className="px-3.5 py-1.5 rounded-full bg-blue-50 text-[11px] font-black text-blue-600 active:scale-95 transition-transform">
+                  VIEW ALL
                 </button>
               </div>
               <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2 -mx-4 px-4">
@@ -534,12 +502,12 @@ export default function ComboStore() {
 
             <section>
               <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2">
-                  <Coffee className="w-5 h-5 text-orange-500" />
-                  <h2 className="text-[18px] font-black text-slate-900 tracking-tight">Beverages</h2>
+                <div className="flex items-center gap-2.5">
+                  <div className="w-1 h-6 bg-orange-500 rounded-full" />
+                  <h2 className="text-[20px] font-black text-slate-900 tracking-tight">Beverages</h2>
                 </div>
-                <button onClick={() => setActiveCategory("beverages")} className="flex items-center gap-1 text-[13px] font-bold text-purple-600">
-                  View all <ArrowRight className="w-3.5 h-3.5" strokeWidth={2.5} />
+                <button onClick={() => setActiveCategory("beverages")} className="px-3.5 py-1.5 rounded-full bg-orange-50 text-[11px] font-black text-orange-600 active:scale-95 transition-transform">
+                  VIEW ALL
                 </button>
               </div>
               <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2 -mx-4 px-4">
@@ -559,23 +527,20 @@ export default function ComboStore() {
                     <div className="absolute top-2 left-2">
                       <span className={`px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-wide shadow-sm ${theme.badgeBg} ${theme.badgeText}`}>{combo.badge}</span>
                     </div>
-                    <button onClick={() => toggleLike(combo.id)} className="absolute top-2 right-2 w-6 h-6 rounded-full bg-white/60 backdrop-blur flex items-center justify-center">
-                      <Heart className={`w-3 h-3 ${likedIds.has(combo.id) ? "fill-red-500 text-red-500" : "text-slate-500"}`} strokeWidth={2} />
-                    </button>
                     <div className="text-6xl opacity-90">{combo.emoji}</div>
                   </div>
                   <div className="p-3 flex-1 flex flex-col justify-between">
                     <div>
                       <h3 className="text-[13px] font-black text-slate-900 mb-0.5 leading-tight">{combo.name}</h3>
-                      <p className="text-[10px] text-slate-400 line-clamp-2 mb-2 leading-snug">{combo.items}</p>
+                      <p className="text-[10px] text-slate-400 mb-2 leading-snug">{combo.items}</p>
                     </div>
                     <div className="flex items-center justify-between mt-auto">
                       <div>
                         <span className="text-[16px] font-black text-slate-900">₹{combo.price}</span>
                         <span className="text-[10px] text-slate-400 line-through ml-1 font-semibold">₹{combo.originalPrice}</span>
                       </div>
-                      <button onClick={() => handleAdd(combo)} className={`w-7 h-7 rounded-full flex items-center justify-center shadow-sm ${addedIds.has(combo.id) ? "bg-green-500" : theme.btnBg}`}>
-                        {addedIds.has(combo.id) ? <CheckCircle2 className="w-3.5 h-3.5 text-white" /> : <Plus className="w-3.5 h-3.5 text-white" strokeWidth={2.5} />}
+                      <button onClick={() => handleAdd(combo)} className={`px-3 py-1 rounded-full flex items-center justify-center shadow-sm text-[10px] font-black text-white ${addedIds.has(combo.id) ? "bg-green-500" : theme.btnBg}`}>
+                        {addedIds.has(combo.id) ? "ADDED" : "ADD"}
                       </button>
                     </div>
                   </div>
@@ -587,7 +552,7 @@ export default function ComboStore() {
 
         <div className="flex items-center justify-center pt-4 pb-6">
           <button onClick={() => navigate("/cart")} className="flex items-center gap-2.5 px-8 py-3.5 rounded-full bg-purple-600 text-white text-[14px] font-black shadow-xl shadow-purple-600/30 active:scale-95 transition-transform">
-            <ShoppingCart className="w-4 h-4" /> Go to Cart
+            GO TO CART
             {totalItems > 0 && <span className="ml-1 bg-white text-purple-600 text-[10px] font-black px-2 py-0.5 rounded-full">{totalItems}</span>}
           </button>
         </div>

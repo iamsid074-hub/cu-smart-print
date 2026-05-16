@@ -726,11 +726,11 @@ export default function Cart() {
                           exit={{ opacity: 0, scale: 0.95 }}
                           className={`flex gap-4 ${index !== items.length - 1 ? 'pb-6 border-b border-slate-50' : ''}`}
                         >
-                          <div className="w-[52px] h-[52px] md:w-48 md:h-48 md:rounded-3xl rounded-2xl bg-slate-50 overflow-hidden shrink-0 border border-slate-100 md:border-white/60 md:shadow-inner p-1 md:p-3 relative">
+                          <div className="w-[52px] h-[52px] md:w-48 md:h-48 md:rounded-3xl rounded-2xl bg-slate-50 overflow-hidden shrink-0 border border-slate-100 md:border-white/60 md:shadow-inner relative">
                             <img
                               src={item.image}
                               alt={item.title}
-                              className="w-full h-full object-cover rounded-xl md:rounded-2xl"
+                              className="w-full h-full object-cover"
                             />
                             {item.category === 'Vending Machine' && (
                               <div className="absolute -top-1 -right-1 md:top-3 md:right-3 w-3 h-3 md:w-5 md:h-5 bg-blue-500 rounded-full border-2 border-white shadow-sm"></div>
@@ -999,7 +999,7 @@ export default function Cart() {
   // Mobile Layout exactly matching iOS-style reference
   return (
     <div className="min-h-screen bg-[#F9F9F9] text-slate-900 pb-40 px-4 font-sans relative">
-      <div className="h-16" /> {/* Top safe area spacing */}
+      <div className="h-12" /> {/* Top safe area spacing */}
 
       {/* Modals for Mobile */}
       <RiskAlert
@@ -1056,21 +1056,17 @@ export default function Cart() {
       <UpiPaymentModal isOpen={showUpiModal} onClose={() => setShowUpiModal(false)} amount={orderTotal} orderIdText="Cart Order" onPaymentVerify={handleUpiPaymentVerify} />
 
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <button onClick={() => navigate('/home')} className="w-11 h-11 bg-white rounded-full flex items-center justify-center shadow-sm border border-slate-100 active:scale-95 transition-transform">
-          <ChevronLeft className="w-6 h-6 text-slate-700" />
-        </button>
-        <button className="w-11 h-11 flex items-center justify-center active:scale-95 transition-transform">
-          <Heart className="w-6 h-6 text-slate-700" />
-        </button>
-      </div>
-
-      <div className="mt-6 mb-8">
-        <h1 className="text-[32px] font-bold text-slate-900 tracking-tight">{showCheckout ? "Checkout" : "Your Cart"}</h1>
-        <div className="flex items-center gap-1.5 mt-1 opacity-70">
-          <ShieldCheck className="w-4 h-4 text-[#D99C4B]" />
-          <span className="text-[13px] font-medium text-slate-600">Secure • Fast • Easy Payments</span>
+      <div className="mt-6 mb-8 flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-[34px] font-black text-slate-900 tracking-tight leading-tight">{showCheckout ? "Checkout" : "Your Cart"}</h1>
+          <div className="flex items-center gap-1.5 mt-1 opacity-70">
+            <ShieldCheck className="w-4 h-4 text-[#D99C4B]" />
+            <span className="text-[13px] font-medium text-slate-600">Secure • Fast • Easy Payments</span>
+          </div>
         </div>
+        <button onClick={() => navigate('/home')} className="w-11 h-11 bg-white rounded-full flex items-center justify-center shadow-sm border border-slate-100 active:scale-95 transition-transform shrink-0 mt-1">
+          <ChevronLeft className="w-6 h-6 text-slate-700 translate-x-[-1px]" />
+        </button>
       </div>
 
       {showCheckout ? (
@@ -1172,7 +1168,7 @@ export default function Cart() {
           <div className="mt-8">
             <div className="flex items-center justify-between mb-4 px-1">
               <h2 className="text-[16px] font-bold text-slate-900">{totalItems} Items</h2>
-              {items.length > 0 && <button onClick={clearCart} className="text-[14px] font-bold text-[#D99C4B]">Edit</button>}
+              {items.length > 0 && <button onClick={clearCart} className="text-[14px] font-bold text-[#D99C4B]">Clear</button>}
             </div>
 
             {items.length === 0 ? (
@@ -1184,8 +1180,8 @@ export default function Cart() {
               <div className="bg-white rounded-[24px] shadow-sm border border-slate-100 divide-y divide-slate-100 overflow-hidden">
                 {items.map(item => (
                   <div key={item.id} className="p-4 flex gap-4 relative">
-                    <div className="w-[88px] h-[88px] bg-[#F5F5F7] rounded-[20px] p-2 flex items-center justify-center shrink-0 overflow-hidden">
-                      <img src={item.image} alt={item.title} className="w-full h-full object-contain mix-blend-multiply drop-shadow-sm" />
+                    <div className="w-[88px] h-[88px] bg-[#F5F5F7] rounded-[20px] flex items-center justify-center shrink-0 overflow-hidden">
+                      <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
                     </div>
                     <div className="flex-1 flex flex-col justify-between py-1">
                       <div className="flex justify-between items-start pr-1">

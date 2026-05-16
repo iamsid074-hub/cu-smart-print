@@ -20,10 +20,10 @@ interface AppDef {
 
 const GRID_APPS: AppDef[] = [
   { name: "Shops",    img: "/dock-shops.webp",       path: "/shops",            wiggleDelay: 0,    wiggleDuration: 0.18 },
-  { name: "Grocery",  img: "/cc_grocery.png",        path: "/grocery",          wiggleDelay: 0.03, wiggleDuration: 0.21 },
+  { name: "Grocery",  img: "/dock-grocery.webp",        path: "/grocery",          wiggleDelay: 0.03, wiggleDuration: 0.21 },
   { name: "Cart",     img: "/dock-cart.webp",        path: "/cart",             wiggleDelay: 0.07, wiggleDuration: 0.19 },
   { name: "Games",    img: "/dock-games.webp",       path: "/games",            wiggleDelay: 0.02, wiggleDuration: 0.18 },
-  { name: "Wallet",   img: "/cc_wallet.png",         path: "/wallet",           wiggleDelay: 0.05, wiggleDuration: 0.18 },
+  { name: "Wallet",   img: "/dock-wallet.webp",         path: "/wallet",           wiggleDelay: 0.05, wiggleDuration: 0.18 },
   { name: "Lock",      icon: Lock,      iconBg: "#1e293b",  iconColor: "#fff",      path: "lock",       wiggleDelay: 0.04, wiggleDuration: 0.19 },
   { name: "Wallpaper", icon: ImageIcon,  iconBg: "#4c1d95",  iconColor: "#c4b5fd",  path: "/wallpaper", wiggleDelay: 0.06, wiggleDuration: 0.20 },
 ];
@@ -299,7 +299,7 @@ const AppIcon = memo(function AppIcon({ app, index, isWiggling, onTap, size = 60
               <img
                 src={app.img}
                 alt={app.name}
-                className="w-full h-full object-cover"
+                className={`w-full h-full object-cover ${app.name === "Grocery" ? "scale-125" : ""}`}
                 draggable={false}
                 loading="eager"
                 decoding="async"
