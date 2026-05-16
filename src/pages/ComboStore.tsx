@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Plus,
@@ -43,7 +43,8 @@ const ALL_COMBOS = [
     originalPrice: 60,
     save: 11,
     image: "",
-    images: ["/combo/amulmilk26rs.png"],
+    images: ["/combo/amullmilk_hq.webp"],
+    fullCover: true,
     category: "new",
     badge: "NEW",
     shop: "Bazzar Grocery",
@@ -59,7 +60,8 @@ const ALL_COMBOS = [
     originalPrice: 80,
     save: 14,
     image: "",
-    images: ["/combo/pepsi400ml.png", "/combo/laysgreen25rs.png", "/combo/kurkurers25.png"],
+    images: ["/combo/snacksimage.webp"],
+    fullCover: true,
     category: "new",
     badge: "NEW",
     shop: "Bazzar Grocery",
@@ -92,7 +94,8 @@ const ALL_COMBOS = [
     originalPrice: 70,
     save: 14,
     image: "",
-    images: ["/combo/dahi.png"],
+    images: ["/combo/dahiimage.webp"],
+    fullCover: true,
     category: "new",
     badge: "NEW",
     shop: "Bazzar Grocery",
@@ -281,27 +284,70 @@ function ComboCard({
         </div>
       </div>
 
-      <div className="px-4 pt-3">
-        <h3 className="text-[14px] font-black text-slate-900 leading-tight mb-1">{combo.name}</h3>
-        <p className="text-[11px] text-slate-500 font-medium line-clamp-2 mb-3 leading-snug">{combo.items}</p>
-        
-        <div className="inline-flex items-center gap-1 bg-green-50 px-2 py-0.5 rounded-[6px] mb-3">
-          <span className="text-[10px] font-bold text-green-700">Save ₹{combo.save}</span>
-        </div>
+      <div className="px-4 pt-3 pb-1">
+        <h3 className="text-[14px] font-black text-slate-900 leading-tight mb-0.5">{combo.name}</h3>
+        <p className="text-[11px] text-slate-500 font-medium line-clamp-1 mb-2 leading-snug">{combo.items}</p>
 
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mb-3">
           <div className="flex items-baseline gap-1.5">
             <span className="text-[20px] font-black text-slate-900 tracking-tight">₹{combo.price}</span>
             <span className="text-[12px] text-slate-400 line-through font-semibold">₹{combo.originalPrice}</span>
           </div>
-          <motion.button
-            whileTap={{ scale: 0.88 }}
-            onClick={onAdd}
-            className={`w-9 h-9 rounded-full flex items-center justify-center shadow-md transition-all ${added ? "bg-green-500 shadow-green-500/30" : `${theme.btnBg} shadow-${theme.btnBg.replace('bg-', '')}/30`}`}
-          >
-            {added ? <CheckCircle2 className="w-5 h-5 text-white" /> : <Plus className="w-5 h-5 text-white" strokeWidth={2.5} />}
-          </motion.button>
+          <div className="inline-flex items-center gap-1 bg-green-50 px-2 py-0.5 rounded-[6px]">
+            <span className="text-[10px] font-bold text-green-700">Save ₹{combo.save}</span>
+          </div>
         </div>
+
+        {/* Full-width animated add button */}
+        <motion.button
+          onClick={onAdd}
+          whileTap={{ scale: 0.97 }}
+          className="relative w-full h-11 rounded-2xl overflow-hidden flex items-center justify-center font-black text-[13px] tracking-wide"
+          style={{
+            background: "linear-gradient(90deg, #16a34a, #22c55e)"
+          }}
+        >
+          {/* Ripple sweep animation on add */}
+          <AnimatePresence>
+            {added && (
+              <motion.div
+                key="sweep"
+                initial={{ x: "-100%" }}
+                animate={{ x: "0%" }}
+                transition={{ duration: 0.45, ease: "easeOut" }}
+                className="absolute inset-0 bg-white/20 rounded-2xl"
+              />
+            )}
+          </AnimatePresence>
+
+          <AnimatePresence mode="wait">
+            {added ? (
+              <motion.div
+                key="added"
+                initial={{ opacity: 0, scale: 0.7, y: 6 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.7, y: -6 }}
+                transition={{ duration: 0.25 }}
+                className="flex items-center gap-2 text-white relative z-10"
+              >
+                <CheckCircle2 className="w-4 h-4" strokeWidth={2.5} />
+                Added to Cart!
+              </motion.div>
+            ) : (
+              <motion.div
+                key="add"
+                initial={{ opacity: 0, scale: 0.7, y: 6 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.7, y: -6 }}
+                transition={{ duration: 0.2 }}
+                className="flex items-center gap-2 text-white relative z-10"
+              >
+                <Plus className="w-4 h-4" strokeWidth={3} />
+                Add to Cart
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.button>
       </div>
     </motion.div>
   );
