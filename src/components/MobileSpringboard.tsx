@@ -19,11 +19,11 @@ interface AppDef {
 }
 
 const GRID_APPS: AppDef[] = [
-  { name: "Shops",    img: "/dock-shops.webp",       path: "/shops",            wiggleDelay: 0,    wiggleDuration: 0.18 },
+  { name: "Shops",    img: "/logoshop_opt.webp",       path: "/shops",            wiggleDelay: 0,    wiggleDuration: 0.18 },
   { name: "Grocery",  img: "/dock-grocery.webp",        path: "/grocery",          wiggleDelay: 0.03, wiggleDuration: 0.21 },
-  { name: "Cart",     img: "/dock-cart.webp",        path: "/cart",             wiggleDelay: 0.07, wiggleDuration: 0.19 },
+  { name: "Cart",     img: "/logocart_opt.webp",        path: "/cart",             wiggleDelay: 0.07, wiggleDuration: 0.19 },
   { name: "Games",    img: "/dock-games.webp",       path: "/games",            wiggleDelay: 0.02, wiggleDuration: 0.18 },
-  { name: "Wallet",   img: "/dock-wallet.webp",         path: "/wallet",           wiggleDelay: 0.05, wiggleDuration: 0.18 },
+  { name: "Wallet",   img: "/logowallet_opt.webp",         path: "/wallet",           wiggleDelay: 0.05, wiggleDuration: 0.18 },
   { name: "Lock",      icon: Lock,      iconBg: "#1e293b",  iconColor: "#fff",      path: "lock",       wiggleDelay: 0.04, wiggleDuration: 0.19 },
   { name: "Wallpaper", icon: ImageIcon,  iconBg: "#4c1d95",  iconColor: "#c4b5fd",  path: "/wallpaper", wiggleDelay: 0.06, wiggleDuration: 0.20 },
 ];
@@ -40,10 +40,10 @@ const ADMIN_APP: AppDef = {
 
 
 const DOCK_APPS_BASE: AppDef[] = [
-  { name: "Home",     icon: IosHomeIcon,    path: "/home",     wiggleDelay: 0,    wiggleDuration: 0.18 },
-  { name: "Combos",   icon: IosCombosIcon,  path: "/combos",   wiggleDelay: 0.05, wiggleDuration: 0.18 },
-  { name: "Profile",  icon: IosProfileIcon, path: "/profile",  wiggleDelay: 0.02, wiggleDuration: 0.18 },
-  { name: "Settings", icon: IosSettingsIcon,path: "/settings", wiggleDelay: 0.07, wiggleDuration: 0.18 },
+  { name: "Home",     img: "/logohome_opt.webp",    path: "/home",     wiggleDelay: 0,    wiggleDuration: 0.18 },
+  { name: "Combos",   img: "/logo2_opt.webp",  path: "/combos",   wiggleDelay: 0.05, wiggleDuration: 0.18 },
+  { name: "Profile",  img: "/logo3_opt.webp", path: "/profile",  wiggleDelay: 0.02, wiggleDuration: 0.18 },
+  { name: "Settings", img: "/logosettings_opt.webp", path: "/settings", wiggleDelay: 0.07, wiggleDuration: 0.18 },
 ];
 
 
@@ -283,7 +283,7 @@ const AppIcon = memo(function AppIcon({ app, index, isWiggling, onTap, size = 60
             width: iconSize,
             height: iconSize,
             borderRadius: "22%",          // squircle proportional to size
-            boxShadow: "0 1px 0px rgba(255,255,255,0.22) inset, 0 0 0 0.5px rgba(0,0,0,0.15)",
+            boxShadow: "0 1px 0px rgba(255,255,255,0.22) inset",
             transform: "translateZ(0)",   // GPU layer
             WebkitTransform: "translateZ(0)",
             touchAction: "manipulation",  // kills 300ms tap delay on mobile
@@ -295,11 +295,11 @@ const AppIcon = memo(function AppIcon({ app, index, isWiggling, onTap, size = 60
           onPointerLeave={(e)=> { (e.currentTarget as HTMLDivElement).style.transform = "translateZ(0) scale(1)"; }}
         >
           {app.img ? (
-            <div className="w-full h-full bg-white">
+            <div className="w-full h-full">
               <img
                 src={app.img}
                 alt={app.name}
-                className={`w-full h-full object-cover ${app.name === "Grocery" ? "scale-125" : ""}`}
+                className={`w-full h-full object-cover ${app.name === "Grocery" ? "scale-125" : "scale-[1.18]"}`}
                 draggable={false}
                 loading="eager"
                 decoding="async"

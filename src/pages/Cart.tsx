@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { motion, AnimatePresence, useMotionValue, useTransform, animate } from "framer-motion";
 import {
   ShoppingCart,
@@ -291,6 +291,16 @@ export default function Cart() {
 
   const isCartFreeShipping = totalPrice >= 200;
   const isDeliveryFree = hasFreeDelivery || isCartFreeShipping;
+
+  const [showCelebration, setShowCelebration] = useState(false);
+  const prevFreeShipping = useRef(false);
+  useEffect(() => {
+    if (isCartFreeShipping && !prevFreeShipping.current) {
+      setShowCelebration(true);
+      setTimeout(() => setShowCelebration(false), 1200);
+    }
+    prevFreeShipping.current = isCartFreeShipping;
+  }, [isCartFreeShipping]);
 
   const deliveryFee = useMemo(() => (items.length === 0 ? 0 : isDeliveryFree
     ? 0
@@ -1138,7 +1148,58 @@ export default function Cart() {
       ) : (
         <>
           {/* Progress Widget */}
-          <div className="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 flex flex-col gap-3">
+          <div className="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 flex flex-col gap-3 relative overflow-hidden">
+            {/* ── Confetti Burst Animation ── */}
+            <AnimatePresence>
+              {showCelebration && (
+                <motion.div
+                  key="confetti-burst"
+                  initial={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="absolute inset-0 z-20 rounded-2xl pointer-events-none overflow-hidden"
+                >
+                  {Array.from({ length: 32 }).map((_, i) => {
+                    const colors = ["#FF4D94","#FFD700","#00C6FB","#A78BFA","#34D399","#F97316","#F43F5E","#06B6D4","#FBBF24","#8B5CF6"];
+                    const color = colors[i % colors.length];
+                    const angle = (i / 32) * 360;
+                    const rad = (angle * Math.PI) / 180;
+                    const speed = 55 + (i % 5) * 18;
+                    const tx = Math.cos(rad) * speed;
+                    const ty = Math.sin(rad) * speed - 20;
+                    const isCircle = i % 3 === 0;
+                    const size = 5 + (i % 4) * 3;
+                    const initialRotate = (i * 47) % 360;
+                    return (
+                      <motion.div
+                        key={i}
+                        initial={{ x: 0, y: 0, opacity: 1, scale: 1, rotate: initialRotate }}
+                        animate={{
+                          x: tx,
+                          y: ty,
+                          opacity: [1, 1, 0.7, 0],
+                          scale: [1, 1.1, 0.8, 0.5],
+                          rotate: initialRotate + (i % 2 === 0 ? 180 : -180),
+                        }}
+                        transition={{ duration: 1.0, ease: [0.22, 1, 0.36, 1], delay: i * 0.012 }}
+                        style={{
+                          position: "absolute",
+                          top: "50%",
+                          left: "50%",
+                          width: isCircle ? size : size * 0.6,
+                          height: isCircle ? size : size * 1.8,
+                          marginLeft: -(isCircle ? size : size * 0.6) / 2,
+                          marginTop: -size / 2,
+                          backgroundColor: color,
+                          borderRadius: isCircle ? "50%" : "2px",
+                        }}
+                      />
+                    );
+                  })}
+                </motion.div>
+              )}
+            </AnimatePresence>
+
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-[#fcf8f2] flex items-center justify-center shrink-0">

@@ -9,13 +9,13 @@ type DockItemWithIcon = { name: string; path: string; icon: React.ElementType; c
 type DockItem = DockItemWithImg | DockItemWithIcon;
 
 const dockItemsRaw: DockItem[] = [
-  { name: "Home",     path: "/home",            img: "/dock-home.webp" },
-  { name: "Shops",    path: "/shops",  img: "/dock-shops.webp" },
-  { name: "Combos",   path: "/search", img: "/dock-combos.webp" },
+  { name: "Home",     path: "/home",            img: "/logohome_opt.webp" },
+  { name: "Shops",    path: "/shops",  img: "/logoshop_opt.webp" },
+  { name: "Combos",   path: "/search", img: "/logo2_opt.webp" },
   { name: "Games",    path: "/games",            img: "/dock-games.webp" },
-  { name: "Cart",     path: "/cart",             img: "/dock-cart.webp" },
-  { name: "Profile",  path: "/profile",          img: "/dock-profile.webp", imgClass: "scale-[1.15]" },
-  { name: "Settings", path: "/settings",         img: "/dock-settings-v2.webp" },
+  { name: "Cart",     path: "/cart",             img: "/logocart_opt.webp" },
+  { name: "Profile",  path: "/profile",          img: "/logo3_opt.webp" },
+  { name: "Settings", path: "/settings",         img: "/logosettings_opt.webp" },
 ];
 
 const ADMIN_DOCK_ITEM: DockItem = { 
