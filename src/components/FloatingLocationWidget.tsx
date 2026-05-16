@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MapPin, Check, ChevronRight, Building2, DoorOpen, X, Loader2, CheckCircle, Navigation } from "lucide-react";
+import { MapPin, Check, ChevronRight, Building2, DoorOpen, X, Loader2, CheckCircle, Navigation, Phone } from "lucide-react";
 import { useUserLocation } from "@/hooks/useUserLocation";
 import { toast } from "sonner";
 
@@ -24,6 +24,7 @@ export default function FloatingLocationWidget() {
   const location = useLocation();
   const [hostel, setHostel] = useState("");
   const [room, setRoom] = useState("");
+  const [phone, setPhone] = useState("");
   const [isExpanded, setIsExpanded] = useState(false);
   const widgetRef = useRef<HTMLDivElement>(null);
   const [isSaving, setIsSaving] = useState(false);
@@ -32,17 +33,23 @@ export default function FloatingLocationWidget() {
     if (isLoaded && data) {
       setHostel(data.hostel || "");
       setRoom(data.room || "");
+      setPhone(data.phone || "");
     }
   }, [isLoaded, data]);
 
   const handleSave = () => {
+    const cleanPhone = phone.replace(/\D/g, "").slice(0, 10);
     if (!hostel || !room) {
       toast.error("Please select your hostel and room number");
       return;
     }
+    if (cleanPhone.length !== 10) {
+      toast.error("Please enter a valid 10-digit phone number");
+      return;
+    }
     setIsSaving(true);
     setTimeout(() => {
-      saveLocation({ hostel, room, phone: data?.phone || "" });
+      saveLocation({ hostel, room, phone: cleanPhone });
       setIsSaving(false);
       setIsExpanded(false);
       toast.success("Delivery address updated successfully!");
@@ -91,7 +98,7 @@ export default function FloatingLocationWidget() {
               initial={{ opacity: 0, scale: 0.9, y: 40 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 40 }}
-              className="relative w-full max-w-4xl h-auto min-h-[600px] rounded-[3.5rem] overflow-hidden border border-white/40 flex flex-col xl:flex-row"
+              className="relative w-full max-w-4xl h-auto min-h-[720px] rounded-[3.5rem] overflow-hidden border border-white/40 flex flex-col xl:flex-row"
               style={{ 
                 background: "rgba(255, 255, 255, 0.45)",
                 backdropFilter: "blur(60px) saturate(210%)",
@@ -150,7 +157,7 @@ export default function FloatingLocationWidget() {
                       </div>
                     </div>
 
-                    <div className="space-y-8 max-h-[350px] overflow-y-auto pr-2 scrollbar-hide">
+                    <div className="space-y-8 max-h-[280px] overflow-y-auto pr-2 scrollbar-hide">
                       {HOSTEL_GROUPS.map((group) => (
                         <div key={group.name} className="space-y-4">
                           <div className="flex items-center justify-between">
@@ -191,6 +198,25 @@ export default function FloatingLocationWidget() {
                         onChange={(e) => setRoom(e.target.value.replace(/\D/g, ""))}
                         placeholder="Enter your room number (e.g. 402)"
                         className="w-full h-16 bg-white/40 border border-white/60 rounded-[1.5rem] pl-16 pr-8 text-lg font-bold text-gray-900 focus:outline-none focus:ring-8 focus:ring-blue-600/10 focus:bg-white/80 transition-all placeholder:text-gray-400"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Phone Number Entry */}
+                  <div className="space-y-4">
+                    <h4 className="text-lg font-black text-gray-900 px-1">Phone Number</h4>
+                    <div className="relative">
+                      <div className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-400">
+                        <Phone className="w-6 h-6" />
+                      </div>
+                      <span className="absolute left-16 top-1/2 -translate-y-1/2 text-gray-500 font-bold text-lg">+91</span>
+                      <input
+                        type="tel"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value.replace(/\D/g, "").slice(0, 10))}
+                        placeholder="9876543210"
+                        maxLength={10}
+                        className="w-full h-16 bg-white/40 border border-white/60 rounded-[1.5rem] pl-28 pr-8 text-lg font-bold text-gray-900 focus:outline-none focus:ring-8 focus:ring-blue-600/10 focus:bg-white/80 transition-all placeholder:text-gray-400"
                       />
                     </div>
                   </div>
