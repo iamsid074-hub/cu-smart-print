@@ -6,6 +6,7 @@ import { Coffee, Wallet as WalletIcon, ShieldAlert, Lock, Search, Image as Image
 import { useWallpaper } from "../contexts/WallpaperContext";
 import { IosHomeIcon, IosCombosIcon, IosProfileIcon, IosSettingsIcon } from "./HighFidelityIcons";
 import OnboardingTour from "./OnboardingTour";
+import { ease, spring as motionSpring } from "@/lib/motion";
 
 
 interface AppDef {
