@@ -57,18 +57,25 @@ export default function MobileAppLibrary({ onTap, apps }: MobileAppLibraryProps)
     <div className="w-full h-full flex flex-col px-6">
       {/* Search Bar */}
       <div className="mt-16 mb-6">
-        <div className="bg-slate-850/15 backdrop-blur-2xl rounded-2xl h-12 flex items-center px-4 gap-3 border border-slate-950/5 shadow-[0_4px_12px_rgba(0,0,0,0.03)]" style={{ backgroundColor: "rgba(30, 41, 59, 0.12)" }}>
-          <Search className="w-5 h-5 text-slate-600/90 flex-shrink-0" />
+        <div 
+          className="backdrop-blur-2xl rounded-2xl h-12 flex items-center px-4 gap-3" 
+          style={{ 
+            backgroundColor: "rgba(255, 255, 255, 0.45)",
+            border: "1.5px solid rgba(15, 23, 42, 0.15)",
+            boxShadow: "0 8px 24px rgba(15, 23, 42, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.4)"
+          }}
+        >
+          <Search className="w-5 h-5 text-slate-800 flex-shrink-0" />
           <input 
             type="text"
             value={searchQuery}
             placeholder="App Library"
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="bg-transparent border-none outline-none text-slate-800 text-[15px] w-full placeholder-slate-500/85 font-semibold"
+            className="bg-transparent border-none outline-none text-slate-900 text-[15px] w-full placeholder-slate-600 font-extrabold"
           />
           {searchQuery && (
-            <button onClick={() => setSearchQuery("")} className="p-1 hover:bg-black/5 rounded-full">
-              <X className="w-4 h-4 text-slate-600" />
+            <button onClick={() => setSearchQuery("")} className="p-1 hover:bg-slate-950/10 rounded-full">
+              <X className="w-4 h-4 text-slate-800" />
             </button>
           )}
         </div>
@@ -123,8 +130,12 @@ export default function MobileAppLibrary({ onTap, apps }: MobileAppLibraryProps)
             return (
               <div key={idx} className="flex flex-col gap-2">
                 <div 
-                  className="bg-slate-800/10 backdrop-blur-2xl rounded-[32px] p-3 grid grid-cols-2 grid-rows-2 gap-2 aspect-square border border-slate-950/5 shadow-xl relative"
-                  style={{ background: "rgba(30, 41, 59, 0.08)" }}
+                  className="backdrop-blur-2xl rounded-[32px] p-3 grid grid-cols-2 grid-rows-2 gap-2 aspect-square relative"
+                  style={{ 
+                    background: "rgba(255, 255, 255, 0.42)",
+                    border: "1.5px solid rgba(15, 23, 42, 0.15)",
+                    boxShadow: "0 12px 30px rgba(15, 23, 42, 0.08), inset 0 1px 1px rgba(255, 255, 255, 0.4)"
+                  }}
                 >
                   {/* Empty state placeholder */}
                   {folderApps.length === 0 ? (
@@ -151,7 +162,7 @@ export default function MobileAppLibrary({ onTap, apps }: MobileAppLibraryProps)
                       ))}
                       {/* Empty placeholders to preserve grid structure if less than 4 */}
                       {Array.from({ length: 4 - folderApps.length }).map((_, i) => (
-                        <div key={i} className="w-full h-full rounded-2xl bg-slate-950/5 border border-slate-950/5" />
+                        <div key={i} className="w-full h-full rounded-2xl bg-slate-950/8 border border-slate-950/5" />
                       ))}
                     </>
                   ) : (
@@ -174,7 +185,7 @@ export default function MobileAppLibrary({ onTap, apps }: MobileAppLibraryProps)
                       ))}
                       {/* 4th quadrant is a mini 2x2 grid */}
                       <div 
-                        className="w-full h-full rounded-2xl bg-slate-950/5 border border-slate-950/5 p-1.5 grid grid-cols-2 gap-1 cursor-pointer active:scale-95 transition-transform"
+                        className="w-full h-full rounded-2xl bg-slate-950/8 border border-slate-950/5 p-1.5 grid grid-cols-2 gap-1 cursor-pointer active:scale-95 transition-transform"
                         onClick={() => setActiveFolder({ title, apps: folderApps })}
                       >
                         {folderApps.slice(3, 7).map(app => (
@@ -192,7 +203,12 @@ export default function MobileAppLibrary({ onTap, apps }: MobileAppLibraryProps)
                     </>
                   )}
                 </div>
-                <span className="text-slate-800/90 text-[11px] font-extrabold text-center tracking-wider uppercase px-2 truncate drop-shadow-sm">
+                <span 
+                  className="text-slate-900 text-[11px] font-black text-center tracking-wider uppercase px-2 truncate"
+                  style={{
+                    textShadow: "0 1px 3px rgba(255, 255, 255, 0.85)"
+                  }}
+                >
                   {title}
                 </span>
               </div>
