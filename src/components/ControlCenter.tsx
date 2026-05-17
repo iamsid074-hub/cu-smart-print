@@ -1,12 +1,13 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   User, Wallet, ShoppingBag, Settings,
   Gamepad2, Search, Grid, Bell, Package, ShoppingCart, Wifi, Zap,
   ShieldAlert
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useSystemStatus } from "@/hooks/useSystemStatus";
 
 // Glassmorphic tile — translucent + blur, light gradient overlay
 const GLASS = {
@@ -81,7 +82,12 @@ const IosStatusBar = () => {
 
 export default function ControlCenter() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user } = useAuth();
+
+  const path = location.pathname.toLowerCase();
+  const isExcludedPage = path === "/" || path === "/login" || path.startsWith("/admin");
+
   const isSuperAdmin = user?.email === "iamsid074@gmail.com";
   const [showCards, setShowCards] = useState(false);
 
@@ -142,14 +148,22 @@ export default function ControlCenter() {
     setY(getClosedY(), true);
   }, [setY]);
 
+  // Page exclusion handlers
+  useEffect(() => {
+    if (isExcludedPage && isOpenRef.current) {
+      close();
+    }
+  }, [isExcludedPage, close]);
+
+  useEffect(() => {
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, []);
+
   // ── Pointer events (unified mouse + touch) ──────────────────────────────
   const onPointerDown = useCallback((e: PointerEvent) => {
-    // Only start from top 10px when closed
     if (isOpenRef.current) return;
-    if (e.clientY > 10) return;
-    // On desktop (non-touch), only allow trigger from the right side (rightmost 220px)
-    const isTouch = e.pointerType === "touch";
-    if (!isTouch && e.clientX < window.innerWidth - 220) return;
     isDragging.current = true;
     dragStartY.current = e.clientY;
     dragStartPanelY.current = currentPanelY.current;
@@ -164,9 +178,14 @@ export default function ControlCenter() {
   const onPointerMove = useCallback((e: PointerEvent) => {
     if (!isDragging.current || isOpenRef.current) return;
     const dy = e.clientY - dragStartY.current;
-    let newY = dragStartPanelY.current + dy;
-    if (newY > 0) newY = newY * 0.08; // resistance
-    setY(newY, false); // false = instant drag, no transition delay
+    
+    // Smooth progress based pull down
+    const targetDragDistance = 350; // Pull down 350px to fully open
+    const pct = Math.max(0, Math.min(1, dy / targetDragDistance));
+    const closedY = getClosedY();
+    const newY = closedY + pct * Math.abs(closedY);
+    
+    setY(newY, false); // instant drag tracking
   }, [setY]);
 
   const onPointerUp = useCallback((e: PointerEvent) => {
@@ -175,7 +194,7 @@ export default function ControlCenter() {
     const dy = e.clientY - dragStartY.current;
     const dt = performance.now() - dragStartTime.current;
     const vel = dy / dt;
-    if (vel > 0.25 || dy > 80) open(); else close();
+    if (vel > 0.25 || dy > 100) open(); else close();
   }, [open, close]);
 
   // ── Panel drag-up to close ──────────────────────────────────────────────
@@ -277,31 +296,19 @@ export default function ControlCenter() {
     hide: { opacity: 0, scale: 0.9, transition: { duration: 0.12 } },
   };
 
+  if (isExcludedPage) return null;
+
   return (
     <>
-      {/* Hit zone — full width on mobile, right-side-only on desktop (md+) */}
+      {/* Hit zone — time-side (left) top bar zone (Time is on the left) */}
       <div
         ref={hitRef}
-        className="fixed top-0 z-[100001]"
+        className="fixed top-0 left-0 z-[100001]"
         style={{
-          height: 35,
+          height: 48,
           touchAction: "none",
           cursor: "ns-resize",
-          // On desktop: only occupy the right 220px (matching the system status icons)
-          right: 0,
-          left: "auto",
-          width: "clamp(50px, 100%, 220px)",
-        }}
-      />
-      {/* Mobile: additional full-width hit zone (pointer-events only for touch) */}
-      <div
-        className="fixed top-0 inset-x-0 z-[100000] md:hidden"
-        style={{ height: 35, touchAction: "none" }}
-        onPointerDown={(e) => {
-          if (e.pointerType !== "touch") return;
-          (hitRef.current as any)?.dispatchEvent(
-            new PointerEvent("pointerdown", e.nativeEvent)
-          );
+          width: 140, // Left 140px (exactly where time is rendered)
         }}
       />
 
