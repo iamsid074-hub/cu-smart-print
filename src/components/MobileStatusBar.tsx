@@ -47,6 +47,7 @@ export default function MobileStatusBar() {
     >
       {/* ── Time (left) ── */}
       <span
+        id="tour-time-trigger"
         className="tracking-wide"
         style={{
           transform: isChargingAlert

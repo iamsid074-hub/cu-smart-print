@@ -5,7 +5,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Coffee, Wallet as WalletIcon, ShieldAlert, Lock, Search, Image as ImageIcon } from "lucide-react";
 import { useWallpaper } from "../contexts/WallpaperContext";
 import { IosHomeIcon, IosCombosIcon, IosProfileIcon, IosSettingsIcon } from "./HighFidelityIcons";
-import { ease, spring as motionSpring } from "@/lib/motion";
+import OnboardingTour from "./OnboardingTour";
+
 
 interface AppDef {
   name: string;
@@ -76,6 +77,14 @@ export default function MobileSpringboard() {
   const [isWiggling, setIsWiggling]   = useState(false);
   const [time, setTime]               = useState(new Date());
   const [activeFolder, setActiveFolder] = useState<FolderDef | null>(null);
+  const [showOnboarding, setShowOnboarding] = useState(false);
+
+  useEffect(() => {
+    const tourCompleted = localStorage.getItem("bazzar_onboarding_completed");
+    if (tourCompleted !== "true") {
+      setShowOnboarding(true);
+    }
+  }, []);
   
   const longPressRef                  = useRef<ReturnType<typeof setTimeout> | null>(null);
   const touchStartX                   = useRef(0);
@@ -450,7 +459,9 @@ export default function MobileSpringboard() {
             </motion.div>
           </motion.div>
         )}
-      </AnimatePresence>
+      {showOnboarding && (
+        <OnboardingTour onClose={() => setShowOnboarding(false)} />
+      )}
     </div>
   );
 }
@@ -482,7 +493,7 @@ const AppIcon = memo(function AppIcon({ app, index, isWiggling, onTap, onOpenFol
 
   return (
     <motion.div
-      className="flex flex-col items-center gap-[6px]"
+      className={`flex flex-col items-center gap-[6px] tour-app-${app.name.toLowerCase().replace(/\s+/g, '-')}`}
       initial={{ opacity: 0, scale: 0.6 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{
