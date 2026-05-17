@@ -63,12 +63,6 @@ export default function Games() {
           <ArrowLeft size={18} strokeWidth={2} />
           <span className="text-xs font-bold uppercase tracking-widest">Back</span>
         </button>
-
-        <span
-          className="text-[10px] font-black uppercase tracking-[0.2em] text-white/20"
-        >
-          STARTING ON 1 MAY
-        </span>
       </div>
 
       {/* ── Page content — padded below fixed header ── */}

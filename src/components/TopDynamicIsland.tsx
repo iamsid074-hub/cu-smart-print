@@ -907,21 +907,13 @@ const TopDynamicIsland = memo(({ onSell }: TopDynamicIslandProps) => {
           </div>
         );
       } else {
-        content = (
-          <span className="text-[11px] font-black tracking-widest text-white/90 uppercase z-10 drop-shadow-md whitespace-nowrap">
-            {location.pathname.startsWith('/games') ? 'STARTING ON 1 MAY' : ''}
-          </span>
-        );
+        content = null;
       }
       break;
 
     default:
-      width = location.pathname.startsWith('/games') ? 200 : 160;
-      content = (
-          <span className="text-[11px] font-black tracking-widest text-white/90 uppercase z-10 drop-shadow-md whitespace-nowrap">
-            {location.pathname.startsWith('/games') ? 'STARTING ON 1 MAY' : ''}
-          </span>
-      );
+      width = 160;
+      content = null;
       break;
   }
 
