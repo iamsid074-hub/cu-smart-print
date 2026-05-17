@@ -60,9 +60,9 @@ export default function MobileAppLibrary({ onTap, apps }: MobileAppLibraryProps)
         <div 
           className="backdrop-blur-2xl rounded-2xl h-12 flex items-center px-4 gap-3" 
           style={{ 
-            backgroundColor: "rgba(255, 255, 255, 0.45)",
-            border: "1.5px solid rgba(15, 23, 42, 0.15)",
-            boxShadow: "0 8px 24px rgba(15, 23, 42, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.4)"
+            backgroundColor: "rgba(255, 255, 255, 0.65)",
+            border: "1.5px solid rgba(255, 255, 255, 0.45)",
+            boxShadow: "0 10px 24px rgba(15, 23, 42, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.6)"
           }}
         >
           <Search className="w-5 h-5 text-slate-800 flex-shrink-0" />
@@ -71,7 +71,7 @@ export default function MobileAppLibrary({ onTap, apps }: MobileAppLibraryProps)
             value={searchQuery}
             placeholder="App Library"
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="bg-transparent border-none outline-none text-slate-900 text-[15px] w-full placeholder-slate-600 font-extrabold"
+            className="bg-transparent border-none outline-none text-slate-950 text-[15px] w-full placeholder-slate-600 font-extrabold"
           />
           {searchQuery && (
             <button onClick={() => setSearchQuery("")} className="p-1 hover:bg-slate-950/10 rounded-full">
@@ -132,9 +132,9 @@ export default function MobileAppLibrary({ onTap, apps }: MobileAppLibraryProps)
                 <div 
                   className="backdrop-blur-2xl rounded-[32px] p-3 grid grid-cols-2 grid-rows-2 gap-2 aspect-square relative"
                   style={{ 
-                    background: "rgba(255, 255, 255, 0.42)",
-                    border: "1.5px solid rgba(15, 23, 42, 0.15)",
-                    boxShadow: "0 12px 30px rgba(15, 23, 42, 0.08), inset 0 1px 1px rgba(255, 255, 255, 0.4)"
+                    background: "rgba(255, 255, 255, 0.62)",
+                    border: "1.5px solid rgba(255, 255, 255, 0.45)",
+                    boxShadow: "0 14px 28px rgba(15, 23, 42, 0.15), 0 4px 10px rgba(0, 0, 0, 0.08), inset 0 1px 1px rgba(255, 255, 255, 0.6)"
                   }}
                 >
                   {/* Empty state placeholder */}
@@ -204,9 +204,9 @@ export default function MobileAppLibrary({ onTap, apps }: MobileAppLibraryProps)
                   )}
                 </div>
                 <span 
-                  className="text-slate-900 text-[11px] font-black text-center tracking-wider uppercase px-2 truncate"
+                  className="text-slate-950 text-[11px] font-black text-center tracking-wider uppercase px-2 truncate drop-shadow-md"
                   style={{
-                    textShadow: "0 1px 3px rgba(255, 255, 255, 0.85)"
+                    textShadow: "0 1px 4px rgba(255, 255, 255, 0.95), 0 0 1px rgba(255, 255, 255, 0.8)"
                   }}
                 >
                   {title}

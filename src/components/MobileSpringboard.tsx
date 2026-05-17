@@ -523,11 +523,11 @@ const AppIcon = memo(function AppIcon({ app, index, isWiggling, onTap, onOpenFol
             <div 
               className="w-full h-full grid grid-cols-3 gap-1.5 p-2.5 items-center justify-items-center"
               style={{
-                background: "rgba(255, 255, 255, 0.42)",
+                background: "rgba(255, 255, 255, 0.62)",
                 backdropFilter: "blur(20px)",
                 WebkitBackdropFilter: "blur(20px)",
-                border: "1px solid rgba(15, 23, 42, 0.15)",
-                boxShadow: "0 4px 12px rgba(15, 23, 42, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.4)"
+                border: "1px solid rgba(255, 255, 255, 0.45)",
+                boxShadow: "0 6px 16px rgba(15, 23, 42, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.5)"
               }}
             >
               {(app as FolderDef).apps.slice(0, 9).map((miniApp, i) => (
