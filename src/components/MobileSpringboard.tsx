@@ -459,6 +459,7 @@ export default function MobileSpringboard() {
             </motion.div>
           </motion.div>
         )}
+      </AnimatePresence>
       {showOnboarding && (
         <OnboardingTour onClose={() => setShowOnboarding(false)} />
       )}
