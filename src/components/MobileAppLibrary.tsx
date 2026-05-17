@@ -76,7 +76,13 @@ export default function MobileAppLibrary({ onTap, apps }: MobileAppLibraryProps)
 
       {searchQuery ? (
         /* Real-time Search Results View */
-        <div className="flex-grow overflow-y-auto pb-20">
+        <div 
+          className="flex-grow overflow-y-auto pb-20 scrollbar-hide pt-2"
+          style={{
+            maskImage: "linear-gradient(to bottom, transparent 0%, black 24px, black calc(100% - 24px), transparent 100%)",
+            WebkitMaskImage: "linear-gradient(to bottom, transparent 0%, black 24px, black calc(100% - 24px), transparent 100%)"
+          }}
+        >
           <div className="flex flex-col gap-3">
             {apps
               .filter(app => app.name.toLowerCase().includes(searchQuery.toLowerCase()))
@@ -84,7 +90,7 @@ export default function MobileAppLibrary({ onTap, apps }: MobileAppLibraryProps)
                 <div 
                   key={app.name}
                   onClick={() => onTap(app.path)}
-                  className="flex items-center gap-4 bg-white/5 hover:bg-white/10 p-3 rounded-2xl border border-white/5 transition-colors cursor-pointer active:scale-[0.98]"
+                  className="flex items-center gap-4 bg-slate-800/10 hover:bg-slate-800/15 p-3 rounded-2xl border border-slate-800/10 transition-colors cursor-pointer active:scale-[0.98]"
                 >
                   <div className="w-12 h-12 rounded-[12px] overflow-hidden flex-shrink-0 relative">
                     {app.img ? (
@@ -95,17 +101,23 @@ export default function MobileAppLibrary({ onTap, apps }: MobileAppLibraryProps)
                       </div>
                     )}
                   </div>
-                  <span className="text-white font-bold text-[14px]">{app.name}</span>
+                  <span className="text-slate-800 font-extrabold text-[14px] drop-shadow-sm">{app.name}</span>
                 </div>
               ))}
             {apps.filter(app => app.name.toLowerCase().includes(searchQuery.toLowerCase())).length === 0 && (
-              <div className="text-center text-white/40 py-10">No apps found for "{searchQuery}"</div>
+              <div className="text-center text-slate-700/60 font-bold py-10">No apps found for "{searchQuery}"</div>
             )}
           </div>
         </div>
       ) : (
         /* Folders Grid View */
-        <div className="grid grid-cols-2 gap-4 pb-20 overflow-y-auto">
+        <div 
+          className="grid grid-cols-2 gap-4 pb-20 overflow-y-auto scrollbar-hide pt-2"
+          style={{
+            maskImage: "linear-gradient(to bottom, transparent 0%, black 24px, black calc(100% - 24px), transparent 100%)",
+            WebkitMaskImage: "linear-gradient(to bottom, transparent 0%, black 24px, black calc(100% - 24px), transparent 100%)"
+          }}
+        >
           {folderTitles.map((title, idx) => {
             const folderApps = categorizedFolders[idx] || [];
             return (
@@ -206,10 +218,10 @@ export default function MobileAppLibrary({ onTap, apps }: MobileAppLibraryProps)
               transition={{ type: "spring", damping: 25, stiffness: 230 }}
               className="w-full max-w-[340px] rounded-[36px] p-6 flex flex-col items-center"
               style={{
-                background: "rgba(255, 255, 255, 0.15)",
-                backdropFilter: "blur(20px)",
-                WebkitBackdropFilter: "blur(20px)",
-                border: "1px solid rgba(255, 255, 255, 0.2)",
+                background: "rgba(15, 23, 42, 0.65)",
+                backdropFilter: "blur(25px)",
+                WebkitBackdropFilter: "blur(25px)",
+                border: "1px solid rgba(255, 255, 255, 0.1)",
                 boxShadow: "0 24px 48px rgba(0,0,0,0.3)"
               }}
               onClick={(e) => e.stopPropagation()}

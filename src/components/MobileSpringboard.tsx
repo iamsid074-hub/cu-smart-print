@@ -287,7 +287,11 @@ export default function MobileSpringboard() {
             {contentPages.map((pageApps, pageIdx) => (
               <div
                 key={pageIdx}
-                className="w-screen flex-shrink-0 flex flex-col h-full overflow-y-auto pb-[150px]"
+                className="w-screen flex-shrink-0 flex flex-col h-full overflow-y-auto pb-[150px] scrollbar-hide"
+                style={{
+                  maskImage: "linear-gradient(to bottom, transparent 0%, black 24px, black calc(100% - 24px), transparent 100%)",
+                  WebkitMaskImage: "linear-gradient(to bottom, transparent 0%, black 24px, black calc(100% - 24px), transparent 100%)"
+                }}
               >
                 <div className={`grid grid-cols-4 gap-y-7 gap-x-2 px-5 ${pageIdx === 0 ? 'pt-28' : 'pt-32'} content-start`}>
                   {pageApps.map((app, i) => (
@@ -313,58 +317,68 @@ export default function MobileSpringboard() {
         </div>
 
         {/* ── Page Indicators ─────────────────────────────── */}
-        <div className="flex justify-center gap-2 pb-3 relative z-10">
-          {Array.from({ length: totalPageCount }).map((_, i) => (
-            <div
-              key={i}
-              className={`w-1.5 h-1.5 rounded-full transition-colors duration-200 ${
-                i === currentPage ? "bg-white" : "bg-white/40"
-              }`}
-            />
-          ))}
-        </div>
+        {currentPage !== totalPageCount - 1 && (
+          <div className="flex justify-center mb-2.5 relative z-10">
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-800/8 backdrop-blur-xl border border-slate-800/5 shadow-sm">
+              {Array.from({ length: totalPageCount }).map((_, i) => (
+                <div
+                  key={i}
+                  className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${
+                    i === currentPage 
+                      ? "bg-slate-800 scale-110 shadow-sm" 
+                      : "bg-slate-800/35"
+                  }`}
+                />
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* ── Search Pill ── */}
-        <div className="flex justify-center mb-3 relative z-10">
-          <div 
-            className="flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-white/20 backdrop-blur-md shadow-sm cursor-pointer active:scale-95 transition-transform" 
-            onClick={() => navigate("/search")}
-          >
-            <Search size={14} className="text-white drop-shadow-md" />
-            <span className="text-white text-[13px] font-medium drop-shadow-md">Search</span>
+        {currentPage !== totalPageCount - 1 && (
+          <div className="flex justify-center mb-3 relative z-10">
+            <div 
+              className="flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-slate-800/10 backdrop-blur-2xl border border-slate-800/10 shadow-sm cursor-pointer active:scale-95 transition-transform" 
+              onClick={() => navigate("/search")}
+            >
+              <Search size={14} className="text-slate-800/80 drop-shadow-sm" />
+              <span className="text-slate-800/80 text-[13px] font-medium drop-shadow-md">Search</span>
+            </div>
           </div>
-        </div>
+        )}
 
         {/* ── Dock ──────────────────────────────────────────── */}
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.45, delay: 0.25, ease: ease.apple }}
-          className="px-5 pb-6"
-          style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 20px) + 16px)" }}
-        >
-          <div
-            className="flex items-center justify-around px-4 py-3 rounded-[28px] border border-white/20"
-            style={{
-              background: "rgba(90, 90, 110, 0.35)",
-              backdropFilter: "blur(30px)",
-              WebkitBackdropFilter: "blur(30px)",
-            }}
+        {currentPage !== totalPageCount - 1 && (
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.45, delay: 0.25, ease: ease.apple }}
+            className="px-5 pb-6"
+            style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 20px) + 16px)" }}
           >
-            {/* Dock items - strictly 4 icons */}
-            {DOCK_APPS_BASE.map((app, i) => (
-              <AppIcon
-                key={app.name}
-                app={app}
-                index={i}
-                isWiggling={false}
-                onTap={handleAppTap}
-                size={60}
-                showLabel={false}
-              />
-            ))}
-          </div>
-        </motion.div>
+            <div
+              className="flex items-center justify-around px-4 py-3 rounded-[28px] border border-slate-800/10 shadow-[0_8px_32px_rgba(0,0,0,0.06)]"
+              style={{
+                background: "rgba(30, 41, 59, 0.08)",
+                backdropFilter: "blur(40px)",
+                WebkitBackdropFilter: "blur(40px)",
+              }}
+            >
+              {/* Dock items - strictly 4 icons */}
+              {DOCK_APPS_BASE.map((app, i) => (
+                <AppIcon
+                  key={app.name}
+                  app={app}
+                  index={i}
+                  isWiggling={false}
+                  onTap={handleAppTap}
+                  size={60}
+                  showLabel={false}
+                />
+              ))}
+            </div>
+          </motion.div>
+        )}
       </div>
 
       {/* Wiggle mode hint */}
@@ -404,10 +418,10 @@ export default function MobileSpringboard() {
               transition={{ type: "spring", damping: 25, stiffness: 220 }}
               className="w-full max-w-[340px] rounded-[36px] p-6 flex flex-col items-center"
               style={{
-                background: "rgba(255, 255, 255, 0.2)",
-                backdropFilter: "blur(20px)",
-                WebkitBackdropFilter: "blur(20px)",
-                border: "1px solid rgba(255, 255, 255, 0.25)",
+                background: "rgba(15, 23, 42, 0.65)",
+                backdropFilter: "blur(25px)",
+                WebkitBackdropFilter: "blur(25px)",
+                border: "1px solid rgba(255, 255, 255, 0.1)",
                 boxShadow: "0 20px 40px rgba(0,0,0,0.2)"
               }}
               onClick={(e) => e.stopPropagation()}

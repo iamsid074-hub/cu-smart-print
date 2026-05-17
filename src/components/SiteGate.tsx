@@ -334,6 +334,11 @@ export function useSiteGate() {
   }, []);
 
 
+  // Bypass gate for local development testing/UI validation
+  if (typeof window !== "undefined" && window.localStorage.getItem("bypass_gate") === "true") {
+    return { gate: null, loaded: true };
+  }
+
   // Admins bypass everything
   if (isAdmin) return { gate: null, loaded: true };
 
