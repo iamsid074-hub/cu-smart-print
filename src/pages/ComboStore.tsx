@@ -88,64 +88,89 @@ const ALL_COMBOS = [
     themeId: "purple"
   },
   {
-    id: "combo-dairy-delight",
-    name: "Dairy Delight",
-    items: "Amul Milk 1L + Paneer 200g + Cheese Slices",
-    price: 185,
-    originalPrice: 210,
-    save: 25,
-    image: "/food_premium/dairy.jpg",
+    id: "combo-aloo-bhujia",
+    name: "Aloo Bhujia Snacks Combo",
+    items: "Aloo Bhujia (80g) + Lays Green + Mad Angles + Cold Drink (400ml)",
+    price: 80,
+    originalPrice: 100,
+    save: 20,
+    image: "",
+    images: ["/combo/3rs1_opt.webp"],
+    fullCover: true,
     category: "dairy",
-    badge: "FRESH",
+    badge: "CRISPY",
     shop: "Bazzar Grocery",
     isVeg: true,
-    emoji: "🧀",
+    emoji: "🍟",
+    themeId: "orange"
+  },
+  {
+    id: "combo-kurkure-chips",
+    name: "Kurkure Chips Combo",
+    items: "Kurkure + Haldiram's Blue Chips (2) + Coke (750ml)",
+    price: 110,
+    originalPrice: 140,
+    save: 30,
+    image: "",
+    images: ["/combo/3rs2_opt.webp"],
+    fullCover: true,
+    category: "dairy",
+    badge: "PARTY",
+    shop: "Bazzar Grocery",
+    isVeg: true,
+    emoji: "🥤",
     themeId: "blue"
   },
   {
-    id: "combo-morning-fuel",
-    name: "Morning Fuel",
-    items: "Curd 400g + 2× Butter Milk + Brown Bread",
-    price: 120,
-    originalPrice: 145,
-    save: 25,
-    image: "/food_premium/morning.jpg",
-    category: "dairy",
-    badge: "HEALTHY",
+    id: "combo-lime-juice",
+    name: "Lime (Mosambi) Juice Large Combo",
+    items: "Get 2 Lime (Mosambi) Juice (Large)",
+    price: 150,
+    originalPrice: 180,
+    save: 30,
+    image: "",
+    images: ["/combo/4th1_opt.webp"],
+    fullCover: true,
+    category: "beverages",
+    badge: "FRESH",
     shop: "Bazzar Grocery",
     isVeg: true,
-    emoji: "🥣",
+    emoji: "🍋",
     themeId: "green"
   },
   {
-    id: "combo-chill-vibes",
-    name: "Chill Vibes",
-    items: "Red Bull + 2× Coke 500ml + Ice Bag",
-    price: 249,
-    originalPrice: 285,
-    save: 36,
-    image: "/food_premium/beverage.jpg",
+    id: "combo-pineapple-juice",
+    name: "Pineapple Juice Large Combo",
+    items: "Get 2 Pineapple Juice (Large)",
+    price: 155,
+    originalPrice: 190,
+    save: 35,
+    image: "",
+    images: ["/combo/4th2_opt.webp"],
+    fullCover: true,
+    category: "beverages",
+    badge: "SWEET",
+    shop: "Bazzar Grocery",
+    isVeg: true,
+    emoji: "🍍",
+    themeId: "orange"
+  },
+  {
+    id: "combo-watermelon-juice",
+    name: "Watermelon Juice Large Combo",
+    items: "Get 2 Watermelon Juice (Large)",
+    price: 115,
+    originalPrice: 140,
+    save: 25,
+    image: "",
+    images: ["/combo/4th3_opt.webp"],
+    fullCover: true,
     category: "beverages",
     badge: "CHILLED",
     shop: "Bazzar Grocery",
     isVeg: true,
-    emoji: "🧊",
-    themeId: "blue"
-  },
-  {
-    id: "combo-energy-pack",
-    name: "Energy Pack",
-    items: "Monster Energy + Sting + Dark Fantasy Biscuits",
-    price: 165,
-    originalPrice: 190,
-    save: 25,
-    image: "/food_premium/energy.jpg",
-    category: "beverages",
-    badge: "POWER",
-    shop: "Bazzar Grocery",
-    isVeg: true,
-    emoji: "⚡",
-    themeId: "orange"
+    emoji: "🍉",
+    themeId: "pink"
   },
   {
     id: "combo-party-chicken",
@@ -220,8 +245,8 @@ const ALL_COMBOS = [
 
 const CATEGORIES = [
   { id: "all", label: "All Combos", count: ALL_COMBOS.length },
-  { id: "dairy", label: "Dairy", count: ALL_COMBOS.filter(c => c.category === "dairy").length },
-  { id: "beverages", label: "Beverages", count: ALL_COMBOS.filter(c => c.category === "beverages").length },
+  { id: "dairy", label: "Snacks combo", count: ALL_COMBOS.filter(c => c.category === "dairy").length },
+  { id: "beverages", label: "Juices combo", count: ALL_COMBOS.filter(c => c.category === "beverages").length },
   { id: "bestseller", label: "Best Seller", count: ALL_COMBOS.filter(c => c.category === "bestseller").length },
   { id: "more", label: "More", count: 0 },
 ];
@@ -252,7 +277,7 @@ function ComboCard({
     <motion.div
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-white rounded-[24px] overflow-hidden flex-shrink-0 w-[220px] border border-slate-100 shadow-[0_4px_24px_rgba(0,0,0,0.04)] pb-4 flex flex-col"
+      className="bg-white rounded-[24px] overflow-hidden flex-shrink-0 w-[220px] h-[340px] border border-slate-100 shadow-[0_4px_24px_rgba(0,0,0,0.04)] pb-4 flex flex-col"
     >
       <div 
         className="relative w-full h-[150px] flex flex-col justify-between p-3"
@@ -305,7 +330,7 @@ function ComboCard({
         <h3 className="text-[14px] font-black text-slate-900 leading-tight mb-0.5">{combo.name}</h3>
         <p className="text-[11px] text-slate-500 font-medium mb-2 leading-snug">{combo.items}</p>
 
-        <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center justify-between mb-3 mt-auto">
           <div className="flex items-baseline gap-1.5">
             <span className="text-[20px] font-black text-slate-900 tracking-tight">₹{combo.price}</span>
             <span className="text-[12px] text-slate-400 line-through font-semibold">₹{combo.originalPrice}</span>
@@ -319,7 +344,7 @@ function ComboCard({
         <motion.button
           onClick={onAdd}
           whileTap={{ scale: 0.97 }}
-          className="relative w-full h-11 rounded-2xl overflow-hidden flex items-center justify-center font-black text-[13px] tracking-wide mt-auto"
+          className="relative w-full h-11 rounded-2xl overflow-hidden flex items-center justify-center font-black text-[13px] tracking-wide"
           style={{
             background: "linear-gradient(90deg, #16a34a, #22c55e)"
           }}
@@ -526,7 +551,7 @@ export default function ComboStore() {
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2.5">
                   <div className="w-1 h-6 bg-blue-500 rounded-full" />
-                  <h2 className="text-[20px] font-black text-slate-900 tracking-tight">Dairy Combos</h2>
+                  <h2 className="text-[20px] font-black text-slate-900 tracking-tight">Snacks combo</h2>
                 </div>
                 <button onClick={() => setActiveCategory("dairy")} className="px-3.5 py-1.5 rounded-full bg-blue-50 text-[11px] font-black text-blue-600 active:scale-95 transition-transform">
                   VIEW ALL
@@ -543,7 +568,7 @@ export default function ComboStore() {
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2.5">
                   <div className="w-1 h-6 bg-orange-500 rounded-full" />
-                  <h2 className="text-[20px] font-black text-slate-900 tracking-tight">Beverages</h2>
+                  <h2 className="text-[20px] font-black text-slate-900 tracking-tight">Juices combo</h2>
                 </div>
                 <button onClick={() => setActiveCategory("beverages")} className="px-3.5 py-1.5 rounded-full bg-orange-50 text-[11px] font-black text-orange-600 active:scale-95 transition-transform">
                   VIEW ALL
@@ -563,25 +588,77 @@ export default function ComboStore() {
               return (
                 <motion.div key={combo.id} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-white rounded-[20px] overflow-hidden shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-slate-100 flex flex-col">
                   <div className="relative w-full h-[120px] flex items-center justify-center p-3" style={{ background: theme.bg }}>
-                    <div className="absolute top-2 left-2">
+                    <div className="absolute top-2 left-2 z-10">
                       <span className={`px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-wide shadow-sm ${theme.badgeBg} ${theme.badgeText}`}>{combo.badge}</span>
                     </div>
-                    <div className="text-6xl opacity-90">{combo.emoji}</div>
+                    <div className={`absolute inset-0 flex items-center justify-center ${combo.fullCover ? '' : 'pt-5'}`}>
+                      {combo.images && combo.images.length > 0 ? (
+                        <div className="relative w-full h-full flex items-center justify-center">
+                          {combo.images.length === 1 && (
+                            <img 
+                              src={combo.images[0]} 
+                              alt="Combo item"
+                              className={combo.fullCover ? "object-cover w-full h-full" : "object-contain h-[80px] drop-shadow-2xl transition-transform duration-300 hover:scale-110"} 
+                              style={combo.fullCover ? { imageRendering: 'high-quality', transform: 'translateZ(0)', WebkitBackfaceVisibility: 'hidden' } : {}}
+                            />
+                          )}
+                          {combo.images.length === 2 && (
+                            <>
+                              <img src={combo.images[0]} className="absolute h-[70px] object-contain drop-shadow-xl -translate-x-4 -rotate-6 z-10" />
+                              <img src={combo.images[1]} className="absolute h-[80px] object-contain drop-shadow-2xl translate-x-3 translate-y-1 rotate-6 z-20" />
+                            </>
+                          )}
+                          {combo.images.length === 3 && (
+                            <>
+                              <img src={combo.images[0]} className="absolute h-[70px] object-contain drop-shadow-xl -translate-x-8 -translate-y-1 -rotate-12 z-10" />
+                              <img src={combo.images[2]} className="absolute h-[65px] object-contain drop-shadow-xl translate-x-8 translate-y-2 rotate-12 z-20" />
+                              <img src={combo.images[1]} className="absolute h-[85px] object-contain drop-shadow-2xl z-30 translate-y-2" />
+                            </>
+                          )}
+                          {combo.images.length > 3 && (
+                            <div className="flex items-center justify-center -space-x-4">
+                              {combo.images.map((img, i) => (
+                                <img key={i} src={img} className="h-[60px] object-contain drop-shadow-xl" style={{ zIndex: i }} />
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      ) : combo.image ? (
+                        <img 
+                          src={combo.image} 
+                          alt="Combo item"
+                          className="object-cover w-full h-full" 
+                        />
+                      ) : (
+                        <div className="text-6xl opacity-90">{combo.emoji}</div>
+                      )}
+                    </div>
                   </div>
                   <div className="p-3 flex-1 flex flex-col justify-between">
                     <div>
                       <h3 className="text-[13px] font-black text-slate-900 mb-0.5 leading-tight">{combo.name}</h3>
                       <p className="text-[10px] text-slate-400 mb-2 leading-snug">{combo.items}</p>
                     </div>
-                    <div className="flex items-center justify-between mt-auto">
-                      <div>
+                    <div className="flex items-center justify-between mb-2.5 mt-auto">
+                      <div className="flex items-baseline gap-1">
                         <span className="text-[16px] font-black text-slate-900">₹{combo.price}</span>
-                        <span className="text-[10px] text-slate-400 line-through ml-1 font-semibold">₹{combo.originalPrice}</span>
+                        <span className="text-[10px] text-slate-400 line-through font-semibold">₹{combo.originalPrice}</span>
                       </div>
-                      <button onClick={() => handleAdd(combo)} className={`px-3 py-1 rounded-full flex items-center justify-center shadow-sm text-[10px] font-black text-white ${addedIds.has(combo.id) ? "bg-green-500" : theme.btnBg}`}>
-                        {addedIds.has(combo.id) ? "ADDED" : "ADD"}
-                      </button>
+                      <div className="inline-flex items-center bg-green-50 px-1.5 py-0.5 rounded-[4px]">
+                        <span className="text-[9px] font-bold text-green-700">Save ₹{combo.save}</span>
+                      </div>
                     </div>
+
+                    <motion.button
+                      onClick={() => handleAdd(combo)}
+                      whileTap={{ scale: 0.97 }}
+                      className="relative w-full h-9 rounded-xl overflow-hidden flex items-center justify-center font-black text-[11px] tracking-wide text-white"
+                      style={{
+                        background: "linear-gradient(90deg, #16a34a, #22c55e)"
+                      }}
+                    >
+                      {addedIds.has(combo.id) ? "Added!" : "Add to Cart"}
+                    </motion.button>
                   </div>
                 </motion.div>
               );
