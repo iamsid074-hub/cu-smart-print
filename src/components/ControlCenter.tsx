@@ -23,62 +23,7 @@ const getClosedY = () => -window.innerHeight;
 
 // Removed runSpring - switching to CSS transitions for 100% GPU accelerated smoothness
 
-// ─── Real-time iOS Status Bar ────────────────────────────────────────────────
-const IosStatusBar = () => {
-  const [time, setTime] = useState(new Date());
-  const { batteryLevel, isCharging, isOnline } = useSystemStatus();
 
-  useEffect(() => {
-    const timer = setInterval(() => setTime(new Date()), 1000);
-    return () => clearInterval(timer);
-  }, []);
-
-  const formattedTime = time.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }).replace(/\s?[AP]M/, '');
-
-  return (
-    <div className="flex items-center justify-between px-3 pb-6 pt-1 w-full relative h-10">
-      <div className="text-white font-semibold text-[15px] tracking-tight ml-2 mt-[2px] w-12 z-10 flex items-center">
-        {formattedTime}
-      </div>
-
-      {/* Dynamic Island Hardware Cutout */}
-      <div className="absolute left-1/2 top-0 -translate-x-1/2 w-[116px] h-[34px] bg-black rounded-full z-10 shadow-[inset_0_-1px_1px_rgba(255,255,255,0.05)]" />
-
-      {/* Right Icons: Perfectly vertically aligned using a strict flex-center container */}
-      <div className="flex items-center justify-end gap-[6px] mr-1 mt-[2px] w-[70px] z-10 h-full">
-        {/* Cellular Bars */}
-        <div className="flex items-end gap-[1.5px] h-[11px] mb-[1px]">
-          <div className={`w-[3px] h-[4px] rounded-[1px] ${isOnline ? 'bg-white' : 'bg-white/40'}`} />
-          <div className={`w-[3px] h-[6px] rounded-[1px] ${isOnline ? 'bg-white' : 'bg-white/40'}`} />
-          <div className={`w-[3px] h-[8px] rounded-[1px] ${isOnline ? 'bg-white' : 'bg-white/40'}`} />
-          <div className={`w-[3px] h-[11px] rounded-[1px] ${isOnline ? 'bg-white' : 'bg-white/40'}`} />
-        </div>
-        
-        {/* WiFi */}
-        {isOnline && (
-          <Wifi className="w-[16px] h-[16px] text-white stroke-[2.5] flex-shrink-0" />
-        )}
-        
-        {/* Battery */}
-        <div className="relative flex items-center">
-          <div className="w-[23.5px] h-[11px] border border-white/35 rounded-[3.5px] relative overflow-hidden">
-            {/* Fill — anchored left/top/bottom, reduces from right */}
-            <div 
-              className={`absolute left-0 top-0 bottom-0 transition-all duration-300 ${
-                isCharging ? 'bg-[#34C759]' : (batteryLevel <= 0.2 ? 'bg-[#FF453A]' : 'bg-white')
-              }`} 
-              style={{ width: `${Math.max(5, batteryLevel * 100)}%` }} 
-            />
-            {isCharging && (
-              <Zap className="w-[9px] h-[9px] text-white absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 fill-current drop-shadow-sm" />
-            )}
-          </div>
-          <div className="w-[1.2px] h-[3.5px] bg-white/35 rounded-r-[1px] ml-[1px]" />
-        </div>
-      </div>
-    </div>
-  );
-};
 
 export default function ControlCenter() {
   const navigate = useNavigate();
@@ -333,7 +278,7 @@ export default function ControlCenter() {
           // Mobile: full width. Desktop: fixed width anchored to the right
           right: 0,
           left: 0,
-          paddingTop: "calc(env(safe-area-inset-top, 20px) + 44px)",
+          paddingTop: "calc(env(safe-area-inset-top, 44px) + 64px)",
           paddingLeft: 16,
           paddingRight: 16,
           paddingBottom: 32,
@@ -350,20 +295,7 @@ export default function ControlCenter() {
           {/* Cards wrapper — max-w-sm centred on mobile, right-aligned on desktop */}
           <div className="w-full max-w-sm md:ml-auto flex flex-col gap-3">
 
-          <AnimatePresence>
-            {/* Only show status bar on mobile (has real dynamic island) */}
-            {showCards && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.2 }}
-                className="md:hidden"
-              >
-                <IosStatusBar />
-              </motion.div>
-            )}
-          </AnimatePresence>
+
 
           {/* Row 1 */}
           <div className="flex gap-3 h-[152px]">
