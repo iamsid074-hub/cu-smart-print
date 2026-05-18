@@ -1,9 +1,13 @@
 import { useState, useEffect } from "react";
 import { useSystemStatus } from "../hooks/useSystemStatus";
 import { Zap } from "lucide-react";
+import { useWallpaper } from "../contexts/WallpaperContext";
 
 
 export default function MobileStatusBar() {
+  const wallpaper = useWallpaper();
+  const is1stWall = wallpaper === "/1stwall.webp";
+
   const [time, setTime] = useState(new Date());
   const { batteryLevel, isCharging, isOnline, isBatteryAvailable } = useSystemStatus();
   const [isChargingAlert, setIsChargingAlert] = useState(false);
@@ -38,7 +42,7 @@ export default function MobileStatusBar() {
 
   return (
     <div
-      className="fixed top-0 left-0 right-0 z-[89999] pointer-events-none flex justify-between items-center text-black font-semibold text-[15px] pl-[32px] pr-[16px] h-[40px]"
+      className={`fixed top-0 left-0 right-0 z-[89999] pointer-events-none flex justify-between items-center font-semibold text-[15px] pl-[32px] pr-[16px] h-[40px] ${is1stWall ? "text-white" : "text-black"}`}
       style={{
         marginTop: "calc(var(--sat, env(safe-area-inset-top, 20px)) + 12px)",
         opacity: isElongated ? 0 : 1,
@@ -108,7 +112,7 @@ export default function MobileStatusBar() {
           {isBatteryAvailable ? (
             <>
               {/* Shell */}
-              <div className="w-[24px] h-[11px] border border-black/35 rounded-[3.5px] relative overflow-hidden">
+              <div className={`w-[24px] h-[11px] border rounded-[3.5px] relative overflow-hidden ${is1stWall ? "border-white/35" : "border-black/35"}`}>
                 {/* Fill — anchored left/top/bottom, reduces from right */}
                 <div
                   className="absolute left-0 top-0 bottom-0 transition-all duration-500"
@@ -118,7 +122,9 @@ export default function MobileStatusBar() {
                       ? "#34C759"
                       : batteryLevel <= 0.2
                         ? "#FF453A"
-                        : "black",
+                        : is1stWall
+                          ? "white"
+                          : "black",
                   }}
                 />
                 {/* Lightning bolt overlay when charging */}
@@ -130,15 +136,15 @@ export default function MobileStatusBar() {
                 )}
               </div>
               {/* Nub */}
-              <div className="w-[1.5px] h-[4px] bg-black/35 rounded-r-[1px] ml-[1px]" />
+              <div className={`w-[1.5px] h-[4px] rounded-r-[1px] ml-[1px] ${is1stWall ? "bg-white/35" : "bg-black/35"}`} />
             </>
           ) : (
             // Neutral Safari Fallback
             <div className="flex items-center gap-1.5 opacity-80">
-              <div className="w-[24px] h-[11px] border border-black/30 rounded-[3.5px] relative overflow-hidden">
-                <div className="absolute left-0 top-0 bottom-0 w-[50%] bg-black/40" />
+              <div className={`w-[24px] h-[11px] border rounded-[3.5px] relative overflow-hidden ${is1stWall ? "border-white/30" : "border-black/30"}`}>
+                <div className={`absolute left-0 top-0 bottom-0 w-[50%] ${is1stWall ? "bg-white/40" : "bg-black/40"}`} />
               </div>
-              <div className="w-[1.5px] h-[4px] bg-black/30 rounded-r-[1px] -ml-[5.5px]" />
+              <div className={`w-[1.5px] h-[4px] rounded-r-[1px] -ml-[5.5px] ${is1stWall ? "bg-white/30" : "bg-black/30"}`} />
             </div>
           )}
         </div>
