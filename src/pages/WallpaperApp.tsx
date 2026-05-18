@@ -14,7 +14,7 @@ interface WallpaperOption {
 const WALLPAPERS: WallpaperOption[] = [
   {
     id: "liquid-glass",
-    url: "/mobile-ethereal-v3.webp",
+    url: "/1stwall.webp",
     name: "Liquid Glass",
     accent: "#a855f7",
   },

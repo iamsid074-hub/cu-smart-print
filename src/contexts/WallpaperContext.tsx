@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 
 const WALLPAPER_KEY = "cu_bazzar_wallpaper";
-const DEFAULT_WALLPAPER = "/mobile-ethereal-v3.webp";
+const DEFAULT_WALLPAPER = "/1stwall.webp";
 
 interface WallpaperContextType {
   wallpaper: string;
