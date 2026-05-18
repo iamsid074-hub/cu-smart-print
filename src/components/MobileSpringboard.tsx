@@ -45,7 +45,7 @@ const GRID_APPS: (AppDef | FolderDef)[] = [
   { name: "Games",    img: "/dock-games.webp",       path: "/games",            wiggleDelay: 0.02, wiggleDuration: 0.18 },
   { name: "Wallpaper", icon: ImageIcon,  iconBg: "#4c1d95",  iconColor: "#c4b5fd",  path: "/wallpaper", wiggleDelay: 0.06, wiggleDuration: 0.20 },
   { name: "Membership", icon: Crown,     iconBg: "linear-gradient(135deg, #a855f7, #ec4899)", iconColor: "#fff", path: "/membership", wiggleDelay: 0.01, wiggleDuration: 0.17 },
-  { name: "Lottery",    icon: Ticket,    iconBg: "linear-gradient(135deg, #f43f5e, #8b5cf6)", iconColor: "#fff", path: "/lottery",    wiggleDelay: 0.03, wiggleDuration: 0.19 },
+  { name: "Lottery",    img: "/electronics.webp", path: "/lottery",    wiggleDelay: 0.03, wiggleDuration: 0.19 },
 ];
 
 const ADMIN_APP: AppDef = { 
