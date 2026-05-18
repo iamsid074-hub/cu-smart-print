@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback, memo, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
-import { Coffee, Wallet as WalletIcon, ShieldAlert, Lock, Search, Image as ImageIcon } from "lucide-react";
+import { Coffee, Wallet as WalletIcon, ShieldAlert, Lock, Search, Image as ImageIcon, Crown, Ticket } from "lucide-react";
 import { useWallpaper } from "../contexts/WallpaperContext";
 import { IosHomeIcon, IosCombosIcon, IosProfileIcon, IosSettingsIcon } from "./HighFidelityIcons";
 import OnboardingTour from "./OnboardingTour";
@@ -44,6 +44,8 @@ const GRID_APPS: (AppDef | FolderDef)[] = [
   { name: "Cart",     img: "/logocart_opt.webp",        path: "/cart",             wiggleDelay: 0.07, wiggleDuration: 0.19 },
   { name: "Games",    img: "/dock-games.webp",       path: "/games",            wiggleDelay: 0.02, wiggleDuration: 0.18 },
   { name: "Wallpaper", icon: ImageIcon,  iconBg: "#4c1d95",  iconColor: "#c4b5fd",  path: "/wallpaper", wiggleDelay: 0.06, wiggleDuration: 0.20 },
+  { name: "Membership", icon: Crown,     iconBg: "linear-gradient(135deg, #a855f7, #ec4899)", iconColor: "#fff", path: "/membership", wiggleDelay: 0.01, wiggleDuration: 0.17 },
+  { name: "Lottery",    icon: Ticket,    iconBg: "linear-gradient(135deg, #f43f5e, #8b5cf6)", iconColor: "#fff", path: "/lottery",    wiggleDelay: 0.03, wiggleDuration: 0.19 },
 ];
 
 const ADMIN_APP: AppDef = { 
@@ -117,12 +119,23 @@ export default function MobileSpringboard() {
         list.push(item as AppDef);
       }
     });
-    if (isSuperAdmin) list.push(ADMIN_APP);
-    return list;
+    let filtered = list;
+    if (!isSuperAdmin) {
+      filtered = filtered.filter(app => app.name !== "Lottery");
+    }
+    if (isSuperAdmin) filtered.push(ADMIN_APP);
+    return filtered;
   }, [isSuperAdmin]);
 
   // Chunk apps into pages of 24 (4x6 grid looks best for iOS)
-  const allApps = [...GRID_APPS, ...(isSuperAdmin ? [ADMIN_APP] : [])];
+  const allApps = useMemo(() => {
+    let apps = [...GRID_APPS];
+    if (!isSuperAdmin) {
+      apps = apps.filter(app => app.name !== "Lottery");
+    }
+    return [...apps, ...(isSuperAdmin ? [ADMIN_APP] : [])];
+  }, [isSuperAdmin]);
+
   const APPS_PER_PAGE = 24;
   const contentPages = [];
   for (let i = 0; i < allApps.length; i += APPS_PER_PAGE) {

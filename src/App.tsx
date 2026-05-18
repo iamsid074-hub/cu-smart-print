@@ -90,6 +90,8 @@ const Sections = lazy(() => import("./pages/Sections"));
 const MobileFoodPortal = lazy(() => import("./components/MobileFoodPortal"));
 const WallpaperApp = lazy(() => import("./pages/WallpaperApp"));
 const ComboStore = lazy(() => import("./pages/ComboStore"));
+const Membership = lazy(() => import("./pages/Membership"));
+const Lottery = lazy(() => import("./pages/Lottery"));
 
 import Navbar from "./components/Navbar";
 // import BottomNav from "./components/BottomNav";
@@ -452,6 +454,22 @@ function AppLayout() {
                 element={
                   <PageTransition locationKey="/combos">
                     <ProtectedRoute><ComboStore /></ProtectedRoute>
+                  </PageTransition>
+                }
+              />
+              <Route
+                path="/membership"
+                element={
+                  <PageTransition locationKey="/membership">
+                    <ProtectedRoute><Membership /></ProtectedRoute>
+                  </PageTransition>
+                }
+              />
+              <Route
+                path="/lottery"
+                element={
+                  <PageTransition locationKey="/lottery">
+                    <ProtectedRoute><Lottery /></ProtectedRoute>
                   </PageTransition>
                 }
               />
