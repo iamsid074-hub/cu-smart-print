@@ -119,21 +119,13 @@ export default function MobileSpringboard() {
         list.push(item as AppDef);
       }
     });
-    let filtered = list;
-    if (!isSuperAdmin) {
-      filtered = filtered.filter(app => app.name !== "Lottery");
-    }
-    if (isSuperAdmin) filtered.push(ADMIN_APP);
-    return filtered;
+    if (isSuperAdmin) list.push(ADMIN_APP);
+    return list;
   }, [isSuperAdmin]);
 
   // Chunk apps into pages of 24 (4x6 grid looks best for iOS)
   const allApps = useMemo(() => {
-    let apps = [...GRID_APPS];
-    if (!isSuperAdmin) {
-      apps = apps.filter(app => app.name !== "Lottery");
-    }
-    return [...apps, ...(isSuperAdmin ? [ADMIN_APP] : [])];
+    return [...GRID_APPS, ...(isSuperAdmin ? [ADMIN_APP] : [])];
   }, [isSuperAdmin]);
 
   const APPS_PER_PAGE = 24;
@@ -493,6 +485,9 @@ interface AppIconProps {
 }
 
 const AppIcon = memo(function AppIcon({ app, index, isWiggling, onTap, onOpenFolder, size = 60, showLabel = true }: AppIconProps) {
+  const { user } = useAuth();
+  const isSuperAdmin = user?.email === "iamsid074@gmail.com";
+  
   const iconSize = `min(${size}px, calc((100vw - 88px) / 4))`;
   const isFolder = 'isFolder' in app && app.isFolder;
 
@@ -598,6 +593,15 @@ const AppIcon = memo(function AppIcon({ app, index, isWiggling, onTap, onOpenFol
                   )}
                 </div>
               )}
+            </div>
+          )}
+          {/* Lock Overlay for Lottery App when not superadmin */}
+          {!isFolder && app.name === "Lottery" && !isSuperAdmin && (
+            <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center backdrop-blur-[2px] transition-all hover:bg-black/40">
+              <Lock className="w-5 h-5 text-rose-500 fill-rose-500/10 drop-shadow-[0_0_8px_rgba(244,63,94,0.5)] animate-pulse" />
+              <span className="text-[7px] text-rose-400 font-extrabold uppercase tracking-widest mt-1 bg-rose-950/80 px-1 py-0.5 rounded border border-rose-500/30">
+                LOCKED
+              </span>
             </div>
           )}
 
