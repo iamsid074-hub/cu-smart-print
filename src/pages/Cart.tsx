@@ -276,12 +276,12 @@ export default function Cart() {
     (item) => item.id === "flavour-factory-combo"
   ), [items]);
 
-  // Logic: If there's a quick item, flat rate 50.
+  // Logic: If there's a quick item, flat rate 29.
   // If there's a food shop item, use standard flat rate.
   // Only if it's EXCLUSIVELY Vending, use the tiered vending fee.
   const baseDelivery = useMemo(() => {
     if (hasQuickItem) {
-      return 50;
+      return 29;
     }
     if (hasFoodShopItem) {
       return standardDeliveryFee;
@@ -312,7 +312,7 @@ export default function Cart() {
     paymentMethod === "cod"
       ? 49
       : hasQuickItem
-      ? 50
+      ? 29
       : hasFoodShopItem
       ? standardDeliveryFee
       : calculateVendingDelivery(floor)), [items.length, paymentMethod, hasQuickItem, hasFoodShopItem, floor]);

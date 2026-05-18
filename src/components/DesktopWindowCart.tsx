@@ -91,9 +91,9 @@ export default function DesktopWindowCart({ onClose, onMinimize, onMaximize, isM
   const isFoodOrder = useMemo(() => !items.some(i => i.category === "Vending Machine" || i.category?.toLowerCase() === "grocery"), [items]);
 
   const calcVending = (f: number) => f <= 3 ? 15 : f <= 6 ? 22 : f <= 9 ? 30 : 35;
-  const baseDelivery = useMemo(() => hasQuickItem ? 50 : hasFoodShopItem ? 30 : calcVending(derivedFloor), [hasQuickItem, hasFoodShopItem, derivedFloor]);
+  const baseDelivery = useMemo(() => hasQuickItem ? 29 : hasFoodShopItem ? 30 : calcVending(derivedFloor), [hasQuickItem, hasFoodShopItem, derivedFloor]);
   const deliveryFee = useMemo(() => hasFreeDelivery ? 0 : paymentMethod === "cod" ? 49 : baseDelivery, [hasFreeDelivery, paymentMethod, baseDelivery]);
-  const displayedDelivery = useMemo(() => paymentMethod === "cod" ? 49 : hasQuickItem ? 50 : hasFoodShopItem ? 30 : calcVending(derivedFloor), [paymentMethod, hasQuickItem, hasFoodShopItem, derivedFloor]);
+  const displayedDelivery = useMemo(() => paymentMethod === "cod" ? 49 : hasQuickItem ? 29 : hasFoodShopItem ? 30 : calcVending(derivedFloor), [paymentMethod, hasQuickItem, hasFoodShopItem, derivedFloor]);
 
   const maxWalletPerDay = 50;
   const availableToday = Math.max(0, maxWalletPerDay - dailyWalletUsed);
